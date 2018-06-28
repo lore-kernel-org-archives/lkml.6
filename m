@@ -2,167 +2,193 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5452C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAFAC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3C1258BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E62B8259A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jARUh2h0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3C1258BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="qYt3ZM5L";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kUpgkB0w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62B8259A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeF1AEq (ORCPT
+        id S1751854AbeF1AKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 20:04:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50418 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbeF1AEm (ORCPT
+        Wed, 27 Jun 2018 20:10:08 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:34689 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751272AbeF1AKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 20:04:42 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so7568948wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 17:04:42 -0700 (PDT)
+        Wed, 27 Jun 2018 20:10:07 -0400
+Received: by mail-yb0-f193.google.com with SMTP id e9-v6so1455492ybq.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 17:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FRk1lMaiyEGoBtYTxhWnfRdlEb9O4EZ4T89a5HdwD5w=;
-        b=jARUh2h0Qt1uWgCifk7mQNGwJQSIw+Pk7yNIQyKk7LGktQlxo9rpOmdGdZoKBTmPQm
-         i6kbCq2cAE+DmdJC/eV4B/2GpzlObJE6juS6Hyq6tobuFxoogTNUzpdfxw5dqGnxM0F9
-         hlpfL8ziJJmj5zZPtDK9lk7on9swlpkAkajm9pmGykOFRZVhIThxoB5SUM3/MsboeF1E
-         pbFPIK1xVwiDZFfQd5eInIxd9IZrVIQH9G7dnwkXu/JitLu29bUUjIBfrob7EU4ocrsr
-         38cM8l0o8dI8d2RId6GTtNSppvio8Fm13juTy/cPW8n7+w3fvi7cq4Sx22S/rth28py2
-         nZUg==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ytac44Imxj1TycbJHWSQn1SDdlrwlZQjpO8QRu+K20U=;
+        b=qYt3ZM5LpaCCmHbW6+1Ux4XkrQwFGG7y0yNU0i1eth0Tv1FalC2t6u/8i9WXeFw3/q
+         itMHG3X+U0HnI0wE8sfugLDdnSBQ48BWgh9f/UFTMjNDLf91kf9olX8SrcEShT4A8nfK
+         kr1cOmbdYpJMmYy99UACoZ7HY50K57NR8/hgprHUgPPb/25A9cfi7yvxntfHPZBE1of1
+         FMZUTayh/Gqt8ftPvIjzEST2/6h0VckR0NhN8MDdn/NeegMxr0RVfmsbJPs4inrHaRRm
+         0tJd2spju23BLsiFtuHkmBegHzayF14OfTXrYGFO1KgI55tZAiTV+8pAJcSf9RWCB19J
+         U0/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ytac44Imxj1TycbJHWSQn1SDdlrwlZQjpO8QRu+K20U=;
+        b=kUpgkB0wbvyJz94lRezvKXbm0wLNvF69yj9/R9YMfXbZ1nIzjNKw9maN1L/2jO0Fuu
+         qYkEnOcsBibp2dyBVpogSyTvqPhWYy5CIFZhMLmNA0K4m7/E0DYCyerJYvHLO3Wo45EA
+         sVC+Dh2ybXdrYIjbAToOs4nd0Q1Uzw3BhOjsI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FRk1lMaiyEGoBtYTxhWnfRdlEb9O4EZ4T89a5HdwD5w=;
-        b=VwzkJUDyZUOVGRLWH/iMamg2mb1bQgPq4iZbWLnV83isWDUFiyVRBD/0+Oq5a2k1+y
-         Gxo6DpUa9zyWu+pu848vGw99S4lmTq5QlS7qByZ0n/m1tnaTTIppZHp7VsNepxO8fcG3
-         YmncLRf9yEX/a1Yg88JknI4zaDBgcrFMf+2CVXzTulz7xLwK6GDXdVny4x95MCQ7oz3p
-         /ZwRhmcgHli7YhP0IhWOJBnFHLO3JjzKNN2yvM4UihKXE4KpEJrZ9y3uudzPcvd0Mubo
-         shGN5bFrnuvFkkLE6d0P6dili6re+aq0A43UsIhBkUUaiHVJpf1ISyDtKzEWEhBQaMqN
-         OZvg==
-X-Gm-Message-State: APt69E1L0f7YzVYhQ6ALWq2jaY6z1daazpbVbpnYtyKi6miU2HfBNXYB
-        e1ZK1AUbOvGUhWbZ2j+S1tMm8Pk7QQUW4GY9dbktFg==
-X-Google-Smtp-Source: AAOMgpcjP7P1nPlAktqfyC6vHVRIqPDDS9l7wY8oiZP/cVGq9ircjVh4E+YOtQxd8d/TqrQ13RbXP2NRBa4q/pL/wdk=
-X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr6140950wmh.116.1530144281284;
- Wed, 27 Jun 2018 17:04:41 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ytac44Imxj1TycbJHWSQn1SDdlrwlZQjpO8QRu+K20U=;
+        b=S2JLRSKZjQihhfaMkN724AAn4ZBOMWNY5tnOZRepRBAHuB/3nlbOKSsMCntpaeMc6+
+         9qbpTU8bAi+LcRjUAyYcGtHPm7gTpp4HytYTbfhl9H2cow4m5fjibi3aUFVrwmDtDHF+
+         UWqG9dCpL6D0FN19t0rNmi/Tc8Ii73g3t1eeowxvVHm0Tv/FFPPQ9Ibad1ig2+QG/00g
+         pMqqx3k389VqDMRJbSTdn6Z2WvW51ra1jhW45rPj+CYsyUHHajtxyiaX3UXDtz/ZbzDw
+         d8XSUBPhEeyuhVYgs+Car6Dw+oZFgcsAtdvIlTNxMLRG4hO5fQojKE4gomUgW09UjLb+
+         KMlg==
+X-Gm-Message-State: APt69E3QpV9qMFSRbdKAQABSaHxxxbaa0sfSDKOM8dY8EjDGIFzuaH2e
+        cYjWBPyYEPRVARrHdU9suJ6j/6bdk8cv8SeVGR9ndg==
+X-Google-Smtp-Source: ADUXVKLDmxBXWm2frNvCobfWgmXO+TeF0sIqaaJX7/nXUCILqbCcMnR18xKnY5Sxdp0Dp/pZxzht9Y7bWd/+pvnhoT8=
+X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr4297164ybi.193.1530144605997;
+ Wed, 27 Jun 2018 17:10:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
-In-Reply-To: <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
-From:   Kostya Serebryany <kcc@google.com>
-Date:   Wed, 27 Jun 2018 17:04:28 -0700
-Message-ID: <CAN=P9pivApAo76Kjc0TUDE0kvJn0pET=47xU6e=ioZV2VqO0Rg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>, aryabinin@virtuozzo.com,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
-        cl@linux.com, mark.rutland@arm.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        marc.zyngier@arm.com, dave.martin@arm.com,
-        ard.biesheuvel@linaro.org, ebiederm@xmission.com, mingo@kernel.org,
-        Paul Lawrence <paullawrence@google.com>, geert@linux-m68k.org,
-        arnd@arndb.de, kirill.shutemov@linux.intel.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        rppt@linux.vnet.ibm.com, kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
-        linux-mm@kvack.org, linux-kbuild@vger.kernel.org,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>, cpandya@codeaurora.org,
-        Vishwath Mohan <vishwath@google.com>
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 17:10:05
+ -0700 (PDT)
+In-Reply-To: <20180627222749.xa5333caq5vaa7st@gondor.apana.org.au>
+References: <20180625211026.15819-1-keescook@chromium.org> <20180625211026.15819-12-keescook@chromium.org>
+ <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au> <CAGXu5jKYb-0NNvOcN79hzqU7O6vCFhMTBDGBL8Knuoc-YHamPg@mail.gmail.com>
+ <20180627143622.ntksjxsymo4yw6dz@gondor.apana.org.au> <CAGXu5jJ2Z=YP+fNsvy+6a_BpC1ibZf6tOzZuPHk=Qx1qNVvOZw@mail.gmail.com>
+ <20180627222749.xa5333caq5vaa7st@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 27 Jun 2018 17:10:05 -0700
+X-Google-Sender-Auth: 9tq98TiJOp28B6a7nfkFb83cuR8
+Message-ID: <CAGXu5jKas=OyJPsrMthxjEykG=FkHDW84dO4bKGpj-50JjUYwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/11] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
+        dm-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 4:08 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, Jun 27, 2018 at 3:27 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Wed, Jun 27, 2018 at 11:31:09AM -0700, Kees Cook wrote:
+>> crypto/lrw.c:   crypto_skcipher_set_reqsize(tfm,
+>> crypto_skcipher_reqsize(cipher) +
+>> crypto/lrw.c-                                    sizeof(struct rctx));
+>> ...
+>> crypto/cts.c-   align = crypto_skcipher_alignmask(tfm);
+>> crypto/cts.c-   bsize = crypto_skcipher_blocksize(cipher);
+>> crypto/cts.c-   reqsize = ALIGN(sizeof(struct crypto_cts_reqctx) +
+>> crypto/cts.c-                   crypto_skcipher_reqsize(cipher),
+>> crypto/cts.c-                   crypto_tfm_ctx_alignment()) +
+>> crypto/cts.c-             (align & ~(crypto_tfm_ctx_alignment() - 1)) + bsize;
+>> crypto/cts.c-
+>> crypto/cts.c:   crypto_skcipher_set_reqsize(tfm, reqsize);
+>>
+>> What values might be expected here? It seems the entire blocksize
+>> needs to be included as well...
 >
-> On Tue, 26 Jun 2018 15:15:10 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> > This patchset adds a new mode to KASAN [1], which is called KHWASAN
-> > (Kernel HardWare assisted Address SANitizer).
-> >
-> > The plan is to implement HWASan [2] for the kernel with the incentive,
-> > that it's going to have comparable to KASAN performance, but in the same
-> > time consume much less memory, trading that off for somewhat imprecise
-> > bug detection and being supported only for arm64.
->
-> Why do we consider this to be a worthwhile change?
->
-> Is KASAN's memory consumption actually a significant problem?  Some
-> data regarding that would be very useful.
+> But otherwise yes these are the ones that count.
 
-On mobile, ASAN's and KASAN's memory usage is a significant problem.
-Not sure if I can find scientific evidence of that.
-CC-ing Vishwath Mohan who deals with KASAN on Android to provide
-anecdotal evidence.
+In both cases here, what is "cipher"? i.e. what ciphers could lrw be
+wrapping, and what ciphers could cts be wrapping, so that I can
+examine the blocksizes, etc?
 
-There are several other benefits too:
-* HWASAN more reliably detects non-linear-buffer-overflows compared to
-ASAN (same for kernel-HWASAN vs kernel-ASAN)
-* Same for detecting use-after-free (since HWASAN doesn't rely on quarantine).
-* Much easier to implement stack-use-after-return detection (which
-IIRC KASAN doesn't have yet, because in KASAN it's too hard)
+FWIW, looking at the non-ASYNC wrappers, I see only:
 
-> If it is a large problem then we still have that problem on x86, so the
-> problem remains largely unsolved?
+crypto/ctr.c
+crypto/cts.c
+crypto/lrw.c
+crypto/xts.c
+drivers/crypto/sunxi-ss/sun4i-ss-cipher.c
 
-The problem is more significant on mobile devices than on desktop/server.
-I'd love to have [K]HWASAN on x86_64 as well, but it's less trivial since x86_64
-doesn't have an analog of aarch64's top-byte-ignore hardware feature.
+Building in all crypto things and running tcrypt with an instrumented
+crypto_skcipher_set_reqsize, I see:
 
+# dmesg | grep skcipher_set_req | cut -c16- | sort -u | sort +1 -n
+crypto_skcipher_set_reqsize: 8
+crypto_skcipher_set_reqsize: 88
+crypto_skcipher_set_reqsize: 184
+crypto_skcipher_set_reqsize: 256
+crypto_skcipher_set_reqsize: 472
 
->
-> > ====== Benchmarks
-> >
-> > The following numbers were collected on Odroid C2 board. Both KASAN and
-> > KHWASAN were used in inline instrumentation mode.
-> >
-> > Boot time [1]:
-> > * ~1.7 sec for clean kernel
-> > * ~5.0 sec for KASAN
-> > * ~5.0 sec for KHWASAN
-> >
-> > Slab memory usage after boot [2]:
-> > * ~40 kb for clean kernel
-> > * ~105 kb + 1/8th shadow ~= 118 kb for KASAN
-> > * ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
-> >
-> > Network performance [3]:
-> > * 8.33 Gbits/sec for clean kernel
-> > * 3.17 Gbits/sec for KASAN
-> > * 2.85 Gbits/sec for KHWASAN
-> >
-> > Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
-> >
-> > [1] Time before the ext4 driver is initialized.
-> > [2] Measured as `cat /proc/meminfo | grep Slab`.
-> > [3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
->
-> The above doesn't actually demonstrate the whole point of the
-> patchset: to reduce KASAN's very high memory consumption?
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20180627160800.3dc7f9ee41c0badbf7342520%40linux-foundation.org.
-> For more options, visit https://groups.google.com/d/optout.
+The 472 maps to lrw with its 384 struct rctx:
+
+[  553.843884] tcrypt: testing lrw(twofish)
+[  553.844479] crypto_skcipher_set_reqsize: 8
+[  553.845076] crypto_skcipher_set_reqsize: 88
+[  553.845658] crypto_skcipher_set_reqsize: 472
+
+[  553.860578] tcrypt: testing lrw(serpent)
+[  553.861349] crypto_skcipher_set_reqsize: 8
+[  553.861960] crypto_skcipher_set_reqsize: 88
+[  553.862534] crypto_skcipher_set_reqsize: 472
+
+[  553.871676] tcrypt: testing lrw(aes)
+[  553.872398] crypto_skcipher_set_reqsize: 8
+[  553.873002] crypto_skcipher_set_reqsize: 88
+[  553.873574] crypto_skcipher_set_reqsize: 472
+
+[  553.957282] tcrypt: testing lrw(cast6)
+[  553.958098] crypto_skcipher_set_reqsize: 8
+[  553.958691] crypto_skcipher_set_reqsize: 88
+[  553.959311] crypto_skcipher_set_reqsize: 472
+
+[  553.982514] tcrypt: testing lrw(camellia)
+[  553.983308] crypto_skcipher_set_reqsize: 8
+[  553.983907] crypto_skcipher_set_reqsize: 88
+[  553.984470] crypto_skcipher_set_reqsize: 472
+
+And while I'm using tcrypt, ahash shows:
+
+44
+124
+336
+368
+528
+536
+568
+616
+648
+728
+808
+
+The largest seems to be sha512:
+
+[  553.883440] tcrypt: testing sha512
+[  553.884179] sha512_mb: crypto_ahash_set_reqsize: 528
+[  553.884904] crypto_ahash_set_reqsize: 728
+[  553.885449] sha512_mb: crypto_ahash_set_reqsize: 808
+
+So ... should I use 472 for skcipher and 808 for ahash?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
