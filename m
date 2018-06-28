@@ -2,81 +2,162 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A6BC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25297C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2CD27496
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeVARlrl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2CD27496
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DA751274A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA751274A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966460AbeF1NyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:54:20 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37573 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966365AbeF1NyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:54:18 -0400
-Received: by mail-it0-f66.google.com with SMTP id p17-v6so7702416itc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 06:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cXOFUcwBtf+Q8h7jPUtDtzhouDPlPenCkja0r9TU+Jo=;
-        b=jeVARlrlgYxlZx8CV8T10RZ2jKxcUzoFHcUN7xs5kxxipHuO5XthEGHq18qFmauZLM
-         5r0gtFOnDFVPhSQpE3HwLfBlmKSFmIln0j90qlgTiaUkW9mULXEvKmjCXasnpqj4r9lW
-         XBecYER1pjedVRIvBKCPIdNS595Mzx1o/qhxA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cXOFUcwBtf+Q8h7jPUtDtzhouDPlPenCkja0r9TU+Jo=;
-        b=cyVfsa25UUbjL90mOO3vkQ7s46T/+cU3QoZMc4xk3ZMb5pqs2oteBBDlvIHrW6wuw+
-         LnUYfe/lk5aUUjYsu/B9qLwaTxz4sTHpCn/u9hVm9Un5VsqdYZKZI0eVEOtXy5D07/eH
-         V/hGRcZ9T1NRUh3TwD6kjvnlaYd9wAgUBlXZC+1jwjmlz9RwAuCAMKyPEeUOCwxYAuIa
-         B2RDIcLPwrjXZENLTKO8eyOpqo9daP9SorzbeC8hUGcxnWGJwe/Dwm1IYX6q6wREKFoA
-         pLNDmmOSKns5C3RlcBY0sifMDilIvgNwZ7Y3M20SZgAMzEQ/N2HyTHgWOPsJo57DF1JQ
-         O5bw==
-X-Gm-Message-State: APt69E0Ohd3Z311UsZpQX2kLJZpW757TxGlk8irelUOSEWNZJd5LYArB
-        BTgYiWuzdI3atUwgQbWdRsAtAJRrbsw5sG9uXshgdw==
-X-Google-Smtp-Source: AAOMgpdxQecUt/jjHsIrpbm5lbKl/SaA2eX5IhSCKqdr6Pnr0f1CHGMFuv2dNm+u+bSEGwyq1Bz/Ub8DA60Hgu3Y9Hs=
-X-Received: by 2002:a02:c006:: with SMTP id y6-v6mr8870120jai.87.1530194058207;
- Thu, 28 Jun 2018 06:54:18 -0700 (PDT)
+        id S966480AbeF1Nyw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:54:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56032 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966349AbeF1NxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:53:19 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3FC9A4077224;
+        Thu, 28 Jun 2018 13:53:19 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C695F2026D69;
+        Thu, 28 Jun 2018 13:53:16 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] KVM: x86: hyperv: optimize 'all cpus' case in kvm_hv_flush_tlb()
+Date:   Thu, 28 Jun 2018 15:53:09 +0200
+Message-Id: <20180628135313.17468-2-vkuznets@redhat.com>
+In-Reply-To: <20180628135313.17468-1-vkuznets@redhat.com>
+References: <20180628135313.17468-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-References: <20180619093126.74060-1-tony@atomide.com>
-In-Reply-To: <20180619093126.74060-1-tony@atomide.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 28 Jun 2018 15:54:06 +0200
-Message-ID: <CACRpkdaV84wai+ie1D-t=j+RiYNvKJUvjA8g-zvGhMZS2dBuEA@mail.gmail.com>
-Subject: Re: [PATCHv2 0/5] pinctrl fixes for generic functions and groups
-To:     ext Tony Lindgren <tony@atomide.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 28 Jun 2018 13:53:19 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 28 Jun 2018 13:53:19 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:31 AM Tony Lindgren <tony@atomide.com> wrote:
+We can use 'NULL' to represent 'all cpus' case in
+kvm_make_vcpus_request_mask() and avoid building vCPU mask with
+all vCPUs.
 
-> Here are fixes to the race issues for generic group and functions
-> reported by H. Nikolaus Schaller <hns@goldelico.com>. I have not seen
-> the issue here myself, so please test to see if this is sufficient.
+Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/hyperv.c | 42 +++++++++++++++++++++++-------------------
+ virt/kvm/kvm_main.c   |  6 ++----
+ 2 files changed, 25 insertions(+), 23 deletions(-)
 
-It looks sane to me, it'd be great to have some Tested-by: from
-H. Nikolaus, can we get that?
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index af8caf965baa..63a17bbbf0e5 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1310,35 +1310,39 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+ 
+ 	cpumask_clear(&hv_current->tlb_lush);
+ 
++	if (all_cpus) {
++		kvm_make_vcpus_request_mask(kvm,
++				    KVM_REQ_TLB_FLUSH | KVM_REQUEST_NO_WAKEUP,
++				    NULL, &hv_current->tlb_lush);
++		goto ret_success;
++	}
++
+ 	kvm_for_each_vcpu(i, vcpu, kvm) {
+ 		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
+ 		int bank = hv->vp_index / 64, sbank = 0;
+ 
+-		if (!all_cpus) {
+-			/* Banks >64 can't be represented */
+-			if (bank >= 64)
+-				continue;
+-
+-			/* Non-ex hypercalls can only address first 64 vCPUs */
+-			if (!ex && bank)
+-				continue;
++		/* Banks >64 can't be represented */
++		if (bank >= 64)
++			continue;
+ 
+-			if (ex) {
+-				/*
+-				 * Check is the bank of this vCPU is in sparse
+-				 * set and get the sparse bank number.
+-				 */
+-				sbank = get_sparse_bank_no(valid_bank_mask,
+-							   bank);
++		/* Non-ex hypercalls can only address first 64 vCPUs */
++		if (!ex && bank)
++			continue;
+ 
+-				if (sbank < 0)
+-					continue;
+-			}
++		if (ex) {
++			/*
++			 * Check is the bank of this vCPU is in sparse
++			 * set and get the sparse bank number.
++			 */
++			sbank = get_sparse_bank_no(valid_bank_mask, bank);
+ 
+-			if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
++			if (sbank < 0)
+ 				continue;
+ 		}
+ 
++		if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
++			continue;
++
+ 		/*
+ 		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
+ 		 * can't analyze it here, flush TLB regardless of the specified
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index ada21f47f22b..153f14e91fb1 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -213,7 +213,7 @@ bool kvm_make_vcpus_request_mask(struct kvm *kvm, unsigned int req,
+ 	me = get_cpu();
+ 
+ 	kvm_for_each_vcpu(i, vcpu, kvm) {
+-		if (!test_bit(i, vcpu_bitmap))
++		if (vcpu_bitmap && !test_bit(i, vcpu_bitmap))
+ 			continue;
+ 
+ 		kvm_make_request(req, vcpu);
+@@ -237,12 +237,10 @@ bool kvm_make_all_cpus_request(struct kvm *kvm, unsigned int req)
+ {
+ 	cpumask_var_t cpus;
+ 	bool called;
+-	static unsigned long vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)]
+-		= {[0 ... BITS_TO_LONGS(KVM_MAX_VCPUS)-1] = ULONG_MAX};
+ 
+ 	zalloc_cpumask_var(&cpus, GFP_ATOMIC);
+ 
+-	called = kvm_make_vcpus_request_mask(kvm, req, vcpu_bitmap, cpus);
++	called = kvm_make_vcpus_request_mask(kvm, req, NULL, cpus);
+ 
+ 	free_cpumask_var(cpus);
+ 	return called;
+-- 
+2.14.4
 
-Else I guess I just queue them, but if I should queue them for
-fixes it'd be great if it actually can be verified to fix something :D
-
-Yours,
-Linus Walleij
