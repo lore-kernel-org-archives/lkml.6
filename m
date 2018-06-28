@@ -3,54 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD95C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4E0C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3012767F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3012767F
+	by mail.kernel.org (Postfix) with ESMTP id 5B349276AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B349276AF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935655AbeF1QlM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:41:12 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:44608 "EHLO
+        id S935685AbeF1Ql0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 12:41:26 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:41500 "EHLO
         mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935611AbeF1QlK (ORCPT
+        by vger.kernel.org with ESMTP id S935628AbeF1QlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:41:10 -0400
-Received: from pps.filterd (m0098781.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SGZuhL029674;
-        Thu, 28 Jun 2018 11:40:47 -0500
+        Thu, 28 Jun 2018 12:41:11 -0400
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SGa0BZ014758;
+        Thu, 28 Jun 2018 11:40:52 -0500
 Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2jw1pr8d6v-1
+        by mx0a-00010702.pphosted.com with ESMTP id 2jvdqwun5u-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jun 2018 11:40:47 -0500
-Received: from us-aus-exch1.ni.corp.natinst.com (us-aus-exch1.ni.corp.natinst.com [130.164.68.11])
-        by us-aus-skprod2.natinst.com (8.16.0.22/8.16.0.22) with ESMTPS id w5SGekuP018127
+        Thu, 28 Jun 2018 11:40:52 -0500
+Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
+        by us-aus-skprod2.natinst.com (8.16.0.22/8.16.0.22) with ESMTPS id w5SGepDv018133
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jun 2018 11:40:46 -0500
+        Thu, 28 Jun 2018 11:40:51 -0500
+Received: from us-aus-exch5.ni.corp.natinst.com (130.164.68.15) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Thu, 28 Jun 2018 11:40:51 -0500
 Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
- us-aus-exch1.ni.corp.natinst.com (130.164.68.11) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Thu, 28 Jun 2018 11:40:46 -0500
+ us-aus-exch5.ni.corp.natinst.com (130.164.68.15) with Microsoft SMTP Server
+ (TLS) id 15.0.1156.6; Thu, 28 Jun 2018 11:40:51 -0500
 Received: from harisdt.amer.corp.natinst.com (130.164.49.7) by
  us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- id 15.0.1156.6 via Frontend Transport; Thu, 28 Jun 2018 11:40:46 -0500
+ id 15.0.1156.6 via Frontend Transport; Thu, 28 Jun 2018 11:40:51 -0500
 From:   Haris Okanovic <haris.okanovic@ni.com>
 To:     <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     <haris.okanovic@ni.com>, <harisokn@gmail.com>,
         <bigeasy@linutronix.de>, <tglx@linutronix.de>,
         <julia.cartwright@ni.com>, <gratian.crisan@ni.com>,
         <anna-maria@linutronix.de>, <daniel@bristot.me>, <efault@gmx.de>
-Subject: [PATCH v5 1/2] timers: Don't wake ktimersoftd on every tick
-Date:   Thu, 28 Jun 2018 11:40:35 -0500
-Message-ID: <20180628164036.27378-1-haris.okanovic@ni.com>
+Subject: [PATCH v5 2/2] timers: Don't search for expired timers while TIMER_SOFTIRQ is scheduled
+Date:   Thu, 28 Jun 2018 11:40:36 -0500
+Message-ID: <20180628164036.27378-2-haris.okanovic@ni.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <7d21ff63-3dce-b8ea-a0f1-81d53617747d@ni.com>
+In-Reply-To: <20180628164036.27378-1-haris.okanovic@ni.com>
 References: <7d21ff63-3dce-b8ea-a0f1-81d53617747d@ni.com>
+ <20180628164036.27378-1-haris.okanovic@ni.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_08:,,
@@ -61,251 +65,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Collect expired timers in interrupt context to avoid overhead of waking
-ktimersoftd on every scheduler tick.
+This change avoids needlessly searching for more timers in
+run_local_timers() (hard interrupt context) when they can't fire.
+For example, when ktimersoftd/run_timer_softirq() is scheduled but
+preempted due to cpu contention. When it runs, run_timer_softirq() will
+discover newly expired timers up to current jiffies in addition to
+firing previously expired timers.
 
-This is implemented by storing lists of expired timers in the timer_base
-struct, which is updated by the interrupt routing on each tick in
-run_local_timers(). TIMER softirq (ktimersoftd) is then raised only when
-one or more expired timers are collected.
-
-Performance impact on a 2core Intel Atom E3825 system:
- * reduction in small latency spikes measured by cyclictest
- * ~30% fewer context-switches measured by perf
- * run_local_timers() execution time increases by 0.2 measured by TSC
+However, this change also adds an edge case where non-hrtimer firing
+is sometimes delayed by an additional tick. This is acceptable since we
+don't make latency guarantees for non-hrtimers and would prefer to
+minimize hard interrupt time instead.
 
 Signed-off-by: Haris Okanovic <haris.okanovic@ni.com>
-
 ---
-[PATCH v2] Applied Thomas Gleixner's suggestions:
- - Fix expired_count race
- - Remove unneeded base->clk lookahead
- - Return expired_count in collect_expired_timers()
- - Add block_softirq
- - Rebase to v4.11.8-rt5
 [PATCH v3]
- - Fix cosmetic issues
- - Rename "count" to "levels" in timer_base and various functions
- - Move expired_levels and block_softirq to fill holes in timer_base
- - Remove READ_ONCE/WRITE_ONCE around block_softirq
+ - Split block_softirq into separate commit
 [PATCH v4]
  - Rebase onto v4.14.20-rt17
 [PATCH v5]
- - Fix hang when timer is rearmed with 0 offset in it's callback
- - Rewrite description
+   no change
 
 https://github.com/harisokanovic/linux/tree/dev/hokanovi/timer-peek-v7
 ---
- kernel/time/timer.c | 111 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 82 insertions(+), 29 deletions(-)
+ kernel/time/timer.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 96fd01c9f6b1..dd67c18c16d0 100644
+index dd67c18c16d0..723c3667de2b 100644
 --- a/kernel/time/timer.c
 +++ b/kernel/time/timer.c
-@@ -197,6 +197,7 @@ EXPORT_SYMBOL(jiffies_64);
- 
- struct timer_base {
- 	raw_spinlock_t		lock;
-+	int					expired_levels;
- 	struct timer_list	*running_timer;
- #ifdef CONFIG_PREEMPT_RT_FULL
- 	struct swait_queue_head	wait_for_running_timer;
-@@ -208,6 +209,7 @@ struct timer_base {
+@@ -207,6 +207,7 @@ struct timer_base {
+ 	unsigned int		cpu;
+ 	bool			is_idle;
  	bool			must_forward_clk;
++	bool			block_softirq;
  	DECLARE_BITMAP(pending_map, WHEEL_SIZE);
  	struct hlist_head	vectors[WHEEL_SIZE];
-+	struct hlist_head	expired_lists[LVL_DEPTH];
- } ____cacheline_aligned;
+ 	struct hlist_head	expired_lists[LVL_DEPTH];
+@@ -1404,9 +1405,11 @@ static int __collect_expired_timers(struct timer_base *base)
  
- static DEFINE_PER_CPU(struct timer_base, timer_bases[NR_BASES]);
-@@ -1342,7 +1344,8 @@ static void call_timer_fn(struct timer_list *timer, void (*fn)(unsigned long),
- 	}
- }
- 
--static void expire_timers(struct timer_base *base, struct hlist_head *head)
-+static void __expire_timers(struct timer_base *base,
-+				   struct hlist_head *head)
- {
- 	while (!hlist_empty(head)) {
- 		struct timer_list *timer;
-@@ -1372,21 +1375,49 @@ static void expire_timers(struct timer_base *base, struct hlist_head *head)
- 	}
- }
- 
--static int __collect_expired_timers(struct timer_base *base,
--				    struct hlist_head *heads)
-+static void expire_timers(struct timer_base *base)
-+{
-+	struct hlist_head *head;
-+	int levels = base->expired_levels;
-+
-+	while (levels--) {
-+		head = base->expired_lists + levels;
-+		__expire_timers(base, head);
-+	}
-+
-+	/*
-+	 * Zero base->expired_levels after processing all base->expired_lists
-+	 * to signal it's ready to get re-populated. Otherwise, we race with
-+	 * tick_find_expired() when base->lock is temporarily dropped in
-+	 * __expire_timers()
-+	 */
-+	base->expired_levels = 0;
-+}
-+
-+static int __collect_expired_timers(struct timer_base *base)
- {
--	unsigned long clk = base->clk;
- 	struct hlist_head *vec;
--	int i, levels = 0;
-+	struct hlist_head *expired_list = base->expired_lists;
-+	unsigned long clk;
-+	int i;
- 	unsigned int idx;
- 
-+	/*
-+	 * expire_timers() must be called at least once before we can
-+	 * collect more timers.
-+	 */
-+	if (base->expired_levels)
-+		return base->expired_levels;
-+
-+	clk = base->clk;
- 	for (i = 0; i < LVL_DEPTH; i++) {
- 		idx = (clk & LVL_MASK) + i * LVL_SIZE;
- 
- 		if (__test_and_clear_bit(idx, base->pending_map)) {
- 			vec = base->vectors + idx;
--			hlist_move_list(vec, heads++);
--			levels++;
-+			hlist_move_list(vec, expired_list);
-+			base->expired_levels++;
-+			expired_list++;
- 		}
- 		/* Is it time to look at the next level? */
- 		if (clk & LVL_CLK_MASK)
-@@ -1394,7 +1425,8 @@ static int __collect_expired_timers(struct timer_base *base,
- 		/* Shift clock for the next level granularity */
- 		clk >>= LVL_CLK_SHIFT;
- 	}
--	return levels;
-+
-+	return base->expired_levels;
- }
- 
- #ifdef CONFIG_NO_HZ_COMMON
-@@ -1593,8 +1625,7 @@ void timer_clear_idle(void)
- 	base->is_idle = false;
- }
- 
--static int collect_expired_timers(struct timer_base *base,
--				  struct hlist_head *heads)
-+static int collect_expired_timers(struct timer_base *base)
- {
  	/*
- 	 * NOHZ optimization. After a long idle sleep we need to forward the
-@@ -1615,16 +1646,47 @@ static int collect_expired_timers(struct timer_base *base,
- 		}
- 		base->clk = next;
- 	}
--	return __collect_expired_timers(base, heads);
-+	return __collect_expired_timers(base);
- }
- #else
--static inline int collect_expired_timers(struct timer_base *base,
--					 struct hlist_head *heads)
-+static inline int collect_expired_timers(struct timer_base *base)
- {
--	return __collect_expired_timers(base, heads);
-+	return __collect_expired_timers(base);
- }
- #endif
+ 	 * expire_timers() must be called at least once before we can
+-	 * collect more timers.
++	 * collect more timers. We should never hit this case unless
++	 * TIMER_SOFTIRQ got raised without expired timers.
+ 	 */
+-	if (base->expired_levels)
++	if (WARN_ONCE(base->expired_levels,
++			"Must expire collected timers before collecting more"))
+ 		return base->expired_levels;
  
-+/*
-+ * Increments timer_base to current jiffies or until first expired
-+ * timer is found. Return number of expired levels.
-+ */
-+static int find_expired_timers(struct timer_base *base)
-+{
-+	unsigned long int end_clk = jiffies;
-+	int expired_levels = 0;
+ 	clk = base->clk;
+@@ -1748,6 +1751,9 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
+ 	__run_timers(base);
+ 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
+ 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
 +
-+	while (time_after_eq(end_clk, base->clk) && !expired_levels) {
-+		expired_levels = collect_expired_timers(base);
-+		base->clk++;
-+	}
-+
-+	return expired_levels;
-+}
-+
-+/*
-+ * Called from CPU tick routine to collect expired timers up to current
-+ * jiffies. Return number of expired levels.
-+ */
-+static int tick_find_expired(struct timer_base *base)
-+{
-+	int levels;
-+
-+	raw_spin_lock(&base->lock);
-+	levels = find_expired_timers(base);
-+	raw_spin_unlock(&base->lock);
-+
-+	return levels;
-+}
-+
++	/* Allow new TIMER_SOFTIRQs to get scheduled by run_local_timers() */
++	base->block_softirq = false;
+ }
+ 
  /*
-  * Called from the timer interrupt handler to charge one tick to the current
-  * process.  user_tick is 1 if the tick is user time, 0 for system.
-@@ -1652,22 +1714,12 @@ void update_process_times(int user_tick)
-  */
- static inline void __run_timers(struct timer_base *base)
- {
--	struct hlist_head heads[LVL_DEPTH];
--	int levels;
--
--	if (!time_after_eq(jiffies, base->clk))
--		return;
--
- 	raw_spin_lock_irq(&base->lock);
- 
--	while (time_after_eq(jiffies, base->clk)) {
-+	do {
-+		expire_timers(base);
-+	} while (find_expired_timers(base));
- 
--		levels = collect_expired_timers(base, heads);
--		base->clk++;
--
--		while (levels--)
--			expire_timers(base, heads + levels);
--	}
- 	raw_spin_unlock_irq(&base->lock);
- 	wakeup_timer_waiters(base);
- }
-@@ -1707,12 +1759,12 @@ void run_local_timers(void)
+@@ -1758,6 +1764,14 @@ void run_local_timers(void)
+ 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
  
  	hrtimer_run_queues();
++
++	/*
++	 * Skip if TIMER_SOFTIRQ is already running on this CPU, since it
++	 * will find and expire all timers up to current jiffies.
++	 */
++	if (base->block_softirq)
++		return;
++
  	/* Raise the softirq only if required. */
--	if (time_before(jiffies, base->clk)) {
-+	if (time_before(jiffies, base->clk) || !tick_find_expired(base)) {
+ 	if (time_before(jiffies, base->clk) || !tick_find_expired(base)) {
  		if (!IS_ENABLED(CONFIG_NO_HZ_COMMON))
- 			return;
- 		/* CPU is awake, so check the deferrable base. */
+@@ -1766,7 +1780,10 @@ void run_local_timers(void)
  		base++;
--		if (time_before(jiffies, base->clk))
-+		if (time_before(jiffies, base->clk) || !tick_find_expired(base))
+ 		if (time_before(jiffies, base->clk) || !tick_find_expired(base))
  			return;
++		base--;
  	}
++
++	base->block_softirq = true;
  	raise_softirq(TIMER_SOFTIRQ);
-@@ -1887,6 +1939,7 @@ int timers_dead_cpu(unsigned int cpu)
- 		raw_spin_lock_nested(&old_base->lock, SINGLE_DEPTH_NESTING);
+ }
  
- 		BUG_ON(old_base->running_timer);
-+		BUG_ON(old_base->expired_levels);
- 
- 		for (i = 0; i < WHEEL_SIZE; i++)
- 			migrate_timer_list(new_base, old_base->vectors + i);
 -- 
 2.17.1
 
