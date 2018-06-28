@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C34C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D91DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B7A277C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 250F6277C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:30:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OEBxT0zN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hl752CSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B7A277C2
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nPdNqIX6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bPJa63y0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250F6277C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967942AbeF1Sa0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 14:30:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36246 "EHLO
+        id S1030523AbeF1Sae (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 14:30:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37002 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967916AbeF1SaW (ORCPT
+        with ESMTP id S1030505AbeF1Sa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 14:30:22 -0400
+        Thu, 28 Jun 2018 14:30:29 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 08AE960BE9; Thu, 28 Jun 2018 18:29:51 +0000 (UTC)
+        id C097D60C6C; Thu, 28 Jun 2018 18:29:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530210621;
-        bh=1ncvEMT8nAQIrRu/ErUgXVLRkf0/5/bV9aLIAVQipS0=;
+        s=default; t=1530210628;
+        bh=7amJamHHqQHBPl05nOR2fU2RCC8Buu+5v5PZz+VwP4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OEBxT0zNh7P3qBQv2z3W4vzliRyy5ZqMzvh+nywclPhB5lpiu6Ylk6o9Px4ygPAp+
-         PfARgc+0ltd368ondXUKzOPTtG7dsVWU3ORbr+9iI0EtOWJfFqOxGEYkw5pc8+lg09
-         DnpeEoeZtgwbKfsE4piv77wUeo0AqdurHH2sKGCU=
+        b=nPdNqIX6eHbeBKPxkPKuhkMkgiA532RBZtOl+bALtGdSWkWi83CgEvgjxFl5WfVLh
+         x7cWj1/SbwoH8FO0taaNDfZAcQ1nJVbXf743F1h2c8hZFDgjO7zKwwLa3MkIZFloy7
+         n05GQOiQToko19I1Dhx6OxBt6jSztPDI9Ez3gIPs=
 Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F19B560BE3;
-        Thu, 28 Jun 2018 18:29:48 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7968660BDF;
+        Thu, 28 Jun 2018 18:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530210590;
-        bh=1ncvEMT8nAQIrRu/ErUgXVLRkf0/5/bV9aLIAVQipS0=;
+        s=default; t=1530210597;
+        bh=7amJamHHqQHBPl05nOR2fU2RCC8Buu+5v5PZz+VwP4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hl752CShFO008PLUQA3Euk6R2jB+HXdiLmlvjmHwqXAMz9Ihii0eDsisONR6VKwEW
-         UKkNaqni146wBYH+zG/c9yIr2tZfunVxmnr9/lgCEL1uWZOInon5QFBu+Etq8kfuzy
-         dNsM/VniZMKDwi7R8KDZLUVqlleG65xeoB+mi4II=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F19B560BE3
+        b=bPJa63y0fIMoOh8Ulcg3TAj1eM9HwMli2q/SOB6ofJpZjlujl2bpjPqu/VLu89ZVZ
+         97CGfL3Rde++q2sNKFPs2hMd08+Fbpviy4KwZhbXRYIZTJne6JGKE+RxjrDXGnFaMy
+         3u6R/eetFjZJKGLkirFSgBsnT3KJN80fpGbvtNQg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7968660BDF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From:   Sinan Kaya <okaya@codeaurora.org>
@@ -55,21 +56,17 @@ To:     linux-pci@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Peter Xu <peterx@redhat.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        linux-rdma@vger.kernel.org (open list:HFI1 DRIVER),
-        linux-kernel@vger.kernel.org (open list),
-        kvm@vger.kernel.org (open list:VFIO DRIVER)
-Subject: [PATCH V3 5/6] PCI: Rename pci_try_reset_bus() to pci_reset_bus()
-Date:   Thu, 28 Jun 2018 14:28:25 -0400
-Message-Id: <1530210507-9287-5-git-send-email-okaya@codeaurora.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V3 6/6] PCI: Handle link reset via hotplug if supported
+Date:   Thu, 28 Jun 2018 14:28:26 -0400
+Message-Id: <1530210507-9287-6-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530210507-9287-1-git-send-email-okaya@codeaurora.org>
 References: <1530210507-9287-1-git-send-email-okaya@codeaurora.org>
@@ -80,133 +77,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the old implementation of pci_reset_bus() is gone, replace
-pci_try_reset_bus() with pci_reset_bus().
+If a bridge supports hotplug and observes a PCIe fatal error, the following
+events happen:
 
-Compared to the old implementation, new code will fail immmediately with
--EAGAIN if object lock cannot be obtained.
+1. AER driver removes the devices from PCI tree on fatal error
+2. AER driver brings down the link by issuing a secondary bus reset waits
+for the link to come up.
+3. Hotplug driver observes a link down interrupt
+4. Hotplug driver tries to remove the devices waiting for the rescan lock
+but devices are already removed by the AER driver and AER driver is waiting
+for the link to come back up.
+5. AER driver tries to re-enumerate devices after polling for the link
+state to go up.
+6. Hotplug driver obtains the lock and tries to remove the devices again.
+
+If a bridge is a hotplug capable bridge, bounce the error handling to the
+hotplug driver so that hotplug driver can mask link up/down interrupts
+while performing a secondary bus reset.
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/infiniband/hw/hfi1/pcie.c |  2 +-
- drivers/pci/pci.c                 | 18 +++++++++---------
- drivers/vfio/pci/vfio_pci.c       |  4 ++--
- include/linux/pci.h               |  2 +-
- 4 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/pci/hotplug/pciehp_core.c | 20 ++++++++++++++++++++
+ drivers/pci/pcie/err.c            |  5 +++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
-index 4570c4d..a6d695a 100644
---- a/drivers/infiniband/hw/hfi1/pcie.c
-+++ b/drivers/infiniband/hw/hfi1/pcie.c
-@@ -905,7 +905,7 @@ static int trigger_sbr(struct hfi1_devdata *dd)
- 	 * delay after a reset is required.  Per spec requirements,
- 	 * the link is either working or not after that point.
- 	 */
--	return pci_try_reset_bus(dev->bus);
-+	return pci_reset_bus(dev->bus);
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index 44a6a63..43a49cc 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -299,6 +299,24 @@ static int pciehp_resume(struct pcie_device *dev)
  }
+ #endif /* PM */
  
- /*
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 6cec722..28a071d 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4784,7 +4784,7 @@ int pci_probe_reset_slot(struct pci_slot *slot)
- EXPORT_SYMBOL_GPL(pci_probe_reset_slot);
++static pci_ers_result_t pciehp_reset_link(struct pci_dev *pdev)
++{
++	struct pcie_device *pciedev;
++	struct controller *ctrl;
++	struct device *devhp;
++	struct slot *slot;
++	int rc;
++
++	devhp = pcie_port_find_device(pdev, PCIE_PORT_SERVICE_HP);
++	pciedev = to_pcie_device(devhp);
++	ctrl = get_service_data(pciedev);
++	slot = ctrl->slot;
++
++	rc = reset_slot(slot->hotplug_slot, 0);
++
++	return !rc ? PCI_ERS_RESULT_RECOVERED : PCI_ERS_RESULT_DISCONNECT;
++}
++
+ static struct pcie_port_service_driver hpdriver_portdrv = {
+ 	.name		= PCIE_MODULE_NAME,
+ 	.port_type	= PCIE_ANY_PORT,
+@@ -311,6 +329,8 @@ static struct pcie_port_service_driver hpdriver_portdrv = {
+ 	.suspend	= pciehp_suspend,
+ 	.resume		= pciehp_resume,
+ #endif	/* PM */
++
++	.reset_link	= pciehp_reset_link,
+ };
  
- /**
-- * __pci_try_reset_slot - Try to reset a PCI slot
-+ * __pci_reset_slot - Try to reset a PCI slot
-  * @slot: PCI slot to reset
-  *`
-  * A PCI bus may host multiple slots, each slot may support a reset mechanism
-@@ -4798,7 +4798,7 @@ EXPORT_SYMBOL_GPL(pci_probe_reset_slot);
-  *
-  * Same as above except return -EAGAIN if the slot cannot be locked
-  */
--static int __pci_try_reset_slot(struct pci_slot *slot)
-+static int __pci_reset_slot(struct pci_slot *slot)
- {
- 	int rc;
- 
-@@ -4854,12 +4854,12 @@ int pci_probe_reset_bus(struct pci_bus *bus)
- EXPORT_SYMBOL_GPL(pci_probe_reset_bus);
- 
- /**
-- * __pci_try_reset_bus - Try to reset a PCI bus
-+ * __pci_reset_bus - Try to reset a PCI bus
-  * @bus: top level PCI bus to reset
-  *
-  * Same as above except return -EAGAIN if the bus cannot be locked
-  */
--static int __pci_try_reset_bus(struct pci_bus *bus)
-+static int __pci_reset_bus(struct pci_bus *bus)
- {
- 	int rc;
- 
-@@ -4882,22 +4882,22 @@ static int __pci_try_reset_bus(struct pci_bus *bus)
- }
- 
- /**
-- * pci_try_reset_bus - Try to reset a PCI bus
-+ * pci_reset_bus - Try to reset a PCI bus
-  * @pdev: top level PCI device to reset via slot/bus
-  *
-  * Same as above except return -EAGAIN if the bus cannot be locked
-  */
--int pci_try_reset_bus(struct pci_dev *pdev)
-+int pci_reset_bus(struct pci_dev *pdev)
- {
- 	bool slot = false;
- 
- 	if (!pci_probe_reset_slot(pdev->slot))
- 		slot = true;
- 
--	return slot ? __pci_try_reset_slot(pdev->slot) :
--			__pci_try_reset_bus(pdev->bus);
-+	return slot ? __pci_reset_slot(pdev->slot) :
-+			__pci_reset_bus(pdev->bus);
- }
--EXPORT_SYMBOL_GPL(pci_try_reset_bus);
-+EXPORT_SYMBOL_GPL(pci_reset_bus);
- 
- /**
-  * pcix_get_max_mmrbc - get PCI-X maximum designed memory read byte count
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 71018ec..345c0dc 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -1010,7 +1010,7 @@ static long vfio_pci_ioctl(void *device_data,
- 						    &info, slot);
- 		if (!ret)
- 			/* User has access, do the reset */
--			ret = pci_try_reset_bus(vdev->pdev);
-+			ret = pci_reset_bus(vdev->pdev);
- 
- hot_reset_release:
- 		for (i--; i >= 0; i--)
-@@ -1372,7 +1372,7 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
+ static int __init pcied_init(void)
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index a3a26f1..0b66779 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -308,6 +308,11 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
+ 		pci_dev_put(pdev);
  	}
  
- 	if (needs_reset)
--		ret = pci_try_reset_bus(vdev->pdev);
-+		ret = pci_reset_bus(vdev->pdev);
++	/* handle link reset via hotplug driver if supported */
++	if (dev->is_hotplug_bridge &&
++		pcie_port_find_device(dev, PCIE_PORT_SERVICE_HP))
++		service = PCIE_PORT_SERVICE_HP;
++
+ 	result = reset_link(udev, service);
  
- put_devs:
- 	for (i = 0; i < devs.cur_index; i++) {
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index ad0c89a..79a2c27 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1096,7 +1096,7 @@ int pci_reset_function_locked(struct pci_dev *dev);
- int pci_try_reset_function(struct pci_dev *dev);
- int pci_probe_reset_slot(struct pci_slot *slot);
- int pci_probe_reset_bus(struct pci_bus *bus);
--int pci_try_reset_bus(struct pci_dev *dev);
-+int pci_reset_bus(struct pci_dev *dev);
- void pci_reset_secondary_bus(struct pci_dev *dev);
- void pcibios_reset_secondary_bus(struct pci_dev *dev);
- void pci_update_resource(struct pci_dev *dev, int resno);
+ 	if ((service == PCIE_PORT_SERVICE_AER) &&
 -- 
 2.7.4
 
