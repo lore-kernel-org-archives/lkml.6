@@ -6,272 +6,154 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA52C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8ABEC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF4D26FE3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:00:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF4D26FE3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7116626FE4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7116626FE4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933827AbeF1HAj convert rfc822-to-8bit (ORCPT
+        id S964786AbeF1HA6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:00:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35710 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752642AbeF1HAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:00:38 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C7A9020703; Thu, 28 Jun 2018 09:00:35 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5801B203EC;
-        Thu, 28 Jun 2018 09:00:35 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 09:00:34 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        <linux-mtd@lists.infradead.org>,
-        Liang Yang <liang.yang@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-Message-ID: <20180628090034.0637a062@xps13>
-In-Reply-To: <7ha7rfiz3c.fsf@baylibre.com>
-References: <20180613161314.14894-1-yixun.lan@amlogic.com>
-        <20180613161314.14894-3-yixun.lan@amlogic.com>
-        <20180624213844.2207ca6f@bbrezillon>
-        <7ha7rfiz3c.fsf@baylibre.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 28 Jun 2018 03:00:58 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37093 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933361AbeF1HA4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 03:00:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id v22-v6so4493919edq.4;
+        Thu, 28 Jun 2018 00:00:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=urXhfHTY3AsAltQuuau4lr0igcRK+phHSMvDsgjkTtA=;
+        b=QweHOjV9Tc9N7uucxK11HPcEYtiQm2Ks5gnWYDs5bpIYomVwDj6b6pD8es44DmvXbk
+         KML63CKm3jYutjz7cln/7iJaRwg7jXpikWAIn/N01/UamXJWa7ehJEyYo/XCjuyaaHF+
+         a3ntE4wrlhDZixNmcEf6sKqzI0Ptycv4prcLWNeIZJJN4LrgHR2M6kHwdQZ7J7oIFkFS
+         YGV5iBK53KL67US6sLOoPgarzJDHbh3WHqdITK6a02oP25gUtcyogb1K0ZjKM7VKoAaL
+         kGwlC6N0IBIyztxNhojt+OOn98ii7ezmkll5zDMBuRm+/t/lmlOuY32Is4z99PBmQV5j
+         r+pA==
+X-Gm-Message-State: APt69E0+akfmUNqbn+RXYGEUeko7Sz6HUIjFC0+uHq9cZTfIljRpOIz7
+        dzXRUk7zoiYqdgPQSpXKULQ6g38C
+X-Google-Smtp-Source: AAOMgpex1eginINmz1oDSu9ej/Pzd16+OsyrlhqxvTK8tzNIPEn7yhHvf6G0VTjWNA+XQUBoV18z+g==
+X-Received: by 2002:a50:9135:: with SMTP id e50-v6mr5260951eda.191.1530169254384;
+        Thu, 28 Jun 2018 00:00:54 -0700 (PDT)
+Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com. [74.125.82.53])
+        by smtp.gmail.com with ESMTPSA id o15-v6sm2747990edt.4.2018.06.28.00.00.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 00:00:53 -0700 (PDT)
+Received: by mail-wm0-f53.google.com with SMTP id z13-v6so7787613wma.5;
+        Thu, 28 Jun 2018 00:00:52 -0700 (PDT)
+X-Received: by 2002:a1c:850c:: with SMTP id h12-v6mr6963261wmd.116.1530169252596;
+ Thu, 28 Jun 2018 00:00:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 00:00:32
+ -0700 (PDT)
+In-Reply-To: <1669385.k4L9lni8DF@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-16-jernej.skrabec@siol.net> <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
+ <1669385.k4L9lni8DF@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 28 Jun 2018 15:00:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
+Message-ID: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 15/24] dt-bindings: display:
+ sun4i-drm: Add description of A64 HDMI PHY
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kevin,
+On Thu, Jun 28, 2018 at 12:51 PM, Jernej Škrabec
+<jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
+>> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+>> > clock parents. It is compatible to other HDMI PHYs, like that found in
+>> > R40.
+>> >
+>> > Acked-by: Rob Herring <robh@kernel.org>
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+>> > 84fe38dbb900..dc83f21ef188 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > @@ -101,6 +101,7 @@ DWC HDMI PHY
+>> >
+>> >  Required properties:
+>> >    - compatible: value must be one of:
+>> > +    * allwinner,sun50i-a64-hdmi-phy
+>> >
+>> >      * allwinner,sun8i-a83t-hdmi-phy
+>> >      * allwinner,sun8i-h3-hdmi-phy
+>>
+>> Nit: the list is sorted by family first, then SoC name, so it should
+>> be the last on the list.
+>
+> I went alphabetically, since "5" is before "8"...
 
-On Wed, 27 Jun 2018 16:33:43 -0700, Kevin Hilman <khilman@baylibre.com>
-wrote:
+I see. I think version sort applies here, given that sun50i is newer
+than sun8i.
 
-> Hi Boris,
-> 
-> Boris Brezillon <boris.brezillon@bootlin.com> writes:
-> 
-> > Hi Yixun,
-> >
-> > On Wed, 13 Jun 2018 16:13:14 +0000
-> > Yixun Lan <yixun.lan@amlogic.com> wrote:
-> >  
-> >> From: Liang Yang <liang.yang@amlogic.com>
-> >> 
-> >> Add initial support for the Amlogic NAND flash controller which found
-> >> in the Meson-GXBB/GXL/AXG SoCs.
-> >> 
-> >> Singed-off-by: Liang Yang <liang.yang@amlogic.com>
-> >> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> >> ---
-> >>  drivers/mtd/nand/raw/Kconfig      |    8 +
-> >>  drivers/mtd/nand/raw/Makefile     |    3 +
-> >>  drivers/mtd/nand/raw/meson_nand.c | 1422 +++++++++++++++++++++++++++++
-> >>  3 files changed, 1433 insertions(+)
-> >>  create mode 100644 drivers/mtd/nand/raw/meson_nand.c  
-> >
-> > Can you run checkpatch.pl --strict and fix the coding style issues?
-> >  
-> >> 
-> >> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-> >> index 19a2b283fbbe..b3c17a3ca8f4 100644
-> >> --- a/drivers/mtd/nand/raw/Kconfig
-> >> +++ b/drivers/mtd/nand/raw/Kconfig
-> >> @@ -534,4 +534,12 @@ config MTD_NAND_MTK
-> >>  	  Enables support for NAND controller on MTK SoCs.
-> >>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
-> >>  
-> >> +config MTD_NAND_MESON
-> >> +	tristate "Support for NAND flash controller on Amlogic's Meson SoCs"
-> >> +	depends on ARCH_MESON || COMPILE_TEST
-> >> +	select COMMON_CLK_REGMAP_MESON
-> >> +	select MFD_SYSCON
-> >> +	help
-> >> +	  Enables support for NAND controller on Amlogic's Meson SoCs.
-> >> +
-> >>  endif # MTD_NAND
-> >> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-> >> index 165b7ef9e9a1..cdf6162f38c3 100644
-> >> --- a/drivers/mtd/nand/raw/Makefile
-> >> +++ b/drivers/mtd/nand/raw/Makefile
-> >> @@ -1,5 +1,7 @@
-> >>  # SPDX-License-Identifier: GPL-2.0
-> >>  
-> >> +ccflags-$(CONFIG_MTD_NAND_MESON) += -I$(srctree)/drivers/clk/meson  
-> >
-> > Please don't do that. If you need to expose common regs, put them
-> > in include/linux/soc/meson/. I'm also not sure why you need to access
-> > the clk regs directly. Why can't you expose the MMC/NAND clk as a clk
-> > provider whose driver would be placed in drivers/clk and which would use
-> > the mmc syscon. This way the same clk driver could be used for both
-> > MMC and NAND clk indifferently, and the NAND driver would be much
-> > simpler.  
-> 
-> [...]
-> 
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static const char * sd_emmc_ext_clk0_parent_names[MUX_CLK_NUM_PARENTS];
-> >> +
-> >> +static struct clk_regmap sd_emmc_c_ext_clk0_sel = {
-> >> +	.data = &(struct clk_regmap_mux_data){
-> >> +		.offset = SD_EMMC_CLOCK,
-> >> +		.mask = 0x3,
-> >> +		.shift = 6,
-> >> +	},
-> >> +	.hw.init = &(struct clk_init_data) {
-> >> +		.name = "sd_emmc_c_nand_clk_mux",
-> >> +		.ops = &clk_regmap_mux_ops,
-> >> +		.parent_names = sd_emmc_ext_clk0_parent_names,
-> >> +		.num_parents = ARRAY_SIZE(sd_emmc_ext_clk0_parent_names),
-> >> +		.flags = CLK_SET_RATE_PARENT,
-> >> +	},
-> >> +};
-> >> +
-> >> +static struct clk_regmap sd_emmc_c_ext_clk0_div = {
-> >> +	.data = &(struct clk_regmap_div_data){
-> >> +		.offset = SD_EMMC_CLOCK,
-> >> +		.shift = 0,
-> >> +		.width = 6,
-> >> +		.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
-> >> +	},
-> >> +	.hw.init = &(struct clk_init_data) {
-> >> +		.name = "sd_emmc_c_nand_clk_div",
-> >> +		.ops = &clk_regmap_divider_ops,
-> >> +		.parent_names = (const char *[]){ "sd_emmc_c_nand_clk_mux" },
-> >> +		.num_parents = 1,
-> >> +		.flags = CLK_SET_RATE_PARENT,
-> >> +	},
-> >> +};
-> >> +
-> >> +static int meson_nfc_clk_init(struct meson_nfc *nfc)
-> >> +{
-> >> +	struct clk_regmap *mux = &sd_emmc_c_ext_clk0_sel;
-> >> +	struct clk_regmap *div = &sd_emmc_c_ext_clk0_div;
-> >> +	struct clk *clk;
-> >> +	int i, ret;
-> >> +
-> >> +	/* request core clock */
-> >> +	nfc->core_clk = devm_clk_get(nfc->dev, "core");
-> >> +	if (IS_ERR(nfc->core_clk)) {
-> >> +		dev_err(nfc->dev, "failed to get core clk\n");
-> >> +		return PTR_ERR(nfc->core_clk);
-> >> +	}
-> >> +
-> >> +	/* init SD_EMMC_CLOCK to sane defaults w/min clock rate */
-> >> +	regmap_update_bits(nfc->reg_clk, 0,
-> >> +			CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK,
-> >> +			CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK);
-> >> +
-> >> +	/* get the mux parents */
-> >> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> >> +		char name[16];
-> >> +
-> >> +		snprintf(name, sizeof(name), "clkin%d", i);
-> >> +		clk = devm_clk_get(nfc->dev, name);
-> >> +		if (IS_ERR(clk)) {
-> >> +			if (clk != ERR_PTR(-EPROBE_DEFER))
-> >> +				dev_err(nfc->dev, "Missing clock %s\n", name);
-> >> +			return PTR_ERR(clk);
-> >> +		}
-> >> +
-> >> +		sd_emmc_ext_clk0_parent_names[i] = __clk_get_name(clk);
-> >> +	}
-> >> +
-> >> +	mux->map = nfc->reg_clk;
-> >> +	clk = devm_clk_register(nfc->dev, &mux->hw);
-> >> +	if (WARN_ON(IS_ERR(clk)))
-> >> +		return PTR_ERR(clk);
-> >> +
-> >> +	div->map = nfc->reg_clk;
-> >> +	nfc->device_clk = devm_clk_register(nfc->dev, &div->hw);
-> >> +	if (WARN_ON(IS_ERR(nfc->device_clk)))
-> >> +		return PTR_ERR(nfc->device_clk);
-> >> +
-> >> +	ret = clk_prepare_enable(nfc->core_clk);
-> >> +	if (ret) {
-> >> +		dev_err(nfc->dev, "failed to enable core clk\n");
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	ret = clk_prepare_enable(nfc->device_clk);
-> >> +	if (ret) {
-> >> +		dev_err(nfc->dev, "failed to enable device clk\n");
-> >> +		clk_disable_unprepare(nfc->core_clk);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}  
-> >
-> >
-> > As said above, I don't like having a clk driver here, especially since
-> > the registers you're accessing are not part of the NAND controller
-> > registers. Please try to create a driver in drivers/clk/ for that.  
-> 
-> We went back and forth on this one on some off-list reviews.
-> 
-> Had we known that the NAND controller was (re)using the clock registers
-> internal to the MMC IP block from the beginning, we would have written a
-> clock provider in drivers/clk for this, and shared it.
-> 
-> However, when I wrote the MMC driver[1] (already upstream) along with
-> the bindings[2], we did not fathom that the internal mux and divider
-> would be "borrowed" by another device. :(
-> 
-> We only recently found out that the NAND controller "borrows" one of the
-> MMC clocks, whose registers are inside the MMC range.  Taking the clock
-> out of the MMC driver and into its own clock-provider implies redoing
-> the MMC driver, as well as its bindings, which we wanted to avoid
-> (especially the binding changes.)
-> 
-> We (I can take the blame) decided that since the MMC and NAND are
-> mutually exclusive (they also share pins), that allowing NAND to reuse
-> the MMC range would be a good compromise.  The DT still accurately
-> describes the hardware, but we don't have to throw a large wrench into
-> the DT bindings just for a newly discovered shared clock.
-> 
-> I agree, it's not the prettiest thing, but when we cannot know the full
-> details of the hardware when we start, sometimes we end up in a bit of a
-> mess that requires some compromise.
+ChenYu
 
-I totally understand your situation but as MMC and NAND are mutually
-exclusive, how is this a problem to have a dedicated clock driver used
-only by the NAND controller (as maybe a first step)? I mean, if you
-don't change the MMC bindings, then the MMC driver will still use its
-own 'local' clock driver, right? I don't know if you can have two
-nodes reserving the same address range though.
-
-
-> 
-> Kevin
-> 
-> [1] drivers/mmc/host/meson-gx-mmc.c
-> [2] Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt                                                                                                       
-
-
-Thanks,
-Miquèl
+> Best regards,
+> Jernej
+>
+>>
+>> Otherwise,
+>>
+>> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>>
+>> >    - reg: base address and size of memory-mapped region
+>> >
+>> > @@ -111,8 +112,9 @@ Required properties:
+>> >    - resets: phandle to the reset controller driving the PHY
+>> >    - reset-names: must be "phy"
+>> >
+>> > -H3 HDMI PHY requires additional clock:
+>> >
+>> > +H3 and A64 HDMI PHY require additional clocks:
+>> >    - pll-0: parent of phy clock
+>> >
+>> > +  - pll-1: second possible phy clock parent (A64 only)
+>> >
+>> >  TV Encoder
+>> >  ----------
+>> >
+>> > --
+>> > 2.18.0
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
