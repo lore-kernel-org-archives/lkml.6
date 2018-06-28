@@ -2,109 +2,143 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEACEC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B989BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9438C278B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9438C278B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D9B7278B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:41:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="1ibThO7f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9B7278B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934658AbeF1Tkp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:40:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40836 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934012AbeF1Tkm (ORCPT
+        id S934942AbeF1Tln (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:41:43 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41996 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934012AbeF1Tlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:40:42 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE797E21;
-        Thu, 28 Jun 2018 19:40:40 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 12:40:39 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-Id: <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
-In-Reply-To: <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
-        <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
-        <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 28 Jun 2018 15:41:42 -0400
+Received: by mail-lf0-f68.google.com with SMTP id u202-v6so5074812lff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:41:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w5P0hZ5qeVerJPWSrkgklM7HL5mxKSLKR1TKQ5TC19I=;
+        b=1ibThO7fdp5K48/2Ar4DIOZH0cPD0VBs9XA0WRQDtpYZWpcv/KSz0dvO+CGzur9MuB
+         osYWtWiw/prpeE1hPxjLUs5cC8TNg0ekBAi9+zob/g53QT3PARnuwA8+lp+slqQP4TNy
+         hGrxkOOyqrqoIFcacaKSZ5jQqmUuTBmm0Q9Iw72EEvUGRDCT++3+lH9MC9B9LRQi0uMy
+         bSI0ZqM4HADl4sfryxybsgESySwP2mntdCY4iijPspIBP/bsY2Lz9gEvo8YidvQdJ1KZ
+         EXPt/R3OH0bPML2Z27Mu9TmOKOBbHHr62TLX2n6NaTgVnc5kuKAlkJwzZIOQ3rspPPP0
+         8BcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w5P0hZ5qeVerJPWSrkgklM7HL5mxKSLKR1TKQ5TC19I=;
+        b=BUgyUi4BQswpthnP9r1a/1CjhIJD5b+SNqUfvTBGUAhubVlQj1LucKmTaIG5tSg7Hx
+         GlcW9w6g6AkamIQYDuwIv1LhWzKLERFg/1RjTz3JSxKxF+sXj7yd+TW92TLT9I78TJZk
+         Bq4SvF78UpYxo7lUxTWSeCoE/d7+DwYniflbVhtGbtthtij/s1qm900ktpYVYrSCwINp
+         cib0MHmxwSHOEcOnL/Zgct+CwlDcI6wuBkg+Al12UzG/j9XMgASTg13/ceR+SFAH/BFf
+         wexMVqVEm3BGg4buJcRJNysiTRCOSsWfOX0FUXxP0JSXYqQ2YXoggkZLOVB/71Wez7Mv
+         odcg==
+X-Gm-Message-State: APt69E2FDz2EdkhpS23ISKcLHm4NaRVy0LWIPOeBOoZFYlhVYw6o346I
+        m3tLM91W15E2y8A4Ez+6/1dpNKGgYdOSlenWw/Wd
+X-Google-Smtp-Source: AAOMgpfwNkaklwdM+DOe95b+3hJFSUATGEnynwaO0vaKJaHr6N28PQs8GfLt4Al6JTxbqP5Nuz8tr1AyQ3XIXansp+M=
+X-Received: by 2002:a19:d754:: with SMTP id o81-v6mr7569956lfg.124.1530214900195;
+ Thu, 28 Jun 2018 12:41:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1529003588.git.rgb@redhat.com> <17f22b579c28c6cd9475a57e792b5d4fb4dde1dc.1529003588.git.rgb@redhat.com>
+In-Reply-To: <17f22b579c28c6cd9475a57e792b5d4fb4dde1dc.1529003588.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 28 Jun 2018 15:41:28 -0400
+Message-ID: <CAHC9VhTxjcmJGEq6XQmRV0Ouk8oOyHO2C8+HVQOy1qxw9yKyXw@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak59 V1 1/6] audit: give a clue what CONFIG_CHANGE
+ op was involved
+To:     rgb@redhat.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
+        aviro@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 28 Jun 2018 20:29:07 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
+On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> The failure to add an audit rule due to audit locked gives no clue
+> what CONFIG_CHANGE operation failed.
+> Similarly the set operation is the only other operation that doesn't
+> give the "op=" field to indicate the action.
+> All other CONFIG_CHANGE records include an op= field to give a clue as
+> to what sort of configuration change is being executed.
+>
+> Since these are the only CONFIG_CHANGE records that that do not have an
+> op= field, add them to bring them in line with the rest.
 
-> >> Slab memory usage after boot [2]:
-> >> * ~40 kb for clean kernel
-> >> * ~105 kb + 1/8th shadow ~= 118 kb for KASAN
-> >> * ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
-> >>
-> >> Network performance [3]:
-> >> * 8.33 Gbits/sec for clean kernel
-> >> * 3.17 Gbits/sec for KASAN
-> >> * 2.85 Gbits/sec for KHWASAN
-> >>
-> >> Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
-> >>
-> >> [1] Time before the ext4 driver is initialized.
-> >> [2] Measured as `cat /proc/meminfo | grep Slab`.
-> >> [3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
-> >
-> > The above doesn't actually demonstrate the whole point of the
-> > patchset: to reduce KASAN's very high memory consumption?
-> 
-> You mean that memory usage numbers collected after boot don't give a
-> representative picture of actual memory consumption on real workloads?
-> 
-> What kind of memory consumption testing would you like to see?
+Normally this would be an immediate reject because this patch inserts
+a field into an existing record, but the CONFIG_CHANGE record is so
+variable (supposedly bad in its own right) that I don't this really
+matters.
 
-Well, 100kb or so is a teeny amount on virtually any machine.  I'm
-assuming the savings are (much) more significant once the machine gets
-loaded up and doing work?
+With that out of the way, I think this patch is fine, but I don't
+think it is complete.  At the very least there is another
+CONFIG_CHANGE record in audit_watch_log_rule_change() that doesn't
+appear to include an "op" field.  If we want to make sure we have an
+"op" field in every CONFIG_CHANGE record, let's actually add them all
+:)
 
+There appears to be another one in audit_mark_log_rule_change() ...
+and one more in audit_receive_msg().  There may be more.
+
+> Old records:
+> type=CONFIG_CHANGE msg=audit(1519812997.781:374): pid=610 uid=0 auid=0 ses=1 subj=... audit_enabled=2 res=0
+> type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
+>
+> New records:
+> type=CONFIG_CHANGE msg=audit(1520958477.855:100): pid=610 uid=0 auid=0 ses=1 subj=... op=add_rule audit_enabled=2 res=0
+>
+> type=CONFIG_CHANGE msg=audit(2018-06-14 14:55:04.507:47) : op=set audit_enabled=1 old=1 auid=unset ses=unset subj=... res=yes
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/59
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/audit.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e7478cb..ad54339 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -403,7 +403,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
+>         ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+>         if (unlikely(!ab))
+>                 return rc;
+> -       audit_log_format(ab, "%s=%u old=%u", function_name, new, old);
+> +       audit_log_format(ab, "op=set %s=%u old=%u", function_name, new, old);
+>         audit_log_session_info(ab);
+>         rc = audit_log_task_context(ab);
+>         if (rc)
+> @@ -1365,7 +1365,9 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+>                         return -EINVAL;
+>                 if (audit_enabled == AUDIT_LOCKED) {
+>                         audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
+> -                       audit_log_format(ab, " audit_enabled=%d res=0", audit_enabled);
+> +                       audit_log_format(ab, " op=%s_rule audit_enabled=%d res=0",
+> +                                        msg_type == AUDIT_ADD_RULE ? "add" : "remove",
+> +                                        audit_enabled);
+>                         audit_log_end(ab);
+>                         return -EPERM;
+>                 }
+> --
+> 1.8.3.1
+
+-- 
+paul moore
+www.paul-moore.com
