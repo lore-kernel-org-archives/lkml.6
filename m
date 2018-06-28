@@ -2,424 +2,182 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449BBC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDA6C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D203B261FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:50:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="UHVE97Ol"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D203B261FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=earthlink.net
+	by mail.kernel.org (Postfix) with ESMTP id 65D4526511
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:01:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D4526511
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeF1DuI (ORCPT
+        id S1751433AbeF1EBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 23:50:08 -0400
-Received: from elasmtp-galgo.atl.sa.earthlink.net ([209.86.89.61]:40168 "EHLO
-        elasmtp-galgo.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932131AbeF1DuF (ORCPT
+        Thu, 28 Jun 2018 00:01:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750802AbeF1EBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 23:50:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
-        s=dk12062016; t=1530157995; bh=ea4+Jcaxyi2Fn63yj2hiiWzkBjCADEAXnrkj
-        pP3Os+4=; h=Received:Subject:To:Cc:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP; b=UHVE97O
-        lqNdSCcbwUiTR5uRM5EQqDrBhqXM7BObtMN73eemfQBnl4Lv3q9+BFYa2gDlmnsH3UX
-        MrbMDmbZSq3g+ishyn6AdLmSwUs+8Q+j01blLue2RMBWZqKXGIAcz6HXR7EzoGOa17P
-        Cc8gE24RERVXI8++wv4UZYM1TfCKpQoNBCLoh9gqzRmv1fCB0jBkT4+BsXg4EX/M6yM
-        2xajuebzP+pbk8VzS+jnZ0f65gTuaPltVn+/Ga77WcLPOxns/mhFxbj6+hJuTkrL6/C
-        GyYQxlyh93LhExI7OVvAv6oY4gd3PAEKoc3lWeCjOhMpPuTGFej0E0ryYFLyAvxUeOg
-        ==
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
-  s=dk12062016; d=earthlink.net;
-  b=XvjQJ7KnYH4uVuLK8kseN3qWcHQsTNf6Lvpz4fiDwavlbbWnBkbLXc8mCuXlgMKovFvX7UPbfjxnw3R0z/m9Wr3CHh1LyK5InZ8WEnZR8BH0tOqHG5ihAi9nhSVl3Lp4VpWpjrVYFULaFOZGVY1yasi9zHTclqLlyvPRkBkC/LUj6BNwN90CbHxrQK/0T3u7w65O9N8MkbbJlYSHck6ec9uhdwDxcY2hVY/iIgcC+Wq1c8n3qDPXth2xTL4mXWnL1cnyuITrqxEOcJcHXeur11GEUgql+kPysJI/yCH8bcJG+60oEpmv4G+TaXJ5uKY5/ZHA4O5vSsj0w+TbxhUnFg==;
-  h=Received:Subject:To:Cc:References:From:Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP;
-Received: from [68.183.100.61] (helo=[192.168.37.199])
-        by elasmtp-galgo.atl.sa.earthlink.net with esmtpa (Exim 4)
-        (envelope-from <jdow@earthlink.net>)
-        id 1fYNtv-0004Mz-Qp; Wed, 27 Jun 2018 23:47:20 -0400
-Subject: Re: moving affs + RDB partition support to staging?
-To:     Michael Schmitz <schmitzmic@gmail.com>
-Cc:     Martin Steigerwald <martin@lichtvoll.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
- <CAOmrzkKunsjZzwpj9gtovKwXVkj1kTt81ea1zmB7BCDtZz409g@mail.gmail.com>
- <1910962.ItDVNtUG5Q@merkaba>
- <c76b4e4d-7e8e-13ac-81e4-9132f4235eb8@earthlink.net>
- <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
- <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
- <00416cde-ddda-a9e6-f4e8-ee424b2e2a1c@gmail.com>
- <8ef4bdc6-4ed0-675e-e26d-0b6e7ab4a00e@earthlink.net>
- <CAOmrzkKLJiWvDwsER0ca09UJbi57Rj6PUmdxizSNPXzZLMErOA@mail.gmail.com>
- <83f7c594-b24e-69f5-03fb-3c9229d15438@earthlink.net>
- <c5691a23-dc03-be49-6213-ee24afe72087@gmail.com>
-From:   jdow <jdow@earthlink.net>
-Message-ID: <b1b9944d-c31b-1c06-555a-b9603bdb3f87@earthlink.net>
-Date:   Wed, 27 Jun 2018 20:44:07 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Thu, 28 Jun 2018 00:01:41 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5S3wcFM055220
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:01:41 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvjuqk7gs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:01:40 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Thu, 28 Jun 2018 05:01:37 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Jun 2018 05:01:35 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5S41YfI25493668
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 Jun 2018 04:01:34 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 724964C05C;
+        Thu, 28 Jun 2018 05:01:24 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 68EFF4C046;
+        Thu, 28 Jun 2018 05:01:23 +0100 (BST)
+Received: from [9.124.31.233] (unknown [9.124.31.233])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 28 Jun 2018 05:01:23 +0100 (BST)
+To:     darrick.wong@oracle.com
+Cc:     lkml <linux-kernel@vger.kernel.org>, allison.henderson@oracle.com,
+        hch@lst.de, Michael Ellerman <mpe@ellerman.id.au>,
+        linux-xfs@vger.kernel.org
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: xfs: Deadlock between fs_reclaim and sb_internal
+Date:   Thu, 28 Jun 2018 09:31:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <c5691a23-dc03-be49-6213-ee24afe72087@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b5711209cf7ffa7a2ea3623a412ea7e949da1ba5251948d90a1030a350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
-X-Originating-IP: 68.183.100.61
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18062804-0020-0000-0000-0000029FC215
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062804-0021-0000-0000-000020EC43EE
+Message-Id: <ee795573-6ab3-361a-d076-b464293bdcc4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=835 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806280042
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael, as long as m68k only supports int fseek( int ) 4 GB * block size is 
-your HARD limit. Versions that support __int64 fseek64( __int64 ) can work with 
-larger disks. RDBs could include RDSK and a new set of other blocks that replace 
-the last two characters with "64" and use __int64 where needed in the various 
-values. That way a clever disk partitioner could give allow normal (32 bit) RDB 
-definitions where possible. Then at least SOME of the disk could be supported 
-AND a very clever filesystem that abstracts very large disks properly could give 
-access to the whole disk. (Read the RDBs first 32 bits. Then if a filesystem or 
-driveinit was loaded re-read the RDBs to see if new 64 bit partitions are revealed.
+Hello Darrick,
 
-I could be wrong but I do not think RDBs could be safely modified any other way 
-to work. And, trust me as I bet this is still true, you will need a SERIOUSLY 
-good bomb shelter on the Moon if you change RDBs. Suppose Joe Amigoid uses it, 
-and then Joe Amigoid loads Amigados 2.4 because he wants to run a game that 
-crashes on anything newer. Then Joe got far enough something writes to the disk 
-and data is corrupted. Note further that Amigoids do NOT, repeat NOT, listen to 
-facts in such cases. Hell, some of them never listened to facts about an 
-incident at Jerry Pournelle's place when a 1.1 DPaint session with Kelly Freas 
-hung and we lost a delightful drawing. Jerry reported it. Amigoids screamed. I 
-tried to tell them I was there, it was my machine, and 1.1 was, indeed, crap.
+Lockdep is reporting a deadlock with following trace. Saw this on my
+powerpc vm with 4GB of ram, running Linus/master kernel. Though, I
+don't have exact testcase to reproduce it. Is this something known?
 
-{o.o}
 
-On 20180627 02:00, Michael Schmitz wrote:
-> Joanne,
-> 
-> I'm not at all allergic to avoiding RDB at all cost for new disks. If AmigaOS 
-> 4.1 supports more recent partition formats, all the better. This is all about 
-> supporting use of legacy RDB disks on Linux (though 2 TB does stretch the 
-> definition of 'legacy' a little). My interest in this is to ensure we can 
-> continue to use RDB format disks on m68k Amiga computers which have no other way 
-> to boot Linux from disk.
-> 
-> Not proposing to change the RDB format at all, either. Just trying to make sure 
-> we translate RDB info into Linux 512-byte block offset and size numbers 
-> correctly. The kernel won't modify the RDB at all (intentionally, that is - with 
-> the correct choice of partition sizes, Martin might well have wiped out his RDB 
-> with the current version of the parser).
-> 
-> The choice of refusing to mount a disk (or mounting read-only) rests with the 
-> VFS drivers alone - AFFS in that case. Not touching any of that. At partition 
-> scan time, we only have the option of making the partition available (with a 
-> warning printed), or refusing to make it available to the kernel. Once it's made 
-> available, all bets are off.
-> 
->  From what Martin writes, his test case RDB was valid and worked as expected on 
-> 32 bit AmigaOS (4.1). Apparently, that version has the necessary extensions to 
-> handle the large offsets resulting from 2 TB disks. Not sure what safeguards are 
-> in place when connecting such a disk to older versions of AmigaOS, but that is a 
-> different matter entirely.
-> 
-> The overflows in partition offset and size are the only ones I can see in the 
-> partition parser - there is no other overflow I've identified. I just stated 
-> that in order to place a partition towards the end of a 2 TB disk, the offset 
-> calculation will overflow regardless of what combination of rdb->rdb_BlockBytes 
-> and sector addresses stored in the RDB (in units of 512 byte blocks) we use:
-> 
->          blksize = be32_to_cpu( rdb->rdb_BlockBytes ) / 512;
-> 
-> 
->                  nr_sects = (be32_to_cpu(pb->pb_Environment[10]) + 1 -
->                              be32_to_cpu(pb->pb_Environment[9])) *
->                             be32_to_cpu(pb->pb_Environment[3]) *
->                             be32_to_cpu(pb->pb_Environment[5]) *
->                             blksize;
->                  if (!nr_sects)
->                          continue;
->                  start_sect = be32_to_cpu(pb->pb_Environment[9]) *
->                               be32_to_cpu(pb->pb_Environment[3]) *
->                               be32_to_cpu(pb->pb_Environment[5]) *
->                               blksize;
-> 
-> But in the interest of avoiding any accidental use of a RDB partition where 
-> calculations currently overflow, I'll make the default behaviour to bail out 
-> (instead of using wrong offset or size as we currently do). Given the 
-> 'eat_my_RDB_disk=1' boot option, the user may proceed at their own risk (though 
-> I still can't see what harm should result from now translating a well formed 
-> v4.1 2 TB disk RDB correctly for the first time).
-> 
-> Whether or not Linux correctly handles AFFS filesystems larger than 1 TB is a 
-> matter for VFS experts. Bailing out on nr_sects overflowing ought to prevent 
-> accidental use of AFFS filesystems on RDB disks which I suppose is the majority 
-> of use cases.
-> 
-> Bugs in partitioning tools on Linux are entirely out of scope - the partitioning 
-> tools bypass the partition structure discovered by the kernel, and work straight 
-> on the raw device. No protecting against that.
-> 
-> If you can point out a way to cause data loss with these precautions, for a disk 
-> 2 TB or larger that was partitioned and used on a recent version or AmigaOS 
-> supporting such large disks, I'd consider omitting the 'eat_my_RDB_disk' boot 
-> option, and just bail out as the only safe option.
-> 
-> Cheers,
-> 
->      Michael
-> 
-> 
-> Am 27.06.2018 um 18:24 schrieb jdow:
->> You allergic to using a GPT solution? It will get away from some of the
->> evils that RDB has inherent in it because they are also features?
->> (Loading a filesystem or DriveInit code from RDBs is just asking for a
->> nearly impossible to remove malware infection.) Furthermore, any 32 bit
->> system that sees an RDSK block is going to try to translate it. If you
->> add a new RDB format you are going to get bizarre and probably quite
->> destructive results from the mistake. Fail safe is a rather good notion,
->> methinks.
->>
->> Personally I figure this is all rather surreal. 2TG of junk on an Amiga
->> system seems utterly outlandish to me. You cited another overflow
->> potential. There are at least three we've identified, I believe. Are you
->> 100% sure there are no more? The specific one you mention of translating
->> RDB to Linux has a proper solution in the RDB reader. It should recover
->> such overflow errors in the RDB as it can with due care and polish. It
->> should flag any other overflow error it detects within the RDBs and
->> return an error such as to leave the disk unmounted or mounted read-only
->> if you feel like messing up a poor sod's backups. The simple solution is
->> to read each of the variables with the nominal RDB size and convert it
->> to uint64_t before calculating byte indices.
->>
->> However, consider my inputs as advice from an adult who has seen the
->> Amiga Elephant so to speak. I am not trying to assert any control. Do as
->> you wish; but, I would plead with you to avoid ANY chance you can for
->> the user to make a bonehead stupid move and lose all his treasured disk
->> archives. Doing otherwise is very poor form.
->>
->> {o.o}   Joanne "Said enough, she has" Dow
->>
->> On 20180626 18:07, Michael Schmitz wrote:
->>> Joanne,
->>>
->>> As far as I have been able to test, the change is backwards compatible
->>> (RDB partitions from an old disk 80 GB disk are still recognized OK).
->>> That"s only been done on an emulator though.
->>>
->>> Your advice about the dangers of using RDB disks that would have
->>> failed the current Linux RDB parser on legacy 32 bit systems is well
->>> taken though. Maybe Martin can clarify that for me - was the 2 TB disk
->>> in question ever used on a 32 bit Amiga system?
->>>
->>> RDB disk format is meant for legacy use only, so I think we can get
->>> away with printing a big fat warning during boot, advising the user
->>> that the oversize RDB partition(s) scanned are not compatible with
->>> legacy 32 bit AmigaOS. With the proposed fix they will work under both
->>> AmigaOS 4.1 and Linux instead of truncating the first overflowing
->>> partition at disk end and trashing valid partitions that overlap,
->>> which is what Martin was after.
->>>
->>> If that still seems too risky, we can make the default behaviour to
->>> bail out once a potential overflow is detected, and allow the user to
->>> override that through a boot parameter. I'd leave that decision up for
->>> the code review on linux-block.
->>>
->>> Two more comments: Linux uses 512 byte block sizes for the partition
->>> start and size calculations, so a change of the RDB blocksize to
->>> reduce the block counts stored in the RDB would still result in the
->>> same overflow. And amiga-fdisk is indeed utterly broken and needs
->>> updating (along with probably most legacy m68k partitioners). Adrian
->>> has advertised parted as replacement for the old tools - maybe this
->>> would make a nice test case for parted?
->>>
->>> Cheers,
->>>
->>>    Michael
->>>
->>>
->>>
->>> On Tue, Jun 26, 2018 at 9:45 PM, jdow <jdow@earthlink.net> wrote:
->>>> If it is not backwards compatible I for one would refuse to use it.
->>>> And if
->>>> it still mattered that much to me I'd also generate a reasonable
->>>> alternative. Modifying RDBs nay not be even an approximation of a
->>>> good idea.
->>>> You'd discover that as soon as an RDB uint64_t disk is tasted by a
->>>> uint32_t
->>>> only system. If it is for your personal use then you're entirely free to
->>>> reject my advice and are probably smart enough to keep it working for
->>>> yourself.
->>>>
->>>> GPT is probably the right way to go. Preserve the ability to read
->>>> RDBs for
->>>> legacy disks only.
->>>>
->>>> {^_^}
->>>>
->>>>
->>>> On 20180626 01:31, Michael Schmitz wrote:
->>>>>
->>>>> Joanne,
->>>>>
->>>>> I think we all agree that doing 32 bit calculations on 512-byte block
->>>>> addresses that overflow on disks 2 TB and larger is a bug, causing the
->>>>> issues Martin reported. Your patch addresses that by using the correct
->>>>> data type for the calculations (as do other partition parsers that may
->>>>> have to deal with large disks) and fixes Martin's bug, so appears to be
->>>>> the right thing to do.
->>>>>
->>>>> Using 64 bit data types for disks smaller than 2 TB where calculations
->>>>> don't currently overflow is not expected to cause new issues, other
->>>>> than
->>>>> enabling use of disk and partitions larger than 2 TB (which may have
->>>>> ramifications with filesystems on these partitions). So comptibility is
->>>>> preserved.
->>>>>
->>>>> Forcing larger block sizes might be a good strategy to avoid overflow
->>>>> issues in filesystems as well, but I can't see how the block size
->>>>> stored
->>>>> in the RDB would enforce use of the same block size in filesystems.
->>>>> We'll have to rely on the filesystem tools to get that right, too.
->>>>> Linux
->>>>> AFFS does allow block sizes up to 4k (VFS limitation) so this should
->>>>> allow partitions larger than 2 TB to work already (but I suspect Al
->>>>> Viro
->>>>> may have found a few issues when he looked at the AFFS code so I won't
->>>>> say more). Anyway partitioning tools and filesystems are unrelated to
->>>>> the Linux partition parser code which is all we aim to fix in this
->>>>> patch.
->>>>>
->>>>> If you feel strongly about unknown ramifications of any filesystems on
->>>>> partitions larger than 2 TB, say so and I'll have the kernel print a
->>>>> warning about these partitions.
->>>>>
->>>>> I'll get this patch tested on Martin's test case image as well as on a
->>>>> RDB image from a disk known to currently work under Linux (thanks Geert
->>>>> for the losetup hint). Can't do much more without procuring a working
->>>>> Amiga disk image to use with an emulator, sorry. The Amiga I plan to
->>>>> use
->>>>> for tests is a long way away from my home indeed.
->>>>>
->>>>> Cheers,
->>>>>
->>>>>       Michael
->>>>>
->>>>> Am 26.06.18 um 17:17 schrieb jdow:
->>>>>>
->>>>>> As long as it preserves compatibility it should be OK, I suppose.
->>>>>> Personally I'd make any partitioning tool front end gently force the
->>>>>> block size towards 8k as the disk size gets larger. The file systems
->>>>>> may also run into 2TB issues that are not obvious. An unused blocks
->>>>>> list will have to go beyond a uint32_t size, for example. But a block
->>>>>> list (OFS for sure, don't remember for the newer AFS) uses a tad under
->>>>>> 1% of the disk all by itself. A block bitmap is not quite so bad.
->>>>>> {^_-}
->>>>>>
->>>>>> Just be sure you are aware of all the ramifications when you make a
->>>>>> change. I remember thinking about this for awhile and then determining
->>>>>> I REALLY did not want to think about it as my brain was getting tied
->>>>>> into a gordian knot.
->>>>>>
->>>>>> {^_^}
->>>>>>
->>>>>> On 20180625 19:23, Michael Schmitz wrote:
->>>>>>>
->>>>>>> Joanne,
->>>>>>>
->>>>>>> Martin's boot log (including your patch) says:
->>>>>>>
->>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512) sdb1
->>>>>>> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2 spb
->>>>>>> 4)
->>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
->>>>>>> Attached SCSI disk
->>>>>>>
->>>>>>> so it's indeed a case of self inflicted damage (RDSK (512) means 512
->>>>>>> byte blocks) and can be worked around by using a different block
->>>>>>> size.
->>>>>>>
->>>>>>> Your memory serves right indeed - blocksize is in 512 bytes units.
->>>>>>> I'll still submit a patch to Jens anyway as this may bite others yet.
->>>>>>>
->>>>>>> Cheers,
->>>>>>>
->>>>>>>      Michael
->>>>>>>
->>>>>>>
->>>>>>> On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net> wrote:
->>>>>>>>
->>>>>>>> BTW - anybody who uses 512 byte blocks with an Amiga file system is
->>>>>>>> a famn
->>>>>>>> dool.
->>>>>>>>
->>>>>>>> If memory serves the RDBs think in blocks rather than bytes so it
->>>>>>>> should
->>>>>>>> work up to 2 gigablocks whatever your block size is. 512 blocks is
->>>>>>>> 2199023255552 bytes. But that wastes just a WHOLE LOT of disk in
->>>>>>>> block maps.
->>>>>>>> Go up to 4096 or 8192. The latter is 35 TB.
->>>>>>>>
->>>>>>>> {^_^}
->>>>>>>> On 20180624 02:06, Martin Steigerwald wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Hi.
->>>>>>>>>
->>>>>>>>> Michael Schmitz - 27.04.18, 04:11:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> test results at https://bugzilla.kernel.org/show_bug.cgi?id=43511
->>>>>>>>>> indicate the RDB parser bug is fixed by the patch given there,
->>>>>>>>>> so if
->>>>>>>>>> Martin now submits the patch, all should be well?
->>>>>>>>>
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Ok, better be honest than having anyone waiting for it:
->>>>>>>>>
->>>>>>>>> I do not care enough about this, in order to motivate myself
->>>>>>>>> preparing
->>>>>>>>> the a patch from Joanne Dow´s fix.
->>>>>>>>>
->>>>>>>>> I am not even using my Amiga boxes anymore, not even the Sam440ep
->>>>>>>>> which
->>>>>>>>> I still have in my apartment.
->>>>>>>>>
->>>>>>>>> So RDB support in Linux it remains broken for disks larger 2 TB,
->>>>>>>>> unless
->>>>>>>>> someone else does.
->>>>>>>>>
->>>>>>>>> Thanks.
->>>>>>>>>
->>>>>>>> -- 
->>>>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>>>> linux-m68k" in
->>>>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>>
->>>>>>>
->>>>>> -- 
->>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>> linux-m68k" in
->>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>
->>>>>
->>>> -- 
->>>> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
-> 
+[ 1797.620389] ======================================================
+[ 1797.620541] WARNING: possible circular locking dependency detected
+[ 1797.620695] 4.18.0-rc2+ #2 Not tainted
+[ 1797.620791] ------------------------------------------------------
+[ 1797.620942] kswapd0/362 is trying to acquire lock:
+[ 1797.621067] 0000000001ad2774 (sb_internal){.+.+}, at: xfs_trans_alloc+0x284/0x360 [xfs]
+[ 1797.621616] 
+[ 1797.621616] but task is already holding lock:
+[ 1797.621779] 00000000bb0609ea (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x10/0x60
+[ 1797.622090] 
+[ 1797.622090] which lock already depends on the new lock.
+[ 1797.622090] 
+[ 1797.622266] 
+[ 1797.622266] the existing dependency chain (in reverse order) is:
+[ 1797.622440] 
+[ 1797.622440] -> #1 (fs_reclaim){+.+.}:
+[ 1797.622609]        fs_reclaim_acquire.part.22+0x44/0x60
+[ 1797.622764]        kmem_cache_alloc+0x60/0x500
+[ 1797.622983]        kmem_zone_alloc+0xb4/0x168 [xfs]
+[ 1797.623220]        xfs_trans_alloc+0xac/0x360 [xfs]
+[ 1797.623454]        xfs_vn_update_time+0x278/0x420 [xfs]
+[ 1797.623576]        touch_atime+0xfc/0x120
+[ 1797.623668]        generic_file_read_iter+0x95c/0xbd0
+[ 1797.623948]        xfs_file_buffered_aio_read+0x98/0x2e0 [xfs]
+[ 1797.624190]        xfs_file_read_iter+0xac/0x170 [xfs]
+[ 1797.624304]        __vfs_read+0x128/0x1d0
+[ 1797.624388]        vfs_read+0xbc/0x1b0
+[ 1797.624476]        kernel_read+0x60/0xa0
+[ 1797.624562]        prepare_binprm+0xf8/0x1f0
+[ 1797.624676]        __do_execve_file.isra.13+0x7ac/0xc80
+[ 1797.624791]        sys_execve+0x58/0x70
+[ 1797.624880]        system_call+0x5c/0x70
+[ 1797.624965] 
+[ 1797.624965] -> #0 (sb_internal){.+.+}:
+[ 1797.625119]        lock_acquire+0xec/0x310
+[ 1797.625204]        __sb_start_write+0x18c/0x290
+[ 1797.625435]        xfs_trans_alloc+0x284/0x360 [xfs]
+[ 1797.625692]        xfs_iomap_write_allocate+0x230/0x470 [xfs]
+[ 1797.625945]        xfs_map_blocks+0x1a8/0x610 [xfs]
+[ 1797.626181]        xfs_do_writepage+0x1a8/0x9e0 [xfs]
+[ 1797.626414]        xfs_vm_writepage+0x4c/0x78 [xfs]
+[ 1797.626527]        pageout.isra.17+0x180/0x680
+[ 1797.626640]        shrink_page_list+0xe0c/0x1470
+[ 1797.626758]        shrink_inactive_list+0x3a4/0x890
+[ 1797.626872]        shrink_node_memcg+0x268/0x790
+[ 1797.626986]        shrink_node+0x124/0x630
+[ 1797.627089]        balance_pgdat+0x1f0/0x550
+[ 1797.627204]        kswapd+0x214/0x8c0
+[ 1797.627301]        kthread+0x1b8/0x1c0
+[ 1797.627389]        ret_from_kernel_thread+0x5c/0x88
+[ 1797.627509] 
+[ 1797.627509] other info that might help us debug this:
+[ 1797.627509] 
+[ 1797.627684]  Possible unsafe locking scenario:
+[ 1797.627684] 
+[ 1797.627820]        CPU0                    CPU1
+[ 1797.627965]        ----                    ----
+[ 1797.628072]   lock(fs_reclaim);
+[ 1797.628166]                                lock(sb_internal);
+[ 1797.628308]                                lock(fs_reclaim);
+[ 1797.628453]   lock(sb_internal);
+[ 1797.628551] 
+[ 1797.628551]  *** DEADLOCK ***
+[ 1797.628551] 
+[ 1797.628693] 1 lock held by kswapd0/362:
+[ 1797.628779]  #0: 00000000bb0609ea (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x10/0x60
+[ 1797.628955] 
+[ 1797.628955] stack backtrace:
+[ 1797.629067] CPU: 18 PID: 362 Comm: kswapd0 Not tainted 4.18.0-rc2+ #2
+[ 1797.629199] Call Trace:
+[ 1797.629311] [c0000000f4ebaff0] [c000000000cc4414] dump_stack+0xe8/0x164 (unreliable)
+[ 1797.629473] [c0000000f4ebb040] [c0000000001a9f54] print_circular_bug.isra.17+0x284/0x3d0
+[ 1797.629639] [c0000000f4ebb0e0] [c0000000001aed58] __lock_acquire+0x1d48/0x2020
+[ 1797.629797] [c0000000f4ebb260] [c0000000001af7cc] lock_acquire+0xec/0x310
+[ 1797.629933] [c0000000f4ebb330] [c000000000454c5c] __sb_start_write+0x18c/0x290
+[ 1797.630191] [c0000000f4ebb380] [d000000009b7896c] xfs_trans_alloc+0x284/0x360 [xfs]
+[ 1797.630443] [c0000000f4ebb3e0] [d000000009b58958] xfs_iomap_write_allocate+0x230/0x470 [xfs]
+[ 1797.630710] [c0000000f4ebb560] [d000000009b2c760] xfs_map_blocks+0x1a8/0x610 [xfs]
+[ 1797.630961] [c0000000f4ebb5d0] [d000000009b2eb20] xfs_do_writepage+0x1a8/0x9e0 [xfs]
+[ 1797.631223] [c0000000f4ebb6b0] [d000000009b2f3a4] xfs_vm_writepage+0x4c/0x78 [xfs]
+[ 1797.631384] [c0000000f4ebb720] [c0000000003692e0] pageout.isra.17+0x180/0x680
+[ 1797.631557] [c0000000f4ebb800] [c00000000036ccfc] shrink_page_list+0xe0c/0x1470
+[ 1797.631730] [c0000000f4ebb920] [c00000000036e064] shrink_inactive_list+0x3a4/0x890
+[ 1797.631912] [c0000000f4ebb9f0] [c00000000036ef48] shrink_node_memcg+0x268/0x790
+[ 1797.632078] [c0000000f4ebbb00] [c00000000036f594] shrink_node+0x124/0x630
+[ 1797.632213] [c0000000f4ebbbd0] [c0000000003714e0] balance_pgdat+0x1f0/0x550
+[ 1797.632350] [c0000000f4ebbcd0] [c000000000371a54] kswapd+0x214/0x8c0
+[ 1797.632488] [c0000000f4ebbdc0] [c0000000001506b8] kthread+0x1b8/0x1c0
+[ 1797.632624] [c0000000f4ebbe30] [c00000000000c3d4] ret_from_kernel_thread+0x5c/0x88
+
+
+Thanks,
+Ravi
+
