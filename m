@@ -2,329 +2,260 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BA9C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59452C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232B627239
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PTqUcCcK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232B627239
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C1702723B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1702723B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964988AbeF1KoF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:44:05 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38481 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933795AbeF1KoC (ORCPT
+        id S965187AbeF1Kop (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 06:44:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55804 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965097AbeF1Kon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:44:02 -0400
-Received: by mail-wr0-f194.google.com with SMTP id e18-v6so5008261wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 03:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+o2dgLDFB/+vYRLevrlZcG2GNnMvg47JziItGrbXb8Q=;
-        b=PTqUcCcK1wBagpht4Uh1zOUA+bn7Ua/WMm98q5eVhQNamb5AYbYeeGfj3c0orILOxI
-         O2z0UT/F567orrnpMwizUkxsZOjmuinegnjW227cj0GeLULkIN8PYrmhtXX2TxdQjhwm
-         aP+zOUCrBmMQMzYrm0O0jUILxVJSWnQwVQnHA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+o2dgLDFB/+vYRLevrlZcG2GNnMvg47JziItGrbXb8Q=;
-        b=cGjS/1jZ3v3Fkk/oDn3XO42fBX2Psz5WWV7cDjxN2vNwquE+oCVH8i0KQ1UEOvi4IC
-         GXqmYErkcGSP2xHvDKcWFP4feG26VsqC79hlDEpJNRpd6/8BBG8JrHWtMRtqJGGSKmTY
-         BK09ew5Mq240YsuZKCCQxPSbiJXMp+zIaJV2wChjSHVYVFYvOg65/wE9T0E2QY5yOfAW
-         Vb4PClEEtEaW/tPU8u+5wtzSFgzbAGQYrjp2MfeCdSJ3Ow/VCAPnTzQrXJmDK+JftLrF
-         5UA+1tvE4I86Zxse+ls7B6qSa4+drDOZd17HjOE2slF6yMGqTTpaxhEA7CPAnv4t4tI8
-         hIjg==
-X-Gm-Message-State: APt69E0XDiEkIze1ORUaErYyqOhNuP0hWvvIfls64U7/+y00C9UlMUVG
-        +GjHrelilPAS1ZlRstwci/Uka3vd
-X-Google-Smtp-Source: AAOMgpezTE+mWDuYjmOKAIu37g2LwFCmHNJpkQa6AUuL0vQC/OSOI20YpyUMRB4KCfpVWArN8xwZ4w==
-X-Received: by 2002:adf:a35b:: with SMTP id d27-v6mr7832253wrb.189.1530182640978;
-        Thu, 28 Jun 2018 03:44:00 -0700 (PDT)
-Received: from andrea.amarulasolutions.com (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm9257298wmh.8.2018.06.28.03.43.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 03:44:00 -0700 (PDT)
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH 3/3] doc: Update wake_up() & co. memory-barrier guarantees
-Date:   Thu, 28 Jun 2018 12:41:20 +0200
-Message-Id: <1530182480-13205-4-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Thu, 28 Jun 2018 06:44:43 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fYUPF-0005IO-OE; Thu, 28 Jun 2018 12:44:05 +0200
+Date:   Thu, 28 Jun 2018 12:43:59 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
+        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
+        Prarit Bhargava <prarit@redhat.com>, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
+In-Reply-To: <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
+ <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de> <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+ <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both the implementation and the users' expectation [1] for the various
-wakeup primitives have evolved over time, but the documentation has not
-kept up with these changes: brings it into 2018.
+On Thu, 28 Jun 2018, Thomas Gleixner wrote:
+> I still want to document the unholy mess of what is initialized and
+> available when. We have 5 hypervisors and 3 different points in early boot
+> where the calibrate_* callbacks are overwritten. The XEN PV one is actually
+> post tsc_init_early() for whatever reason.
+> 
+> That's all completely obscure and any attempt of moving tsc_early_init()
+> earlier than where it is now is just lottery.
+> 
+> The other issue is that double calibration, e.g. doing the PIT thing twice
+> is just consuming boot time for no value.
+> 
+> All of that has been duct taped over time and we really don't want yet
+> another thing glued to it just because we can.
 
-[1] http://lkml.kernel.org/r/20180424091510.GB4064@hirez.programming.kicks-ass.net
+So here is the full picture of the TSC/CPU calibration maze:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-[ aparri: Apply feedback from Alan Stern. ]
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Ingo Molnar <mingo@redhat.com>
----
- Documentation/memory-barriers.txt | 43 ++++++++++++++++++++++++---------------
- include/linux/sched.h             |  4 ++--
- kernel/sched/completion.c         |  8 ++++----
- kernel/sched/core.c               | 30 +++++++++++----------------
- kernel/sched/wait.c               |  8 ++++----
- 5 files changed, 49 insertions(+), 44 deletions(-)
+Compile time setup:
+	native_calibrate_tsc
+		CPUID based frequency read out with magic fixups
+		for broken CPUID implementations
 
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index a02d6bbfc9d0a..0d8d7ef131e9a 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -2179,32 +2179,41 @@ or:
- 	event_indicated = 1;
- 	wake_up_process(event_daemon);
- 
--A write memory barrier is implied by wake_up() and co.  if and only if they
--wake something up.  The barrier occurs before the task state is cleared, and so
--sits between the STORE to indicate the event and the STORE to set TASK_RUNNING:
-+A general memory barrier is executed by wake_up() if it wakes something up.
-+If it doesn't wake anything up then a memory barrier may or may not be
-+executed; you must not rely on it.  The barrier occurs before the task state
-+is accessed, in particular, it sits between the STORE to indicate the event
-+and the STORE to set TASK_RUNNING:
- 
--	CPU 1				CPU 2
-+	CPU 1 (Sleeper)			CPU 2 (Waker)
- 	===============================	===============================
- 	set_current_state();		STORE event_indicated
- 	  smp_store_mb();		wake_up();
--	    STORE current->state	  <write barrier>
--	    <general barrier>		  STORE current->state
--	LOAD event_indicated
-+	    STORE current->state	  ...
-+	    <general barrier>		  <general barrier>
-+	LOAD event_indicated		  if ((LOAD task->state) & TASK_NORMAL)
-+					    STORE task->state
- 
--To repeat, this write memory barrier is present if and only if something
--is actually awakened.  To see this, consider the following sequence of
--events, where X and Y are both initially zero:
-+where "task" is the thread being woken up and it equals CPU 1's "current".
-+
-+To repeat, a general memory barrier is guaranteed to be executed by wake_up()
-+if something is actually awakened, but otherwise there is no such guarantee.
-+To see this, consider the following sequence of events, where X and Y are both
-+initially zero:
- 
- 	CPU 1				CPU 2
- 	===============================	===============================
--	X = 1;				STORE event_indicated
-+	X = 1;				Y = 1;
- 	smp_mb();			wake_up();
--	Y = 1;				wait_event(wq, Y == 1);
--	wake_up();			  load from Y sees 1, no memory barrier
--					load from X might see 0
-+	LOAD Y				LOAD X
-+
-+If a wakeup does occur, one (at least) of the two loads must see 1.  If, on
-+the other hand, a wakeup does not occur, both loads might see 0.
- 
--In contrast, if a wakeup does occur, CPU 2's load from X would be guaranteed
--to see 1.
-+wake_up_process() always executes a general memory barrier.  The barrier again
-+occurs before the task state is accessed.  In particular, if the wake_up() in
-+the previous snippet were replaced by a call to wake_up_process() then one of
-+the two loads would be guaranteed to see 1.
- 
- The available waker functions include:
- 
-@@ -2224,6 +2233,8 @@ The available waker functions include:
- 	wake_up_poll();
- 	wake_up_process();
- 
-+In terms of memory ordering, these functions all provide the same guarantees of
-+a wake_up() (or stronger).
- 
- [!] Note that the memory barriers implied by the sleeper and the waker do _not_
- order multiple stores before the wake-up with respect to loads of those stored
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a279..ddfdeb632f748 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -167,8 +167,8 @@ struct task_group;
-  *   need_sleep = false;
-  *   wake_up_state(p, TASK_UNINTERRUPTIBLE);
-  *
-- * Where wake_up_state() (and all other wakeup primitives) imply enough
-- * barriers to order the store of the variable against wakeup.
-+ * where wake_up_state() executes a full memory barrier before accessing the
-+ * task state.
-  *
-  * Wakeup will do: if (@state & p->state) p->state = TASK_RUNNING, that is,
-  * once it observes the TASK_UNINTERRUPTIBLE store the waking CPU can issue a
-diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
-index e426b0cb9ac63..a1ad5b7d5521b 100644
---- a/kernel/sched/completion.c
-+++ b/kernel/sched/completion.c
-@@ -22,8 +22,8 @@
-  *
-  * See also complete_all(), wait_for_completion() and related routines.
-  *
-- * It may be assumed that this function implies a write memory barrier before
-- * changing the task state if and only if any tasks are woken up.
-+ * If this function wakes up a task, it executes a full memory barrier before
-+ * accessing the task state.
-  */
- void complete(struct completion *x)
- {
-@@ -44,8 +44,8 @@ EXPORT_SYMBOL(complete);
-  *
-  * This will wake up all threads waiting on this particular completion event.
-  *
-- * It may be assumed that this function implies a write memory barrier before
-- * changing the task state if and only if any tasks are woken up.
-+ * If this function wakes up a task, it executes a full memory barrier before
-+ * accessing the task state.
-  *
-  * Since complete_all() sets the completion of @x permanently to done
-  * to allow multiple waiters to finish, a call to reinit_completion()
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bfd49a932bdb6..3579fc45fbeb8 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -413,8 +413,8 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
- 	 * its already queued (either by us or someone else) and will get the
- 	 * wakeup due to that.
- 	 *
--	 * This cmpxchg() implies a full barrier, which pairs with the write
--	 * barrier implied by the wakeup in wake_up_q().
-+	 * This cmpxchg() executes a full barrier, which pairs with the full
-+	 * barrier executed by the wakeup in wake_up_q().
- 	 */
- 	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
- 		return;
-@@ -442,8 +442,8 @@ void wake_up_q(struct wake_q_head *head)
- 		task->wake_q.next = NULL;
- 
- 		/*
--		 * wake_up_process() implies a wmb() to pair with the queueing
--		 * in wake_q_add() so as not to miss wakeups.
-+		 * wake_up_process() executes a full barrier, which pairs with
-+		 * the queueing in wake_q_add() so as not to miss wakeups.
- 		 */
- 		wake_up_process(task);
- 		put_task_struct(task);
-@@ -1880,8 +1880,7 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
-  *     rq(c1)->lock (if not at the same time, then in that order).
-  *  C) LOCK of the rq(c1)->lock scheduling in task
-  *
-- * Transitivity guarantees that B happens after A and C after B.
-- * Note: we only require RCpc transitivity.
-+ * Release/acquire chaining guarantees that B happens after A and C after B.
-  * Note: the CPU doing B need not be c0 or c1
-  *
-  * Example:
-@@ -1943,16 +1942,9 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
-  *   UNLOCK rq(0)->lock
-  *
-  *
-- * However; for wakeups there is a second guarantee we must provide, namely we
-- * must observe the state that lead to our wakeup. That is, not only must our
-- * task observe its own prior state, it must also observe the stores prior to
-- * its wakeup.
-- *
-- * This means that any means of doing remote wakeups must order the CPU doing
-- * the wakeup against the CPU the task is going to end up running on. This,
-- * however, is already required for the regular Program-Order guarantee above,
-- * since the waking CPU is the one issueing the ACQUIRE (smp_cond_load_acquire).
-- *
-+ * However, for wakeups there is a second guarantee we must provide, namely we
-+ * must ensure that CONDITION=1 done by the caller can not be reordered with
-+ * accesses to the task state; see try_to_wake_up() and set_current_state().
-  */
- 
- /**
-@@ -1968,6 +1960,9 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
-  * Atomic against schedule() which would dequeue a task, also see
-  * set_current_state().
-  *
-+ * This function executes a full memory barrier before accessing the task
-+ * state; see set_current_state().
-+ *
-  * Return: %true if @p->state changes (an actual wakeup was done),
-  *	   %false otherwise.
-  */
-@@ -2141,8 +2136,7 @@ static void try_to_wake_up_local(struct task_struct *p, struct rq_flags *rf)
-  *
-  * Return: 1 if the process was woken up, 0 if it was already running.
-  *
-- * It may be assumed that this function implies a write memory barrier before
-- * changing the task state if and only if any tasks are woken up.
-+ * This function executes a full memory barrier before accessing the task state.
-  */
- int wake_up_process(struct task_struct *p)
- {
-diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
-index a7a2aaa3026a6..870f97b313e38 100644
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -134,8 +134,8 @@ static void __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int
-  * @nr_exclusive: how many wake-one or wake-many threads to wake up
-  * @key: is directly passed to the wakeup function
-  *
-- * It may be assumed that this function implies a write memory barrier before
-- * changing the task state if and only if any tasks are woken up.
-+ * If this function wakes up a task, it executes a full memory barrier before
-+ * accessing the task state.
-  */
- void __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
- 			int nr_exclusive, void *key)
-@@ -180,8 +180,8 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key_bookmark);
-  *
-  * On UP it can prevent extra preemption.
-  *
-- * It may be assumed that this function implies a write memory barrier before
-- * changing the task state if and only if any tasks are woken up.
-+ * If this function wakes up a task, it executes a full memory barrier before
-+ * accessing the task state.
-  */
- void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
- 			int nr_exclusive, void *key)
--- 
-2.7.4
+	native_calibrate_cpu
+		Try the following:
 
+		1) CPUID based (different leaf than the TSC one)
+		2) MSR based
+		3) Quick PIT calibration
+		4) PIT/HPET/PMTIMER calibration (slow) and only
+		   available in tsc_init(). Could be made working
+		   post x86_dtb_init().
+
+
+Boot sequence:
+
+  start_kernel()
+
+	INTEL_MID:
+		x86_intel_mid_early_setup()
+	   	calibrate_tsc = intel_mid_calibrate_tsc
+
+	   	intel_mid_calibrate_tsc() { return 0; }
+
+  setup_arch()
+
+	x86_init.oem.arch_setup();
+	  INTEL_MID:
+		intel_mid_arch_setup()
+
+		PENWELL:
+		   x86_platform.calibrate_tsc = mfld_calibrate_tsc;
+
+		   MSR based magic. Value would be available right away.
+		   
+		TANGIER:
+		   x86_platform.calibrate_tsc = tangier_calibrate_tsc;
+	
+		   Different MSR based magic. Value would be available
+		   right away.
+		
+	....
+	
+	init_hypervisor_platform()
+	   vmware:
+	           Retrieves frequency and store it for the
+		   calibration function
+
+		   khz = vmware_get_khz_magic()
+		   vmware_tsc_khz = khz
+		   calibrate_cpu = vmware_get_tsc_khz
+	   	   calibrate_tsc = vmware_get_tsc_khz
+		   preset_lpj(khz)
+
+ 	   hyperv:
+		   if special hyperv MSRs are available:
+
+		      calibrate_cpu = hv_get_tsc_khz
+		      calibrate_tsc = hv_get_tsc_khz
+
+		   MSR is readable already in this function
+
+	   jailhouse:
+	   
+		   Frequency is available in this function and store
+		   in a variable for the calibration function
+
+		   calibrate_cpu	= jailhouse_get_tsc
+		   calibrate_tsc	= jailhouse_get_tsc
+
+	...
+	
+	kvmclock_init()
+
+		if (magic_conditions)
+			calibrate_tsc = kvm_get_tsc_khz
+			calibrate_cpu = kvm_get_tsc_khz
+
+			kvm_get_preset_lpj()
+			   khz = kvm_get_tsc_khz()
+			   preset_lpj(khz);
+
+	tsc_early_delay_calibrate()
+	    tsc_khz = calibrate_tsc()
+	    cpu_khz = calibrate_cpu()
+
+	    ....
+	    set_lpj(tsc_khz);
+
+
+	x86_init.paging.pagetable_init()    
+	   xen_pagetable_init()
+	      xen_setup_shared_info()
+	         xen_hvm_init_time_ops()
+	            if (XENFEAT_hvm_safe_pvclock)
+	                calibrate_tsc = xen_tsc_khz
+
+	         	PV clock based access
+
+	tsc_init()
+	    tsc_khz = calibrate_tsc()
+	    cpu_khz = calibrate_cpu()
+
+
+Putting this into a table:
+
+Platform	tsc_early_delay_calibrate()	tsc_init()
+-----------------------------------------------------------------------
+
+Generic		native_calibrate_tsc()		native_calibrate_tsc()
+		native_calibrate_cpu()		native_calibrate_cpu()
+		(Cannot do HPET/PMTIMER)
+
+-----------------------------------------------------------------------
+
+INTEL_MID	intel_mid_calibrate_tsc()	intel_mid_calibrate_tsc()
+Generic		native_calibrate_cpu()		native_calibrate_cpu()
+
+INTEL_MID	mfld_calibrate_tsc()		mfld_calibrate_tsc()
+PENWELL		native_calibrate_cpu()		native_calibrate_cpu()
+
+INTEL_MID	tangier_calibrate_tsc()		tangier_calibrate_tsc()
+TANGIER		native_calibrate_cpu()		native_calibrate_cpu()
+
+-----------------------------------------------------------------------
+
+VNWARE		vmware_get_tsc_khz()		vmware_get_tsc_khz()
+		vmware_get_tsc_khz()		vmware_get_tsc_khz()
+
+HYPERV		hv_get_tsc_khz()		hv_get_tsc_khz()
+		hv_get_tsc_khz()		hv_get_tsc_khz()
+
+
+JAILHOUSE	jailhouse_get_tsc()		jailhouse_get_tsc()
+		jailhouse_get_tsc()		jailhouse_get_tsc()
+
+
+KVM		kvm_get_tsc_khz()		kvm_get_tsc_khz()
+		kvm_get_tsc_khz()		kvm_get_tsc_khz()
+
+------------------------------------------------------------------------
+
+XEN		native_calibrate_tsc()		xen_tsc_khz()
+		native_calibrate_cpu()		native_calibrate_cpu()
+
+------------------------------------------------------------------------
+
+The only platform which cannot use the special TSC calibration routine
+in the early calibration is XEN because it's initialized just _after_ the
+early calibration runs.
+
+For enhanced fun the early calibration stuff was moved from right after
+init_hypervisor_platform() to the place where it is now in commit
+ccb64941f375a6 ("x86/timers: Move simple_udelay_calibration() past
+kvmclock_init()") to speed up KVM boot time by avoiding the PIT
+calibration. I have no idea why it wasn't just moved past the XEN
+initialization a few lines further down, especially as the change was done
+by a XEN maintainer :) Boris?
+
+The other HV guests all do more or less the same thing and return the same
+value for cpu_khz and tsc_khz via the calibration indirection despite the
+value being known in the init_platform() function already.
+
+The generic initilizaiton does everything twice, which makes no sense,
+except for the unlikely case were no fast functions are available and the
+quick PIT calibration fails (PMTIMER/HPET) are not available in early
+calibration. HPET 
+
+The INTEL MID stuff is wierd and not really obvious. AFAIR those systems
+don't have PIT or such, so they need to rely on the MSR/CPUID mechanisms to
+work, but that's just working because and not for obvious reasons. Andy,
+can you shed some light on that stuff?
+
+So some of this just works by chance, things are done twice and pointlessly
+(XEN). This really wants to be cleaned up and well documented which the
+requirements of each platform are, especially the Intel-MID stuff needs
+that.
+
+Thanks,
+
+	tglx
