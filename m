@@ -2,254 +2,122 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF64C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED3EC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0568A215A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:32:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0568A215A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 92F11215A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:32:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rWCUp0Jx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F11215A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935412AbeF1Mb5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:31:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59698 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932371AbeF1Mb4 (ORCPT
+        id S964887AbeF1Mcu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:32:50 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34259 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752170AbeF1Mct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:31:56 -0400
-Received: from juma (unknown [IPv6:2804:14c:181:9195:9419:3bed:192:1e62])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: padovan)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C817C261420;
-        Thu, 28 Jun 2018 13:31:51 +0100 (BST)
-Message-ID: <06736479f36918a58d6b4986b697ddb7569c920e.camel@collabora.com>
-Subject: Re: [RFC PATCH] drm/atomic: add ASYNC_UPDATE flag to the Atomic
- IOCTL.
-From:   Gustavo Padovan <gustavo.padovan@collabora.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dnicoara@chromium.org, alexandros.frantzis@collabora.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?ISO-8859-1?Q?St=E9phane?= Marchesin <marcheu@google.com>,
-        Sean Paul <seanpaul@chromium.org>
-Date:   Thu, 28 Jun 2018 09:31:46 -0300
-In-Reply-To: <b8fda72a-1ec6-4d47-ea5a-22f03802f4f3@linux.intel.com>
-References: <20180627212506.24061-1-enric.balletbo@collabora.com>
-         <b8fda72a-1ec6-4d47-ea5a-22f03802f4f3@linux.intel.com>
-Organization: Collabora Ltd
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 28 Jun 2018 08:32:49 -0400
+Received: by mail-wm0-f67.google.com with SMTP id l15-v6so20629538wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 05:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TY7Cb884+Sla7/kOAhvrWdYiG0FoREBQjkAAHhprHOw=;
+        b=rWCUp0Jx3FSzR9sp7coKleDMUvYapm6qGAYB4baglg+QxkXD3oy7uakSnxIcmB3xMr
+         pnLw2Pa+qpcBBG81LYppoXGkW2h4D26aUb3UD4cAPDFN2OEkoqQIkvuJXf/RVBjLMNYw
+         k+W5C1s9MLof6oAsLqSTGyiwJaV6UurPJUuRvUKZBgiwFJRxtwv31MoO0qs8EuGHjIKv
+         G6NuaH9+UZr4hw4JrGtTKyj1KzByLWML0noPqL8avrryRCfLrChFKqztzy9oAEbhOGKG
+         FIvwXCMsX3zhAsjUrrdenNcvMy4PO3IOW+w4vVmtnVXMoOWIZiObqUqy7UuMUL2QQxJ6
+         jQVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TY7Cb884+Sla7/kOAhvrWdYiG0FoREBQjkAAHhprHOw=;
+        b=EK2XU4hYtmfQ1ojSd2Qk7sSesdwcKwEz1eZnbALl62i87D/4+KSXcRnEWoM6aX0+q/
+         t3hDnDEMs0FCUzROu0eBOxPdjRmRn/IbFLYeDsO6/CV6AkRZJ0T+6VRQCGHzuCDMkYW/
+         ewaRbGBc763xzGOmuMs81rRvGaiCu2aV6HdgpEadTKEmmMgWpCiVwkegl4R8tLymNKFE
+         oA7MtMB91+mHI6KxzhGoR4c8sc9R3bGBnhOKhcu33baXt9XbpmmCqqCy1pYP38cNeOCJ
+         HezyYfGQmGY4AlYrySrGx79XyKNc3bB8l5no+TI7ON7j3YFOp0p6Fb6ikkDrOueYiass
+         Uoxw==
+X-Gm-Message-State: APt69E1plFBIaOb/WZ4NR8mjmfvoPzdAhkTDSsYZBmb9eKL/0E46+3cq
+        Jg3m+f+gHfxo3lpuS20rL/0=
+X-Google-Smtp-Source: AAOMgpd8gCIV0z8qZ0FEg5R8GmLCKQafWcVgKquw59gcKyYOf1Li3w7mKJjGOe9aZK4vGvdm0T9ZXg==
+X-Received: by 2002:a1c:8206:: with SMTP id e6-v6mr8258892wmd.24.1530189168083;
+        Thu, 28 Jun 2018 05:32:48 -0700 (PDT)
+Received: from xux707-tw ([109.77.208.206])
+        by smtp.gmail.com with ESMTPSA id n14-v6sm7482487wrm.23.2018.06.28.05.32.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Jun 2018 05:32:47 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 13:32:41 +0100
+From:   John Whitmore <arigead@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: Re: [PATCH v3 5/8] staging: rtl8192u: Use %s and __func__ instead of
+ hardcoded string - Style
+Message-ID: <20180628123239.xqv3lb3bqos467z6@xux707-tw>
+References: <20180624153454.27356-1-johnfwhitmore@gmail.com>
+ <20180624153454.27356-6-johnfwhitmore@gmail.com>
+ <20180626035624.GA26173@kroah.com>
+ <20180627202248.mvohkxjhwsv5hcn6@xux707-tw>
+ <20180628073828.hur7njmsstg2jwvx@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628073828.hur7njmsstg2jwvx@mwanda>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maarten,
+On Thu, Jun 28, 2018 at 10:38:28AM +0300, Dan Carpenter wrote:
+> On Wed, Jun 27, 2018 at 09:22:50PM +0100, John Whitmore wrote:
+> > On Tue, Jun 26, 2018 at 11:56:24AM +0800, Greg KH wrote:
+> > > On Sun, Jun 24, 2018 at 04:34:51PM +0100, John Whitmore wrote:
+> > > > Changed a number of hard coded function names to use %s and __func__
+> > > > 
+> > > > Mailing list response suggest that there is a better method for debugging
+> > > > using netdev_dbg(). I can't argue with that, but for the moment this change
+> > > > will clear the checkpatch.pl Warning.
+> > > > 
+> > > > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > > > ---
+> > > >  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
+> > > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > > 
+> > > Did not apply :(
+> > 
+> > No worries, can I just ask is that because it should be changed to use
+> > netdev_dbg as was suggested? And should that be across the whole file?
+> 
+> "Does not apply" means you save the raw email to email.txt then download
+> the latest code from
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+> then `cat email.txt | git am` and it fails.
+> 
+> Probably someone else's patch was merged ahead of yours.  Fix it up and
+> then resend.
+> 
+> regards,
+> dan carpenter
 
-On Thu, 2018-06-28 at 10:31 +0200, Maarten Lankhorst wrote:
-> Op 27-06-18 om 23:25 schreef Enric Balletbo i Serra:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > 
-> > This flag tells core to jump ahead the queued update if the
-> > conditions
-> > in drm_atomic_async_check() are met. That means we are only able to
-> > do an
-> > async update if no modeset is pending and update for the same plane
-> > is
-> > not queued.
-> > 
-> > It uses the already in place infrastructure for async updates.
-> > 
-> > It is useful for cursor updates and async PageFlips over the atomic
-> > ioctl, otherwise in some cases updates may be delayed to the point
-> > the
-> > user will notice it.
-> > 
-> > DRM_MODE_ATOMIC_ASYNC_UPDATE should be passed to the Atomic IOCTL
-> > to use
-> > this feature.
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com
-> > >
-> > ---
-> > Hi,
-> > 
-> > This is an attempt to introduce the new ASYNC_UPDATE flag for
-> > atomic
-> > operations, see the commit message for a more detailed description.
-> > 
-> > To test this patch we have created an IGT test that we plan to send
-> > to
-> > the ML but also was tested using a small program that exercises the
-> > uAPI
-> > for easy sanity testing. The program created by Alexandros can be
-> > found here
-> > [2]. To test, just build the program and use the --atomic flag to
-> > use the
-> > cursor plane in normal (blocking mode), and --atomic-async to use
-> > the cursor
-> > plane with the ASYNC_UPDATE flag.E.g.
-> > 
-> >   drm_cursor --atomic
-> > 
-> > or
-> > 
-> >   drm_cursor --atomic-async
-> > 
-> > The test worked on a Samsung Chromebook Plus on top of mainline
-> > plus
-> > the patch to update cursors asynchronously through atomic for the
-> > drm/rockchip driver [3].
-> > 
-> > Alexandros also did a proof-of-concept to use this flag and draw
-> > cursors
-> > using atomic if possible on ozone [1].
-> > 
-> > Best regards,
-> >  Enric
-> > 
-> > [1] https://chromium-review.googlesource.com/c/chromium/src/+/10927
-> > 11
-> > [2] https://gitlab.collabora.com/alf/drm-cursor
-> > [3] https://patchwork.kernel.org/patch/10492693/
-> > 
-> > 
-> >  drivers/gpu/drm/drm_atomic.c        | 6 ++++++
-> >  drivers/gpu/drm/drm_atomic_helper.c | 9 ++++++---
-> >  include/uapi/drm/drm_mode.h         | 4 +++-
-> >  3 files changed, 15 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_atomic.c
-> > b/drivers/gpu/drm/drm_atomic.c
-> > index c825c76edc1d..15b799f46982 100644
-> > --- a/drivers/gpu/drm/drm_atomic.c
-> > +++ b/drivers/gpu/drm/drm_atomic.c
-> > @@ -80,6 +80,7 @@ drm_atomic_state_init(struct drm_device *dev,
-> > struct drm_atomic_state *state)
-> >  	 * setting this appropriately?
-> >  	 */
-> >  	state->allow_modeset = true;
-> > +	state->async_update = true;
-> 
-> Do we really want this by default?
-> 
-> Wouldn't it make more sense to only enable it if userspace requests
-> it?
+Thank you for that. I read the sentence and filled in my own pronoun as there
+wasn't one :( So I read it as "I did not apply" rather then "it did not
+apply". That's great that 'it' did not apply, thought I'd done something
+wrong. I'll have another crack at it later if I get a chance.
 
-This value is rewritten when we check for the ASYNC_UPDATE flag, so it 
-disable by default. I guess this line could be removed then.
+Once again thanks
 
-> >  
-> >  	state->crtcs = kcalloc(dev->mode_config.num_crtc,
-> >  			       sizeof(*state->crtcs), GFP_KERNEL);
-> > @@ -2320,6 +2321,10 @@ int drm_mode_atomic_ioctl(struct drm_device
-> > *dev,
-> >  			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
-> >  		return -EINVAL;
-> >  
-> > +	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
-> > +			(arg->flags &
-> > DRM_MODE_ATOMIC_ASYNC_UPDATE))
-> > +		return -EINVAL;
-> > +
-> >  	drm_modeset_acquire_init(&ctx,
-> > DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
-> >  
-> >  	state = drm_atomic_state_alloc(dev);
-> 
-> We should probably move it to be a flag only enabled when requested,
-> and reject with the error returned by drm_atomic_helper_async_check()
-> when things fail.
-> 
-> ~Maarten
-> > @@ -2328,6 +2333,7 @@ int drm_mode_atomic_ioctl(struct drm_device
-> > *dev,
-> >  
-> >  	state->acquire_ctx = &ctx;
-> >  	state->allow_modeset = !!(arg->flags &
-> > DRM_MODE_ATOMIC_ALLOW_MODESET);
-> > +	state->async_update = !!(arg->flags &
-> > DRM_MODE_ATOMIC_ASYNC_UPDATE);
-> >  
-> >  retry:
-> >  	plane_mask = 0;
-> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> > b/drivers/gpu/drm/drm_atomic_helper.c
-> > index c35654591c12..aeb0523d3bcf 100644
-> > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > @@ -891,7 +891,7 @@ int drm_atomic_helper_check(struct drm_device
-> > *dev,
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	if (state->legacy_cursor_update)
-> > +	if (state->async_update || state->legacy_cursor_update)
-> >  		state->async_update =
-> > !drm_atomic_helper_async_check(dev, state);
-> >  
-> >  	return ret;
-> > @@ -1526,13 +1526,16 @@ int drm_atomic_helper_async_check(struct
-> > drm_device *dev,
-> >  	if (new_plane_state->fence)
-> >  		return -EINVAL;
-> >  
-> > +	/* Only do an async update if there is a pending commit.
-> > */
-> > +	if (!old_plane_state->commit)
-> > +		return -EINVAL;
-> > +
-> >  	/*
-> >  	 * Don't do an async update if there is an outstanding
-> > commit modifying
-> >  	 * the plane.  This prevents our async update's changes
-> > from getting
-> >  	 * overridden by a previous synchronous update's state.
-> >  	 */
-> > -	if (old_plane_state->commit &&
-> > -	    !try_wait_for_completion(&old_plane_state->commit-
-> > >hw_done))
-> > +	if (!try_wait_for_completion(&old_plane_state->commit-
-> > >hw_done))
-> >  		return -EBUSY;
-> >  
-> >  	return funcs->atomic_async_check(plane, new_plane_state);
-> > diff --git a/include/uapi/drm/drm_mode.h
-> > b/include/uapi/drm/drm_mode.h
-> > index 50bcf4214ff9..772e84f0edeb 100644
-> > --- a/include/uapi/drm/drm_mode.h
-> > +++ b/include/uapi/drm/drm_mode.h
-> > @@ -718,13 +718,15 @@ struct drm_mode_destroy_dumb {
-> >  #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
-> >  #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
-> >  #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
-> > +#define DRM_MODE_ATOMIC_ASYNC_UPDATE  0x0800
-> >  
-> >  #define DRM_MODE_ATOMIC_FLAGS (\
-> >  		DRM_MODE_PAGE_FLIP_EVENT |\
-> >  		DRM_MODE_PAGE_FLIP_ASYNC |\
-> >  		DRM_MODE_ATOMIC_TEST_ONLY |\
-> >  		DRM_MODE_ATOMIC_NONBLOCK |\
-> > -		DRM_MODE_ATOMIC_ALLOW_MODESET)
-> > +		DRM_MODE_ATOMIC_ALLOW_MODESET |\
-> > +		DRM_MODE_ATOMIC_ASYNC_UPDATE)
-> >  
-> >  struct drm_mode_atomic {
-> >  	__u32 flags;
-> 
-> 
--- 
-Gustavo Padovan
-Collabora Ltd.
+John Whitmore
