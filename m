@@ -3,141 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.6 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2FDC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5165EC43145
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BB827823
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:05:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BB827823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1762B27823
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1762B27823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968037AbeF1TDw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:03:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40176 "EHLO mx1.suse.de"
+        id S1754696AbeF1TFm (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:05:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40604 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S968009AbeF1TDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:03:48 -0400
+        id S968034AbeF1TDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:03:53 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7CA7ADA0;
-        Thu, 28 Jun 2018 19:03:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F00371E3C15; Thu, 28 Jun 2018 11:17:43 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 11:17:43 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
-References: <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <20180626134757.GY28965@dhcp22.suse.cz>
- <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
- <20180627113221.GO32348@dhcp22.suse.cz>
- <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
- <20180627115927.GQ32348@dhcp22.suse.cz>
- <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
- <20180627145718.GB20171@ziepe.ca>
- <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
- <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E46C8AD06;
+        Thu, 28 Jun 2018 19:03:49 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 12:54:04 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] printk: Deadlock in NMI regression
+Message-ID: <20180628105404.stnlihwzfgpsrl4f@pathway.suse.cz>
+References: <20180627140817.27764-1-pmladek@suse.com>
+ <20180628023902.GE481@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180628023902.GE481@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 27-06-18 19:42:01, John Hubbard wrote:
-> On 06/27/2018 10:02 AM, Jan Kara wrote:
-> > On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
-> >> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
-> >>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
-> >>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
-> >>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
-> >>>> [...]
-> >>>>>> Appart from that, do we really care about 32b here? Big DIO, IB users
-> >>>>>> seem to be 64b only AFAIU.
-> >>>>>
-> >>>>> IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
-> >>>>> kernel even for uncommon platforms...
-> >>>>
-> >>>> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
-> >>>> wanted to say that we can stay with a simple solution for 32b. I thought
-> >>>> the g-u-p-longterm has plugged the most obvious breakage already. But
-> >>>> maybe I just misunderstood.
-> >>>
-> >>> Most yes, but if you try hard enough, you can still trigger the oops e.g.
-> >>> with appropriately set up direct IO when racing with writeback / reclaim.
-> >>
-> >> gup longterm is only different from normal gup if you have DAX and few
-> >> people do, which really means it doesn't help at all.. AFAIK??
+On Thu 2018-06-28 11:39:02, Sergey Senozhatsky wrote:
+> On (06/27/18 16:08), Petr Mladek wrote:
 > > 
-> > Right, what I wrote works only for DAX. For non-DAX situation g-u-p
-> > longterm does not currently help at all. Sorry for confusion.
-> > 
+> >  kernel/printk/printk.c      | 57 +++++++++++++++++++++++++++-----------------
+> >  kernel/printk/printk_safe.c | 58 +++++++++++++++++++++++++++++----------------
 > 
-> OK, I've got an early version of this up and running, reusing the page->lru
-> fields. I'll clean it up and do some heavier testing, and post as a PATCH v2.
+> Shall we just merge these two?
 
-Cool.
+Do you mean to merge files or the patches, please?
 
-> One question though: I'm still vague on the best actions to take in the
-> following functions:
-> 
->     page_mkclean_one
->     try_to_unmap_one
-> 
-> At the moment, they are both just doing an evil little early-out:
-> 
-> 	if (PageDmaPinned(page))
-> 		return false;
-> 
-> ...but we talked about maybe waiting for the condition to clear, instead?
-> Thoughts?
+I would prefer to keep it as is in both cases.
 
-What needs to happen in page_mkclean() depends on the caller. Most of the
-callers really need to be sure the page is write-protected once
-page_mkclean() returns. Those are:
+The printk code could deserve a clean up but I would rather
+split it into more files than the opposite.
 
-  pagecache_isize_extended()
-  fb_deferred_io_work()
-  clear_page_dirty_for_io() if called for data-integrity writeback - which
-    is currently known only in its caller (e.g. write_cache_pages()) where
-    it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
-    information into page_mkclean() will require some plumbing and
-    clear_page_dirty_for_io() has some 50 callers but it's doable.
-
-clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
-WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
-otherwise memory cleaning would get stuck on pinned pages until RDMA
-drivers release its pins.
-
-> And if so, does it sound reasonable to refactor wait_on_page_bit_common(),
-> so that it learns how to wait for a bit that, while inside struct page, is
-> not within page->flags?
-
-wait_on_page_bit_common() and associated wait queue handling is a fast path
-so we should not make it slower for such special case as waiting for DMA
-pin. OTOH we could probably refactor most of the infrastructure to take
-pointer to word with flags instead of pointer to page. I'm not sure how the
-result will look like but it's probably worth a try.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best Regards,
+Petr
