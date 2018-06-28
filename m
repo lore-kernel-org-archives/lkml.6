@@ -2,178 +2,73 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4B0C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAADC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 452C126C4B
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452C126C4B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id A935426C72
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A935426C72
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeF1EuU convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:50:20 -0400
-Received: from mailoutvs12.siol.net ([185.57.226.203]:38710 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932131AbeF1EuS (ORCPT
+        id S933028AbeF1Eum (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 00:50:42 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45232 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932131AbeF1Euk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:50:18 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id B1DCA52076D;
-        Thu, 28 Jun 2018 06:50:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id sA3p3Wh25wn0; Thu, 28 Jun 2018 06:50:16 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id DCED65207A5;
-        Thu, 28 Jun 2018 06:50:15 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 02F8D52076D;
-        Thu, 28 Jun 2018 06:50:14 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
-Date:   Thu, 28 Jun 2018 06:48:50 +0200
-Message-ID: <1812731.FQOhD8MfmX@jernej-laptop>
-In-Reply-To: <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-11-jernej.skrabec@siol.net> <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 28 Jun 2018 00:50:40 -0400
+Received: from localhost (unknown [211.196.191.92])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 484D312163CC5;
+        Wed, 27 Jun 2018 21:50:37 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 13:50:35 +0900 (KST)
+Message-Id: <20180628.135035.1675371432262099147.davem@davemloft.net>
+To:     alexandre.belloni@bootlin.com
+Cc:     rafalo@cadence.com, nicolas.ferre@microchip.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: macb: initialize bp->queues[0].bp for
+ at91rm9200
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180626084401.16780-1-alexandre.belloni@bootlin.com>
+References: <20180626084401.16780-1-alexandre.belloni@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 27 Jun 2018 21:50:40 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne četrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Current "old" method to find engine worked pretty well for DE2. However,
-> > it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
-> > TOP has multiple input ports, but current engine search algorithm
-> > expects only one.
-> > 
-> > This can be fixed by first looking for output port id and selecting
-> > matching input by subtracting 1 for the next round. This work even if
-> > there is only one input and output.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
-> >  1 file changed, 18 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..264bcc43da11
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device
-> > *dev,
-> > 
-> >   */
-> >  
-> >  static struct sunxi_engine *
-> >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
-> > 
-> > -                               struct device_node *node)
-> > +                               struct device_node *node,
-> > +                               u32 port_id)
-> > 
-> >  {
-> >  
-> >         struct device_node *port, *ep, *remote;
-> >         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
-> > 
-> > +       u32 reg = 0;
-> > 
-> > -       port = of_graph_get_port_by_id(node, 0);
-> > +       port = of_graph_get_port_by_id(node, port_id);
-> > 
-> >         if (!port)
-> >         
-> >                 return ERR_PTR(-EINVAL);
-> > 
-> > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv
-> > *drv,
-> > 
-> >                 if (remote == engine->node)
-> >                 
-> >                         goto out_put_remote;
-> > 
-> > +       /*
-> > +        * According to device tree binding input ports have even id
-> > +        * number and output ports have odd id. Since component with
-> > +        * more than one input and one output (TCON TOP) exits, correct
-> > +        * remote input id has to be calculated by subtracting 1 from
-> > +        * remote output id. If this for some reason can't be done, 0
-> > +        * is used as input port id.
-> > +        */
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Tue, 26 Jun 2018 10:44:01 +0200
+
+> The macb driver currently crashes on at91rm9200 with the following trace:
 > 
-> You need to call
+> Unable to handle kernel NULL pointer dereference at virtual address 00000014
+> [...]
+> [<c031da44>] (macb_rx_desc) from [<c031f2bc>] (at91ether_open+0x2e8/0x3f8)
+> [<c031f2bc>] (at91ether_open) from [<c041e8d8>] (__dev_open+0x120/0x13c)
+> [<c041e8d8>] (__dev_open) from [<c041ec08>] (__dev_change_flags+0x17c/0x1a8)
+> [<c041ec08>] (__dev_change_flags) from [<c041ec4c>] (dev_change_flags+0x18/0x4c)
+> [<c041ec4c>] (dev_change_flags) from [<c07a5f4c>] (ip_auto_config+0x220/0x10b0)
+> [<c07a5f4c>] (ip_auto_config) from [<c000a4fc>] (do_one_initcall+0x78/0x18c)
+> [<c000a4fc>] (do_one_initcall) from [<c0783e50>] (kernel_init_freeable+0x184/0x1c4)
+> [<c0783e50>] (kernel_init_freeable) from [<c0574d70>] (kernel_init+0x8/0xe8)
+> [<c0574d70>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
 > 
->     of_node_put(port);
+> Solve that by initializing bp->queues[0].bp in at91ether_init (as is done
+> in macb_init).
 > 
-> to drop the reference to the original port.
+> Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Thanks for noticing it. I guess I should send fix patch, since patches from 
-drm-misc-next can't be dropped.
-
-Best regards,
-Jernej
-
-> Otherwise,
-> 
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> 
-> > +       port = of_graph_get_remote_port(ep);
-> > +       if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
-> > +               reg -= 1;
-> > +
-> > 
-> >         /* keep looking through upstream ports */
-> > 
-> > -       engine = sun4i_tcon_find_engine_traverse(drv, remote);
-> > +       engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
-> > 
-> >  out_put_remote:
-> >         of_node_put(remote);
-> > 
-> > @@ -950,7 +964,7 @@ static struct sunxi_engine
-> > *sun4i_tcon_find_engine(struct sun4i_drv *drv,> 
-> >         /* Fallback to old method by traversing input endpoints */
-> >         of_node_put(port);
-> > 
-> > -       return sun4i_tcon_find_engine_traverse(drv, node);
-> > +       return sun4i_tcon_find_engine_traverse(drv, node, 0);
-> > 
-> >  }
-> >  
-> >  static int sun4i_tcon_bind(struct device *dev, struct device *master,
-> > 
-> > --
-> > 2.18.0
-
-
-
-
+Applied and queued up for -stable.
