@@ -2,213 +2,206 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EBCC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65DD52563C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65DD52563C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 143CD258E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:09:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lO9pxHmI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143CD258E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeF1BHR (ORCPT
+        id S1752964AbeF1BJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 21:07:17 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40814 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751177AbeF1BHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 21:07:15 -0400
-X-UUID: 8bf21b70bb4843d4b8dcc843633bdfd5-20180628
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1778603653; Thu, 28 Jun 2018 09:07:11 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 28 Jun 2018 09:07:08 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 28 Jun 2018 09:07:09 +0800
-Message-ID: <1530148028.6193.9.camel@mtksdaap41>
-Subject: Re: [PATCH v21 4/4] soc: mediatek: Add Mediatek CMDQ helper
-From:   CK Hu <ck.hu@mediatek.com>
-To:     houlong wei <houlong.wei@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        Cawa Cheng =?UTF-8?Q?=28=E9=84=AD=E6=9B=84=E7=A6=A7=29?= 
-        <cawa.cheng@mediatek.com>,
-        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Damon Chu =?UTF-8?Q?=28=E6=9C=B1=E5=B3=BB=E8=B3=A2=29?= 
-        <Damon.Chu@mediatek.com>,
-        Josh-YC Liu =?UTF-8?Q?=28=E5=8A=89=E8=82=B2=E8=AA=A0=29?= 
-        <Josh-YC.Liu@mediatek.com>,
-        Glory Hung =?UTF-8?Q?=28=E6=B4=AA=E6=99=BA=E7=91=8B=29?= 
-        <glory.hung@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>
-Date:   Thu, 28 Jun 2018 09:07:08 +0800
-In-Reply-To: <1530099833.31725.7.camel@mhfsdcap03>
-References: <1517383693-25591-1-git-send-email-houlong.wei@mediatek.com>
-         <1517383693-25591-5-git-send-email-houlong.wei@mediatek.com>
-         <1519200345.8716.68.camel@mtksdaap41> <1530099833.31725.7.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 27 Jun 2018 21:09:53 -0400
+Received: from mail-eopbgr20051.outbound.protection.outlook.com ([40.107.2.51]:54720
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750946AbeF1BJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 21:09:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=enl/khcAOGu/25x6NiZTye0MKUOeQsgo/9cf+FcOlM0=;
+ b=lO9pxHmIXCkcfQxweEsUY78inKYQq4hX0bxeYor1/8RVdhqk1sEIIzXHyvMF+v9IOks3g9SMPzhx1LB//P+0Xlb8QHVzN9yIPdyD9uapLEYFIpuKmYj49W1kx/g5tCANEe3WhnTdRAAbSwoaeG5K/kI10PlefazFb0TiYZkKphU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ AM3PR04MB1316.eurprd04.prod.outlook.com (2a01:111:e400:586f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.23; Thu, 28 Jun
+ 2018 01:09:43 +0000
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] ARM: dts: imx6sll-evk: enable usdhc3 slot
+Date:   Thu, 28 Jun 2018 09:04:27 +0800
+Message-Id: <1530147867-24159-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: SG2PR02CA0029.apcprd02.prod.outlook.com
+ (2603:1096:3:18::17) To AM3PR04MB1316.eurprd04.prod.outlook.com
+ (2a01:111:e400:586f::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 694e20ad-59e6-49a0-e1c1-08d5dc93d708
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1316;
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1316;3:HEJ2G11I0R+Qjpdu3UBjybNXPM4pjenuPgMk4WdHl2E2wj859GxRq3E7g7jF8MEwtLYGuQWEhfpXelOvqjCB5OZipZoRO1QLuxJkvvmlbUc58Mxh3Z3ciXiB3FQBBWypkkhS0DR4QQgkKcsVxKutgYQCZAAJ6U3QB2TsU/iyN3vBCrKRK+Yaz/7OH2SLjSSuv9dNUg5TFsOhHtF7TKotRnjDSNxz8WlebcKKedtktSkvSAHqpTEo1gB/OEsyjLJ0;25:z4nrG5yxDot3Vinf9QIreBfs0+eP1fz07EnoX906HCquVI+5ORMMoX6IxR/VW+T8KJ4KW9L+oBnAOhy+Vpj8WERj9SgfTSoTjVakle8EwtVlzFiUSvw2Y0IZzjWgLz2VOiXaWP2vdO3sZE8AEgmGRkhDHBAfQgSBfFq6FrofzoEVyHZNqrT3K3XGBOnBRDeQoTd+R1jgUm1+Yh/4rMHZrCyTc/UkLQt9U0M4ROREXJRnFTcliOu1ImpracF7pQcMmBQG/R0+CaIEeOVLDq2s6JJgf7Ms3kIGIloLAW6xkNnAA7dIjYnV4sTU9VFgROqzdY9DaIEb3LvOJioTiQZyaA==;31:S32gBON7AWwySvVmZ29OIO6bVe/I+YGs5wSvdzB0h9pcZ5tVNSVbmdcYT4TKjeNS4+VkYWGgRqRKD9ghD5LORqC+SupLWurZQibv5nsUVji+7IctTLrIosfeI48XkyzI+l7YEPAUZlAguURjTmymD+aiSpBC/l0XsTzS4x8AC6XbQ6ezGEZd4oDpqCHZfnmJTmYJyWYEvtdrgfp0FG+JIur9d3OUFzCURDCCvgeRIuA=
+X-MS-TrafficTypeDiagnostic: AM3PR04MB1316:
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1316;20:9Dm2OqGBIgs6NgWTtwle5Ear4qRANsz+hhbAWP/8BkhWTnMdLOcz9yDf+FmL3UYuqdhOU9qPyHtGiKuC+7P0XkUN5SFOpVezA7bs27BdKBz6SHnCGDIUjJWlLT1GdchB9XjuJEO5y22lQW5s41KOO2eowf0KcaPMGaOBiqBRlhuVBFuTtlpSVjD5oh6xEUZh4K6JHyC0PfJVA8ZRNZhDpRuKRl5FxFHRyFFfZuTTfcamUwDN/s2a84PJijLOp67af9VXf146DjjqTa1QIu9n9fG/vdg79km2HXgTacvmt6hsGcXPVdSDHxl7qOshjq/Kqt931tZe143+vtXFbWMBLzloQu6Ixfvpd1NHR928JX0fuwYUZg+Co5y6fatRoQLjAj0FwxbvZPpuHk1xnSEu+1fot5YJzmrIJj48Sr3oEG9cBfP88cfvsfrYosvkchtxlV8a+ES5iNyVMv3RuZw+305vg8j6NlGYYKQ/2OuEojQLuZPpUy39rXgbYb9oHMRh;4:ywcrmuhMZAzUnOQKKUqbs9BbqIbNn+MEZhpDmFkRAkDDKcDEo0oGx2SUmVwlBDNZLze6uU+4sosEw6XbRnxjK+IUQozSEuaelxW0suGY2Ualud8EQCHog26kGOWr+6K08081KoMlx3GOBM9dKv2MiE7aT0EZLCi3vSAgsZyreRo1uTJ5OFnjpsz+Ho5pIJp/NrOH+63YwY6QbDoaJaLqH+2HMOD3SwAO7J+wdX7fWTvDQAeAgQa5g38im83Jl1gYsA+JtysMX2YFJ3TTdcwfdeOeQR9NR1Tkjjdj35/TJ9R9vIfjksC60hEcQxifTsKH
+X-Microsoft-Antispam-PRVS: <AM3PR04MB13166E31673E115DD4F01195F54F0@AM3PR04MB1316.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1316;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1316;
+X-Forefront-PRVS: 0717E25089
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(136003)(39860400002)(376002)(199004)(189003)(36756003)(2906002)(50466002)(48376002)(50226002)(81166006)(8676002)(81156014)(8936002)(4326008)(25786009)(53936002)(68736007)(14444005)(7736002)(305945005)(86362001)(97736004)(478600001)(51416003)(52116002)(26005)(186003)(106356001)(16526019)(6512007)(486006)(16586007)(316002)(6506007)(386003)(6486002)(5660300001)(3846002)(66066001)(47776003)(956004)(2616005)(105586002)(6116002)(476003)(6666003)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1316;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1316;23:TqcxoEGKIp/8IO8rxrLqIVJVDzFDKV9gikadwbni9?=
+ =?us-ascii?Q?mKi3ADCv/CZ9K/GwOT1nnfvJXhNevY9Bpvb8qQ8DntF8qA17ff5IUxGwHnc/?=
+ =?us-ascii?Q?iL1DjYt2CAhvPewBphUafN0bD2w9Joc5jbZnrEXgqSHHzi9tcJ7cEX91gHHc?=
+ =?us-ascii?Q?AgivYWmAhkAUF309t7p4vT5p/FMm41zpbv/OyGAp9DTlfhbfjluwdbFGNF7y?=
+ =?us-ascii?Q?BBOYiOThzdT9k4F8D1UMZWFjg2Rn1JMNB3ufzicp1RudIjXwRtrQ+Zo8Digj?=
+ =?us-ascii?Q?oaVV/Jk6f14xmHSVyutEA6CTPtdYKAraapTZCTNI8OT+/Mf90jhJ5YO+pSDC?=
+ =?us-ascii?Q?g/rmNM+4YYoLw0fsTtsaj8MPgUkAq31+lwKuqFz2yVI8JrfCp0sLfKo+cL7a?=
+ =?us-ascii?Q?oELl0SAlY00vg15lgdOkA/cRApKCcwx1mSiJy3zvVfWTPFyn57MiV8CI3iov?=
+ =?us-ascii?Q?4Ap+9xXV05RU8/Zn+ko7lA8kYsGQZMrRUsKgkc2ejZ1i1OZgRdOWTbVj1S/y?=
+ =?us-ascii?Q?gZihoe5Lt/hMjPOp4GRdYRVsFw2Evzh/mJyRLnWHxhTm5hmlWRe/EkGqFkF9?=
+ =?us-ascii?Q?bFf9YEhgK8hQqQChrZ+rW41ILIuN+Uiv/HDJp4FUtAZq6Lz92fNQieGmVseq?=
+ =?us-ascii?Q?RME6hRmMwDGeRHHoNajBUZzmvlWP6sYlEr1F+dIbHfwNugC0+0kdT+eLa99G?=
+ =?us-ascii?Q?uJ8CeCNncabb9mS7CKiYd+PGLq9fag/o4AcWZ1gKN2VJTZhGWqwSJbKyoSVP?=
+ =?us-ascii?Q?sR7GlhCATPcllsXWEw/ecvnc2FjZUEyE+Ddqx5+bkNbCVkjCZ3KtCH3c8iPs?=
+ =?us-ascii?Q?Jbn03615eb8LsXm923j71AVOfOw5bXnMVQ4sCSEhRZelWpsn1QfUwW5qa8aG?=
+ =?us-ascii?Q?dvcuSyrJKO4HI9B4YbGvZ2YkzNrlALrIFQML7XzfPCaatO7Izsc/pLDuCqEh?=
+ =?us-ascii?Q?0PNP3Ay7rtdgN+xaZPLeu7uB7FC0FYw//mD/a4mcmVUVkR2m8QgOY8mqHwgZ?=
+ =?us-ascii?Q?pQFw03q9NGKY5R+YyNYWEsbRrezc4As4oVhEMpdkx6o5/QIy+dUAr1qLWi46?=
+ =?us-ascii?Q?KL+duWDZgFp/YxXu/6ri6GOU4RMOaWt9Thn7yDi20LpNXf8+sNTzrv8OrFPP?=
+ =?us-ascii?Q?7MDh1Pb8xSQ4x1PpEmkFKbCtimYGBIwrJtsQOiU/xbfTNtvxJM+Eg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: ePEKZrgr7EXGAdF8tGRynb8S4oOplgzwc88o5/Zefd+qu0b0/vJJ/2iB1ejJBtz/uj1P7Fm26hOVgNpnGDavvv7KME+iAtn9S+2IVSliWQoQrn/mCgj2vWuoqxNJXgDa17VZPBgRm7086icet+UcxhP9X6iu2XyAnn6Ks98/cdPMs8b6O1jwzP1RMVGWw2nRiK752oLOj7UzuqDZtv1th4/mQgdAxrH880gCV87t7NjW69H/fqIgBupE73+LppY2TGVGUzYZzDl/YkosBTOkVPTnqn8gGtm3eztZr0w4t7xHour2Zb70fLjNIXSEpnPx1gigWiB4r2haM+bsCaWvoOC6n0aKYhDVKc7T4c5iyfY=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1316;6:07oDRI3oL8E493BE95vFf2ZI0a//Ze6WWX9JP6UiNOHPIyBM6NMyE8eVIqeq8MT/GSebHFyOLwzCNb6+pTtp+bAqEUGuYlnOQIRhs7+o+EGNhmnNUVC1w+27kVAROwr8QcKWk0ZH/Z8h+4Dy5WEGnCcFxjX4C2dycEACmo+R9PhnZBnuDBOfV4cjuJ5mgt2oxUBX97kGZwpvhfkJYlMzVyPoYTkxDPszW2uio1/jLRG3Dc65hwx9nOQEyH5+1A/HR8Ix7vRdQSViket0tJ/sqMiprbP023MPvLTflG9GNQTJwcuL/V7jvF+3t+eydKkjTEwXIVnC36N/zmsq5wUNW38QvzNKAbK6tGPWsg27pazjMKy+0Rz2A/IIA+5t4vrIv799vhejJefspPltvpjuIbEhwoMxi/uCxQWykAvh+jhAx6UVTBuDn3w2mZ0ibWuJSsb010zp/k5wo0lG7JTvUg==;5:I7LenqXUJ8ROPBXnVmgi+jKMUWuEwTas4Ws03A4ThL4bTd3XPzCd74blxKTO9iNYnwt2otrtXczcxKsKeAyIu1zGDMyOtojHjOmvYFzQkciI+HLHbukjBEwHLtSJPUDVrLlS9q+f9sEWISDj0wrB0k/bph4hmZ2rSsELW4DIWN4=;24:xFPQQahgflDABJUlX/CtxrWTf3Nh0bKPdTr12ybWYtA0y22y6oBcEE8vpGLTpajDdM7W370xTwCrQH60l2f/1PuWRGHbfunHkAmqfEHbvCc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1316;7:ssh2Buz0kagjpcpH63gikkg/K9jkBz/fj4qvXud2zTBxZHuGgPsqodLXGBguzOWzeOqjb923Sy604RYmqRxcLaFmbeeT2BKCGFtbjyQzHzT1VlsnOM85e7jo4IJbiD9J15IkCDcMGUh/glCcVAHbBYvK0MgHSXBQnClZu+WVu/FoAVnmB8A9NauneL7FkHt+BUog8KGoinPlMSHfLN7JkY1dbvG5ly1ubAE740RrSfyB0m+wi4rvhXII04am7meC
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2018 01:09:43.8134
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 694e20ad-59e6-49a0-e1c1-08d5dc93d708
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1316
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Houlong:
+On i.MX6SLL EVK board, SD3 slot can be used for
+WiFi and other SD accessories, enable it.
 
-On Wed, 2018-06-27 at 19:43 +0800, houlong wei wrote:
-> On Wed, 2018-02-21 at 16:05 +0800, CK Hu wrote:
-> > Hi, Houlong:
-> > 
-> > I've one more inline comment.
-> > 
-> > On Wed, 2018-01-31 at 15:28 +0800, houlong.wei@mediatek.com wrote:
-> > > From: "hs.liao@mediatek.com" <hs.liao@mediatek.com>
-> > > 
-> > > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
-> > > 
-> > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> > > ---
-> > >  drivers/soc/mediatek/Kconfig           |   12 ++
-> > >  drivers/soc/mediatek/Makefile          |    1 +
-> > >  drivers/soc/mediatek/mtk-cmdq-helper.c |  322 ++++++++++++++++++++++++++++++++
-> > >  include/linux/soc/mediatek/mtk-cmdq.h  |  174 +++++++++++++++++
-> > >  4 files changed, 509 insertions(+)
-> > >  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
-> > >  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
-> > > 
-> > > diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-> > > index a7d0667..e66582e 100644
-> > > --- a/drivers/soc/mediatek/Kconfig
-> > > +++ b/drivers/soc/mediatek/Kconfig
-> > > @@ -4,6 +4,18 @@
-> > >  menu "MediaTek SoC drivers"
-> > >  	depends on ARCH_MEDIATEK || COMPILE_TEST
-> > >  
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6sll-evk.dts | 65 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-[...]
-
-> > > +
-> > > +static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
-> > > +				   u32 arg_a, u32 arg_b)
-> > > +{
-> > > +	u64 *cmd_ptr;
-> > > +	int err;
-> > > +
-> > > +	if (WARN_ON(cmdq_pkt_is_finalized(pkt)))
-> > > +		return -EBUSY;
-> > > +	if (unlikely(pkt->cmd_buf_size + CMDQ_INST_SIZE > pkt->buf_size)) {
-> > > +		err = cmdq_pkt_realloc_cmd_buffer(pkt, pkt->buf_size << 1);
-> > 
-> > In your design, the command buffer is frequently allocated and freed.
-> > But client may not want this mechanism because it have penalty on CPU
-> > loading and may have risk of allocation failure. The client may
-> > pre-allocate the command buffer and reuse it. So it's better to let
-> > client decide which buffer management it want. That means cmdq helper do
-> > not allocate command buffer and do not reallocate it. The working flow
-> > would be:
-> > 
-> > For client that want to pre-allocate buffer:
-> > (1) Client pre-allocate a command buffer with a pre-calculated size.
-> > (Programmer should make sure that all command would not exceed this
-> > size)
-> > (2) Client use cmdq helper function to generate command in command
-> > buffer. If command buffer is full, helper still increase
-> > pkt->cmd_buf_size but do not write command into command buffer.
-> > (3) When client flush packet, cmdq helper could check whether
-> > pkt->cmd_buf_size is greater than pkt->buf_size, if so, return error and
-> > programmer should modify the pre-calculated size in step (1).
-> > (4) Wait for command done.
-> > (5) Set pkt->cmd_buf_size to zero and directly goto step (2) to reuse
-> > this command buffer.
-> > 
-> > For client that want to dynamically allocate buffer:
-> > (1) Client dynamically allocate a command buffer with a initial size,
-> > for example, 1024 bytes.
-> > (2) Client use cmdq helper function to generate command in command
-> > buffer. If command buffer is full, helper still increase
-> > pkt->cmd_buf_size but do not write command into command buffer.
-> > (3) When client flush packet, cmdq helper could check whether
-> > pkt->cmd_buf_size is greater than pkt->buf_size, if so, return error and
-> > client goto step (1) and reallocate a command buffer with pkt->buf_size.
-> > (4) Wait for command done.
-> > (5) Free the command buffer.
-> > 
-> > Because the reallocation is so complicated, for client that want to
-> > dynamically allocate buffer, the initial buffer size could also be
-> > pre-calculated that you need not to reallocate it. Once the buffer is
-> > full, programmer should also fix the accurate buffer size.
-> > 
-> > Regards,
-> > CK
-> > 
-> 
-> Hi CK, thanks for your explanation and suggestion. Currently, the cmdq
-> buffer is allocated in cmdq_pkt_create and its initial size is
-> PAGE_SIZE. In most case of display scenario, PAGE_SIZE(4096) bytes are
-> enough.
-> 
-
-You use the tern 'most' means you still need to consider the size over
-PAGE_SIZE. If in current application, PAGE_SIZE is enough for display, I
-think you still should remove this reallocation in the first patch
-because you need not to reallocation. Once the display need more than
-PAGE_SIZE, you send the another patch that support client to set the
-initial size. I think we should make the first patch as simple as
-possible, and you could add another patch to improve it.
-
-Regards,
-CK
-
-> > > +		if (err < 0)
-> > > +			return err;
-> > > +	}
-> > > +	cmd_ptr = pkt->va_base + pkt->cmd_buf_size;
-> > > +	(*cmd_ptr) = (u64)((code << CMDQ_OP_CODE_SHIFT) | arg_a) << 32 | arg_b;
-> > > +	pkt->cmd_buf_size += CMDQ_INST_SIZE;
-> > > +	return 0;
-> > > +}
-> > > +
-
-[...]
-> 
-> 
-
+diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-evk.dts
+index 2217c40..1a60c8d 100644
+--- a/arch/arm/boot/dts/imx6sll-evk.dts
++++ b/arch/arm/boot/dts/imx6sll-evk.dts
+@@ -84,6 +84,17 @@
+ 		gpio = <&gpio3 30 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++
++	reg_sd3_vmmc: regulator-sd3-vmmc {
++		compatible = "regulator-fixed";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_reg_sd3_vmmc>;
++		regulator-name = "SD3_WIFI";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3000000>;
++		gpio = <&gpio4 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &cpu0 {
+@@ -236,7 +247,25 @@
+ 	status = "okay";
+ };
+ 
++&usdhc3 {
++	pinctrl-names = "default", "state_100mhz", "state_200mhz";
++	pinctrl-0 = <&pinctrl_usdhc3>;
++	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
++	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
++	cd-gpios = <&gpio3 22 GPIO_ACTIVE_LOW>;
++	keep-power-in-suspend;
++	enable-sdio-wakeup;
++	vmmc-supply = <&reg_sd3_vmmc>;
++	status = "okay";
++};
++
+ &iomuxc {
++	pinctrl_reg_sd3_vmmc: sd3vmmcgrp {
++		fsl,pins = <
++			MX6SLL_PAD_KEY_COL6__GPIO4_IO04 0x17059
++		>;
++	};
++
+ 	pinctrl_usb_otg1_vbus: vbus1grp {
+ 		fsl,pins = <
+ 			MX6SLL_PAD_KEY_COL4__GPIO4_IO00 0x17059
+@@ -307,6 +336,42 @@
+ 		>;
+ 	};
+ 
++	pinctrl_usdhc3: usdhc3grp {
++		fsl,pins = <
++			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x17061
++			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x13061
++			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x17061
++			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x17061
++			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x17061
++			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x17061
++			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
++		>;
++	};
++
++	pinctrl_usdhc3_100mhz: usdhc3grp_100mhz {
++		fsl,pins = <
++			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x170a1
++			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x130a1
++			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x170a1
++			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x170a1
++			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x170a1
++			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x170a1
++			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
++		>;
++	};
++
++	pinctrl_usdhc3_200mhz: usdhc3grp_200mhz {
++		fsl,pins = <
++			MX6SLL_PAD_SD3_CMD__SD3_CMD		0x170e9
++			MX6SLL_PAD_SD3_CLK__SD3_CLK		0x130f9
++			MX6SLL_PAD_SD3_DATA0__SD3_DATA0		0x170e9
++			MX6SLL_PAD_SD3_DATA1__SD3_DATA1		0x170e9
++			MX6SLL_PAD_SD3_DATA2__SD3_DATA2		0x170e9
++			MX6SLL_PAD_SD3_DATA3__SD3_DATA3		0x170e9
++			MX6SLL_PAD_REF_CLK_32K__GPIO3_IO22	0x17059
++		>;
++	};
++
+ 	pinctrl_i2c1: i2c1grp {
+ 		fsl,pins = <
+ 			MX6SLL_PAD_I2C1_SCL__I2C1_SCL	 0x4001b8b1
+-- 
+2.7.4
 
