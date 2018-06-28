@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0907EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE33C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18642754D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37C0223C46
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:38:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Tho2VFEo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18642754D
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xW/y215G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C0223C46
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966910AbeF1OiS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:38:18 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41621 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966652AbeF1OdU (ORCPT
+        id S966917AbeF1Oim (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:38:42 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37491 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966620AbeF1OdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:33:20 -0400
-Received: by mail-wr0-f194.google.com with SMTP id h10-v6so5751856wrq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:33:19 -0700 (PDT)
+        Thu, 28 Jun 2018 10:33:15 -0400
+Received: by mail-wm0-f66.google.com with SMTP id n17-v6so8802901wmh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zArp1LhynJj6PtR0vOEIzjnAxQ8D1ftfqwxGbTe1BC8=;
-        b=Tho2VFEoma3gScYSolCFaegTDcAIdusxa2EyCbSnryNnBYTkvc3NpDVGCVjQQ2PGAY
-         ULGBFNug8kWtxZJRj90BdRMzf6Mvlad8HUo+8D3+5shfUxzmQIx2p2K79apVTIueBa9d
-         aOXBePlopH3HMkhdrt2LkH0xAZNNxUymq/E8kUaEj+QCJBeRqf0Y7gvT3pY1fLldJIKY
-         FTh+SV3eu3oG+WlwUMzG6Bj+As5XJvCBsgOl87Fh76guefu1RyMLFFieCdaNAlPwCeL2
-         2DwX3Mq7UzagZ0YDkuQTNl80rhpAUFtxrFgndhbpmUKyVgRUv1bh19dbVjoaduMS6or3
-         FQEQ==
+        bh=8vikMWRVd5RpNbpIMgIoO4AUKuTDf/0imXwnHOpRp0w=;
+        b=xW/y215GlSBadHN52RnfIpsFowaA1AI0wsrYAd7ssAs+XAt3SSS0AtIxNA7IMBofdS
+         guk1tabXrUU0w27ZnC+x++nmXHrVRZx/WDmokp3NGwn/+LM9Xq+7BFw+K5+8hq5Cryix
+         SIRRrNzVSsvM/KDcB4p5jiUEhdmWrrBd9QFEg3CEfia7IoT22uZGPSWp7uhiKS4kOg3K
+         VbIMtOENoa4e/pztNfk4fhIjPZiwHEe+IaRjnlo1LVOdc89APsA6koluAWMrHT6VD1FV
+         pOMrchLXuZ4MebN4+TeIBeXNYBICuB3LnMLF1yJ7fZEi+RvltYw+xY/HEKvPRvxSRlec
+         CUBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zArp1LhynJj6PtR0vOEIzjnAxQ8D1ftfqwxGbTe1BC8=;
-        b=aFay5opMcJx7rWj+Alw3dYlT2FsZqim5W6TCxFkccC75yqESsAmNsH84fK0V20B4/N
-         Gbf6/rYMFyive4AeI5/nEQ5DHy+cFRgT1AlOOmex+NqOYo6V41/+1/cn59w+D9Ik2qpD
-         1qWxiYIOgYUohn4OvZhLEFRcW4dxuJCD1+twW2yhF130vKeRzQQnaxdk6xB7s5LzSRJO
-         DugP6JsLIyBQpaVUoshm2MSnv2asvVtnYdCZ1tDMYEsQNcsLZnvnjw6MJf2jigNbdFLk
-         wqWRkHGDDE6tgUQpZD5PoFWLUHt40Ybxx/hJ67rhrJxjDXrpe4rOz4D3Kyd2MONRKHyO
-         oF/w==
-X-Gm-Message-State: APt69E1mM6/PwrGHNkT3XMgcHxOyM0gPK+cRInv0P7cOkWTQNG/XjL+j
-        IjTYtS0ydJ0lG74tJ+t6JFMOGg==
-X-Google-Smtp-Source: AAOMgpferG7vInksNBqhlY07+BTByLC8v82b1odTpS39rwpuYeArbh8M1LBoj1wWwfwtvwXArHAa1w==
-X-Received: by 2002:adf:ba8c:: with SMTP id p12-v6mr2223104wrg.139.1530196399185;
-        Thu, 28 Jun 2018 07:33:19 -0700 (PDT)
+        bh=8vikMWRVd5RpNbpIMgIoO4AUKuTDf/0imXwnHOpRp0w=;
+        b=tcUuyPv4bPgOzXn+xSyAh4dh9TL/sSeWtqL3oRF55QfLcQLjKrO1RTI0hBit0uu4Rr
+         5nLvgt0RqGkhqaRR8+a+dOlov3qeSu7nC/f4gHDvo0nkP89sVmrJKm+gkAnyLS821ZWj
+         DhY6f4QDGYHQvUMyOHSakz55I0C4Qzerw4+aIyl9IfSm0d1Oj23I93zzBPSU+hfqF/d0
+         QRTJ3BhAF2pBsREp0xKa/Re80k71xHsaX6fV/BMUBRLZ6/L2e+G58CZDow0Yzda3P+kr
+         kbnmz5sQ0xG8ewavyxfsRGCyYwiCvsJML86fU0R8SaiM3MWgZwvrQtkQrLvh1BildAOf
+         vPYQ==
+X-Gm-Message-State: APt69E0GzCAOo9/LwhwnVPLQXUFBrtT1400FW4BmFxFpqEBbMqM3EhVn
+        NfFbpfEFXM1YhW6CZuBz5ULG8g==
+X-Google-Smtp-Source: AAOMgpcfZ88YhmHAEgyRsx1BLSKtfKtajgjhIpDDixA+zBfo2tdRB0/AqAgmuqqPDCTYzdYfgUhXvA==
+X-Received: by 2002:a1c:7d47:: with SMTP id y68-v6mr1935224wmc.62.1530196393996;
+        Thu, 28 Jun 2018 07:33:13 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-87-41.w90-86.abo.wanadoo.fr. [90.86.29.41])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm8037499wmh.14.2018.06.28.07.33.17
+        by smtp.gmail.com with ESMTPSA id 4-v6sm8037499wmh.14.2018.06.28.07.33.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 07:33:18 -0700 (PDT)
+        Thu, 28 Jun 2018 07:33:13 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -72,9 +72,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 08/18] net: davinci_emac: potentially get the MAC address from MTD
-Date:   Thu, 28 Jun 2018 16:32:34 +0200
-Message-Id: <20180628143244.4561-9-brgl@bgdev.pl>
+Subject: [PATCH v3 04/18] ARM: davinci: dm644-evm: use nvmem lookup for mac address
+Date:   Thu, 28 Jun 2018 16:32:30 +0200
+Message-Id: <20180628143244.4561-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628143244.4561-1-brgl@bgdev.pl>
 References: <20180628143244.4561-1-brgl@bgdev.pl>
@@ -85,60 +85,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On da850-evm board we can read the MAC address from MTD. It's currently
-done in the relevant board file, but we want to get rid of all the MAC
-reading callbacks from the board file (SPI and NAND). Move the reading
-of the MAC address from SPI to the emac driver's probe function.
+We now support nvmem lookups for machine code. Add a lookup for
+mac-address.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/net/ethernet/ti/davinci_emac.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index a1a6445b5a7e..17cfe093b8cf 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -67,7 +67,7 @@
- #include <linux/of_irq.h>
- #include <linux/of_net.h>
- #include <linux/mfd/syscon.h>
--
-+#include <linux/mtd/mtd.h>
- #include <asm/irq.h>
- #include <asm/page.h>
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 48436f74fd71..6d35c6e1b0bd 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -28,6 +28,7 @@
+ #include <linux/v4l2-dv-timings.h>
+ #include <linux/export.h>
+ #include <linux/leds.h>
++#include <linux/nvmem-provider.h>
  
-@@ -1783,7 +1783,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 	struct cpdma_params dma_params;
- 	struct clk *emac_clk;
- 	unsigned long emac_bus_frequency;
--
-+#ifdef CONFIG_MTD
-+	size_t mac_addr_len;
-+	struct mtd_info *mtd;
-+#endif /* CONFIG_MTD */
+ #include <media/i2c/tvp514x.h>
  
- 	/* obtain emac clock from kernel */
- 	emac_clk = devm_clk_get(&pdev->dev, NULL);
-@@ -1815,6 +1818,18 @@ static int davinci_emac_probe(struct platform_device *pdev)
- 		goto err_free_netdev;
- 	}
+@@ -476,6 +477,15 @@ static struct pcf857x_platform_data pcf_data_u35 = {
+  *  - ... newer boards may have more
+  */
  
-+#ifdef CONFIG_MTD
-+	mtd = get_mtd_device_nm("MAC-Address");
-+	if (!IS_ERR(mtd)) {
-+		rc = mtd_read(mtd, 0, ETH_ALEN,
-+			      &mac_addr_len, priv->mac_addr);
-+		if (rc == 0)
-+			dev_info(&pdev->dev,
-+				 "Read MAC addr from SPI Flash: %pM\n",
-+				 priv->mac_addr);
-+	}
-+#endif /* CONFIG_MTD */
++static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
++	.info = {
++		.name = "mac-address",
++		.offset = 0x7f00,
++		.bytes = ETH_ALEN,
++	},
++	.nvmem_name = "1-00500",
++};
 +
- 	/* MAC addr and PHY mask , RMII enable info from platform_data */
- 	memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
- 	priv->phy_id = pdata->phy_id;
+ static struct at24_platform_data eeprom_info = {
+ 	.byte_len	= (256*1024) / 8,
+ 	.page_size	= 64,
+@@ -828,6 +838,8 @@ static __init void davinci_evm_init(void)
+ 		phy_register_fixup_for_uid(LXT971_PHY_ID, LXT971_PHY_MASK,
+ 						davinci_phy_fixup);
+ 	}
++
++	nvmem_add_lookup_table(&dm6446evm_mac_address_cell, 1);
+ }
+ 
+ MACHINE_START(DAVINCI_EVM, "DaVinci DM644x EVM")
 -- 
 2.17.1
 
