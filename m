@@ -2,114 +2,107 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A17C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54E0C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC940214FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC940214FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 88F89274F1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:26:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dkJLDRbu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F89274F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966562AbeF1OYV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:24:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:60155 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966209AbeF1OYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:24:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 07:24:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,283,1526367600"; 
-   d="scan'208";a="52604005"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga007.jf.intel.com with ESMTP; 28 Jun 2018 07:24:00 -0700
-Date:   Thu, 28 Jun 2018 07:23:22 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 04/16] x86/split_lock: Use non locked bit set
- instruction in set_cpu_cap
-Message-ID: <20180628142322.GK18979@romley-ivt3.sc.intel.com>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-5-git-send-email-fenghua.yu@intel.com>
- <20180621195540.GC13636@worktop.programming.kicks-ass.net>
- <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806280945120.1778@nanos.tec.linutronix.de>
+        id S966577AbeF1O0A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:26:00 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55205 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966544AbeF1OZ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 10:25:58 -0400
+Received: by mail-it0-f67.google.com with SMTP id 76-v6so13025225itx.4
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pIpRE23Jo8lCpy0akrfwdryZmfg17rZQVqrESoRafHs=;
+        b=dkJLDRbuObycZ1Q1YuDccxgfxRSxxVlk1Siuo9QNanVnwUrOPoQGZ4kNpgqgoDu5/s
+         4ygnL3Gy890wABbXOChwdn98teH24XHM/lT4REvIN6MjB0IbxUpPATv/oUrN6H+z8bR0
+         fiDDm/xNku+/RXAs1Fb9DtmP5CWsto0q9xW0s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pIpRE23Jo8lCpy0akrfwdryZmfg17rZQVqrESoRafHs=;
+        b=WulOm91LqTbgveUGDyVH7tvwmcx7BXfiYeI98uBASmWBGMu67kY0Ns6lT6iTXFGDaZ
+         tvVfWVNWxjh5vGXEdEXUm7EmMYsiaI/IRJLzRrLW5hAb5nsUuH9JTmsIQUlSLI9EdPmb
+         Byux59ASuPjCrb84K1aHVXG6JlKNCyJAHLlVweruRDeZ1XDwJp9ygrcL0zG2NRbPYOwb
+         aicuxoevMqbwzN7vbs8x0ozVOrFi9ASRWqW7iih5dVN+EgU12PVTJ8oK2t0GX8phRxHR
+         nszrnSB9sjI7TmskjVWN+Q2JJ8ksV0dO4biDJPbRDL+GV7DJ/m9O1+q+jTFq6+D0yHSB
+         gQmw==
+X-Gm-Message-State: APt69E2/absqprRNUWv/K18hPbqnr7Y2WFOQEkgh6c2uSm3C9YURyV3m
+        jKHPInmHlBFuuQ9nnL8Gdw9tc1YnrP9pn8g69bD83Q==
+X-Google-Smtp-Source: AAOMgpezOGZvR1GYEYuL+EIc1Jxe9LSYl+bQtUcz/sT4w7dINjvvrE/+oOKv0Qbu9cs8EtA0lNgpptLvRjPiJx9ZV0Y=
+X-Received: by 2002:a24:8989:: with SMTP id s131-v6mr8499845itd.70.1530195958224;
+ Thu, 28 Jun 2018 07:25:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806280945120.1778@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
+ <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+In-Reply-To: <20180622183129.GD3402@tuxbook-pro>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 28 Jun 2018 16:25:46 +0200
+Message-ID: <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 09:53:17AM +0200, Thomas Gleixner wrote:
-> On Wed, 27 Jun 2018, Fenghua Yu wrote:
-> > On Thu, Jun 21, 2018 at 09:55:40PM +0200, Peter Zijlstra wrote:
-> > > On Sun, May 27, 2018 at 08:45:53AM -0700, Fenghua Yu wrote:
-> > > > set_bit() called by set_cpu_cap() is a locked bit set instruction for
-> > > > atomic operation.
-> > > > 
-> > > > Since the c->x86_capability can span two cache lines depending on kernel
-> > > > configuration and building evnironment, the locked bit set instruction may
-> > > > cause #AC exception when #AC exception for split lock is enabled.
-> > > 
-> > > That doesn't make sense. Sure the bitmap may be longer, but depending on
-> > > if the argument is an immediate or not we either use a byte instruction
-> > > (which can never cross a cacheline boundary) or a 'word' aligned BTS.
-> > > And the bitmap really _should_ be 'unsigned long' aligned.
-> > > 
-> > > If it is not aligned, fix that too.
-> > > 
-> > > /me looks at cpuinfo_x86 and finds x86_capability is in fact a __u32
-> > > array.. see that's broken and needs fixing first.
-> > 
-> > Do you mean x86_capability's type should be changed from __u32 to unsigned
-> > long?
-> > 
-> > Changing x86_capability's type won't directly fix the split lock in
-> > set_cpu_cap(), right? BTS still may access x86_capability across cache
-> > line no matter x86_capability's type.
-> 
-> Errm. No.  BTS & al are accessing a single 64bit location which is
-> 
->    base_address + (bit_offset % 64) * 8
-> 
-> So if the base address is properly aligned then BTS & al will _NEVER_ have
-> to lock more than a single cache line. And it does not matter wheter we fix
-> the type or enforce 64bit alignement of the array by other means.
-> 
-> If that's not true then BTS & al are terminally broken and you can stop
-> working on #AC right away.
+On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
+> > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+> >
+> > > We rely on devices to use pinmuxing configurations in DT to select the
+> > > GPIO function (function 0) if they're going to use the gpio in GPIO
+> > > mode. Let's simplify things for driver authors by implementing
+> > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
+> > > function when the gpio is use from gpiolib.
+> > >
+> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >
+> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+(...)
+> While both patch 2 and 3 are convenient ways to get around the annoyance
+> of having to specify a pinmux state both patches then ends up relying on
+> some default pinconf state; which I think is bad.
 
-Is the following patch right fix for the x86_capability split lock issue
-(i.e. this patch replace patch 4 and 5)?
+Nothing stops you from setting up a default conf in
+this callback though.
 
--       __u32                   x86_capability[NCAPINTS + NBUGINTS];
-+       __u32                   x86_capability[NCAPINTS + NBUGINTS]
-+                               __aligned(8);
+But admittedly this call was added for simpler hardware.
 
-Thanks.
+> Further more in situations like i2c-qup (downstream), where the pins are
+> requested as gpios in order to "bitbang" a reset this would mean that
+> the driver has to counter the convenience; by either switching in the
+> default pinmux at the end of probe or postponing the gpio_request() to
+> the invocation of reset and then, after issuing the gpio_release,
+> switching in the default pinmux explicitly again.
 
--Fenghua
+That's a bigger problem. If the system is using device and GPIO
+mode orthogonally, it'd be good to leave like this.
+
+Yours,
+Linus Walleij
