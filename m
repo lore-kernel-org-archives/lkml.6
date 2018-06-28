@@ -2,165 +2,81 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90735C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A6BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526E024664
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526E024664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AA2CD27496
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:54:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeVARlrl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2CD27496
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966441AbeF1NyK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:54:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34166 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966365AbeF1NxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:53:24 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 247B15BCB6;
-        Thu, 28 Jun 2018 13:53:23 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D49620180F4;
-        Thu, 28 Jun 2018 13:53:21 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] KVM: x86: hyperv: use vp_idx_to_vcpu_idx() in kvm_hv_flush_tlb()
-Date:   Thu, 28 Jun 2018 15:53:11 +0200
-Message-Id: <20180628135313.17468-4-vkuznets@redhat.com>
-In-Reply-To: <20180628135313.17468-1-vkuznets@redhat.com>
-References: <20180628135313.17468-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 13:53:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 13:53:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        id S966460AbeF1NyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:54:20 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37573 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966365AbeF1NyS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:54:18 -0400
+Received: by mail-it0-f66.google.com with SMTP id p17-v6so7702416itc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 06:54:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cXOFUcwBtf+Q8h7jPUtDtzhouDPlPenCkja0r9TU+Jo=;
+        b=jeVARlrlgYxlZx8CV8T10RZ2jKxcUzoFHcUN7xs5kxxipHuO5XthEGHq18qFmauZLM
+         5r0gtFOnDFVPhSQpE3HwLfBlmKSFmIln0j90qlgTiaUkW9mULXEvKmjCXasnpqj4r9lW
+         XBecYER1pjedVRIvBKCPIdNS595Mzx1o/qhxA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cXOFUcwBtf+Q8h7jPUtDtzhouDPlPenCkja0r9TU+Jo=;
+        b=cyVfsa25UUbjL90mOO3vkQ7s46T/+cU3QoZMc4xk3ZMb5pqs2oteBBDlvIHrW6wuw+
+         LnUYfe/lk5aUUjYsu/B9qLwaTxz4sTHpCn/u9hVm9Un5VsqdYZKZI0eVEOtXy5D07/eH
+         V/hGRcZ9T1NRUh3TwD6kjvnlaYd9wAgUBlXZC+1jwjmlz9RwAuCAMKyPEeUOCwxYAuIa
+         B2RDIcLPwrjXZENLTKO8eyOpqo9daP9SorzbeC8hUGcxnWGJwe/Dwm1IYX6q6wREKFoA
+         pLNDmmOSKns5C3RlcBY0sifMDilIvgNwZ7Y3M20SZgAMzEQ/N2HyTHgWOPsJo57DF1JQ
+         O5bw==
+X-Gm-Message-State: APt69E0Ohd3Z311UsZpQX2kLJZpW757TxGlk8irelUOSEWNZJd5LYArB
+        BTgYiWuzdI3atUwgQbWdRsAtAJRrbsw5sG9uXshgdw==
+X-Google-Smtp-Source: AAOMgpdxQecUt/jjHsIrpbm5lbKl/SaA2eX5IhSCKqdr6Pnr0f1CHGMFuv2dNm+u+bSEGwyq1Bz/Ub8DA60Hgu3Y9Hs=
+X-Received: by 2002:a02:c006:: with SMTP id y6-v6mr8870120jai.87.1530194058207;
+ Thu, 28 Jun 2018 06:54:18 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619093126.74060-1-tony@atomide.com>
+In-Reply-To: <20180619093126.74060-1-tony@atomide.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 28 Jun 2018 15:54:06 +0200
+Message-ID: <CACRpkdaV84wai+ie1D-t=j+RiYNvKJUvjA8g-zvGhMZS2dBuEA@mail.gmail.com>
+Subject: Re: [PATCHv2 0/5] pinctrl fixes for generic functions and groups
+To:     ext Tony Lindgren <tony@atomide.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we now have a fast way to get vCPU index from VP number we can
-avoid walking through all vCPUs in kvm_hv_flush_tlb().
+On Tue, Jun 19, 2018 at 11:31 AM Tony Lindgren <tony@atomide.com> wrote:
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/hyperv.c | 59 ++++++++++++++-------------------------------------
- 1 file changed, 16 insertions(+), 43 deletions(-)
+> Here are fixes to the race issues for generic group and functions
+> reported by H. Nikolaus Schaller <hns@goldelico.com>. I have not seen
+> the issue here myself, so please test to see if this is sufficient.
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index d676335a5448..9983304d6664 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1395,20 +1395,6 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
- 		return kvm_hv_get_msr(vcpu, msr, pdata);
- }
- 
--static __always_inline int get_sparse_bank_no(u64 valid_bank_mask, int bank_no)
--{
--	int i = 0, j;
--
--	if (!(valid_bank_mask & BIT_ULL(bank_no)))
--		return -1;
--
--	for (j = 0; j < bank_no; j++)
--		if (valid_bank_mask & BIT_ULL(j))
--			i++;
--
--	return i;
--}
--
- static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 			    u16 rep_cnt, bool ex)
- {
-@@ -1416,11 +1402,10 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
- 	struct hv_tlb_flush_ex flush_ex;
- 	struct hv_tlb_flush flush;
--	struct kvm_vcpu *vcpu;
- 	unsigned long vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)] = {0};
--	unsigned long valid_bank_mask = 0;
-+	unsigned long valid_bank_mask;
- 	u64 sparse_banks[64];
--	int sparse_banks_len, i;
-+	int sparse_banks_len, bank, i;
- 	bool all_cpus;
- 
- 	if (!ex) {
-@@ -1430,6 +1415,7 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 		trace_kvm_hv_flush_tlb(flush.processor_mask,
- 				       flush.address_space, flush.flags);
- 
-+		valid_bank_mask = BIT_ULL(0);
- 		sparse_banks[0] = flush.processor_mask;
- 		all_cpus = flush.flags & HV_FLUSH_ALL_PROCESSORS;
- 	} else {
-@@ -1470,38 +1456,25 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 		goto ret_success;
- 	}
- 
--	kvm_for_each_vcpu(i, vcpu, kvm) {
--		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
--		int bank = hv->vp_index / 64, sbank = 0;
-+	for_each_set_bit(bank, (unsigned long *)&valid_bank_mask,
-+			 BITS_PER_LONG) {
- 
--		/* Banks >64 can't be represented */
--		if (bank >= 64)
--			continue;
-+		for_each_set_bit(i, (unsigned long *)&sparse_banks[bank],
-+				 BITS_PER_LONG) {
-+			u32 vp_index = bank * 64 + i;
-+			u32 vcpu_idx = vp_idx_to_vcpu_idx(kvm, vp_index);
- 
--		/* Non-ex hypercalls can only address first 64 vCPUs */
--		if (!ex && bank)
--			continue;
-+			/* A non-existent vCPU was specified */
-+			if (vcpu_idx >= atomic_read(&kvm->online_vcpus))
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
- 
--		if (ex) {
- 			/*
--			 * Check is the bank of this vCPU is in sparse
--			 * set and get the sparse bank number.
-+			 * vcpu->arch.cr3 may not be up-to-date for running
-+			 * vCPUs so we can't analyze it here, flush TLB
-+			 * regardless of the specified address space.
- 			 */
--			sbank = get_sparse_bank_no(valid_bank_mask, bank);
--
--			if (sbank < 0)
--				continue;
-+			__set_bit(vcpu_idx, vcpu_bitmap);
- 		}
--
--		if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
--			continue;
--
--		/*
--		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
--		 * can't analyze it here, flush TLB regardless of the specified
--		 * address space.
--		 */
--		__set_bit(i, vcpu_bitmap);
- 	}
- 
- 	kvm_make_vcpus_request_mask(kvm,
--- 
-2.14.4
+It looks sane to me, it'd be great to have some Tested-by: from
+H. Nikolaus, can we get that?
 
+Else I guess I just queue them, but if I should queue them for
+fixes it'd be great if it actually can be verified to fix something :D
+
+Yours,
+Linus Walleij
