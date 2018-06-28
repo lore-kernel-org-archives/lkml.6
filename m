@@ -6,54 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA7CC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA48C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C90B2779C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACBBC208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="L0n8QYnz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C90B2779C
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lbFAAtt9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACBBC208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030429AbeF1SX1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 14:23:27 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:39398 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030428AbeF1SV7 (ORCPT
+        id S967844AbeF1SXZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 14:23:25 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39259 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030432AbeF1SWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 14:21:59 -0400
-Received: by mail-pg0-f68.google.com with SMTP id n2-v6so2822114pgq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 11:21:59 -0700 (PDT)
+        Thu, 28 Jun 2018 14:22:00 -0400
+Received: by mail-pf0-f194.google.com with SMTP id s21-v6so2979682pfm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 11:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QKg90FTuSuW27iG9WkPEeAv4vw/9V5gf4/0TnS9jz5U=;
-        b=L0n8QYnzMafn0UED6KfTLrCCidJg3O8fCiWdR0inqKPjetwFa8ngFimyR8hyMArhec
-         Y54zJtlsi4uiIuFueDAln2/zyu9q29zisvPyx9umPHTggVreqMkfmYcc37I9Yna6gt+M
-         0KW24dn+jIgWTAKfvme8O6h8ViVyNyny4JVws=
+        bh=j6lPye0g1OOV0nGV5FlFez9sBig7U1uURpZjRjQnBJo=;
+        b=lbFAAtt9lxy6qZ8E1cmASmXGEfq/LDFJBe0Zn03fLYes/IA96tcIrs6azafa/pXiAK
+         sj5Rk2UrFNkJhmYksVLs3l3UWNXvrTGtcFI19kwAGAGk3kX12Y3rSWh6EcorPP1ff2Xf
+         +gZYJINquYrot8254gdA/5RaVxKACsp5pVER0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QKg90FTuSuW27iG9WkPEeAv4vw/9V5gf4/0TnS9jz5U=;
-        b=DRbQhVlaUF1axbyJUdQi7zvXvbDWJPC2tvakq9+bGrpKs44MuDpGZ8+QeOBnkCh4Bg
-         kxQDho+4PyyL3xgiRj/ZaCLtTrJUhspL1899LJ46gfT1WaID4KqkqPN1YOPvdGhq5PFd
-         DVmrSTecXmChUriVLv2Drt1poeggWEk6IlrjsQxs36tFRN6CWWIZMKBTkFI9thF+uSkY
-         dlBZL0HVIx8S/T54RnBTKJOVZMYDfOL1NtGwayrTUCIb2BqL9wjFinHIaUB674/YICPl
-         BSJeGNMehSugT4Cy3DZ15I1C3S1rDOBl8YnneuEMT7YQRJo05HlqQEbmvzUjBqftOpIg
-         S74w==
-X-Gm-Message-State: APt69E2DpQ/6aVJxdjNEhXCFDmtMPx2FhYZehnnl6aINcJrMBGhxH5Bt
-        4j7T2Hj+/VsRrqOd2RnoyYlv0JFhgec=
-X-Google-Smtp-Source: ADUXVKL+h2nPp6bZUHmT3HxDGWt+QQCi0M7p8fg5oCcg+GklkpCzOzSkohwU/p7NFh4grDLxHGMJbA==
-X-Received: by 2002:a63:aa03:: with SMTP id e3-v6mr9792456pgf.169.1530210118745;
-        Thu, 28 Jun 2018 11:21:58 -0700 (PDT)
+        bh=j6lPye0g1OOV0nGV5FlFez9sBig7U1uURpZjRjQnBJo=;
+        b=ZBIWEGhEYepE6IhsaimyXJEEwy7/eGepssQzSvI/4d0fAHRNF8tu9obV6guAdpcXPZ
+         WzweycmMvztt9RlZC3rA35vpT7tG3zK30SD++5kOO64tex4Q4bSfkQx86jbDUcAqbU96
+         zBLcQouyYlQtMPNKXGX4Nd85GSOhseDKTmSGGVgH3sdFXcM3Ynirx76zHCNpW5DKIUck
+         qcfa6epzw2p4aaO/4zV4VgIqB/ExkYjHakK5Z+f3/jhG62d5sXD02IJ4Lw2aqghfruhI
+         +8T/JNv4WkQwyYlLpA8cqWPrbnB2llocqbaWjSM1WM0FXV48GA3F6ioP8f8TLzhXVdf0
+         FWoQ==
+X-Gm-Message-State: APt69E1NPiqyq2qiiVYaklftx0N4kjTYImhVo6zswk+6pQt0a28bqPd2
+        NhMLMwF522cweMYK0lOhNl12zKuU9BQ=
+X-Google-Smtp-Source: AAOMgpc1V511PqC+mplOrn+EzX+DSRZDjN2ds2HIXnwcky0e+oifVMcmb3ggm24hi8zKlKWjhRMjPw==
+X-Received: by 2002:a65:5004:: with SMTP id f4-v6mr9786469pgo.54.1530210119879;
+        Thu, 28 Jun 2018 11:21:59 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm13686027pfj.7.2018.06.28.11.21.57
+        by smtp.gmail.com with ESMTPSA id q10-v6sm13686027pfj.7.2018.06.28.11.21.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 11:21:58 -0700 (PDT)
+        Thu, 28 Jun 2018 11:21:59 -0700 (PDT)
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -70,9 +69,9 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Glexiner <tglx@linutronix.de>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v9 2/7] srcu: Add notrace variant of srcu_dereference
-Date:   Thu, 28 Jun 2018 11:21:44 -0700
-Message-Id: <20180628182149.226164-3-joel@joelfernandes.org>
+Subject: [PATCH v9 3/7] trace/irqsoff: Split reset into separate functions
+Date:   Thu, 28 Jun 2018 11:21:45 -0700
+Message-Id: <20180628182149.226164-4-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 In-Reply-To: <20180628182149.226164-1-joel@joelfernandes.org>
 References: <20180628182149.226164-1-joel@joelfernandes.org>
@@ -83,41 +82,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-In the last patch in this series, we are making lockdep register hooks
-onto the irq_{disable,enable} tracepoints. These tracepoints use the
-_rcuidle tracepoint variant. In this series we switch the _rcuidle
-tracepoint callers to use SRCU instead of sched-RCU. Inorder to
-dereference the pointer to the probe functions, we could call
-srcu_dereference, however this API will call back into lockdep to check
-if the lock is held *before* the lockdep probe hooks have a chance to
-run and annotate the IRQ enabled/disabled state.
+Split reset functions into seperate functions in preparation
+of future patches that need to do tracer specific reset.
 
-For this reason we need a notrace variant of srcu_dereference since
-otherwise we get lockdep splats. This patch adds the needed
-srcu_dereference_notrace variant.
-
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- include/linux/srcu.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/trace/trace_irqsoff.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 3e72a291c401..67135d4a8a30 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -169,6 +169,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
-  */
- #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 03ecb4465ee4..f8daa754cce2 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -634,7 +634,7 @@ static int __irqsoff_tracer_init(struct trace_array *tr)
+ 	return 0;
+ }
  
-+/**
-+ * srcu_dereference_notrace - no tracing and no lockdep calls from here
-+ */
-+#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
+-static void irqsoff_tracer_reset(struct trace_array *tr)
++static void __irqsoff_tracer_reset(struct trace_array *tr)
+ {
+ 	int lat_flag = save_flags & TRACE_ITER_LATENCY_FMT;
+ 	int overwrite_flag = save_flags & TRACE_ITER_OVERWRITE;
+@@ -665,6 +665,12 @@ static int irqsoff_tracer_init(struct trace_array *tr)
+ 
+ 	return __irqsoff_tracer_init(tr);
+ }
 +
- /**
-  * srcu_read_lock - register a new reader for an SRCU-protected structure.
-  * @sp: srcu_struct in which to register the new reader.
++static void irqsoff_tracer_reset(struct trace_array *tr)
++{
++	__irqsoff_tracer_reset(tr);
++}
++
+ static struct tracer irqsoff_tracer __read_mostly =
+ {
+ 	.name		= "irqsoff",
+@@ -697,11 +703,16 @@ static int preemptoff_tracer_init(struct trace_array *tr)
+ 	return __irqsoff_tracer_init(tr);
+ }
+ 
++static void preemptoff_tracer_reset(struct trace_array *tr)
++{
++	__irqsoff_tracer_reset(tr);
++}
++
+ static struct tracer preemptoff_tracer __read_mostly =
+ {
+ 	.name		= "preemptoff",
+ 	.init		= preemptoff_tracer_init,
+-	.reset		= irqsoff_tracer_reset,
++	.reset		= preemptoff_tracer_reset,
+ 	.start		= irqsoff_tracer_start,
+ 	.stop		= irqsoff_tracer_stop,
+ 	.print_max	= true,
+@@ -731,11 +742,16 @@ static int preemptirqsoff_tracer_init(struct trace_array *tr)
+ 	return __irqsoff_tracer_init(tr);
+ }
+ 
++static void preemptirqsoff_tracer_reset(struct trace_array *tr)
++{
++	__irqsoff_tracer_reset(tr);
++}
++
+ static struct tracer preemptirqsoff_tracer __read_mostly =
+ {
+ 	.name		= "preemptirqsoff",
+ 	.init		= preemptirqsoff_tracer_init,
+-	.reset		= irqsoff_tracer_reset,
++	.reset		= preemptirqsoff_tracer_reset,
+ 	.start		= irqsoff_tracer_start,
+ 	.stop		= irqsoff_tracer_stop,
+ 	.print_max	= true,
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
