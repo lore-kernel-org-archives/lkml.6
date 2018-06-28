@@ -3,46 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDD5C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7DAC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D275F24C9E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D275F24C9E
+	by mail.kernel.org (Postfix) with ESMTP id 415042570B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:43:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415042570B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754753AbeF1Unt (ORCPT
+        id S1754872AbeF1Uny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 16:43:49 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:37984 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753637AbeF1Uns (ORCPT
+        Thu, 28 Jun 2018 16:43:54 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33852 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753637AbeF1Unu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 16:43:48 -0400
-Received: by mail-yb0-f193.google.com with SMTP id f12-v6so2533925ybp.5;
-        Thu, 28 Jun 2018 13:43:48 -0700 (PDT)
+        Thu, 28 Jun 2018 16:43:50 -0400
+Received: by mail-yw0-f194.google.com with SMTP id n187-v6so2645299ywd.1;
+        Thu, 28 Jun 2018 13:43:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MBw/TUiTzAGrYRjToKJCmT0iIojVoEoD7cDXN8AgjeM=;
-        b=G4O9jLbsOakH7IbCPfH0eo0xBFz19svkalP+GbyypB4tYoijzwNSR7Jndc9YS2xn1l
-         glPOuJEd/t00LVJj3dtycwNdDz0mcoxh3NTpyfy2m357ruBYsIryOPVe8USlnVXR6jO3
-         nwllldTT36SLaiX1NkvzcOkf0gxuheroGEJMF2o34Urya1I0vyJ8r9eSqByNPH1r7sc/
-         9Fm+T1u7K/9CMOKpK/c8g6gg0mvuJbECMAv7BqGwaEQFPZ60T1T+EpNL6NOT3HBDtDq4
-         L9bXSwChNzHd8yZkZrIkeatJs9WSA5Pn4hN2bU1B4eiRHDZpAB4LfJNAgYUDMeNtI/BY
-         BDRQ==
-X-Gm-Message-State: APt69E2FqFQbP6GX2GaZkFzGOoi80eh/SJWt+CVzB1IpX+HC8YQYnPJQ
-        cbo7WxVHtOox4AKl2rfl6A==
-X-Google-Smtp-Source: ADUXVKJmKl8Gg9rNXsxCoRB/JGRirF3V9rcZTLumzmEvuauj4CGRKQ/AvTT9JgUlbS+7/nFAMdFE1A==
-X-Received: by 2002:a5b:451:: with SMTP id s17-v6mr5987573ybp.310.1530218627636;
-        Thu, 28 Jun 2018 13:43:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=P14tl48maitCw4gJBmoAA3FYbIjRhkYwzWMuVhlBmjc=;
+        b=G+AG9BveVNil/5z+rXBvK6S+9s5wGF2fx8f/wbnG1uHAyrQC43NOsYyrtNGdcV8TdC
+         shd3VDtjGJs5Puj0xmhoNWg1LFDsp3y/gZBYeLZGTUIFzEldBJeInmkuo3lWdxW6c8bo
+         qJnQtlQYf9KPm3pqIhyQYCwyI1YuMBMy66roCQ5VKS+yO4ncq+qWqN5O0o36qrXid77B
+         Xb39K6RWx6QFP+/o4e3eUaBZPSQLjj8JG5FQrgbQZDR7guYs3USGoLwhOLlcNLkXUthU
+         i1S2g9HLBaZY9PmNquK+KiD38x7Iw23jNB8ESSDp6rhMBPj1OH65EHeo2rvTGMImUzY2
+         1Nuw==
+X-Gm-Message-State: APt69E3lQN3hBFy0kImXNRcBS3mMknqFcyznyK0ai9aXehLTJ+51z0v+
+        VoHe5Sf3DG59RxZusn2oug==
+X-Google-Smtp-Source: AAOMgpdEYHhhoG7AQyhd4xhL+7khSaP8lawkMszMnA35fr9x5PVKHKtjDsWGlq0P9IsRRdJg0eFY4w==
+X-Received: by 2002:a81:30d0:: with SMTP id w199-v6mr5900127yww.130.1530218629697;
+        Thu, 28 Jun 2018 13:43:49 -0700 (PDT)
 Received: from localhost.localdomain (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.googlemail.com with ESMTPSA id o7-v6sm427913ywi.32.2018.06.28.13.43.45
+        by smtp.googlemail.com with ESMTPSA id o7-v6sm427913ywi.32.2018.06.28.13.43.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 13:43:46 -0700 (PDT)
+        Thu, 28 Jun 2018 13:43:49 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -58,57 +59,175 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         boot-architecture@lists.linaro.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 0/6] Make deferring probe forever optional
-Date:   Thu, 28 Jun 2018 14:43:38 -0600
-Message-Id: <20180628204344.13973-1-robh@kernel.org>
+Subject: [PATCH v3 1/6] driver core: allow stopping deferred probe after init
+Date:   Thu, 28 Jun 2018 14:43:39 -0600
+Message-Id: <20180628204344.13973-2-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180628204344.13973-1-robh@kernel.org>
+References: <20180628204344.13973-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series came out of a discussion on the ARM boot-architecture
-list[1] about DT forwards and backwards compatibility issues. There are
-issues with newer DTs breaking on older, stable kernels. Some of these
-are difficult to solve, but cases of optional devices not having
-kernel support should be solvable.
+Deferred probe will currently wait forever on dependent devices to probe,
+but sometimes a driver will never exist. It's also not always critical for
+a driver to exist. Platforms can rely on default configuration from the
+bootloader or reset defaults for things such as pinctrl and power domains.
+This is often the case with initial platform support until various drivers
+get enabled. There's at least 2 scenarios where deferred probe can render
+a platform broken. Both involve using a DT which has more devices and
+dependencies than the kernel supports. The 1st case is a driver may be
+disabled in the kernel config. The 2nd case is the kernel version may
+simply not have the dependent driver. This can happen if using a newer DT
+(provided by firmware perhaps) with a stable kernel version. Deferred
+probe issues can be difficult to debug especially if the console has
+dependencies or userspace fails to boot to a shell.
 
-I tested this on a RPi3 B with the pinctrl driver forced off. With this
-change, the MMC/SD and UART drivers can function without the pinctrl
-driver. I left the dts change out this time.
+There are also cases like IOMMUs where only built-in drivers are
+supported, so deferring probe after initcalls is not needed. The IOMMU
+subsystem implemented its own mechanism to handle this using OF_DECLARE
+linker sections.
 
-v2 of this series can be found here[2].
+This commit adds makes ending deferred probe conditional on initcalls
+being completed or a debug timeout. Subsystems or drivers may opt-in by
+calling driver_deferred_probe_check_init_done() instead of
+unconditionally returning -EPROBE_DEFER. They may use additional
+information from DT or kernel's config to decide whether to continue to
+defer probe or not.
 
-Rob
+The timeout mechanism is intended for debug purposes and WARNs loudly.
+The remaining deferred probe pending list will also be dumped after the
+timeout. Not that this timeout won't work for the console which needs
+to be enabled before userspace starts. However, if the console's
+dependencies are resolved, then the kernel log will be printed (as
+opposed to no output).
 
-[1] https://lists.linaro.org/pipermail/boot-architecture/2018-April/000466.html
-[2] https://lore.kernel.org/patchwork/project/lkml/list/?series=347413
-
-Rob Herring (6):
-  driver core: allow stopping deferred probe after init
-  dt-bindings: pinctrl: add a 'pinctrl-use-default' property
-  pinctrl: Support stopping deferred probe after initcalls
-  iommu: Stop deferring probe at end of initcalls
-  iommu: Remove IOMMU_OF_DECLARE
-  PM / Domains: Stop deferring probe at the end of initcall
+Cc: Alexander Graf <agraf@suse.de>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+v3:
+- Merged with timeout patch.
+- Clarify that deferred_probe_timeout is a debug option.
+- Drop the 'optional' param. The only user was pinctrl, so it has to handle
+  that functionality.
+- Rename function to driver_deferred_probe_check_state
+- Added kerneldoc for driver_deferred_probe_check_state
+- Print a 1 line warning if stopping deferred probe after initcalls and a
+  WARN on timeout.
 
  .../admin-guide/kernel-parameters.txt         |  9 +++
- .../bindings/pinctrl/pinctrl-bindings.txt     |  6 ++
  drivers/base/dd.c                             | 57 +++++++++++++++++++
- drivers/base/power/domain.c                   |  2 +-
- drivers/iommu/arm-smmu-v3.c                   |  2 -
- drivers/iommu/arm-smmu.c                      |  7 ---
- drivers/iommu/exynos-iommu.c                  |  2 -
- drivers/iommu/ipmmu-vmsa.c                    |  3 -
- drivers/iommu/msm_iommu.c                     |  2 -
- drivers/iommu/of_iommu.c                      | 21 +------
- drivers/iommu/qcom_iommu.c                    |  2 -
- drivers/iommu/rockchip-iommu.c                |  2 -
- drivers/pinctrl/devicetree.c                  | 15 +++--
- include/asm-generic/vmlinux.lds.h             |  2 -
  include/linux/device.h                        |  2 +
- include/linux/of_iommu.h                      |  4 --
- 16 files changed, 88 insertions(+), 50 deletions(-)
+ 3 files changed, 68 insertions(+)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..e83ef4648ea4 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -804,6 +804,15 @@
+ 			Defaults to the default architecture's huge page size
+ 			if not specified.
+
++	deferred_probe_timeout=
++			[KNL] Debugging option to set a timeout in seconds for
++			deferred probe to give up waiting on dependencies to
++			probe. Only specific dependencies (subsystems or
++			drivers) that have opted in will be ignored. A timeout of 0
++			will timeout at the end of initcalls. This option will also
++			dump out devices still on the deferred probe list after
++			retrying.
++
+ 	dhash_entries=	[KNL]
+ 			Set number of hash buckets for dentry cache.
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1435d7281c66..f0bc73a71a25 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -224,6 +224,51 @@ void device_unblock_probing(void)
+ 	driver_deferred_probe_trigger();
+ }
+
++static int deferred_probe_timeout = -1;
++static int __init deferred_probe_timeout_setup(char *str)
++{
++	deferred_probe_timeout = simple_strtol(str, NULL, 0);
++	return 1;
++}
++__setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
++
++/**
++ * driver_deferred_probe_check_state() - Check deferred probe state
++ * @dev: device to check
++ *
++ * Returns -ENODEV if init is done and all built-in drivers have had a chance
++ * to probe (i.e. initcalls are done), -ETIMEDOUT if deferred probe debug
++ * timeout has expired, or -EPROBE_DEFER if none of those conditions are met.
++ *
++ * Drivers or subsystems can opt-in to calling this function instead of directly
++ * returning -EPROBE_DEFER.
++ */
++int driver_deferred_probe_check_state(struct device *dev)
++{
++	if (initcalls_done) {
++		if (!deferred_probe_timeout) {
++			dev_WARN(dev, "deferred probe timeout, ignoring dependency");
++			return -ETIMEDOUT;
++		}
++		dev_warn(dev, "ignoring dependency for device, assuming no driver");
++		return -ENODEV;
++	}
++	return -EPROBE_DEFER;
++}
++
++static void deferred_probe_timeout_work_func(struct work_struct *work)
++{
++	struct device_private *private, *p;
++
++	deferred_probe_timeout = 0;
++	driver_deferred_probe_trigger();
++	flush_work(&deferred_probe_work);
++
++	list_for_each_entry_safe(private, p, &deferred_probe_pending_list, deferred_probe)
++		dev_info(private->device, "deferred probe pending");
++}
++static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_work_func);
++
+ /**
+  * deferred_probe_initcall() - Enable probing of deferred devices
+  *
+@@ -238,6 +283,18 @@ static int deferred_probe_initcall(void)
+ 	/* Sort as many dependencies as possible before exiting initcalls */
+ 	flush_work(&deferred_probe_work);
+ 	initcalls_done = true;
++
++	/*
++	 * Trigger deferred probe again, this time we won't defer anything
++	 * that is optional
++	 */
++	driver_deferred_probe_trigger();
++	flush_work(&deferred_probe_work);
++
++	if (deferred_probe_timeout > 0) {
++		schedule_delayed_work(&deferred_probe_timeout_work,
++			deferred_probe_timeout * HZ);
++	}
+ 	return 0;
+ }
+ late_initcall(deferred_probe_initcall);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 055a69dbcd18..b6d8e0a09ad9 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -339,6 +339,8 @@ struct device *driver_find_device(struct device_driver *drv,
+ 				  struct device *start, void *data,
+ 				  int (*match)(struct device *dev, void *data));
+
++int driver_deferred_probe_check_state(struct device *dev);
++
+ /**
+  * struct subsys_interface - interfaces to device functions
+  * @name:       name of the device function
 --
 2.17.1
