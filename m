@@ -2,123 +2,136 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB8AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6953C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D1427282
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D1427282
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 716352726B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:40:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0Q/OmdV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716352726B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965129AbeF1Mj0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:39:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934394AbeF1MjX (ORCPT
+        id S965298AbeF1Mk2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:40:28 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38369 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeF1Mk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:39:23 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SCdFOU088964
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:39:23 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvwqt67nt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:39:22 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 28 Jun 2018 13:39:21 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Jun 2018 13:39:18 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SCdHVx34406506
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jun 2018 12:39:17 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4D7EA4059;
-        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3221A4057;
-        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 25651)
-        id F294620F660; Thu, 28 Jun 2018 14:39:16 +0200 (CEST)
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-To:     linux-mm@kvack.org, linux-s390@vger.kernel.org
-Cc:     kvm@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: [PATCH/RFC] mm: do not drop unused pages when userfaultd is running
-Date:   Thu, 28 Jun 2018 14:39:16 +0200
-X-Mailer: git-send-email 2.17.0
-X-TM-AS-GCONF: 00
-x-cbid: 18062812-0008-0000-0000-0000024CD855
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062812-0009-0000-0000-000021B35228
-Message-Id: <20180628123916.96106-1-borntraeger@de.ibm.com>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+        Thu, 28 Jun 2018 08:40:27 -0400
+Received: by mail-pl0-f67.google.com with SMTP id d10-v6so2706841plo.5
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 05:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3bFyBM/eDJt61jxPJA5XzlcvnP+c/0AgQX6AvucAUAc=;
+        b=C0Q/OmdVb+ohJODNlhiELySm6DN2unyVnPuxWUCgz5pjFnOx6y1UGHlOV1kFZg578l
+         6vIOv5FMU1dqFRsnk746UoDnGhBuiXNSWJNzOIhJQR+sViadhivWoYd0mOlalzJTHVGA
+         YsMf9fWVTrAsYcVoEtPB7dTWZep7omXuAcMSnG8lJs+rNiH3KeMyC7BS76NyJwpeUypn
+         L6NzlkDYwXnQHldW+g8bINKwxHEYIuY4SgZs+u2DyVuWeN/td6eogrr+uq3bc3sNtCBa
+         MUvHhPYpOuZHbKB413O3+/fdSNuQJXd3NahLpgDZVAtdelr3EprXpE70WdfrPz0nGA9/
+         DgdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3bFyBM/eDJt61jxPJA5XzlcvnP+c/0AgQX6AvucAUAc=;
+        b=GqtWjUxFgEv5Y3xdspzFDT/1IKxeAmI7zlJhpkBi4rtnyE5+GXPbzn7Zy4RjagsH69
+         j4g1dJP5Py9/ke1nJCb7Hn5CJYvBJ4bwUA+o0i1YA/dwtHvTncpRnsT2jSkUBjrZv9Cf
+         O2UYmVfaOdcl9XaTHYaUl8eYhXiFSLjco0jLiD8TM9Q+nTSmy5+7BRdiOidrDH49REcW
+         H7W/2lfSOkKuv3g1I2c+ed3zITbHGVw3s5u84X7pcWl0p5vrsyMc/5PeCoTLoMoVuPH5
+         /2k3+fTfZacP08wYfc6Yjaq+7uHqkXtLO6fllgFicrLnd91aLGAwRo/X2cwilR+Pu6bL
+         3lug==
+X-Gm-Message-State: APt69E3EEZZnT2AT+HQPBWlVq38EfgowtRz1LAtH+P95GTeFpa6Pz9cR
+        /f9HmC6iXNlQjhktdagQy0RaowyRxG+d8wOBdhwHhw==
+X-Google-Smtp-Source: ADUXVKJt3pndMpTDCoOTrB353IN/5T6ndgp0gqI5bSx/TK6Ocs8PQsMqeJw7Hi3YcGtp2NvzIlcEtjKqDIfn4XG/kmA=
+X-Received: by 2002:a17:902:7586:: with SMTP id j6-v6mr10238430pll.262.1530189626441;
+ Thu, 28 Jun 2018 05:40:26 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806280145
+References: <20180627194614.188210-1-ghackmann@google.com> <20180628093928.GB10751@arm.com>
+In-Reply-To: <20180628093928.GB10751@arm.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 28 Jun 2018 08:40:14 -0400
+Message-ID: <CAKwvOdnhPhXc+V2aTzpyCDCeCmFtzPe+-7+YrRrPeWDF1f5s1A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: remove no-op -p linker flag
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     ghackmann@android.com, Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Greg Hackmann <ghackmann@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM guests on s390 can notify the host of unused pages. This can result
-in pte_unused callbacks to be true for KVM guest memory.
+On Thu, Jun 28, 2018 at 5:38 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Wed, Jun 27, 2018 at 12:46:14PM -0700, Greg Hackmann wrote:
+> > Linking the ARM64 defconfig kernel with LLVM lld fails with the error:
+> >
+> >   ld.lld: error: unknown argument: -p
+> >   Makefile:1015: recipe for target 'vmlinux' failed
+> >
+> > Without this flag, the ARM64 defconfig kernel successfully links with
+> > lld and boots on Dragonboard 410c.
 
-If a page is unused (checked with pte_unused) we might drop this page
-instead of paging it. This can have side-effects on userfaultd, when the
-page in question was already migrated:
+Ha! Just one single unknown linker flag, to link and boot? That's not too bad.
 
-The next access of that page will trigger a fault and a user fault
-instead of faulting in a new and empty zero page. As QEMU does not
-expect a userfault on an already migrated page this migration will fail.
+> > After digging through binutils source and changelogs, it turns out that
+> > -p is only relevant to ancient binutils installations targeting 32-bit
+> > ARM.  binutils accepts -p for AArch64 too, but it's always been
+> > undocumented and silently ignored.
 
-The most straightforward solution is to ignore the pte_unused hint if a
-userfault context is active for this VMA.
+Nothing in the man pages for ld in regards to -p.  Seems like it was
+shortform for "--no-pipeline-knowledge: Stop the linker knowing about
+the pipeline length".
 
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
----
- mm/rmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks like it was added to binutils via this commit in 1999:
+https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=7ca69e9e10ef290eb3dd62a1e6bebbe4c87fa202
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 6db729dc4c50..3f3a72aa99f2 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1481,7 +1481,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 			}
- 
--		} else if (pte_unused(pteval)) {
-+		} else if (pte_unused(pteval) && !vma->vm_userfaultfd_ctx.ctx) {
- 			/*
- 			 * The guest indicated that the page content is of no
- 			 * interest anymore. Simply discard the pte, vmscan
+And removed in 2004:
+https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=dea514f51da1051f9f3cd7a746e3b68085aa1a72
+
+arch/arm/Makefile has -p as a LD_FLAGS.  Is it actually needed there
+too, or can it be removed from there?  I assume we'll want to use lld
+for arm32 at some point.
+
+> > A comment in
+> > ld/emultempl/aarch64elf.em explains that it's "Only here for backwards
+> > compatibility".
+
+Yep: https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=blob;f=ld/emultempl/aarch64elf.em;h=edc548f65298e563481bdd9d547fcb9c6b13da04;hb=HEAD#l405
+
+armelf.em also has that comment.
+
+Looks like -p has been in arch/arm64/Makefile since the initial commit
+that added that file. So likely copy+pasted from arch/arm/Makefile.
+
+commit 8c2c3df31e3b ("arm64: Build infrastructure"):
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm64/Makefile?id=8c2c3df31e3b87cb5348e48776c366ebd1dc5a7a
+
+And it looks like arch/arm/Makefile has has -p since the move to git
+for Linux 2.6:
+
+commit 1da177e4c3f4 ("Linux-2.6.12-rc2")
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/arm/Makefile?id=1da177e4c3f41524e886b7f1b8a0c1fc7321cac2
+
+So nothing in the kernel commit history to hint at what it was ever used for.
+
+As long as you have a version of binutils that not 14 years old, you
+should be good.
+
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
 -- 
-2.17.0
-
+Thanks,
+~Nick Desaulniers
