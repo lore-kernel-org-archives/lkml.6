@@ -2,191 +2,180 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A880C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2D8C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FCC2780D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:59:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Vikw59ZN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FCC2780D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id D88C227810
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:02:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88C227810
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936006AbeF1S7y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 14:59:54 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35243 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935093AbeF1S7w (ORCPT
+        id S967028AbeF1TCk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:02:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39206 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935093AbeF1TCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 14:59:52 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z137-v6so10163231wmc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 11:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kL/0RKlrM2UCByDRfCDoAFNlKwtyaEaQBTklTLyi9Ww=;
-        b=Vikw59ZNCH7gLKuFITIb+9Qz60gw5veqxNIGt2bMNb0FKMyl2sHVqJaVOyAI4kbgjI
-         mMOSQlwjaU9cT7YhwDiUh5t1cYZnkSkZydZy4/k5xfw0jM3KEImnV4wnJrx1rIu4x/yx
-         PkDka8IUM6qzjXpk3oKWPjvJ6+chwCuMbiBy/aU8gjib1FpstS/emACVRd3CqOHQpUsH
-         jXN9X8YWBsDTEiByJNCSidMNk7ng9mq+pR83ZcXXXRDsRjYrJWwX3ppNh9+dSRA2y7T1
-         LyDZVQvkFRkIM4+47z1YtLrsObqQaupBV2F1wB6oJro4rxsNuW8unIFB9txx0Xow9316
-         kMdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kL/0RKlrM2UCByDRfCDoAFNlKwtyaEaQBTklTLyi9Ww=;
-        b=AWlY2+K6gAL0b7xkXB62xFwUo0aTJ0mo5UiG9shRiELrxasq7cNzggYG5KCZWyX/lz
-         RnHVMSdZ9lkoqhvCUVK8XX8X2oLTTdp8M0LAjJkAZtPwJHLnM0b9UOspGkYLsw+exRki
-         l9iLtTOjlAHDN4q4rvF7CjGHZTCXQUIh0singz2j2OPT0XLJjE708p4oufRH6tOs7Z0w
-         7O2TIAaj3BpKCqSRzAJDl1jBOhuGHPwwq0ymKIwti+6vF+JheJBaNNsZG5jILKLyT2FX
-         lyhF5/4UBK3ONPFv/cOSXBC6+7zDo87sXQjOXUpTlZBq+x9c7uLuKnR4dzBoalRzIawh
-         7QGw==
-X-Gm-Message-State: APt69E3C+5xhZgUKkCvWX9jm50i/ibec1GVkSHVpWS97CorU1NtbKMP5
-        UoZrLFtAwv12i+IZTBUhkknIbCmAq50=
-X-Google-Smtp-Source: AAOMgpcfvW6TZ4IPI8NRLa51s7Qnse0iv8J5dJMQkWPWkFKZ3TtNxzcrJtnZ+1GmmWJ0Y5HNTotjqg==
-X-Received: by 2002:a1c:d482:: with SMTP id l124-v6mr8574109wmg.22.1530212391446;
-        Thu, 28 Jun 2018 11:59:51 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id x11-v6sm9554174wrm.78.2018.06.28.11.59.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 11:59:50 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fYc8w-0003cn-Qj; Thu, 28 Jun 2018 12:59:46 -0600
-Date:   Thu, 28 Jun 2018 12:59:46 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     linux-rdma@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
-        VMware PV-Drivers <pv-drivers@vmware.com>,
-        Doug Ledford <dledford@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vmw_pvrdma: Release netdev when vmxnet3 module is removed
-Message-ID: <20180628185946.GC379@ziepe.ca>
-References: <20180628135938.19625-1-nhorman@tuxdriver.com>
+        Thu, 28 Jun 2018 15:02:39 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SIwbD6085932
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:02:38 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jw3axdh2y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:02:38 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 28 Jun 2018 15:02:38 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Jun 2018 15:02:34 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SJ2YRq917814
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 Jun 2018 19:02:34 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F59BB2065;
+        Thu, 28 Jun 2018 15:02:24 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25878B2076;
+        Thu, 28 Jun 2018 15:02:24 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 28 Jun 2018 15:02:24 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6921416CA2C6; Thu, 28 Jun 2018 12:04:40 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 12:04:40 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: sched/core warning triggers on rcu torture test
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <alpine.DEB.2.21.1806261709001.19188@somnus>
+ <20180626163255.GG2458@hirez.programming.kicks-ass.net>
+ <20180626174826.GB3593@linux.vnet.ibm.com>
+ <20180627104014.GB10102@lerouge>
+ <20180627142529.GU3593@linux.vnet.ibm.com>
+ <20180628163323.GB19886@lerouge>
+ <20180628164448.GL3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628135938.19625-1-nhorman@tuxdriver.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180628164448.GL3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062819-0040-0000-0000-00000446A23D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009272; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01053666; UDB=6.00540267; IPR=6.00831589;
+ MB=3.00021910; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-28 19:02:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062819-0041-0000-0000-0000084CBAB0
+Message-Id: <20180628190440.GA23784@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806280212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 09:59:38AM -0400, Neil Horman wrote:
-> On repeated module load/unload cycles, its possible for the pvrmda
-> driver to encounter this crash:
+On Thu, Jun 28, 2018 at 09:44:48AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 28, 2018 at 06:33:24PM +0200, Frederic Weisbecker wrote:
+> > On Wed, Jun 27, 2018 at 07:25:29AM -0700, Paul E. McKenney wrote:
+> > > On Wed, Jun 27, 2018 at 12:40:15PM +0200, Frederic Weisbecker wrote:
+> > > > On Tue, Jun 26, 2018 at 10:48:26AM -0700, Paul E. McKenney wrote:
+> > > > > On Tue, Jun 26, 2018 at 06:32:55PM +0200, Peter Zijlstra wrote:
+> > > > > > On Tue, Jun 26, 2018 at 06:16:04PM +0200, Anna-Maria Gleixner wrote:
+> > > > > > > Hi,
+> > > > > > > 
+> > > > > > > during rcu torture tests (TREE04 and TREE07) I noticed, that a
+> > > > > > > WARN_ON_ONCE() in sched core triggers on a recent 4.18-rc2 based
+> > > > > > > kernel (6f0d349d922b ("Merge
+> > > > > > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")) as well as
+> > > > > > > on a 4.17.3.
+> > > > > 
+> > > > > First, I am very glad that I am not the only one running rcutorture!  ;-)
+> > > > > 
+> > > > > > > I'm running the tests on a machine with 144 cores:
+> > > > > > > 
+> > > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "9*TREE07"
+> > > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "18*TREE04"
+> > > > > > > 
+> > > > > > > 
+> > > > > > > The warning was introduced by commit d84b31313ef8 ("sched/isolation:
+> > > > > > > Offload residual 1Hz scheduler tick").
+> > > > > > > 
+> > > > > > > 
+> > > > > > > Output looks similar for all tests I did (this one is the output of
+> > > > > > > the 4.18-rc2 based kernel):
+> > > > > > > 
+> > > > > > > WARNING: CPU: 11 PID: 906 at kernel/sched/core.c:3138 sched_tick_remote+0xb6/0xc0
+> > > > > > 
+> > > > > > That's nohz_full stuff, is that a normal part of rcutorture? In any
+> > > > > > case, is the one housekeeping CPU getting seriously overloaded or
+> > > > > > something?
+> > > > > 
+> > > > > Yes, nohz_full is a normal part for rcutorture because RCU has to deal
+> > > > > differently with userspace execution in the nohz_full case.
+> > > > > 
+> > > > > I do see this splat (at least when I don't comment it out), but I
+> > > > > do share my system with others, so I could easily be overloading the
+> > > > > housekeeping vCPUs due to hypervisor preemption.  I was intending to
+> > > > > dig into this one once I got done consolidating RCU-bh, RCU-preempt,
+> > > > > and RCU-sched at Linus's behest.
+> > > > > 
+> > > > > On overloading the housekeeping CPU without outside load, let's look at
+> > > > > TREE04 and TREE07 separately.
+> > > > > 
+> > > > > TREE04 uses eight CPUs, and seven of them ("nohz_full=1-7") are nohz_full
+> > > > > CPUs, and rcutorture doesn't generate all that large of a callback load.
+> > > > > It looks like all 144 CPUs are used in this case (18*8), though RCU
+> > > > > enforces idle periods in order to test idle/non-idle transitions.
+> > > > > But was there anything else running on the machine at the time?
+> > > > > 
+> > > > > TREE07 uses 16 CPUs, and eight of them ("nohz_full=2-9") are nohz_full
+> > > > > CPUs.  Again, it looks like all 144 CPUs are used (9*8).
+> > > > > 
+> > > > > I sometimes see this on TASKS03 as well, which uses two CPUs, and one of
+> > > > > them ("nohz_full=1") is a nohz_full CPU.
+> > > > > 
+> > > > > If your system is otherwise idle, would it make sense to trace context
+> > > > > switches on CPU 0 to see what it is up to?  And to do an ftrace_dump()
+> > > > > and turn tracing off when the warning triggers as well?
+> > > > 
+> > > > Yeah you guys reported me this warning a few times ago. I didn't manage to reproduce
+> > > > it because I fought and failed with a high NR_CPUS machine. But apparently 8 CPUs
+> > > > are enough. Let me try that with TREE04.
+> > > 
+> > > Looking forward to hearing what you find!
+> > 
+> > Please check "[PATCH] sched/nohz: Skip remote tick on idle task entirely" which I
+> > just posted. In the hope that the warning didn't trigger for another reason on
+> > your testings.
 > 
-> ...
-> 297.032448] RIP: 0010:[<ffffffff839e4620>]  [<ffffffff839e4620>] netdev_walk_all_upper_dev_rcu+0x50/0xb0
-> [  297.034078] RSP: 0018:ffff95087780bd08  EFLAGS: 00010286
-> [  297.034986] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff95087a0c0000
-> [  297.036196] RDX: ffff95087a0c0000 RSI: ffffffff839e44e0 RDI: ffff950835d0c000
-> [  297.037421] RBP: ffff95087780bd40 R08: ffff95087a0e0ea0 R09: abddacd03f8e0ea0
-> [  297.038636] R10: abddacd03f8e0ea0 R11: ffffef5901e9dbc0 R12: ffff95087a0c0000
-> [  297.039854] R13: ffffffff839e44e0 R14: ffff95087a0c0000 R15: ffff950835d0c828
-> [  297.041071] FS:  0000000000000000(0000) GS:ffff95087fc00000(0000) knlGS:0000000000000000
-> [  297.042443] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  297.043429] CR2: ffffffffffffffe8 CR3: 000000007a652000 CR4: 00000000003607f0
-> [  297.044674] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [  297.045893] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [  297.047109] Call Trace:
-> [  297.047545]  [<ffffffff839e4698>] netdev_has_upper_dev_all_rcu+0x18/0x20
-> [  297.048691]  [<ffffffffc05d31af>] is_eth_port_of_netdev+0x2f/0xa0 [ib_core]
-> [  297.049886]  [<ffffffffc05d3180>] ? is_eth_active_slave_of_bonding_rcu+0x70/0x70 [ib_core]
-> ...
-> 
-> This occurs because vmw_pvrdma on probe stores a pointer to the netdev
-> that exists on function 0 of the same bus/device/slot (which represents
-> the vmxnet3 ethernet driver).  However, it never removes this pointer if
-> the vmxnet3 module is removed, leading to crashes resulting from use
-> after free dereferencing incidents like the one above.
-> 
-> The fix is pretty straightforward.  vmw_pvrdma should listen for
-> NETDEV_REGISTER and NETDEV_UNREGISTER events in its event listener code
-> block, and update the stored netdev pointer accordingly.  This solution
-> has been tested by myself and the reporter with successful results.
-> This fix also allows the pvrdma driver to find its underlying ethernet
-> device in the event that vmxnet3 is loaded after pvrdma, which it was
-> not able to do before.
-> 
-> Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-> Reported-by: ruquin@redhat.com
-> CC: Adit Ranadive <aditr@vmware.com>
-> CC: VMware PV-Drivers <pv-drivers@vmware.com>
-> CC: Doug Ledford <dledford@redhat.com>
-> CC: Jason Gunthorpe <jgg@ziepe.ca>
-> CC: linux-kernel@vger.kernel.org
->  .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    | 25 +++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-> index 0be33a81bbe6..5b4782078a74 100644
-> +++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-> @@ -699,8 +699,12 @@ static int pvrdma_del_gid(const struct ib_gid_attr *attr, void **context)
->  }
->  
->  static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
-> +					  struct net_device *ndev,
->  					  unsigned long event)
->  {
-> +	struct pci_dev *pdev_net;
-> +
-> +
->  	switch (event) {
->  	case NETDEV_REBOOT:
->  	case NETDEV_DOWN:
-> @@ -718,6 +722,21 @@ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
->  		else
->  			pvrdma_dispatch_event(dev, 1, IB_EVENT_PORT_ACTIVE);
->  		break;
-> +	case NETDEV_UNREGISTER:
-> +		dev_put(dev->netdev);
-> +		dev->netdev = NULL;
-> +		break;
-> +	case NETDEV_REGISTER:
-> +		/* Paired vmxnet3 will have same bus, slot. But func will be 0 */
-> +		pdev_net = pci_get_slot(dev->pdev->bus, PCI_DEVFN(PCI_SLOT(dev->pdev->devfn), 0));
-> +		if ((dev->netdev == NULL) && (pci_get_drvdata(pdev_net) == ndev)) {
-> +			/* this is our netdev */
-> +			dev->netdev = ndev;
-> +			dev_hold(ndev);
-> +		}
-> +		pci_dev_put(pdev_net);
-> +		break;
-> +
->  	default:
->  		dev_dbg(&dev->pdev->dev, "ignore netdevice event %ld on %s\n",
->  			event, dev->ib_dev.name);
-> @@ -734,8 +753,9 @@ static void pvrdma_netdevice_event_work(struct work_struct *work)
->  
->  	mutex_lock(&pvrdma_device_list_lock);
->  	list_for_each_entry(dev, &pvrdma_device_list, device_link) {
-> -		if (dev->netdev == netdev_work->event_netdev) {
-> -			pvrdma_netdevice_event_handle(dev, netdev_work->event);
-> +		if ((netdev_work->event == NETDEV_REGISTER) ||
-> +		    (dev->netdev == netdev_work->event_netdev)) {
-> +			pvrdma_netdevice_event_handle(dev, netdev_work->event_netdev, netdev_work->event);
->  			break;
->  		}
->  	}
-> @@ -962,6 +982,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
->  	}
->  
->  	dev->netdev = pci_get_drvdata(pdev_net);
-> +	dev_hold(dev->netdev);
->  	pci_dev_put(pdev_net);
->  	if (!dev->netdev) {
->  		dev_err(&pdev->dev, "failed to get vmxnet3 device\n");
+> Very cool, thank you!  Firing up rcutorture with this now.
 
-I see a lot of new dev_hold's here, where are the matching
-dev_puts()?
+And the three scenarios (TASKS03, TREE04, and TREE07) that reliably give
+me a splat without this patch are properly silent with it.  So:
 
-Jason
+Tested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+And thank you very much!
+
+							Thanx, Paul
+
