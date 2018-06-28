@@ -2,169 +2,345 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5BAC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A41C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F59627A5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179F927A63
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:19:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJDsK2t/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F59627A5C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G4FcKCB4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179F927A63
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967131AbeF1XPx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 19:15:53 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45129 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753224AbeF1XPv (ORCPT
+        id S936198AbeF1XTM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 19:19:12 -0400
+Received: from mail-vk0-f74.google.com ([209.85.213.74]:36198 "EHLO
+        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932883AbeF1XTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 19:15:51 -0400
-Received: by mail-pg0-f65.google.com with SMTP id z1-v6so3107525pgv.12;
-        Thu, 28 Jun 2018 16:15:50 -0700 (PDT)
+        Thu, 28 Jun 2018 19:19:11 -0400
+Received: by mail-vk0-f74.google.com with SMTP id p79-v6so2717486vkd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 16:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GYHmEfwyTRZ2qUDtn+3Srp2bHdRirZCZ1+7PwhwO5Yw=;
-        b=bJDsK2t/b2eO+wapQnUgAn2kb2/gACPDaGEA+jNOA8yyOttUubToqkyTn907OVigW1
-         sidqEHbabFsBlpZIySUbmJ4CZ5H26/xTqDvAgNTdwZfYnTpMEUL1PiTSklSMakNkPGoi
-         RJHGvvKvJHhPyu3PnCASlnVEweuFCswlOIiuMkeJmjXaKtudUNMbML5w+fMad1iuZl5r
-         8aBCHRUAsLOJn8q0A6TpINSlSFzwOPwgq8nhyYMfhlf34BMY0IN/ilmt0G4vXYlJDRcu
-         UtsNlggFZvl+Ak1M6+73aK2tWMm4DLe40fgzCTybMJKbFQR4wDmm0XQUdZ0/bD9dqL5d
-         aQsQ==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=C73ATu+JNBVbQ8GjP3+joM+FxX6anzBtTSxBi13wbQs=;
+        b=G4FcKCB44AKTFrQCckhecc2mpwBoqospbS6YKNiRT7V0JPd+9MquKzdzyV0A3cES7y
+         DVM1F+Z+VpvXZ3dyol3+umeD7ZAKfAdMLTDvb6/379850NT+tTdLV8K5ooUJ4YP1xZiX
+         iLJUf5UNhkez+3gw2QG8NdHEttvY/4JPel3L3kD+lAFsSBNE0BcnIsd5sqZPkdo8xZge
+         vIv7w4/CRMJYT24CBy/6HtkGcJcQMJWpRyGcH95bLykpLq4rdwjzoeb4iFdp9xOqWGX7
+         3gc/KjAEwJejJBw6hRfsDeHd/X5Iuqqwm2pC8s0+XuujhHpj5tomhrLJNjdDmcVLNjVJ
+         HWjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=GYHmEfwyTRZ2qUDtn+3Srp2bHdRirZCZ1+7PwhwO5Yw=;
-        b=ka2FCbYK/vY9+GKxt4dEhg6CGrgMjNGolfdlUJfcXY3A+K3SW5VT0o3QlqZWkB42Hu
-         7clyf5we34v3U5jKBHInLud3fpxKesXXCeYdgWKPJwSXLfTMMTttnrKgY9Dz13SSTk5Q
-         c3S7rIPAZDE/3BJ/h8+cHrjOx3/7fCvvlHQJLeiULhX1awTqOQn9yhh1DEgNNA5hAGUc
-         Nnvj3HwDh52kdXhzt4KsceKatB2pFe8PhUxY7j7IYTA2TDaArrooEJnhCmYhR0wxn3SR
-         i+8xkQsx48JRAoEDuBkA4IgbQ7YPZQFTkTqOwnH/P4yrTO0Thdo/nLn2gP9Fd/uYub3y
-         9nEg==
-X-Gm-Message-State: APt69E1yoft8C9OdmEosx6IiZcb4SOenTOIrwF99aMCUXyLnSH6wiKHz
-        hSAmjzRAKhX1jFyiJHkUZWs=
-X-Google-Smtp-Source: ADUXVKKysZC1UX+252EUEE1WC3cuimzFQlTjYoIpHShYayHIlBuI61JN3F5OWkz9DKrUUPPbu4LoJg==
-X-Received: by 2002:a65:63cd:: with SMTP id n13-v6mr10345735pgv.185.1530227750412;
-        Thu, 28 Jun 2018 16:15:50 -0700 (PDT)
-Received: from aurora.jms.id.au ([203.0.153.9])
-        by smtp.gmail.com with ESMTPSA id m7-v6sm7993378pfj.25.2018.06.28.16.15.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Jun 2018 16:15:49 -0700 (PDT)
-Received: by aurora.jms.id.au (sSMTP sendmail emulation); Fri, 29 Jun 2018 08:45:43 +0930
-From:   Joel Stanley <joel@jms.id.au>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
-Date:   Fri, 29 Jun 2018 08:45:40 +0930
-Message-Id: <20180628231540.26633-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=C73ATu+JNBVbQ8GjP3+joM+FxX6anzBtTSxBi13wbQs=;
+        b=riAZZThdeWiLFJ8DVJcDMFOfmTj3Zt/Y4U5jkV7nUqlaawyoSrN4AWeS07LkfPA89C
+         qpkuoBrc2NKiLdUn+cedukKOBdmFSHaK3qXB0mTOV7HIvokokLdfGE6sVelyWTXuNZFk
+         LbexQEcOe6AMrXD4ySsotsxe9sfpKsSCPcD0i9JlgvW167gq2CRjhjMQ3/gq+lfO2TJV
+         GLs9XpOJeNEJ/6s2nIFyhYnQkjhtFPQqJpsSfjGz5tnMLccX5O+OEa0L2cFPTHLBrbQr
+         EZA6f+6CMK/vwh2KBSaZKRe0guNtz8Zoz09juqNrMkpgm9FFwQ6uIKCBz8wCE3EH6oIq
+         uIMA==
+X-Gm-Message-State: APt69E2ZVHKUdJzo94IK7S/kUo/TRrdMQqFeZpC89/tF6Lt2sCWZYWHR
+        jTWVpKuSHlBqoR+eOCdAWr1UT5lcCta6
+X-Google-Smtp-Source: AAOMgpewnj53H7GtE+bD6xbyqUHXHyLk7ND63HBnWQR/LBypfllGlud1wTNOX80ctEzNbyU0eKIqGDCe9tg1
+X-Received: by 2002:a1f:b004:: with SMTP id z4-v6mr5234481vke.78.1530227950062;
+ Thu, 28 Jun 2018 16:19:10 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 16:19:07 -0700
+In-Reply-To: <20180628151101.25307-1-mhocko@kernel.org>
+Message-Id: <xr93in62jy8k.fsf@gthelen.svl.corp.google.com>
+Mime-Version: 1.0
+References: <20180628151101.25307-1-mhocko@kernel.org>
+Subject: Re: [PATCH] memcg, oom: move out_of_memory back to the charge path
+From:   Greg Thelen <gthelen@google.com>
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HPLL can be configured through a register (SCU24), however some
-platforms chose to configure it through the strapping settings and do
-not use the register. This was not noticed as the logic for bit 18 in
-SCU24 was confused: set means programmed, but the driver read it as set
-means strapped.
+Michal Hocko <mhocko@kernel.org> wrote:
 
-This gives us the correct HPLL value on Palmetto systems, from which
-most of the peripheral clocks are generated.
+> From: Michal Hocko <mhocko@suse.com>
+>
+> 3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
+> has changed the ENOMEM semantic of memcg charges. Rather than invoking
+> the oom killer from the charging context it delays the oom killer to the
+> page fault path (pagefault_out_of_memory). This in turn means that many
+> users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
+> hits the hard limit and the memcg is is OOM. This is behavior is
+> inconsistent with !memcg case where the oom killer is invoked from the
+> allocation context and the allocator keeps retrying until it succeeds.
+>
+> The difference in the behavior is user visible. mmap(MAP_POPULATE) might
+> result in not fully populated ranges while the mmap return code doesn't
+> tell that to the userspace. Random syscalls might fail with ENOMEM etc.
+>
+> The primary motivation of the different memcg oom semantic was the
+> deadlock avoidance. Things have changed since then, though. We have
+> an async oom teardown by the oom reaper now and so we do not have to
+> rely on the victim to tear down its memory anymore. Therefore we can
+> return to the original semantic as long as the memcg oom killer is not
+> handed over to the users space.
+>
+> There is still one thing to be careful about here though. If the oom
+> killer is not able to make any forward progress - e.g. because there is
+> no eligible task to kill - then we have to bail out of the charge path
+> to prevent from same class of deadlocks. We have basically two options
+> here. Either we fail the charge with ENOMEM or force the charge and
+> allow overcharge. The first option has been considered more harmful than
+> useful because rare inconsistencies in the ENOMEM behavior is hard to
+> test for and error prone. Basically the same reason why the page
+> allocator doesn't fail allocations under such conditions. The later
+> might allow runaways but those should be really unlikely unless somebody
+> misconfigures the system. E.g. allowing to migrate tasks away from the
+> memcg to a different unlimited memcg with move_charge_at_immigrate
+> disabled.
+>
+> Changes since rfc v1
+> - s@memcg_may_oom@in_user_fault@ suggested by Johannes. It is much more
+>   clear what is the purpose of the flag now
+> - s@mem_cgroup_oom_enable@mem_cgroup_enter_user_fault@g
+>   s@mem_cgroup_oom_disable@mem_cgroup_exit_user_fault@g as per Johannes
+> - make oom_kill_disable an exceptional case because it should be rare
+>   and the normal oom handling a core of the function - per Johannes
+>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
-Cc: stable@vger.kernel.org # v4.15
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-aspeed.c | 42 +++++++++++++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 13 deletions(-)
+Acked-by: Greg Thelen <gthelen@google.com>
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 38b366b00c57..2ef4ad7bdbdc 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -24,7 +24,7 @@
- #define ASPEED_MPLL_PARAM	0x20
- #define ASPEED_HPLL_PARAM	0x24
- #define  AST2500_HPLL_BYPASS_EN	BIT(20)
--#define  AST2400_HPLL_STRAPPED	BIT(18)
-+#define  AST2400_HPLL_PROGRAMMED BIT(18)
- #define  AST2400_HPLL_BYPASS_EN	BIT(17)
- #define ASPEED_MISC_CTRL	0x2c
- #define  UART_DIV13_EN		BIT(12)
-@@ -565,29 +565,45 @@ builtin_platform_driver(aspeed_clk_driver);
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
--	u32 val, freq, div;
-+	u32 val, div, clkin, hpll;
-+	const u16 hpll_rates[][4] = {
-+		{384, 360, 336, 408},
-+		{400, 375, 350, 425},
-+	};
-+	int rate;
- 
- 	/*
- 	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
- 	 * strapping
- 	 */
- 	regmap_read(map, ASPEED_STRAP, &val);
--	if (val & CLKIN_25MHZ_EN)
--		freq = 25000000;
--	else if (val & AST2400_CLK_SOURCE_SEL)
--		freq = 48000000;
--	else
--		freq = 24000000;
--	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
--	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+	rate = (val >> 8) & 3;
-+	if (val & CLKIN_25MHZ_EN) {
-+		clkin = 25000000;
-+		hpll = hpll_rates[1][rate];
-+	} else if (val & AST2400_CLK_SOURCE_SEL) {
-+		clkin = 48000000;
-+		hpll = hpll_rates[0][rate];
-+	} else {
-+		clkin = 24000000;
-+		hpll = hpll_rates[0][rate];
-+	}
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, clkin);
-+	pr_debug("clkin @%u MHz\n", clkin / 1000000);
- 
- 	/*
- 	 * High-speed PLL clock derived from the crystal. This the CPU clock,
--	 * and we assume that it is enabled
-+	 * and we assume that it is enabled. It can be configured through the
-+	 * HPLL_PARAM register, or set to a specified frequency by strapping.
- 	 */
- 	regmap_read(map, ASPEED_HPLL_PARAM, &val);
--	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
--	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
-+	if (val & AST2400_HPLL_PROGRAMMED)
-+		hw = aspeed_ast2400_calc_pll("hpll", val);
-+	else
-+		hw = clk_hw_register_fixed_rate(NULL, "hpll", "clkin", 0,
-+				hpll * 1000000);
-+
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = hw;
- 
- 	/*
- 	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
--- 
-2.17.1
+Thanks!  One comment below.
 
+> ---
+>
+> Hi,
+> I've posted this as an RFC previously [1]. There was no fundamental
+> disagreement so I've integrated all the suggested changes and tested it.
+> mmap(MAP_POPULATE) hits the oom killer again rather than silently fails
+> to populate the mapping on the hard limit excess. On the other hand
+> g-u-p and other charge path keep the ENOMEM semantic when the memcg oom
+> killer is disabled. All the forward progress guarantee relies on the oom
+> reaper.
+>
+> Unless there are objections I think this is ready to go to mmotm and
+> ready for the next merge window
+>
+> [1] http://lkml.kernel.org/r/20180620103736.13880-1-mhocko@kernel.org
+>  include/linux/memcontrol.h | 16 ++++----
+>  include/linux/sched.h      |  2 +-
+>  mm/memcontrol.c            | 75 ++++++++++++++++++++++++++++++--------
+>  mm/memory.c                |  4 +-
+>  4 files changed, 71 insertions(+), 26 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 6c6fb116e925..5a69bb4026f6 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -494,16 +494,16 @@ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
+>  void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+>  				struct task_struct *p);
+>  
+> -static inline void mem_cgroup_oom_enable(void)
+> +static inline void mem_cgroup_enter_user_fault(void)
+>  {
+> -	WARN_ON(current->memcg_may_oom);
+> -	current->memcg_may_oom = 1;
+> +	WARN_ON(current->in_user_fault);
+> +	current->in_user_fault = 1;
+>  }
+>  
+> -static inline void mem_cgroup_oom_disable(void)
+> +static inline void mem_cgroup_exit_user_fault(void)
+>  {
+> -	WARN_ON(!current->memcg_may_oom);
+> -	current->memcg_may_oom = 0;
+> +	WARN_ON(!current->in_user_fault);
+> +	current->in_user_fault = 0;
+>  }
+>  
+>  static inline bool task_in_memcg_oom(struct task_struct *p)
+> @@ -924,11 +924,11 @@ static inline void mem_cgroup_handle_over_high(void)
+>  {
+>  }
+>  
+> -static inline void mem_cgroup_oom_enable(void)
+> +static inline void mem_cgroup_enter_user_fault(void)
+>  {
+>  }
+>  
+> -static inline void mem_cgroup_oom_disable(void)
+> +static inline void mem_cgroup_exit_user_fault(void)
+>  {
+>  }
+>  
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 87bf02d93a27..34cc95b751cd 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -722,7 +722,7 @@ struct task_struct {
+>  	unsigned			restore_sigmask:1;
+>  #endif
+>  #ifdef CONFIG_MEMCG
+> -	unsigned			memcg_may_oom:1;
+> +	unsigned			in_user_fault:1;
+>  #ifndef CONFIG_SLOB
+>  	unsigned			memcg_kmem_skip_account:1;
+>  #endif
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e6f0d5ef320a..cff6c75137c1 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1483,28 +1483,53 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+>  		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
+>  }
+>  
+> -static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+> +enum oom_status {
+> +	OOM_SUCCESS,
+> +	OOM_FAILED,
+> +	OOM_ASYNC,
+> +	OOM_SKIPPED
+> +};
+> +
+> +static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+>  {
+> -	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+> -		return;
+> +	if (order > PAGE_ALLOC_COSTLY_ORDER)
+> +		return OOM_SKIPPED;
+> +
+>  	/*
+>  	 * We are in the middle of the charge context here, so we
+>  	 * don't want to block when potentially sitting on a callstack
+>  	 * that holds all kinds of filesystem and mm locks.
+>  	 *
+> -	 * Also, the caller may handle a failed allocation gracefully
+> -	 * (like optional page cache readahead) and so an OOM killer
+> -	 * invocation might not even be necessary.
+> +	 * cgroup1 allows disabling the OOM killer and waiting for outside
+> +	 * handling until the charge can succeed; remember the context and put
+> +	 * the task to sleep at the end of the page fault when all locks are
+> +	 * released.
+> +	 *
+> +	 * On the other hand, in-kernel OOM killer allows for an async victim
+> +	 * memory reclaim (oom_reaper) and that means that we are not solely
+> +	 * relying on the oom victim to make a forward progress and we can
+> +	 * invoke the oom killer here.
+>  	 *
+> -	 * That's why we don't do anything here except remember the
+> -	 * OOM context and then deal with it at the end of the page
+> -	 * fault when the stack is unwound, the locks are released,
+> -	 * and when we know whether the fault was overall successful.
+> +	 * Please note that mem_cgroup_out_of_memory might fail to find a
+> +	 * victim and then we have to bail out from the charge path.
+>  	 */
+> -	css_get(&memcg->css);
+> -	current->memcg_in_oom = memcg;
+> -	current->memcg_oom_gfp_mask = mask;
+> -	current->memcg_oom_order = order;
+> +	if (memcg->oom_kill_disable) {
+> +		if (!current->in_user_fault)
+> +			return OOM_SKIPPED;
+> +		css_get(&memcg->css);
+> +		current->memcg_in_oom = memcg;
+> +		current->memcg_oom_gfp_mask = mask;
+> +		current->memcg_oom_order = order;
+> +
+> +		return OOM_ASYNC;
+> +	}
+> +
+> +	if (mem_cgroup_out_of_memory(memcg, mask, order))
+> +		return OOM_SUCCESS;
+> +
+> +	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
+> +		"This looks like a misconfiguration or a kernel bug.");
+
+I'm not sure here if the warning should here or so strongly worded.  It
+seems like the current task could be oom reaped with MMF_OOM_SKIP and
+thus mem_cgroup_out_of_memory() will return false.  So there's nothing
+alarming in that case.
+
+> +	return OOM_FAILED;
+>  }
+>  
+>  /**
+> @@ -1899,6 +1924,8 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	unsigned long nr_reclaimed;
+>  	bool may_swap = true;
+>  	bool drained = false;
+> +	bool oomed = false;
+> +	enum oom_status oom_status;
+>  
+>  	if (mem_cgroup_is_root(memcg))
+>  		return 0;
+> @@ -1986,6 +2013,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (nr_retries--)
+>  		goto retry;
+>  
+> +	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
+> +		goto nomem;
+> +
+>  	if (gfp_mask & __GFP_NOFAIL)
+>  		goto force;
+>  
+> @@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  
+>  	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+>  
+> -	mem_cgroup_oom(mem_over_limit, gfp_mask,
+> +	/*
+> +	 * keep retrying as long as the memcg oom killer is able to make
+> +	 * a forward progress or bypass the charge if the oom killer
+> +	 * couldn't make any progress.
+> +	 */
+> +	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
+>  		       get_order(nr_pages * PAGE_SIZE));
+> +	switch (oom_status) {
+> +	case OOM_SUCCESS:
+> +		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
+> +		oomed = true;
+> +		goto retry;
+> +	case OOM_FAILED:
+> +		goto force;
+> +	default:
+> +		goto nomem;
+> +	}
+>  nomem:
+>  	if (!(gfp_mask & __GFP_NOFAIL))
+>  		return -ENOMEM;
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 7206a634270b..a4b1f8c24884 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4125,7 +4125,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>  	 * space.  Kernel faults are handled more gracefully.
+>  	 */
+>  	if (flags & FAULT_FLAG_USER)
+> -		mem_cgroup_oom_enable();
+> +		mem_cgroup_enter_user_fault();
+>  
+>  	if (unlikely(is_vm_hugetlb_page(vma)))
+>  		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
+> @@ -4133,7 +4133,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+>  		ret = __handle_mm_fault(vma, address, flags);
+>  
+>  	if (flags & FAULT_FLAG_USER) {
+> -		mem_cgroup_oom_disable();
+> +		mem_cgroup_exit_user_fault();
+>  		/*
+>  		 * The task may have entered a memcg OOM situation but
+>  		 * if the allocation error was handled gracefully (no
