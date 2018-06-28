@@ -2,137 +2,133 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75700C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB64C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B54F2460E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:30:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="PRdR8kT7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B54F2460E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 13C0B272FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C0B272FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935303AbeF1Pa1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:30:27 -0400
-Received: from imap.thunk.org ([74.207.234.97]:36892 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933604AbeF1PaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:30:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=vz6JhvmmsHmYqdou6n8cS8VcCVHWEosn48QWhb3Gti0=; b=PRdR8kT72yOLnxb329XanasAVM
-        gmNwPW3Te6Y5GXewVxFitAw+tsQnAzZBDrOkhnNQ1rRvHof2wQyeHFMuoBwtvIyvkFeG5ClO/dwKv
-        cwQHIs2IMeaan9oMZdCGAlhO1r59TwEzvTH/bmVAGxPc1baYhZZWCbn6zyqmMq1rZkbw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fYYsJ-0008Lo-5h; Thu, 28 Jun 2018 15:30:23 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7C5067A4480; Thu, 28 Jun 2018 11:30:22 -0400 (EDT)
-Date:   Thu, 28 Jun 2018 11:30:22 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
-Cc:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
-        "Shenchen (harry)" <harry.shen@huawei.com>,
-        "miaoxie (A)" <miaoxie@huawei.com>,
-        "yangfei (D)" <yangfei39@huawei.com>,
-        "Renlipeng (OS driver)" <renlipeng@huawei.com>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?=
- =?utf-8?Q?H=5D_ext4=3A_e2fsprogs=3A_fix_inode_bitma?= =?utf-8?Q?p?= num not
- integer,incompatible for ancient android devices
-Message-ID: <20180628153022.GA8521@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
-        "Shenchen (harry)" <harry.shen@huawei.com>,
-        "miaoxie (A)" <miaoxie@huawei.com>,
-        "yangfei (D)" <yangfei39@huawei.com>,
-        "Renlipeng (OS driver)" <renlipeng@huawei.com>
-References: <1530014046-62466-1-git-send-email-gaoming20@huawei.com>
- <20180627140937.GA3348@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41667@dggemm511-mbx.china.huawei.com>
- <20180628022900.GA663@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
+        id S1754097AbeF1Ped (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:34:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49514 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752408AbeF1Peb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:34:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EB6B18A;
+        Thu, 28 Jun 2018 08:34:31 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 491223F266;
+        Thu, 28 Jun 2018 08:34:28 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 16:34:25 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        Linuxarm <linuxarm@huawei.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>, suzuki.poulose@arm.com,
+        marc.zyngier@arm.com,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dave.martin@arm.com,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        libeijian@hisilicon.com, zhangxiquan@hisilicon.com,
+        wxf.wang@hisilicon.com, dingshuai1@huawei.com,
+        Hanjun Guo <guohanjun@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+Message-ID: <20180628153425.rm5fd6dxb53n226z@lakrids.cambridge.arm.com>
+References: <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+ <5B2B6DEA.2090100@hisilicon.com>
+ <5B3274FC.7000206@hisilicon.com>
+ <20180626174746.GO23375@arm.com>
+ <5B338F7B.9070500@hisilicon.com>
+ <20180627132826.GB30631@arm.com>
+ <5B34F5C0.9090001@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <5B34F5C0.9090001@hisilicon.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 07:56:59AM +0000, Gaoming (ming, consumer BG) wrote:
-> You see, Inodes per group is 1708,which is illegal as you said.
+On Thu, Jun 28, 2018 at 03:50:40PM +0100, Wei Xu wrote:
+> Hi Will,
 > 
-> So, the problem exists a long time until Jun 21th 2018.
+> On 2018/6/27 14:28, Will Deacon wrote:
+> > On Wed, Jun 27, 2018 at 02:22:03PM +0100, Wei Xu wrote:
+> >> On 2018/6/26 18:47, Will Deacon wrote:
+> >>> If you look at the __idmap_kpti_put_pgtable_ent_ng asm macro, can you try
+> >>> replacing:
+> >>>
+> >>> 	dc      civac, cur_\()\type\()p
+> >>>
+> >>> with:
+> >>>
+> >>> 	dc      ivac, cur_\()\type\()p
+> >>>
+> >>> please? Only do this for the guest kernel, not the host. KVM will upgrade
+> >>> the clean to a clean+invalidate, so it's interesting to see if this has
+> >>> an effect on the behaviour.
+> >>
+> >> Only changed the guest kernel, the guest still failed to boot and the log
+> >> is same with the last mail.
+> >>
+> >> But if I changed to cvac as below for the guest, it is kind of stable.
+> >> 	dc      cvac, cur_\()\type\()p
+> >>
+> >> I have synced with our SoC guys about this and hope we can find the reason.
+> >> Do you have any more suggestion?
+> > 
+> > Unfortunately, not. It looks like somehow clean+invalidate is behaving
+> > just as an invalidate, and we're corrupting the page table as a result.
+> > 
+> > Hopefully the SoC guys will figure it out.
 > 
-> You complained the problem in 2011, they do not fix it till 2018.
-> Just as
-> I complained, fix it,  and you do not accept it. ^_^
+> After replaced the dmb with dsb in both __idmap_kpti_get_pgtable_ent and
+> __idmap_kpti_put_pgtable_ent_ng, we tested 20 times and we can not reproduce
+> the issue.
+> Today we will continue to do the stress testing and will update the result tomorrow.
+> 
+> The dsb in __idmap_kpti_get_pgtable_ent is to make sure the dc has been done and
+> the following ldr can get the latest data.
+> 
+> The dsb in __idmap_kpti_put_pgtable_ent_ng is to make sure the str will be done
+> before dc. Although dmb can guarantee the order of the str and dc on the L2 cache,
+> dmb can not guarantee the order on the bus.
 
-Here's the commit.  (Note the date.)   Do you see it in your repository?
+The architecture mandates that a DMB must provide this ordering, so that
+would be an erratum.
 
-Or are you using an unusual inode size?  (e.g., not 256 bytes, or 16
-inodes per block).
+Per ARM DDI 0487C.a, page D3-2069, "Ordering and completion of data and instruction
+cache instructions":
 
+  All data cache instructions, other than DC ZVA, that specify an
+  address:
 
-       	   	       	       	     	  - Ted
+  * Can execute in any order relative to loads or stores that access any
+    address with the Device memory attribute,or with Normal memory with
+    Inner Non-cacheable attribute unless a DMB or DSB is executed
+    between the instructions.
 
-commit 06c35f935a7adadceb9ee326b3231f952f6ad203
-Merge: 480a3b1 96cc54a
-Author: Colin Cross <ccross@android.com>
-Date:   Sat Apr 30 19:08:09 2011 -0700
+Note that we rely on this ordering in head.S when creating the page
+tables and setting up the boot mode. We also rely on this for the pmem
+API.
 
-    Merge "Make inodes per group a multiple of inodes per block"
-
-diff --cc ext4_utils/make_ext4fs.c
-index c9fd992,e37d617..22c9424
---- a/ext4_utils/make_ext4fs.c
-+++ b/ext4_utils/make_ext4fs.c
-@@@ -214,26 -215,10 +214,27 @@@ static u32 compute_inodes_per_group(
-  {
-  	u32 blocks = DIV_ROUND_UP(info.len, info.block_size);
-  	u32 block_groups = DIV_ROUND_UP(blocks, info.blocks_per_group);
-- 	return DIV_ROUND_UP(info.inodes, block_groups);
-+ 	u32 inodes = DIV_ROUND_UP(info.inodes, block_groups);
-+ 	return ALIGN(inodes, (info.block_size / info.inode_size));
-  }
-  
- +static u32 compute_bg_desc_reserve_blocks()
- +{
- +	u32 blocks = DIV_ROUND_UP(info.len, info.block_size);
- +	u32 block_groups = DIV_ROUND_UP(blocks, info.blocks_per_group);
- +	u32 bg_desc_blocks = DIV_ROUND_UP(block_groups * sizeof(struct ext2_group_desc),
- +			info.block_size);
- +
- +	u32 bg_desc_reserve_blocks =
- +			DIV_ROUND_UP(block_groups * 1024 * sizeof(struct ext2_group_desc),
- +					info.block_size) - bg_desc_blocks;
- +
- +	if (bg_desc_reserve_blocks > info.block_size / sizeof(u32))
- +		bg_desc_reserve_blocks = info.block_size / sizeof(u32);
- +
- +	return bg_desc_reserve_blocks;
- +}
- +
-  void reset_ext4fs_info() {
-      // Reset all the global data structures used by make_ext4fs so it
-      // can be called again.
+Thanks,
+Mark.
