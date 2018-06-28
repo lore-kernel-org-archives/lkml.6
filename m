@@ -6,20 +6,20 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF7CC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E99C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C7C279A5
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:57:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C7C279A5
+	by mail.kernel.org (Postfix) with ESMTP id 5B9BE279A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B9BE279A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936085AbeF1U5P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 16:57:15 -0400
+        id S965323AbeF1U5Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 16:57:16 -0400
 Received: from mga09.intel.com ([134.134.136.24]:31844 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934003AbeF1U5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S935810AbeF1U5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 28 Jun 2018 16:57:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -27,7 +27,7 @@ Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 13:57:11 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,284,1526367600"; 
-   d="scan'208";a="50702325"
+   d="scan'208";a="50702324"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.44])
   by fmsmga007.fm.intel.com with ESMTP; 28 Jun 2018 13:56:57 -0700
 From:   Keith Busch <keith.busch@intel.com>
@@ -36,9 +36,10 @@ To:     Johannes Thumshirn <jthumshirn@suse.de>,
         Sagi Grimberg <sagi@grimberg.me>,
         linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/5] nvme: cache struct nvme_ctrl reference to struct nvme_request
-Date:   Thu, 28 Jun 2018 14:55:59 -0600
-Message-Id: <20180628205601.13742-3-keith.busch@intel.com>
+Cc:     Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 2/5] nvme: trace nvme queue identifiers
+Date:   Thu, 28 Jun 2018 14:55:58 -0600
+Message-Id: <20180628205601.13742-2-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180628205601.13742-1-keith.busch@intel.com>
 References: <20180628205601.13742-1-keith.busch@intel.com>
@@ -47,81 +48,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagi Grimberg <sagi@grimberg.me>
+We can not match up a command to its completion based on the command
+id alone. We need to pair this up with the submitting queue identifier,
+so this patch adds that to the trace buffer.
 
-We will need to reference the controller in the setup and completion
-time for tracing and future traffic based keep alive support.
+This patch is also collapsing the admin and io submission traces into
+a single one since we don't need to duplicate this and creating
+unnecessary code branches.
 
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/nvme/host/fc.c     | 1 +
- drivers/nvme/host/nvme.h   | 1 +
- drivers/nvme/host/pci.c    | 2 ++
- drivers/nvme/host/rdma.c   | 1 +
- drivers/nvme/target/loop.c | 1 +
- 5 files changed, 6 insertions(+)
+ drivers/nvme/host/core.c  |  7 +++----
+ drivers/nvme/host/trace.h | 41 ++++++++++-------------------------------
+ 2 files changed, 13 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 41d45a1b5c62..9cc33752539a 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -1737,6 +1737,7 @@ nvme_fc_init_request(struct blk_mq_tag_set *set, struct request *rq,
- 	int queue_idx = (set == &ctrl->tag_set) ? hctx_idx + 1 : 0;
- 	struct nvme_fc_queue *queue = &ctrl->queues[queue_idx];
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 46df030b2c3f..398a5fb26603 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -97,6 +97,8 @@ static dev_t nvme_chr_devt;
+ static struct class *nvme_class;
+ static struct class *nvme_subsys_class;
  
-+	nvme_req(rq)->ctrl = &ctrl->ctrl;
- 	return __nvme_fc_init_request(ctrl, queue, op, rq, queue->rqcnt++);
++static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
++					   unsigned nsid);
+ static void nvme_ns_remove(struct nvme_ns *ns);
+ static int nvme_revalidate_disk(struct gendisk *disk);
+ static void nvme_put_subsystem(struct nvme_subsystem *subsys);
+@@ -652,10 +654,7 @@ blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req,
+ 	}
+ 
+ 	cmd->common.command_id = req->tag;
+-	if (ns)
+-		trace_nvme_setup_nvm_cmd(req->q->id, cmd);
+-	else
+-		trace_nvme_setup_admin_cmd(cmd);
++	trace_nvme_setup_nvm_cmd(req, cmd);
+ 	return ret;
  }
+ EXPORT_SYMBOL_GPL(nvme_setup_cmd);
+diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
+index 01390f0e1671..bca3451caa37 100644
+--- a/drivers/nvme/host/trace.h
++++ b/drivers/nvme/host/trace.h
+@@ -75,34 +75,9 @@ const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p, u8 opcode,
+ #define __parse_nvme_cmd(opcode, cdw10) \
+ 	nvme_trace_parse_nvm_cmd(p, opcode, cdw10)
  
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 0c4a33df3b2f..f2249387b60d 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -102,6 +102,7 @@ struct nvme_request {
- 	u8			retries;
- 	u8			flags;
- 	u16			status;
-+	struct nvme_ctrl	*ctrl;
- };
+-TRACE_EVENT(nvme_setup_admin_cmd,
+-	    TP_PROTO(struct nvme_command *cmd),
+-	    TP_ARGS(cmd),
+-	    TP_STRUCT__entry(
+-		    __field(u8, opcode)
+-		    __field(u8, flags)
+-		    __field(u16, cid)
+-		    __field(u64, metadata)
+-		    __array(u8, cdw10, 24)
+-	    ),
+-	    TP_fast_assign(
+-		    __entry->opcode = cmd->common.opcode;
+-		    __entry->flags = cmd->common.flags;
+-		    __entry->cid = cmd->common.command_id;
+-		    __entry->metadata = le64_to_cpu(cmd->common.metadata);
+-		    memcpy(__entry->cdw10, cmd->common.cdw10,
+-			   sizeof(__entry->cdw10));
+-	    ),
+-	    TP_printk(" cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
+-		      __entry->cid, __entry->flags, __entry->metadata,
+-		      show_admin_opcode_name(__entry->opcode),
+-		      __parse_nvme_admin_cmd(__entry->opcode, __entry->cdw10))
+-);
+-
+-
+ TRACE_EVENT(nvme_setup_nvm_cmd,
+-	    TP_PROTO(int qid, struct nvme_command *cmd),
+-	    TP_ARGS(qid, cmd),
++	    TP_PROTO(struct request *req, struct nvme_command *cmd),
++	    TP_ARGS(req, cmd),
+ 	    TP_STRUCT__entry(
+ 		    __field(int, qid)
+ 		    __field(u8, opcode)
+@@ -113,7 +88,7 @@ TRACE_EVENT(nvme_setup_nvm_cmd,
+ 		    __array(u8, cdw10, 24)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = qid;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->opcode = cmd->common.opcode;
+ 		    __entry->flags = cmd->common.flags;
+ 		    __entry->cid = cmd->common.command_id;
+@@ -125,8 +100,12 @@ TRACE_EVENT(nvme_setup_nvm_cmd,
+ 	    TP_printk("qid=%d, nsid=%u, cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
+ 		      __entry->qid, __entry->nsid, __entry->cid,
+ 		      __entry->flags, __entry->metadata,
+-		      show_opcode_name(__entry->opcode),
+-		      __parse_nvme_cmd(__entry->opcode, __entry->cdw10))
++		      __entry->qid ?
++				show_opcode_name(__entry->opcode) :
++				show_admin_opcode_name(__entry->opcode),
++		      __entry->qid ?
++				__parse_nvme_cmd(__entry->opcode, __entry->cdw10) :
++				__parse_nvme_admin_cmd(__entry->opcode, __entry->cdw10))
+ );
  
- /*
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index ba943f211687..8dcae11bbf3a 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -418,6 +418,8 @@ static int nvme_init_request(struct blk_mq_tag_set *set, struct request *req,
- 
- 	BUG_ON(!nvmeq);
- 	iod->nvmeq = nvmeq;
-+
-+	nvme_req(req)->ctrl = &dev->ctrl;
- 	return 0;
- }
- 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index 9544625c0b7d..ade55977d432 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -286,6 +286,7 @@ static int nvme_rdma_init_request(struct blk_mq_tag_set *set,
- 	struct ib_device *ibdev = dev->dev;
- 	int ret;
- 
-+	nvme_req(rq)->ctrl = &ctrl->ctrl;
- 	ret = nvme_rdma_alloc_qe(ibdev, &req->sqe, sizeof(struct nvme_command),
- 			DMA_TO_DEVICE);
- 	if (ret)
-diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
-index d8d91f04bd7e..af7fbf4132b0 100644
---- a/drivers/nvme/target/loop.c
-+++ b/drivers/nvme/target/loop.c
-@@ -227,6 +227,7 @@ static int nvme_loop_init_request(struct blk_mq_tag_set *set,
- {
- 	struct nvme_loop_ctrl *ctrl = set->driver_data;
- 
-+	nvme_req(req)->ctrl = &ctrl->ctrl;
- 	return nvme_loop_init_iod(ctrl, blk_mq_rq_to_pdu(req),
- 			(set == &ctrl->tag_set) ? hctx_idx + 1 : 0);
- }
+ TRACE_EVENT(nvme_complete_rq,
+@@ -141,7 +120,7 @@ TRACE_EVENT(nvme_complete_rq,
+ 		    __field(u16, status)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = req->q->id;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->cid = req->tag;
+ 		    __entry->result = le64_to_cpu(nvme_req(req)->result.u64);
+ 		    __entry->retries = nvme_req(req)->retries;
 -- 
 2.14.3
 
