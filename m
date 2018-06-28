@@ -6,129 +6,192 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47276C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A908C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB94227989
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3CF82799F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HM4aY7yT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB94227989
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pEdx7QFt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CF82799F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935118AbeF1Uum (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 16:50:42 -0400
-Received: from mail.efficios.com ([167.114.142.138]:49826 "EHLO
+        id S935619AbeF1Uz7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 16:55:59 -0400
+Received: from mail.efficios.com ([167.114.142.138]:50064 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934361AbeF1Uul (ORCPT
+        with ESMTP id S934003AbeF1Uz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 16:50:41 -0400
+        Thu, 28 Jun 2018 16:55:56 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E8A1722E912;
-        Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 2DF6A22EA22;
+        Thu, 28 Jun 2018 16:55:56 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id v97WlVU6WM9k; Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
+        with ESMTP id QiA4YQtKdm_Q; Thu, 28 Jun 2018 16:55:55 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 5064F22E90B;
-        Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 5064F22E90B
+        by mail.efficios.com (Postfix) with ESMTP id 69C6522EA17;
+        Thu, 28 Jun 2018 16:55:55 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 69C6522EA17
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530219040;
-        bh=3zsAsHny2giQGZhdDTd8ldXmz5z1G7O0nWQ3afxJcoA=;
+        s=default; t=1530219355;
+        bh=IcQd3NTPIgp6VsYT2ufu57V1GnAc6U8MoK5VS3Hu+K8=;
         h=Date:From:To:Message-ID:MIME-Version;
-        b=HM4aY7yTFawgAniToyiWtKlHBbThICrOzRbbADbuVxnCNi7RjJPjnuWvW3KMqRn5Y
-         Xz+D1Psuw3y1dxYFzU8DSdOAKJNR6dEvC8tBCS9DPyYNtesK46EnabAZRiWHrYE1iB
-         MB1DEA0I9okH57LDrGnsnwuBcY8QM0lXI/3aOM9VLr6xbWrWCRXUw7G8xLdzii4NcT
-         vk9N0/IfgP5sCu4OFNTkYXmdjhCUsQ6weg6KLKaIOW27NRHei3tR+d5Ov2TZo8y8r/
-         JxhgH7J3oCt056u1bqMeeFx0AgLGyej9iMRYzC2OMfkCtXvnxMpePWuxSSI7O4dv8O
-         FvE1HclvNb2cg==
+        b=pEdx7QFtZ4V81u+fup6R3isYTt9/PAO7ZAg8Lakl/ibFrncJfLBYh+SavWjobGuSM
+         jwlkDfBzUlgl68hOLDVlH8T0c7Syi16ld5Xgcut15NgSgpjnv7ySkXrLVVG4zM05SB
+         z2w9yDFqXR3cuWsMDOEH2xSrfQ8MJJaY/40fd/XVXS4Av/OYo81WnX73JDEh60uNF1
+         fZThUno04qsy+IDf48GyJu0CbLs8vuqGrvLIvDpW6tdy9V1s6WQ/je4WcA2syIlgAS
+         2VfjeiChREq9UHypZgs5bt5OxyFNdsq4oMJlaimz8fL9/UMPA8d6v4MddbsQx4CFMU
+         BwwwDoojWA/Mw==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id rPaQJRP9cnNn; Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
+        with ESMTP id QJQWKQx0Y4hl; Thu, 28 Jun 2018 16:55:55 -0400 (EDT)
 Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 3B32C22E902;
-        Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
-Date:   Thu, 28 Jun 2018 16:50:40 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 4BF6622EA0C;
+        Thu, 28 Jun 2018 16:55:55 -0400 (EDT)
+Date:   Thu, 28 Jun 2018 16:55:55 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        linux-api <linux-api@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        peter maydell <peter.maydell@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Message-ID: <176714835.9396.1530219040151.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180628164700.GD10751@arm.com>
-References: <1529949285-11013-1-git-send-email-will.deacon@arm.com> <1529949285-11013-4-git-send-email-will.deacon@arm.com> <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com> <20180626151427.GF23375@arm.com> <1763491947.3520.1530029512923.JavaMail.zimbra@efficios.com> <20180628164700.GD10751@arm.com>
-Subject: Re: [PATCH 3/3] rseq/selftests: Add support for arm64
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <145668759.9406.1530219355192.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180628165348.GE10751@arm.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <20180628162359.9054-2-mathieu.desnoyers@efficios.com> <20180628165348.GE10751@arm.com>
+Subject: Re: [RFC PATCH for 4.18 2/2] rseq: check that rseq->rseq_cs padding
+ is zero
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.114.142.138]
 X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq/selftests: Add support for arm64
-Thread-Index: pOL0RT8soSezNFWSYW0xKiF2CmhiIw==
+Thread-Topic: rseq: check that rseq->rseq_cs padding is zero
+Thread-Index: 0yd5tDgqkI8JsxsjRwSMAAu3hkRTxw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 28, 2018, at 12:47 PM, Will Deacon will.deacon@arm.com wrote:
+----- On Jun 28, 2018, at 12:53 PM, Will Deacon will.deacon@arm.com wrote:
 
 > Hi Mathieu,
 > 
-> On Tue, Jun 26, 2018 at 12:11:52PM -0400, Mathieu Desnoyers wrote:
->> ----- On Jun 26, 2018, at 11:14 AM, Will Deacon will.deacon@arm.com wrote:
->> > On Mon, Jun 25, 2018 at 02:10:10PM -0400, Mathieu Desnoyers wrote:
->> >> I notice you are using the instructions
->> >> 
->> >>   adrp
->> >>   add
->> >>   str
->> >> 
->> >> to implement RSEQ_ASM_STORE_RSEQ_CS(). Did you compare
->> >> performance-wise with an approach using a literal pool
->> >> near the instruction pointer like I did on arm32 ?
->> > 
->> > I didn't, no. Do you have a benchmark to hand so I can give this a go?
+> On Thu, Jun 28, 2018 at 12:23:59PM -0400, Mathieu Desnoyers wrote:
+>> On 32-bit kernels, the rseq->rseq_cs_padding field is never read by the
+>> kernel. However, 64-bit kernels dealing with 32-bit compat tasks read the
+>> full 64-bit in its entirety, and terminates the offending process with
+>> a segmentation fault if the upper 32 bits are set due to failure of
+>> copy_from_user().
 >> 
->> see tools/testing/selftests/rseq/param_test_benchmark --help
+>> Ensure that both 32-bit and 64-bit kernels dealing with 32-bit tasks end
+>> up terminating offending tasks with a segmentation fault if the upper
+>> 32-bit padding bits (rseq->rseq_cs_padding) are set by adding an explicit
+>> check that padding is zero on 32-bit kernels.
 >> 
->> It's a stripped-down version of param_test, without all the code for
->> delay loops and testing checks.
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+>> CC: Peter Zijlstra <peterz@infradead.org>
+>> CC: Paul Turner <pjt@google.com>
+>> CC: Thomas Gleixner <tglx@linutronix.de>
+>> CC: Andy Lutomirski <luto@amacapital.net>
+>> CC: Andi Kleen <andi@firstfloor.org>
+>> CC: Dave Watson <davejwatson@fb.com>
+>> CC: Chris Lameter <cl@linux.com>
+>> CC: Ingo Molnar <mingo@redhat.com>
+>> CC: "H. Peter Anvin" <hpa@zytor.com>
+>> CC: Ben Maurer <bmaurer@fb.com>
+>> CC: Steven Rostedt <rostedt@goodmis.org>
+>> CC: Josh Triplett <josh@joshtriplett.org>
+>> CC: Linus Torvalds <torvalds@linux-foundation.org>
+>> CC: Andrew Morton <akpm@linux-foundation.org>
+>> CC: Russell King <linux@arm.linux.org.uk>
+>> CC: Catalin Marinas <catalin.marinas@arm.com>
+>> CC: Will Deacon <will.deacon@arm.com>
+>> CC: Michael Kerrisk <mtk.manpages@gmail.com>
+>> CC: Boqun Feng <boqun.feng@gmail.com>
+>> CC: linux-api@vger.kernel.org
+>> ---
+>>  kernel/rseq.c | 25 +++++++++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
 >> 
->> Example use for counter increment with 4 threads, doing 5G counter
->> increments per thread:
->> 
->> time ./param_test_benchmark -T i -t 4 -r 5000000000
+>> diff --git a/kernel/rseq.c b/kernel/rseq.c
+>> index 4ba582046fcd..b038f35a60d6 100644
+>> --- a/kernel/rseq.c
+>> +++ b/kernel/rseq.c
+>> @@ -112,6 +112,29 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
+>>  	return 0;
+>>  }
+>>  
+>> +#ifndef __LP64__
+>> +/*
+>> + * Ensure that padding is zero.
+>> + */
+>> +static int check_rseq_cs_padding(struct task_struct *t)
+>> +{
+>> +	unsigned long pad;
+>> +	int ret;
+>> +
+>> +	ret = __get_user(pad, &t->rseq->rseq_cs_padding);
+>> +	if (ret)
+>> +		return ret;
+>> +	if (pad)
+>> +		return -EFAULT;
+>> +	return 0;
+>> +}
+>> +#else
+>> +static int check_rseq_cs_padding(struct task_struct *t)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
 > 
-> Thanks. I ran that on a few arm64 systems I have access to, with three
-> configurations of the selftest:
+> I'm still not sure how this works with a 64-bit kernel and a compat (32-bit)
+> task. The check_rseq_cs_padding() will return 0 regardless of the upper bits
+> of the rseq_cs field, whereas a native 32-bit kernel would actually go and
+> check them.
 > 
-> 1. As I posted
-> 2. With the abort signature and branch in-lined, so as to avoid the CBNZ
->   address limitations in large codebases
-> 3. With both the abort handler and the table inlined (i.e. the same thing
->   as 32-bit).
-> 
-> There isn't a reliably measurable difference between (1) and (2), but I take
-> between 12% and 27% hit between (2) and (3).
+> What am I missing here?
 
-Those results puzzle me. Do you have the actual code snippets of each
-implementation nearby ?
+With a 64-bit kernel, we end up in the #else, which means check_rseq_cs_padding()
+always returns 0.
+
+On that 64-bit kernel, all 64 bits of rseq->rseq_cs are read, including the
+padding. Therefore, all those bits are contained in the pointer passed as
+argument to copy_from_user(), which will cause copy_from_user() to accurately
+fail on an invalid user-space address.
+
+Therefore, 64-bit kernels already check those padding bits by means of trying to use
+that pointer to access user-space data with copy_from_user, which does an access_ok
+check.
+
+So both 32-bit and 64-bit kernels will end up killing the process with segmentation
+fault if a 32-bit userland populates those padding bits with anything other than
+0.
+
+Does it seem acceptable ?
 
 Thanks,
 
 Mathieu
 
-> 
-> So I'll post a v2 based on (2).
 > 
 > Will
 
