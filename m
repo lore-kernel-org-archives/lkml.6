@@ -2,179 +2,141 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34025C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E6DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4CC422DFB
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CC422DFB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 75E032710B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:50:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m53clXBP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E032710B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932239AbeF1ItE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:49:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43164 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752964AbeF1ItA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:49:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FE807A9;
-        Thu, 28 Jun 2018 01:49:00 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2E0C3F5C0;
-        Thu, 28 Jun 2018 01:48:58 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 09:48:52 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Quentin Perret <quentin.perret@arm.com>, peterz@infradead.org,
-        mingo@redhat.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/9] sched: Add static_key for asymmetric cpu capacity
- optimizations
-Message-ID: <20180628084852.GA8596@e105550-lin.cambridge.arm.com>
-References: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
- <1529485549-5191-2-git-send-email-morten.rasmussen@arm.com>
- <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
- <20180622143624.GD8461@e105550-lin.cambridge.arm.com>
- <4208ea5d-0c00-d17a-5524-b5d9caa70273@arm.com>
+        id S1753023AbeF1IuP (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 04:50:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52458 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeF1IuN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 04:50:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VaYagYMjNLi5MbppvTx+jyrVgSqhqS5U8HypcAHit6E=; b=m53clXBP+KMWO6W8lVT/UIkoy
+        JZeIZf8XmzffvFUwckJ18HnHV/lQ0Hq4LRZAUCldMJb1lWOgMQ6zOIkKMDzuURNSmYp6QNLwVYIo6
+        dLR5speD2kU0ebpCsagjYMDmzUg6YMDVKGjEXvy66mHGvtMJCzXTGotBuyPlN+XMlnLPOr4k0sxMc
+        8ikIFXq4vm9sZXtPAAYI0cHBQv5G0tH1k4pcfDlk1XYGCbhUirwN0emC3DHi3ZqDwRkyQH1mXhhC9
+        8g+/jOdvUGmqqxTmgei+yZfIoagOUtG4Ekd/dFe0bPru8xH4+3ONKBmICzPkOHth4GyR/italG9qj
+        PkrnETh2g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYScv-0002gn-07; Thu, 28 Jun 2018 08:50:05 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8B5E320297645; Thu, 28 Jun 2018 10:50:03 +0200 (CEST)
+Date:   Thu, 28 Jun 2018 10:50:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        x86@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 2/5] kernel/jump_label: implement generic support for
+ relative references
+Message-ID: <20180628085003.GA2494@hirez.programming.kicks-ass.net>
+References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
+ <20180627160604.8154-3-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4208ea5d-0c00-d17a-5524-b5d9caa70273@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180627160604.8154-3-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 05:41:22PM +0200, Dietmar Eggemann wrote:
-> On 06/22/2018 04:36 PM, Morten Rasmussen wrote:
-> >On Fri, Jun 22, 2018 at 09:22:22AM +0100, Quentin Perret wrote:
-> >>Hi Morten,
-> >>
-> >>On Wednesday 20 Jun 2018 at 10:05:41 (+0100), Morten Rasmussen wrote:
-> >>>+static void update_asym_cpucapacity(int cpu)
-> >>>+{
-> >>>+	int enable = false;
-> >>>+
-> >>>+	rcu_read_lock();
-> >>>+	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
-> >>>+		enable = true;
-> >>>+	rcu_read_unlock();
-> >>>+
-> >>>+	if (enable) {
-> >>>+		/* This expects to be hotplug-safe */
-> >>>+		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
-> >>>+	}
-> >>>+}
-> >>
-> >>What would happen if you hotplugged an entire cluster ? You'd loose the
-> >>SD_ASYM_CPUCAPACITY flag but keep the static key is that right ? Should
-> >>we care ?
-> >
-> >I don't think we should care. The static key enables additional checks
-> >and tweaks but AFAICT none of them requires the SD_ASYM_CPUCAPACITY to
-> >be set and they should all be have no effect if that is the case. I
-> >added the static key just avoid the overhead on systems where they would
-> >have no effect. At least that is intention, I could course have broken
-> >things by mistake.
-> 
-> I tent to agree for misfit but it would be easy to just add an
-> static_branch_disable_cpuslocked() into the else path of if(enable).
+On Wed, Jun 27, 2018 at 06:06:01PM +0200, Ard Biesheuvel wrote:
+> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+> index 86ec0652d3b1..aa203dffe72c 100644
+> --- a/include/linux/jump_label.h
+> +++ b/include/linux/jump_label.h
+> @@ -121,6 +121,32 @@ struct static_key {
+>  #include <asm/jump_label.h>
+>  
+>  #ifndef __ASSEMBLY__
+> +#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
+> +
+> +struct jump_entry {
+> +	int code;
+> +	int target;
+> +	int key;
+> +};
 
-Depending on how we address the exclusive cpuset mess Quentin pointed
-out, it isn't as simple as that. As it is with our current
-not-yet-posted patches we would never remove the SD_ASYM_CPUCAPACITY
-flag, so we would never do a static_branch_disable_cpuslocked().
+I much prefer you use 'u32' there.
 
-However, I'm currently thinking that we should probably set the flag
-according to the cpus in each root_domain. If we do that, we can't just
-disable the static_key because one root_domain is SMP, so we would have
-to track if _any_ root_domain (exclusive cpuset topology) has the flag
-set.
 
-Is it worth it to iterate over all the exclusive cpuset with all
-the locking implications to disable the static_key in the corner case
-where exclusive cpuset are set up for all cpu capacities in the system?
+> +static void jump_label_swap(void *a, void *b, int size)
+> +{
+> +	long delta = (unsigned long)a - (unsigned long)b;
+> +	struct jump_entry *jea = a;
+> +	struct jump_entry *jeb = b;
+> +	struct jump_entry tmp = *jea;
+> +
+> +	jea->code	= jeb->code - delta;
+> +	jea->target	= jeb->target - delta;
+> +	jea->key	= jeb->key - delta;
+> +
+> +	jeb->code	= tmp.code + delta;
+> +	jeb->target	= tmp.target + delta;
+> +	jeb->key	= tmp.key + delta;
+> +}
+> +
+>  static void
+>  jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
+>  {
+> @@ -56,7 +72,9 @@ jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
+>  
+>  	size = (((unsigned long)stop - (unsigned long)start)
+>  					/ sizeof(struct jump_entry));
+> -	sort(start, size, sizeof(struct jump_entry), jump_label_cmp, NULL);
+> +	sort(start, size, sizeof(struct jump_entry), jump_label_cmp,
+> +	     IS_ENABLED(CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE) ? jump_label_swap
+> +							      : NULL);
+>  }
 
-> >>And also, Peter mentioned an issue with the EAS patches with multiple
-> >>root_domains. Does that apply here as well ? What if you had a
-> >>configuration with big and little CPUs in different root_domains for ex?
-> >>
-> >>Should we disable the static key in the above cases ?
-> >
-> >Exclusive cpusets are more tricky as the flags will be the same for
-> >sched_domains at the same level. So we can't set the flag correctly if
-> >someone configures the exclusive cpusets such that you have one
-> >root_domain spanning big and a subset of little, and one spanning the
-> >remaining little cpus if all topology levels are preserved. If we
-> >imagine a three cluster system where 0-3 and 4-7 little clusters, and
-> >8-11 is a big cluster with cpusets configured as 0-5 and 6-11. The first
-> >set should _not_ have SD_ASYM_CPUCAPACITY set, while the second should.
-> >
-> >I'm tempted to say we shouldn't care in this situation. Setting the
-> >flags correctly in the three cluster example would require knowledge
-> >about the cpuset configuration which we don't have in the arch code so
-> >SD_ASYM_CPUCAPACITY flag detection would have be done by the
-> >sched_domain build code. However, not setting the flag according to the
-> >actual members of the exclusive cpuset means that homogeneous
-> >sched_domains might have SD_ASYM_CPUCAPACITY set enabling potentially
-> >wrong scheduling decisions.
-> 
-> We could easily pass the CPU as an argument to all these
-> sched_domain_flags_f functions.
-> 
-> -typedef int (*sched_domain_flags_f)(void);
-> +typedef int (*sched_domain_flags_f)(int cpu);
-> 
-> In this case, the arch specific flag functions on a sched domain (sd) level
-> could use the corresponding sched_domain_mask_f function to iterate over the
-> span of the sd seen by CPU instead of all online cpus.
+That will result in jump_label_swap being an unused symbol for some
+compile options.
 
-Yeah, but I'm afraid that doesn't solve the problem. The
-sched_domain_mask_f function doesn't tell us anything about any
-exclusive cpusets. We need sched_domain_span(sd) which is
-sched_domain_mask_f & cpu_map where cpu_map is the cpumask of the
-exclusive cpuset. So we either need to pass the sched_domain_span() mask
-through sched_domain_flags_f or work our way back to that information
-based on the cpu id. I'm not sure if the latter is possible.
+Would it not be much nicer to write that like:
 
-> The overall question is ... do we need sd setups which are asymmetric
-> (different topology flags for sd hierarchies seen by different CPUs) and
-> does the scheduler cope with this?
+static void jump_label_swap(void *a, void *b, int size)
+{
+	struct jump_entry *jea = a, *jeb = b;
 
-Well, in this case each root_domain is still flag symmetric so don't
-think it should cause any problems.
+#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
+	long delta = a - b;
 
-> We have seen 3 cluster systems like the MediaTek X20 (2 A72, 4 A53 (max
-> 1.85Ghz), 4 A53 (max 1.4Ghz)) but this would rather be a big-little-tiny
-> system due to the max CPU frequency differences between the A53's.
-> 
-> We could also say that systems with 2 clusters with the same uArch and same
-> max CPU frequency and additional clusters are insane, like we e.g. do with
-> the Energy Model and CPUs with different uArch within a frequency domain?
+	jea->code += delta;
+	jea->target += delta;
+	jea->key += delta;
 
-I fail to get the point here. Are you saying that SMP is insane? ;-)
+	jeb->code -= delta;
+	jeb->target -= delta;
+	jeb->key -= delta;
+#else
 
-> 
-> >We can actually end up with this problem just by hotplugging too. If you
-> >unplug the entire big cluster in the three cluster example above, you
-> >preserve DIE level which would have SD_ASYM_CPUCAPACITY set even though
-> >we only have little cpus left.
-> >
-> >As I see it, we have two choices: 1) Set the flags correctly for
-> >exclusive cpusets which means some additional "fun" in the sched_domain
-> >hierarchy set up, or 2) ignore it and make sure that setting
-> 
-> I assume you refer to this cpu parameter for sched_domain_flags_f under 1).
+	swap(*jea, *jeb);
+}
 
-No, what I had in mind was to let sd_init() set SD_ASYM_CPUCAPACITY
-flag as the arch-code doesn't know about the exclusive cpusets as
-discussed above. In the meantime I have thought about a different
-approach where sd_init() only disables the flag when it is no longer
-needed due to exclusive cpusets.
+And then unconditionally use jump_label_swap().
