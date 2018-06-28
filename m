@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B99C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92382C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF0E2786F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF0E2786F
+	by mail.kernel.org (Postfix) with ESMTP id 4D12227863
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D12227863
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754876AbeF1TPq (ORCPT
+        id S1754315AbeF1TPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:15:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48256 "EHLO mx1.redhat.com"
+        Thu, 28 Jun 2018 15:15:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48236 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754322AbeF1TPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:15:23 -0400
+        id S1753174AbeF1TPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:15:18 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2101CC12A0;
-        Thu, 28 Jun 2018 19:15:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 593EDF013C;
+        Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A82401116717;
-        Thu, 28 Jun 2018 19:15:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E261C1116717;
+        Thu, 28 Jun 2018 19:15:16 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     amd-gfx@lists.freedesktop.org
 Cc:     stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
@@ -36,72 +36,205 @@ Cc:     stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
         "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>,
         Felix Kuehling <Felix.Kuehling@amd.com>,
-        Shaoyun Liu <Shaoyun.Liu@amd.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Shaoyun Liu <Shaoyun.Liu@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        Jean Delvare <jdelvare@suse.de>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] drm/amdgpu: Add amdgpu_atpx_get_dhandle()
-Date:   Thu, 28 Jun 2018 15:14:54 -0400
-Message-Id: <20180628191505.10015-4-lyude@redhat.com>
+Subject: [PATCH v2 1/4] drm/amdgpu: Make struct amdgpu_atif private to amdgpu_acpi.c
+Date:   Thu, 28 Jun 2018 15:14:52 -0400
+Message-Id: <20180628191505.10015-2-lyude@redhat.com>
 In-Reply-To: <20180628191505.10015-1-lyude@redhat.com>
 References: <20180628191505.10015-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:23 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:17 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The handles for ACPI methods like ATPX and ATIF will live under the
-integrated GPU's namespace on systems with more then one GPU. ATPX is
-already detected regardless of the namespace it lives in, and it will
-always be in the same namespace as ATIF. So we can make things easier on
-ourselves by just adding some functions to retrieve said namespace so it
-can be searched later for ATIF.
+Currently, there is nothing in amdgpu that actually uses these structs
+other than amdgpu_acpi.c. Additionally, since we're about to start
+saving the correct ACPI handle to use for calling ATIF in this struct
+this saves us from having to handle making sure that the acpi_handle
+(and by proxy, the type definition for acpi_handle and all of the other
+acpi headers) doesn't need to be included within the amdgpu_drv struct
+itself. This follows the example set by amdgpu_atpx_handler.c.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: stable@vger.kernel.org
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu.h              | 6 ++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h      | 40 +-----------------
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 54 ++++++++++++++++++++++--
+ 2 files changed, 53 insertions(+), 41 deletions(-)
 
 diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index 7df5d3d11aff..7dcbac8af9a7 100644
+index a59c07590cee..7df5d3d11aff 100644
 --- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
 +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1858,6 +1858,12 @@ static inline bool amdgpu_atpx_dgpu_req_power_for_displays(void) { return false;
- static inline bool amdgpu_has_atpx(void) { return false; }
- #endif
+@@ -190,6 +190,7 @@ struct amdgpu_job;
+ struct amdgpu_irq_src;
+ struct amdgpu_fpriv;
+ struct amdgpu_bo_va_mapping;
++struct amdgpu_atif;
  
-+#if defined(CONFIG_VGA_SWITCHEROO) && defined(CONFIG_ACPI)
-+void *amdgpu_atpx_get_dhandle(void);
-+#else
-+static inline void *amdgpu_atpx_get_dhandle(void) { return NULL; }
-+#endif
-+
+ enum amdgpu_cp_irq {
+ 	AMDGPU_CP_IRQ_GFX_EOP = 0,
+@@ -1269,43 +1270,6 @@ struct amdgpu_vram_scratch {
  /*
-  * KMS
+  * ACPI
   */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-index a3896412a019..b33f1680c9a3 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-@@ -90,6 +90,12 @@ bool amdgpu_atpx_dgpu_req_power_for_displays(void) {
- 	return amdgpu_atpx_priv.atpx.dgpu_req_power_for_displays;
- }
+-struct amdgpu_atif_notification_cfg {
+-	bool enabled;
+-	int command_code;
+-};
+-
+-struct amdgpu_atif_notifications {
+-	bool display_switch;
+-	bool expansion_mode_change;
+-	bool thermal_state;
+-	bool forced_power_state;
+-	bool system_power_state;
+-	bool display_conf_change;
+-	bool px_gfx_switch;
+-	bool brightness_change;
+-	bool dgpu_display_event;
+-};
+-
+-struct amdgpu_atif_functions {
+-	bool system_params;
+-	bool sbios_requests;
+-	bool select_active_disp;
+-	bool lid_state;
+-	bool get_tv_standard;
+-	bool set_tv_standard;
+-	bool get_panel_expansion_mode;
+-	bool set_panel_expansion_mode;
+-	bool temperature_change;
+-	bool graphics_device_types;
+-};
+-
+-struct amdgpu_atif {
+-	struct amdgpu_atif_notifications notifications;
+-	struct amdgpu_atif_functions functions;
+-	struct amdgpu_atif_notification_cfg notification_cfg;
+-	struct amdgpu_encoder *encoder_for_bl;
+-};
+-
+ struct amdgpu_atcs_functions {
+ 	bool get_ext_state;
+ 	bool pcie_perf_req;
+@@ -1466,7 +1430,7 @@ struct amdgpu_device {
+ #if defined(CONFIG_DEBUG_FS)
+ 	struct dentry			*debugfs_regs[AMDGPU_DEBUGFS_MAX_COMPONENTS];
+ #endif
+-	struct amdgpu_atif		atif;
++	struct amdgpu_atif		*atif;
+ 	struct amdgpu_atcs		atcs;
+ 	struct mutex			srbm_mutex;
+ 	/* GRBM index mutex. Protects concurrent access to GRBM index */
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+index 8fa850a070e0..22c7e8ec0b9a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -34,6 +34,43 @@
+ #include "amd_acpi.h"
+ #include "atom.h"
  
-+#if defined(CONFIG_ACPI)
-+void *amdgpu_atpx_get_dhandle(void) {
-+	return amdgpu_atpx_priv.dhandle;
-+}
-+#endif
++struct amdgpu_atif_notification_cfg {
++	bool enabled;
++	int command_code;
++};
 +
++struct amdgpu_atif_notifications {
++	bool display_switch;
++	bool expansion_mode_change;
++	bool thermal_state;
++	bool forced_power_state;
++	bool system_power_state;
++	bool display_conf_change;
++	bool px_gfx_switch;
++	bool brightness_change;
++	bool dgpu_display_event;
++};
++
++struct amdgpu_atif_functions {
++	bool system_params;
++	bool sbios_requests;
++	bool select_active_disp;
++	bool lid_state;
++	bool get_tv_standard;
++	bool set_tv_standard;
++	bool get_panel_expansion_mode;
++	bool set_panel_expansion_mode;
++	bool temperature_change;
++	bool graphics_device_types;
++};
++
++struct amdgpu_atif {
++	struct amdgpu_atif_notifications notifications;
++	struct amdgpu_atif_functions functions;
++	struct amdgpu_atif_notification_cfg notification_cfg;
++	struct amdgpu_encoder *encoder_for_bl;
++};
++
+ /* Call the ATIF method
+  */
  /**
-  * amdgpu_atpx_call - call an ATPX method
-  *
+@@ -292,7 +329,7 @@ static int amdgpu_atif_get_sbios_requests(acpi_handle handle,
+ static int amdgpu_atif_handler(struct amdgpu_device *adev,
+ 			struct acpi_bus_event *event)
+ {
+-	struct amdgpu_atif *atif = &adev->atif;
++	struct amdgpu_atif *atif = adev->atif;
+ 	struct atif_sbios_requests req;
+ 	acpi_handle handle;
+ 	int count;
+@@ -303,7 +340,8 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
+ 	if (strcmp(event->device_class, ACPI_VIDEO_CLASS) != 0)
+ 		return NOTIFY_DONE;
+ 
+-	if (!atif->notification_cfg.enabled ||
++	if (!atif ||
++	    !atif->notification_cfg.enabled ||
+ 	    event->type != atif->notification_cfg.command_code)
+ 		/* Not our event */
+ 		return NOTIFY_DONE;
+@@ -642,7 +680,7 @@ static int amdgpu_acpi_event(struct notifier_block *nb,
+ int amdgpu_acpi_init(struct amdgpu_device *adev)
+ {
+ 	acpi_handle handle;
+-	struct amdgpu_atif *atif = &adev->atif;
++	struct amdgpu_atif *atif;
+ 	struct amdgpu_atcs *atcs = &adev->atcs;
+ 	int ret;
+ 
+@@ -659,11 +697,19 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
+ 	}
+ 
+ 	/* Call the ATIF method */
++	atif = kzalloc(sizeof(*atif), GFP_KERNEL);
++	if (!atif) {
++		DRM_WARN("Not enough memory to initialize ATIF\n");
++		goto out;
++	}
++
+ 	ret = amdgpu_atif_verify_interface(handle, atif);
+ 	if (ret) {
+ 		DRM_DEBUG_DRIVER("Call to ATIF verify_interface failed: %d\n", ret);
++		kfree(atif);
+ 		goto out;
+ 	}
++	adev->atif = atif;
+ 
+ 	if (atif->notifications.brightness_change) {
+ 		struct drm_encoder *tmp;
+@@ -720,4 +766,6 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
+ void amdgpu_acpi_fini(struct amdgpu_device *adev)
+ {
+ 	unregister_acpi_notifier(&adev->acpi_nb);
++	if (adev->atif)
++		kfree(adev->atif);
+ }
 -- 
 2.17.1
 
