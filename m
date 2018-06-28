@@ -1,214 +1,105 @@
 Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE51C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AB4C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C73823C1C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C73823C1C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C140256CE
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:40:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C140256CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752516AbeF1Bdl (ORCPT
+        id S1752281AbeF1Bkn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 21:33:41 -0400
-Received: from regular1.263xmail.com ([211.150.99.135]:56731 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752214AbeF1Bdj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 21:33:39 -0400
-Received: from david.wu?rock-chips.com (unknown [192.168.167.171])
-        by regular1.263xmail.com (Postfix) with ESMTP id ADB061E021;
-        Thu, 28 Jun 2018 09:33:31 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id E67CF3C1;
-        Thu, 28 Jun 2018 09:33:25 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: david.wu@rock-chips.com
-X-FST-TO: davem@davemloft.net
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: david.wu@rock-chips.com
-X-UNIQUE-TAG: <f084206f1d86d6bae4d67c5c65686f1d>
-X-ATTACHMENT-NUM: 0
-X-SENDER: wdc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 9607239PC2;
-        Thu, 28 Jun 2018 09:33:28 +0800 (CST)
-From:   David Wu <david.wu@rock-chips.com>
-To:     davem@davemloft.net, heiko@sntech.de, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, huangtao@rock-chips.com,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Wu <david.wu@rock-chips.com>
-Subject: [PATCH v4] net: ethernet: stmmac: dwmac-rk: Add GMAC support for px30
-Date:   Thu, 28 Jun 2018 09:33:21 +0800
-Message-Id: <1530149601-23337-1-git-send-email-david.wu@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 27 Jun 2018 21:40:43 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5565 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751614AbeF1Bkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 21:40:41 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id B55A2377085FF;
+        Thu, 28 Jun 2018 09:40:37 +0800 (CST)
+Received: from DGGEMM511-MBX.china.huawei.com ([169.254.1.80]) by
+ DGGEMM404-HUB.china.huawei.com ([10.3.20.212]) with mapi id 14.03.0382.000;
+ Thu, 28 Jun 2018 09:40:31 +0800
+From:   "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+CC:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
+        "Shenchen (harry)" <harry.shen@huawei.com>,
+        "miaoxie (A)" <miaoxie@huawei.com>,
+        "yangfei (D)" <yangfei39@huawei.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBleHQ0OiBlMmZzcHJvZ3M6IGZpeCBpbm9kZSBiaXRt?=
+ =?gb2312?B?YXAgbnVtIG5vdCBpbnRlZ2VyLGluY29tcGF0aWJsZSBmb3IgYW5jaWVudCBh?=
+ =?gb2312?Q?ndroid_devices?=
+Thread-Topic: [PATCH] ext4: e2fsprogs: fix inode bitmap num not
+ integer,incompatible for ancient android devices
+Thread-Index: AQHUDiB7bBM9P+9CgUmyd+rfiNQEzqR03/Qw
+Date:   Thu, 28 Jun 2018 01:40:30 +0000
+Message-ID: <FDC91B229D965C458E3615E98C48ADDD0EC41667@dggemm511-mbx.china.huawei.com>
+References: <1530014046-62466-1-git-send-email-gaoming20@huawei.com>
+ <20180627140937.GA3348@thunk.org>
+In-Reply-To: <20180627140937.GA3348@thunk.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.189.158.207]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add constants and callback functions for the dwmac on px30 Soc.
-The base structure is the same, but registers and the bits in
-them are moved slightly, and add the clk_mac_speed for selecting
-mac speed.
-
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
-Change in v4:
-- Fix the patch applied failed at net-next.
-
-Change in v3:
-- Add the clock enable/disable for clk_mac_speed.
-
-Change in v2:
-- Fix some error in commit title and message.
-
- .../devicetree/bindings/net/rockchip-dwmac.txt     |  1 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     | 69 ++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-index 9c16ee2..3b71da7 100644
---- a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-+++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-@@ -4,6 +4,7 @@ The device node has following properties.
- 
- Required properties:
-  - compatible: should be "rockchip,<name>-gamc"
-+   "rockchip,px30-gmac":   found on PX30 SoCs
-    "rockchip,rk3128-gmac": found on RK312x SoCs
-    "rockchip,rk3228-gmac": found on RK322x SoCs
-    "rockchip,rk3288-gmac": found on RK3288 SoCs
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index f08625a..7b92336 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -61,6 +61,7 @@ struct rk_priv_data {
- 	struct clk *mac_clk_tx;
- 	struct clk *clk_mac_ref;
- 	struct clk *clk_mac_refout;
-+	struct clk *clk_mac_speed;
- 	struct clk *aclk_mac;
- 	struct clk *pclk_mac;
- 	struct clk *clk_phy;
-@@ -83,6 +84,64 @@ struct rk_priv_data {
- 	(((tx) ? soc##_GMAC_TXCLK_DLY_ENABLE : soc##_GMAC_TXCLK_DLY_DISABLE) | \
- 	 ((rx) ? soc##_GMAC_RXCLK_DLY_ENABLE : soc##_GMAC_RXCLK_DLY_DISABLE))
- 
-+#define PX30_GRF_GMAC_CON1		0x0904
-+
-+/* PX30_GRF_GMAC_CON1 */
-+#define PX30_GMAC_PHY_INTF_SEL_RMII	(GRF_CLR_BIT(4) | GRF_CLR_BIT(5) | \
-+					 GRF_BIT(6))
-+#define PX30_GMAC_SPEED_10M		GRF_CLR_BIT(2)
-+#define PX30_GMAC_SPEED_100M		GRF_BIT(2)
-+
-+static void px30_set_to_rmii(struct rk_priv_data *bsp_priv)
-+{
-+	struct device *dev = &bsp_priv->pdev->dev;
-+
-+	if (IS_ERR(bsp_priv->grf)) {
-+		dev_err(dev, "%s: Missing rockchip,grf property\n", __func__);
-+		return;
-+	}
-+
-+	regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+		     PX30_GMAC_PHY_INTF_SEL_RMII);
-+}
-+
-+static void px30_set_rmii_speed(struct rk_priv_data *bsp_priv, int speed)
-+{
-+	struct device *dev = &bsp_priv->pdev->dev;
-+	int ret;
-+
-+	if (IS_ERR(bsp_priv->clk_mac_speed)) {
-+		dev_err(dev, "%s: Missing clk_mac_speed clock\n", __func__);
-+		return;
-+	}
-+
-+	if (speed == 10) {
-+		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+			     PX30_GMAC_SPEED_10M);
-+
-+		ret = clk_set_rate(bsp_priv->clk_mac_speed, 2500000);
-+		if (ret)
-+			dev_err(dev, "%s: set clk_mac_speed rate 2500000 failed: %d\n",
-+				__func__, ret);
-+	} else if (speed == 100) {
-+		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+			     PX30_GMAC_SPEED_100M);
-+
-+		ret = clk_set_rate(bsp_priv->clk_mac_speed, 25000000);
-+		if (ret)
-+			dev_err(dev, "%s: set clk_mac_speed rate 25000000 failed: %d\n",
-+				__func__, ret);
-+
-+	} else {
-+		dev_err(dev, "unknown speed value for RMII! speed=%d", speed);
-+	}
-+}
-+
-+static const struct rk_gmac_ops px30_ops = {
-+	.set_to_rmii = px30_set_to_rmii,
-+	.set_rmii_speed = px30_set_rmii_speed,
-+};
-+
- #define RK3128_GRF_MAC_CON0	0x0168
- #define RK3128_GRF_MAC_CON1	0x016c
- 
-@@ -1042,6 +1101,10 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
- 		}
- 	}
- 
-+	bsp_priv->clk_mac_speed = devm_clk_get(dev, "clk_mac_speed");
-+	if (IS_ERR(bsp_priv->clk_mac_speed))
-+		dev_err(dev, "cannot get clock %s\n", "clk_mac_speed");
-+
- 	if (bsp_priv->clock_input) {
- 		dev_info(dev, "clock input from PHY\n");
- 	} else {
-@@ -1094,6 +1157,9 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
- 			if (!IS_ERR(bsp_priv->mac_clk_tx))
- 				clk_prepare_enable(bsp_priv->mac_clk_tx);
- 
-+			if (!IS_ERR(bsp_priv->clk_mac_speed))
-+				clk_prepare_enable(bsp_priv->clk_mac_speed);
-+
- 			/**
- 			 * if (!IS_ERR(bsp_priv->clk_mac))
- 			 *	clk_prepare_enable(bsp_priv->clk_mac);
-@@ -1118,6 +1184,8 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
- 			clk_disable_unprepare(bsp_priv->pclk_mac);
- 
- 			clk_disable_unprepare(bsp_priv->mac_clk_tx);
-+
-+			clk_disable_unprepare(bsp_priv->clk_mac_speed);
- 			/**
- 			 * if (!IS_ERR(bsp_priv->clk_mac))
- 			 *	clk_disable_unprepare(bsp_priv->clk_mac);
-@@ -1414,6 +1482,7 @@ static int rk_gmac_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rk_gmac_pm_ops, rk_gmac_suspend, rk_gmac_resume);
- 
- static const struct of_device_id rk_gmac_dwmac_match[] = {
-+	{ .compatible = "rockchip,px30-gmac",	.data = &px30_ops   },
- 	{ .compatible = "rockchip,rk3128-gmac", .data = &rk3128_ops },
- 	{ .compatible = "rockchip,rk3228-gmac", .data = &rk3228_ops },
- 	{ .compatible = "rockchip,rk3288-gmac", .data = &rk3288_ops },
--- 
-2.7.4
-
-
+SGkgdHl0c28sDQoNCkkgaGF2ZSBjaGVja2VkIHRoYXQgbWFrZV9leHQ0ZnMgY29kZSB3YXMgZGVs
+ZXRlZCBvIEp1biAyMXRoIDIwMTggb24gbWFzdGVyIGJyYW5jaCBvZiAvc3lzdGVtL2V4dHJhcyBy
+ZXBvc2l0b3J5Lg0KZS5nLiANCmh0dHBzOi8vYW5kcm9pZC1yZXZpZXcuZ29vZ2xlc291cmNlLmNv
+bS9jL3BsYXRmb3JtL3N5c3RlbS9leHRyYXMvKy83MDgwMDMNCg0KdGhhdCBtZWFucyB0aGlzIHRv
+b2xzIGhhcyBiZWVuIHdpZGVseSB1c2VkIGFsb25nIHNlcnZhbCB5ZWFycy4NCkFuZCBpdCBpcyBw
+cm9iYWJseSB0aGF0IG1hbnkgbWFueSBkZXZpY2VzIGhhdmUgYmVlbiBkZWxpdmVyeWVkIGluIHNl
+dmVyYWwgeWVhciBmcm9tIGFuZHJvaWQgMy4wIHRvIGFuZHJvaWQgOC4wLCB3aGljaCB1c2VkIG1h
+a2VfZXh0NGZzLg0KQW5kIG9mIGNvdXJzZSB0aGVzZSBkZXZpY2VzIGNhbm5vdCBiZSByZWNhbGxl
+ZC4NCg0KSWYgdGhpcyBidWcgd2FzIGluZHVjZWQgaW4gc29tZSBhbmRyb2lkIGRldmljZXMsIHdo
+ZW4gbWFrZV9leHQ0ZnMgdG9vbCBwcm9kdWNlIGV4dDQgZmlsZXN5c3RlbSB3aXRoIGlub2RlbWFw
+IG51bSBub3QgaW50ZWdlci4NCklmIHNvbWUgZXJyb3Igb2NjdXJzIHdpdGggdGhpcyBmaWxlc3lz
+dGVtICwgdGhlIGUyZnNjayB0cnkgdG8gZml4IGl0LiBDb250cmFyaWx5LCBpdCBpbmR1Y2VkIG1v
+cmUgZXJyb3JzLg0KDQpJIGhhdmUgY2hlY2tlZCB0dW5lMmZzLHJlc2l6ZTJmcywgdGhlc2UgdHdv
+IHByb2dzIG5vdCB1c2VkIHNvbWV0aGluZyBsaWtlICIgRVhUMl9JTk9ERVNfUEVSX0dST1VQKGZz
+LT5zdXBlcikgLyA4IiAsIG9yIHVzZWQgbGliIHdoaWNoIHdhcyBtb2RpZmllZCBieSBtZS4NCg0K
+UmVnYXJkcywNCk1pbmcNCg0KLS0tLS3Tyrz+1K28/i0tLS0tDQq3orz+yMs6IFRoZW9kb3JlIFku
+IFRzJ28gW21haWx0bzp0eXRzb0BtaXQuZWR1XSANCreiy83KsbzkOiAyMDE4xOo21MIyN8jVIDIy
+OjEwDQrK1bz+yMs6IEdhb21pbmcgKG1pbmcsIGNvbnN1bWVyIEJHKQ0Ks63LzTogbGludXgtZXh0
+NEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IExpcWluZ2No
+YW8gKHNvcnApOyBTaGVuY2hlbiAoaGFycnkpOyBtaWFveGllIChBKQ0K1vfM4jogUmU6IFtQQVRD
+SF0gZXh0NDogZTJmc3Byb2dzOiBmaXggaW5vZGUgYml0bWFwIG51bSBub3QgaW50ZWdlcixpbmNv
+bXBhdGlibGUgZm9yIGFuY2llbnQgYW5kcm9pZCBkZXZpY2VzDQoNCk9uIFR1ZSwgSnVuIDI2LCAy
+MDE4IGF0IDA3OjU0OjA2UE0gKzA4MDAsIEdhb01pbmcgd3JvdGU6DQo+IGZvciBleGFtcGxlLCAx
+NzA4IGlub2RlcyBldmVyeSBncm91cCwzIGJsb2NrIGdyb3VwcywgYml0bWFwIGJ5dGVzIGFyZSAx
+NzA4Lzg9MjEzLjUgd2hlbiB0aGUgaW5vZGUgYml0bWFwIGhhcyBzb21lIGVycm9ycywgZTJmc3By
+b2dzIGNhbm5vdCBmaXggaXQNCj4NCj4gU2lnbmVkLW9mZi1ieTogR2FvTWluZyA8Z2FvbWluZzIw
+QGh1YXdlaS5jb20+DQoNCkZpbGUgc3lzdGVtcyBsaWtlIHRoaXMgc2hvdWxkIG5vdCBleGlzdC4g
+IENhbiB5b3UgcGxlYXNlIHBsZWFzZSBwbGVhc2UNCm1ha2Ugc3VyZSB0aGF0IGFueSB1c2Ugb2Yg
+bWFrZV9leHQyZnMgYXJlIHJpcHBlZCBvdXQgYnkgdGhlIHJvb3RzPw0KDQpXaGF0IEkgKnNob3Vs
+ZCogZG8gaXMgaGF2ZSBlMmZzY2sgcmVqZWN0IHRoZXNlIGZpbGUgc3lzdGVtcyBhcw0KY29tcGxl
+dGVseSBpbnZhbGlkIGluIHBhc3MgMCwgd2hlbiB3ZSBjaGVjayBmb3Igc3VwZXJibG9jayBzYW5p
+dHkuICBJDQpoYXZlbid0IGJlY2F1c2UgdGhlcmUgYXJlIHNvbWUgb2xkZXIgQW5kcm9pZCBzeXN0
+ZW1zIHRoYXQgdXNlDQptYWtlX2V4dDJmcy4gIEJ1dCBhdCB0aGlzIHBvaW50LCB3aGF0IEkgYW0g
+KipzZXJpb3VzbHkqKiBkb2luZyBpcyB0bw0KbWFrZSBlMmZzY2sgcmVqZWN0IHRoZXNlIGZpbGUg
+c3lzdGVtcyBieSBkZWZhdWx0LCB1bmxlc3MgYSBzZXR0aW5nIGluDQplMmZzY2suY29uZiBpcyBz
+ZXQgdG8gYWxsb3cgdGhlbSBhcyBhbiBleGNlcHRpb24uDQoNCk15IGNvbmNlcm4gYWJvdXQgYXBw
+bHlpbmcgdGhpcyBwYXRjaCBpcyB0aGF0IGl0IHdpbGwgYmUgdGFrZW4gYXMNCmFjY2VwdGFuY2Ug
+b2YgZTJmc3Byb2dzIHRvIGZ1bGx5IHN1cHBvcnQgdGhlc2Ugc29ydHMgb2YgaW52YWxpZCBmaWxl
+DQpzeXN0ZW1zLiAgSW4gcGFydGljdWxhciwgdGhlcmUgaXMgbm8gZ3VhcmFudGVlIHRoYXQgdmFy
+aW91cyB0dW5lMmZzDQpvcHRpb25zLCByZXNpemUyZnMsIGV0Yy4sIHdpbGwgd29yayBjb3JyZWN0
+bHkgZXZlbiB3aXRoIHlvdXIgcGF0Y2guDQoNCgkgCSAgICAJICAgICAgIAkgICAgCSAgICAgIC0g
+VGVkDQo=
