@@ -2,126 +2,107 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE6AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2537AC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CED726FDE
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:57:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CED726FDE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D5F7226FDE
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:59:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F7226FDE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933718AbeF1G52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 02:57:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752245AbeF1G51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 02:57:27 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7B8A5BF569;
-        Thu, 28 Jun 2018 06:57:26 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3917F11166F1;
-        Thu, 28 Jun 2018 06:57:24 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 14:57:22 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        dave.hansen@intel.com, pagupta@redhat.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v5 3/4] mm/sparse: Add a new parameter 'data_unit_size'
- for alloc_usemap_and_memmap
-Message-ID: <20180628065722.GB32539@MiWiFi-R3L-srv>
-References: <20180627013116.12411-1-bhe@redhat.com>
- <20180627013116.12411-4-bhe@redhat.com>
- <CAGM2reb=2fmgJQzfPGJ_bCG-317-dsFfoG8vSr9LuYit4AVsyQ@mail.gmail.com>
+        id S933753AbeF1G72 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 02:59:28 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41631 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751466AbeF1G70 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 02:59:26 -0400
+Received: by mail-ed1-f65.google.com with SMTP id b12-v6so4483533edt.8;
+        Wed, 27 Jun 2018 23:59:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=U3ivltB5NPgkWDRA2ek/0OwMf6Yk2NzDbTIa/6EgiLo=;
+        b=Agdpr1qKBN0oa415Bdy9JEhxU/3vzDCEnxBoL3GWeCoA7ZsVVrp5z2ieHRHFLazxkF
+         Lh8T9tp51uDeBMHOfbUhrapjXY0jPJ3tSP2knn46x0EDWsfh5GU/cCGYs/oyYJhX+Q2P
+         TDLcf4/GgrQV1R+/cCLDAPpcSjCN4cvjNXHKlkxo9fVZLDbrruFMGipAWELP76m3SkD/
+         p2zNs2oX3Z+B7qvz9RyLmb7XHfa6Nhq71sDx5+mOOkybwREXjIjVZfWOFqdsoM+zhIo0
+         AUji5EPFoPuJ3Hz6G4OgbOPYzAxPa91wDrMabbAOLMo5nuh4kkN21fpG5OduNP5Ww6EZ
+         leUQ==
+X-Gm-Message-State: APt69E14+Tq2TII3xeNZrSQIksEEZfz8c82LqhVT/M1yJGc9rtoKI7le
+        zM3lVtJ3Uv0Y/USrIO8XF+9kviEW
+X-Google-Smtp-Source: AAOMgpehFGd+L86vSq1BW9yjREXJd7tL6uGARjNpG+dPxEBtkOWw/McvL+FB27cvIZa91nuReHV5hg==
+X-Received: by 2002:a50:84e9:: with SMTP id 96-v6mr7991841edq.118.1530169164675;
+        Wed, 27 Jun 2018 23:59:24 -0700 (PDT)
+Received: from mail-wr0-f171.google.com (mail-wr0-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id g33-v6sm1321581ede.10.2018.06.27.23.59.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 23:59:23 -0700 (PDT)
+Received: by mail-wr0-f171.google.com with SMTP id c13-v6so4293030wrq.2;
+        Wed, 27 Jun 2018 23:59:22 -0700 (PDT)
+X-Received: by 2002:adf:ca13:: with SMTP id o19-v6mr7552031wrh.148.1530169162728;
+ Wed, 27 Jun 2018 23:59:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reb=2fmgJQzfPGJ_bCG-317-dsFfoG8vSr9LuYit4AVsyQ@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 06:57:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 06:57:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 23:59:02
+ -0700 (PDT)
+In-Reply-To: <52771065.UHJ1SZMy5a@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-19-jernej.skrabec@siol.net> <CAGb2v651RGegpAi-2efhBUkyFf1iC+zxOGTbRkmjuWcYSTgYJw@mail.gmail.com>
+ <52771065.UHJ1SZMy5a@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 28 Jun 2018 14:59:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66HOrbjm4w-EoVpvPde7SoVE5X3tfcyW_Ny-vQ+ax141Q@mail.gmail.com>
+Message-ID: <CAGb2v66HOrbjm4w-EoVpvPde7SoVE5X3tfcyW_Ny-vQ+ax141Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 18/24] drm/sun4i: DW HDMI PHY: Add
+ support for second PLL
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/27/18 at 11:14pm, Pavel Tatashin wrote:
-> Honestly, I do not like this new agrument, but it will do for now. I
-> could not think of a better way without rewriting everything.
-> 
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> 
-> However, I will submit a series of patches to cleanup sparse.c and
-> completely remove large and confusing temporary buffers: map_map, and
-> usemap_map. In those patches, I will remove alloc_usemap_and_memmap().
+On Thu, Jun 28, 2018 at 12:56 PM, Jernej Škrabec
+<jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 04:25:54 CEST je Chen-Yu Tsai napisal(a):
+>> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
+>> > between two clock parents.
+>> >
+>> > Add code which reads second PLL from DT.
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>>
+>> This patch by itself does not do anything. It should be merged with the
+>> next one.
+>
+> Maxime said clock changes should be separated from DT changes.
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/578775.html
 
-Great, look forward to seeing them, I can help review.
+OK. I think the boundary between these two is bit blurred in this case.
+And I think implementing support for two or more parents, then actually
+adding the second parent makes more sense.
 
-> On Tue, Jun 26, 2018 at 9:31 PM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > alloc_usemap_and_memmap() is passing in a "void *" that points to
-> > usemap_map or memmap_map. In next patch we will change both of the
-> > map allocation from taking 'NR_MEM_SECTIONS' as the length to taking
-> > 'nr_present_sections' as the length. After that, the passed in 'void*'
-> > needs to update as things get consumed. But, it knows only the
-> > quantity of objects consumed and not the type.  This effectively
-> > tells it enough about the type to let it update the pointer as
-> > objects are consumed.
-> >
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/sparse.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 71ad53da2cd1..b2848cc6e32a 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -489,10 +489,12 @@ void __weak __meminit vmemmap_populate_print_last(void)
-> >  /**
-> >   *  alloc_usemap_and_memmap - memory alloction for pageblock flags and vmemmap
-> >   *  @map: usemap_map for pageblock flags or mmap_map for vmemmap
-> > + *  @unit_size: size of map unit
-> >   */
-> >  static void __init alloc_usemap_and_memmap(void (*alloc_func)
-> >                                         (void *, unsigned long, unsigned long,
-> > -                                       unsigned long, int), void *data)
-> > +                                       unsigned long, int), void *data,
-> > +                                       int data_unit_size)
-> >  {
-> >         unsigned long pnum;
-> >         unsigned long map_count;
-> > @@ -569,7 +571,8 @@ void __init sparse_init(void)
-> >         if (!usemap_map)
-> >                 panic("can not allocate usemap_map\n");
-> >         alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
-> > -                                                       (void *)usemap_map);
-> > +                               (void *)usemap_map,
-> > +                               sizeof(usemap_map[0]));
-> >
-> >  #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> >         size2 = sizeof(struct page *) * NR_MEM_SECTIONS;
-> > @@ -577,7 +580,8 @@ void __init sparse_init(void)
-> >         if (!map_map)
-> >                 panic("can not allocate map_map\n");
-> >         alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
-> > -                                                       (void *)map_map);
-> > +                               (void *)map_map,
-> > +                               sizeof(map_map[0]));
-> >  #endif
-> >
-> >         for_each_present_section_nr(0, pnum) {
-> > --
-> > 2.13.6
-> >
+ChenYu
