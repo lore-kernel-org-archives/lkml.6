@@ -2,40 +2,40 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B72C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC470C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1900E27809
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1900E27809
+	by mail.kernel.org (Postfix) with ESMTP id 7375827811
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:10:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7375827811
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754790AbeF1TKC (ORCPT
+        id S1753721AbeF1TJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:10:02 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41614 "EHLO mga18.intel.com"
+        Thu, 28 Jun 2018 15:09:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:44096 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752805AbeF1TJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:09:58 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1751981AbeF1TJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:09:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 12:09:58 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 12:09:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,284,1526367600"; 
-   d="scan'208";a="211963036"
+   d="scan'208";a="50684706"
 Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga004.jf.intel.com with ESMTP; 28 Jun 2018 12:09:55 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 28 Jun 2018 12:09:54 -0700
 Received: from kbuild by bee with local (Exim 4.84_2)
         (envelope-from <lkp@intel.com>)
-        id 1fYcIk-0003Sy-Rb; Fri, 29 Jun 2018 03:09:54 +0800
+        id 1fYcIj-0003KU-AU; Fri, 29 Jun 2018 03:09:53 +0800
 Date:   Fri, 29 Jun 2018 03:09:34 +0800
-From:   kbuild test robot <lkp@intel.com>
+From:   kbuild test robot <fengguang.wu@intel.com>
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc:     kbuild-all@01.org, kvm@vger.kernel.org, x86@kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>,
@@ -49,9 +49,8 @@ Cc:     kbuild-all@01.org, kvm@vger.kernel.org, x86@kernel.org,
         Cathy Avery <cavery@redhat.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] KVM: x86: hyperv: introduce vp_index_to_vcpu_idx
- mapping
-Message-ID: <201806290231.OdpQFfRH%fengguang.wu@intel.com>
+Subject: [PATCH] KVM: x86: hyperv: fix semicolon.cocci warnings
+Message-ID: <20180628190934.GA50065@lkp-hsx03>
 References: <20180628135313.17468-3-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -66,24 +65,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vitaly,
+From: kbuild test robot <fengguang.wu@intel.com>
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on kvm/linux-next]
-[also build test WARNING on v4.18-rc2 next-20180628]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Vitaly-Kuznetsov/KVM-x86-hyperv-PV-IPI-support-for-Windows-guests/20180629-011544
-base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git linux-next
+arch/x86/kvm/hyperv.c:174:2-3: Unneeded semicolon
 
 
-coccinelle warnings: (new ones prefixed by >>)
+ Remove unneeded semicolon.
 
->> arch/x86/kvm/hyperv.c:174:2-3: Unneeded semicolon
+Generated by: scripts/coccinelle/misc/semicolon.cocci
 
-Please review and possibly fold the followup patch.
-
+Fixes: 5282e205b1f9 ("KVM: x86: hyperv: introduce vp_index_to_vcpu_idx mapping")
+CC: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+ hyperv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -171,7 +171,7 @@ static u32 vp_idx_to_vcpu_idx(struct kvm
+ 		} else /* (tmp_vp_idx > vp_idx) */ {
+ 			r_index = tmp_index - 1;
+ 		}
+-	};
++	}
+ 
+ unlock:
+ 	rcu_read_unlock();
