@@ -2,112 +2,171 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4507EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB1AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA0D273CA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B88273CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:07:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wTXlkJ60"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA0D273CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMwKh9SH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B88273CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935126AbeF1NHK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:07:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35714 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933090AbeF1NHI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:07:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wFi6agvxReR/NogVb81FqyUet+GZUKeUFAGRyzXcbso=; b=wTXlkJ60KtcGcvabrN/Xrlpb1
-        x7VhuEkznJLq5Nmr8GUW8obsK/CvitSpzqhze1pyZvQR8dlVrtEinvihAftzBaHOi1s7xz/C6ACwv
-        BS0WOCF4aS/NO9MIoTusTOhJxjZmOWR4m3s/m7d3se8mw9ta5Kj5GEyGwbsRhW7lbUileA471FM8U
-        ZhQiuPfbBFE62zNqp/zfCLQqHhXKjb4Dqc/dbplTBF+CKu71qcjC/WZLBQCWw1J/bAeBn0mNG4y4T
-        b38Kt6Gl7d7dwv/C0nFG3UpwQBEKAsWrfBqAm5oubPmBqEZIqzz0xWw1PUzWFCA4CuBkbEJqEdIB4
-        h22vv5Y3Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYWdO-0006Aq-Br; Thu, 28 Jun 2018 13:06:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 562BB20289CE6; Thu, 28 Jun 2018 15:06:46 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 15:06:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 13/22] rcu: Fix grace-period hangs due to
- race with CPU offline
-Message-ID: <20180628130646.GH2494@hirez.programming.kicks-ass.net>
-References: <20180626202615.GA32162@linux.vnet.ibm.com>
- <20180626203225.GT2494@hirez.programming.kicks-ass.net>
- <20180626234004.GQ3593@linux.vnet.ibm.com>
- <20180627091106.GB7184@worktop.programming.kicks-ass.net>
- <20180627094633.GG2512@hirez.programming.kicks-ass.net>
- <20180627155721.GZ3593@linux.vnet.ibm.com>
- <20180627175134.GV2494@hirez.programming.kicks-ass.net>
- <20180628051334.GG3593@linux.vnet.ibm.com>
- <20180628082653.GX2494@hirez.programming.kicks-ass.net>
- <20180628123833.GJ3593@linux.vnet.ibm.com>
+        id S965477AbeF1NHl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964849AbeF1NHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:07:39 -0400
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76F94273C7;
+        Thu, 28 Jun 2018 13:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530191258;
+        bh=FENXYr9HSE9g5xwZRzM9/vpzsOEWBo9qcFZcm36t85E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tMwKh9SHS8sMQnvNKWq8KAY0+QEebV8pw7ysNmfmEzq37Hs5WnhqHUs3yCvZaUjOt
+         p6mGwR+6MSUoLdX7WL+2UIQptT1yWxUQMs5jLqM4DP9qFuKxjnwzm/wBS9ctpInXMh
+         2Az6wytbU2PcSA+JzMoTBVsMLswCQan9W4nlidDk=
+Date:   Thu, 28 Jun 2018 08:07:37 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     honghui.zhang@mediatek.com
+Cc:     lorenzo.pieralisi@arm.com, marc.zyngier@arm.com,
+        bhelgaas@google.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, youlin.pei@mediatek.com,
+        hongkun.cao@mediatek.com, sean.wang@mediatek.com,
+        yt.shen@mediatek.com, yong.wu@mediatek.com
+Subject: Re: [PATCH 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+Message-ID: <20180628130737.GA90450@bhelgaas-glaptop.roam.corp.google.com>
+References: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
+ <1530091298-28120-2-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628123833.GJ3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1530091298-28120-2-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 05:38:33AM -0700, Paul E. McKenney wrote:
-> Please let me try again.
+On Wed, Jun 27, 2018 at 05:21:35PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
 > 
-> The approach you are suggesting, clever though it is, disables a check
+> Mediatek's host controller have two slots, each have it's own control
+> registers. The host driver need to identify which slot was connected
+> in order to access the device's configuration space. There's problem
+> for current host driver to find out which slot was connected to for
+> a given EP device.
 
-  https://lkml.kernel.org/r/20180627094633.GG2512@hirez.programming.kicks-ass.net
+  The Mediatek host controller has two slots, each with its own control
+  registers.
 
-Is the one we're talking about, right?
+> Assuming each slot have connect with one EP device as below:
+> 
+>                 host bridge
+>   bus 0 --> __________|_______
+>            |                  |
+>            |                  |
+>          slot 0             slot 1
+>   bus 1 -->|        bus 2 --> |
+>            |                  |
+>          EP 0               EP 1
+> 
+> While PCI emulation, system software will scan all the PCI device
 
-That does not disable any actual check afaict. It simply does not do a
-wakeup when ran on an offline CPU. And ensures we do an unconditional
-wakeup soon after from a still running CPU.
+s/While PCI emulation/During PCI enumeration/
 
-> of a type that has proved to be an important diagnostic in the past.
-> It is only reasonable to assume that this check would be important
-> and helpful in the future, but only if that check remains in the code.
+> starting from devfn 0. So it will get the proper port for slot0 and
+> slot1 device when using PCI_SLOT(devfn) for match. But it will get
+> the wrong slot for EP1: The devfn will be start from 0 when scanning
+> EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+> for port0's slot value. So the host driver should not using EP's devfn
+> but the slot's devfn(the slot which EP was connected to) for match.
+> 
+> This patch fix the mtk_pcie_find_port's logical by using the slot's
+> devfn for match.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 0baabe3..9cf7ecf 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -337,10 +337,23 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+>  {
+>  	struct mtk_pcie *pcie = bus->sysdata;
+>  	struct mtk_pcie_port *port;
+> +	struct pci_dev *dev;
+> +	struct pci_bus *pbus;
+>  
+> -	list_for_each_entry(port, &pcie->ports, list)
+> -		if (port->slot == PCI_SLOT(devfn))
+> +	list_for_each_entry(port, &pcie->ports, list) {
 
-I am confused..
+mvebu has the identical hardware structure but uses an array instead
+of a list:
 
-> Yes, agreed, given the current structure of the code, this particular
-> instance of the check would not matter, but experience indicates that
-> RCU code restructuring is not at all uncommon, with the current effort
-> being but one case in point.
+  num = of_get_available_child_count(np);
+  pcie->ports = devm_kcalloc(dev, num, sizeof(*pcie->ports), GFP_KERNEL);
+  for_each_available_child_of_node(np, child) {
+    struct mvebu_pcie_port *port = &pcie->ports[i];
+    mvebu_pcie_parse_port(pcie, port, child);
+  }
 
-Once more confused...
+It would be nice if mvebu and mtk used the same strategy so the code
+looks the same.
 
-> So, unless I am missing something, the only possible benefit of disabling
-> this check is getting rid of an acquisition of an uncontended lock in
-> a code path that is miles (sorry, kilometers) away from any fastpath.
-> So, again, yes, it is clever.  If it sped up a fastpath, I might be
-> sorely tempted to take it.  But the alternative is straightforward and
-> isn't anywhere near a fastpath.  So, though I do very much appreciate
-> the cleverness and creativity, I am not seeing your change to be a
-> good tradeoff from a long-term maintainability viewpoint.
+> +		if (bus->number == 0 && port->slot == PCI_SLOT(devfn)) {
 
-I think you mean guarantee/invariant instead of check. But I see it no
-different than any other missed rcu_gp_kthread_wake(). You can similarly
-fail to make the call while restructuring.
+Is the root bus number fixed at 0 or is it programmable?  Many drivers
+do something like this:
+
+  if (bus->number == pcie->root_bus_nr)
+
+to handle the case of the root bus number being programmable.
+
+>  			return port;
+> +		} else if (bus->number != 0) {
+> +			pbus = bus;
+> +			do {
+> +				dev = pbus->self;
+> +				if (port->slot == PCI_SLOT(dev->devfn))
+> +					return port;
+> +
+> +				pbus = dev->bus;
+> +			} while (dev->bus->number != 0);
+
+You should not need to search up the tree of dev->bus->self.
+
+mvebu_pcie_find_port() checks the root port secondary and subordinate
+bus numbers, which should work here, too.
+
+> +		}
+> +	}
+>  
+>  	return NULL;
+>  }
+> -- 
+> 2.6.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
