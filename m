@@ -2,138 +2,111 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926E4C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661DCC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C56E25410
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C56E25410
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CC8326197
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:46:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HTydpI44";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CVBMSXbC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC8326197
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeF1Dpv (ORCPT
+        id S1753270AbeF1DqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 23:45:51 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:24662 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750942AbeF1Dpt (ORCPT
+        Wed, 27 Jun 2018 23:46:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48110 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752057AbeF1DqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 23:45:49 -0400
-X-UUID: 0174346147e54195adde20ddeff9981e-20180628
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 734708562; Thu, 28 Jun 2018 11:45:46 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 28 Jun 2018 11:45:38 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 28 Jun 2018 11:45:37 +0800
-Message-ID: <1530157537.11190.53.camel@mtksdccf07>
-Subject: Re: [PATCH v7 00/29] Add support for mediatek SOC MT2712
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-CC:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        David Airlie <airlied@linux.ie>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 28 Jun 2018 11:45:37 +0800
-In-Reply-To: <20180625084740.GN2958@phenom.ffwll.local>
-References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-         <20180625084740.GN2958@phenom.ffwll.local>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 27 Jun 2018 23:46:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2963E60B6B; Thu, 28 Jun 2018 03:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530157580;
+        bh=Z4LOTTo8aSEEVRpqfRal8HcZDzCfC9iTsc6Mx6N9KfQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HTydpI44cI/HEv0I3lroQ5RAVcpSm/AOi/6ItAyUwZjsdAqUuIgRHt5lrtr5NqRaK
+         ASVBbNwC7rGlh3VVn6uT1Oy/WasotGPvl3H2QVFlXY/Y4CtXNddmistDaRkZyTpq6n
+         ZVZ95v3SGb+vEsc7JlXJn6qAGp67m48qL4pB5c90=
+Received: from [10.206.25.22] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF8C860B19;
+        Thu, 28 Jun 2018 03:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530157576;
+        bh=Z4LOTTo8aSEEVRpqfRal8HcZDzCfC9iTsc6Mx6N9KfQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CVBMSXbCg2wmxtpY0HvJ/VULIK7eaKDfsmfYNPiCLj132RJdMJYoDUJlDj2n1R1m8
+         Dwuom/TXGHW07yyPYJG/aKFci9Daid4p5pSThCsE92GdlrFsNDqcrv+R+lXUosgK3H
+         m9VcYl9MYNU+7HadltQdPgtmVWTKNJw7tvf2Vt3Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF8C860B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v7 3/4] phy: Add QMP phy based UFS phy support for sdm845
+To:     Can Guo <cang@codeaurora.org>, subhashj@codeaurora.org,
+        asutoshd@codeaurora.org, vivek.gautam@codeaurora.org,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20180619083647.10116-1-cang@codeaurora.org>
+ <20180619083647.10116-4-cang@codeaurora.org>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <996e8b41-9090-7961-45c0-fdf6fc83c30a@codeaurora.org>
+Date:   Thu, 28 Jun 2018 09:16:11 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20180619083647.10116-4-cang@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Daniel Vetter:
+Hi,
 
-On Mon, 2018-06-25 at 10:47 +0200, Daniel Vetter wrote:
-> On Wed, Jun 20, 2018 at 04:19:02PM +0800, Stu Hsieh wrote:
-> > This patch add support for the Mediatek MT2712 DISP subsystem.
-> > MT2712 is base on MT8173, there are some difference as following:
-> > MT2712 support three disp output(two ovl and one rdma)
-> > 
-> > Change in v6:
-> > - Update commit message for the patch
-> >   "drm/mediatek: Update the definition of connection from RDMA1 to DPI0"
-> 
-> Just a drive-by comment on the mediatek driver:
-> 
-> As far as I can see mtk_drm_gem.c reimplements the cma helpers as a
-> copypaste job. Any reasons why you're not using the normal cma helpers?
-> 
-> Thanks, Daniel
-> > 
+On 6/19/2018 2:06 PM, Can Guo wrote:
+> +static int qcom_qmp_phy_poweron(struct phy *phy)
+> +{
+> +	struct qmp_phy *qphy = phy_get_drvdata(phy);
+> +	struct qcom_qmp *qmp = qphy->qmp;
+> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> +	void __iomem *pcs = qphy->pcs;
+> +	void __iomem *status;
+> +	unsigned int mask, val;
+> +	int ret = 0;
+> +
+> +	if (cfg->type != PHY_TYPE_UFS)
+> +		return 0;
+> +
+> +	/*
+> +	 * For UFS PHY that has not software reset control, serdes start
+> +	 * should only happen when UFS driver explicitly calls phy_power_on
+> +	 * after it deasserts software reset.
+> +	 */
 
-In the beginning, we develop mtk_drm_gem.c by referring other platform.
-We will try to use the normal cma helpers according to your idea.
+Instead of relying on UFS glue driver to assert/de-assert PHY
+which requires UFS PHY initialization to be split in init() and
+poweron(), we can rather register reset_controller from ufs-qcom
+driver.
+PHY driver can then assert/de-assert as per UFS PHY requirement
+in init() function itself and there won't be any need to have
+poweron() routine for UFS as init can perform complete PHY
+initialization without any dependency on ufs-qcom glue driver.
 
-Thanks,
-Stu
+-Manu
 
-> > Stu Hsieh (29):
-> >   drm/mediatek: update dt-bindings for mt2712
-> >   drm/mediatek: support maximum 64 mutex mod
-> >   drm/mediatek: add ddp component AAL1
-> >   drm/mediatek: add ddp component OD1
-> >   drm/mediatek: add ddp component PWM1
-> >   drm/mediatek: add ddp component PWM2
-> >   drm/mediatek: add component DPI1
-> >   drm/mediatek: add component DSI2
-> >   drm/mediatek: add component DSI3
-> >   drm/mediatek: add the DSI1 for component init condition
-> >   drm/mediatek: add connection from OD1 to RDMA1
-> >   drm/mediatek: Update the definition of connection from RDMA1 to DPI0
-> >   drm/mediatek: add connection from RDMA0 to DPI0
-> >   drm/mediatek: add connection from RDMA0 to DSI2
-> >   drm/mediatek: add connection from RDMA0 to DSI3
-> >   drm/mediatek: add connection from RDMA1 to DPI1
-> >   drm/mediatek: add connection from RDMA1 to DSI1
-> >   drm/mediatek: add connection from RDMA1 to DSI2
-> >   drm/mediatek: add connection from RDMA1 to DSI3
-> >   drm/mediatek: add connection from RDMA2 to DPI0
-> >   drm/mediatek: add connection from RDMA2 to DPI1
-> >   drm/mediatek: add connection from RDMA2 to DSI1
-> >   drm/mediatek: add connection from RDMA2 to DSI2
-> >   drm/mediatek: add connection from RDMA2 to DSI3
-> >   drm/mediatek: add DPI1 support for mutex
-> >   drm/mediatek: add DSI2 support for mutex
-> >   drm/mediatek: add DSI3 support for mutex
-> >   drm/mediatek: add third ddp path
-> >   drm/mediatek: Add support for mediatek SOC MT2712
-> > 
-> >  .../bindings/display/mediatek/mediatek,disp.txt    |   2 +-
-> >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |   3 +
-> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 235 ++++++++++++++++++---
-> >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c        |  15 +-
-> >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  10 +-
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  47 ++++-
-> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |   5 +-
-> >  7 files changed, 274 insertions(+), 43 deletions(-)
-> > 
-> > -- 
-> > 2.12.5
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-
-
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
