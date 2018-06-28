@@ -2,61 +2,60 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB89C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5917CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E90EE2719F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015D3271A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ifGrXA2V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90EE2719F
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="KOnwABwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015D3271A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965099AbeF1J6J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:58:09 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37105 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935231AbeF1J6F (ORCPT
+        id S965189AbeF1J6S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:58:18 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40446 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964953AbeF1J6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:58:05 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n17-v6so7835808wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:58:05 -0700 (PDT)
+        Thu, 28 Jun 2018 05:58:11 -0400
+Received: by mail-wr0-f194.google.com with SMTP id l2-v6so4275062wro.7
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:58:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aAipzPKBO632NJ0duDUioMPfNkzJ+t1E0zp4HTn+o8Y=;
-        b=ifGrXA2VbYFKNEGe9Zni0sDlRRi/MDSdUNmrYuAS0ArB9oUXHBLBDDy87o+UgcpBRt
-         f8QLJZ0ii9lDvmA+KCUPNs1i6gMevRqOYHiVPZsEy9EQV6I8lBTBaC2Vh+KhAwFCFgkQ
-         +FxcYPmn6dAdUsw9ERFQCp0IuzWyafMWxfjq0yR6iQ3Fhi4bFoQI5PFC7I33QKQ2qxhx
-         MkIRClIiFeHiInkpv0Qqq2M3m5ETfVUWjoZvOppGxnweO57/PWwlY+PLCVapLT9rfS5A
-         q723sgLYkTFzdCUtDpC+Lg1blg22kVwAHYEGo8e0OSihCWhcna1UrFuxYnrY/2uaHqRB
-         K/4g==
+        bh=u4tKrqOBdXJ23Vx4TJ9XThLndhjqxmxnoJ7uc13SY2M=;
+        b=KOnwABwUZ2qfdtzIb1dTz+0jE7BUFhDgJtCmhXwloV2LC7EOpWoGke+C3FTmO/4+s4
+         ETm1e3Vk/KuTZ9my9nAGJcEHB2aGPoOKETmNbBsTz7gDZ6PLoTv/jedi6IvKX8DF0yFd
+         DEhNkrPjDAUH+OudoAolJStCzSeqUHRFDaNU5TsR/P0xgPpwy+cz/ppfjKnDgrXBTQFC
+         ZgpI2QBelvNg7hZBB8Q9nm8Cl5KVBH0TF9QqAQrrljj+2OWfoc6izDPeO2YfcELR79xh
+         JgZ4fbnDu6QBSYj+5jgudQrJ8o9KqmPqML1eUTMw3qewPRfeJrCfT7xVYMtvIOh27lSu
+         bMbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=aAipzPKBO632NJ0duDUioMPfNkzJ+t1E0zp4HTn+o8Y=;
-        b=sMMZrjXhyQG4WyS9qTa+pxKqDOeSC0ftNToIk++EyLY6ZqUQotXnRkitqtIbMx0ymz
-         jFRnRTAc2lmnaSWkXYhdVy82TMx9kmVMOkOCB9qV4ukOhAYwXnHNIXUQlG4np5bS1xUj
-         bGzFVa1r9nDwumiIKVfILZfN28e0rWxbetZHbiarq5v6dyYxDY0c5alw8ubdZWu24siX
-         ba+59tz7eS5PoaZ2vrYadwPYWiH9GkZlhaP94eb57wFfGUJBtri16aWU29YPCejH6PnN
-         hWukfkCEG4MULEnSknnPoQ8hpsEm+o+cuEoreDZrwX8z6vddlUMgE0GCOA6WkIkqdCx8
-         8nhQ==
-X-Gm-Message-State: APt69E2Jl8Dha1ggrMPnxLp56k5qhkzgS0CW66cvtBcrrvc/3aubXcC4
-        Si6bT+cmaPCSav6IEas5yJyRZA==
-X-Google-Smtp-Source: AAOMgpd3F0uvz3Zog5+llb/J48dSD4OPG/weQBBXg88w1Nkbizd7eK+PM1X5RkZgi118BXQNHDckPg==
-X-Received: by 2002:a1c:a88a:: with SMTP id r132-v6mr6089606wme.31.1530179884469;
-        Thu, 28 Jun 2018 02:58:04 -0700 (PDT)
+        bh=u4tKrqOBdXJ23Vx4TJ9XThLndhjqxmxnoJ7uc13SY2M=;
+        b=Ikdezvf7iuky8IsYkKsQWv8hzhKhgvTvInjzmLXwSMy+jOlN9pjTPmXWv1tB7oefDd
+         An/rIb6WmFZd81gPd9B10Xyo3wVuc9q2YNGk4H/k4ksINQF2VxzkkqquTikN9BUCV0Ul
+         8oAJ8YHJVdtnBgS2ipe14yqQS1tHpE3nEhiZXUxcP5lf2u4OGhvdvpgiKLcTjqv2EXHs
+         C0mZ0m07f1CWDInCUSKgbCL/3KBn7Cb5CkBAC3bsoJ62ppZYLzKIRXN61papkMN+sT9n
+         vjI2c2nS16gDPqensJndpm7lHeIftxJY4njRqYt/lzDMkpQT7BdHOAEZt2qSHaj2LNXC
+         HWRg==
+X-Gm-Message-State: APt69E2ZorbuTVxb59e8rg3QtZfy0o6oJejJ4Pztsyn2OigPSbLk31Tf
+        rpXuKeg4WVbzF7kDmMhJvxOiOg==
+X-Google-Smtp-Source: AAOMgpdMyjzAlMR0V/RgdVrOvng2Eh8FdHjV1bOpmxqVCAgLt8+H6SdMRWL9DTjg+LXNh40+GL/qJQ==
+X-Received: by 2002:adf:af27:: with SMTP id z36-v6mr7840628wrc.59.1530179890273;
+        Thu, 28 Jun 2018 02:58:10 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-87-41.w90-86.abo.wanadoo.fr. [90.86.29.41])
-        by smtp.gmail.com with ESMTPSA id s8-v6sm1550352wrm.84.2018.06.28.02.58.03
+        by smtp.gmail.com with ESMTPSA id s8-v6sm1550352wrm.84.2018.06.28.02.58.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 02:58:03 -0700 (PDT)
+        Thu, 28 Jun 2018 02:58:09 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -66,9 +65,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 08/13] ARM: davinci: dm365-evm: use the ti-aemif soc driver
-Date:   Thu, 28 Jun 2018 11:57:43 +0200
-Message-Id: <20180628095748.4462-9-brgl@bgdev.pl>
+Subject: [PATCH v3 13/13] ARM: davinci: unduplicate aemif support
+Date:   Thu, 28 Jun 2018 11:57:48 +0200
+Message-Id: <20180628095748.4462-14-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
 References: <20180628095748.4462-1-brgl@bgdev.pl>
@@ -79,113 +78,264 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm365-evm.
+All users now register platform devices using the ti-aemif driver.
+Remove the handcrafted aemif API.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm365-evm.c | 59 +++++++++++++++++++------
- 1 file changed, 46 insertions(+), 13 deletions(-)
+ arch/arm/mach-davinci/Makefile                |   2 +-
+ arch/arm/mach-davinci/aemif.c                 | 218 ------------------
+ .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
+ 3 files changed, 1 insertion(+), 220 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/aemif.c
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 307e88d99dd3..8143756ff38b 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/eeprom.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/platform_data/ti-aemif.h>
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 8725d8bea567..93d271b4d84b 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -6,7 +6,7 @@
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -159,14 +160,47 @@ static struct resource davinci_nand_resources[] = {
- 	},
- };
+ # Common objects
+ obj-y 					:= time.o serial.o usb.o \
+-					   common.o sram.o aemif.o
++					   common.o sram.o
  
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct platform_device davinci_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
-+		.dev		= {
-+			.platform_data	= &davinci_nand_data,
-+		},
-+	}
-+};
-+
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start		= DM365_ASYNC_EMIF_CONTROL_BASE,
-+		.end		= DM365_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
-+	{
-+		.cs		= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= da850_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da850_evm_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
-+};
-+
-+static struct platform_device davinci_aemif_device = {
-+	.name			= "ti-aemif",
-+	.id			= -1,
-+	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource		= davinci_aemif_resources,
-+	.num_resources		= ARRAY_SIZE(davinci_aemif_resources),
- };
+ obj-$(CONFIG_DAVINCI_MUX)		+= mux.o
  
- static struct at24_platform_data eeprom_info = {
-@@ -537,10 +571,6 @@ static void __init evm_init_i2c(void)
- 	i2c_register_board_info(1, i2c_info, ARRAY_SIZE(i2c_info));
- }
- 
--static struct platform_device *dm365_evm_nand_devices[] __initdata = {
--	&davinci_nand_device,
--};
+diff --git a/arch/arm/mach-davinci/aemif.c b/arch/arm/mach-davinci/aemif.c
+deleted file mode 100644
+index e4ab3f3a2a1f..000000000000
+--- a/arch/arm/mach-davinci/aemif.c
++++ /dev/null
+@@ -1,218 +0,0 @@
+-/*
+- * AEMIF support for DaVinci SoCs
+- *
+- * Copyright (C) 2010 Texas Instruments Incorporated. http://www.ti.com/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
 -
- static inline int have_leds(void)
- {
- #ifdef CONFIG_LEDS_CLASS
-@@ -628,6 +658,7 @@ static void __init evm_init_cpld(void)
- 	u8 mux, resets;
- 	const char *label;
- 	struct clk *aemif_clk;
-+	int rc;
+-#include <linux/kernel.h>
+-#include <linux/io.h>
+-#include <linux/err.h>
+-#include <linux/clk.h>
+-#include <linux/module.h>
+-#include <linux/time.h>
+-
+-#include <linux/platform_data/mtd-davinci-aemif.h>
+-#include <linux/platform_data/mtd-davinci.h>
+-
+-/* Timing value configuration */
+-
+-#define TA(x)		((x) << 2)
+-#define RHOLD(x)	((x) << 4)
+-#define RSTROBE(x)	((x) << 7)
+-#define RSETUP(x)	((x) << 13)
+-#define WHOLD(x)	((x) << 17)
+-#define WSTROBE(x)	((x) << 20)
+-#define WSETUP(x)	((x) << 26)
+-
+-#define TA_MAX		0x3
+-#define RHOLD_MAX	0x7
+-#define RSTROBE_MAX	0x3f
+-#define RSETUP_MAX	0xf
+-#define WHOLD_MAX	0x7
+-#define WSTROBE_MAX	0x3f
+-#define WSETUP_MAX	0xf
+-
+-#define TIMING_MASK	(TA(TA_MAX) | \
+-				RHOLD(RHOLD_MAX) | \
+-				RSTROBE(RSTROBE_MAX) |	\
+-				RSETUP(RSETUP_MAX) | \
+-				WHOLD(WHOLD_MAX) | \
+-				WSTROBE(WSTROBE_MAX) | \
+-				WSETUP(WSETUP_MAX))
+-
+-static inline unsigned int davinci_aemif_readl(void __iomem *base, int offset)
+-{
+-	return readl_relaxed(base + offset);
+-}
+-
+-static inline void davinci_aemif_writel(void __iomem *base,
+-					int offset, unsigned long value)
+-{
+-	writel_relaxed(value, base + offset);
+-}
+-
+-/*
+- * aemif_calc_rate - calculate timing data.
+- * @wanted: The cycle time needed in nanoseconds.
+- * @clk: The input clock rate in kHz.
+- * @max: The maximum divider value that can be programmed.
+- *
+- * On success, returns the calculated timing value minus 1 for easy
+- * programming into AEMIF timing registers, else negative errno.
+- */
+-static int aemif_calc_rate(int wanted, unsigned long clk, int max)
+-{
+-	int result;
+-
+-	result = DIV_ROUND_UP((wanted * clk), NSEC_PER_MSEC) - 1;
+-
+-	pr_debug("%s: result %d from %ld, %d\n", __func__, result, clk, wanted);
+-
+-	/* It is generally OK to have a more relaxed timing than requested... */
+-	if (result < 0)
+-		result = 0;
+-
+-	/* ... But configuring tighter timings is not an option. */
+-	else if (result > max)
+-		result = -EINVAL;
+-
+-	return result;
+-}
+-
+-/**
+- * davinci_aemif_setup_timing - setup timing values for a given AEMIF interface
+- * @t: timing values to be progammed
+- * @base: The virtual base address of the AEMIF interface
+- * @cs: chip-select to program the timing values for
+- * @clkrate: the AEMIF clkrate
+- *
+- * This function programs the given timing values (in real clock) into the
+- * AEMIF registers taking the AEMIF clock into account.
+- *
+- * This function does not use any locking while programming the AEMIF
+- * because it is expected that there is only one user of a given
+- * chip-select.
+- *
+- * Returns 0 on success, else negative errno.
+- */
+-static int davinci_aemif_setup_timing(struct davinci_aemif_timing *t,
+-					void __iomem *base, unsigned cs,
+-					unsigned long clkrate)
+-{
+-	unsigned set, val;
+-	int ta, rhold, rstrobe, rsetup, whold, wstrobe, wsetup;
+-	unsigned offset = A1CR_OFFSET + cs * 4;
+-
+-	if (!t)
+-		return 0;	/* Nothing to do */
+-
+-	clkrate /= 1000;	/* turn clock into kHz for ease of use */
+-
+-	ta	= aemif_calc_rate(t->ta, clkrate, TA_MAX);
+-	rhold	= aemif_calc_rate(t->rhold, clkrate, RHOLD_MAX);
+-	rstrobe	= aemif_calc_rate(t->rstrobe, clkrate, RSTROBE_MAX);
+-	rsetup	= aemif_calc_rate(t->rsetup, clkrate, RSETUP_MAX);
+-	whold	= aemif_calc_rate(t->whold, clkrate, WHOLD_MAX);
+-	wstrobe	= aemif_calc_rate(t->wstrobe, clkrate, WSTROBE_MAX);
+-	wsetup	= aemif_calc_rate(t->wsetup, clkrate, WSETUP_MAX);
+-
+-	if (ta < 0 || rhold < 0 || rstrobe < 0 || rsetup < 0 ||
+-			whold < 0 || wstrobe < 0 || wsetup < 0) {
+-		pr_err("%s: cannot get suitable timings\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	set = TA(ta) | RHOLD(rhold) | RSTROBE(rstrobe) | RSETUP(rsetup) |
+-		WHOLD(whold) | WSTROBE(wstrobe) | WSETUP(wsetup);
+-
+-	val = __raw_readl(base + offset);
+-	val &= ~TIMING_MASK;
+-	val |= set;
+-	__raw_writel(val, base + offset);
+-
+-	return 0;
+-}
+-
+-/**
+- * davinci_aemif_setup - setup AEMIF interface by davinci_nand_pdata
+- * @pdev - link to platform device to setup settings for
+- *
+- * This function does not use any locking while programming the AEMIF
+- * because it is expected that there is only one user of a given
+- * chip-select.
+- *
+- * Returns 0 on success, else negative errno.
+- */
+-int davinci_aemif_setup(struct platform_device *pdev)
+-{
+-	struct davinci_nand_pdata *pdata = dev_get_platdata(&pdev->dev);
+-	uint32_t val;
+-	unsigned long clkrate;
+-	struct resource	*res;
+-	void __iomem *base;
+-	struct clk *clk;
+-	int ret = 0;
+-
+-	clk = clk_get(&pdev->dev, "aemif");
+-	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		dev_dbg(&pdev->dev, "unable to get AEMIF clock, err %d\n", ret);
+-		return ret;
+-	}
+-
+-	ret = clk_prepare_enable(clk);
+-	if (ret < 0) {
+-		dev_dbg(&pdev->dev, "unable to enable AEMIF clock, err %d\n",
+-			ret);
+-		goto err_put;
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (!res) {
+-		dev_err(&pdev->dev, "cannot get IORESOURCE_MEM\n");
+-		ret = -ENOMEM;
+-		goto err;
+-	}
+-
+-	base = ioremap(res->start, resource_size(res));
+-	if (!base) {
+-		dev_err(&pdev->dev, "ioremap failed for resource %pR\n", res);
+-		ret = -ENOMEM;
+-		goto err;
+-	}
+-
+-	/*
+-	 * Setup Async configuration register in case we did not boot
+-	 * from NAND and so bootloader did not bother to set it up.
+-	 */
+-	val = davinci_aemif_readl(base, A1CR_OFFSET + pdata->core_chipsel * 4);
+-	/*
+-	 * Extended Wait is not valid and Select Strobe mode is not
+-	 * used
+-	 */
+-	val &= ~(ACR_ASIZE_MASK | ACR_EW_MASK | ACR_SS_MASK);
+-	if (pdata->options & NAND_BUSWIDTH_16)
+-		val |= 0x1;
+-
+-	davinci_aemif_writel(base, A1CR_OFFSET + pdata->core_chipsel * 4, val);
+-
+-	clkrate = clk_get_rate(clk);
+-
+-	if (pdata->timing)
+-		ret = davinci_aemif_setup_timing(pdata->timing, base,
+-						 pdata->core_chipsel, clkrate);
+-
+-	if (ret < 0)
+-		dev_dbg(&pdev->dev, "NAND timing values setup fail\n");
+-
+-	iounmap(base);
+-err:
+-	clk_disable_unprepare(clk);
+-err_put:
+-	clk_put(clk);
+-	return ret;
+-}
+diff --git a/include/linux/platform_data/mtd-davinci-aemif.h b/include/linux/platform_data/mtd-davinci-aemif.h
+index 97948ac2bb9b..a403dd51dacc 100644
+--- a/include/linux/platform_data/mtd-davinci-aemif.h
++++ b/include/linux/platform_data/mtd-davinci-aemif.h
+@@ -33,5 +33,4 @@ struct davinci_aemif_timing {
+ 	u8	ta;
+ };
  
- 	/* Make sure we can configure the CPLD through CS1.  Then
- 	 * leave it on for later access to MMC and LED registers.
-@@ -660,8 +691,10 @@ static void __init evm_init_cpld(void)
- 		/* external keypad mux */
- 		mux |= BIT(7);
- 
--		platform_add_devices(dm365_evm_nand_devices,
--				ARRAY_SIZE(dm365_evm_nand_devices));
-+		rc = platform_device_register(&davinci_aemif_device);
-+		if (rc)
-+			pr_warn("%s(): error registering the aemif device: %d\n",
-+				__func__, rc);
- 	} else {
- 		/* no OneNAND support yet */
- 	}
+-int davinci_aemif_setup(struct platform_device *pdev);
+ #endif
 -- 
 2.17.1
 
