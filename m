@@ -2,260 +2,238 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59452C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5CBC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1702723B
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:44:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1702723B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C3DBC2723E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:45:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3DBC2723E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965187AbeF1Kop (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:44:45 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55804 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965097AbeF1Kon (ORCPT
+        id S965347AbeF1Kp4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 06:45:56 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:36079 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932979AbeF1Kpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:44:43 -0400
-Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fYUPF-0005IO-OE; Thu, 28 Jun 2018 12:44:05 +0200
-Date:   Thu, 28 Jun 2018 12:43:59 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
-        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
-        Prarit Bhargava <prarit@redhat.com>, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
-In-Reply-To: <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
- <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de> <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
- <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 28 Jun 2018 06:45:53 -0400
+X-UUID: a682bc97494443f0bdb13675cc35f0f5-20180628
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1647392995; Thu, 28 Jun 2018 18:45:50 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 28 Jun 2018 18:45:48 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 28 Jun 2018 18:45:48 +0800
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v3 3/5] clocksource/drivers/timer-mediatek: Rename function prefix
+Date:   Thu, 28 Jun 2018 18:45:42 +0800
+Message-ID: <1530182744-10731-4-git-send-email-stanley.chu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+References: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 28 Jun 2018, Thomas Gleixner wrote:
-> I still want to document the unholy mess of what is initialized and
-> available when. We have 5 hypervisors and 3 different points in early boot
-> where the calibrate_* callbacks are overwritten. The XEN PV one is actually
-> post tsc_init_early() for whatever reason.
-> 
-> That's all completely obscure and any attempt of moving tsc_early_init()
-> earlier than where it is now is just lottery.
-> 
-> The other issue is that double calibration, e.g. doing the PIT thing twice
-> is just consuming boot time for no value.
-> 
-> All of that has been duct taped over time and we really don't want yet
-> another thing glued to it just because we can.
+Add prefix to specify the name of supported timer hardware:
+"General Purpose Timer (GPT)".
 
-So here is the full picture of the TSC/CPU calibration maze:
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+---
+ drivers/clocksource/timer-mediatek.c |   60 +++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
-Compile time setup:
-	native_calibrate_tsc
-		CPUID based frequency read out with magic fixups
-		for broken CPUID implementations
+diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
+index f9b724f..ff284f2 100644
+--- a/drivers/clocksource/timer-mediatek.c
++++ b/drivers/clocksource/timer-mediatek.c
+@@ -64,7 +64,7 @@ struct mtk_clock_event_device {
+ 
+ static void __iomem *gpt_sched_reg __read_mostly;
+ 
+-static u64 notrace mtk_read_sched_clock(void)
++static u64 notrace mtk_gpt_read_sched_clock(void)
+ {
+ 	return readl_relaxed(gpt_sched_reg);
+ }
+@@ -75,7 +75,7 @@ static inline struct mtk_clock_event_device *to_mtk_clk(
+ 	return container_of(c, struct mtk_clock_event_device, dev);
+ }
+ 
+-static void mtk_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
+ {
+ 	u32 val;
+ 
+@@ -84,13 +84,13 @@ static void mtk_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
+ 			TIMER_CTRL_REG(timer));
+ }
+ 
+-static void mtk_clkevt_time_setup(struct mtk_clock_event_device *evt,
++static void mtk_gpt_clkevt_time_setup(struct mtk_clock_event_device *evt,
+ 				unsigned long delay, u8 timer)
+ {
+ 	writel(delay, evt->gpt_base + TIMER_CMP_REG(timer));
+ }
+ 
+-static void mtk_clkevt_time_start(struct mtk_clock_event_device *evt,
++static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
+ 		bool periodic, u8 timer)
+ {
+ 	u32 val;
+@@ -112,35 +112,35 @@ static void mtk_clkevt_time_start(struct mtk_clock_event_device *evt,
+ 	       evt->gpt_base + TIMER_CTRL_REG(timer));
+ }
+ 
+-static int mtk_clkevt_shutdown(struct clock_event_device *clk)
++static int mtk_gpt_clkevt_shutdown(struct clock_event_device *clk)
+ {
+-	mtk_clkevt_time_stop(to_mtk_clk(clk), GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(to_mtk_clk(clk), GPT_CLK_EVT);
+ 	return 0;
+ }
+ 
+-static int mtk_clkevt_set_periodic(struct clock_event_device *clk)
++static int mtk_gpt_clkevt_set_periodic(struct clock_event_device *clk)
+ {
+ 	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
+ 
+-	mtk_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_clkevt_time_setup(evt, evt->ticks_per_jiffy, GPT_CLK_EVT);
+-	mtk_clkevt_time_start(evt, true, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_setup(evt, evt->ticks_per_jiffy, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_start(evt, true, GPT_CLK_EVT);
+ 	return 0;
+ }
+ 
+-static int mtk_clkevt_next_event(unsigned long event,
++static int mtk_gpt_clkevt_next_event(unsigned long event,
+ 				   struct clock_event_device *clk)
+ {
+ 	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
+ 
+-	mtk_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_clkevt_time_setup(evt, event, GPT_CLK_EVT);
+-	mtk_clkevt_time_start(evt, false, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_setup(evt, event, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_start(evt, false, GPT_CLK_EVT);
+ 
+ 	return 0;
+ }
+ 
+-static irqreturn_t mtk_timer_interrupt(int irq, void *dev_id)
++static irqreturn_t mtk_gpt_interrupt(int irq, void *dev_id)
+ {
+ 	struct mtk_clock_event_device *evt = dev_id;
+ 
+@@ -152,7 +152,7 @@ static irqreturn_t mtk_timer_interrupt(int irq, void *dev_id)
+ }
+ 
+ static void
+-__init mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++__init mtk_gpt_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ {
+ 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+ 		evt->gpt_base + TIMER_CTRL_REG(timer));
+@@ -166,7 +166,7 @@ __init mtk_timer_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
+ 			evt->gpt_base + TIMER_CTRL_REG(timer));
+ }
+ 
+-static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+ {
+ 	u32 val;
+ 
+@@ -181,7 +181,7 @@ static void mtk_timer_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
+ 			evt->gpt_base + GPT_IRQ_EN_REG);
+ }
+ 
+-static int __init mtk_timer_init(struct device_node *node)
++static int __init mtk_gpt_init(struct device_node *node)
+ {
+ 	struct mtk_clock_event_device *evt;
+ 	struct resource res;
+@@ -195,14 +195,14 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	evt->dev.name = "mtk_tick";
+ 	evt->dev.rating = 300;
+ 	evt->dev.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->dev.set_state_shutdown = mtk_clkevt_shutdown;
+-	evt->dev.set_state_periodic = mtk_clkevt_set_periodic;
+-	evt->dev.set_state_oneshot = mtk_clkevt_shutdown;
+-	evt->dev.tick_resume = mtk_clkevt_shutdown;
+-	evt->dev.set_next_event = mtk_clkevt_next_event;
++	evt->dev.set_state_shutdown = mtk_gpt_clkevt_shutdown;
++	evt->dev.set_state_periodic = mtk_gpt_clkevt_set_periodic;
++	evt->dev.set_state_oneshot = mtk_gpt_clkevt_shutdown;
++	evt->dev.tick_resume = mtk_gpt_clkevt_shutdown;
++	evt->dev.set_next_event = mtk_gpt_clkevt_next_event;
+ 	evt->dev.cpumask = cpu_possible_mask;
+ 
+-	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer");
++	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer-gpt");
+ 	if (IS_ERR(evt->gpt_base)) {
+ 		pr_err("Can't get resource\n");
+ 		goto err_kzalloc;
+@@ -226,7 +226,7 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	}
+ 	rate = clk_get_rate(clk);
+ 
+-	if (request_irq(evt->dev.irq, mtk_timer_interrupt,
++	if (request_irq(evt->dev.irq, mtk_gpt_interrupt,
+ 			IRQF_TIMER | IRQF_IRQPOLL, "mtk_timer", evt)) {
+ 		pr_err("failed to setup irq %d\n", evt->dev.irq);
+ 		goto err_clk_disable;
+@@ -235,18 +235,18 @@ static int __init mtk_timer_init(struct device_node *node)
+ 	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
+ 
+ 	/* Configure clock source */
+-	mtk_timer_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
++	mtk_gpt_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
+ 	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+ 			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+ 	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
+-	sched_clock_register(mtk_read_sched_clock, 32, rate);
++	sched_clock_register(mtk_gpt_read_sched_clock, 32, rate);
+ 
+ 	/* Configure clock event */
+-	mtk_timer_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
++	mtk_gpt_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
+ 	clockevents_config_and_register(&evt->dev, rate, 0x3,
+ 					0xffffffff);
+ 
+-	mtk_timer_enable_irq(evt, GPT_CLK_EVT);
++	mtk_gpt_enable_irq(evt, GPT_CLK_EVT);
+ 
+ 	return 0;
+ 
+@@ -265,4 +265,4 @@ static int __init mtk_timer_init(struct device_node *node)
+ 
+ 	return -EINVAL;
+ }
+-TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_timer_init);
++TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
+-- 
+1.7.9.5
 
-	native_calibrate_cpu
-		Try the following:
-
-		1) CPUID based (different leaf than the TSC one)
-		2) MSR based
-		3) Quick PIT calibration
-		4) PIT/HPET/PMTIMER calibration (slow) and only
-		   available in tsc_init(). Could be made working
-		   post x86_dtb_init().
-
-
-Boot sequence:
-
-  start_kernel()
-
-	INTEL_MID:
-		x86_intel_mid_early_setup()
-	   	calibrate_tsc = intel_mid_calibrate_tsc
-
-	   	intel_mid_calibrate_tsc() { return 0; }
-
-  setup_arch()
-
-	x86_init.oem.arch_setup();
-	  INTEL_MID:
-		intel_mid_arch_setup()
-
-		PENWELL:
-		   x86_platform.calibrate_tsc = mfld_calibrate_tsc;
-
-		   MSR based magic. Value would be available right away.
-		   
-		TANGIER:
-		   x86_platform.calibrate_tsc = tangier_calibrate_tsc;
-	
-		   Different MSR based magic. Value would be available
-		   right away.
-		
-	....
-	
-	init_hypervisor_platform()
-	   vmware:
-	           Retrieves frequency and store it for the
-		   calibration function
-
-		   khz = vmware_get_khz_magic()
-		   vmware_tsc_khz = khz
-		   calibrate_cpu = vmware_get_tsc_khz
-	   	   calibrate_tsc = vmware_get_tsc_khz
-		   preset_lpj(khz)
-
- 	   hyperv:
-		   if special hyperv MSRs are available:
-
-		      calibrate_cpu = hv_get_tsc_khz
-		      calibrate_tsc = hv_get_tsc_khz
-
-		   MSR is readable already in this function
-
-	   jailhouse:
-	   
-		   Frequency is available in this function and store
-		   in a variable for the calibration function
-
-		   calibrate_cpu	= jailhouse_get_tsc
-		   calibrate_tsc	= jailhouse_get_tsc
-
-	...
-	
-	kvmclock_init()
-
-		if (magic_conditions)
-			calibrate_tsc = kvm_get_tsc_khz
-			calibrate_cpu = kvm_get_tsc_khz
-
-			kvm_get_preset_lpj()
-			   khz = kvm_get_tsc_khz()
-			   preset_lpj(khz);
-
-	tsc_early_delay_calibrate()
-	    tsc_khz = calibrate_tsc()
-	    cpu_khz = calibrate_cpu()
-
-	    ....
-	    set_lpj(tsc_khz);
-
-
-	x86_init.paging.pagetable_init()    
-	   xen_pagetable_init()
-	      xen_setup_shared_info()
-	         xen_hvm_init_time_ops()
-	            if (XENFEAT_hvm_safe_pvclock)
-	                calibrate_tsc = xen_tsc_khz
-
-	         	PV clock based access
-
-	tsc_init()
-	    tsc_khz = calibrate_tsc()
-	    cpu_khz = calibrate_cpu()
-
-
-Putting this into a table:
-
-Platform	tsc_early_delay_calibrate()	tsc_init()
------------------------------------------------------------------------
-
-Generic		native_calibrate_tsc()		native_calibrate_tsc()
-		native_calibrate_cpu()		native_calibrate_cpu()
-		(Cannot do HPET/PMTIMER)
-
------------------------------------------------------------------------
-
-INTEL_MID	intel_mid_calibrate_tsc()	intel_mid_calibrate_tsc()
-Generic		native_calibrate_cpu()		native_calibrate_cpu()
-
-INTEL_MID	mfld_calibrate_tsc()		mfld_calibrate_tsc()
-PENWELL		native_calibrate_cpu()		native_calibrate_cpu()
-
-INTEL_MID	tangier_calibrate_tsc()		tangier_calibrate_tsc()
-TANGIER		native_calibrate_cpu()		native_calibrate_cpu()
-
------------------------------------------------------------------------
-
-VNWARE		vmware_get_tsc_khz()		vmware_get_tsc_khz()
-		vmware_get_tsc_khz()		vmware_get_tsc_khz()
-
-HYPERV		hv_get_tsc_khz()		hv_get_tsc_khz()
-		hv_get_tsc_khz()		hv_get_tsc_khz()
-
-
-JAILHOUSE	jailhouse_get_tsc()		jailhouse_get_tsc()
-		jailhouse_get_tsc()		jailhouse_get_tsc()
-
-
-KVM		kvm_get_tsc_khz()		kvm_get_tsc_khz()
-		kvm_get_tsc_khz()		kvm_get_tsc_khz()
-
-------------------------------------------------------------------------
-
-XEN		native_calibrate_tsc()		xen_tsc_khz()
-		native_calibrate_cpu()		native_calibrate_cpu()
-
-------------------------------------------------------------------------
-
-The only platform which cannot use the special TSC calibration routine
-in the early calibration is XEN because it's initialized just _after_ the
-early calibration runs.
-
-For enhanced fun the early calibration stuff was moved from right after
-init_hypervisor_platform() to the place where it is now in commit
-ccb64941f375a6 ("x86/timers: Move simple_udelay_calibration() past
-kvmclock_init()") to speed up KVM boot time by avoiding the PIT
-calibration. I have no idea why it wasn't just moved past the XEN
-initialization a few lines further down, especially as the change was done
-by a XEN maintainer :) Boris?
-
-The other HV guests all do more or less the same thing and return the same
-value for cpu_khz and tsc_khz via the calibration indirection despite the
-value being known in the init_platform() function already.
-
-The generic initilizaiton does everything twice, which makes no sense,
-except for the unlikely case were no fast functions are available and the
-quick PIT calibration fails (PMTIMER/HPET) are not available in early
-calibration. HPET 
-
-The INTEL MID stuff is wierd and not really obvious. AFAIR those systems
-don't have PIT or such, so they need to rely on the MSR/CPUID mechanisms to
-work, but that's just working because and not for obvious reasons. Andy,
-can you shed some light on that stuff?
-
-So some of this just works by chance, things are done twice and pointlessly
-(XEN). This really wants to be cleaned up and well documented which the
-requirements of each platform are, especially the Intel-MID stuff needs
-that.
-
-Thanks,
-
-	tglx
