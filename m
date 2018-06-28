@@ -2,98 +2,134 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5683EC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A73BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E762735F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E762735F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DED78208B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED78208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935372AbeF1M1j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:27:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43970 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932640AbeF1M1h (ORCPT
+        id S935378AbeF1M2h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:28:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56111 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932640AbeF1M2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:27:37 -0400
-Received: from localhost (unknown [104.153.224.166])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4D9886A;
-        Thu, 28 Jun 2018 12:27:19 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 21:07:42 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
-Message-ID: <20180628120742.GB4065@kroah.com>
-References: <20180529180746.29684-1-mark.rutland@arm.com>
- <20180529180746.29684-2-mark.rutland@arm.com>
- <20180605120021.GH12258@hirez.programming.kicks-ass.net>
- <20180605142051.GB12925@kroah.com>
- <20180605144304.GW12180@hirez.programming.kicks-ass.net>
- <20180605145334.GA12235@hirez.programming.kicks-ass.net>
- <20180606140042.GA8865@kroah.com>
- <20180622165535.w3jvdzc6aykkiq5m@lakrids.cambridge.arm.com>
+        Thu, 28 Jun 2018 08:28:36 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fYW1D-0006lc-Gw; Thu, 28 Jun 2018 14:27:23 +0200
+Date:   Thu, 28 Jun 2018 14:27:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
+        douly.fnst@cn.fujitsu.com, Prarit Bhargava <prarit@redhat.com>,
+        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
+        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
+In-Reply-To: <20180628114615.GF2494@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1806281421550.1778@nanos.tec.linutronix.de>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
+ <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de> <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+ <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de> <20180628114615.GF2494@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622165535.w3jvdzc6aykkiq5m@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 05:55:59PM +0100, Mark Rutland wrote:
-> Hi,
-> 
-> On Wed, Jun 06, 2018 at 04:00:42PM +0200, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 05, 2018 at 04:53:34PM +0200, Peter Zijlstra wrote:
-> > > On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
-> > > 
-> > > > I can make a proper patch, hold on.
-> > > 
-> > > ---
-> > > Subject: atomic/tty: Fix up atomic abuse in ldsem
-> > > 
-> > > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-> > > working after making the atomic_long interface type safe.
-> > > 
-> > > Needing casts is bad form, which made me look at the code. There are no
-> > > ld_semaphore::count users outside of these functions so there is no
-> > > reason why it can not be an atomic_long_t in the first place, obviating
-> > > the need for this cast.
-> > > 
-> > > That also ensures the loads use atomic_long_read(), which implies (at
-> > > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
-> > > 
-> > > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-> > > very thin (the only difference is not changing *old on success, which
-> > > most callers don't seem to care about).
-> > > 
-> > > So rework the whole thing to use atomic_long_t and its accessors
-> > > directly.
-> > > 
-> > > While there, fixup all the horrible comment styles.
-> > > 
-> > > Cc: Peter Hurley <peter@hurleysoftware.com>
-> > > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+On Thu, 28 Jun 2018, Peter Zijlstra wrote:
+> On Thu, Jun 28, 2018 at 12:43:59PM +0200, Thomas Gleixner wrote:
+> > 	init_hypervisor_platform()
+> > 	   vmware:
+> > 	           Retrieves frequency and store it for the
+> > 		   calibration function
 > > 
-> > Looks good, I'll queue this up after 4.18-rc1 is out, thanks.
+> > 		   khz = vmware_get_khz_magic()
+> > 		   vmware_tsc_khz = khz
+> > 		   calibrate_cpu = vmware_get_tsc_khz
+> > 	   	   calibrate_tsc = vmware_get_tsc_khz
+> > 		   preset_lpj(khz)
+> > 
+> >  	   hyperv:
+> > 		   if special hyperv MSRs are available:
+> > 
+> > 		      calibrate_cpu = hv_get_tsc_khz
+> > 		      calibrate_tsc = hv_get_tsc_khz
+> > 
+> > 		   MSR is readable already in this function
+> > 
+> > 	   jailhouse:
+> > 	   
+> > 		   Frequency is available in this function and store
+> > 		   in a variable for the calibration function
+> > 
+> > 		   calibrate_cpu	= jailhouse_get_tsc
+> > 		   calibrate_tsc	= jailhouse_get_tsc
+> > 
+> > 	...
+> > 	
+> > 	kvmclock_init()
+> > 
+> > 		if (magic_conditions)
+> > 			calibrate_tsc = kvm_get_tsc_khz
+> > 			calibrate_cpu = kvm_get_tsc_khz
+> > 
+> > 			kvm_get_preset_lpj()
+> > 			   khz = kvm_get_tsc_khz()
+> > 			   preset_lpj(khz);
 > 
-> Now that v4.18-rc1 is out, I thought I'd ping so that this doesn't get
-> forgotten.
+> Note that all these which get TSC values from a HV _should_ set
+> X86_FEATURE_TSC_KNOWN_FREQ to avoid the late recalibrate.
 
-Not forgotten, sorry, now queued up.
+True.
 
-greg k-h
+> Calibrating against a virtual PIT/HPET/PMTIMER is utterly pointless.
+
+It kinda works :)
+ 
+> > The generic initilizaiton does everything twice, which makes no sense,
+> > except for the unlikely case were no fast functions are available and the
+> > quick PIT calibration fails (PMTIMER/HPET) are not available in early
+> > calibration. HPET 
+> 
+> Incomplete; but I suspect you want to talk about how we can make HPET
+> available early by putting it in a fixmap.
+
+As I figured out now that's only part of the picture. We also need to do
+that past x86_dtb_init() because early_quirks() and the early acpi/sfi/dtb
+stuff needs to be completed before it makes sense to access hpet. But at
+that point we also have the PMTIMER info.
+
+> And only if we fail, do we at a later stage try again using PMTIMER.
+> 
+> Currently it all works by accident, since !hpet and acpi_pm_read_early()
+> returns 0, but really we should not be running the fallback crap at all
+> that early.
+
+Right.
+
+Thanks,
+
+	tglx
