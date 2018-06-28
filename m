@@ -2,364 +2,191 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAD6C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A880C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A552A27805
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:58:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A552A27805
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 06FCC2780D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 18:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Vikw59ZN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FCC2780D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935991AbeF1S6X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 14:58:23 -0400
-Received: from smtprelay0225.hostedemail.com ([216.40.44.225]:57560 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935200AbeF1S6V (ORCPT
+        id S936006AbeF1S7y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 14:59:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35243 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935093AbeF1S7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 14:58:21 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id B47021800E8FB;
-        Thu, 28 Jun 2018 18:58:20 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: lunch41_2b99b04d0a54d
-X-Filterd-Recvd-Size: 11967
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 28 Jun 2018 18:58:19 +0000 (UTC)
-Message-ID: <db21aa9703833bad65ab70cc4e8a78da5b399138.camel@perches.com>
-Subject: [PATCH] checkpatch: Improve runtime execution speed a little
-From:   Joe Perches <joe@perches.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Andy Whitcroft <apw@canonical.com>
-Date:   Thu, 28 Jun 2018 11:58:18 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 28 Jun 2018 14:59:52 -0400
+Received: by mail-wm0-f66.google.com with SMTP id z137-v6so10163231wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 11:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kL/0RKlrM2UCByDRfCDoAFNlKwtyaEaQBTklTLyi9Ww=;
+        b=Vikw59ZNCH7gLKuFITIb+9Qz60gw5veqxNIGt2bMNb0FKMyl2sHVqJaVOyAI4kbgjI
+         mMOSQlwjaU9cT7YhwDiUh5t1cYZnkSkZydZy4/k5xfw0jM3KEImnV4wnJrx1rIu4x/yx
+         PkDka8IUM6qzjXpk3oKWPjvJ6+chwCuMbiBy/aU8gjib1FpstS/emACVRd3CqOHQpUsH
+         jXN9X8YWBsDTEiByJNCSidMNk7ng9mq+pR83ZcXXXRDsRjYrJWwX3ppNh9+dSRA2y7T1
+         LyDZVQvkFRkIM4+47z1YtLrsObqQaupBV2F1wB6oJro4rxsNuW8unIFB9txx0Xow9316
+         kMdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kL/0RKlrM2UCByDRfCDoAFNlKwtyaEaQBTklTLyi9Ww=;
+        b=AWlY2+K6gAL0b7xkXB62xFwUo0aTJ0mo5UiG9shRiELrxasq7cNzggYG5KCZWyX/lz
+         RnHVMSdZ9lkoqhvCUVK8XX8X2oLTTdp8M0LAjJkAZtPwJHLnM0b9UOspGkYLsw+exRki
+         l9iLtTOjlAHDN4q4rvF7CjGHZTCXQUIh0singz2j2OPT0XLJjE708p4oufRH6tOs7Z0w
+         7O2TIAaj3BpKCqSRzAJDl1jBOhuGHPwwq0ymKIwti+6vF+JheJBaNNsZG5jILKLyT2FX
+         lyhF5/4UBK3ONPFv/cOSXBC6+7zDo87sXQjOXUpTlZBq+x9c7uLuKnR4dzBoalRzIawh
+         7QGw==
+X-Gm-Message-State: APt69E3C+5xhZgUKkCvWX9jm50i/ibec1GVkSHVpWS97CorU1NtbKMP5
+        UoZrLFtAwv12i+IZTBUhkknIbCmAq50=
+X-Google-Smtp-Source: AAOMgpcfvW6TZ4IPI8NRLa51s7Qnse0iv8J5dJMQkWPWkFKZ3TtNxzcrJtnZ+1GmmWJ0Y5HNTotjqg==
+X-Received: by 2002:a1c:d482:: with SMTP id l124-v6mr8574109wmg.22.1530212391446;
+        Thu, 28 Jun 2018 11:59:51 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id x11-v6sm9554174wrm.78.2018.06.28.11.59.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 11:59:50 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fYc8w-0003cn-Qj; Thu, 28 Jun 2018 12:59:46 -0600
+Date:   Thu, 28 Jun 2018 12:59:46 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     linux-rdma@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
+        VMware PV-Drivers <pv-drivers@vmware.com>,
+        Doug Ledford <dledford@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vmw_pvrdma: Release netdev when vmxnet3 module is removed
+Message-ID: <20180628185946.GC379@ziepe.ca>
+References: <20180628135938.19625-1-nhorman@tuxdriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628135938.19625-1-nhorman@tuxdriver.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-checkpatch repeatedly uses a runtime minimum version check that
-validates the minimum perl version required for a regex match
-by using a "$^V ge 5.10.0" runtime string match.
+On Thu, Jun 28, 2018 at 09:59:38AM -0400, Neil Horman wrote:
+> On repeated module load/unload cycles, its possible for the pvrmda
+> driver to encounter this crash:
+> 
+> ...
+> 297.032448] RIP: 0010:[<ffffffff839e4620>]  [<ffffffff839e4620>] netdev_walk_all_upper_dev_rcu+0x50/0xb0
+> [  297.034078] RSP: 0018:ffff95087780bd08  EFLAGS: 00010286
+> [  297.034986] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff95087a0c0000
+> [  297.036196] RDX: ffff95087a0c0000 RSI: ffffffff839e44e0 RDI: ffff950835d0c000
+> [  297.037421] RBP: ffff95087780bd40 R08: ffff95087a0e0ea0 R09: abddacd03f8e0ea0
+> [  297.038636] R10: abddacd03f8e0ea0 R11: ffffef5901e9dbc0 R12: ffff95087a0c0000
+> [  297.039854] R13: ffffffff839e44e0 R14: ffff95087a0c0000 R15: ffff950835d0c828
+> [  297.041071] FS:  0000000000000000(0000) GS:ffff95087fc00000(0000) knlGS:0000000000000000
+> [  297.042443] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  297.043429] CR2: ffffffffffffffe8 CR3: 000000007a652000 CR4: 00000000003607f0
+> [  297.044674] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  297.045893] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [  297.047109] Call Trace:
+> [  297.047545]  [<ffffffff839e4698>] netdev_has_upper_dev_all_rcu+0x18/0x20
+> [  297.048691]  [<ffffffffc05d31af>] is_eth_port_of_netdev+0x2f/0xa0 [ib_core]
+> [  297.049886]  [<ffffffffc05d3180>] ? is_eth_active_slave_of_bonding_rcu+0x70/0x70 [ib_core]
+> ...
+> 
+> This occurs because vmw_pvrdma on probe stores a pointer to the netdev
+> that exists on function 0 of the same bus/device/slot (which represents
+> the vmxnet3 ethernet driver).  However, it never removes this pointer if
+> the vmxnet3 module is removed, leading to crashes resulting from use
+> after free dereferencing incidents like the one above.
+> 
+> The fix is pretty straightforward.  vmw_pvrdma should listen for
+> NETDEV_REGISTER and NETDEV_UNREGISTER events in its event listener code
+> block, and update the stored netdev pointer accordingly.  This solution
+> has been tested by myself and the reporter with successful results.
+> This fix also allows the pvrdma driver to find its underlying ethernet
+> device in the event that vmxnet3 is loaded after pvrdma, which it was
+> not able to do before.
+> 
+> Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+> Reported-by: ruquin@redhat.com
+> CC: Adit Ranadive <aditr@vmware.com>
+> CC: VMware PV-Drivers <pv-drivers@vmware.com>
+> CC: Doug Ledford <dledford@redhat.com>
+> CC: Jason Gunthorpe <jgg@ziepe.ca>
+> CC: linux-kernel@vger.kernel.org
+>  .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    | 25 +++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+> index 0be33a81bbe6..5b4782078a74 100644
+> +++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+> @@ -699,8 +699,12 @@ static int pvrdma_del_gid(const struct ib_gid_attr *attr, void **context)
+>  }
+>  
+>  static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
+> +					  struct net_device *ndev,
+>  					  unsigned long event)
+>  {
+> +	struct pci_dev *pdev_net;
+> +
+> +
+>  	switch (event) {
+>  	case NETDEV_REBOOT:
+>  	case NETDEV_DOWN:
+> @@ -718,6 +722,21 @@ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
+>  		else
+>  			pvrdma_dispatch_event(dev, 1, IB_EVENT_PORT_ACTIVE);
+>  		break;
+> +	case NETDEV_UNREGISTER:
+> +		dev_put(dev->netdev);
+> +		dev->netdev = NULL;
+> +		break;
+> +	case NETDEV_REGISTER:
+> +		/* Paired vmxnet3 will have same bus, slot. But func will be 0 */
+> +		pdev_net = pci_get_slot(dev->pdev->bus, PCI_DEVFN(PCI_SLOT(dev->pdev->devfn), 0));
+> +		if ((dev->netdev == NULL) && (pci_get_drvdata(pdev_net) == ndev)) {
+> +			/* this is our netdev */
+> +			dev->netdev = ndev;
+> +			dev_hold(ndev);
+> +		}
+> +		pci_dev_put(pdev_net);
+> +		break;
+> +
+>  	default:
+>  		dev_dbg(&dev->pdev->dev, "ignore netdevice event %ld on %s\n",
+>  			event, dev->ib_dev.name);
+> @@ -734,8 +753,9 @@ static void pvrdma_netdevice_event_work(struct work_struct *work)
+>  
+>  	mutex_lock(&pvrdma_device_list_lock);
+>  	list_for_each_entry(dev, &pvrdma_device_list, device_link) {
+> -		if (dev->netdev == netdev_work->event_netdev) {
+> -			pvrdma_netdevice_event_handle(dev, netdev_work->event);
+> +		if ((netdev_work->event == NETDEV_REGISTER) ||
+> +		    (dev->netdev == netdev_work->event_netdev)) {
+> +			pvrdma_netdevice_event_handle(dev, netdev_work->event_netdev, netdev_work->event);
+>  			break;
+>  		}
+>  	}
+> @@ -962,6 +982,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
+>  	}
+>  
+>  	dev->netdev = pci_get_drvdata(pdev_net);
+> +	dev_hold(dev->netdev);
+>  	pci_dev_put(pdev_net);
+>  	if (!dev->netdev) {
+>  		dev_err(&pdev->dev, "failed to get vmxnet3 device\n");
 
-Only perform that minimum version test once and store the result
-to reduce string matching time.
+I see a lot of new dev_hold's here, where are the matching
+dev_puts()?
 
-This reduces runtime execution time for patches or files with high
-line counts.
-
-An example runtime improvement:
-
-new: $ time ./scripts/checkpatch.pl -f drivers/net/ethernet/intel/i40e/i40e_main.c > /dev/null
-
-real	0m11.856s
-user	0m11.831s
-sys	0m0.025s
-
-old: $ time ./scripts/checkpatch.pl -f drivers/net/ethernet/intel/i40e/i40e_main.c > /dev/null
-
-real	0m13.330s
-user	0m13.282s
-sys	0m0.049s
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/checkpatch.pl | 66 +++++++++++++++++++++++++--------------------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 2c792107dd01..bde77c5a661b 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -240,11 +240,11 @@ $check_orig = $check;
- 
- my $exit = 0;
- 
-+my $perl_version_ok = 1;
- if ($^V && $^V lt $minimum_perl_version) {
-+	$perl_version_ok = 0;
- 	printf "$P: requires at least perl version %vd\n", $minimum_perl_version;
--	if (!$ignore_perl_version) {
--		exit(1);
--	}
-+	exit(1) if (!$ignore_perl_version);
- }
- 
- #if no filenames are given, push '-' to read patch from stdin
-@@ -1026,11 +1026,11 @@ if (!$quiet) {
- 	hash_show_words(\%use_type, "Used");
- 	hash_show_words(\%ignore_type, "Ignored");
- 
--	if ($^V lt 5.10.0) {
-+	if (!$perl_version_ok) {
- 		print << "EOM"
- 
- NOTE: perl $^V is not modern enough to detect all possible issues.
--      An upgrade to at least perl v5.10.0 is suggested.
-+      An upgrade to at least perl $minimum_perl_version is suggested.
- EOM
- 	}
- 	if ($exit) {
-@@ -3079,7 +3079,7 @@ sub process {
- 		}
- 
- # check indentation starts on a tab stop
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $sline =~ /^\+\t+( +)(?:$c90_Keywords\b|\{\s*$|\}\s*(?:else\b|while\b|\s*$)|$Declare\s*$Ident\s*[;=])/) {
- 			my $indent = length($1);
- 			if ($indent % 8) {
-@@ -3092,7 +3092,7 @@ sub process {
- 		}
- 
- # check multi-line statement indentation matches previous line
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $prevline =~ /^\+([ \t]*)((?:$c90_Keywords(?:\s+if)\s*)|(?:$Declare\s*)?(?:$Ident|\(\s*\*\s*$Ident\s*\))\s*|(?:\*\s*)*$Lval\s*=\s*$Ident\s*)\(.*(\&\&|\|\||,)\s*$/) {
- 			$prevline =~ /^\+(\t*)(.*)$/;
- 			my $oldindent = $1;
-@@ -3967,7 +3967,7 @@ sub process {
- 
- # function brace can't be on same line, except for #defines of do while,
- # or if closed on same line
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $sline =~ /$Type\s*$Ident\s*$balanced_parens\s*\{/ &&
- 		    $sline !~ /\#\s*define\b.*do\s*\{/ &&
- 		    $sline !~ /}/) {
-@@ -4578,7 +4578,7 @@ sub process {
- # check for unnecessary parentheses around comparisons in if uses
- # when !drivers/staging or command-line uses --strict
- 		if (($realfile !~ m@^(?:drivers/staging/)@ || $check_orig) &&
--		    $^V && $^V ge 5.10.0 && defined($stat) &&
-+		    $perl_version_ok && defined($stat) &&
- 		    $stat =~ /(^.\s*if\s*($balanced_parens))/) {
- 			my $if_stat = $1;
- 			my $test = substr($2, 1, -1);
-@@ -4615,7 +4615,7 @@ sub process {
- # return is not a function
- 		if (defined($stat) && $stat =~ /^.\s*return(\s*)\(/s) {
- 			my $spacing = $1;
--			if ($^V && $^V ge 5.10.0 &&
-+			if ($perl_version_ok &&
- 			    $stat =~ /^.\s*return\s*($balanced_parens)\s*;\s*$/) {
- 				my $value = $1;
- 				$value = deparenthesize($value);
-@@ -4642,7 +4642,7 @@ sub process {
-                }
- 
- # if statements using unnecessary parentheses - ie: if ((foo == bar))
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /\bif\s*((?:\(\s*){2,})/) {
- 			my $openparens = $1;
- 			my $count = $openparens =~ tr@\(@\(@;
-@@ -4659,7 +4659,7 @@ sub process {
- #	avoid cases like "foo + BAR < baz"
- #	only fix matches surrounded by parentheses to avoid incorrect
- #	conversions like "FOO < baz() + 5" being "misfixed" to "baz() > FOO + 5"
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /^\+(.*)\b($Constant|[A-Z_][A-Z0-9_]*)\s*($Compare)\s*($LvalOrFunc)/) {
- 			my $lead = $1;
- 			my $const = $2;
-@@ -5084,7 +5084,7 @@ sub process {
- # do {} while (0) macro tests:
- # single-statement macros do not need to be enclosed in do while (0) loop,
- # macro should not end with a semicolon
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $realfile !~ m@/vmlinux.lds.h$@ &&
- 		    $line =~ /^.\s*\#\s*define\s+$Ident(\()?/) {
- 			my $ln = $linenr;
-@@ -5460,7 +5460,7 @@ sub process {
- 		}
- 
- # check for mask then right shift without a parentheses
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /$LvalOrFunc\s*\&\s*($LvalOrFunc)\s*>>/ &&
- 		    $4 !~ /^\&/) { # $LvalOrFunc may be &foo, ignore if so
- 			WARN("MASK_THEN_SHIFT",
-@@ -5468,7 +5468,7 @@ sub process {
- 		}
- 
- # check for pointer comparisons to NULL
--		if ($^V && $^V ge 5.10.0) {
-+		if ($perl_version_ok) {
- 			while ($line =~ /\b$LvalOrFunc\s*(==|\!=)\s*NULL\b/g) {
- 				my $val = $1;
- 				my $equal = "!";
-@@ -5740,7 +5740,7 @@ sub process {
- 		}
- 
- # Check for __attribute__ weak, or __weak declarations (may have link issues)
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /(?:$Declare|$DeclareMisordered)\s*$Ident\s*$balanced_parens\s*(?:$Attribute)?\s*;/ &&
- 		    ($line =~ /\b__attribute__\s*\(\s*\(.*\bweak\b/ ||
- 		     $line =~ /\b__weak\b/)) {
-@@ -5822,7 +5822,7 @@ sub process {
- 		}
- 
- # check for vsprintf extension %p<foo> misuses
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+(?![^\{]*\{\s*).*\b(\w+)\s*\(.*$String\s*,/s &&
- 		    $1 !~ /^_*volatile_*$/) {
-@@ -5869,7 +5869,7 @@ sub process {
- 		}
- 
- # Check for misused memsets
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+(?:.*?)\bmemset\s*\(\s*$FuncArg\s*,\s*$FuncArg\s*\,\s*$FuncArg\s*\)/) {
- 
-@@ -5887,7 +5887,7 @@ sub process {
- 		}
- 
- # Check for memcpy(foo, bar, ETH_ALEN) that could be ether_addr_copy(foo, bar)
--#		if ($^V && $^V ge 5.10.0 &&
-+#		if ($perl_version_ok &&
- #		    defined $stat &&
- #		    $stat =~ /^\+(?:.*?)\bmemcpy\s*\(\s*$FuncArg\s*,\s*$FuncArg\s*\,\s*ETH_ALEN\s*\)/) {
- #			if (WARN("PREFER_ETHER_ADDR_COPY",
-@@ -5898,7 +5898,7 @@ sub process {
- #		}
- 
- # Check for memcmp(foo, bar, ETH_ALEN) that could be ether_addr_equal*(foo, bar)
--#		if ($^V && $^V ge 5.10.0 &&
-+#		if ($perl_version_ok &&
- #		    defined $stat &&
- #		    $stat =~ /^\+(?:.*?)\bmemcmp\s*\(\s*$FuncArg\s*,\s*$FuncArg\s*\,\s*ETH_ALEN\s*\)/) {
- #			WARN("PREFER_ETHER_ADDR_EQUAL",
-@@ -5907,7 +5907,7 @@ sub process {
- 
- # check for memset(foo, 0x0, ETH_ALEN) that could be eth_zero_addr
- # check for memset(foo, 0xFF, ETH_ALEN) that could be eth_broadcast_addr
--#		if ($^V && $^V ge 5.10.0 &&
-+#		if ($perl_version_ok &&
- #		    defined $stat &&
- #		    $stat =~ /^\+(?:.*?)\bmemset\s*\(\s*$FuncArg\s*,\s*$FuncArg\s*\,\s*ETH_ALEN\s*\)/) {
- #
-@@ -5929,7 +5929,7 @@ sub process {
- #		}
- 
- # typecasts on min/max could be min_t/max_t
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+(?:.*?)\b(min|max)\s*\(\s*$FuncArg\s*,\s*$FuncArg\s*\)/) {
- 			if (defined $2 || defined $7) {
-@@ -5953,7 +5953,7 @@ sub process {
- 		}
- 
- # check usleep_range arguments
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+(?:.*?)\busleep_range\s*\(\s*($FuncArg)\s*,\s*($FuncArg)\s*\)/) {
- 			my $min = $1;
-@@ -5969,7 +5969,7 @@ sub process {
- 		}
- 
- # check for naked sscanf
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $line =~ /\bsscanf\b/ &&
- 		    ($stat !~ /$Ident\s*=\s*sscanf\s*$balanced_parens/ &&
-@@ -5983,7 +5983,7 @@ sub process {
- 		}
- 
- # check for simple sscanf that should be kstrto<foo>
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $line =~ /\bsscanf\b/) {
- 			my $lc = $stat =~ tr@\n@@;
-@@ -6055,7 +6055,7 @@ sub process {
- 		}
- 
- # check for function definitions
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^.\s*(?:$Storage\s+)?$Type\s*($Ident)\s*$balanced_parens\s*{/s) {
- 			$context_function = $1;
-@@ -6095,14 +6095,14 @@ sub process {
- 
- # alloc style
- # p = alloc(sizeof(struct foo), ...) should be p = alloc(sizeof(*p), ...)
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*([kv][mz]alloc(?:_node)?)\s*\(\s*(sizeof\s*\(\s*struct\s+$Lval\s*\))/) {
- 			CHK("ALLOC_SIZEOF_STRUCT",
- 			    "Prefer $3(sizeof(*$1)...) over $3($4...)\n" . $herecurr);
- 		}
- 
- # check for k[mz]alloc with multiplies that could be kmalloc_array/kcalloc
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+\s*($Lval)\s*\=\s*(?:$balanced_parens)?\s*(k[mz]alloc)\s*\(\s*($FuncArg)\s*\*\s*($FuncArg)\s*,/) {
- 			my $oldfunc = $3;
-@@ -6131,7 +6131,7 @@ sub process {
- 		}
- 
- # check for krealloc arg reuse
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/) {
- 			WARN("KREALLOC_ARG_REUSE",
- 			     "Reusing the krealloc arg is almost always a bug\n" . $herecurr);
-@@ -6200,7 +6200,7 @@ sub process {
- 		}
- 
- # check for switch/default statements without a break;
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /^\+[$;\s]*(?:case[$;\s]+\w+[$;\s]*:[$;\s]*|)*[$;\s]*\bdefault[$;\s]*:[$;\s]*;/g) {
- 			my $cnt = statement_rawlines($stat);
-@@ -6317,7 +6317,7 @@ sub process {
- 		}
- 
- # likely/unlikely comparisons similar to "(likely(foo) > 0)"
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    $line =~ /\b((?:un)?likely)\s*\(\s*$FuncArg\s*\)\s*$Compare/) {
- 			WARN("LIKELY_MISUSE",
- 			     "Using $1 should generally have parentheses around the comparison\n" . $herecurr);
-@@ -6360,7 +6360,7 @@ sub process {
- # check for DEVICE_ATTR uses that could be DEVICE_ATTR_<FOO>
- # and whether or not function naming is typical and if
- # DEVICE_ATTR permissions uses are unusual too
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $stat =~ /\bDEVICE_ATTR\s*\(\s*(\w+)\s*,\s*\(?\s*(\s*(?:${multi_mode_perms_string_search}|0[0-7]{3,3})\s*)\s*\)?\s*,\s*(\w+)\s*,\s*(\w+)\s*\)/) {
- 			my $var = $1;
-@@ -6420,7 +6420,7 @@ sub process {
- #   specific definition of not visible in sysfs.
- # o Ignore proc_create*(...) uses with a decimal 0 permission as that means
- #   use the default permissions
--		if ($^V && $^V ge 5.10.0 &&
-+		if ($perl_version_ok &&
- 		    defined $stat &&
- 		    $line =~ /$mode_perms_search/) {
- 			foreach my $entry (@mode_permission_funcs) {
-
-
+Jason
