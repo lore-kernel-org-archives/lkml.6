@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58DDC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A846C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5746D2792C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5746D2792C
+	by mail.kernel.org (Postfix) with ESMTP id F39942083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 20:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39942083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966073AbeF1Ua2 convert rfc822-to-8bit (ORCPT
+        id S1753698AbeF1Udh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 16:30:28 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:54349 "EHLO
+        Thu, 28 Jun 2018 16:33:37 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:52565 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeF1Ua0 (ORCPT
+        with ESMTP id S1752485AbeF1Udf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 16:30:26 -0400
+        Thu, 28 Jun 2018 16:33:35 -0400
 Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 0MBr6d-1fP2mG23D5-00Aj4y; Thu, 28 Jun 2018 22:29:59 +0200
-Date:   Thu, 28 Jun 2018 22:29:57 +0200
+ (mreue101 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0LrsLe-1gIOIy0GuU-013eE1; Thu, 28 Jun 2018 22:33:10 +0200
+Date:   Thu, 28 Jun 2018 22:33:08 +0200
 From:   Andreas Klinger <ak@it-klinger.de>
 To:     Pavel Machek <pavel@ucw.cz>
 Cc:     jacek.anaszewski@gmail.com, ben.whitten@gmail.com,
@@ -34,7 +34,7 @@ Cc:     jacek.anaszewski@gmail.com, ben.whitten@gmail.com,
         gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org
 Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
-Message-ID: <20180628202955.GA1534@imap.1und1.de>
+Message-ID: <20180628203308.GA1859@imap.1und1.de>
 References: <20180628134227.GA1719@arbeit>
  <20180628185630.GA6095@amd>
 MIME-Version: 1.0
@@ -43,22 +43,22 @@ Content-Disposition: inline
 Content-Transfer-Encoding: 8BIT
 In-Reply-To: <20180628185630.GA6095@amd>
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:+FJ1DcXL8QCYIzf36pOvAdVnaRme/tKHEOwCCe7tphwNT0/rPJV
- ERPjQXFczqTUZOgopWPzMXYa/iQQMBpgqmM+1Gyi1qrD/FRdb+H8cDGR1hSaeckFt4RISH0
- 73L6FffozGFUkoWaBkWXSpkQ5j/zWSlSp1PoDYqRJyAOBBAxHgFZ0FsmjU2iC0myWSfiuHD
- w2qxOohMa1GNhNUHTWkFw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:N38It/XS0no=:JLCTMZFawDnV+tXw70uPn8
- q1st3LQAq4a8IkL6CscqhDhk8DNnu9DV8cnBQHceKeftCqMvJqFwWL1TB/uzlKgtbslDjStuP
- rEbLP/Iy5cBK06babVmXDuR/7ffoCcoz75sDQpkdMZ1yIA0Nry83yvloPpucjXB2Uy7W4sIhk
- wi7Tc+8DGWYLrjbMxkyawDjCXWLrHPcWmv2qG/M6fQNPW0goEREaaX/IO1skuaWs7HQjkOHoU
- 9HcMTJHe/Q8uOSxnXouUXq8xniI4nUSYA5vQzZLb6J9EmVtPBflmiPCb7+YUG55z2pry1p/WG
- iSXUs9MBP5Qhv0RegmOprbGFH6rXt4w0BWH58w/OoBet0SAgMsxl78H+Gjo6j/rB4+BK5BTx0
- hDpeNPxnjfgEbhRR+yXJehtTqXBldhSSOJPAGO/k5h8LoVhYEhD/EVYliImqyYf/33qQdS2Ik
- ltASMhiMrHm2dFvMJdIkfZ127pYk55LDprKag8h7ctH7fzH69fOIllKFiwasOizYD/s0ILIkV
- TxcKIerZIedXzJkaIkCJcwASXv+TRr+ixKhtnJGg4het3q55cshj0AHorDnt1u44ZsvVyIc+U
- ttVnorT0tRMC1WvAdTCR01FN3rmpnKdx8heGLNWVadZk4dPcEpX/Lf1XiNT8uz/IdPFJuH/RU
- Za/PHAN7xAxUHNpdOQk/CBTlbcha/IukAXLkDKG+nxS7DGdiA+D3TB1pE8iZeKcRtpeOjoU7x
- FXOfAZAAN9K23pi2a/LJnBWFariuFMgcjw1y/tmJEEBB6x1EQhstdUiC4AM=
+X-Provags-ID: V03:K1:niU7K0fTbSomAAEBNIfKBQvjexsqltQy/j37xqVid5QdGQ6kqzH
+ ID0/77xBz/ImPrF8GQKCx9oHP5Be/nBFai4zJiNnqF/e8+glxtzOvj+TSvGYXynsezwBKpk
+ eDl4adhvSVJ4F6eRmKIHGqNhi1o2MZMUerrw6sx9z6rGpUeYhoomExyVgNkFDL9CHgiQRZ8
+ pKiU/GUVIRiKfAGWmIz6w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9fEdF3K9Hg4=:Bz6NQnUXBxZ9e9KPgBjK6u
+ oJxhNce55WnZQgjBbAjvtzeo4OCDGt9w4JGlTaKcaUWVOt0JCrhZo4Cz56vY0pXe+QVCiMAEL
+ q7fn1xtEHIILKpvgxXgVmmXexbGV7/kO7fLz95cTsWOQNYhXc1eA2dsgnkUah7r0AXWlqHreI
+ BHRz24GuiNruHqYL2e7o337fD5/aloSL0yZzSla14Y1D81C1pX4m/V8H3lgK8dWqu/sRSEm2C
+ Rgss4tZ0WgFanPtM0AlG4dQCGbkW+qnnGZS2vXA0EzypdxWVIPU1qqEsNmnQVToYxHWR+/703
+ USDMV2+fVK717MOVhJTCVglpmbkP5fjS4BM1QAlgXSbWhiZ2P1abfVtQD54RZ4iIM32WrLVdL
+ X6fuHat9HkRls7JunBOk234XIYTvORqwSVYjTL+IBnhWNkpbMCKszrn2liqltdqyeBs9KcD5d
+ LoTnB23tf/Z5cM+csjN7Rd3Q8N4FCVGkOVWr40OKFS4T4JkJZ7Fw5Dg3L2bTEJw94loaJgQEK
+ G2WIwCOUTneJVKO9lAvhEkR7KjQDCg2D4gWKBcMtO9VRVUwCzHb94BsZeSr79fPvHnnkeTNPM
+ ipCP15lkFscnyLBkfAJ5getDN0RytOlA1Uc3P/pmD1+99LWVHJMF1WmAa5NAcyq/RbBmKG8qv
+ 5LQuaDSDiaV3MA+8/ZRn8n+x3M4HhaG8naaj9nxBOkSGB1+GIYE6/XG8s6Q+eRG+zBOSZK3UM
+ cizxQsuI22cHURup+GvhFHAkoVQHAFdqYX1eglbPjxrxSHdGRcvKesNjRiQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,6 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Pavel,
 
-Pavel Machek <pavel@ucw.cz> schrieb am Thu, 28. Jun 20:56:
 > Hi!
 > 
 > > Send out a morse code by using LEDs.
@@ -105,6 +104,7 @@ Another question:
 The pattern trigger is not in mainline. Do you know why?
 
 Andreas
+
 
 
 > 
@@ -768,3 +768,15 @@ Andreas
 > 
 > 
 > 
+
+
+
+
+-- 
+Andreas Klinger
+Grabenreith 27
+84508 Burgkirchen
++49 8623 919966
+ak@it-klinger.de
+www.it-klinger.de
+www.grabenreith.de
