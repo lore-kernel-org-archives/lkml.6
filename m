@@ -2,294 +2,321 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A12C4314D
-	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1071C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853F6275B1
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F6275B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9556F275A0
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9556F275A0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966837AbeF1PCf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:02:35 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47357 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932522AbeF1PCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:02:34 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 29BF76E896B0A;
-        Thu, 28 Jun 2018 23:02:29 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.382.0; Thu, 28 Jun
- 2018 23:02:22 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-CC:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH RESEND v3] <linux/tagptr.h>: Introduce tagged pointer
-Date:   Thu, 28 Jun 2018 23:02:15 +0800
-Message-ID: <1530198135-112481-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1530176789-107541-1-git-send-email-gaoxiang25@huawei.com>
-References: <1530176789-107541-1-git-send-email-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+        id S1753823AbeF1PLL (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:11:11 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38418 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbeF1PLK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:11:10 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a5-v6so5393664edt.5
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:11:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SiChA9yBNztd2gLPihsApzhKSdjSPZJEWk2SUpU1sBY=;
+        b=kwwqfx96v4Hcha6+ZW9QSCZ/MGkF4dti6U1t/2VLyuvVxiviWeV68jyU++Gk6xASXQ
+         52ZsThIQLXtTDtIWGaUdg8Srk5vWthtIVj5EWPoprbmFxHLJVhCJeK8cqKjqxh8Diyfb
+         zp9BDDEwayUrZ0+qe0mZARsWhUw+81AyMp6BwpSIiP7nUlB4gwm9SuE6ck09r1WB4zLW
+         3sdMv3KVQWSbPk15oK7tHcPetFM9M0yIu2kZosYejihH1r+qnWOC7k0jikXw+1clcByi
+         9yuBqp2hg1pxsN3G4j/kCxVo4u3GbAyzoh3GMkcNsK4U/bJCJpOebMijkFb5c3uxvlnb
+         418A==
+X-Gm-Message-State: APt69E1lGW8Ht4Gv/8c4sk7XUP3g+2FLZCT4OTyvcvK7EWqm1iqUnR6t
+        eq2QipRZ3WwJ8fFWaW5qNK70oA==
+X-Google-Smtp-Source: AAOMgpdGr/IvNh/lJgrSnaFwv4cDAzV1Jqf0oiDpiy+/6a/CKESTBkAa8XM0xrEgLLwbmWQQ6XFKBg==
+X-Received: by 2002:aa7:d2cc:: with SMTP id k12-v6mr1581604edr.258.1530198668769;
+        Thu, 28 Jun 2018 08:11:08 -0700 (PDT)
+Received: from tiehlicka.microfocus.com (nat.nue.novell.com. [195.135.221.2])
+        by smtp.gmail.com with ESMTPSA id h24-v6sm3036532eds.18.2018.06.28.08.11.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 08:11:07 -0700 (PDT)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Greg Thelen <gthelen@google.com>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] memcg, oom: move out_of_memory back to the charge path
+Date:   Thu, 28 Jun 2018 17:11:01 +0200
+Message-Id: <20180628151101.25307-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently kernel has scattered tagged pointer usages hacked
-by hand in plain code, without a unique and portable functionset
-to highlight the tagged pointer itself and wrap these hacked code
-in order to clean up all over meaningless magic masks.
+From: Michal Hocko <mhocko@suse.com>
 
-Therefore, this patch introduces simple generic methods to fold
-tags into a pointer integer. It currently supports the last n bits
-of the pointer for tags, which can be selected by users.
+3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
+has changed the ENOMEM semantic of memcg charges. Rather than invoking
+the oom killer from the charging context it delays the oom killer to the
+page fault path (pagefault_out_of_memory). This in turn means that many
+users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
+hits the hard limit and the memcg is is OOM. This is behavior is
+inconsistent with !memcg case where the oom killer is invoked from the
+allocation context and the allocator keeps retrying until it succeeds.
 
-In addition, it will also be used for the upcoming EROFS filesystem,
-which heavily uses tagged pointer approach for high performance
-and reducing extra memory allocation.
+The difference in the behavior is user visible. mmap(MAP_POPULATE) might
+result in not fully populated ranges while the mmap return code doesn't
+tell that to the userspace. Random syscalls might fail with ENOMEM etc.
 
-Refer to:
-https://en.wikipedia.org/wiki/Tagged_pointer
+The primary motivation of the different memcg oom semantic was the
+deadlock avoidance. Things have changed since then, though. We have
+an async oom teardown by the oom reaper now and so we do not have to
+rely on the victim to tear down its memory anymore. Therefore we can
+return to the original semantic as long as the memcg oom killer is not
+handed over to the users space.
 
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Miao Xie <miaoxie@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-erofs@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+There is still one thing to be careful about here though. If the oom
+killer is not able to make any forward progress - e.g. because there is
+no eligible task to kill - then we have to bail out of the charge path
+to prevent from same class of deadlocks. We have basically two options
+here. Either we fail the charge with ENOMEM or force the charge and
+allow overcharge. The first option has been considered more harmful than
+useful because rare inconsistencies in the ENOMEM behavior is hard to
+test for and error prone. Basically the same reason why the page
+allocator doesn't fail allocations under such conditions. The later
+might allow runaways but those should be really unlikely unless somebody
+misconfigures the system. E.g. allowing to migrate tasks away from the
+memcg to a different unlimited memcg with move_charge_at_immigrate
+disabled.
+
+Changes since rfc v1
+- s@memcg_may_oom@in_user_fault@ suggested by Johannes. It is much more
+  clear what is the purpose of the flag now
+- s@mem_cgroup_oom_enable@mem_cgroup_enter_user_fault@g
+  s@mem_cgroup_oom_disable@mem_cgroup_exit_user_fault@g as per Johannes
+- make oom_kill_disable an exceptional case because it should be rare
+  and the normal oom handling a core of the function - per Johannes
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
-change log v3:
-  - include/linux/file.h: define a unique alias fdtagptr_t (tagptr2_t)
 
-change log v2:
-  - add support to select the last {1,2,3,...} bits for tags
+Hi,
+I've posted this as an RFC previously [1]. There was no fundamental
+disagreement so I've integrated all the suggested changes and tested it.
+mmap(MAP_POPULATE) hits the oom killer again rather than silently fails
+to populate the mapping on the hard limit excess. On the other hand
+g-u-p and other charge path keep the ENOMEM semantic when the memcg oom
+killer is disabled. All the forward progress guarantee relies on the oom
+reaper.
 
+Unless there are objections I think this is ready to go to mmotm and
+ready for the next merge window
 
-Tagged pointers are good for performance and memory saving,
-hoping for a generic taggedptr approach to clean up redundant dirty code.
+[1] http://lkml.kernel.org/r/20180620103736.13880-1-mhocko@kernel.org
+ include/linux/memcontrol.h | 16 ++++----
+ include/linux/sched.h      |  2 +-
+ mm/memcontrol.c            | 75 ++++++++++++++++++++++++++++++--------
+ mm/memory.c                |  4 +-
+ 4 files changed, 71 insertions(+), 26 deletions(-)
 
-Any comments, suggestions or alternative approaches are welcomed. :)
-
-Thanks,
-Gao Xiang
-
- fs/file.c              | 24 +++++++++-------
- include/linux/file.h   | 15 ++++++----
- include/linux/tagptr.h | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 101 insertions(+), 16 deletions(-)
- create mode 100644 include/linux/tagptr.h
-
-diff --git a/fs/file.c b/fs/file.c
-index 7ffd6e9..a54a551 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -727,42 +727,44 @@ struct file *fget_raw(unsigned int fd)
-  * The fput_needed flag returned by fget_light should be passed to the
-  * corresponding fput_light.
-  */
--static unsigned long __fget_light(unsigned int fd, fmode_t mask)
-+static fdtagptr_t __fget_light(unsigned int fd, fmode_t mask)
- {
-+	const fdtagptr_t nil = tagptr_fold(fdtagptr_t, NULL, 0);
- 	struct files_struct *files = current->files;
- 	struct file *file;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 6c6fb116e925..5a69bb4026f6 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -494,16 +494,16 @@ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
+ void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+ 				struct task_struct *p);
  
- 	if (atomic_read(&files->count) == 1) {
- 		file = __fcheck_files(files, fd);
- 		if (!file || unlikely(file->f_mode & mask))
--			return 0;
--		return (unsigned long)file;
-+			return nil;
-+		return tagptr_fold(fdtagptr_t, file, 0);
- 	} else {
- 		file = __fget(fd, mask);
- 		if (!file)
--			return 0;
--		return FDPUT_FPUT | (unsigned long)file;
-+			return nil;
-+		return tagptr_fold(fdtagptr_t, file, FDPUT_FPUT);
- 	}
- }
--unsigned long __fdget(unsigned int fd)
-+
-+fdtagptr_t __fdget(unsigned int fd)
+-static inline void mem_cgroup_oom_enable(void)
++static inline void mem_cgroup_enter_user_fault(void)
  {
- 	return __fget_light(fd, FMODE_PATH);
- }
- EXPORT_SYMBOL(__fdget);
- 
--unsigned long __fdget_raw(unsigned int fd)
-+fdtagptr_t __fdget_raw(unsigned int fd)
- {
- 	return __fget_light(fd, 0);
+-	WARN_ON(current->memcg_may_oom);
+-	current->memcg_may_oom = 1;
++	WARN_ON(current->in_user_fault);
++	current->in_user_fault = 1;
  }
  
--unsigned long __fdget_pos(unsigned int fd)
-+fdtagptr_t __fdget_pos(unsigned int fd)
+-static inline void mem_cgroup_oom_disable(void)
++static inline void mem_cgroup_exit_user_fault(void)
  {
--	unsigned long v = __fdget(fd);
--	struct file *file = (struct file *)(v & ~3);
-+	fdtagptr_t v = __fdget(fd);
-+	struct file *file = tagptr_unfold_ptr(v);
- 
- 	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
- 		if (file_count(file) > 1) {
--			v |= FDPUT_POS_UNLOCK;
-+			tagptr_set_tags(&v, FDPUT_POS_UNLOCK);
- 			mutex_lock(&file->f_pos_lock);
- 		}
- 	}
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 279720d..38b6641 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -9,6 +9,7 @@
- #include <linux/compiler.h>
- #include <linux/types.h>
- #include <linux/posix_types.h>
-+#include <linux/tagptr.h>
- 
- struct file;
- 
-@@ -34,6 +35,9 @@ struct fd {
- #define FDPUT_FPUT       1
- #define FDPUT_POS_UNLOCK 2
- 
-+/* tagged pointer for fd */
-+typedef tagptr2_t	fdtagptr_t;
-+
- static inline void fdput(struct fd fd)
- {
- 	if (fd.flags & FDPUT_FPUT)
-@@ -42,14 +46,15 @@ static inline void fdput(struct fd fd)
- 
- extern struct file *fget(unsigned int fd);
- extern struct file *fget_raw(unsigned int fd);
--extern unsigned long __fdget(unsigned int fd);
--extern unsigned long __fdget_raw(unsigned int fd);
--extern unsigned long __fdget_pos(unsigned int fd);
-+extern fdtagptr_t __fdget(unsigned int fd);
-+extern fdtagptr_t __fdget_raw(unsigned int fd);
-+extern fdtagptr_t __fdget_pos(unsigned int fd);
- extern void __f_unlock_pos(struct file *);
- 
--static inline struct fd __to_fd(unsigned long v)
-+static inline struct fd __to_fd(fdtagptr_t v)
- {
--	return (struct fd){(struct file *)(v & ~3),v & 3};
-+	return (struct fd){ tagptr_unfold_ptr(v),
-+		tagptr_unfold_tags(v) };
+-	WARN_ON(!current->memcg_may_oom);
+-	current->memcg_may_oom = 0;
++	WARN_ON(!current->in_user_fault);
++	current->in_user_fault = 0;
  }
  
- static inline struct fd fdget(unsigned int fd)
-diff --git a/include/linux/tagptr.h b/include/linux/tagptr.h
-new file mode 100644
-index 0000000..50d2f89
---- /dev/null
-+++ b/include/linux/tagptr.h
-@@ -0,0 +1,78 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Tagged pointer implementation
-+ *
-+ * Copyright (C) 2018 Gao Xiang <gaoxiang25@huawei.com>
-+ */
-+#ifndef _LINUX_TAGPTR_H
-+#define _LINUX_TAGPTR_H
+ static inline bool task_in_memcg_oom(struct task_struct *p)
+@@ -924,11 +924,11 @@ static inline void mem_cgroup_handle_over_high(void)
+ {
+ }
+ 
+-static inline void mem_cgroup_oom_enable(void)
++static inline void mem_cgroup_enter_user_fault(void)
+ {
+ }
+ 
+-static inline void mem_cgroup_oom_disable(void)
++static inline void mem_cgroup_exit_user_fault(void)
+ {
+ }
+ 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..34cc95b751cd 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -722,7 +722,7 @@ struct task_struct {
+ 	unsigned			restore_sigmask:1;
+ #endif
+ #ifdef CONFIG_MEMCG
+-	unsigned			memcg_may_oom:1;
++	unsigned			in_user_fault:1;
+ #ifndef CONFIG_SLOB
+ 	unsigned			memcg_kmem_skip_account:1;
+ #endif
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e6f0d5ef320a..cff6c75137c1 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1483,28 +1483,53 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+ 		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
+ }
+ 
+-static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
++enum oom_status {
++	OOM_SUCCESS,
++	OOM_FAILED,
++	OOM_ASYNC,
++	OOM_SKIPPED
++};
 +
-+#include <linux/types.h>
-+#include <linux/build_bug.h>
++static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+ {
+-	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+-		return;
++	if (order > PAGE_ALLOC_COSTLY_ORDER)
++		return OOM_SKIPPED;
 +
-+/* the name of types are tagptr{1, 2, 3...}_t */
-+#define __MAKE_TAGPTR(n) \
-+typedef struct tagptr##n {	\
-+	uintptr_t v;	\
-+} tagptr##n##_t;
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+ 	 * don't want to block when potentially sitting on a callstack
+ 	 * that holds all kinds of filesystem and mm locks.
+ 	 *
+-	 * Also, the caller may handle a failed allocation gracefully
+-	 * (like optional page cache readahead) and so an OOM killer
+-	 * invocation might not even be necessary.
++	 * cgroup1 allows disabling the OOM killer and waiting for outside
++	 * handling until the charge can succeed; remember the context and put
++	 * the task to sleep at the end of the page fault when all locks are
++	 * released.
++	 *
++	 * On the other hand, in-kernel OOM killer allows for an async victim
++	 * memory reclaim (oom_reaper) and that means that we are not solely
++	 * relying on the oom victim to make a forward progress and we can
++	 * invoke the oom killer here.
+ 	 *
+-	 * That's why we don't do anything here except remember the
+-	 * OOM context and then deal with it at the end of the page
+-	 * fault when the stack is unwound, the locks are released,
+-	 * and when we know whether the fault was overall successful.
++	 * Please note that mem_cgroup_out_of_memory might fail to find a
++	 * victim and then we have to bail out from the charge path.
+ 	 */
+-	css_get(&memcg->css);
+-	current->memcg_in_oom = memcg;
+-	current->memcg_oom_gfp_mask = mask;
+-	current->memcg_oom_order = order;
++	if (memcg->oom_kill_disable) {
++		if (!current->in_user_fault)
++			return OOM_SKIPPED;
++		css_get(&memcg->css);
++		current->memcg_in_oom = memcg;
++		current->memcg_oom_gfp_mask = mask;
++		current->memcg_oom_order = order;
 +
-+__MAKE_TAGPTR(1)
-+__MAKE_TAGPTR(2)
-+__MAKE_TAGPTR(3)
-+__MAKE_TAGPTR(4)
++		return OOM_ASYNC;
++	}
 +
-+#undef __MAKE_TAGPTR
++	if (mem_cgroup_out_of_memory(memcg, mask, order))
++		return OOM_SUCCESS;
 +
-+extern void __compiletime_error("bad tagptr tags")
-+	__bad_tagptr_tags(void);
++	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
++		"This looks like a misconfiguration or a kernel bug.");
++	return OOM_FAILED;
+ }
+ 
+ /**
+@@ -1899,6 +1924,8 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	unsigned long nr_reclaimed;
+ 	bool may_swap = true;
+ 	bool drained = false;
++	bool oomed = false;
++	enum oom_status oom_status;
+ 
+ 	if (mem_cgroup_is_root(memcg))
+ 		return 0;
+@@ -1986,6 +2013,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (nr_retries--)
+ 		goto retry;
+ 
++	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
++		goto nomem;
 +
-+extern void __compiletime_error("bad tagptr type")
-+	__bad_tagptr_type(void);
-+
-+#define __tagptr_mask_1(ptr, n)	\
-+	__builtin_types_compatible_p(typeof(ptr), tagptr##n##_t) ? \
-+		(1UL << (n)) - 1 :
-+
-+#define __tagptr_mask(ptr)	(\
-+	__tagptr_mask_1(ptr, 1) ( \
-+	__tagptr_mask_1(ptr, 2) ( \
-+	__tagptr_mask_1(ptr, 3) ( \
-+	__tagptr_mask_1(ptr, 4) ( \
-+	__bad_tagptr_type(), 0)))))
-+
-+/* encode the tagged pointer */
-+#define tagptr_fold(type, ptr, _tags) ({ \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(type))) \
-+		__bad_tagptr_tags(); \
-+((typeof(type)){ .v = (uintptr_t)ptr | tags }); })
-+
-+#define tagptr_unfold_ptr(tptr) \
-+	((void *)((tptr).v & ~__tagptr_mask(tptr)))
-+
-+#define tagptr_unfold_tags(tptr) \
-+	((tptr).v & __tagptr_mask(tptr))
-+
-+#define tagptr_replace_tags(_ptptr, tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	*ptptr = tagptr_fold(*ptptr, tagptr_unfold_ptr(*ptptr), tags); \
-+*ptptr; })
-+
-+#define tagptr_set_tags(_ptptr, _tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-+		__bad_tagptr_tags(); \
-+	ptptr->v |= tags; \
-+*ptptr; })
-+
-+#define tagptr_clear_tags(_ptptr, _tags) ({ \
-+	typeof(_ptptr) ptptr = (_ptptr); \
-+	const typeof(_tags) tags = (_tags); \
-+	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
-+		__bad_tagptr_tags(); \
-+	ptptr->v &= ~tags; \
-+*ptptr; })
-+
-+#endif
-+
+ 	if (gfp_mask & __GFP_NOFAIL)
+ 		goto force;
+ 
+@@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 
+ 	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+ 
+-	mem_cgroup_oom(mem_over_limit, gfp_mask,
++	/*
++	 * keep retrying as long as the memcg oom killer is able to make
++	 * a forward progress or bypass the charge if the oom killer
++	 * couldn't make any progress.
++	 */
++	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
+ 		       get_order(nr_pages * PAGE_SIZE));
++	switch (oom_status) {
++	case OOM_SUCCESS:
++		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
++		oomed = true;
++		goto retry;
++	case OOM_FAILED:
++		goto force;
++	default:
++		goto nomem;
++	}
+ nomem:
+ 	if (!(gfp_mask & __GFP_NOFAIL))
+ 		return -ENOMEM;
+diff --git a/mm/memory.c b/mm/memory.c
+index 7206a634270b..a4b1f8c24884 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4125,7 +4125,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 	 * space.  Kernel faults are handled more gracefully.
+ 	 */
+ 	if (flags & FAULT_FLAG_USER)
+-		mem_cgroup_oom_enable();
++		mem_cgroup_enter_user_fault();
+ 
+ 	if (unlikely(is_vm_hugetlb_page(vma)))
+ 		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
+@@ -4133,7 +4133,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 		ret = __handle_mm_fault(vma, address, flags);
+ 
+ 	if (flags & FAULT_FLAG_USER) {
+-		mem_cgroup_oom_disable();
++		mem_cgroup_exit_user_fault();
+ 		/*
+ 		 * The task may have entered a memcg OOM situation but
+ 		 * if the allocation error was handled gracefully (no
 -- 
-1.9.1
+2.18.0
 
