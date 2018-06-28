@@ -2,503 +2,147 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A60AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB068C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DB12729B
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:43:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DB12729B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 644FB2729B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644FB2729B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965775AbeF1Mn5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:43:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46874 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965413AbeF1Mmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:42:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EC7D220DD5; Thu, 28 Jun 2018 14:42:49 +0200 (CEST)
-Received: from mc-bl-xps13.lan (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8B2032082B;
-        Thu, 28 Jun 2018 14:42:39 +0200 (CEST)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 2/4] net: mvpp2: prs: Drop unions representing TCAM and SRAM entries
-Date:   Thu, 28 Jun 2018 14:42:05 +0200
-Message-Id: <20180628124207.11635-3-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180628124207.11635-1-maxime.chevallier@bootlin.com>
-References: <20180628124207.11635-1-maxime.chevallier@bootlin.com>
+        id S1753791AbeF1Mp5 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:45:57 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42228 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752056AbeF1Mpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:45:54 -0400
+Received: by mail-vk0-f68.google.com with SMTP id s187-v6so3192844vke.9;
+        Thu, 28 Jun 2018 05:45:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6MyuWicRcy+qwjOSy+0dEcBZbw03av5e98n1XfNcTiw=;
+        b=W4m8Flo9uMtXGfvTmMn7bjiIwXFMXSbirVzMHwJKkNGryDQaDgmNGPQGoSHFAJGXI/
+         +lXC/yFQIgt1xgZN5ms1u4s8ZrAOQc82QjwmoCMch9/DWP5Nb4COBc8ddKLnURwRQkOf
+         SOKPeLzbvyq3XYCxWJe4Hd62gLk3ROcF7/IFKNSCLz4f3L64gUJ1osh8nUAZZAQPgyGN
+         f174x4zS9i9WeVc3RY0BbHRDYQcbwr0QGsqSSd68iy+XPENOnLzgDmrm6sZd+sJcN72Y
+         OLD+JRU/qiH3KRsuqENi3mr74h5U1FQwJahKbXpGDxldH4VIpB6+dR261ntakPdqKZnr
+         U+/w==
+X-Gm-Message-State: APt69E1mu3dsoWM8ie1eSoqnLFnllYE6ROWI5Y5ogHDfOL6SDlj2kF5k
+        PWJ619Ch7IkTtw3T1hjFb5X6zi1+l30SQPrnipM=
+X-Google-Smtp-Source: AAOMgpfldzECYdsOCIbFewzzLu+v1Y42SBJ6Sq1B7laOZESXXznDhuWx3HK4oiWB1G+3bJKykbvFAOkZRIz5vdLd/rY=
+X-Received: by 2002:a1f:2c0d:: with SMTP id s13-v6mr5992236vks.106.1530189953211;
+ Thu, 28 Jun 2018 05:45:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180628120031.eq2yuysz4re2olwn@verge.net.au> <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+In-Reply-To: <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Jun 2018 14:45:41 +0200
+Message-ID: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PPv2's Header Parser use some large TCAM and SRAM entries, that are
-duplicated in software so that we can write them to hardware only when
-we are done modifying them.
+Hi Simon,
 
-Currently, PPv2 uses a union containing arrays of u32 and u8 to represent
-these entries, to facilitate byte per byte access. This representation is
-broken when we want to support big endian, and this makes the code
-confusing to read.
+On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
+> > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> > > This adds the Renesas R9A06G032 bare bone support.
+> > >
+> > > This currently only handles the SYSCTRL block note,
+> > > generic parts (gic, architected timer) and a UART.
+> > >
+> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > Thanks, applied with the following appended:
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9d5eeff51b5f..4c85ac04872d 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1969,6 +1969,7 @@ S:      Supported
+> >  F:   arch/arm/boot/dts/emev2*
+> >  F:   arch/arm/boot/dts/r7s*
+> >  F:   arch/arm/boot/dts/r8a*
+> > +F:   arch/arm/boot/dts/r9a*
+> >  F:   arch/arm/boot/dts/sh*
+> >  F:   arch/arm/configs/shmobile_defconfig
+> >  F:   arch/arm/include/debug/renesas-scif.S
+>
+> One more update.
+>
+> dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
+> current base of the renesas tree and likely base for the rest of the v4.19
+> development cycle.
+>
+> Accordingly I have removed the include of that header and replaced
+> the use of symbols it defines with numeric constants. The result is below.
 
-This patch drops the union, and simply stores the TCAM and SRAM entries
-as u32 arrays, each entry corresponding to a 32-bit register.
+Oh right. Thanks!
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h     |   2 +
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c | 149 +++++++++++--------------
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h |  41 ++++---
- 3 files changed, 87 insertions(+), 105 deletions(-)
+> Please:
+> 1) Check that this is correct and
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-index fa314b272853..81a66cce7fa8 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -553,6 +553,8 @@
- 	((total_size) - NET_SKB_PAD - MVPP2_SKB_SHINFO_SIZE)
- 
- #define MVPP2_BIT_TO_BYTE(bit)		((bit) / 8)
-+#define MVPP2_BIT_TO_WORD(bit)		((bit) / 32)
-+#define MVPP2_BIT_IN_WORD(bit)		((bit) % 32)
- 
- /* IPv6 max L3 address size */
- #define MVPP2_MAX_L3_ADDR_SIZE		16
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-index 6bb69f086794..af11feea681c 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-@@ -30,17 +30,17 @@ static int mvpp2_prs_hw_write(struct mvpp2 *priv, struct mvpp2_prs_entry *pe)
- 		return -EINVAL;
- 
- 	/* Clear entry invalidation bit */
--	pe->tcam.word[MVPP2_PRS_TCAM_INV_WORD] &= ~MVPP2_PRS_TCAM_INV_MASK;
-+	pe->tcam[MVPP2_PRS_TCAM_INV_WORD] &= ~MVPP2_PRS_TCAM_INV_MASK;
- 
- 	/* Write tcam index - indirect access */
- 	mvpp2_write(priv, MVPP2_PRS_TCAM_IDX_REG, pe->index);
- 	for (i = 0; i < MVPP2_PRS_TCAM_WORDS; i++)
--		mvpp2_write(priv, MVPP2_PRS_TCAM_DATA_REG(i), pe->tcam.word[i]);
-+		mvpp2_write(priv, MVPP2_PRS_TCAM_DATA_REG(i), pe->tcam[i]);
- 
- 	/* Write sram index - indirect access */
- 	mvpp2_write(priv, MVPP2_PRS_SRAM_IDX_REG, pe->index);
- 	for (i = 0; i < MVPP2_PRS_SRAM_WORDS; i++)
--		mvpp2_write(priv, MVPP2_PRS_SRAM_DATA_REG(i), pe->sram.word[i]);
-+		mvpp2_write(priv, MVPP2_PRS_SRAM_DATA_REG(i), pe->sram[i]);
- 
- 	return 0;
- }
-@@ -60,18 +60,18 @@ static int mvpp2_prs_init_from_hw(struct mvpp2 *priv,
- 	/* Write tcam index - indirect access */
- 	mvpp2_write(priv, MVPP2_PRS_TCAM_IDX_REG, pe->index);
- 
--	pe->tcam.word[MVPP2_PRS_TCAM_INV_WORD] = mvpp2_read(priv,
-+	pe->tcam[MVPP2_PRS_TCAM_INV_WORD] = mvpp2_read(priv,
- 			      MVPP2_PRS_TCAM_DATA_REG(MVPP2_PRS_TCAM_INV_WORD));
--	if (pe->tcam.word[MVPP2_PRS_TCAM_INV_WORD] & MVPP2_PRS_TCAM_INV_MASK)
-+	if (pe->tcam[MVPP2_PRS_TCAM_INV_WORD] & MVPP2_PRS_TCAM_INV_MASK)
- 		return MVPP2_PRS_TCAM_ENTRY_INVALID;
- 
- 	for (i = 0; i < MVPP2_PRS_TCAM_WORDS; i++)
--		pe->tcam.word[i] = mvpp2_read(priv, MVPP2_PRS_TCAM_DATA_REG(i));
-+		pe->tcam[i] = mvpp2_read(priv, MVPP2_PRS_TCAM_DATA_REG(i));
- 
- 	/* Write sram index - indirect access */
- 	mvpp2_write(priv, MVPP2_PRS_SRAM_IDX_REG, pe->index);
- 	for (i = 0; i < MVPP2_PRS_SRAM_WORDS; i++)
--		pe->sram.word[i] = mvpp2_read(priv, MVPP2_PRS_SRAM_DATA_REG(i));
-+		pe->sram[i] = mvpp2_read(priv, MVPP2_PRS_SRAM_DATA_REG(i));
- 
- 	return 0;
- }
-@@ -103,42 +103,35 @@ static void mvpp2_prs_shadow_ri_set(struct mvpp2 *priv, int index,
- /* Update lookup field in tcam sw entry */
- static void mvpp2_prs_tcam_lu_set(struct mvpp2_prs_entry *pe, unsigned int lu)
- {
--	int enable_off = MVPP2_PRS_TCAM_EN_OFFS(MVPP2_PRS_TCAM_LU_BYTE);
--
--	pe->tcam.byte[MVPP2_PRS_TCAM_LU_BYTE] = lu;
--	pe->tcam.byte[enable_off] = MVPP2_PRS_LU_MASK;
-+	pe->tcam[MVPP2_PRS_TCAM_LU_WORD] &= ~MVPP2_PRS_TCAM_LU(MVPP2_PRS_LU_MASK);
-+	pe->tcam[MVPP2_PRS_TCAM_LU_WORD] &= ~MVPP2_PRS_TCAM_LU_EN(MVPP2_PRS_LU_MASK);
-+	pe->tcam[MVPP2_PRS_TCAM_LU_WORD] |= MVPP2_PRS_TCAM_LU(lu & MVPP2_PRS_LU_MASK);
-+	pe->tcam[MVPP2_PRS_TCAM_LU_WORD] |= MVPP2_PRS_TCAM_LU_EN(MVPP2_PRS_LU_MASK);
- }
- 
- /* Update mask for single port in tcam sw entry */
- static void mvpp2_prs_tcam_port_set(struct mvpp2_prs_entry *pe,
- 				    unsigned int port, bool add)
- {
--	int enable_off = MVPP2_PRS_TCAM_EN_OFFS(MVPP2_PRS_TCAM_PORT_BYTE);
--
- 	if (add)
--		pe->tcam.byte[enable_off] &= ~(1 << port);
-+		pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] &= ~MVPP2_PRS_TCAM_PORT_EN(BIT(port));
- 	else
--		pe->tcam.byte[enable_off] |= 1 << port;
-+		pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] |= MVPP2_PRS_TCAM_PORT_EN(BIT(port));
- }
- 
- /* Update port map in tcam sw entry */
- static void mvpp2_prs_tcam_port_map_set(struct mvpp2_prs_entry *pe,
- 					unsigned int ports)
- {
--	unsigned char port_mask = MVPP2_PRS_PORT_MASK;
--	int enable_off = MVPP2_PRS_TCAM_EN_OFFS(MVPP2_PRS_TCAM_PORT_BYTE);
--
--	pe->tcam.byte[MVPP2_PRS_TCAM_PORT_BYTE] = 0;
--	pe->tcam.byte[enable_off] &= ~port_mask;
--	pe->tcam.byte[enable_off] |= ~ports & MVPP2_PRS_PORT_MASK;
-+	pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] &= ~MVPP2_PRS_TCAM_PORT(MVPP2_PRS_PORT_MASK);
-+	pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] &= ~MVPP2_PRS_TCAM_PORT_EN(MVPP2_PRS_PORT_MASK);
-+	pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] |= MVPP2_PRS_TCAM_PORT_EN(~ports & MVPP2_PRS_PORT_MASK);
- }
- 
- /* Obtain port map from tcam sw entry */
- static unsigned int mvpp2_prs_tcam_port_map_get(struct mvpp2_prs_entry *pe)
- {
--	int enable_off = MVPP2_PRS_TCAM_EN_OFFS(MVPP2_PRS_TCAM_PORT_BYTE);
--
--	return ~(pe->tcam.byte[enable_off]) & MVPP2_PRS_PORT_MASK;
-+	return (~pe->tcam[MVPP2_PRS_TCAM_PORT_WORD] >> 24) & MVPP2_PRS_PORT_MASK;
- }
- 
- /* Set byte of data and its enable bits in tcam sw entry */
-@@ -146,8 +139,12 @@ static void mvpp2_prs_tcam_data_byte_set(struct mvpp2_prs_entry *pe,
- 					 unsigned int offs, unsigned char byte,
- 					 unsigned char enable)
- {
--	pe->tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE(offs)] = byte;
--	pe->tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE_EN(offs)] = enable;
-+	int pos = MVPP2_PRS_BYTE_IN_WORD(offs) * BITS_PER_BYTE;
-+
-+	pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] &= ~(0xff << pos);
-+	pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] &= ~(MVPP2_PRS_TCAM_EN(0xff) << pos);
-+	pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] |= byte << pos;
-+	pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] |= MVPP2_PRS_TCAM_EN(enable << pos);
- }
- 
- /* Get byte of data and its enable bits from tcam sw entry */
-@@ -155,46 +152,45 @@ static void mvpp2_prs_tcam_data_byte_get(struct mvpp2_prs_entry *pe,
- 					 unsigned int offs, unsigned char *byte,
- 					 unsigned char *enable)
- {
--	*byte = pe->tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE(offs)];
--	*enable = pe->tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE_EN(offs)];
-+	int pos = MVPP2_PRS_BYTE_IN_WORD(offs) * BITS_PER_BYTE;
-+
-+	*byte = (pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] >> pos) & 0xff;
-+	*enable = (pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] >> (pos + 16)) & 0xff;
- }
- 
- /* Compare tcam data bytes with a pattern */
- static bool mvpp2_prs_tcam_data_cmp(struct mvpp2_prs_entry *pe, int offs,
- 				    u16 data)
- {
--	int off = MVPP2_PRS_TCAM_DATA_BYTE(offs);
- 	u16 tcam_data;
- 
--	tcam_data = (pe->tcam.byte[off + 1] << 8) | pe->tcam.byte[off];
--	if (tcam_data != data)
--		return false;
--	return true;
-+	tcam_data = pe->tcam[MVPP2_PRS_BYTE_TO_WORD(offs)] & 0xffff;
-+	return tcam_data == data;
- }
- 
- /* Update ai bits in tcam sw entry */
- static void mvpp2_prs_tcam_ai_update(struct mvpp2_prs_entry *pe,
- 				     unsigned int bits, unsigned int enable)
- {
--	int i, ai_idx = MVPP2_PRS_TCAM_AI_BYTE;
-+	int i;
- 
- 	for (i = 0; i < MVPP2_PRS_AI_BITS; i++) {
- 		if (!(enable & BIT(i)))
- 			continue;
- 
- 		if (bits & BIT(i))
--			pe->tcam.byte[ai_idx] |= 1 << i;
-+			pe->tcam[MVPP2_PRS_TCAM_AI_WORD] |= BIT(i);
- 		else
--			pe->tcam.byte[ai_idx] &= ~(1 << i);
-+			pe->tcam[MVPP2_PRS_TCAM_AI_WORD] &= ~BIT(i);
- 	}
- 
--	pe->tcam.byte[MVPP2_PRS_TCAM_EN_OFFS(ai_idx)] |= enable;
-+	pe->tcam[MVPP2_PRS_TCAM_AI_WORD] |= MVPP2_PRS_TCAM_AI_EN(enable);
- }
- 
- /* Get ai bits from tcam sw entry */
- static int mvpp2_prs_tcam_ai_get(struct mvpp2_prs_entry *pe)
- {
--	return pe->tcam.byte[MVPP2_PRS_TCAM_AI_BYTE];
-+	return pe->tcam[MVPP2_PRS_TCAM_AI_WORD] & MVPP2_PRS_AI_MASK;
- }
- 
- /* Set ethertype in tcam sw entry */
-@@ -215,16 +211,16 @@ static void mvpp2_prs_match_vid(struct mvpp2_prs_entry *pe, int offset,
- 
- /* Set bits in sram sw entry */
- static void mvpp2_prs_sram_bits_set(struct mvpp2_prs_entry *pe, int bit_num,
--				    int val)
-+				    u32 val)
- {
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(bit_num)] |= (val << (bit_num % 8));
-+	pe->sram[MVPP2_BIT_TO_WORD(bit_num)] |= (val << (MVPP2_BIT_IN_WORD(bit_num)));
- }
- 
- /* Clear bits in sram sw entry */
- static void mvpp2_prs_sram_bits_clear(struct mvpp2_prs_entry *pe, int bit_num,
--				      int val)
-+				      u32 val)
- {
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(bit_num)] &= ~(val << (bit_num % 8));
-+	pe->sram[MVPP2_BIT_TO_WORD(bit_num)] &= ~(val << (MVPP2_BIT_IN_WORD(bit_num)));
- }
- 
- /* Update ri bits in sram sw entry */
-@@ -234,15 +230,16 @@ static void mvpp2_prs_sram_ri_update(struct mvpp2_prs_entry *pe,
- 	unsigned int i;
- 
- 	for (i = 0; i < MVPP2_PRS_SRAM_RI_CTRL_BITS; i++) {
--		int ri_off = MVPP2_PRS_SRAM_RI_OFFS;
--
- 		if (!(mask & BIT(i)))
- 			continue;
- 
- 		if (bits & BIT(i))
--			mvpp2_prs_sram_bits_set(pe, ri_off + i, 1);
-+			mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_RI_OFFS + i,
-+						1);
- 		else
--			mvpp2_prs_sram_bits_clear(pe, ri_off + i, 1);
-+			mvpp2_prs_sram_bits_clear(pe,
-+						  MVPP2_PRS_SRAM_RI_OFFS + i,
-+						  1);
- 
- 		mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_RI_CTRL_OFFS + i, 1);
- 	}
-@@ -251,7 +248,7 @@ static void mvpp2_prs_sram_ri_update(struct mvpp2_prs_entry *pe,
- /* Obtain ri bits from sram sw entry */
- static int mvpp2_prs_sram_ri_get(struct mvpp2_prs_entry *pe)
- {
--	return pe->sram.word[MVPP2_PRS_SRAM_RI_WORD];
-+	return pe->sram[MVPP2_PRS_SRAM_RI_WORD];
- }
- 
- /* Update ai bits in sram sw entry */
-@@ -259,16 +256,18 @@ static void mvpp2_prs_sram_ai_update(struct mvpp2_prs_entry *pe,
- 				     unsigned int bits, unsigned int mask)
- {
- 	unsigned int i;
--	int ai_off = MVPP2_PRS_SRAM_AI_OFFS;
- 
- 	for (i = 0; i < MVPP2_PRS_SRAM_AI_CTRL_BITS; i++) {
- 		if (!(mask & BIT(i)))
- 			continue;
- 
- 		if (bits & BIT(i))
--			mvpp2_prs_sram_bits_set(pe, ai_off + i, 1);
-+			mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_AI_OFFS + i,
-+						1);
- 		else
--			mvpp2_prs_sram_bits_clear(pe, ai_off + i, 1);
-+			mvpp2_prs_sram_bits_clear(pe,
-+						  MVPP2_PRS_SRAM_AI_OFFS + i,
-+						  1);
- 
- 		mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_AI_CTRL_OFFS + i, 1);
- 	}
-@@ -278,12 +277,12 @@ static void mvpp2_prs_sram_ai_update(struct mvpp2_prs_entry *pe,
- static int mvpp2_prs_sram_ai_get(struct mvpp2_prs_entry *pe)
- {
- 	u8 bits;
--	int ai_off = MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_AI_OFFS);
--	int ai_en_off = ai_off + 1;
--	int ai_shift = MVPP2_PRS_SRAM_AI_OFFS % 8;
-+	/* ai is stored on bits 90->97; so it spreads across two u32 */
-+	int ai_off = MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_AI_OFFS);
-+	int ai_shift = MVPP2_BIT_IN_WORD(MVPP2_PRS_SRAM_AI_OFFS);
- 
--	bits = (pe->sram.byte[ai_off] >> ai_shift) |
--	       (pe->sram.byte[ai_en_off] << (8 - ai_shift));
-+	bits = (pe->sram[ai_off] >> ai_shift) |
-+	       (pe->sram[ai_off + 1] << (32 - ai_shift));
- 
- 	return bits;
- }
-@@ -316,8 +315,7 @@ static void mvpp2_prs_sram_shift_set(struct mvpp2_prs_entry *pe, int shift,
- 	}
- 
- 	/* Set value */
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_SHIFT_OFFS)] =
--							   (unsigned char)shift;
-+	pe->sram[MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_SHIFT_OFFS)] = shift & MVPP2_PRS_SRAM_SHIFT_MASK;
- 
- 	/* Reset and set operation */
- 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_OP_SEL_SHIFT_OFFS,
-@@ -346,13 +344,8 @@ static void mvpp2_prs_sram_offset_set(struct mvpp2_prs_entry *pe,
- 	/* Set value */
- 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_UDF_OFFS,
- 				  MVPP2_PRS_SRAM_UDF_MASK);
--	mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_UDF_OFFS, offset);
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_UDF_OFFS +
--					MVPP2_PRS_SRAM_UDF_BITS)] &=
--	      ~(MVPP2_PRS_SRAM_UDF_MASK >> (8 - (MVPP2_PRS_SRAM_UDF_OFFS % 8)));
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_UDF_OFFS +
--					MVPP2_PRS_SRAM_UDF_BITS)] |=
--				(offset >> (8 - (MVPP2_PRS_SRAM_UDF_OFFS % 8)));
-+	mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_UDF_OFFS,
-+				offset & MVPP2_PRS_SRAM_UDF_MASK);
- 
- 	/* Set offset type */
- 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_UDF_TYPE_OFFS,
-@@ -362,16 +355,8 @@ static void mvpp2_prs_sram_offset_set(struct mvpp2_prs_entry *pe,
- 	/* Set offset operation */
- 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS,
- 				  MVPP2_PRS_SRAM_OP_SEL_UDF_MASK);
--	mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS, op);
--
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS +
--					MVPP2_PRS_SRAM_OP_SEL_UDF_BITS)] &=
--					     ~(MVPP2_PRS_SRAM_OP_SEL_UDF_MASK >>
--				    (8 - (MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS % 8)));
--
--	pe->sram.byte[MVPP2_BIT_TO_BYTE(MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS +
--					MVPP2_PRS_SRAM_OP_SEL_UDF_BITS)] |=
--			     (op >> (8 - (MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS % 8)));
-+	mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_OP_SEL_UDF_OFFS,
-+				op & MVPP2_PRS_SRAM_OP_SEL_UDF_MASK);
- 
- 	/* Set base offset as current */
- 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_OP_SEL_BASE_OFFS, 1);
-@@ -932,8 +917,8 @@ static int mvpp2_prs_ip4_proto(struct mvpp2 *priv, unsigned short proto,
- 
- 	pe.index = tid;
- 	/* Clear ri before updating */
--	pe.sram.word[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
--	pe.sram.word[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
- 	mvpp2_prs_sram_ri_update(&pe, ri, ri_mask);
- 
- 	mvpp2_prs_sram_ri_update(&pe, ri | MVPP2_PRS_RI_IP_FRAG_TRUE,
-@@ -1433,17 +1418,13 @@ static int mvpp2_prs_etype_init(struct mvpp2 *priv)
- 
- 	pe.index = tid;
- 
--	/* Clear tcam data before updating */
--	pe.tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE(MVPP2_ETH_TYPE_LEN)] = 0x0;
--	pe.tcam.byte[MVPP2_PRS_TCAM_DATA_BYTE_EN(MVPP2_ETH_TYPE_LEN)] = 0x0;
--
- 	mvpp2_prs_tcam_data_byte_set(&pe, MVPP2_ETH_TYPE_LEN,
- 				     MVPP2_PRS_IPV4_HEAD,
- 				     MVPP2_PRS_IPV4_HEAD_MASK);
- 
- 	/* Clear ri before updating */
--	pe.sram.word[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
--	pe.sram.word[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
- 	mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_L3_IP4_OPT,
- 				 MVPP2_PRS_RI_L3_PROTO_MASK);
- 
-@@ -1644,8 +1625,8 @@ static int mvpp2_prs_pppoe_init(struct mvpp2 *priv)
- 				     MVPP2_PRS_IPV4_IHL_MASK);
- 
- 	/* Clear ri before updating */
--	pe.sram.word[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
--	pe.sram.word[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_WORD] = 0x0;
-+	pe.sram[MVPP2_PRS_SRAM_RI_CTRL_WORD] = 0x0;
- 	mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_L3_IP4,
- 				 MVPP2_PRS_RI_L3_PROTO_MASK);
- 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-index 22fbbc4c8b28..a7c8d0818432 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-@@ -50,17 +50,25 @@
-  * The fields are represented by MVPP2_PRS_TCAM_DATA_REG(5)->(0).
-  */
- #define MVPP2_PRS_AI_BITS			8
-+#define MVPP2_PRS_AI_MASK			0xff
- #define MVPP2_PRS_PORT_MASK			0xff
- #define MVPP2_PRS_LU_MASK			0xf
--#define MVPP2_PRS_TCAM_DATA_BYTE(offs)		\
--				    (((offs) - ((offs) % 2)) * 2 + ((offs) % 2))
--#define MVPP2_PRS_TCAM_DATA_BYTE_EN(offs)	\
--					      (((offs) * 2) - ((offs) % 2)  + 2)
--#define MVPP2_PRS_TCAM_AI_BYTE			16
--#define MVPP2_PRS_TCAM_PORT_BYTE		17
--#define MVPP2_PRS_TCAM_LU_BYTE			20
--#define MVPP2_PRS_TCAM_EN_OFFS(offs)		((offs) + 2)
--#define MVPP2_PRS_TCAM_INV_WORD			5
-+
-+/* TCAM entries in registers are accessed using 16 data bits + 16 enable bits */
-+#define MVPP2_PRS_BYTE_TO_WORD(byte)	((byte) / 2)
-+#define MVPP2_PRS_BYTE_IN_WORD(byte)	((byte) % 2)
-+
-+#define MVPP2_PRS_TCAM_EN(data)		((data) << 16)
-+#define MVPP2_PRS_TCAM_AI_WORD		4
-+#define MVPP2_PRS_TCAM_AI(ai)		(ai)
-+#define MVPP2_PRS_TCAM_AI_EN(ai)	MVPP2_PRS_TCAM_EN(MVPP2_PRS_TCAM_AI(ai))
-+#define MVPP2_PRS_TCAM_PORT_WORD	4
-+#define MVPP2_PRS_TCAM_PORT(p)		((p) << 8)
-+#define MVPP2_PRS_TCAM_PORT_EN(p)	MVPP2_PRS_TCAM_EN(MVPP2_PRS_TCAM_PORT(p))
-+#define MVPP2_PRS_TCAM_LU_WORD		5
-+#define MVPP2_PRS_TCAM_LU(lu)		(lu)
-+#define MVPP2_PRS_TCAM_LU_EN(lu)	MVPP2_PRS_TCAM_EN(MVPP2_PRS_TCAM_LU(lu))
-+#define MVPP2_PRS_TCAM_INV_WORD		5
- 
- #define MVPP2_PRS_VID_TCAM_BYTE         2
- 
-@@ -146,6 +154,7 @@
- #define MVPP2_PRS_SRAM_RI_CTRL_BITS		32
- #define MVPP2_PRS_SRAM_SHIFT_OFFS		64
- #define MVPP2_PRS_SRAM_SHIFT_SIGN_BIT		72
-+#define MVPP2_PRS_SRAM_SHIFT_MASK		0xff
- #define MVPP2_PRS_SRAM_UDF_OFFS			73
- #define MVPP2_PRS_SRAM_UDF_BITS			8
- #define MVPP2_PRS_SRAM_UDF_MASK			0xff
-@@ -255,20 +264,10 @@ enum mvpp2_prs_lookup {
- 	MVPP2_PRS_LU_LAST,
- };
- 
--union mvpp2_prs_tcam_entry {
--	u32 word[MVPP2_PRS_TCAM_WORDS];
--	u8  byte[MVPP2_PRS_TCAM_WORDS * 4];
--};
--
--union mvpp2_prs_sram_entry {
--	u32 word[MVPP2_PRS_SRAM_WORDS];
--	u8  byte[MVPP2_PRS_SRAM_WORDS * 4];
--};
--
- struct mvpp2_prs_entry {
- 	u32 index;
--	union mvpp2_prs_tcam_entry tcam;
--	union mvpp2_prs_sram_entry sram;
-+	u32 tcam[MVPP2_PRS_TCAM_WORDS];
-+	u32 sram[MVPP2_PRS_SRAM_WORDS];
- };
- 
- struct mvpp2_prs_shadow {
+Looks good to me, except for the bogus "fixes" and "SoB" below
+(bad squash?)
+
+> From: Michel Pollet <michel.pollet@bp.renesas.com>
+> Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
+>
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles the SYSCTRL block note,
+> generic parts (gic, architected timer) and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [simon: updated MAINTAINERS file
+> [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> fixes
+  ^^^^^
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+  ^^^^
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
