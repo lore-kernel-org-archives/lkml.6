@@ -2,321 +2,528 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1071C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A9FC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9556F275A0
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9556F275A0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A330275A0
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:12:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsFUBUzG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A330275A0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753823AbeF1PLL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:11:11 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38418 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751434AbeF1PLK (ORCPT
+        id S935082AbeF1PMQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:12:16 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38973 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932522AbeF1PMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:11:10 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a5-v6so5393664edt.5
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:11:09 -0700 (PDT)
+        Thu, 28 Jun 2018 11:12:14 -0400
+Received: by mail-lf0-f68.google.com with SMTP id q6-v6so4484002lfh.6;
+        Thu, 28 Jun 2018 08:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:user-agent:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YwoP7VfNufKz3AdcDP4rD7DzhJl/EoWElJvzO8qQKuw=;
+        b=XsFUBUzGxmG9KAjtIQyNsuAR85yb+Ph1BW+VhToYP0EMh0ddmsQJopq4Ths/b4Fydx
+         P2M5j+a7cU5ph0F2EtuCU0pBkkyThwVV9x6F6RExXktBwW5DXF7KwKd2LRKdiXeT2b2A
+         YENraQQ2lYwhotLKFB00s0XzOlAY3Xsy4BzBUASjS+/zThvmVlxuhsIwnDeacHkQi1B/
+         X2Jdb2L6pvFN7ORn57XVLo9cN2g187H0al3f17HIrd+g1dHCkggHu7ZroAd1o1AcRybZ
+         KiTAAx7WpqY/yR5I4JC7kDQ8JK3quNGc3I99q0fe9RCl1jQVQwuRlwUESlNmlM7LHU1t
+         vv7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SiChA9yBNztd2gLPihsApzhKSdjSPZJEWk2SUpU1sBY=;
-        b=kwwqfx96v4Hcha6+ZW9QSCZ/MGkF4dti6U1t/2VLyuvVxiviWeV68jyU++Gk6xASXQ
-         52ZsThIQLXtTDtIWGaUdg8Srk5vWthtIVj5EWPoprbmFxHLJVhCJeK8cqKjqxh8Diyfb
-         zp9BDDEwayUrZ0+qe0mZARsWhUw+81AyMp6BwpSIiP7nUlB4gwm9SuE6ck09r1WB4zLW
-         3sdMv3KVQWSbPk15oK7tHcPetFM9M0yIu2kZosYejihH1r+qnWOC7k0jikXw+1clcByi
-         9yuBqp2hg1pxsN3G4j/kCxVo4u3GbAyzoh3GMkcNsK4U/bJCJpOebMijkFb5c3uxvlnb
-         418A==
-X-Gm-Message-State: APt69E1lGW8Ht4Gv/8c4sk7XUP3g+2FLZCT4OTyvcvK7EWqm1iqUnR6t
-        eq2QipRZ3WwJ8fFWaW5qNK70oA==
-X-Google-Smtp-Source: AAOMgpdGr/IvNh/lJgrSnaFwv4cDAzV1Jqf0oiDpiy+/6a/CKESTBkAa8XM0xrEgLLwbmWQQ6XFKBg==
-X-Received: by 2002:aa7:d2cc:: with SMTP id k12-v6mr1581604edr.258.1530198668769;
-        Thu, 28 Jun 2018 08:11:08 -0700 (PDT)
-Received: from tiehlicka.microfocus.com (nat.nue.novell.com. [195.135.221.2])
-        by smtp.gmail.com with ESMTPSA id h24-v6sm3036532eds.18.2018.06.28.08.11.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=YwoP7VfNufKz3AdcDP4rD7DzhJl/EoWElJvzO8qQKuw=;
+        b=uPKPCYKgMUhdA3olFkD6LOgQd4eidamVVJaoPJ9z8MxFTPZ+zyHowLV+tVmjUwxcjd
+         /01uDFiJTxez7Z0U+FylXxPQQa9DuC8NRIaiDi9M/t97moHC2OHhUpSaLv/wyc11wa8N
+         BcBa/Bw+b9b5Lpzvctta6noIuxnPPB/3K2Wyt6/Ep1X5vV8hFXtAUp8u+fAwsiulFOkC
+         N0vGWtMafAxrS/z7xDtsNkD7Il0BbvB07+iuNtUbgpH4m3HqzWCaP+lHSukB9k/lnNbj
+         5RAfyoy/0LBIl35D7VJrKb6n65YTRa6ytHYtjJnt8NJtvrnJaIemeyjP+nIuHCLtAwUY
+         suBg==
+X-Gm-Message-State: APt69E2hKVJYe6AnbM5Z3j3h5UV0IvwmTb6c2iFvzsxolCyskNeHky7v
+        LANTk+QjoRC2oLvOgdpuP00=
+X-Google-Smtp-Source: AAOMgped+A63nYS9xXQsCT5KEgfHJeFsv0u1EadY3FaAQsamrZRcMO1NjgJeLlVeIXhyAVDNLtHJwA==
+X-Received: by 2002:a19:7707:: with SMTP id s7-v6mr7137005lfc.8.1530198732106;
+        Thu, 28 Jun 2018 08:12:12 -0700 (PDT)
+Received: from acerlaptop.localnet (user-94-254-170-61.play-internet.pl. [94.254.170.61])
+        by smtp.gmail.com with ESMTPSA id r77-v6sm1381732lfi.34.2018.06.28.08.12.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 08:11:07 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] memcg, oom: move out_of_memory back to the charge path
-Date:   Thu, 28 Jun 2018 17:11:01 +0200
-Message-Id: <20180628151101.25307-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Thu, 28 Jun 2018 08:12:11 -0700 (PDT)
+From:   =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xc-racer2@live.ca
+Subject: Re: [PATCH v2 02/10] ARM: dts: s5pv210: Add initial DTS for Samsung Aries based phones
+Date:   Thu, 28 Jun 2018 17:12:09 +0200
+Message-ID: <2874389.2o2OQCEWau@acerlaptop>
+User-Agent: KMail/5.1.3 (Linux/4.13.0-45-generic; KDE/5.18.0; x86_64; ; )
+In-Reply-To: <CAJKOXPf5MMAwEEt8xZ2mcTUCmrZiOTgGOJuuo5yHmh8UWE6ULA@mail.gmail.com>
+References: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPdxdwmCcXNnYNCc81hZVi=YUs_+CNKev_gPZbXoMPPepg@mail.gmail.com> <CAJKOXPf5MMAwEEt8xZ2mcTUCmrZiOTgGOJuuo5yHmh8UWE6ULA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On Thursday, June 28, 2018 9:48:48 AM CEST Krzysztof Kozlowski wrote:
+> On 28 June 2018 at 09:41, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On 27 June 2018 at 19:12, Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail=
+=2Ecom> wrote:
+> >> This DTS file have initial support Samsung Aries based phones.
+> >> Initial version have support for:
+> >> - sdcard
+> >> - internal memory (present only on non 4g variant)
+> >> - max8998 pmic and rtc
+> >> - max17040 fuel gauge
+> >> - gpio keys
+> >> - fimd (no panel driver yet)
+> >> - usb (peripherial mode)
+> >> - wifi
+> >>
+> >> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> >> ---
+> >>
+> >> Changes from v1:
+> >>   - Removed duplicated and unneeded headers
+> >>   - Corrected node names
+> >>   - Added missing spaces
+> >>   - Removed unneeded pinctrl and sorted entries
+> >>   - Set correct interrupt type for max8998 pmic
+> >>   - Add missing regulators
+> >> ---
+> >> ---
+> >>  arch/arm/boot/dts/s5pv210-aries.dtsi | 423 ++++++++++++++++++++++++++=
++++++++++
+> >>  1 file changed, 423 insertions(+)
+> >>  create mode 100644 arch/arm/boot/dts/s5pv210-aries.dtsi
+> >>
+> >> diff --git a/arch/arm/boot/dts/s5pv210-aries.dtsi b/arch/arm/boot/dts/=
+s5pv210-aries.dtsi
+> >> new file mode 100644
+> >> index 000000000000..61b6cf76265f
+> >> --- /dev/null
+> >> +++ b/arch/arm/boot/dts/s5pv210-aries.dtsi
+> >> @@ -0,0 +1,423 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Samsung's S5PV210 based Galaxy Aries board device tree source
+> >> + */
+> >> +
+> >> +/dts-v1/;
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >> +#include <dt-bindings/interrupt-controller/irq.h>
+> >> +#include "s5pv210.dtsi"
+> >> +
+> >> +/ {
+> >> +       compatible =3D "samsung,aries", "samsung,s5pv210";
+> >> +
+> >> +       aliases {
+> >> +               i2c6 =3D &i2c_pmic;
+> >> +               i2c9 =3D &i2c_fuel;
+> >> +       };
+> >> +
+> >> +       memory@30000000 {
+> >> +               device_type =3D "memory";
+> >> +               reg =3D <0x30000000 0x05000000
+> >> +                       0x40000000 0x10000000
+> >> +                       0x50000000 0x08000000>;
+> >> +       };
+> >> +
+> >> +       wifi_pwrseq: wifi-pwrseq {
+> >> +               compatible =3D "mmc-pwrseq-simple";
+> >> +               reset-gpios =3D <&gpg1 2 GPIO_ACTIVE_LOW>;
+> >> +               pinctrl-names =3D "default";
+> >> +               pinctrl-0 =3D <&wlan_gpio_rst>;
+> >> +               post-power-on-delay-ms =3D <500>;
+> >> +               power-off-delay-us =3D <500>;
+> >> +       };
+> >> +
+> >> +       i2c_pmic: i2c-gpio-0 {
+> >> +               compatible =3D "i2c-gpio";
+> >> +               sda-gpios =3D <&gpj4 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_D=
+RAIN)>;
+> >> +               scl-gpios =3D <&gpj4 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_D=
+RAIN)>;
+> >> +               i2c-gpio,delay-us =3D <2>;
+> >> +               #address-cells =3D <1>;
+> >> +               #size-cells =3D <0>;
+> >> +
+> >> +               pmic@66 {
+> >> +                       compatible =3D "maxim,max8998";
+> >> +                       reg =3D <0x66>;
+> >> +                       interrupt-parent =3D <&gph0>;
+> >> +                       interrupts =3D <7 IRQ_TYPE_EDGE_FALLING>;
+> >> +
+> >> +                       max8998,pmic-buck1-default-dvs-idx =3D <1>;
+> >> +                       max8998,pmic-buck1-dvs-gpios =3D <&gph0 3 GPIO=
+_ACTIVE_HIGH>,
+> >> +                                                       <&gph0 4 GPIO_=
+ACTIVE_HIGH>;
+> >> +                       max8998,pmic-buck1-dvs-voltage =3D <1275000>, =
+<1200000>,
+> >> +                                                       <1050000>, <95=
+0000>;
+> >> +
+> >> +                       max8998,pmic-buck2-default-dvs-idx =3D <0>;
+> >> +                       max8998,pmic-buck2-dvs-gpio =3D <&gph0 5 GPIO_=
+ACTIVE_HIGH>;
+> >> +                       max8998,pmic-buck2-dvs-voltage =3D <1100000>, =
+<1000000>;
+> >> +
+> >> +                       regulators {
+> >> +                               ldo2_reg: LDO2 {
+> >> +                                       regulator-name =3D "VALIVE_1.2=
+V";
+> >> +                                       regulator-min-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-always-on;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-on-in-suspen=
+d;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo3_reg: LDO3 {
+> >> +                                       regulator-name =3D "VUSB_1.1V";
+> >> +                                       regulator-min-microvolt =3D <1=
+100000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+100000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo4_reg: LDO4 {
+> >> +                                       regulator-name =3D "VADC_3.3V";
+> >> +                                       regulator-min-microvolt =3D <3=
+300000>;
+> >> +                                       regulator-max-microvolt =3D <3=
+300000>;
+> >> +                                       regulator-always-on;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo5_reg: LDO5 {
+> >> +                                       regulator-name =3D "VTF_2.8V";
+> >> +                                       regulator-min-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <2=
+800000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo6_reg: LDO6 {
+> >> +                                       regulator-name =3D "LDO6";
+> >> +                                       regulator-min-microvolt =3D <1=
+600000>;
+> >> +                                       regulator-max-microvolt =3D <3=
+600000>;
+> >> +                               };
+> >> +
+> >> +                               ldo7_reg: LDO7 {
+> >> +                                       regulator-name =3D "VLCD_1.8V";
+> >> +                                       regulator-min-microvolt =3D <1=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+800000>;
+> >> +                                       /* Till we get panel driver */
+> >> +                                       regulator-always-on;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo8_reg: LDO8 {
+> >> +                                       regulator-name =3D "VUSB_3.3V";
+> >> +                                       regulator-min-microvolt =3D <3=
+300000>;
+> >> +                                       regulator-max-microvolt =3D <3=
+300000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo9_reg: LDO9 {
+> >> +                                       regulator-name =3D "VCC_2.8V_P=
+DA";
+> >> +                                       regulator-min-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-always-on;
+> >> +                               };
+> >> +
+> >> +                               ldo10_reg: LDO10 {
+> >> +                                       regulator-name =3D "VPLL_1.2V";
+> >> +                                       regulator-min-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-always-on;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-on-in-suspen=
+d;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo11_reg: LDO11 {
+> >> +                                       regulator-name =3D "CAM_AF_3.0=
+V";
+> >> +                                       regulator-min-microvolt =3D <3=
+000000>;
+> >> +                                       regulator-max-microvolt =3D <3=
+000000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo12_reg: LDO12 {
+> >> +                                       regulator-name =3D "CAM_SENSOR=
+_CORE_1.2V";
+> >> +                                       regulator-min-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+200000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo13_reg: LDO13 {
+> >> +                                       regulator-name =3D "VGA_VDDIO_=
+2.8V";
+> >> +                                       regulator-min-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <2=
+800000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo14_reg: LDO14 {
+> >> +                                       regulator-name =3D "VGA_DVDD_1=
+=2E8V";
+> >> +                                       regulator-min-microvolt =3D <1=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+800000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo15_reg: LDO15 {
+> >> +                                       regulator-name =3D "CAM_ISP_HO=
+ST_2.8V";
+> >> +                                       regulator-min-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <2=
+800000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo16_reg: LDO16 {
+> >> +                                       regulator-name =3D "VGA_AVDD_2=
+=2E8V";
+> >> +                                       regulator-min-microvolt =3D <2=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <2=
+800000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ldo17_reg: LDO17 {
+> >> +                                       regulator-name =3D "VCC_3.0V_L=
+CD";
+> >> +                                       regulator-min-microvolt =3D <3=
+000000>;
+> >> +                                       regulator-max-microvolt =3D <3=
+000000>;
+> >> +                                       /* Till we get panel driver */
+> >> +                                       regulator-always-on;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               buck1_reg: BUCK1 {
+> >> +                                       regulator-name =3D "vddarm";
+> >> +                                       regulator-min-microvolt =3D <7=
+50000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+500000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                               regulator-suspend-micr=
+ovolt =3D <1250000>;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               buck2_reg: BUCK2 {
+> >> +                                       regulator-name =3D "vddint";
+> >> +                                       regulator-min-microvolt =3D <7=
+50000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+500000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                               regulator-suspend-micr=
+ovolt =3D <1100000>;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               buck3_reg: BUCK3 {
+> >> +                                       regulator-name =3D "VCC_1.8V";
+> >> +                                       regulator-min-microvolt =3D <1=
+800000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+800000>;
+> >> +                                       regulator-always-on;
+> >> +                               };
+> >> +
+> >> +                               buck4_reg: BUCK4 {
+> >> +                                       regulator-name =3D "CAM_ISP_CO=
+RE_1.2V";
+> >> +                                       regulator-min-microvolt =3D <1=
+200000>;
+> >> +                                       regulator-max-microvolt =3D <1=
+200000>;
+> >> +
+> >> +                                       regulator-state-mem {
+> >> +                                               regulator-off-in-suspe=
+nd;
+> >> +                                       };
+> >> +                               };
+> >> +
+> >> +                               ap32khz_reg: EN32KHz-AP {
+> >> +                                       regulator-name =3D "32KHz AP";
+> >> +                                       regulator-always-on;
+> >> +                               };
+> >> +
+> >> +                               cp32khz_reg: EN32KHz-CP {
+> >> +                                       regulator-name =3D "32KHz CP";
+> >> +                               };
+> >> +
+> >> +                               vichg_reg: ENVICHG {
+> >> +                                       regulator-name =3D "VICHG";
+> >> +                                       regulator-always-on;
+> >> +                               };
+> >> +
+> >> +                               safe1_sreg: ESAFEOUT1 {
+> >> +                                       regulator-name =3D "SAFEOUT1";
+> >> +                               };
+> >> +
+> >> +                               safe2_sreg: ESAFEOUT2 {
+> >> +                                       regulator-name =3D "SAFEOUT2";
+> >> +                               };
+> >> +                       };
+> >> +               };
+> >> +       };
+> >> +
+> >> +       i2c_fuel: i2c-gpio-1 {
+> >> +               compatible =3D "i2c-gpio";
+> >> +               sda-gpios =3D <&mp05 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_D=
+RAIN)>;
+> >> +               scl-gpios =3D <&mp05 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_D=
+RAIN)>;
+> >> +               i2c-gpio,delay-us =3D <2>;
+> >> +               #address-cells =3D <1>;
+> >> +               #size-cells =3D <0>;
+> >> +
+> >> +               fuelgauge@36 {
+> >> +                       compatible =3D "maxim,max17040";
+> >> +                       interrupt-parent =3D <&vic0>;
+> >> +                       interrupts =3D <7>;
+> >> +                       reg =3D <0x36>;
+> >> +               };
+> >> +       };
+> >> +};
+> >> +
+> >> +&xusbxti {
+> >> +       clock-frequency =3D <24000000>;
+> >> +};
+> >> +
+> >> +&pinctrl0 {
+> >
+> > Thanks for changes. You missed one part - ordering the labels here
+> > alphabetically, so:
+> >
+> > &fimd {}
+> > &hsotg {}
+> > ...
+> > &xusbxti {}
+>=20
+> Ah, now I see that you changed the order of nodes inside pinctrl. No
+> need. These were good - ordered by pin names (so gpb, gpg, gph, gpj).
+> I was referring only to the top-level overrides by label. The point is
+> when people add new overrides, they tend to add them to the end... and
+> this brings conflicts with multiple edits at the same time. When node
+> overrides are ordered and new entries are being added, the chance of
+> conflicts is reduced.
+>=20
+Ok now it's clear for me, will fix this  (finally) in v3.
 
-3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
-has changed the ENOMEM semantic of memcg charges. Rather than invoking
-the oom killer from the charging context it delays the oom killer to the
-page fault path (pagefault_out_of_memory). This in turn means that many
-users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
-hits the hard limit and the memcg is is OOM. This is behavior is
-inconsistent with !memcg case where the oom killer is invoked from the
-allocation context and the allocator keeps retrying until it succeeds.
+Thanks
+> BR,
+> Krzysztof
+>=20
 
-The difference in the behavior is user visible. mmap(MAP_POPULATE) might
-result in not fully populated ranges while the mmap return code doesn't
-tell that to the userspace. Random syscalls might fail with ENOMEM etc.
-
-The primary motivation of the different memcg oom semantic was the
-deadlock avoidance. Things have changed since then, though. We have
-an async oom teardown by the oom reaper now and so we do not have to
-rely on the victim to tear down its memory anymore. Therefore we can
-return to the original semantic as long as the memcg oom killer is not
-handed over to the users space.
-
-There is still one thing to be careful about here though. If the oom
-killer is not able to make any forward progress - e.g. because there is
-no eligible task to kill - then we have to bail out of the charge path
-to prevent from same class of deadlocks. We have basically two options
-here. Either we fail the charge with ENOMEM or force the charge and
-allow overcharge. The first option has been considered more harmful than
-useful because rare inconsistencies in the ENOMEM behavior is hard to
-test for and error prone. Basically the same reason why the page
-allocator doesn't fail allocations under such conditions. The later
-might allow runaways but those should be really unlikely unless somebody
-misconfigures the system. E.g. allowing to migrate tasks away from the
-memcg to a different unlimited memcg with move_charge_at_immigrate
-disabled.
-
-Changes since rfc v1
-- s@memcg_may_oom@in_user_fault@ suggested by Johannes. It is much more
-  clear what is the purpose of the flag now
-- s@mem_cgroup_oom_enable@mem_cgroup_enter_user_fault@g
-  s@mem_cgroup_oom_disable@mem_cgroup_exit_user_fault@g as per Johannes
-- make oom_kill_disable an exceptional case because it should be rare
-  and the normal oom handling a core of the function - per Johannes
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-
-Hi,
-I've posted this as an RFC previously [1]. There was no fundamental
-disagreement so I've integrated all the suggested changes and tested it.
-mmap(MAP_POPULATE) hits the oom killer again rather than silently fails
-to populate the mapping on the hard limit excess. On the other hand
-g-u-p and other charge path keep the ENOMEM semantic when the memcg oom
-killer is disabled. All the forward progress guarantee relies on the oom
-reaper.
-
-Unless there are objections I think this is ready to go to mmotm and
-ready for the next merge window
-
-[1] http://lkml.kernel.org/r/20180620103736.13880-1-mhocko@kernel.org
- include/linux/memcontrol.h | 16 ++++----
- include/linux/sched.h      |  2 +-
- mm/memcontrol.c            | 75 ++++++++++++++++++++++++++++++--------
- mm/memory.c                |  4 +-
- 4 files changed, 71 insertions(+), 26 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb116e925..5a69bb4026f6 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -494,16 +494,16 @@ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
- 				struct task_struct *p);
- 
--static inline void mem_cgroup_oom_enable(void)
-+static inline void mem_cgroup_enter_user_fault(void)
- {
--	WARN_ON(current->memcg_may_oom);
--	current->memcg_may_oom = 1;
-+	WARN_ON(current->in_user_fault);
-+	current->in_user_fault = 1;
- }
- 
--static inline void mem_cgroup_oom_disable(void)
-+static inline void mem_cgroup_exit_user_fault(void)
- {
--	WARN_ON(!current->memcg_may_oom);
--	current->memcg_may_oom = 0;
-+	WARN_ON(!current->in_user_fault);
-+	current->in_user_fault = 0;
- }
- 
- static inline bool task_in_memcg_oom(struct task_struct *p)
-@@ -924,11 +924,11 @@ static inline void mem_cgroup_handle_over_high(void)
- {
- }
- 
--static inline void mem_cgroup_oom_enable(void)
-+static inline void mem_cgroup_enter_user_fault(void)
- {
- }
- 
--static inline void mem_cgroup_oom_disable(void)
-+static inline void mem_cgroup_exit_user_fault(void)
- {
- }
- 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a27..34cc95b751cd 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -722,7 +722,7 @@ struct task_struct {
- 	unsigned			restore_sigmask:1;
- #endif
- #ifdef CONFIG_MEMCG
--	unsigned			memcg_may_oom:1;
-+	unsigned			in_user_fault:1;
- #ifndef CONFIG_SLOB
- 	unsigned			memcg_kmem_skip_account:1;
- #endif
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..cff6c75137c1 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1483,28 +1483,53 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
- 		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
- }
- 
--static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
-+enum oom_status {
-+	OOM_SUCCESS,
-+	OOM_FAILED,
-+	OOM_ASYNC,
-+	OOM_SKIPPED
-+};
-+
-+static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
- {
--	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
--		return;
-+	if (order > PAGE_ALLOC_COSTLY_ORDER)
-+		return OOM_SKIPPED;
-+
- 	/*
- 	 * We are in the middle of the charge context here, so we
- 	 * don't want to block when potentially sitting on a callstack
- 	 * that holds all kinds of filesystem and mm locks.
- 	 *
--	 * Also, the caller may handle a failed allocation gracefully
--	 * (like optional page cache readahead) and so an OOM killer
--	 * invocation might not even be necessary.
-+	 * cgroup1 allows disabling the OOM killer and waiting for outside
-+	 * handling until the charge can succeed; remember the context and put
-+	 * the task to sleep at the end of the page fault when all locks are
-+	 * released.
-+	 *
-+	 * On the other hand, in-kernel OOM killer allows for an async victim
-+	 * memory reclaim (oom_reaper) and that means that we are not solely
-+	 * relying on the oom victim to make a forward progress and we can
-+	 * invoke the oom killer here.
- 	 *
--	 * That's why we don't do anything here except remember the
--	 * OOM context and then deal with it at the end of the page
--	 * fault when the stack is unwound, the locks are released,
--	 * and when we know whether the fault was overall successful.
-+	 * Please note that mem_cgroup_out_of_memory might fail to find a
-+	 * victim and then we have to bail out from the charge path.
- 	 */
--	css_get(&memcg->css);
--	current->memcg_in_oom = memcg;
--	current->memcg_oom_gfp_mask = mask;
--	current->memcg_oom_order = order;
-+	if (memcg->oom_kill_disable) {
-+		if (!current->in_user_fault)
-+			return OOM_SKIPPED;
-+		css_get(&memcg->css);
-+		current->memcg_in_oom = memcg;
-+		current->memcg_oom_gfp_mask = mask;
-+		current->memcg_oom_order = order;
-+
-+		return OOM_ASYNC;
-+	}
-+
-+	if (mem_cgroup_out_of_memory(memcg, mask, order))
-+		return OOM_SUCCESS;
-+
-+	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
-+		"This looks like a misconfiguration or a kernel bug.");
-+	return OOM_FAILED;
- }
- 
- /**
-@@ -1899,6 +1924,8 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	unsigned long nr_reclaimed;
- 	bool may_swap = true;
- 	bool drained = false;
-+	bool oomed = false;
-+	enum oom_status oom_status;
- 
- 	if (mem_cgroup_is_root(memcg))
- 		return 0;
-@@ -1986,6 +2013,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (nr_retries--)
- 		goto retry;
- 
-+	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
-+		goto nomem;
-+
- 	if (gfp_mask & __GFP_NOFAIL)
- 		goto force;
- 
-@@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 
- 	memcg_memory_event(mem_over_limit, MEMCG_OOM);
- 
--	mem_cgroup_oom(mem_over_limit, gfp_mask,
-+	/*
-+	 * keep retrying as long as the memcg oom killer is able to make
-+	 * a forward progress or bypass the charge if the oom killer
-+	 * couldn't make any progress.
-+	 */
-+	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
- 		       get_order(nr_pages * PAGE_SIZE));
-+	switch (oom_status) {
-+	case OOM_SUCCESS:
-+		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
-+		oomed = true;
-+		goto retry;
-+	case OOM_FAILED:
-+		goto force;
-+	default:
-+		goto nomem;
-+	}
- nomem:
- 	if (!(gfp_mask & __GFP_NOFAIL))
- 		return -ENOMEM;
-diff --git a/mm/memory.c b/mm/memory.c
-index 7206a634270b..a4b1f8c24884 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4125,7 +4125,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 	 * space.  Kernel faults are handled more gracefully.
- 	 */
- 	if (flags & FAULT_FLAG_USER)
--		mem_cgroup_oom_enable();
-+		mem_cgroup_enter_user_fault();
- 
- 	if (unlikely(is_vm_hugetlb_page(vma)))
- 		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
-@@ -4133,7 +4133,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 		ret = __handle_mm_fault(vma, address, flags);
- 
- 	if (flags & FAULT_FLAG_USER) {
--		mem_cgroup_oom_disable();
-+		mem_cgroup_exit_user_fault();
- 		/*
- 		 * The task may have entered a memcg OOM situation but
- 		 * if the allocation error was handled gracefully (no
--- 
-2.18.0
 
