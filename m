@@ -2,402 +2,193 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D59C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A5CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9085327A1E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:26:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LaIPmVt4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KtDGYTaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9085327A1E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 89CEC27A1E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CEC27A1E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967369AbeF1W0q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:26:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47516 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966506AbeF1W0m (ORCPT
+        id S967389AbeF1W1C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:27:02 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:59772 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966506AbeF1W1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:26:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6FCAE60791; Thu, 28 Jun 2018 22:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530224801;
-        bh=n8mTteEHkotxEwdpI/F2k791Sx8FcUiCs4pS6VjOn8Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LaIPmVt4b+f/+Qxt7UY3bpb6LpEpOKiGnCDo54MPhTZvYsnD4BBpbXl7Zq9JdPI6z
-         x2rBfPPr86IHyiodUrm/5AGRcE/hdAzqt8MY6K12p+qaFfGBaSpO0ALl9fA+YxUInj
-         4rmifd48LOCV38Fsu28TrHPpDLrZp7WTQyhGvRnM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 108D26071C;
-        Thu, 28 Jun 2018 22:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530224800;
-        bh=n8mTteEHkotxEwdpI/F2k791Sx8FcUiCs4pS6VjOn8Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KtDGYTaqI8uO8iZXUFPWgataeG+1btKJ8S9rz/wJKaXbht1c61saE1GqHeaoiPqMs
-         WjEhKvT2XnMy3Np/alrYWstJHxPaZo/Kb5fD0kapkFGpdy0YslLUU59SWOSvV2wMPP
-         +ArxcZsYCfqqtN4Xk2z9Ffn3iA2ka1k9xS9U7NEU=
+        Thu, 28 Jun 2018 18:27:00 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id C9026E1C;
+        Fri, 29 Jun 2018 00:26:57 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vwl-wCOGW7wY; Fri, 29 Jun 2018 00:26:56 +0200 (CEST)
+Received: from var.youpi.perso.aquilenet.fr (static-176-158-111-12.ftth.abo.bbox.fr [176.158.111.12])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id 296637E6;
+        Fri, 29 Jun 2018 00:26:56 +0200 (CEST)
+Received: from samy by var.youpi.perso.aquilenet.fr with local (Exim 4.91)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1fYfNN-0001sU-SU; Fri, 29 Jun 2018 00:26:53 +0200
+Date:   Fri, 29 Jun 2018 00:26:53 +0200
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, Anton Zinoviev <anton@lml.bas.bg>
+Subject: Re: [PATCH] kbd: complete dead keys definitions
+Message-ID: <20180628222653.uqeh2cqo6izo5j6i@var.youpi.perso.aquilenet.fr>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, Anton Zinoviev <anton@lml.bas.bg>
+References: <20180603181858.dtyhhmb7f43cqg3d@var.youpi.perso.aquilenet.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 28 Jun 2018 15:26:40 -0700
-From:   Subhash Jadavani <subhashj@codeaurora.org>
-To:     Asutosh Das <asutoshd@codeaurora.org>
-Cc:     cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi-owner@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] scsi: ufs: fix irq return code
-In-Reply-To: <25908e040c7c797e8a5c1bb6b00df4497bdd7b60.1525343531.git.asutoshd@codeaurora.org>
-References: <cover.1525343531.git.asutoshd@codeaurora.org>
- <25908e040c7c797e8a5c1bb6b00df4497bdd7b60.1525343531.git.asutoshd@codeaurora.org>
-Message-ID: <71bfee86ad846cf62f848d1db71ceeef@codeaurora.org>
-X-Sender: subhashj@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180603181858.dtyhhmb7f43cqg3d@var.youpi.perso.aquilenet.fr>
+Organization: I am not organized
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-03 04:07, Asutosh Das wrote:
-> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Hello,
+
+Ping?
+
+Samuel
+
+Samuel Thibault, le dim. 03 juin 2018 20:18:58 +0200, a ecrit:
+> This completes dead keys definitions for internationalization
+> completeness on the console.  The representatives have been chosen
+> coherently with libx11 compose sequences, which avoid symetry conflicts
+> (e.g. there is U with caron, but no c with breve).
 > 
-> Return IRQ_HANDLED only if the irq is really handled, this will
-> help in catching spurious interrupts that go unhandled.
+> Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 > 
-> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 137 
-> ++++++++++++++++++++++++++++++++++------------
->  1 file changed, 101 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 09b7a3f..557d538 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -211,7 +211,7 @@ enum {
->  	END_FIX
+> Index: linux-4.15/drivers/s390/char/keyboard.c
+> ===================================================================
+> --- linux-4.15.orig/drivers/s390/char/keyboard.c
+> +++ linux-4.15/drivers/s390/char/keyboard.c
+> @@ -39,8 +39,34 @@ static const int kbd_max_vals[] = {
 >  };
-> 
-> -static void ufshcd_tmc_handler(struct ufs_hba *hba);
-> +static irqreturn_t ufshcd_tmc_handler(struct ufs_hba *hba);
->  static void ufshcd_async_scan(void *data, async_cookie_t cookie);
->  static int ufshcd_reset_and_restore(struct ufs_hba *hba);
->  static int ufshcd_eh_host_reset_handler(struct scsi_cmnd *cmd);
-> @@ -4609,19 +4609,29 @@ static int ufshcd_task_req_compl(struct
-> ufs_hba *hba, u32 index, u8 *resp)
->   * ufshcd_uic_cmd_compl - handle completion of uic command
->   * @hba: per adapter instance
->   * @intr_status: interrupt status generated by the controller
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
+>  static const int KBD_NR_TYPES = ARRAY_SIZE(kbd_max_vals);
+>  
+> -static unsigned char ret_diacr[NR_DEAD] = {
+> -	'`', '\'', '^', '~', '"', ','
+> +static const unsigned char ret_diacr[NR_DEAD] = {
+> +	'`',	/* dead_grave */
+> +	'\'',	/* dead_acute */
+> +	'^',	/* dead_circumflex */
+> +	'~',	/* dead_tilda */
+> +	'"',	/* dead_diaeresis */
+> +	',',	/* dead_cedilla */
+> +	'_',	/* dead_macron */
+> +	'U',	/* dead_breve */
+> +	'.',	/* dead_abovedot */
+> +	'*',	/* dead_abovering */
+> +	'=',	/* dead_doubleacute */
+> +	'c',	/* dead_caron */
+> +	'k',	/* dead_ogonek */
+> +	'i',	/* dead_iota */
+> +	'#',	/* dead_voiced_sound */
+> +	'o',	/* dead_semivoiced_sound */
+> +	'!',	/* dead_belowdot */
+> +	'?',	/* dead_hook */
+> +	'+',	/* dead_horn */
+> +	'-',	/* dead_stroke */
+> +	')',	/* dead_abovecomma */
+> +	'(',	/* dead_abovereversedcomma */
+> +	':',	/* dead_doublegrave */
+> +	'n',	/* dead_invertedbreve */
+> +	';',	/* dead_belowcomma */
+> +	'$',	/* dead_currency */
+> +	'@',	/* dead_greek */
+>  };
+>  
+>  /*
+> Index: linux-4.15/drivers/tty/vt/keyboard.c
+> ===================================================================
+> --- linux-4.15.orig/drivers/tty/vt/keyboard.c
+> +++ linux-4.15/drivers/tty/vt/keyboard.c
+> @@ -690,7 +690,35 @@ static void k_dead2(struct vc_data *vc,
 >   */
-> -static void ufshcd_uic_cmd_compl(struct ufs_hba *hba, u32 intr_status)
-> +static irqreturn_t ufshcd_uic_cmd_compl(struct ufs_hba *hba, u32 
-> intr_status)
+>  static void k_dead(struct vc_data *vc, unsigned char value, char up_flag)
 >  {
-> +	irqreturn_t retval = IRQ_NONE;
-> +
->  	if ((intr_status & UIC_COMMAND_COMPL) && hba->active_uic_cmd) {
->  		hba->active_uic_cmd->argument2 |=
->  			ufshcd_get_uic_cmd_result(hba);
->  		hba->active_uic_cmd->argument3 =
->  			ufshcd_get_dme_attr_val(hba);
->  		complete(&hba->active_uic_cmd->done);
-> +		retval = IRQ_HANDLED;
->  	}
-> 
-> -	if ((intr_status & UFSHCD_UIC_PWR_MASK) && hba->uic_async_done)
-> +	if ((intr_status & UFSHCD_UIC_PWR_MASK) && hba->uic_async_done) {
->  		complete(hba->uic_async_done);
-> +		retval = IRQ_HANDLED;
-> +	}
-> +	return retval;
+> -	static const unsigned char ret_diacr[NR_DEAD] = {'`', '\'', '^', '~', '"', ',' };
+> +	static const unsigned char ret_diacr[NR_DEAD] = {
+> +		'`',	/* dead_grave */
+> +		'\'',	/* dead_acute */
+> +		'^',	/* dead_circumflex */
+> +		'~',	/* dead_tilda */
+> +		'"',	/* dead_diaeresis */
+> +		',',	/* dead_cedilla */
+> +		'_',	/* dead_macron */
+> +		'U',	/* dead_breve */
+> +		'.',	/* dead_abovedot */
+> +		'*',	/* dead_abovering */
+> +		'=',	/* dead_doubleacute */
+> +		'c',	/* dead_caron */
+> +		'k',	/* dead_ogonek */
+> +		'i',	/* dead_iota */
+> +		'#',	/* dead_voiced_sound */
+> +		'o',	/* dead_semivoiced_sound */
+> +		'!',	/* dead_belowdot */
+> +		'?',	/* dead_hook */
+> +		'+',	/* dead_horn */
+> +		'-',	/* dead_stroke */
+> +		')',	/* dead_abovecomma */
+> +		'(',	/* dead_abovereversedcomma */
+> +		':',	/* dead_doublegrave */
+> +		'n',	/* dead_invertedbreve */
+> +		';',	/* dead_belowcomma */
+> +		'$',	/* dead_currency */
+> +		'@',	/* dead_greek */
+> +	};
+>  
+>  	k_deadunicode(vc, ret_diacr[value], up_flag);
 >  }
-> 
->  /**
-> @@ -4675,8 +4685,12 @@ static void __ufshcd_transfer_req_compl(struct
-> ufs_hba *hba,
->  /**
->   * ufshcd_transfer_req_compl - handle SCSI and query command 
-> completion
->   * @hba: per adapter instance
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
-> -static void ufshcd_transfer_req_compl(struct ufs_hba *hba)
-> +static irqreturn_t ufshcd_transfer_req_compl(struct ufs_hba *hba)
->  {
->  	unsigned long completed_reqs;
->  	u32 tr_doorbell;
-> @@ -4694,7 +4708,12 @@ static void ufshcd_transfer_req_compl(struct
-> ufs_hba *hba)
->  	tr_doorbell = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
->  	completed_reqs = tr_doorbell ^ hba->outstanding_reqs;
-> 
-> -	__ufshcd_transfer_req_compl(hba, completed_reqs);
-> +	if (completed_reqs) {
-> +		__ufshcd_transfer_req_compl(hba, completed_reqs);
-> +		return IRQ_HANDLED;
-> +	} else {
-> +		return IRQ_NONE;
-> +	}
->  }
-> 
->  /**
-> @@ -5220,16 +5239,21 @@ static void ufshcd_update_uic_reg_hist(struct
-> ufs_uic_err_reg_hist *reg_hist,
->  /**
->   * ufshcd_update_uic_error - check and set fatal UIC error flags.
->   * @hba: per-adapter instance
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
-> -static void ufshcd_update_uic_error(struct ufs_hba *hba)
-> +static irqreturn_t ufshcd_update_uic_error(struct ufs_hba *hba)
->  {
->  	u32 reg;
-> +	irqreturn_t retval = IRQ_NONE;
-> 
->  	/* PHY layer lane error */
->  	reg = ufshcd_readl(hba, REG_UIC_ERROR_CODE_PHY_ADAPTER_LAYER);
->  	/* Ignore LINERESET indication, as this is not an error */
->  	if ((reg & UIC_PHY_ADAPTER_LAYER_ERROR) &&
-> -			(reg & UIC_PHY_ADAPTER_LAYER_LANE_ERR_MASK)) {
-> +			(reg & UIC_PHY_ADAPTER_LAYER_ERROR_CODE_MASK)) {
->  		/*
->  		 * To know whether this error is fatal or not, DB timeout
->  		 * must be checked but this error is handled separately.
-> @@ -5240,57 +5264,73 @@ static void ufshcd_update_uic_error(struct 
-> ufs_hba *hba)
-> 
->  	/* PA_INIT_ERROR is fatal and needs UIC reset */
->  	reg = ufshcd_readl(hba, REG_UIC_ERROR_CODE_DATA_LINK_LAYER);
-> -	if (reg)
-> +	if ((reg & UIC_DATA_LINK_LAYER_ERROR) &&
-> +	    (reg & UIC_DATA_LINK_LAYER_ERROR_CODE_MASK)) {
->  		ufshcd_update_uic_reg_hist(&hba->ufs_stats.dl_err, reg);
-> -
-> -	if (reg & UIC_DATA_LINK_LAYER_ERROR_PA_INIT)
-> -		hba->uic_error |= UFSHCD_UIC_DL_PA_INIT_ERROR;
-> -	else if (hba->dev_quirks &
-> -		   UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS) {
-> -		if (reg & UIC_DATA_LINK_LAYER_ERROR_NAC_RECEIVED)
-> -			hba->uic_error |=
-> -				UFSHCD_UIC_DL_NAC_RECEIVED_ERROR;
-> -		else if (reg & UIC_DATA_LINK_LAYER_ERROR_TCx_REPLAY_TIMEOUT)
-> -			hba->uic_error |= UFSHCD_UIC_DL_TCx_REPLAY_ERROR;
-> +		if (reg & UIC_DATA_LINK_LAYER_ERROR_PA_INIT) {
-> +			hba->uic_error |= UFSHCD_UIC_DL_PA_INIT_ERROR;
-> +		} else if (hba->dev_quirks &
-> +			   UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS) {
-> +			if (reg & UIC_DATA_LINK_LAYER_ERROR_NAC_RECEIVED)
-> +				hba->uic_error |=
-> +					UFSHCD_UIC_DL_NAC_RECEIVED_ERROR;
-> +			else if (reg &
-> +				UIC_DATA_LINK_LAYER_ERROR_TCx_REPLAY_TIMEOUT)
-> +				hba->uic_error |=
-> +					UFSHCD_UIC_DL_TCx_REPLAY_ERROR;
-> +		}
-> +		retval |= IRQ_HANDLED;
->  	}
-> 
->  	/* UIC NL/TL/DME errors needs software retry */
->  	reg = ufshcd_readl(hba, REG_UIC_ERROR_CODE_NETWORK_LAYER);
-> -	if (reg) {
-> +	if ((reg & UIC_NETWORK_LAYER_ERROR) &&
-> +	    (reg & UIC_NETWORK_LAYER_ERROR_CODE_MASK)) {
->  		ufshcd_update_uic_reg_hist(&hba->ufs_stats.nl_err, reg);
->  		hba->uic_error |= UFSHCD_UIC_NL_ERROR;
-> +		retval |= IRQ_HANDLED;
->  	}
-> 
->  	reg = ufshcd_readl(hba, REG_UIC_ERROR_CODE_TRANSPORT_LAYER);
-> -	if (reg) {
-> +	if ((reg & UIC_TRANSPORT_LAYER_ERROR) &&
-> +	    (reg & UIC_TRANSPORT_LAYER_ERROR_CODE_MASK)) {
->  		ufshcd_update_uic_reg_hist(&hba->ufs_stats.tl_err, reg);
->  		hba->uic_error |= UFSHCD_UIC_TL_ERROR;
-> +		retval |= IRQ_HANDLED;
->  	}
-> 
->  	reg = ufshcd_readl(hba, REG_UIC_ERROR_CODE_DME);
-> -	if (reg) {
-> +	if ((reg & UIC_DME_ERROR) &&
-> +	    (reg & UIC_DME_ERROR_CODE_MASK)) {
->  		ufshcd_update_uic_reg_hist(&hba->ufs_stats.dme_err, reg);
->  		hba->uic_error |= UFSHCD_UIC_DME_ERROR;
-> +		retval |= IRQ_HANDLED;
->  	}
-> 
->  	dev_dbg(hba->dev, "%s: UIC error flags = 0x%08x\n",
->  			__func__, hba->uic_error);
-> +	return retval;
->  }
-> 
->  /**
->   * ufshcd_check_errors - Check for errors that need s/w attention
->   * @hba: per-adapter instance
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
-> -static void ufshcd_check_errors(struct ufs_hba *hba)
-> +static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba)
->  {
->  	bool queue_eh_work = false;
-> +	irqreturn_t retval = IRQ_NONE;
-> 
->  	if (hba->errors & INT_FATAL_ERRORS)
->  		queue_eh_work = true;
-> 
->  	if (hba->errors & UIC_ERROR) {
->  		hba->uic_error = 0;
-> -		ufshcd_update_uic_error(hba);
-> +		retval = ufshcd_update_uic_error(hba);
->  		if (hba->uic_error)
->  			queue_eh_work = true;
->  	}
-> @@ -5327,6 +5367,7 @@ static void ufshcd_check_errors(struct ufs_hba 
-> *hba)
->  			}
->  			schedule_work(&hba->eh_work);
->  		}
-> +		retval |= IRQ_HANDLED;
->  	}
->  	/*
->  	 * if (!queue_eh_work) -
-> @@ -5334,40 +5375,58 @@ static void ufshcd_check_errors(struct ufs_hba 
-> *hba)
->  	 * itself without s/w intervention or errors that will be
->  	 * handled by the SCSI core layer.
->  	 */
-> +	return retval;
->  }
-> 
->  /**
->   * ufshcd_tmc_handler - handle task management function completion
->   * @hba: per adapter instance
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
-> -static void ufshcd_tmc_handler(struct ufs_hba *hba)
-> +static irqreturn_t ufshcd_tmc_handler(struct ufs_hba *hba)
->  {
->  	u32 tm_doorbell;
-> 
->  	tm_doorbell = ufshcd_readl(hba, REG_UTP_TASK_REQ_DOOR_BELL);
->  	hba->tm_condition = tm_doorbell ^ hba->outstanding_tasks;
-> -	wake_up(&hba->tm_wq);
-> +	if (hba->tm_condition) {
-> +		wake_up(&hba->tm_wq);
-> +		return IRQ_HANDLED;
-> +	} else {
-> +		return IRQ_NONE;
-> +	}
->  }
-> 
->  /**
->   * ufshcd_sl_intr - Interrupt service routine
->   * @hba: per adapter instance
->   * @intr_status: contains interrupts generated by the controller
-> + *
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
-> -static void ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
-> +static irqreturn_t ufshcd_sl_intr(struct ufs_hba *hba, u32 
-> intr_status)
->  {
-> +	irqreturn_t retval = IRQ_NONE;
-> +
->  	hba->errors = UFSHCD_ERROR_MASK & intr_status;
->  	if (hba->errors)
-> -		ufshcd_check_errors(hba);
-> +		retval |= ufshcd_check_errors(hba);
-> 
->  	if (intr_status & UFSHCD_UIC_MASK)
-> -		ufshcd_uic_cmd_compl(hba, intr_status);
-> +		retval |= ufshcd_uic_cmd_compl(hba, intr_status);
-> 
->  	if (intr_status & UTP_TASK_REQ_COMPL)
-> -		ufshcd_tmc_handler(hba);
-> +		retval |= ufshcd_tmc_handler(hba);
-> 
->  	if (intr_status & UTP_TRANSFER_REQ_COMPL)
-> -		ufshcd_transfer_req_compl(hba);
-> +		retval |= ufshcd_transfer_req_compl(hba);
-> +
-> +	return retval;
->  }
-> 
->  /**
-> @@ -5375,8 +5434,9 @@ static void ufshcd_sl_intr(struct ufs_hba *hba,
-> u32 intr_status)
->   * @irq: irq number
->   * @__hba: pointer to adapter instance
->   *
-> - * Returns IRQ_HANDLED - If interrupt is valid
-> - *		IRQ_NONE - If invalid interrupt
-> + * Returns
-> + *  IRQ_HANDLED - If interrupt is valid
-> + *  IRQ_NONE    - If invalid interrupt
->   */
->  static irqreturn_t ufshcd_intr(int irq, void *__hba)
->  {
-> @@ -5399,14 +5459,19 @@ static irqreturn_t ufshcd_intr(int irq, void 
-> *__hba)
->  			intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
->  		if (intr_status)
->  			ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
-> -		if (enabled_intr_status) {
-> -			ufshcd_sl_intr(hba, enabled_intr_status);
-> -			retval = IRQ_HANDLED;
-> -		}
-> +		if (enabled_intr_status)
-> +			retval |= ufshcd_sl_intr(hba, enabled_intr_status);
-> 
->  		intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
->  	} while (intr_status && --retries);
-> 
-> +	if (retval == IRQ_NONE) {
-> +		dev_err(hba->dev, "%s: Unhandled interrupt 0x%08x\n",
-> +			__func__, intr_status);
-> +		ufshcd_hex_dump("host regs: ", hba->mmio_base,
-> +				UFSHCI_REG_SPACE_SIZE);
-> +	}
-> +
->  	spin_unlock(hba->host->host_lock);
->  	return retval;
->  }
+> Index: linux-4.15/include/uapi/linux/keyboard.h
+> ===================================================================
+> --- linux-4.15.orig/include/uapi/linux/keyboard.h
+> +++ linux-4.15/include/uapi/linux/keyboard.h
+> @@ -357,8 +357,29 @@
+>  #define K_DTILDE	K(KT_DEAD,3)
+>  #define K_DDIERE	K(KT_DEAD,4)
+>  #define K_DCEDIL	K(KT_DEAD,5)
+> +#define K_DMACRON	K(KT_DEAD,6)
+> +#define K_DBREVE	K(KT_DEAD,7)
+> +#define K_DABDOT	K(KT_DEAD,8)
+> +#define K_DABRING	K(KT_DEAD,9)
+> +#define K_DDBACUTE	K(KT_DEAD,10)
+> +#define K_DCARON	K(KT_DEAD,11)
+> +#define K_DOGONEK	K(KT_DEAD,12)
+> +#define K_DIOTA		K(KT_DEAD,13)
+> +#define K_DVOICED	K(KT_DEAD,14)
+> +#define K_DSEMVOICED	K(KT_DEAD,15)
+> +#define K_DBEDOT	K(KT_DEAD,16)
+> +#define K_DHOOK		K(KT_DEAD,17)
+> +#define K_DHORN		K(KT_DEAD,18)
+> +#define K_DSTROKE	K(KT_DEAD,19)
+> +#define K_DABCOMMA	K(KT_DEAD,20)
+> +#define K_DABREVCOMMA	K(KT_DEAD,21)
+> +#define K_DDBGRAVE	K(KT_DEAD,22)
+> +#define K_DINVBREVE	K(KT_DEAD,23)
+> +#define K_DBECOMMA	K(KT_DEAD,24)
+> +#define K_DCURRENCY	K(KT_DEAD,25)
+> +#define K_DGREEK	K(KT_DEAD,26)
+>  
+> -#define NR_DEAD		6
+> +#define NR_DEAD		27
+>  
+>  #define K_DOWN		K(KT_CUR,0)
+>  #define K_LEFT		K(KT_CUR,1)
 
-
-Looks good to me.
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
