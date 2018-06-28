@@ -2,405 +2,142 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41446C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982FDC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1AAA2724D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AAA2724D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C6342724D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="by2hPx6r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6342724D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753384AbeF1KqM (ORCPT
+        id S1753424AbeF1KqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:46:12 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:26951 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S964952AbeF1Kpy (ORCPT
+        Thu, 28 Jun 2018 06:46:22 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33055 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753389AbeF1KqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:45:54 -0400
-X-UUID: 06e328885deb4d0f9010e0348b33219c-20180628
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 918245787; Thu, 28 Jun 2018 18:45:49 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 28 Jun 2018 18:45:48 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 28 Jun 2018 18:45:48 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v3 4/5] clocksource/drivers/timer-mediatek: Convert the driver to timer-of
-Date:   Thu, 28 Jun 2018 18:45:43 +0800
-Message-ID: <1530182744-10731-5-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
-References: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+        Thu, 28 Jun 2018 06:46:15 -0400
+Received: by mail-ed1-f67.google.com with SMTP id l23-v6so4887011edq.0;
+        Thu, 28 Jun 2018 03:46:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1JS8M5+WHZ4q9lqry4nTCR0zThe+sGjPnruBV6R0+5Q=;
+        b=by2hPx6rXcfMwJ5vI3bwiCxF8qRFmLT4mXXGfAYWU3Yfr6xyHRN9C5JTTvxZhU1pAQ
+         siW4nYflexTY08sL9F/m0sCjahiMHHs3iAgToXUiDWO65tsFT0GBd1jw59PemaUS9p8B
+         gy/+u+LaOfSHpSHTM3H44ez7ZfAwGToqx04nb8lTLAG3imCzWZlO8Bl+dueSKsQ/nv/s
+         2e/QzhQfshy2rvQsrbGnJqASULLg/79axf+sh9GdJoJ3vexIgr16CUrM0NZen7eVs4Nf
+         0KePLpEjQOfusfynR/8Tgk3O6fG6lwN1swhJ2m/TbXCoi/6nsGhAOcwSgXqHdeHTbopY
+         f8IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1JS8M5+WHZ4q9lqry4nTCR0zThe+sGjPnruBV6R0+5Q=;
+        b=UhpQEigFc79uOKfaJPxuQ8dfVSXL/zgihO1IGZ5OlY9tZFRVoHUG8Nl4z4AzfzXO7V
+         Fgy3hoLn4RPHP8T5Y6LYvqSLpyp7FTOe8hr0m9CC+x7dPQEPUiyGOWTPhkS9fU1CQEtW
+         HAszd7i8jabnfbvBQvGWvGSyYDEuTXevXM4RYAAQkc1PL57qaRK4KrxTo0VqfVJN2SzD
+         rv4b9f9nJ9PPflhoz0gHnwmDy6bKLBJAraouhFDYs65CXXQ2VZ6btWNC6rkl626tzIo0
+         fzuTh5VMS4RW2GD7b6bJIVso6S/sAqiBzS+a7QSpOr6sLFs6vopUQUE59M51Pag5Lh4r
+         6jrg==
+X-Gm-Message-State: APt69E2DVlQgnbW82kpevOy8ihE4cr08TigY95eqA0771vbkVWgXQ3sX
+        y4F3c6pm0G0N62psALb41skmQijY
+X-Google-Smtp-Source: AAOMgpcj9gEuMx5woISDBJ2lXXAyqqRC7xNMKMJpulqh3gkV+B3Z2yei2LzWfIoE1j5WZwkimF0NPA==
+X-Received: by 2002:a50:b0c2:: with SMTP id j60-v6mr9198296edd.188.1530182773883;
+        Thu, 28 Jun 2018 03:46:13 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:40dc:3d00:cc54:7de1:e161:def7])
+        by smtp.gmail.com with ESMTPSA id p30-v6sm3703882edc.5.2018.06.28.03.46.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 03:46:13 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 12:46:11 +0200
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Mark Rutland <Mark.Rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, nd <nd@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+Message-ID: <20180628104610.czsnq4w3lfhxrn53@ltop.local>
+References: <cover.1529507994.git.andreyknvl@google.com>
+ <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+ <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+ <0cef1643-a523-98e7-95e2-9ec595137642@arm.com>
+ <20180627171757.amucnh5znld45cpc@armageddon.cambridge.arm.com>
+ <20180628061758.j6bytsaj5jk4aocg@ltop.local>
+ <20180628102741.vk6vphfinlj3lvhv@armageddon.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628102741.vk6vphfinlj3lvhv@armageddon.cambridge.arm.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the driver to use the timer_of helpers.
-This allows to remove custom proprietary structure,
-factors out and simplifies the code.
+On Thu, Jun 28, 2018 at 11:27:42AM +0100, Catalin Marinas wrote:
+> On Thu, Jun 28, 2018 at 08:17:59AM +0200, Luc Van Oostenryck wrote:
+> > On Wed, Jun 27, 2018 at 06:17:58PM +0100, Catalin Marinas wrote:
+> > > sparse is indeed an option. The current implementation doesn't warn on
+> > > an explicit cast from (void __user *) to (unsigned long) since that's a
+> > > valid thing in the kernel. I couldn't figure out if there's any other
+> > > __attribute__ that could be used to warn of such conversion.
+> > 
+> > sparse doesn't have such attribute but would an new option that would warn
+> > on such cast be a solution for your case?
+> 
+> I can't tell for sure whether such sparse option would be the full
+> solution but detecting explicit __user pointer casts to long is a good
+> starting point. So far this patchset pretty much relies on detecting
+> a syscall failure and trying to figure out why, patching the kernel. It
+> doesn't really scale.
 
-Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
----
- drivers/clocksource/timer-mediatek.c |  222 ++++++++++++++++------------------
- 1 file changed, 104 insertions(+), 118 deletions(-)
+OK, I'll add such an option this evening.
+ 
+> As a side note, we have cases in the user-kernel ABI where the user
+> address type is "unsigned long": mmap() and friends. My feedback on an
+> early version of this patchset was to always require untagged pointers
+> coming from user space on such syscalls, so no need for explicit
+> untagging.
 
-diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
-index ff284f2..d94d8e1 100644
---- a/drivers/clocksource/timer-mediatek.c
-+++ b/drivers/clocksource/timer-mediatek.c
-@@ -18,16 +18,13 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
--#include <linux/clk.h>
- #include <linux/clockchips.h>
-+#include <linux/clocksource.h>
- #include <linux/interrupt.h>
--#include <linux/irq.h>
- #include <linux/irqreturn.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/sched_clock.h>
- #include <linux/slab.h>
-+#include "timer-of.h"
- 
- #define GPT_IRQ_EN_REG		0x00
- #define GPT_IRQ_ENABLE(val)	BIT((val) - 1)
-@@ -56,49 +53,57 @@
- #define GPT_CLK_EVT	1
- #define GPT_CLK_SRC	2
- 
--struct mtk_clock_event_device {
--	void __iomem *gpt_base;
--	u32 ticks_per_jiffy;
--	struct clock_event_device dev;
-+struct mtk_timer_private {
-+	unsigned long ticks_per_jiffy;
- };
- 
- static void __iomem *gpt_sched_reg __read_mostly;
- 
--static u64 notrace mtk_gpt_read_sched_clock(void)
-+static void mtk_timer_of_priv_set(struct timer_of *to, u32 ticks_per_jiffy)
- {
--	return readl_relaxed(gpt_sched_reg);
-+	struct mtk_timer_private *pd = to->private_data;
-+
-+	pd->ticks_per_jiffy = ticks_per_jiffy;
-+}
-+
-+static void mtk_timer_of_priv_get(struct timer_of *to,
-+				 unsigned long *ticks_per_jiffy)
-+{
-+	struct mtk_timer_private *pd = to->private_data;
-+
-+	if (ticks_per_jiffy)
-+		*ticks_per_jiffy = pd->ticks_per_jiffy;
- }
- 
--static inline struct mtk_clock_event_device *to_mtk_clk(
--				struct clock_event_device *c)
-+static u64 notrace mtk_gpt_read_sched_clock(void)
- {
--	return container_of(c, struct mtk_clock_event_device, dev);
-+	return readl_relaxed(gpt_sched_reg);
- }
- 
--static void mtk_gpt_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
-+static void mtk_gpt_clkevt_time_stop(struct timer_of *to, u8 timer)
- {
- 	u32 val;
- 
--	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
--	writel(val & ~TIMER_CTRL_ENABLE, evt->gpt_base +
--			TIMER_CTRL_REG(timer));
-+	val = readl(timer_of_base(to) + TIMER_CTRL_REG(timer));
-+	writel(val & ~TIMER_CTRL_ENABLE, timer_of_base(to) +
-+	       TIMER_CTRL_REG(timer));
- }
- 
--static void mtk_gpt_clkevt_time_setup(struct mtk_clock_event_device *evt,
--				unsigned long delay, u8 timer)
-+static void mtk_gpt_clkevt_time_setup(struct timer_of *to,
-+				      unsigned long delay, u8 timer)
- {
--	writel(delay, evt->gpt_base + TIMER_CMP_REG(timer));
-+	writel(delay, timer_of_base(to) + TIMER_CMP_REG(timer));
- }
- 
--static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
--		bool periodic, u8 timer)
-+static void mtk_gpt_clkevt_time_start(struct timer_of *to,
-+				      bool periodic, u8 timer)
- {
- 	u32 val;
- 
- 	/* Acknowledge interrupt */
--	writel(GPT_IRQ_ACK(timer), evt->gpt_base + GPT_IRQ_ACK_REG);
-+	writel(GPT_IRQ_ACK(timer), timer_of_base(to) + GPT_IRQ_ACK_REG);
- 
--	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
-+	val = readl(timer_of_base(to) + TIMER_CTRL_REG(timer));
- 
- 	/* Clear 2 bit timer operation mode field */
- 	val &= ~TIMER_CTRL_OP(0x3);
-@@ -109,160 +114,141 @@ static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
- 		val |= TIMER_CTRL_OP(TIMER_CTRL_OP_ONESHOT);
- 
- 	writel(val | TIMER_CTRL_ENABLE | TIMER_CTRL_CLEAR,
--	       evt->gpt_base + TIMER_CTRL_REG(timer));
-+	       timer_of_base(to) + TIMER_CTRL_REG(timer));
- }
- 
- static int mtk_gpt_clkevt_shutdown(struct clock_event_device *clk)
- {
--	mtk_gpt_clkevt_time_stop(to_mtk_clk(clk), GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_stop(to_timer_of(clk), GPT_CLK_EVT);
- 	return 0;
- }
- 
- static int mtk_gpt_clkevt_set_periodic(struct clock_event_device *clk)
- {
--	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
-+	struct timer_of *to = to_timer_of(clk);
-+	unsigned long ticks_per_jiffy;
- 
--	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
--	mtk_gpt_clkevt_time_setup(evt, evt->ticks_per_jiffy, GPT_CLK_EVT);
--	mtk_gpt_clkevt_time_start(evt, true, GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_stop(to, GPT_CLK_EVT);
-+	mtk_timer_of_priv_get(to, &ticks_per_jiffy);
-+	mtk_gpt_clkevt_time_setup(to, ticks_per_jiffy, GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_start(to, true, GPT_CLK_EVT);
- 	return 0;
- }
- 
- static int mtk_gpt_clkevt_next_event(unsigned long event,
--				   struct clock_event_device *clk)
-+				     struct clock_event_device *clk)
- {
--	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
-+	struct timer_of *to = to_timer_of(clk);
- 
--	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
--	mtk_gpt_clkevt_time_setup(evt, event, GPT_CLK_EVT);
--	mtk_gpt_clkevt_time_start(evt, false, GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_stop(to, GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_setup(to, event, GPT_CLK_EVT);
-+	mtk_gpt_clkevt_time_start(to, false, GPT_CLK_EVT);
- 
- 	return 0;
- }
- 
- static irqreturn_t mtk_gpt_interrupt(int irq, void *dev_id)
- {
--	struct mtk_clock_event_device *evt = dev_id;
-+	struct clock_event_device *clkevt = (struct clock_event_device *)dev_id;
-+	struct timer_of *to = to_timer_of(clkevt);
- 
- 	/* Acknowledge timer0 irq */
--	writel(GPT_IRQ_ACK(GPT_CLK_EVT), evt->gpt_base + GPT_IRQ_ACK_REG);
--	evt->dev.event_handler(&evt->dev);
-+	writel(GPT_IRQ_ACK(GPT_CLK_EVT), timer_of_base(to) + GPT_IRQ_ACK_REG);
-+	clkevt->event_handler(clkevt);
- 
- 	return IRQ_HANDLED;
- }
- 
- static void
--__init mtk_gpt_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
-+__init mtk_gpt_setup(struct timer_of *to, u8 timer, u8 option)
- {
- 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
--		evt->gpt_base + TIMER_CTRL_REG(timer));
-+		timer_of_base(to) + TIMER_CTRL_REG(timer));
- 
- 	writel(TIMER_CLK_SRC(TIMER_CLK_SRC_SYS13M) | TIMER_CLK_DIV1,
--			evt->gpt_base + TIMER_CLK_REG(timer));
-+			timer_of_base(to) + TIMER_CLK_REG(timer));
- 
--	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
-+	writel(0x0, timer_of_base(to) + TIMER_CMP_REG(timer));
- 
- 	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
--			evt->gpt_base + TIMER_CTRL_REG(timer));
-+			timer_of_base(to) + TIMER_CTRL_REG(timer));
- }
- 
--static void mtk_gpt_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
-+static void mtk_gpt_enable_irq(struct timer_of *to, u8 timer)
- {
- 	u32 val;
- 
- 	/* Disable all interrupts */
--	writel(0x0, evt->gpt_base + GPT_IRQ_EN_REG);
-+	writel(0x0, timer_of_base(to) + GPT_IRQ_EN_REG);
- 
- 	/* Acknowledge all spurious pending interrupts */
--	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
-+	writel(0x3f, timer_of_base(to) + GPT_IRQ_ACK_REG);
- 
--	val = readl(evt->gpt_base + GPT_IRQ_EN_REG);
-+	val = readl(timer_of_base(to) + GPT_IRQ_EN_REG);
- 	writel(val | GPT_IRQ_ENABLE(timer),
--			evt->gpt_base + GPT_IRQ_EN_REG);
-+			timer_of_base(to) + GPT_IRQ_EN_REG);
- }
- 
--static int __init mtk_gpt_init(struct device_node *node)
--{
--	struct mtk_clock_event_device *evt;
--	struct resource res;
--	unsigned long rate = 0;
--	struct clk *clk;
--
--	evt = kzalloc(sizeof(*evt), GFP_KERNEL);
--	if (!evt)
--		return -ENOMEM;
--
--	evt->dev.name = "mtk_tick";
--	evt->dev.rating = 300;
--	evt->dev.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
--	evt->dev.set_state_shutdown = mtk_gpt_clkevt_shutdown;
--	evt->dev.set_state_periodic = mtk_gpt_clkevt_set_periodic;
--	evt->dev.set_state_oneshot = mtk_gpt_clkevt_shutdown;
--	evt->dev.tick_resume = mtk_gpt_clkevt_shutdown;
--	evt->dev.set_next_event = mtk_gpt_clkevt_next_event;
--	evt->dev.cpumask = cpu_possible_mask;
--
--	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer-gpt");
--	if (IS_ERR(evt->gpt_base)) {
--		pr_err("Can't get resource\n");
--		goto err_kzalloc;
--	}
-+static struct timer_of to = {
-+	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
- 
--	evt->dev.irq = irq_of_parse_and_map(node, 0);
--	if (evt->dev.irq <= 0) {
--		pr_err("Can't parse IRQ\n");
--		goto err_mem;
--	}
--
--	clk = of_clk_get(node, 0);
--	if (IS_ERR(clk)) {
--		pr_err("Can't get timer clock\n");
--		goto err_irq;
--	}
-+	.clkevt = {
-+		.name = "mtk-clkevt",
-+		.rating = 300,
-+		.cpumask = cpu_possible_mask,
-+	},
- 
--	if (clk_prepare_enable(clk)) {
--		pr_err("Can't prepare clock\n");
--		goto err_clk_put;
--	}
--	rate = clk_get_rate(clk);
-+	.of_irq = {
-+		.flags = IRQF_TIMER | IRQF_IRQPOLL,
-+	},
-+};
- 
--	if (request_irq(evt->dev.irq, mtk_gpt_interrupt,
--			IRQF_TIMER | IRQF_IRQPOLL, "mtk_timer", evt)) {
--		pr_err("failed to setup irq %d\n", evt->dev.irq);
--		goto err_clk_disable;
-+static int __init mtk_gpt_init(struct device_node *node)
-+{
-+	int ret;
-+
-+	to.clkevt.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
-+	to.clkevt.set_state_shutdown = mtk_gpt_clkevt_shutdown;
-+	to.clkevt.set_state_periodic = mtk_gpt_clkevt_set_periodic;
-+	to.clkevt.set_state_oneshot = mtk_gpt_clkevt_shutdown;
-+	to.clkevt.tick_resume = mtk_gpt_clkevt_shutdown;
-+	to.clkevt.set_next_event = mtk_gpt_clkevt_next_event;
-+	to.of_irq.handler = mtk_gpt_interrupt;
-+
-+	ret = timer_of_init(node, &to);
-+	if (ret)
-+		goto err;
-+
-+	to.private_data = kzalloc(sizeof(struct mtk_timer_private),
-+				  GFP_KERNEL);
-+
-+	if (!to.private_data) {
-+		ret = -ENOMEM;
-+		goto deinit;
- 	}
- 
--	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
-+	mtk_timer_of_priv_set(&to, DIV_ROUND_UP(timer_of_rate(&to), HZ));
- 
- 	/* Configure clock source */
--	mtk_gpt_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
--	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
--			node->name, rate, 300, 32, clocksource_mmio_readl_up);
--	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
--	sched_clock_register(mtk_gpt_read_sched_clock, 32, rate);
-+	mtk_gpt_setup(&to, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
-+	clocksource_mmio_init(timer_of_base(&to) + TIMER_CNT_REG(GPT_CLK_SRC),
-+			      node->name, timer_of_rate(&to), 300, 32,
-+			      clocksource_mmio_readl_up);
-+	gpt_sched_reg = timer_of_base(&to) + TIMER_CNT_REG(GPT_CLK_SRC);
-+	sched_clock_register(mtk_gpt_read_sched_clock, 32, timer_of_rate(&to));
- 
- 	/* Configure clock event */
--	mtk_gpt_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
--	clockevents_config_and_register(&evt->dev, rate, 0x3,
-+	mtk_gpt_setup(&to, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
-+	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 0x3,
- 					0xffffffff);
- 
--	mtk_gpt_enable_irq(evt, GPT_CLK_EVT);
-+	mtk_gpt_enable_irq(&to, GPT_CLK_EVT);
- 
- 	return 0;
- 
--err_clk_disable:
--	clk_disable_unprepare(clk);
--err_clk_put:
--	clk_put(clk);
--err_irq:
--	irq_dispose_mapping(evt->dev.irq);
--err_mem:
--	iounmap(evt->gpt_base);
--	of_address_to_resource(node, 0, &res);
--	release_mem_region(res.start, resource_size(&res));
--err_kzalloc:
--	kfree(evt);
--
--	return -EINVAL;
-+deinit:
-+	timer_of_cleanup(&to);
-+err:
-+	return ret;
- }
- TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
--- 
-1.7.9.5
+Mmmm yes.
+I tend to favor a sort of opposite approach. When we have an address
+that must not be dereferenced as-such (and sometimes when the address
+can be from both __user & __kernel space) I prefer to use a ulong
+which will force the use of the required operation before being
+able to do any sort of dereferencing and this won't need horrible
+casts with __force (it, of course, all depends on the full context).
 
+-- Luc
