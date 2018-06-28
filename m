@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AC2C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F842C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15CC26AEB
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C4C626AFE
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vhe4ukmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15CC26AEB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIe5WvlB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4C626AFE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753437AbeF1EZZ (ORCPT
+        id S1753417AbeF1EZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:25:25 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41048 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752163AbeF1EYt (ORCPT
+        Thu, 28 Jun 2018 00:25:23 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44379 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753230AbeF1EYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:24:49 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a11-v6so1974480pff.8;
-        Wed, 27 Jun 2018 21:24:49 -0700 (PDT)
+        Thu, 28 Jun 2018 00:24:52 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m16-v6so2103240pls.11;
+        Wed, 27 Jun 2018 21:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bdK4ynP43AhULcihW/50rpf/tDG4BCKIMP413TMh16Q=;
-        b=vhe4ukmMPFFxhlU8Q4oGb5Lwim6MKyDmgxmMxJkbYDc2bZ5mIJVdkZcj9uz51auSSD
-         FHShnD/xC/oz3/56hwlzUoBmSnsl0NHRj7kREFwJ66kjRPwFHRSLN2g+dT45/0DjRqpd
-         BD3oc8a0fF55fmnnAWmaaMYJdtZ+xAwslMU1+C4tuPPzzPxsPfu0nuCF9R1PRiCmz+tx
-         JiH0TcVaA+TpAu63nFQ2T8N8hrhLEHKrM6EBcJngUaCl0QDdE6+WrNGLf1lTTr/quYj9
-         WQzJGRQHn2ql85GYtzpnSoxfGqB0XlMiPaQoW+JN9zfgQuDdKyw16n2Af+E6xsqCVrVF
-         lG9Q==
+        bh=/1/3gpX7m4CEJ9O8AomjJRI72OGjg+qD4//mIB9xrtw=;
+        b=XIe5WvlBxtBtbO2lTIsqTWFmW3B3q3yD9WrDO+RLbDCBgXAJmvp56zMD/r0cpbahbE
+         34vPUJjxlj7H9VH1lMcdp519cHrV9H+pSmEFRRc1AY1pMveYcqAJz20pKYHlWRjascv5
+         aAt+aIvqpyEZqSXPq3HVivwXKzgazr49HF5Kh6gHlnfOjt21kYKBI+mnphPgMJQMNq+A
+         3gFfYmrhh3Ms4UHt2G4ztL27yOLRbUjbL48n0qkEt0++pV/YRFlx8Mlvm2NWbhaqcTU2
+         pnzbnzOZydyQ6wZ9dJTgxDirtBt0xgMVo3lxkiXWD8rMF6LFRRctze2OfVs9gz9pBurT
+         RzQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bdK4ynP43AhULcihW/50rpf/tDG4BCKIMP413TMh16Q=;
-        b=s/6gOgg2aqzi8yQqR+NBuwZf4QnYm1MhQldMkCjl+0LQGQ15V1eaTlSb54I5vVGVW9
-         Ee1rWTNdjPb0AC+dKQ9E2zvgjI4Hmj8bZr5DaDA4MrM/8R23AosTYSheAQr06/iyXn3N
-         fkh6030vqEnVwrmO8K6alaC5hXy04yxwojOX4aFEg/6fOiqUxLZtfoGfI5nFmD1k6RtZ
-         1RVAyThHN/1/amjVbR7nYBJCmUc20iKVMVVeoPOVkNK9gwbQou3M6oTtfzA0WVEo9eh3
-         uYS8Epb77QrBaNaTeLrUN2mUwjhK+1axvmA7bExxPUT2BDpSroT2U2KZ444oUWOv5ROI
-         QBaw==
-X-Gm-Message-State: APt69E09Wzwl74RuvXQAFY3BM/qcl88psbs2FFeew7efartgepUe+seQ
-        mcabrO/Oqzq+uzzxRsQF5yM=
-X-Google-Smtp-Source: ADUXVKKheTL+PhlKx3yFPrqltTXYPl6U6HRVkVkIiEekfTMkEhj2gZPYB99TZHS+fbzIf+sIGTiXqw==
-X-Received: by 2002:a65:6094:: with SMTP id t20-v6mr7614819pgu.264.1530159888984;
-        Wed, 27 Jun 2018 21:24:48 -0700 (PDT)
+        bh=/1/3gpX7m4CEJ9O8AomjJRI72OGjg+qD4//mIB9xrtw=;
+        b=cQsOzDgTpw5aqnNpJWeKbilhDCARXOiJS3ws6Snj4LjgnxttyGHncjAeqoC1hd/sK7
+         l8wMidV/R31DYRCeoKNsv9xwkudHkjtlaKXCaE7zSzNw3rCEKlfuCXl7joah5Gz1uiwc
+         LWdibISZOZYXAVhffxcD/yCIHvYogsYWnWNToJv+TrHQPwCYV6K4LGImx8SUKfRdRPo3
+         HzGiku2xPHtdhDmG3PWyEyFa31H+R+TjfuURmSS+CUINn5/PNPVdpdVcvCIraavI5M4f
+         nxTgEjJDWy4OnYWC7rakYE/Wr6BGkHhCAWQ72Kg3qB0nQjsxCLMzpio6GB9AQnw+/k+Z
+         THNg==
+X-Gm-Message-State: APt69E0r6TtcEutBS8WBxhvOxGQr/kd99K2DYUB0oNiGi5oukdov2GIY
+        R+B3WIjGC/PMu1y6Hn+zWax8XN8h
+X-Google-Smtp-Source: ADUXVKK1C7T+Ye0pgXe0K/VDj/gxCOA1pmjebCk58Bu3yDF7nBxmJJ0SAq1jN5S3cRWOnQHsTxBzBw==
+X-Received: by 2002:a17:902:b946:: with SMTP id h6-v6mr8631889pls.1.1530159891725;
+        Wed, 27 Jun 2018 21:24:51 -0700 (PDT)
 Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id t19-v6sm12328577pfj.169.2018.06.27.21.24.47
+        by smtp.gmail.com with ESMTPSA id t19-v6sm12328577pfj.169.2018.06.27.21.24.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 21:24:48 -0700 (PDT)
+        Wed, 27 Jun 2018 21:24:50 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] ARM: dts: imx51-zii-rdu1: Populate RAVE SP EEPROM nodes
-Date:   Wed, 27 Jun 2018 21:24:21 -0700
-Message-Id: <20180628042424.12664-2-andrew.smirnov@gmail.com>
+Subject: [PATCH 3/4] ARM: dts: imx6qdl-zii-rdu2: Populate RAVE SP backlight node
+Date:   Wed, 27 Jun 2018 21:24:23 -0700
+Message-Id: <20180628042424.12664-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628042424.12664-1-andrew.smirnov@gmail.com>
 References: <20180628042424.12664-1-andrew.smirnov@gmail.com>
@@ -79,8 +79,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ZII's RDU1s come with up to 3 EEPROMs attached to RAVE SP. Add
-corresponding nodes to make them availible.
+RAVE SP found on RDU2 implements backlight control compatible with the
+rave-sp-backlight driver. Add a node to make it availible.
 
 Cc: Fabio Estevam <fabio.estevam@nxp.com>
 Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
@@ -94,56 +94,24 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 ---
- arch/arm/boot/dts/imx51-zii-rdu1.dts | 29 ++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-index ad2445dfa91d..c6da263cf210 100644
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -578,6 +578,8 @@
- 	rave-sp {
- 		compatible = "zii,rave-sp-rdu1";
- 		current-speed = <38400>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
- 
- 		watchdog {
+diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+index e4630481d951..48da4b15da09 100644
+--- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
+@@ -327,6 +327,10 @@
  			compatible = "zii,rave-sp-watchdog";
-@@ -590,6 +592,33 @@
- 		pwrbutton {
- 			compatible = "zii,rave-sp-pwrbutton";
  		};
-+
-+		eeprom@a3 {
-+			compatible = "zii,rave-sp-eeprom";
-+			reg = <0xa3 0x2000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			zii,eeprom-name = "dds-eeprom";
-+		};
-+
-+		eeprom@a4 {
-+			compatible = "zii,rave-sp-eeprom";
-+			reg = <0xa4 0x4000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			zii,eeprom-name = "main-eeprom";
-+		};
-+
-+		eeprom@ae {
-+			compatible = "zii,rave-sp-eeprom";
-+			reg = <0xae 0x200>;
-+			zii,eeprom-name = "switch-eeprom";
-+			/*
-+			 * Not all RDU1s have this functionality, so we
-+			 * rely on the bootloader to enable this
-+			 */
-+			status = "disabled";
-+		};
- 	};
- };
  
++		backlight {
++			compatible = "zii,rave-sp-backlight";
++		};
++
+ 		eeprom@a3 {
+ 			compatible = "zii,rave-sp-eeprom";
+ 			reg = <0xa3 0x4000>;
 -- 
 2.17.1
 
