@@ -5,281 +5,103 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E8C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B99C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99E027842
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99E027842
+	by mail.kernel.org (Postfix) with ESMTP id CEF0E2786F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:15:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF0E2786F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754842AbeF1TPa (ORCPT
+        id S1754876AbeF1TPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:15:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38574 "EHLO mx1.redhat.com"
+        Thu, 28 Jun 2018 15:15:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48256 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754803AbeF1TPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:15:25 -0400
+        id S1754322AbeF1TPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:15:23 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2259940711FE;
-        Thu, 28 Jun 2018 19:15:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2101CC12A0;
+        Thu, 28 Jun 2018 19:15:23 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C11EA1116717;
-        Thu, 28 Jun 2018 19:15:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A82401116717;
+        Thu, 28 Jun 2018 19:15:22 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     amd-gfx@lists.freedesktop.org
 Cc:     stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>,
-        Jean Delvare <jdelvare@suse.de>,
+        David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Shaoyun Liu <Shaoyun.Liu@amd.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] drm/amdgpu: Dynamically probe for ATIF handle
-Date:   Thu, 28 Jun 2018 15:14:55 -0400
-Message-Id: <20180628191505.10015-5-lyude@redhat.com>
+Subject: [PATCH v2 3/4] drm/amdgpu: Add amdgpu_atpx_get_dhandle()
+Date:   Thu, 28 Jun 2018 15:14:54 -0400
+Message-Id: <20180628191505.10015-4-lyude@redhat.com>
 In-Reply-To: <20180628191505.10015-1-lyude@redhat.com>
 References: <20180628191505.10015-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 19:15:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 19:15:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:23 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The other day I was testing one of the HP laptops at my office with an
-i915/amdgpu hybrid setup and noticed that hotplugging was non-functional
-on almost all of the display outputs. I eventually discovered that all
-of the external outputs were connected to the amdgpu device instead of
-i915, and that the hotplugs weren't being detected so long as the GPU
-was in runtime suspend. After some talking with folks at AMD, I learned
-that amdgpu is actually supposed to support hotplug detection in runtime
-suspend so long as the OEM has implemented it properly in the firmware.
-
-On this HP ZBook 15 G4 (the machine in question), amdgpu wasn't managing
-to find the ATIF handle at all despite the fact that I could see acpi
-events being sent in response to any hotplugging. After going through
-dumps of the firmware, I discovered that this machine did in fact
-support ATIF, but that it's ATIF method lived in an entirely different
-namespace than this device's handle (the device handle was
-\_SB_.PCI0.PEG0.PEGP, but ATIF lives in ATPX's handle at
-\_SB_.PCI0.GFX0).
-
-According to AMD, the reason for this appears to be that on laptops with
-PRIME configurations, the ATIF and other related ACPI handles usually
-live under the namespace of the intel GPU instead of the AMD GPU.
-Machines that don't have more then a single GPU have the ATIF handle
-located in the namespace of the AMD GPU.
-
-So, fix this by probing ATPX's ACPI parent's namespace if we can't find
-ATIF elsewhere, along with storing a pointer to the proper handle to use
-for ATIF and using that instead of the device's handle.
-
-This fixes HPD detection while in runtime suspend for this ZBook!
+The handles for ACPI methods like ATPX and ATIF will live under the
+integrated GPU's namespace on systems with more then one GPU. ATPX is
+already detected regardless of the namespace it lives in, and it will
+always be in the same namespace as ATIF. So we can make things easier on
+ourselves by just adding some functions to retrieve said namespace so it
+can be searched later for ATIF.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: stable@vger.kernel.org
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 80 +++++++++++++++++-------
- 1 file changed, 59 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h              | 6 ++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index 22c7e8ec0b9a..b0d7978c475d 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -65,6 +65,8 @@ struct amdgpu_atif_functions {
- };
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+index 7df5d3d11aff..7dcbac8af9a7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
+@@ -1858,6 +1858,12 @@ static inline bool amdgpu_atpx_dgpu_req_power_for_displays(void) { return false;
+ static inline bool amdgpu_has_atpx(void) { return false; }
+ #endif
  
- struct amdgpu_atif {
-+	acpi_handle handle;
++#if defined(CONFIG_VGA_SWITCHEROO) && defined(CONFIG_ACPI)
++void *amdgpu_atpx_get_dhandle(void);
++#else
++static inline void *amdgpu_atpx_get_dhandle(void) { return NULL; }
++#endif
 +
- 	struct amdgpu_atif_notifications notifications;
- 	struct amdgpu_atif_functions functions;
- 	struct amdgpu_atif_notification_cfg notification_cfg;
-@@ -83,8 +85,9 @@ struct amdgpu_atif {
-  * Executes the requested ATIF function (all asics).
-  * Returns a pointer to the acpi output buffer.
+ /*
+  * KMS
   */
--static union acpi_object *amdgpu_atif_call(acpi_handle handle, int function,
--		struct acpi_buffer *params)
-+static union acpi_object *amdgpu_atif_call(struct amdgpu_atif *atif,
-+					   int function,
-+					   struct acpi_buffer *params)
- {
- 	acpi_status status;
- 	union acpi_object atif_arg_elements[2];
-@@ -107,7 +110,8 @@ static union acpi_object *amdgpu_atif_call(acpi_handle handle, int function,
- 		atif_arg_elements[1].integer.value = 0;
- 	}
- 
--	status = acpi_evaluate_object(handle, "ATIF", &atif_arg, &buffer);
-+	status = acpi_evaluate_object(atif->handle, NULL, &atif_arg,
-+				      &buffer);
- 
- 	/* Fail only if calling the method fails and ATIF is supported */
- 	if (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {
-@@ -178,15 +182,14 @@ static void amdgpu_atif_parse_functions(struct amdgpu_atif_functions *f, u32 mas
-  * (all asics).
-  * returns 0 on success, error on failure.
-  */
--static int amdgpu_atif_verify_interface(acpi_handle handle,
--		struct amdgpu_atif *atif)
-+static int amdgpu_atif_verify_interface(struct amdgpu_atif *atif)
- {
- 	union acpi_object *info;
- 	struct atif_verify_interface output;
- 	size_t size;
- 	int err = 0;
- 
--	info = amdgpu_atif_call(handle, ATIF_FUNCTION_VERIFY_INTERFACE, NULL);
-+	info = amdgpu_atif_call(atif, ATIF_FUNCTION_VERIFY_INTERFACE, NULL);
- 	if (!info)
- 		return -EIO;
- 
-@@ -213,6 +216,36 @@ static int amdgpu_atif_verify_interface(acpi_handle handle,
- 	return err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+index a3896412a019..b33f1680c9a3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+@@ -90,6 +90,12 @@ bool amdgpu_atpx_dgpu_req_power_for_displays(void) {
+ 	return amdgpu_atpx_priv.atpx.dgpu_req_power_for_displays;
  }
  
-+static acpi_handle amdgpu_atif_probe_handle(acpi_handle dhandle)
-+{
-+	acpi_handle handle = NULL;
-+	char acpi_method_name[255] = { 0 };
-+	struct acpi_buffer buffer = { sizeof(acpi_method_name), acpi_method_name };
-+	acpi_status status;
-+
-+	/* First check the device handle */
-+	status = acpi_get_handle(dhandle, "ATIF", &handle);
-+	if (ACPI_SUCCESS(status))
-+		goto out;
-+
-+	/* Some vendors stick the ATIF methods in the same namespace as the
-+	 * ATPX methods
-+	 */
-+	if (amdgpu_has_atpx()) {
-+		status = acpi_get_handle(amdgpu_atpx_get_dhandle(), "ATIF",
-+					 &handle);
-+		if (ACPI_SUCCESS(status))
-+			goto out;
-+	}
-+
-+	DRM_DEBUG_DRIVER("No ATIF handle found\n");
-+	return NULL;
-+out:
-+	acpi_get_name(handle, ACPI_FULL_PATHNAME, &buffer);
-+	DRM_DEBUG_DRIVER("Found ATIF handle %s\n", acpi_method_name);
-+	return handle;
++#if defined(CONFIG_ACPI)
++void *amdgpu_atpx_get_dhandle(void) {
++	return amdgpu_atpx_priv.dhandle;
 +}
++#endif
 +
  /**
-  * amdgpu_atif_get_notification_params - determine notify configuration
+  * amdgpu_atpx_call - call an ATPX method
   *
-@@ -225,15 +258,16 @@ static int amdgpu_atif_verify_interface(acpi_handle handle,
-  * where n is specified in the result if a notifier is used.
-  * Returns 0 on success, error on failure.
-  */
--static int amdgpu_atif_get_notification_params(acpi_handle handle,
--		struct amdgpu_atif_notification_cfg *n)
-+static int amdgpu_atif_get_notification_params(struct amdgpu_atif *atif)
- {
- 	union acpi_object *info;
-+	struct amdgpu_atif_notification_cfg *n = &atif->notification_cfg;
- 	struct atif_system_params params;
- 	size_t size;
- 	int err = 0;
- 
--	info = amdgpu_atif_call(handle, ATIF_FUNCTION_GET_SYSTEM_PARAMETERS, NULL);
-+	info = amdgpu_atif_call(atif, ATIF_FUNCTION_GET_SYSTEM_PARAMETERS,
-+				NULL);
- 	if (!info) {
- 		err = -EIO;
- 		goto out;
-@@ -287,14 +321,15 @@ static int amdgpu_atif_get_notification_params(acpi_handle handle,
-  * (all asics).
-  * Returns 0 on success, error on failure.
-  */
--static int amdgpu_atif_get_sbios_requests(acpi_handle handle,
--		struct atif_sbios_requests *req)
-+static int amdgpu_atif_get_sbios_requests(struct amdgpu_atif *atif,
-+					  struct atif_sbios_requests *req)
- {
- 	union acpi_object *info;
- 	size_t size;
- 	int count = 0;
- 
--	info = amdgpu_atif_call(handle, ATIF_FUNCTION_GET_SYSTEM_BIOS_REQUESTS, NULL);
-+	info = amdgpu_atif_call(atif, ATIF_FUNCTION_GET_SYSTEM_BIOS_REQUESTS,
-+				NULL);
- 	if (!info)
- 		return -EIO;
- 
-@@ -327,11 +362,10 @@ static int amdgpu_atif_get_sbios_requests(acpi_handle handle,
-  * Returns NOTIFY code
-  */
- static int amdgpu_atif_handler(struct amdgpu_device *adev,
--			struct acpi_bus_event *event)
-+			       struct acpi_bus_event *event)
- {
- 	struct amdgpu_atif *atif = adev->atif;
- 	struct atif_sbios_requests req;
--	acpi_handle handle;
- 	int count;
- 
- 	DRM_DEBUG_DRIVER("event, device_class = %s, type = %#x\n",
-@@ -347,8 +381,7 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 		return NOTIFY_DONE;
- 
- 	/* Check pending SBIOS requests */
--	handle = ACPI_HANDLE(&adev->pdev->dev);
--	count = amdgpu_atif_get_sbios_requests(handle, &req);
-+	count = amdgpu_atif_get_sbios_requests(atif, &req);
- 
- 	if (count <= 0)
- 		return NOTIFY_DONE;
-@@ -679,7 +712,7 @@ static int amdgpu_acpi_event(struct notifier_block *nb,
-  */
- int amdgpu_acpi_init(struct amdgpu_device *adev)
- {
--	acpi_handle handle;
-+	acpi_handle handle, atif_handle;
- 	struct amdgpu_atif *atif;
- 	struct amdgpu_atcs *atcs = &adev->atcs;
- 	int ret;
-@@ -696,14 +729,20 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
- 		DRM_DEBUG_DRIVER("Call to ATCS verify_interface failed: %d\n", ret);
- 	}
- 
--	/* Call the ATIF method */
-+	/* Probe for ATIF, and initialize it if found */
-+	atif_handle = amdgpu_atif_probe_handle(handle);
-+	if (!atif_handle)
-+		goto out;
-+
- 	atif = kzalloc(sizeof(*atif), GFP_KERNEL);
- 	if (!atif) {
- 		DRM_WARN("Not enough memory to initialize ATIF\n");
- 		goto out;
- 	}
-+	atif->handle = atif_handle;
- 
--	ret = amdgpu_atif_verify_interface(handle, atif);
-+	/* Call the ATIF method */
-+	ret = amdgpu_atif_verify_interface(atif);
- 	if (ret) {
- 		DRM_DEBUG_DRIVER("Call to ATIF verify_interface failed: %d\n", ret);
- 		kfree(atif);
-@@ -739,8 +778,7 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
- 	}
- 
- 	if (atif->functions.system_params) {
--		ret = amdgpu_atif_get_notification_params(handle,
--				&atif->notification_cfg);
-+		ret = amdgpu_atif_get_notification_params(atif);
- 		if (ret) {
- 			DRM_DEBUG_DRIVER("Call to GET_SYSTEM_PARAMS failed: %d\n",
- 					ret);
 -- 
 2.17.1
 
