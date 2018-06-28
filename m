@@ -2,118 +2,329 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93F4C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25D1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F942257C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44B3D257DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:56:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpOMGRp6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F942257C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="LeQAr68l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B3D257DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=earthlink.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932761AbeF1CzX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 22:55:23 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:32957 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932322AbeF1CzR (ORCPT
+        id S1753058AbeF1C45 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 22:56:57 -0400
+Received: from elasmtp-curtail.atl.sa.earthlink.net ([209.86.89.64]:52018 "EHLO
+        elasmtp-curtail.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752057AbeF1C4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 22:55:17 -0400
-Received: by mail-pg0-f66.google.com with SMTP id e11-v6so1794969pgq.0;
-        Wed, 27 Jun 2018 19:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=skCbf+DfXdqw9S/HcSge1QOD7NgcjCH4BdVpJ466xIM=;
-        b=PpOMGRp6cgf4gCXTZf/k4N+j1RFB/Hu4wXskTxKuyn5oVl5/nRllrlqw8+dq9t6eKA
-         rPwRZ+u/lkUKA63bAPXi1u0s+uAxNoFnq5gH4WFYsy89Ko4q6+sZlY3bcqLxG1xHRjrM
-         7MtX22YNTT04pXiH2SrLFU/MNnDa/jBhJEaTS3k0OwU1OjX54QUbW59MfRhu/OSnff4e
-         1btH+cn8RYVzfbTWnK2xLQ+1CsFTiJPrk1ZgbbupZMMzUINQFib8t8P1B2cn2YRXwm+B
-         Qo5DfTnK+GPI3va+ENPg3AtxR8gM5C0wbGVZi4ZLQ9AP3BEOGNCTFPjTjPNL/rFJUT4R
-         pOQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=skCbf+DfXdqw9S/HcSge1QOD7NgcjCH4BdVpJ466xIM=;
-        b=Yk1avL05FaKseRty6KtQkyivznKcv2mLlcE6gzOLrWTNftutF+tqESCJLsOh/njC1A
-         +FrPSe6nkb1Vnb7w3isjNQ7aMlSkBZe866euuHL1JWPFBx6wYeqct53l4vGVNfXDrZUP
-         aR1xPo4uTJJDWMhDNV7Ti3iVzVE+FXLqPAeAZ9yoAA9myQrQZWbYSxyTesyvID0oOg8j
-         +exLOIN8yooESAFiuwATSNg0UzemhQMZr87u8BeHdDHff0Pgz5Cw47IXqGHMOeAGdkw6
-         T18dJ0sIa1+hrrlP7oPGtwLlPcyMFEBhM1WUfEeTtWwuhJUFe54xmugQryWSypk1J9FQ
-         dT2w==
-X-Gm-Message-State: APt69E3gaePv4coKenwJoCD3ETi6ZnSc7FM2wFUapzGss5c0qgiGfCNI
-        aELq5tk+OMqKI0mzslD+oVhGcDP/
-X-Google-Smtp-Source: AAOMgpdYUZU5QBlOunr1DIlC8iTsB86aZiGlxOyQVNCapTipn15vscP87sAsBdEtRR60OrIxSN7Brg==
-X-Received: by 2002:a63:4386:: with SMTP id q128-v6mr1096162pga.353.1530154517074;
-        Wed, 27 Jun 2018 19:55:17 -0700 (PDT)
-Received: from localhost ([110.70.27.221])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm7820302pfn.59.2018.06.27.19.55.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 27 Jun 2018 19:55:15 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 11:55:12 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
+        Wed, 27 Jun 2018 22:56:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=earthlink.net;
+        s=dk12062016; t=1530154747; bh=UH7G2CBR9j6qxnxIkoHuYbu1+Cik1ID0xqcE
+        U8qHLso=; h=Received:Subject:To:Cc:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:
+         Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP; b=LeQAr68
+        lG9s8hO9p5ScgFu6nkBCxvwzXLrI35Um7FIxhFTSMvL8Vw0q+WAaWU5YCvjkScZR4z8
+        XgJFF4dgp7jQuefXHy6fS0h8hDALVZMolQqqmYNO0XkvnBLjyH0tTCI4uMF4vE98p+K
+        bMafO8cKsQjWJuUEVfgdBU9sSGzO4lb0Tg2cCD8vmiRUjtiOUZFxn49bsOSH6LzlewH
+        2U3bFpJjKT/kXU3w/HRXCAG0WpOEoAC0zWa3fPXLjLqBhdkUczlQI+l6CXM3lr2JKLP
+        Vmww08c5jylnV3GLTewRsHd/b6S1lWaR6bbIxxNT9ns7bW9UupOxZDVV+NMWNPBwTIA
+        ==
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=dk12062016; d=earthlink.net;
+  b=ecDJipT5B68TcDSUzJ9q1lu6ZJ8RgJ+ck5vBodXem67YvR3gFsN4tUP+1hYx9IQV+TCp7FP7JX4HqP8oiCZbUBLDrHRYvgpPaBtl6dmMPOhqHHHFt45HcyKTsokWjX1Isu0tucrY2DftYDXcP9QUUR2HSNyQyDmZLF/EbpfgiG3TT3X8sydT58hBuKr61TLcaESGP6j6qr4ggmu4xPZ5RA1EdvzSOpjp/mETF02W/Dj7hGbr84c+ptUn/mq2dZHzFstKJSvsbHodgmWgZ9L5lh/2n3sWJ3kEshcvIyPyuwGIHgS1c6ERHUu8bp0PV/YNMs/QcYQ3cM12SnIMKxe2Vw==;
+  h=Received:Subject:To:Cc:References:From:Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:Content-Language:Content-Transfer-Encoding:X-ELNK-Trace:X-Originating-IP;
+Received: from [68.183.100.61] (helo=[192.168.37.199])
+        by elasmtp-curtail.atl.sa.earthlink.net with esmtpa (Exim 4)
+        (envelope-from <jdow@earthlink.net>)
+        id 1fYN96-0002hZ-1h; Wed, 27 Jun 2018 22:58:56 -0400
+Subject: Re: moving affs + RDB partition support to staging?
+To:     Martin Steigerwald <martin@lichtvoll.de>,
+        Michael Schmitz <schmitzmic@gmail.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
- locks
-Message-ID: <20180628025512.GF481@jagdpanzerIV>
-References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
- <20180618143818.50b2f2f9@alans-desktop>
- <20180619005308.GA405@jagdpanzerIV>
- <20180619083021.4avsgvcqjrpkat6s@pathway.suse.cz>
- <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
- <20180620025050.GE650@jagdpanzerIV>
- <CA+55aFzC5=awDhzOy9u_2FNaQmRprUTxj_KV2xO+GnpNAFg8MQ@mail.gmail.com>
+        Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20180425154602.GA8546@bombadil.infradead.org>
+ <8ef4bdc6-4ed0-675e-e26d-0b6e7ab4a00e@earthlink.net>
+ <CAOmrzkKLJiWvDwsER0ca09UJbi57Rj6PUmdxizSNPXzZLMErOA@mail.gmail.com>
+ <6247961.nY8s5dWVsg@merkaba>
+From:   jdow <jdow@earthlink.net>
+Message-ID: <37f25a45-c9b4-da5b-e6ca-054a3b931175@earthlink.net>
+Date:   Wed, 27 Jun 2018 19:56:38 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzC5=awDhzOy9u_2FNaQmRprUTxj_KV2xO+GnpNAFg8MQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <6247961.nY8s5dWVsg@merkaba>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b5711209cf7ffa7a2ea3623217667e179ba8aaeb174fd24821b975c350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
+X-Originating-IP: 68.183.100.61
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/20/18 12:38), Linus Torvalds wrote:
-> On Wed, Jun 20, 2018 at 11:50 AM Sergey Senozhatsky
-> <sergey.senozhatsky.work@gmail.com> wrote:
-> >
-> > It's not UART on its own that immediately calls into printk(), that would
-> > be trivial to fix, it's all those subsystems that serial console driver
-> > can call into.
+FFS is limited to 2 GHz file size if you don't want any corruption using 
+fseek(). Otherwise it can go to 4 GHz sort of safely.
+{^_^}
+
+On 20180627 00:57, Martin Steigerwald wrote:
+> Michael Schmitz - 27.06.18, 03:07:
+>> Joanne,
+>>
+>> As far as I have been able to test, the change is backwards compatible
+>> (RDB partitions from an old disk 80 GB disk are still recognized OK).
+>> That"s only been done on an emulator though.
+>>
+>> Your advice about the dangers of using RDB disks that would have
+>> failed the current Linux RDB parser on legacy 32 bit systems is well
+>> taken though. Maybe Martin can clarify that for me - was the 2 TB disk
+>> in question ever used on a 32 bit Amiga system?
 > 
-> We already have the whole PRINTK_SAFE_CONTEXT_MASK model that only
-> adds it to a secondary buffer if you get recursion.  Why isn't that
-> triggering? That's the whole point of it.
-
-Linus, Alan, Steven,
-are you on board with the patch set?
-What shall I do to improve it?
-
-PRINTK_SAFE_CONTEXT_MASK is what we answer nowadays when someone says
-"printk causes deadlocks". We really can't remove all printk-s that can
-cause uart->...->printk->uart recursion, and the only other option is to
-use spin_trylock on uart_port->lock in every driver and discard con->write()
-if we see that we have re-entered uart. I'd rather use per-CPU printk_safe
-buffer in this case.
-
-	-ss
+> Sure! Are there actually *any* 64 bit Amiga systems? I am not completely
+> sure architecture-wise, but the operating system is still just 32-Bit.
+> 
+> However, on AmigaOS officially since at least 3.5/3.9 there are various
+> mechanisms to handle 64-bit block numbers for disk devices, called
+> NSD64, TD64 and scsi direct¹. One of them, NSD 64 in AmigaOS 3.5/3.9, is
+> part of the operating system. First via SetPatch based update to
+> Kickstart ROM, but with AmigaOS 4.x its just included.
+> 
+> [1] http://www.amigawiki.de/doku.php?id=de:system:filesystems_limits
+> 
+> (I do not agree with maximum filesystem size limits stated there for
+> Amiga Fast Filesystem (FFS), but well, for early FFS versions they could
+> have been true, I am pretty sure that at least with higher block sizes
+> you can have FFS > 2 GiB in size. And I remember having had JFXS and I
+> think also SFS2 partitions in AmigaOS 4 with more than 100 GiB.)
+> 
+>> RDB disk format is meant for legacy use only, so I think we can get
+>> away with printing a big fat warning during boot, advising the user
+>> that the oversize RDB partition(s) scanned are not compatible with
+>> legacy 32 bit AmigaOS. With the proposed fix they will work under both
+>> AmigaOS 4.1 and Linux instead of truncating the first overflowing
+>> partition at disk end and trashing valid partitions that overlap,
+>> which is what Martin was after.
+> 
+> They are compatible. For AmigaOS 4.x I am completely sure, cause I
+> installed and used the disk there. That was the original motivation for
+> my Linux bug report back then: I used the disk in AmigaOS 4 *just fine*
+> and it broke in Linux. I used Media Toolbox in order to create the RDB I
+> posted back then.
+> 
+> Its difficult to find proof for my claims online, but here is an
+> official one:
+> 
+> http://wiki.amigaos.net/wiki/RDB
+> 
+> Limits of filesystem sizes may of course be different, but here we are
+> talking about RDB.
+> 
+> Also this confirms that RDB only uses 512 byte block size on AmigaOS 4.
+> 
+> Hmmm, I even created the page back then. Interestingly at about the same
+> time I made the bug report about the Linux issue. The calculations in
+> there are not really from me. I bet I copied them over from what other
+> AmigaOS developers wrote on development mailing lists, at that time.
+> With their agreement. I think I started my research back then due by my
+> own question on: Will such a large disk actually work in AmigaOS?
+> 
+> It is all a long time ago…
+> 
+>> If that still seems too risky, we can make the default behaviour to
+>> bail out once a potential overflow is detected, and allow the user to
+>> override that through a boot parameter. I'd leave that decision up for
+>> the code review on linux-block.
+>>
+>> Two more comments: Linux uses 512 byte block sizes for the partition
+>> start and size calculations, so a change of the RDB blocksize to
+>> reduce the block counts stored in the RDB would still result in the
+>> same overflow. And amiga-fdisk is indeed utterly broken and needs
+>> updating (along with probably most legacy m68k partitioners). Adrian
+>> has advertised parted as replacement for the old tools - maybe this
+>> would make a nice test case for parted?
+> 
+> I always used AmigaOS based tools to partition in RDB format, cause I
+> never trusted amiga-fdisk :).
+> 
+>> On Tue, Jun 26, 2018 at 9:45 PM, jdow <jdow@earthlink.net> wrote:
+>>> If it is not backwards compatible I for one would refuse to use it.
+>>> And if it still mattered that much to me I'd also generate a
+>>> reasonable alternative. Modifying RDBs nay not be even an
+>>> approximation of a good idea. You'd discover that as soon as an RDB
+>>> uint64_t disk is tasted by a uint32_t only system. If it is for
+>>> your personal use then you're entirely free to reject my advice and
+>>> are probably smart enough to keep it working for yourself.
+>>>
+>>> GPT is probably the right way to go. Preserve the ability to read
+>>> RDBs for legacy disks only.
+>>>
+>>> {^_^}
+>>>
+>>> On 20180626 01:31, Michael Schmitz wrote:
+>>>> Joanne,
+>>>>
+>>>> I think we all agree that doing 32 bit calculations on 512-byte
+>>>> block
+>>>> addresses that overflow on disks 2 TB and larger is a bug, causing
+>>>> the issues Martin reported. Your patch addresses that by using the
+>>>> correct data type for the calculations (as do other partition
+>>>> parsers that may have to deal with large disks) and fixes Martin's
+>>>> bug, so appears to be the right thing to do.
+>>>>
+>>>> Using 64 bit data types for disks smaller than 2 TB where
+>>>> calculations don't currently overflow is not expected to cause new
+>>>> issues, other than enabling use of disk and partitions larger than
+>>>> 2 TB (which may have ramifications with filesystems on these
+>>>> partitions). So comptibility is preserved.
+>>>>
+>>>> Forcing larger block sizes might be a good strategy to avoid
+>>>> overflow
+>>>> issues in filesystems as well, but I can't see how the block size
+>>>> stored in the RDB would enforce use of the same block size in
+>>>> filesystems. We'll have to rely on the filesystem tools to get
+>>>> that right, too. Linux AFFS does allow block sizes up to 4k (VFS
+>>>> limitation) so this should allow partitions larger than 2 TB to
+>>>> work already (but I suspect Al Viro may have found a few issues
+>>>> when he looked at the AFFS code so I won't say more). Anyway
+>>>> partitioning tools and filesystems are unrelated to the Linux
+>>>> partition parser code which is all we aim to fix in this patch.
+>>>>
+>>>> If you feel strongly about unknown ramifications of any filesystems
+>>>> on partitions larger than 2 TB, say so and I'll have the kernel
+>>>> print a warning about these partitions.
+>>>>
+>>>> I'll get this patch tested on Martin's test case image as well as
+>>>> on a RDB image from a disk known to currently work under Linux
+>>>> (thanks Geert for the losetup hint). Can't do much more without
+>>>> procuring a working Amiga disk image to use with an emulator,
+>>>> sorry. The Amiga I plan to use for tests is a long way away from
+>>>> my home indeed.
+>>>>
+>>>> Cheers,
+>>>>
+>>>>       Michael
+>>>>
+>>>> Am 26.06.18 um 17:17 schrieb jdow:
+>>>>> As long as it preserves compatibility it should be OK, I suppose.
+>>>>> Personally I'd make any partitioning tool front end gently force
+>>>>> the
+>>>>> block size towards 8k as the disk size gets larger. The file
+>>>>> systems
+>>>>> may also run into 2TB issues that are not obvious. An unused
+>>>>> blocks
+>>>>> list will have to go beyond a uint32_t size, for example. But a
+>>>>> block
+>>>>> list (OFS for sure, don't remember for the newer AFS) uses a tad
+>>>>> under 1% of the disk all by itself. A block bitmap is not quite
+>>>>> so bad. {^_-}
+>>>>>
+>>>>> Just be sure you are aware of all the ramifications when you make
+>>>>> a
+>>>>> change. I remember thinking about this for awhile and then
+>>>>> determining I REALLY did not want to think about it as my brain
+>>>>> was getting tied into a gordian knot.
+>>>>>
+>>>>> {^_^}
+>>>>>
+>>>>> On 20180625 19:23, Michael Schmitz wrote:
+>>>>>> Joanne,
+>>>>>>
+>>>>>> Martin's boot log (including your patch) says:
+>>>>>>
+>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512)
+>>>>>> sdb1
+>>>>>> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res 2
+>>>>>> spb
+>>>>>> 4)
+>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
+>>>>>> Attached SCSI disk
+>>>>>>
+>>>>>> so it's indeed a case of self inflicted damage (RDSK (512) means
+>>>>>> 512
+>>>>>> byte blocks) and can be worked around by using a different block
+>>>>>> size.
+>>>>>>
+>>>>>> Your memory serves right indeed - blocksize is in 512 bytes
+>>>>>> units.
+>>>>>> I'll still submit a patch to Jens anyway as this may bite others
+>>>>>> yet.
+>>>>>>
+>>>>>> Cheers,
+>>>>>>
+>>>>>>      Michael
+>>>>>>
+>>>>>> On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net>
+> wrote:
+>>>>>>> BTW - anybody who uses 512 byte blocks with an Amiga file system
+>>>>>>> is
+>>>>>>> a famn
+>>>>>>> dool.
+>>>>>>>
+>>>>>>> If memory serves the RDBs think in blocks rather than bytes so
+>>>>>>> it
+>>>>>>> should
+>>>>>>> work up to 2 gigablocks whatever your block size is. 512 blocks
+>>>>>>> is
+>>>>>>> 2199023255552 bytes. But that wastes just a WHOLE LOT of disk in
+>>>>>>> block maps.
+>>>>>>> Go up to 4096 or 8192. The latter is 35 TB.
+>>>>>>>
+>>>>>>> {^_^}
+>>>>>>>
+>>>>>>> On 20180624 02:06, Martin Steigerwald wrote:
+>>>>>>>> Hi.
+>>>>>>>>
+>>>>>>>> Michael Schmitz - 27.04.18, 04:11:
+>>>>>>>>> test results at
+>>>>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=43511
+>>>>>>>>> indicate the RDB parser bug is fixed by the patch given there,
+>>>>>>>>> so if
+>>>>>>>>> Martin now submits the patch, all should be well?
+>>>>>>>>
+>>>>>>>> Ok, better be honest than having anyone waiting for it:
+>>>>>>>>
+>>>>>>>> I do not care enough about this, in order to motivate myself
+>>>>>>>> preparing the a patch from Joanne Dow´s fix.
+>>>>>>>>
+>>>>>>>> I am not even using my Amiga boxes anymore, not even the
+>>>>>>>> Sam440ep
+>>>>>>>> which
+>>>>>>>> I still have in my apartment.
+>>>>>>>>
+>>>>>>>> So RDB support in Linux it remains broken for disks larger 2
+>>>>>>>> TB,
+>>>>>>>> unless
+>>>>>>>> someone else does.
+>>>>>>>>
+>>>>>>>> Thanks.
+>>>>>>>
+>>>>>>> --
+>>>>>>> To unsubscribe from this list: send the line "unsubscribe
+>>>>>>> linux-m68k" in
+>>>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>>>> More majordomo info at
+>>>>>>> http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>> --
+>>>>> To unsubscribe from this list: send the line "unsubscribe
+>>>>> linux-m68k" in the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-m68k" in the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
