@@ -5,154 +5,130 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6DCC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2F3C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60ECD25623
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:18:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60ECD25623
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CD58526FA5
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:19:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD58526FA5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965944AbeF1NSw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:18:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51344 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753717AbeF1NSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:18:50 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DBAB7A7E5;
-        Thu, 28 Jun 2018 13:18:49 +0000 (UTC)
-Received: from [10.36.116.166] (ovpn-116-166.ams2.redhat.com [10.36.116.166])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 037E91C67F;
-        Thu, 28 Jun 2018 13:18:47 +0000 (UTC)
-Subject: Re: [PATCH/RFC] mm: do not drop unused pages when userfaultd is
- running
-To:     Christian Borntraeger <borntraeger@de.ibm.com>, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org
-Cc:     kvm@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        id S965979AbeF1NTf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:19:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47566 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753784AbeF1NTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:19:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FAA218A;
+        Thu, 28 Jun 2018 06:19:33 -0700 (PDT)
+Received: from [192.168.100.244] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 320493F5C0;
+        Thu, 28 Jun 2018 06:19:33 -0700 (PDT)
+Subject: Re: [RFC PATCH] arm64: topology: Map PPTT node offset to logic
+ physical package id
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        Andrew Jones <drjones@redhat.com>
+Cc:     Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
         linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20180628123916.96106-1-borntraeger@de.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <df95ae10-0c78-0d76-d2bb-c91712c145ea@redhat.com>
-Date:   Thu, 28 Jun 2018 15:18:47 +0200
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+References: <1530177508-15298-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <cb057c6a-0eb4-581e-c259-7a31545e0ae7@arm.com>
+ <20180628115748.kprobde6c3joc6ll@kamzik.brq.redhat.com>
+ <f9376e47-e2ae-b2f4-db23-07698364f1bb@arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <b9b537e7-8f7b-07cc-a99d-bcaa8f5d60d5@arm.com>
+Date:   Thu, 28 Jun 2018 08:19:26 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180628123916.96106-1-borntraeger@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <f9376e47-e2ae-b2f4-db23-07698364f1bb@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 13:18:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 13:18:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.06.2018 14:39, Christian Borntraeger wrote:
-> KVM guests on s390 can notify the host of unused pages. This can result
-> in pte_unused callbacks to be true for KVM guest memory.
+Hi,
+
+On 06/28/2018 07:12 AM, Sudeep Holla wrote:
 > 
-> If a page is unused (checked with pte_unused) we might drop this page
-> instead of paging it. This can have side-effects on userfaultd, when the
-> page in question was already migrated:
 > 
-> The next access of that page will trigger a fault and a user fault
-> instead of faulting in a new and empty zero page. As QEMU does not
-> expect a userfault on an already migrated page this migration will fail.
+> On 28/06/18 12:57, Andrew Jones wrote:
+>> On Thu, Jun 28, 2018 at 10:38:24AM +0100, Sudeep Holla wrote:
+>>> Hi Shunyong,
+>>>
+>>> On 28/06/18 10:18, Shunyong Yang wrote:
+>>>> As PPTT spec doesn't define the physical package id,
+>>>> find_acpi_cpu_topology_package() will return offset of the node with
+>>>> Physical package field set when querying physical package id. So, it
+>>>> returns 162(0xA2) in following example.
+>>>>
+>>>> [0A2h 0162   1]                Subtable Type : 00 [Processor Hierarchy
+>>>> Node]
+>>>> [0A3h 0163   1]                       Length : 1C
+>>>> [0A4h 0164   2]                     Reserved : 0000
+>>>> [0A6h 0166   4]        Flags (decoded below) : 00000003
+>>>>                              Physical package : 1
+>>>>                       ACPI Processor ID valid : 1
+>>>> [0AAh 0170   4]                       Parent : 00000000
+>>>> [0AEh 0174   4]            ACPI Processor ID : 00001000
+>>>> [0B2h 0178   4]      Private Resource Number : 00000002
+>>>> [0B6h 0182   4]             Private Resource : 0000006C
+>>>> [0BAh 0186   4]             Private Resource : 00000084
+>>>>
+>>>> So, when "cat physical_package" in /sys/devices/system/cpu/cpu0/topology/,
+>>>> it will output 162(0xA2). And if some items are added before the node
+>>>> above, the output will change to other value.
+>>>>
+>>>> This patch maps the node offset to a logic package id. It maps the first
+>>>> node offset to 0, the second to 1, and so on.
+>>>>
+>>>> Then, it will not output a big value, such as 162 above. And it will
+>>>> not change when some nodes(Physical package not set) are added.
+>>>>
+>>>> And as long as the nodes with Physical package field set in PPTT keeps
+>>>> the real hardware order, the logic id can map to hardware package id to
+>>>> some extent.
+>>>>
+>>>> Hope to get feedback from you.
+>>>
+>>> Thanks for the patch, but Andrew Jones has also posted a patch[1] which
+>>> I had a look but was not sure what is the best approach to fix it yet.
+>>> I will think about it and respond to that.
+>>>
+>>
+>> I'll send a v1 yet today. The RFC version was actually OK, as the concern
+>> with ACPI nodes not being in the expected order wasn't actually a problem.
+>> The thread-id or core-id would only be reset to zero when a yet to be
+>> remapped core-id (and all its peers) was found when iterating the PEs.
+>> Since all peers were handled at the same time, the counter reset was
+>> correct, even when the ACPI nodes were out-of-order. The code didn't make
+>> that very obvious, though, and there was some room for other cleanups,
+>> so I've reworked it. Once I run it through a couple more rounds of testing
+>> I'll repost.
+>>
 > 
-> The most straightforward solution is to ignore the pte_unused hint if a
-> userfault context is active for this VMA.
-> 
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  mm/rmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 6db729dc4c50..3f3a72aa99f2 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1481,7 +1481,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
->  				set_pte_at(mm, address, pvmw.pte, pteval);
->  			}
->  
-> -		} else if (pte_unused(pteval)) {
-> +		} else if (pte_unused(pteval) && !vma->vm_userfaultfd_ctx.ctx) {
->  			/*
->  			 * The guest indicated that the page content is of no
->  			 * interest anymore. Simply discard the pte, vmscan
+> OK sure. I liked the approach in Shunyong's patch. I was thinking if we
+> can avoid the list and dynamic allocation on each addition and make it
+> more simpler.
 > 
 
-To understand the implications better:
+This one reads simpler, but yes I agree we should try to avoid the 
+dynamic allocation.
 
-This is like a MADV_DONTNEED from user space while a userfaultfd
-notifier is registered for this vma range.
+OTOH, I think that dropping the dynamic allocation leads to an algorithm 
+that picks a value and replaces all the matches. Which of course is 
+Andrew's patch, although I did have to read it a couple times to get a 
+grasp how it works. I'm guessing that is due to the fact that he seems 
+to have optimized 3 double loops into a single loop with two individual 
+nested loops. AKA its probably more efficient than the naive 
+implementation, but readability seems to have suffered a bit in the 
+initial version he posted. I'm not sure the optimization is worth it, 
+but I'm guessing there is a middle ground which makes it more readable.
 
-While we can block such calls in QEMU ("we registered it, we know it
-best"), we can't do the same in the kernel.
-
-These "intern MADV_DONTNEED" can actually trigger "deferred", so e.g. if
-the pte_unused() was set before userfaultfd has been registered, we can
-still get the same result, right?
-
--- 
-
-Thanks,
-
-David / dhildenb
+Finally, @Shunyong, thanks for putting the effort into this...
