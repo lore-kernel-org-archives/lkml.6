@@ -2,141 +2,149 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8C4C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8831CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A09F27644
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:48:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5FL72Lu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A09F27644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2FE1923C4D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE1923C4D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934870AbeF1PsE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:48:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54121 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966977AbeF1Pp1 (ORCPT
+        id S1030250AbeF1Ptn (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:49:43 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44060 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752028AbeF1Ptm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:45:27 -0400
-Received: by mail-wm0-f66.google.com with SMTP id b188-v6so4123217wme.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OcmgxRiLyrkswXgHU3qseRb+IEdrpHSwiSXvn0FFVBQ=;
-        b=D5FL72LukmNDASiDvkVM2BNLpT29ZErQuBdjkjtpiDANecf6RKnvSj/55e8trsql2d
-         YC3xB3Nq8THBfHcYpugL8md7xu6lx4TGunH2EVc1UGj8IoyyPfMgX52sudu9MnoUU9xX
-         ONhWRPtn8lTE7405oNyv+KBaPKygsizeOKcEk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=OcmgxRiLyrkswXgHU3qseRb+IEdrpHSwiSXvn0FFVBQ=;
-        b=PsRYhlGfWy3bo+eiwq6eogCMBzWqWlE1Nqm0upxLdFQmbthZoTdYaZRqlTyBBnDzzs
-         EIRrVX5PNkbIq8IH7+4hbBEl6Qw9PGk5aTOkmSCVUOKPzTSAWCJ/8poDthUfyAmqy3tG
-         3R6d0YfRRJq2cWp7nGh0+vErlJLsK7wlj0xDm0jGX78t0EGRSK7x6dwcsz1PchkSJBpl
-         FWjf9xjBv3/6tzGum/azqaq4gzRt84fPQReWAJjKkWYO2MAyPqmtWWyMK7ZAWlrwvC4q
-         Y12XAD97bWvlOfk7bbl5DclZ4MpnOLFN95zGIZAAZk4EsJyixN3x/kxZFgPNaSFKhbb7
-         P2Qw==
-X-Gm-Message-State: APt69E1utYG2GC8x2JfXPV//e/qe3ErLEjTFoFllwvkAiUPOOD+ZPH0d
-        0YN4CL5+GwJA9byoy6x16X+31g==
-X-Google-Smtp-Source: AAOMgpe1LfCrhhde1kloxeI7yFyAf3HZU95dPh+ShjRBD9/OmEDpMEvqb9oiaHIght2SzXZyUTcFVg==
-X-Received: by 2002:a1c:818e:: with SMTP id c136-v6mr8740170wmd.107.1530200726039;
-        Thu, 28 Jun 2018 08:45:26 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:21c3:ec41:bec9:c38])
-        by smtp.gmail.com with ESMTPSA id i4-v6sm6202115wrq.28.2018.06.28.08.45.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 08:45:25 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com, patrick.bellasi@arm.com,
-        joel@joelfernandes.org, daniel.lezcano@linaro.org,
-        quentin.perret@arm.com, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 03/11] cpufreq/schedutil: use rt utilization tracking
-Date:   Thu, 28 Jun 2018 17:45:06 +0200
-Message-Id: <1530200714-4504-4-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
+        Thu, 28 Jun 2018 11:49:42 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SFmu3e013159;
+        Thu, 28 Jun 2018 10:49:37 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2ju89dm9jp-1;
+        Thu, 28 Jun 2018 10:49:36 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 1499F611C8A7;
+        Thu, 28 Jun 2018 10:50:39 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Thu, 28 Jun 2018
+ 16:49:36 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5SFnZwf019089; Thu,
+ 28 Jun 2018 16:49:35 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>
+CC:     <andy.shevchenko@gmail.com>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] mfd: arizona: Don't use regmap_read_poll_timeout
+Date:   Thu, 28 Jun 2018 16:49:35 +0100
+Message-ID: <20180628154935.31049-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1806210000
+ definitions=main-1806280179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add both cfs and rt utilization when selecting an OPP for cfs tasks as rt
-can preempt and steal cfs's running time.
+Some Arizona CODECs have a small timing window where they will
+NAK an I2C transaction if it happens before the boot done bit is
+set. This can cause the read of the register containing the boot
+done bit to fail until it is set. Since regmap_read_poll_timeout
+will abort polling if a read fails it can't be reliably used to
+poll the boot done bit over I2C.
 
-rt util_avg is used to take into account the utilization of rt tasks
-on the CPU when selecting OPP. If a rt task migrate, the rt utilization
-will not migrate but will decay over time. On an overloaded CPU, cfs
-utilization reflects the remaining utilization avialable on CPU. When rt
-task migrates, the cfs utilization will increase when tasks will start to
-use the newly available capacity. At the same pace, rt utilization will
-decay and both variations will compensate each other  to keep unchanged
-overall utilization and will prevent any OPP drop.
+Do a partial revert of ef84f885e037 ("mfd: arizona: Refactor
+arizona_poll_reg"), removing the regmap_read_poll_timeout but
+leaving the refactoring to make the arizona_poll_reg take more
+sensible arguments.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Fixes: ef84f885e037 ("mfd: arizona: Refactor arizona_poll_reg")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- kernel/sched/cpufreq_schedutil.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 3cde464..9c5e92e 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -56,6 +56,7 @@ struct sugov_cpu {
- 	/* The fields below are only needed when sharing a policy: */
- 	unsigned long		util_cfs;
- 	unsigned long		util_dl;
-+	unsigned long		util_rt;
- 	unsigned long		max;
+Changes since v2:
+ - Refactor to remove initialisation of ret variable
+
+Thanks,
+Charles
+
+ drivers/mfd/arizona-core.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+index 83f1c5a516d99..5f1e37d23943a 100644
+--- a/drivers/mfd/arizona-core.c
++++ b/drivers/mfd/arizona-core.c
+@@ -24,6 +24,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/slab.h>
++#include <linux/ktime.h>
+ #include <linux/platform_device.h>
  
- 	/* The field below is for single-CPU policies only: */
-@@ -186,15 +187,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- 	sg_cpu->max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
- 	sg_cpu->util_cfs = cpu_util_cfs(rq);
- 	sg_cpu->util_dl  = cpu_util_dl(rq);
-+	sg_cpu->util_rt  = cpu_util_rt(rq);
- }
+ #include <linux/mfd/arizona/core.h>
+@@ -236,22 +237,39 @@ static irqreturn_t arizona_overclocked(int irq, void *data)
  
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
-+	unsigned long util;
+ #define ARIZONA_REG_POLL_DELAY_US 7500
  
- 	if (rq->rt.rt_nr_running)
- 		return sg_cpu->max;
- 
-+	util = sg_cpu->util_dl;
-+	util += sg_cpu->util_cfs;
-+	util += sg_cpu->util_rt;
++static inline bool arizona_poll_reg_delay(ktime_t timeout)
++{
++	if (ktime_compare(ktime_get(), timeout) > 0)
++		return false;
 +
- 	/*
- 	 * Utilization required by DEADLINE must always be granted while, for
- 	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-@@ -205,7 +212,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
- 	 * ready for such an interface. So, we only do the latter for now.
- 	 */
--	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-+	return min(sg_cpu->max, util);
++	usleep_range(ARIZONA_REG_POLL_DELAY_US / 2, ARIZONA_REG_POLL_DELAY_US);
++
++	return true;
++}
++
+ static int arizona_poll_reg(struct arizona *arizona,
+ 			    int timeout_ms, unsigned int reg,
+ 			    unsigned int mask, unsigned int target)
+ {
++	ktime_t timeout = ktime_add_us(ktime_get(), timeout_ms * USEC_PER_MSEC);
+ 	unsigned int val = 0;
+ 	int ret;
+ 
+-	ret = regmap_read_poll_timeout(arizona->regmap,
+-				       reg, val, ((val & mask) == target),
+-				       ARIZONA_REG_POLL_DELAY_US,
+-				       timeout_ms * 1000);
+-	if (ret)
+-		dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n",
+-			reg, val);
++	do {
++		ret = regmap_read(arizona->regmap, reg, &val);
+ 
+-	return ret;
++		if ((val & mask) == target)
++			return 0;
++	} while (arizona_poll_reg_delay(timeout));
++
++	if (ret) {
++		dev_err(arizona->dev, "Failed polling reg 0x%x: %d\n",
++			reg, ret);
++		return ret;
++	}
++
++	dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n", reg, val);
++	return -ETIMEDOUT;
  }
  
- /**
+ static int arizona_wait_for_boot(struct arizona *arizona)
 -- 
-2.7.4
+2.11.0
 
