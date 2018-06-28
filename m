@@ -6,168 +6,119 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFDAC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E271DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFCD27755
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:40:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AFCD27755
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id ABC7627765
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:42:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABC7627765
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935963AbeF1Rkn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 13:40:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49188 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933815AbeF1Rkm (ORCPT
+        id S1754551AbeF1RmJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 13:42:09 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.47]:19941 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935361AbeF1RmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 13:40:42 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SHd1UV132224
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 13:40:42 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jw2ehdeek-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 13:40:42 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 28 Jun 2018 13:40:40 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Jun 2018 13:40:35 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SHeY8c38142052
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jun 2018 17:40:34 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C65A0B206B;
-        Thu, 28 Jun 2018 13:40:24 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97293B206A;
-        Thu, 28 Jun 2018 13:40:24 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Jun 2018 13:40:24 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B534A16CA2C2; Thu, 28 Jun 2018 10:42:40 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 10:42:40 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, kernel-team@android.com
-Subject: Re: [PATCH tip/core/rcu 16/27] rcu: Add comment documenting how
- rcu_seq_snap works
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180626003448.GA26209@linux.vnet.ibm.com>
- <20180626003513.27812-16-paulmck@linux.vnet.ibm.com>
- <20180626173055.GJ2494@hirez.programming.kicks-ass.net>
- <20180627043913.GA177710@joelaf.mtv.corp.google.com>
- <20180627175436.GC3593@linux.vnet.ibm.com>
- <20180627182726.GA79165@joelaf.mtv.corp.google.com>
- <20180628051028.GB79165@joelaf.mtv.corp.google.com>
+        Thu, 28 Jun 2018 13:42:03 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id D485A2F3D9
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:42:01 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YavRfi8UiBcCXYavbfT4kk; Thu, 28 Jun 2018 12:42:01 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=59456 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fYavQ-003SJM-Ji; Thu, 28 Jun 2018 12:41:44 -0500
+Date:   Thu, 28 Jun 2018 12:41:42 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] can: peak_usb: mark expected switch fall-throughs
+Message-ID: <20180628174142.GA17081@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628051028.GB79165@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062817-2213-0000-0000-000002C16A83
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009272; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01053639; UDB=6.00540251; IPR=6.00831561;
- MB=3.00021910; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-28 17:40:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062817-2214-0000-0000-00005AA3EAAC
-Message-Id: <20180628174240.GM3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806280199
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fYavQ-003SJM-Ji
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:59456
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 10:10:28PM -0700, Joel Fernandes wrote:
-> On Wed, Jun 27, 2018 at 11:27:26AM -0700, Joel Fernandes wrote:
-> [..]
-> > > > > 	s = __ALIGN_MASK(s, RCU_SEQ_STATE_MASK);
-> > > > > 
-> > > > 
-> > > > I agree with Peter's suggestions for both the verbiage reduction in the
-> > > > comments in the header, as the new code he is proposing is more
-> > > > self-documenting. I believe I proposed a big comment just because the code
-> > > > wasn't self-documenting or obvious previously so needed an explanation.
-> > > > 
-> > > > How would you like to proceed? Let me know what you guys decide, I am really
-> > > > Ok with anything. If you guys agree, should I write a follow-up patch with
-> > > > Peter's suggestion that applies on top of this one?  Or do we want to drop
-> > > > this one in favor of Peter's suggestion?
-> > > 
-> > > Shortening the comment would be good, so please do that.
-> 
-> Paul,
-> 
-> Do you want to fold the below patch into the original one? Or do you prefer I
-> resent the original patch fixed up?
-> 
-> Following is the patch ontop of current 'dev' branch in your tree, with the
-> excessive comments removed.
-> 
-> Thanks to Peter for suggesting!
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-I merged this into the current commit, with the result shown below.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/can/usb/peak_usb/pcan_usb.c      | 1 +
+ drivers/net/can/usb/peak_usb/pcan_usb_core.c | 1 +
+ drivers/net/can/usb/peak_usb/pcan_usb_pro.c  | 2 ++
+ 3 files changed, 4 insertions(+)
 
-Thank you both!
-
-							Thanx, Paul
-
------------------------------------------------------------------------
-
-commit c9a6ed70aad9f4571afba3e12e869f5fccc26a40
-Author: Joel Fernandes (Google) <joel@joelfernandes.org>
-Date:   Tue May 22 23:38:13 2018 -0700
-
-    rcu: Add comment documenting how rcu_seq_snap works
-    
-    rcu_seq_snap may be tricky to decipher. Lets document how it works with
-    an example to make it easier.
-    
-    Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-    [ paulmck: Shrink comment as suggested by Peter Zijlstra. ]
-
-diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-index aa215d6355f8..89f13fffac73 100644
---- a/kernel/rcu/rcu.h
-+++ b/kernel/rcu/rcu.h
-@@ -91,7 +91,17 @@ static inline void rcu_seq_end(unsigned long *sp)
- 	WRITE_ONCE(*sp, rcu_seq_endval(sp));
- }
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb.c b/drivers/net/can/usb/peak_usb/pcan_usb.c
+index f530a80..13238a7 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb.c
+@@ -423,6 +423,7 @@ static int pcan_usb_decode_error(struct pcan_usb_msg_context *mc, u8 n,
+ 			new_state = CAN_STATE_ERROR_WARNING;
+ 			break;
+ 		}
++		/* else: fall through */
  
--/* Take a snapshot of the update side's sequence number. */
-+/*
-+ * rcu_seq_snap - Take a snapshot of the update side's sequence number.
-+ *
-+ * This function returns the earliest value of the grace-period sequence number
-+ * that will indicate that a full grace period has elapsed since the current
-+ * time.  Once the grace-period sequence number has reached this value, it will
-+ * be safe to invoke all callbacks that have been registered prior to the
-+ * current time. This value is the current grace-period number plus two to the
-+ * power of the number of low-order bits reserved for state, then rounded up to
-+ * the next value in which the state bits are all zero.
-+ */
- static inline unsigned long rcu_seq_snap(unsigned long *sp)
- {
- 	unsigned long s;
+ 	case CAN_STATE_ERROR_WARNING:
+ 		if (n & PCAN_USB_ERROR_BUS_HEAVY) {
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb_core.c b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+index 50e9114..611f9d3 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+@@ -353,6 +353,7 @@ static netdev_tx_t peak_usb_ndo_start_xmit(struct sk_buff *skb,
+ 		default:
+ 			netdev_warn(netdev, "tx urb submitting failed err=%d\n",
+ 				    err);
++			/* fall through */
+ 		case -ENOENT:
+ 			/* cable unplugged */
+ 			stats->tx_dropped++;
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb_pro.c b/drivers/net/can/usb/peak_usb/pcan_usb_pro.c
+index 0105fbf..d516def 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_pro.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_pro.c
+@@ -141,8 +141,10 @@ static int pcan_msg_add_rec(struct pcan_usb_pro_msg *pm, u8 id, ...)
+ 	switch (id) {
+ 	case PCAN_USBPRO_TXMSG8:
+ 		i += 4;
++		/* fall through */
+ 	case PCAN_USBPRO_TXMSG4:
+ 		i += 4;
++		/* fall through */
+ 	case PCAN_USBPRO_TXMSG0:
+ 		*pc++ = va_arg(ap, int);
+ 		*pc++ = va_arg(ap, int);
+-- 
+2.7.4
 
