@@ -2,97 +2,429 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A40C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F1DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA152707F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA152707F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 3FF0524B64
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:55:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="H7m44cR2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF0524B64
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934309AbeF1Hxc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:53:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55414 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934041AbeF1Hxb (ORCPT
+        id S1753698AbeF1HzH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:55:07 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35545 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753532AbeF1HzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:53:31 -0400
-Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fYRk2-0002pc-UL; Thu, 28 Jun 2018 09:53:23 +0200
-Date:   Thu, 28 Jun 2018 09:53:17 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 04/16] x86/split_lock: Use non locked bit set
- instruction in set_cpu_cap
-In-Reply-To: <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
-Message-ID: <alpine.DEB.2.21.1806280945120.1778@nanos.tec.linutronix.de>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <1527435965-202085-5-git-send-email-fenghua.yu@intel.com> <20180621195540.GC13636@worktop.programming.kicks-ass.net> <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 28 Jun 2018 03:55:05 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c1-v6so4590169edt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2jDYNatvW4AmShHAUrKboa2o/Bp7quZ6xLB8dcNb+K8=;
+        b=H7m44cR2NSrEH6ba6KWfZVgzekRLXpREfkk7xwmmkKqRsrpbJrSTTHa44h+peWRs44
+         u3XhC154hSrKO6Dfv11ZzsL3jeZoYpT/f87/yoHogV7zu6Nkb0to2ZDrSboD9pVhJ6wB
+         kq+ljSVeArEt5B51PzggFOZ4kIDyRhtigHO6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=2jDYNatvW4AmShHAUrKboa2o/Bp7quZ6xLB8dcNb+K8=;
+        b=c+jmbkHNjYICXyEPj4CUBAE4Dm0Z1MToQ+g/tTxc7ciEOUjgUGUD9c3qGTtvcp7GAc
+         7Ef9Z181qcC4BoosNpraVfM5bj3V1vUq/t0GRb5WNntmzXlxhd/sl5AYDY921EEAoyKc
+         sIwi0poZEC40Oz4QcDndZlhknopg0osRINyKytN5Nm5/b53tQv386n2FUZoa1XStfz+I
+         JZqKfKCqIK0xryIce67lV6JBBamWqnJGXPRWeLScWU/1/1CCnuu1v2LgxXE5bVlCJY0w
+         rZ2LMhc7R72lBBKo7UOzC/oXGjtX6lRM0N0r13exHrwuj+bBsfc6dzO6c8S1MD0grr/C
+         r4ow==
+X-Gm-Message-State: APt69E0g12l0GeOHP6G+/0JkBHPWsWilWdwMpFz9pT8xsJXuh6KmQ8dZ
+        BkNkuoqGwkZkXalqmTiR7FVmAw==
+X-Google-Smtp-Source: AAOMgpf5rqs2DbwMsbOLw0pkzlV/YDqTmQHFRaT7NE6EhIrmtvvyMhXo1U5GUUQ4pKpUWNPADloH4A==
+X-Received: by 2002:a50:a743:: with SMTP id h61-v6mr8325801edc.261.1530172503556;
+        Thu, 28 Jun 2018 00:55:03 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5635:0:ee51:c8a0:8c68:b779])
+        by smtp.gmail.com with ESMTPSA id d4-v6sm2816675edk.35.2018.06.28.00.55.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Jun 2018 00:55:02 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 09:55:00 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] console/fbcon: Add support for deferred console
+ takeover
+Message-ID: <20180628075500.GP13978@phenom.ffwll.local>
+Mail-Followup-To: Hans de Goede <hdegoede@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180626183612.321-1-hdegoede@redhat.com>
+ <20180626183612.321-4-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626183612.321-4-hdegoede@redhat.com>
+X-Operating-System: Linux phenom 4.16.0-2-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Jun 2018, Fenghua Yu wrote:
-> On Thu, Jun 21, 2018 at 09:55:40PM +0200, Peter Zijlstra wrote:
-> > On Sun, May 27, 2018 at 08:45:53AM -0700, Fenghua Yu wrote:
-> > > set_bit() called by set_cpu_cap() is a locked bit set instruction for
-> > > atomic operation.
-> > > 
-> > > Since the c->x86_capability can span two cache lines depending on kernel
-> > > configuration and building evnironment, the locked bit set instruction may
-> > > cause #AC exception when #AC exception for split lock is enabled.
-> > 
-> > That doesn't make sense. Sure the bitmap may be longer, but depending on
-> > if the argument is an immediate or not we either use a byte instruction
-> > (which can never cross a cacheline boundary) or a 'word' aligned BTS.
-> > And the bitmap really _should_ be 'unsigned long' aligned.
-> > 
-> > If it is not aligned, fix that too.
-> > 
-> > /me looks at cpuinfo_x86 and finds x86_capability is in fact a __u32
-> > array.. see that's broken and needs fixing first.
+On Tue, Jun 26, 2018 at 08:36:12PM +0200, Hans de Goede wrote:
+> Currently fbcon claims fbdevs as soon as they are registered and takes over
+> the console as soon as the first fbdev gets registered.
 > 
-> Do you mean x86_capability's type should be changed from __u32 to unsigned
-> long?
+> This behavior is undesirable in cases where a smooth graphical bootup is
+> desired, in such cases we typically want the contents of the framebuffer
+> (typically a vendor logo) to stay in place as is.
 > 
-> Changing x86_capability's type won't directly fix the split lock in
-> set_cpu_cap(), right? BTS still may access x86_capability across cache
-> line no matter x86_capability's type.
+> The current solution for this problem (on embedded systems) is to not
+> enable fbcon.
+> 
+> This commit adds a new FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER config option,
+> which when enabled defers fbcon taking over the console from the dummy
+> console until the first text is displayed on the console. Together with the
+> "quiet" kernel commandline option, this allows fbcon to still be used
+> together with a smooth graphical bootup, having it take over the console as
+> soon as e.g. an error message is logged.
+> 
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Errm. No.  BTS & al are accessing a single 64bit location which is
+A bit a late comment, and feel free to reject: Have you considered
+registering the fbcon driver, but not doing any modesets until the very
+first real message shows up?
 
-   base_address + (bit_offset % 64) * 8
+That would make it work with any console driver setup, even when dummy
+console is deactivated. And it would avoid the notifier layering
+violation, which still irks me a bit with this approach here.
+-Daniel
 
-So if the base address is properly aligned then BTS & al will _NEVER_ have
-to lock more than a single cache line. And it does not matter wheter we fix
-the type or enforce 64bit alignement of the array by other means.
+> ---
+> Changes in v2:
+> -Check the whole string when checking for erases in putcs, instead of just
+>  the first char
+> -Make dummycon_blank return 1, so that a redraw gets triggered and any text
+>  rendered while blanked gets output so that it can trigger a deferred
+>  takeover if one is pending
+> 
+> Changes in v3:
+> -Call WARN_CONSOLE_UNLOCKED() from fbcon_output_notifier()
+> -Unregister the notifier on fbcon_exit()
+> -Document the fbcon=nodefer commandline option in Documentation/fb/fbcon.txt
+> ---
+>  Documentation/fb/fbcon.txt       |  7 ++++
+>  drivers/video/console/Kconfig    | 11 +++++
+>  drivers/video/console/dummycon.c | 67 +++++++++++++++++++++++++----
+>  drivers/video/fbdev/core/fbcon.c | 72 ++++++++++++++++++++++++++++++++
+>  include/linux/console.h          |  5 +++
+>  5 files changed, 154 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/fb/fbcon.txt b/Documentation/fb/fbcon.txt
+> index 79c22d096bbc..d4d642e1ce9c 100644
+> --- a/Documentation/fb/fbcon.txt
+> +++ b/Documentation/fb/fbcon.txt
+> @@ -155,6 +155,13 @@ C. Boot options
+>  	used by text. By default, this area will be black. The 'color' value
+>  	is an integer number that depends on the framebuffer driver being used.
+>  
+> +6. fbcon=nodefer
+> +
+> +	If the kernel is compiled with deferred fbcon takeover support, normally
+> +	the framebuffer contents, left in place by the firmware/bootloader, will
+> +	be preserved until there actually is some text is output to the console.
+> +	This option causes fbcon to bind immediately to the fbdev device.
+> +
+>  C. Attaching, Detaching and Unloading
+>  
+>  Before going on how to attach, detach and unload the framebuffer console, an
+> diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
+> index 4110ba7d7ca9..e91edef98633 100644
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@ -150,6 +150,17 @@ config FRAMEBUFFER_CONSOLE_ROTATION
+>           such that other users of the framebuffer will remain normally
+>           oriented.
+>  
+> +config FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +	bool "Framebuffer Console Deferred Takeover"
+> +	depends on FRAMEBUFFER_CONSOLE=y && DUMMY_CONSOLE=y
+> +	help
+> +	  If enabled this defers the framebuffer console taking over the
+> +	  console from the dummy console until the first text is displayed on
+> +	  the console. This is useful in combination with the "quiet" kernel
+> +	  commandline option to keep the framebuffer contents initially put up
+> +	  by the firmware in place, rather then replacing the contents with a
+> +	  black screen as soon as fbcon loads.
+> +
+>  config STI_CONSOLE
+>          bool "STI text console"
+>  	depends on PARISC && HAS_IOMEM
+> diff --git a/drivers/video/console/dummycon.c b/drivers/video/console/dummycon.c
+> index f2eafe2ed980..45ad925ad5f8 100644
+> --- a/drivers/video/console/dummycon.c
+> +++ b/drivers/video/console/dummycon.c
+> @@ -26,6 +26,65 @@
+>  #define DUMMY_ROWS	CONFIG_DUMMY_CONSOLE_ROWS
+>  #endif
+>  
+> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +/* These are both protected by the console_lock */
+> +static RAW_NOTIFIER_HEAD(dummycon_output_nh);
+> +static bool dummycon_putc_called;
+> +
+> +void dummycon_register_output_notifier(struct notifier_block *nb)
+> +{
+> +	raw_notifier_chain_register(&dummycon_output_nh, nb);
+> +
+> +	if (dummycon_putc_called)
+> +		nb->notifier_call(nb, 0, NULL);
+> +}
+> +
+> +void dummycon_unregister_output_notifier(struct notifier_block *nb)
+> +{
+> +	raw_notifier_chain_unregister(&dummycon_output_nh, nb);
+> +}
+> +
+> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
+> +{
+> +	dummycon_putc_called = true;
+> +	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
+> +}
+> +
+> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
+> +			   int count, int ypos, int xpos)
+> +{
+> +	int i;
+> +
+> +	if (!dummycon_putc_called) {
+> +		/* Ignore erases */
+> +		for (i = 0 ; i < count; i++) {
+> +			if (s[i] != vc->vc_video_erase_char)
+> +				break;
+> +		}
+> +		if (i == count)
+> +			return;
+> +
+> +		dummycon_putc_called = true;
+> +	}
+> +
+> +	raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
+> +}
+> +
+> +static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
+> +{
+> +	/* Redraw, so that we get putc(s) for output done while blanked */
+> +	return 1;
+> +}
+> +#else
+> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos) { }
+> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
+> +			   int count, int ypos, int xpos) { }
+> +static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>  static const char *dummycon_startup(void)
+>  {
+>      return "dummy device";
+> @@ -44,9 +103,6 @@ static void dummycon_init(struct vc_data *vc, int init)
+>  static void dummycon_deinit(struct vc_data *vc) { }
+>  static void dummycon_clear(struct vc_data *vc, int sy, int sx, int height,
+>  			   int width) { }
+> -static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos) { }
+> -static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
+> -			   int count, int ypos, int xpos) { }
+>  static void dummycon_cursor(struct vc_data *vc, int mode) { }
+>  
+>  static bool dummycon_scroll(struct vc_data *vc, unsigned int top,
+> @@ -61,11 +117,6 @@ static int dummycon_switch(struct vc_data *vc)
+>  	return 0;
+>  }
+>  
+> -static int dummycon_blank(struct vc_data *vc, int blank, int mode_switch)
+> -{
+> -	return 0;
+> -}
+> -
+>  static int dummycon_font_set(struct vc_data *vc, struct console_font *font,
+>  			     unsigned int flags)
+>  {
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index cd8d52a967aa..5fb156bdcf4e 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -129,6 +129,12 @@ static inline void fbcon_map_override(void)
+>  }
+>  #endif /* CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY */
+>  
+> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +static bool deferred_takeover = true;
+> +#else
+> +#define deferred_takeover false
+> +#endif
+> +
+>  /* font data */
+>  static char fontname[40];
+>  
+> @@ -499,6 +505,12 @@ static int __init fb_console_setup(char *this_opt)
+>  				margin_color = simple_strtoul(options, &options, 0);
+>  			continue;
+>  		}
+> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +		if (!strcmp(options, "nodefer")) {
+> +			deferred_takeover = false;
+> +			continue;
+> +		}
+> +#endif
+>  	}
+>  	return 1;
+>  }
+> @@ -3100,6 +3112,9 @@ static int fbcon_fb_unregistered(struct fb_info *info)
+>  
+>  	WARN_CONSOLE_UNLOCKED();
+>  
+> +	if (deferred_takeover)
+> +		return 0;
+> +
+>  	idx = info->node;
+>  	for (i = first_fb_vc; i <= last_fb_vc; i++) {
+>  		if (con2fb_map[i] == idx)
+> @@ -3140,6 +3155,13 @@ static void fbcon_remap_all(int idx)
+>  
+>  	WARN_CONSOLE_UNLOCKED();
+>  
+> +	if (deferred_takeover) {
+> +		for (i = first_fb_vc; i <= last_fb_vc; i++)
+> +			con2fb_map_boot[i] = idx;
+> +		fbcon_map_override();
+> +		return;
+> +	}
+> +
+>  	for (i = first_fb_vc; i <= last_fb_vc; i++)
+>  		set_con2fb_map(i, idx, 0);
+>  
+> @@ -3191,6 +3213,11 @@ static int fbcon_fb_registered(struct fb_info *info)
+>  	idx = info->node;
+>  	fbcon_select_primary(info);
+>  
+> +	if (deferred_takeover) {
+> +		pr_info("fbcon: Deferring console take-over\n");
+> +		return 0;
+> +	}
+> +
+>  	if (info_idx == -1) {
+>  		for (i = first_fb_vc; i <= last_fb_vc; i++) {
+>  			if (con2fb_map_boot[i] == idx) {
+> @@ -3566,8 +3593,46 @@ static int fbcon_init_device(void)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +static struct notifier_block fbcon_output_nb;
+> +
+> +static int fbcon_output_notifier(struct notifier_block *nb,
+> +				 unsigned long action, void *data)
+> +{
+> +	int i;
+> +
+> +	WARN_CONSOLE_UNLOCKED();
+> +
+> +	pr_info("fbcon: Taking over console\n");
+> +
+> +	dummycon_unregister_output_notifier(&fbcon_output_nb);
+> +	deferred_takeover = false;
+> +	logo_shown = FBCON_LOGO_DONTSHOW;
+> +
+> +	for (i = 0; i < FB_MAX; i++) {
+> +		if (registered_fb[i])
+> +			fbcon_fb_registered(registered_fb[i]);
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static void fbcon_register_output_notifier(void)
+> +{
+> +	fbcon_output_nb.notifier_call = fbcon_output_notifier;
+> +	dummycon_register_output_notifier(&fbcon_output_nb);
+> +}
+> +#else
+> +static inline void fbcon_register_output_notifier(void) {}
+> +#endif
+> +
+>  static void fbcon_start(void)
+>  {
+> +	if (deferred_takeover) {
+> +		fbcon_register_output_notifier();
+> +		return;
+> +	}
+> +
+>  	if (num_registered_fb) {
+>  		int i;
+>  
+> @@ -3594,6 +3659,13 @@ static void fbcon_exit(void)
+>  	if (fbcon_has_exited)
+>  		return;
+>  
+> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
+> +	if (deferred_takeover) {
+> +		dummycon_unregister_output_notifier(&fbcon_output_nb);
+> +		deferred_takeover = false;
+> +	}
+> +#endif
+> +
+>  	kfree((void *)softback_buf);
+>  	softback_buf = 0UL;
+>  
+> diff --git a/include/linux/console.h b/include/linux/console.h
+> index dfd6b0e97855..f59f3dbca65c 100644
+> --- a/include/linux/console.h
+> +++ b/include/linux/console.h
+> @@ -21,6 +21,7 @@ struct console_font_op;
+>  struct console_font;
+>  struct module;
+>  struct tty_struct;
+> +struct notifier_block;
+>  
+>  /*
+>   * this is what the terminal answers to a ESC-Z or csi0c query.
+> @@ -220,4 +221,8 @@ static inline bool vgacon_text_force(void) { return false; }
+>  
+>  extern void console_init(void);
+>  
+> +/* For deferred console takeover */
+> +void dummycon_register_output_notifier(struct notifier_block *nb);
+> +void dummycon_unregister_output_notifier(struct notifier_block *nb);
+> +
+>  #endif /* _LINUX_CONSOLE_H */
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-If that's not true then BTS & al are terminally broken and you can stop
-working on #AC right away.
-
-Thanks,
-
-	tglx
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
