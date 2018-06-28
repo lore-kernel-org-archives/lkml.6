@@ -6,93 +6,92 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F82FC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197E4C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1584121522
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C50D3270F5
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:40:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j9EsLuZ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1584121522
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="w8JWlmrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50D3270F5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeF1IjO (ORCPT
+        id S1752351AbeF1IkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:39:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51606 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750802AbeF1IjM (ORCPT
+        Thu, 28 Jun 2018 04:40:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52352 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751059AbeF1IkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:39:12 -0400
+        Thu, 28 Jun 2018 04:40:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pyJzunvr74w7FKUMDsnOI8piHo79VejrRDDM5YBU/5U=; b=j9EsLuZ6Ah3yNoemmmFzFYqs0
-        OR7vY9x4pZ6OGrpHNLgbQ+nwLSOAO8y7XJOg11W+K+7jiOKap7+GqE4Cc/oQEwBoTv0GTv07Uq0K+
-        1fo9QRCeBwxmrCD0kmWBCy4JDdVNbKWXAcn6Hv0xrvuQEakySr531GtJlSLPFyIpWAPsuRaLPdkMV
-        5WzrIxUBM0WuQWib1dfkYcVdzcOhKZL75CJ02+fWqpICBqwyLdxfkD5ORD2A7KBSYbi1ME8TPMCsJ
-        J+WGlTmPJLBJ5OkdfFoxq3MjNvbK/hqU5FmyAjs5S4OAk2tskNnUqj2G15gfw/r9hREu1bhJ7QxWl
-        aa1ZchTWA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYSSL-0000zl-V1; Thu, 28 Jun 2018 08:39:09 +0000
-Date:   Thu, 28 Jun 2018 01:39:09 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Message-ID: <20180628083909.GA7646@bombadil.infradead.org>
-References: <20180617020052.4759-1-willy@infradead.org>
- <20180619031257.GA12527@linux.intel.com>
- <20180619092230.GA1438@bombadil.infradead.org>
- <20180619164037.GA6679@linux.intel.com>
- <20180619171638.GE1438@bombadil.infradead.org>
- <20180627110529.GA19606@bombadil.infradead.org>
- <20180627194438.GA20774@linux.intel.com>
+         bh=h4xKpgE2MQLtBZJkuVS8FjXWkeZEK3fhTY/y4XX9agM=; b=w8JWlmrhbMTvoP/D9Pz41JBIa
+        83UrwBjtk1SdYcNgdfwKpSw668XjzTbhtn2ApxYgj/WbUIhnOrmi05/Xt9zg/njoxMrElyj4B2zQz
+        0AB/GoqDNUlbJHtAKpi2W8K3uV4om3X3Dfy8/q8rxyQJf8QPRTTUKjr+4evT6DrROeUwiMmMse5Qv
+        7H/FbzstJjue7I+vkMnPYZaah+hYL6t3mfll0UNEgGMBA7Kjt8E1CdzQAz20Z0jW0P+n+xKiWy7b5
+        PMhSOz9Nz17YmAAtrQmelkfLIbA3fy3ecB0dCLFL4o86zuK4EL8boqbHqETTkS4NAZKUmyptS6Brs
+        eJk8d0dPA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYSTD-0002eS-TL; Thu, 28 Jun 2018 08:40:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A9CBF20297645; Thu, 28 Jun 2018 10:40:02 +0200 (CEST)
+Date:   Thu, 28 Jun 2018 10:40:02 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        g@hirez.programming.kicks-ass.net
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        x86@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/5] kernel/jump_label: abstract jump_entry member
+ accessors
+Message-ID: <20180628084002.GZ2494@hirez.programming.kicks-ass.net>
+References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
+ <20180627160604.8154-2-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180627194438.GA20774@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180627160604.8154-2-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
-> On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
-> > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
-> > > I think I see a bug.  No idea if it's the one you're hitting ;-)
-> > > 
-> > > I had been intending to not use the 'entry' to decide whether we were
-> > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
-> > > but not before dropping the DAX_PMD flag being passed from the PMD
-> > > pagefault caller.  So if I put that back ...
-> > 
-> > Did you get a chance to test this?
-> 
-> With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
-> hit a WARN_ON in the DAX code:
-> 
-> WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
-> 
-> I don't have a lot of time this week to debug further.  The quickest path to
-> victory is probably for you to get this reproducing in your test setup.  Does
-> XFS + DAX + generic/340 pass for you?
+On Wed, Jun 27, 2018 at 06:06:00PM +0200, Ard Biesheuvel wrote:
 
-I won't be back in front of my test box until Tuesday, but that test
-does work for me because I couldn't get your instructions to give me a
-2MB aligned DAX setup.  I had to settle for 4k, so none of the 2MB stuff
-has been tested properly.
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index 01ebdf1f9f40..c3524c9b3004 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -38,10 +38,12 @@ static int jump_label_cmp(const void *a, const void *b)
+>  	const struct jump_entry *jea = a;
+>  	const struct jump_entry *jeb = b;
+>  
+> -	if (jea->key < jeb->key)
+> +	if ((unsigned long)jump_entry_key(jea) <
+> +	    (unsigned long)jump_entry_key(jeb))
+>  		return -1;
+>  
+> -	if (jea->key > jeb->key)
+> +	if ((unsigned long)jump_entry_key(jea) >
+> +	    (unsigned long)jump_entry_key(jeb))
+>  		return 1;
+
+I think you can ditch the unsigned long cast and directly compare
+pointers. That leads to much prettier code:
+
+	if (jump_entry_key(jea) < jump_entry_key(jeb))
+		return -1;
+
+etc..
+
