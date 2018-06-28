@@ -2,132 +2,143 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE67C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4EFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BCF20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BCF20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 1CE95216FA
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:40:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="szszYERX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE95216FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966085AbeF1Nig (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:38:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:49045 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753771AbeF1Nie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:38:34 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 4F94968B97; Thu, 28 Jun 2018 15:38:33 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 15:38:33 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ye Xiaolong <xiaolong.ye@intel.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [lkp-robot] [fs]  3deb642f0d:  will-it-scale.per_process_ops
-        -8.8% regression
-Message-ID: <20180628133833.GA11790@lst.de>
-References: <20180622082752.GX11011@yexl-desktop> <20180622150251.GA12802@lst.de> <20180626060338.GU12146@yexl-desktop> <20180627070745.GA9765@lst.de> <20180628003834.GH18756@yexl-desktop>
+        id S966189AbeF1Nkh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:40:37 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:25231 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965245AbeF1Nkf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:40:35 -0400
+Received: from mail-vk0-f42.google.com (mail-vk0-f42.google.com [209.85.213.42]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w5SDeEQR001705;
+        Thu, 28 Jun 2018 22:40:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5SDeEQR001705
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530193215;
+        bh=8qe21NudDhwnIm2BZIu/COYCTDIJMlNY6Fj/t4XEifk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=szszYERX3oF0pJappMJGMC3cNFAOKxlJiyVErpbSxpC8kTqY/miTlHUsjMFZ/eyKR
+         aQgP32fENEs1r8V/TNfUOuZHRjDD3famhiejoSQFQAHDNA8qlJyhi8scVfqYycxB9Y
+         5Q9QYuowUG+nJ6fQs5upIiD9z/BJ94rm0cU4den6J0aN+5dD68v0awA2ZaVOtMuanu
+         P8ZkyjFl09Gh/lV+oI7tY9Z67tcTgEvp7/48LpjWnp4EyLlcgdWWX8CxrVXzL968jS
+         L1M5Kw7S5xO5F0IZbFTfdi0gglhP7F08cg8L+LNdeZOqx2IL8N4GhReqwtSpsxl+Lp
+         E+zfrjDa60nMg==
+X-Nifty-SrcIP: [209.85.213.42]
+Received: by mail-vk0-f42.google.com with SMTP id l64-v6so3289459vkl.12;
+        Thu, 28 Jun 2018 06:40:14 -0700 (PDT)
+X-Gm-Message-State: APt69E2L6t5dJCI9ai9yaVNdKmgbEeMXS3ks4twSFp3X74ltuqHJM5bw
+        DZ6wUnTSMMB31KQULQ6Vt2zmHGSHbo5XHp4wyzM=
+X-Google-Smtp-Source: AAOMgpeBtz8Dp7S+JxqSVgR9Mn7AITmnoqACaONt+7JYiWMN9YVH6uR80VtPPGfkaf+0kK9AwV4J0jLS3aslqZo4q3M=
+X-Received: by 2002:a1f:d982:: with SMTP id q124-v6mr6320387vkg.166.1530193213755;
+ Thu, 28 Jun 2018 06:40:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180628003834.GH18756@yexl-desktop>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 06:39:33
+ -0700 (PDT)
+In-Reply-To: <201806240006.eCGYTuNX%fengguang.wu@intel.com>
+References: <1529762169-13488-1-git-send-email-yamada.masahiro@socionext.com> <201806240006.eCGYTuNX%fengguang.wu@intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 28 Jun 2018 22:39:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATEc6SO9ws9zS7zAnQThKf8q1bK1S3DdSGKfipDz8sAhA@mail.gmail.com>
+Message-ID: <CAK7LNATEc6SO9ws9zS7zAnQThKf8q1bK1S3DdSGKfipDz8sAhA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kbuild: use 'include' directive to load auto.conf
+ from top Makefile
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 08:38:34AM +0800, Ye Xiaolong wrote:
-> Update the result:
-> 
-> testcase/path_params/tbox_group/run: will-it-scale/poll2-performance/lkp-sb03
+2018-06-24 3:59 GMT+09:00 kbuild test robot <lkp@intel.com>:
+> Hi Masahiro,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on kbuild/for-next]
+> [also build test ERROR on v4.18-rc1 next-20180622]
+> [cannot apply to mmarek/for-next mmarek/rc-fixes]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/kbuild-use-include-directive-to-load-auto-conf-from-top-Makefile/20180623-220114
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
+> config: xtensa-nommu_kc705_defconfig (attached as .config)
+> compiler: xtensa-de212-elf-gcc (crosstool-NG crosstool-ng-1.23.0-307-g452ee331) 7.3.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.3.0 make.cross ARCH=xtensa
+>
+> All errors (new ones prefixed by >>):
+>
+>>> Makefile:592: include/config/auto.conf: No such file or directory
 
-So this looks like a huge improvement in the per process ops, but not
-as large as the original regression, and no change in the per-thread
-ops.
 
-But the baseline already looks much lower, e.g. this shows an improvement
-from 404611 to 424608 for the per-process ops, while the original showed
-a regression from 501456 to 457120.  Are we measuring on different
-hardware?   Did we gain new spectre mitigations elsewhere?  Either way
-I'm going to send these patches out for review, but I'd like to understand
-the numbers a bit more.
+I was able to reproduce this.
 
-> 
-> 894b8c000ae6c106  8fbedc19c94fd25a2b9b327015  
-> ----------------  --------------------------  
->          %stddev      change         %stddev
->              \          |                \  
->     404611 ±  4%         5%     424608        will-it-scale.per_process_ops
->       1489 ± 21%        28%       1899 ± 18%  will-it-scale.time.voluntary_context_switches
->   45828560                    46155690        will-it-scale.workload
->       2337                        2342        will-it-scale.time.system_time
->        806                         806        will-it-scale.time.percent_of_cpu_this_job_got
->        310                         310        will-it-scale.time.elapsed_time
->        310                         310        will-it-scale.time.elapsed_time.max
->       4096                        4096        will-it-scale.time.page_size
->     233917                      233862        will-it-scale.per_thread_ops
->      17196                       17179        will-it-scale.time.minor_page_faults
->       9901                        9862        will-it-scale.time.maximum_resident_set_size
->      14705 ±  3%                 14397 ±  4%  will-it-scale.time.involuntary_context_switches
->        167                         163        will-it-scale.time.user_time
->       0.66 ± 25%       -17%       0.54        will-it-scale.scalability
->     120508 ± 15%        -7%     112098 ±  5%  interrupts.CAL:Function_call_interrupts
->       1670 ±  3%        10%       1845 ±  3%  vmstat.system.cs
->      32707                       32635        vmstat.system.in
->        121                         122        turbostat.CorWatt
->        149                         150        turbostat.PkgWatt
->       1573                        1573        turbostat.Avg_MHz
->      17.54 ± 19%                 17.77 ± 19%  boot-time.kernel_boot
->        824 ± 12%                   834 ± 12%  boot-time.idle
->      27.45 ± 12%                 27.69 ± 12%  boot-time.boot
->      16.96 ± 21%                 16.93 ± 21%  boot-time.dhcp
->       1489 ± 21%        28%       1899 ± 18%  time.voluntary_context_switches
->       2337                        2342        time.system_time
->        806                         806        time.percent_of_cpu_this_job_got
->        310                         310        time.elapsed_time
->        310                         310        time.elapsed_time.max
->       4096                        4096        time.page_size
->      17196                       17179        time.minor_page_faults
->       9901                        9862        time.maximum_resident_set_size
->      14705 ±  3%                 14397 ±  4%  time.involuntary_context_switches
->        167                         163        time.user_time
->      18320               6%      19506 ±  8%  proc-vmstat.nr_slab_unreclaimable
->       1518 ±  7%                  1558 ± 10%  proc-vmstat.numa_hint_faults
->       1387 ±  8%                  1421 ±  9%  proc-vmstat.numa_hint_faults_local
->       1873 ±  5%                  1917 ±  8%  proc-vmstat.numa_pte_updates
->      19987                       20005        proc-vmstat.nr_anon_pages
->       8464                        8471        proc-vmstat.nr_kernel_stack
->     309815                      310062        proc-vmstat.nr_file_pages
->      50828                       50828        proc-vmstat.nr_free_cma
->   16065590                    16064831        proc-vmstat.nr_free_pages
->    3194669                     3194517        proc-vmstat.nr_dirty_threshold
->    1595384                     1595308        proc-vmstat.nr_dirty_background_threshold
->     798886                      797937        proc-vmstat.pgfault
->       6510                        6499        proc-vmstat.nr_mapped
->     659089                      657491        proc-vmstat.numa_local
->     665458                      663786        proc-vmstat.numa_hit
->       1037                        1033        proc-vmstat.nr_page_table_pages
->     669923                      665906        proc-vmstat.pgfree
->     676982                      672385        proc-vmstat.pgalloc_normal
->       6368                        6294        proc-vmstat.numa_other
->      13013              -7%      12152 ± 11%  proc-vmstat.nr_slab_reclaimable
->   51213164 ± 18%        23%   63014695 ± 25%  perf-stat.node-loads
->   22096136 ± 28%        20%   26619357 ± 35%  perf-stat.node-load-misses
->  2.079e+08 ±  9%        12%  2.323e+08 ± 11%  perf-stat.cache-misses
->     515039 ±  3%        10%     568299 ±  3%  perf-stat.context-switches
->  3.283e+08 ± 22%        10%  3.622e+08 ±  5%  perf-stat.iTLB-loads
-> 
-> Thanks,
-> Xiaolong
----end quoted text---
+
+This depends on the version of GNU Make.
+
+The warning is displayed if you use GNU Make 4.1 or older.
+No more annoying warning is displayed for GNU Make 4.2 or later.
+
+Probably, this commit in GNU Make:
+
+commit 87a5f98d248fe63fe6e3e53ee3e1b1b1fa5e49dc
+Author: Paul Smith <psmith@gnu.org>
+Date:   Sat Apr 9 19:49:27 2016 -0400
+
+    [SV 102] Don't show unnecessary include file errors.
+
+
+However, 4.2 is quite new.  I will do something with it.
+
+
+Thanks.
+
+
+
+
+
+
+>    drivers/staging/mt7621-dts/Kconfig:4:warning: 'BUILTIN_DTB' has wrong type. 'select' only accept arguments of bool and tristate type
+>    <stdin>:1332:2: warning: #warning syscall io_pgetevents not implemented [-Wcpp]
+>    <stdin>:1335:2: warning: #warning syscall rseq not implemented [-Wcpp]
+>
+> vim +592 Makefile
+>
+>    590
+>    591  ifeq ($(dot-config),1)
+>  > 592  include include/config/auto.conf
+>    593  endif
+>    594
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
