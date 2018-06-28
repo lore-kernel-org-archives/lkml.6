@@ -2,74 +2,93 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E997C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F4BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D3BB26C94
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D3BB26C94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B1C920C01
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1C920C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965391AbeF1Kxv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:53:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54156 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964908AbeF1Kxu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:53:50 -0400
-Received: from localhost (unknown [104.153.224.166])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51A0FC7F;
-        Thu, 28 Jun 2018 10:53:45 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 19:24:17 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     hadess@hadess.net, hdegoede@redhat.com, Larry.Finger@lwfinger.net,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: staging: rtl8723bs: bug or pointless if else ?
-Message-ID: <20180628102417.GA30782@kroah.com>
-References: <473d9997-8c30-a3f3-85b6-076decc7a7c2@gmail.com>
+        id S965403AbeF1K6h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 06:58:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:45156 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964908AbeF1K6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 06:58:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B17F280D;
+        Thu, 28 Jun 2018 03:58:35 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C42743F266;
+        Thu, 28 Jun 2018 03:58:34 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 11:58:29 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com
+Subject: Re: [PATCHv2 07/11] atomics: add common header generation files
+Message-ID: <20180628105829.ywuywj2f6yuqstj2@lakrids.cambridge.arm.com>
+References: <20180625105952.3756-1-mark.rutland@arm.com>
+ <20180625105952.3756-8-mark.rutland@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <473d9997-8c30-a3f3-85b6-076decc7a7c2@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180625105952.3756-8-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 09:43:47AM +0200, Michael Straube wrote:
-> Hi,
-> 
-> I stumbled upon the following if else construct in
-> drivers/staging/rtl8723bs/os_dep/sdio_intf.c:618
-> 
->         if (pwrpriv->bInternalAutoSuspend)
->         {
->                 ret = rtw_resume_process(padapter);
->         }
->         else
->         {
->                 if (pwrpriv->wowlan_mode || pwrpriv->wowlan_ap_mode)
->                 {
->                         ret = rtw_resume_process(padapter);
->                 }
->                 else
->                 {
->                         ret = rtw_resume_process(padapter);
->                 }
->         }
-> 
-> It does not matter if the conditions are true or not,
-> ret is always set to:
-> 
-> ret = rtw_resume_process(padapter)
-> 
-> Is this a bug or is the if else construct just pointless?
+On Mon, Jun 25, 2018 at 11:59:48AM +0100, Mark Rutland wrote:
+> diff --git a/scripts/atomic/gen-atomic-long.sh b/scripts/atomic/gen-atomic-long.sh
 
-Looks pretty pointless...
+> +cat << EOF
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Generated by $0
+> +// DO NOT MODIFY THIS FILE DIRECTLY
+> +
+> +#ifndef _ASM_GENERIC_ATOMIC_LONG_H
+> +#define _ASM_GENERIC_ATOMIC_LONG_H
+> +
+> +#include <asm/types.h>
+> +
+> +#ifdef CONFIG_64BIT
+> +typedef atomic64_t atomic_long_t;
+> +#define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
+> +#define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
+> +#else
+> +typedef atomic_t atomic_long_t;
+> +#define ATOMIC_LONG_INIT(i)		ATOMIC_INIT(i)
+> +#define atomic_long_cond_read_acquire	atomic_cond_read_acquire
+> +#endif
+
+I forgot to add atomic_long_cond_read_relaxed() here, so I've added that
+locally.
+
+i.e. I now have:
+
+#ifdef CONFIG_64BIT
+typedef atomic64_t atomic_long_t;
+#define ATOMIC_LONG_INIT(i)		ATOMIC64_INIT(i)
+#define atomic_long_cond_read_acquire	atomic64_cond_read_acquire
+#define atomic_long_cond_read_relaxed	atomic64_cond_read_relaxed
+#else
+typedef atomic_t atomic_long_t;
+#define ATOMIC_LONG_INIT(i)		ATOMIC_INIT(i)
+#define atomic_long_cond_read_acquire	atomic_cond_read_acquire
+#define atomic_long_cond_read_relaxed	atomic_cond_read_relaxed
+#endif
+
+... with <asm-generic/atomic-long.h> regenerated appropriately.
+
+Peter, I assume that your ack holds with that change.
+
+Thanks,
+Mark.
