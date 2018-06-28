@@ -3,90 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F433C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AEFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175C624AD3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:42:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175C624AD3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 9528524FB6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:43:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9528524FB6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753217AbeF1Cm0 (ORCPT
+        id S1753237AbeF1CnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 22:42:26 -0400
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:44716 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752618AbeF1CmY (ORCPT
+        Wed, 27 Jun 2018 22:43:07 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8598 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752039AbeF1CnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 22:42:24 -0400
-Received: by mail-ed1-f46.google.com with SMTP id c17-v6so4216980eds.11;
-        Wed, 27 Jun 2018 19:42:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5M3CW5Agr2iSI9g0CIwyB4dKIIWKiOehtPh3q+Ekh+4=;
-        b=dumg7THpJWw9VJ/KjVveyqP6jxaBdrAqvkbZ1AUH49IL/KQIpQt+s0XAJ66fMFrz5O
-         6bF+Pu4OhpWsUq8590Psv4zNAw7HDlwgrc5vC0/jk2hI+w/DHWwmhmAemftWtO23qCDW
-         weiO+BXJuoR6NpU+CRcgJ5YbpifMVqI+wzhCsybVUxvKIO+oHiFSTQyvQVM/nlDWMCKy
-         xrK0jTAkh6CTkwRJCAet4kBW8vRq+F9vGGENGpj7LNyNmGX1+Q9s47DDdKjZulM33OGu
-         GdjS292NQuirIwiq49jgqtS9a+1RR65UVjZNgEefWVDuRlrPsOh8eAYrT4yxx2oSIsLz
-         TCrw==
-X-Gm-Message-State: APt69E1WSo9fz1iKxrOQqBq0ksXnR7AlgzTI9gs3pHPnsar4RhVIHDQJ
-        zbU7rbkIVvePg10p4AXxreLReWIZ
-X-Google-Smtp-Source: AAOMgpewRKlI5G06EYG5P0Ecpip2MZIhiQKO6Kp2etOW5TGZX1R38OySRVnUqCbZMYLayDaHaL1LCw==
-X-Received: by 2002:a50:eb81:: with SMTP id y1-v6mr7530487edr.38.1530153743126;
-        Wed, 27 Jun 2018 19:42:23 -0700 (PDT)
-Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com. [74.125.82.44])
-        by smtp.gmail.com with ESMTPSA id s21-v6sm2524045edr.62.2018.06.27.19.42.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 19:42:22 -0700 (PDT)
-Received: by mail-wm0-f44.google.com with SMTP id 69-v6so7306655wmf.3;
-        Wed, 27 Jun 2018 19:42:21 -0700 (PDT)
-X-Received: by 2002:a1c:850c:: with SMTP id h12-v6mr6482299wmd.116.1530153741759;
- Wed, 27 Jun 2018 19:42:21 -0700 (PDT)
+        Wed, 27 Jun 2018 22:43:05 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b344b380000>; Wed, 27 Jun 2018 19:43:04 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 27 Jun 2018 19:43:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 27 Jun 2018 19:43:06 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 28 Jun
+ 2018 02:43:04 +0000
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+To:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+References: <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
+ <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <20180626134757.GY28965@dhcp22.suse.cz>
+ <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+Date:   Wed, 27 Jun 2018 19:42:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 19:42:01
- -0700 (PDT)
-In-Reply-To: <20180625120304.7543-23-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-23-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 28 Jun 2018 10:42:01 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67DHtUDyPXKykz1LxehGZRJ2PzPC=1G7iW0hoMzD+6Juw@mail.gmail.com>
-Message-ID: <CAGb2v67DHtUDyPXKykz1LxehGZRJ2PzPC=1G7iW0hoMzD+6Juw@mail.gmail.com>
-Subject: Re: [PATCH v3 22/24] drm/sun4i: DW HDMI: Expand algorithm for
- possible crtcs
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> drm_of_find_possible_crtcs() doesn't work when DW HDMI encoder is
-> connected to TCON (crtc) through mux in TCON TOP.
->
-> In that case TCON TOP HDMI mux input port has to be manually traversed
-> and checked if it matches any known crtc.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 06/27/2018 10:02 AM, Jan Kara wrote:
+> On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
+>> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
+>>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+>>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+>>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+>>>> [...]
+>>>>>> Appart from that, do we really care about 32b here? Big DIO, IB users
+>>>>>> seem to be 64b only AFAIU.
+>>>>>
+>>>>> IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
+>>>>> kernel even for uncommon platforms...
+>>>>
+>>>> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
+>>>> wanted to say that we can stay with a simple solution for 32b. I thought
+>>>> the g-u-p-longterm has plugged the most obvious breakage already. But
+>>>> maybe I just misunderstood.
+>>>
+>>> Most yes, but if you try hard enough, you can still trigger the oops e.g.
+>>> with appropriately set up direct IO when racing with writeback / reclaim.
+>>
+>> gup longterm is only different from normal gup if you have DAX and few
+>> people do, which really means it doesn't help at all.. AFAIK??
+> 
+> Right, what I wrote works only for DAX. For non-DAX situation g-u-p
+> longterm does not currently help at all. Sorry for confusion.
+> 
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+OK, I've got an early version of this up and running, reusing the page->lru
+fields. I'll clean it up and do some heavier testing, and post as a PATCH v2.
+
+One question though: I'm still vague on the best actions to take in the following
+functions:
+
+    page_mkclean_one
+    try_to_unmap_one
+
+At the moment, they are both just doing an evil little early-out:
+
+	if (PageDmaPinned(page))
+		return false;
+
+...but we talked about maybe waiting for the condition to clear, instead? Thoughts?
+
+And if so, does it sound reasonable to refactor wait_on_page_bit_common(),
+so that it learns how to wait for a bit that, while inside struct page, is
+not within page->flags?
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
