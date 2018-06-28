@@ -2,459 +2,165 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD7CC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B759FC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF602483E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:59:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF602483E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 590792483E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:02:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EnLfJr6M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590792483E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934048AbeF1I7Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:59:24 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44065 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933195AbeF1I6p (ORCPT
+        id S1753172AbeF1JCj (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:02:39 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:37015 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeF1JCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:58:45 -0400
-Received: by mail-ed1-f66.google.com with SMTP id c17-v6so4693697eds.11
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 01:58:44 -0700 (PDT)
+        Thu, 28 Jun 2018 05:02:37 -0400
+Received: by mail-it0-f66.google.com with SMTP id p17-v6so6501897itc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=N837V8s17hZoWhQ1OUVPVoWNbJUo+w9UaZNebt1VuYE=;
+        b=EnLfJr6MB/cj0pGt8CJcZE+rs+SNsPZwSH3VKHj1G8xWFlS+3DR5pijdmUBvR5QAFJ
+         JI77oP0mXoDzPYHNmhHUrDYNahnjiKCq+mBNbHLp7QlXni6jSJNp49kVmiPLJZUmt0/c
+         OQE4cJ/1tKI+MM2NyJdonRJDxhidkHgLFXMpw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OsHjv733GAF4s3sEVgky2ubHWFk66tpaZ0yKjMgkmrc=;
-        b=dDokEeAZtbtlgi52ZrUmAg1XEd+lBmjmJP1QB9NzLrT4WBrxbYYlWlvELkA8PcJqDq
-         6XpontPdaaFfvS7lN1i7ZiBnOdvwt1BJv4fowNbovMRPWBEB/pcLtrtyw+u6m6awzKY+
-         /iaFLudpC4haJ+aO7/RZmAzApLHUECKBvmBcl+mjRvYZKL1zKFNMYXfL7lTA2GTzLhtT
-         yBJn+GYtskZxLm1x/hGPMOJGCsQ6qGvLFJPt1mWWR1Uo7Zub52jL8ci2YBkSEyyk767u
-         EbgesbgFc9pdEC7jqs/UA5NG40+NAFLbbQaCYbtXDbgjrW1EEXC38oNb+J69IZr6vgwb
-         F82w==
-X-Gm-Message-State: APt69E1A7E9whhI/bZwMAQ0MhMdqCIjDcjNV06SzSEnjeyXoliniRz2v
-        EWOQ4gGF6WTozdhMOfabr5sbn79HgaE=
-X-Google-Smtp-Source: AAOMgpdNMh8quwfg7SdOuDCV1OolGP7Wj0xh//aLbIm7aSlTeV0Xw/Vr656UnsjlIUCTaonHfjNkoA==
-X-Received: by 2002:a50:d9c7:: with SMTP id x7-v6mr8567337edj.95.1530176324024;
-        Thu, 28 Jun 2018 01:58:44 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id l61-v6sm465708edl.96.2018.06.28.01.58.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 01:58:43 -0700 (PDT)
-Subject: Re: [PATCH v3 3/3] console/fbcon: Add support for deferred console
- takeover
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180626183612.321-1-hdegoede@redhat.com>
- <20180626183612.321-4-hdegoede@redhat.com>
- <20180628075500.GP13978@phenom.ffwll.local>
- <4365b09a-639b-2217-a49e-30f9119e4f96@redhat.com>
- <CAKMK7uE3isnwSZYDT73tsZoYZMV8LUn+OjCSLbY6MtkOrbnG8A@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <4498d646-337e-df0e-90bf-2caa17fd77b5@redhat.com>
-Date:   Thu, 28 Jun 2018 10:58:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=N837V8s17hZoWhQ1OUVPVoWNbJUo+w9UaZNebt1VuYE=;
+        b=Ys569/RBl2XGhhbt5O6Yv4UihOLmDxLx0VS3kimcCWikcdW2TMlQ+7lLuHfzKmU7AO
+         77klrYISC8VyxId0vhdItnCm2BgAlZxF4F8kzP7/Iys84+JUX+/duMx7/asVzwGMMI/K
+         wNgfWdTwmuHwhGbGPiXVGoam9vebbKySD+MbjK5C4K2B/McG2YrjXf8SVKgIatXGtabT
+         YaPAaKQQ7MehLHYvTOuDQlN9lWa2uN0UaslCMcV/uSFyWMc9BPSj9+njgBtI11PEcZuX
+         slG+muuuGtBmFLsqRHT0P86dvY779zN+abv5CUELZoWO+Ws8vlKWwZwcaHyb9LRRQF92
+         pJ7g==
+X-Gm-Message-State: APt69E0Ih7twW2Q1kV4cum0kYZLLgQFggn1TBkR4o3pgRi/UpDumr7NG
+        FKOV8nHMvVxxhqydNgB6PtyMPtWxe8tiQ65GPsaIkg==
+X-Google-Smtp-Source: ADUXVKJiIfE8YVSzTuE2ygKVguP6PQ8l8HBNqC4V4gBWHFmqO5RwhtDYN7rSgkd0AEVQ6PWku1v42gax/Y64R8RSd5k=
+X-Received: by 2002:a24:6196:: with SMTP id s144-v6mr7740673itc.68.1530176556683;
+ Thu, 28 Jun 2018 02:02:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKMK7uE3isnwSZYDT73tsZoYZMV8LUn+OjCSLbY6MtkOrbnG8A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 02:02:36
+ -0700 (PDT)
+In-Reply-To: <20180628085003.GA2494@hirez.programming.kicks-ass.net>
+References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
+ <20180627160604.8154-3-ard.biesheuvel@linaro.org> <20180628085003.GA2494@hirez.programming.kicks-ass.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 28 Jun 2018 11:02:36 +0200
+Message-ID: <CAKv+Gu87DmGLG7N8X8+V7LppXm72SJUmCcEpaehCE5Rt0Z4FNw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] kernel/jump_label: implement generic support for
+ relative references
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 28-06-18 10:37, Daniel Vetter wrote:
-> On Thu, Jun 28, 2018 at 10:20 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->> Hi,
+On 28 June 2018 at 10:50, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, Jun 27, 2018 at 06:06:01PM +0200, Ard Biesheuvel wrote:
+>> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+>> index 86ec0652d3b1..aa203dffe72c 100644
+>> --- a/include/linux/jump_label.h
+>> +++ b/include/linux/jump_label.h
+>> @@ -121,6 +121,32 @@ struct static_key {
+>>  #include <asm/jump_label.h>
 >>
->> On 28-06-18 09:55, Daniel Vetter wrote:
->>>
->>> On Tue, Jun 26, 2018 at 08:36:12PM +0200, Hans de Goede wrote:
->>>>
->>>> Currently fbcon claims fbdevs as soon as they are registered and takes
->>>> over
->>>> the console as soon as the first fbdev gets registered.
->>>>
->>>> This behavior is undesirable in cases where a smooth graphical bootup is
->>>> desired, in such cases we typically want the contents of the framebuffer
->>>> (typically a vendor logo) to stay in place as is.
->>>>
->>>> The current solution for this problem (on embedded systems) is to not
->>>> enable fbcon.
->>>>
->>>> This commit adds a new FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER config
->>>> option,
->>>> which when enabled defers fbcon taking over the console from the dummy
->>>> console until the first text is displayed on the console. Together with
->>>> the
->>>> "quiet" kernel commandline option, this allows fbcon to still be used
->>>> together with a smooth graphical bootup, having it take over the console
->>>> as
->>>> soon as e.g. an error message is logged.
->>>>
->>>> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>>
->>>
->>> A bit a late comment, and feel free to reject: Have you considered
->>> registering the fbcon driver, but not doing any modesets until the very
->>> first real message shows up?
+>>  #ifndef __ASSEMBLY__
+>> +#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
+>> +
+>> +struct jump_entry {
+>> +     int code;
+>> +     int target;
+>> +     int key;
+>> +};
+>
+> I much prefer you use 'u32' there.
+>
+
+Actually, they are signed so that would be s32. But yeah, I can change that.
+
+>
+>> +static void jump_label_swap(void *a, void *b, int size)
+>> +{
+>> +     long delta = (unsigned long)a - (unsigned long)b;
+>> +     struct jump_entry *jea = a;
+>> +     struct jump_entry *jeb = b;
+>> +     struct jump_entry tmp = *jea;
+>> +
+>> +     jea->code       = jeb->code - delta;
+>> +     jea->target     = jeb->target - delta;
+>> +     jea->key        = jeb->key - delta;
+>> +
+>> +     jeb->code       = tmp.code + delta;
+>> +     jeb->target     = tmp.target + delta;
+>> +     jeb->key        = tmp.key + delta;
+>> +}
+>> +
+>>  static void
+>>  jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
+>>  {
+>> @@ -56,7 +72,9 @@ jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
 >>
->>
->> I have tried something like that, but it did not work out, this patch-set
->> actually is my 3th attempt at this (the other 2 were never posted
->> because they did not work).
->>
->> The fbcon code is woven quite tightly into the console code, so this was
->> the only clean way I could find to achieve what I want.
-> 
-> I assumed/feared as much. Would be good to cover that in the commit
-> message, to justify your approach better.
+>>       size = (((unsigned long)stop - (unsigned long)start)
+>>                                       / sizeof(struct jump_entry));
+>> -     sort(start, size, sizeof(struct jump_entry), jump_label_cmp, NULL);
+>> +     sort(start, size, sizeof(struct jump_entry), jump_label_cmp,
+>> +          IS_ENABLED(CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE) ? jump_label_swap
+>> +                                                           : NULL);
+>>  }
+>
+> That will result in jump_label_swap being an unused symbol for some
+> compile options.
+>
 
-Ok, v5 with an updated commit message (and without any code changes)
-coming up.
+No, and isn't that the point of IS_ENABLED()? The compiler sees a
+reference to jump_label_swap(), so it won't complain about it being
+unused.
 
-Regards,
+> Would it not be much nicer to write that like:
+>
+> static void jump_label_swap(void *a, void *b, int size)
+> {
+>         struct jump_entry *jea = a, *jeb = b;
+>
+> #ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
+>         long delta = a - b;
+>
+>         jea->code += delta;
+>         jea->target += delta;
+>         jea->key += delta;
+>
+>         jeb->code -= delta;
+>         jeb->target -= delta;
+>         jeb->key -= delta;
+> #else
+>
+>         swap(*jea, *jeb);
+> }
+>
+> And then unconditionally use jump_label_swap().
 
-Hans
-
-
-
->>>> ---
->>>> Changes in v2:
->>>> -Check the whole string when checking for erases in putcs, instead of
->>>> just
->>>>    the first char
->>>> -Make dummycon_blank return 1, so that a redraw gets triggered and any
->>>> text
->>>>    rendered while blanked gets output so that it can trigger a deferred
->>>>    takeover if one is pending
->>>>
->>>> Changes in v3:
->>>> -Call WARN_CONSOLE_UNLOCKED() from fbcon_output_notifier()
->>>> -Unregister the notifier on fbcon_exit()
->>>> -Document the fbcon=nodefer commandline option in
->>>> Documentation/fb/fbcon.txt
->>>> ---
->>>>    Documentation/fb/fbcon.txt       |  7 ++++
->>>>    drivers/video/console/Kconfig    | 11 +++++
->>>>    drivers/video/console/dummycon.c | 67 +++++++++++++++++++++++++----
->>>>    drivers/video/fbdev/core/fbcon.c | 72 ++++++++++++++++++++++++++++++++
->>>>    include/linux/console.h          |  5 +++
->>>>    5 files changed, 154 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/Documentation/fb/fbcon.txt b/Documentation/fb/fbcon.txt
->>>> index 79c22d096bbc..d4d642e1ce9c 100644
->>>> --- a/Documentation/fb/fbcon.txt
->>>> +++ b/Documentation/fb/fbcon.txt
->>>> @@ -155,6 +155,13 @@ C. Boot options
->>>>          used by text. By default, this area will be black. The 'color'
->>>> value
->>>>          is an integer number that depends on the framebuffer driver being
->>>> used.
->>>>    +6. fbcon=nodefer
->>>> +
->>>> +       If the kernel is compiled with deferred fbcon takeover support,
->>>> normally
->>>> +       the framebuffer contents, left in place by the
->>>> firmware/bootloader, will
->>>> +       be preserved until there actually is some text is output to the
->>>> console.
->>>> +       This option causes fbcon to bind immediately to the fbdev device.
->>>> +
->>>>    C. Attaching, Detaching and Unloading
->>>>      Before going on how to attach, detach and unload the framebuffer
->>>> console, an
->>>> diff --git a/drivers/video/console/Kconfig
->>>> b/drivers/video/console/Kconfig
->>>> index 4110ba7d7ca9..e91edef98633 100644
->>>> --- a/drivers/video/console/Kconfig
->>>> +++ b/drivers/video/console/Kconfig
->>>> @@ -150,6 +150,17 @@ config FRAMEBUFFER_CONSOLE_ROTATION
->>>>             such that other users of the framebuffer will remain normally
->>>>             oriented.
->>>>    +config FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +       bool "Framebuffer Console Deferred Takeover"
->>>> +       depends on FRAMEBUFFER_CONSOLE=y && DUMMY_CONSOLE=y
->>>> +       help
->>>> +         If enabled this defers the framebuffer console taking over the
->>>> +         console from the dummy console until the first text is
->>>> displayed on
->>>> +         the console. This is useful in combination with the "quiet"
->>>> kernel
->>>> +         commandline option to keep the framebuffer contents initially
->>>> put up
->>>> +         by the firmware in place, rather then replacing the contents
->>>> with a
->>>> +         black screen as soon as fbcon loads.
->>>> +
->>>>    config STI_CONSOLE
->>>>            bool "STI text console"
->>>>          depends on PARISC && HAS_IOMEM
->>>> diff --git a/drivers/video/console/dummycon.c
->>>> b/drivers/video/console/dummycon.c
->>>> index f2eafe2ed980..45ad925ad5f8 100644
->>>> --- a/drivers/video/console/dummycon.c
->>>> +++ b/drivers/video/console/dummycon.c
->>>> @@ -26,6 +26,65 @@
->>>>    #define DUMMY_ROWS    CONFIG_DUMMY_CONSOLE_ROWS
->>>>    #endif
->>>>    +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +/* These are both protected by the console_lock */
->>>> +static RAW_NOTIFIER_HEAD(dummycon_output_nh);
->>>> +static bool dummycon_putc_called;
->>>> +
->>>> +void dummycon_register_output_notifier(struct notifier_block *nb)
->>>> +{
->>>> +       raw_notifier_chain_register(&dummycon_output_nh, nb);
->>>> +
->>>> +       if (dummycon_putc_called)
->>>> +               nb->notifier_call(nb, 0, NULL);
->>>> +}
->>>> +
->>>> +void dummycon_unregister_output_notifier(struct notifier_block *nb)
->>>> +{
->>>> +       raw_notifier_chain_unregister(&dummycon_output_nh, nb);
->>>> +}
->>>> +
->>>> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
->>>> +{
->>>> +       dummycon_putc_called = true;
->>>> +       raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
->>>> +}
->>>> +
->>>> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
->>>> +                          int count, int ypos, int xpos)
->>>> +{
->>>> +       int i;
->>>> +
->>>> +       if (!dummycon_putc_called) {
->>>> +               /* Ignore erases */
->>>> +               for (i = 0 ; i < count; i++) {
->>>> +                       if (s[i] != vc->vc_video_erase_char)
->>>> +                               break;
->>>> +               }
->>>> +               if (i == count)
->>>> +                       return;
->>>> +
->>>> +               dummycon_putc_called = true;
->>>> +       }
->>>> +
->>>> +       raw_notifier_call_chain(&dummycon_output_nh, 0, NULL);
->>>> +}
->>>> +
->>>> +static int dummycon_blank(struct vc_data *vc, int blank, int
->>>> mode_switch)
->>>> +{
->>>> +       /* Redraw, so that we get putc(s) for output done while blanked
->>>> */
->>>> +       return 1;
->>>> +}
->>>> +#else
->>>> +static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
->>>> { }
->>>> +static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
->>>> +                          int count, int ypos, int xpos) { }
->>>> +static int dummycon_blank(struct vc_data *vc, int blank, int
->>>> mode_switch)
->>>> +{
->>>> +       return 0;
->>>> +}
->>>> +#endif
->>>> +
->>>>    static const char *dummycon_startup(void)
->>>>    {
->>>>        return "dummy device";
->>>> @@ -44,9 +103,6 @@ static void dummycon_init(struct vc_data *vc, int
->>>> init)
->>>>    static void dummycon_deinit(struct vc_data *vc) { }
->>>>    static void dummycon_clear(struct vc_data *vc, int sy, int sx, int
->>>> height,
->>>>                             int width) { }
->>>> -static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
->>>> { }
->>>> -static void dummycon_putcs(struct vc_data *vc, const unsigned short *s,
->>>> -                          int count, int ypos, int xpos) { }
->>>>    static void dummycon_cursor(struct vc_data *vc, int mode) { }
->>>>      static bool dummycon_scroll(struct vc_data *vc, unsigned int top,
->>>> @@ -61,11 +117,6 @@ static int dummycon_switch(struct vc_data *vc)
->>>>          return 0;
->>>>    }
->>>>    -static int dummycon_blank(struct vc_data *vc, int blank, int
->>>> mode_switch)
->>>> -{
->>>> -       return 0;
->>>> -}
->>>> -
->>>>    static int dummycon_font_set(struct vc_data *vc, struct console_font
->>>> *font,
->>>>                               unsigned int flags)
->>>>    {
->>>> diff --git a/drivers/video/fbdev/core/fbcon.c
->>>> b/drivers/video/fbdev/core/fbcon.c
->>>> index cd8d52a967aa..5fb156bdcf4e 100644
->>>> --- a/drivers/video/fbdev/core/fbcon.c
->>>> +++ b/drivers/video/fbdev/core/fbcon.c
->>>> @@ -129,6 +129,12 @@ static inline void fbcon_map_override(void)
->>>>    }
->>>>    #endif /* CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY */
->>>>    +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +static bool deferred_takeover = true;
->>>> +#else
->>>> +#define deferred_takeover false
->>>> +#endif
->>>> +
->>>>    /* font data */
->>>>    static char fontname[40];
->>>>    @@ -499,6 +505,12 @@ static int __init fb_console_setup(char *this_opt)
->>>>                                  margin_color = simple_strtoul(options,
->>>> &options, 0);
->>>>                          continue;
->>>>                  }
->>>> +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +               if (!strcmp(options, "nodefer")) {
->>>> +                       deferred_takeover = false;
->>>> +                       continue;
->>>> +               }
->>>> +#endif
->>>>          }
->>>>          return 1;
->>>>    }
->>>> @@ -3100,6 +3112,9 @@ static int fbcon_fb_unregistered(struct fb_info
->>>> *info)
->>>>          WARN_CONSOLE_UNLOCKED();
->>>>    +     if (deferred_takeover)
->>>> +               return 0;
->>>> +
->>>>          idx = info->node;
->>>>          for (i = first_fb_vc; i <= last_fb_vc; i++) {
->>>>                  if (con2fb_map[i] == idx)
->>>> @@ -3140,6 +3155,13 @@ static void fbcon_remap_all(int idx)
->>>>          WARN_CONSOLE_UNLOCKED();
->>>>    +     if (deferred_takeover) {
->>>> +               for (i = first_fb_vc; i <= last_fb_vc; i++)
->>>> +                       con2fb_map_boot[i] = idx;
->>>> +               fbcon_map_override();
->>>> +               return;
->>>> +       }
->>>> +
->>>>          for (i = first_fb_vc; i <= last_fb_vc; i++)
->>>>                  set_con2fb_map(i, idx, 0);
->>>>    @@ -3191,6 +3213,11 @@ static int fbcon_fb_registered(struct fb_info
->>>> *info)
->>>>          idx = info->node;
->>>>          fbcon_select_primary(info);
->>>>    +     if (deferred_takeover) {
->>>> +               pr_info("fbcon: Deferring console take-over\n");
->>>> +               return 0;
->>>> +       }
->>>> +
->>>>          if (info_idx == -1) {
->>>>                  for (i = first_fb_vc; i <= last_fb_vc; i++) {
->>>>                          if (con2fb_map_boot[i] == idx) {
->>>> @@ -3566,8 +3593,46 @@ static int fbcon_init_device(void)
->>>>          return 0;
->>>>    }
->>>>    +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +static struct notifier_block fbcon_output_nb;
->>>> +
->>>> +static int fbcon_output_notifier(struct notifier_block *nb,
->>>> +                                unsigned long action, void *data)
->>>> +{
->>>> +       int i;
->>>> +
->>>> +       WARN_CONSOLE_UNLOCKED();
->>>> +
->>>> +       pr_info("fbcon: Taking over console\n");
->>>> +
->>>> +       dummycon_unregister_output_notifier(&fbcon_output_nb);
->>>> +       deferred_takeover = false;
->>>> +       logo_shown = FBCON_LOGO_DONTSHOW;
->>>> +
->>>> +       for (i = 0; i < FB_MAX; i++) {
->>>> +               if (registered_fb[i])
->>>> +                       fbcon_fb_registered(registered_fb[i]);
->>>> +       }
->>>> +
->>>> +       return NOTIFY_OK;
->>>> +}
->>>> +
->>>> +static void fbcon_register_output_notifier(void)
->>>> +{
->>>> +       fbcon_output_nb.notifier_call = fbcon_output_notifier;
->>>> +       dummycon_register_output_notifier(&fbcon_output_nb);
->>>> +}
->>>> +#else
->>>> +static inline void fbcon_register_output_notifier(void) {}
->>>> +#endif
->>>> +
->>>>    static void fbcon_start(void)
->>>>    {
->>>> +       if (deferred_takeover) {
->>>> +               fbcon_register_output_notifier();
->>>> +               return;
->>>> +       }
->>>> +
->>>>          if (num_registered_fb) {
->>>>                  int i;
->>>>    @@ -3594,6 +3659,13 @@ static void fbcon_exit(void)
->>>>          if (fbcon_has_exited)
->>>>                  return;
->>>>    +#ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
->>>> +       if (deferred_takeover) {
->>>> +               dummycon_unregister_output_notifier(&fbcon_output_nb);
->>>> +               deferred_takeover = false;
->>>> +       }
->>>> +#endif
->>>> +
->>>>          kfree((void *)softback_buf);
->>>>          softback_buf = 0UL;
->>>>    diff --git a/include/linux/console.h b/include/linux/console.h
->>>> index dfd6b0e97855..f59f3dbca65c 100644
->>>> --- a/include/linux/console.h
->>>> +++ b/include/linux/console.h
->>>> @@ -21,6 +21,7 @@ struct console_font_op;
->>>>    struct console_font;
->>>>    struct module;
->>>>    struct tty_struct;
->>>> +struct notifier_block;
->>>>      /*
->>>>     * this is what the terminal answers to a ESC-Z or csi0c query.
->>>> @@ -220,4 +221,8 @@ static inline bool vgacon_text_force(void) { return
->>>> false; }
->>>>      extern void console_init(void);
->>>>    +/* For deferred console takeover */
->>>> +void dummycon_register_output_notifier(struct notifier_block *nb);
->>>> +void dummycon_unregister_output_notifier(struct notifier_block *nb);
->>>> +
->>>>    #endif /* _LINUX_CONSOLE_H */
->>>> --
->>>> 2.17.1
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
->>>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
-> 
+Meh. I thought IS_ENABLED() was preferred over #ifdef, no? That way,
+the compiler always sees the code, and simply discards it without
+complaining if it ends up left unused.
