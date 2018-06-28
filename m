@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E2AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E8AC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EAB42450C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:24:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAB42450C
+	by mail.kernel.org (Postfix) with ESMTP id 4608224A1B
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:24:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4608224A1B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967038AbeF1PY2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:24:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53323 "EHLO mail.bootlin.com"
+        id S967219AbeF1PYo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:24:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53311 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964991AbeF1PUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:20:04 -0400
+        id S964963AbeF1PUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:20:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2762920A32; Thu, 28 Jun 2018 17:20:02 +0200 (CEST)
+        id AFB45208B3; Thu, 28 Jun 2018 17:20:01 +0200 (CEST)
 Received: from localhost (nat.foo.tf [163.172.35.26])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E7E30203EC;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 85894203EC;
         Thu, 28 Jun 2018 17:20:01 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
@@ -35,9 +35,9 @@ Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
         igall@marvell.com
-Subject: [PATCH 04/14] crypto: inside-secure - filter out the algorithms by engine
-Date:   Thu, 28 Jun 2018 17:15:34 +0200
-Message-Id: <20180628151544.22134-5-antoine.tenart@bootlin.com>
+Subject: [PATCH 03/14] Documentation/bindings: crypto: inside-secure: update the compatibles
+Date:   Thu, 28 Jun 2018 17:15:33 +0200
+Message-Id: <20180628151544.22134-4-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628151544.22134-1-antoine.tenart@bootlin.com>
 References: <20180628151544.22134-1-antoine.tenart@bootlin.com>
@@ -46,221 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EIP engines do not support the same set of algorithms. So far the
-supported engines in the Inside Secure SafeXcel driver support the same
-set of algorithms, but that won't be true for all engines. This patch
-adds an 'engines' field in the algorithm definitions so that they only
-are registered when using a compatible cryptographic engine.
+The compatibles were updated in the Inside Secure SafeXcel cryptographic
+driver, as the ones previously used were not specific enough. The old
+compatibles are still supported by the driver for backward
+compatibility.
+
+This patch updates the documentation accordingly.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel.c        |  9 +++++++++
- drivers/crypto/inside-secure/safexcel.h        |  5 +++--
- drivers/crypto/inside-secure/safexcel_cipher.c |  7 +++++++
- drivers/crypto/inside-secure/safexcel_hash.c   | 10 ++++++++++
- 4 files changed, 29 insertions(+), 2 deletions(-)
+ .../bindings/crypto/inside-secure-safexcel.txt     | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index c28ab137d721..b2749ff933c8 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -817,6 +817,9 @@ static int safexcel_register_algorithms(struct safexcel_crypto_priv *priv)
- 	for (i = 0; i < ARRAY_SIZE(safexcel_algs); i++) {
- 		safexcel_algs[i]->priv = priv;
+diff --git a/Documentation/devicetree/bindings/crypto/inside-secure-safexcel.txt b/Documentation/devicetree/bindings/crypto/inside-secure-safexcel.txt
+index 5dba55cdfa63..dc8678db52fa 100644
+--- a/Documentation/devicetree/bindings/crypto/inside-secure-safexcel.txt
++++ b/Documentation/devicetree/bindings/crypto/inside-secure-safexcel.txt
+@@ -1,8 +1,8 @@
+ Inside Secure SafeXcel cryptographic engine
  
-+		if (!(safexcel_algs[i]->engines & priv->version))
-+			continue;
+ Required properties:
+-- compatible: Should be "inside-secure,safexcel-eip197" or
+-              "inside-secure,safexcel-eip97".
++- compatible: Should be "inside-secure,safexcel-eip197b" or
++              "inside-secure,safexcel-eip97ies".
+ - reg: Base physical address of the engine and length of memory mapped region.
+ - interrupts: Interrupt numbers for the rings and engine.
+ - interrupt-names: Should be "ring0", "ring1", "ring2", "ring3", "eip", "mem".
+@@ -14,10 +14,18 @@ Optional properties:
+                name must be "core" for the first clock and "reg" for
+                the second one.
+ 
++Backward compatibility:
++Two compatibles are kept for backward compatibility, but shouldn't be used for
++new submissions:
++- "inside-secure,safexcel-eip197" is equivalent to
++  "inside-secure,safexcel-eip197b".
++- "inside-secure,safexcel-eip97" is equivalent to
++  "inside-secure,safexcel-eip97ies".
 +
- 		if (safexcel_algs[i]->type == SAFEXCEL_ALG_TYPE_SKCIPHER)
- 			ret = crypto_register_skcipher(&safexcel_algs[i]->alg.skcipher);
- 		else if (safexcel_algs[i]->type == SAFEXCEL_ALG_TYPE_AEAD)
-@@ -832,6 +835,9 @@ static int safexcel_register_algorithms(struct safexcel_crypto_priv *priv)
+ Example:
  
- fail:
- 	for (j = 0; j < i; j++) {
-+		if (!(safexcel_algs[j]->engines & priv->version))
-+			continue;
-+
- 		if (safexcel_algs[j]->type == SAFEXCEL_ALG_TYPE_SKCIPHER)
- 			crypto_unregister_skcipher(&safexcel_algs[j]->alg.skcipher);
- 		else if (safexcel_algs[j]->type == SAFEXCEL_ALG_TYPE_AEAD)
-@@ -848,6 +854,9 @@ static void safexcel_unregister_algorithms(struct safexcel_crypto_priv *priv)
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(safexcel_algs); i++) {
-+		if (!(safexcel_algs[i]->engines & priv->version))
-+			continue;
-+
- 		if (safexcel_algs[i]->type == SAFEXCEL_ALG_TYPE_SKCIPHER)
- 			crypto_unregister_skcipher(&safexcel_algs[i]->alg.skcipher);
- 		else if (safexcel_algs[i]->type == SAFEXCEL_ALG_TYPE_AEAD)
-diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index 6e6bdad6a6f5..b79cb36b3772 100644
---- a/drivers/crypto/inside-secure/safexcel.h
-+++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -529,8 +529,8 @@ struct safexcel_work_data {
- };
- 
- enum safexcel_eip_version {
--	EIP97IES,
--	EIP197B,
-+	EIP97IES = BIT(0),
-+	EIP197B  = BIT(1),
- };
- 
- struct safexcel_register_offsets {
-@@ -624,6 +624,7 @@ struct safexcel_ahash_export_state {
- struct safexcel_alg_template {
- 	struct safexcel_crypto_priv *priv;
- 	enum safexcel_alg_type type;
-+	u32 engines;
- 	union {
- 		struct skcipher_alg skcipher;
- 		struct aead_alg aead;
-diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
-index 845546129d09..bf3de334c580 100644
---- a/drivers/crypto/inside-secure/safexcel_cipher.c
-+++ b/drivers/crypto/inside-secure/safexcel_cipher.c
-@@ -835,6 +835,7 @@ static void safexcel_aead_cra_exit(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_ecb_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_SKCIPHER,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.skcipher = {
- 		.setkey = safexcel_skcipher_aes_setkey,
- 		.encrypt = safexcel_ecb_aes_encrypt,
-@@ -871,6 +872,7 @@ static int safexcel_cbc_aes_decrypt(struct skcipher_request *req)
- 
- struct safexcel_alg_template safexcel_alg_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_SKCIPHER,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.skcipher = {
- 		.setkey = safexcel_skcipher_aes_setkey,
- 		.encrypt = safexcel_cbc_aes_encrypt,
-@@ -940,6 +942,7 @@ static int safexcel_aead_sha1_cra_init(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_authenc_hmac_sha1_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_AEAD,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.aead = {
- 		.setkey = safexcel_aead_aes_setkey,
- 		.encrypt = safexcel_aead_encrypt,
-@@ -974,6 +977,7 @@ static int safexcel_aead_sha256_cra_init(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_authenc_hmac_sha256_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_AEAD,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.aead = {
- 		.setkey = safexcel_aead_aes_setkey,
- 		.encrypt = safexcel_aead_encrypt,
-@@ -1008,6 +1012,7 @@ static int safexcel_aead_sha224_cra_init(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_authenc_hmac_sha224_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_AEAD,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.aead = {
- 		.setkey = safexcel_aead_aes_setkey,
- 		.encrypt = safexcel_aead_encrypt,
-@@ -1042,6 +1047,7 @@ static int safexcel_aead_sha512_cra_init(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_authenc_hmac_sha512_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_AEAD,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.aead = {
- 		.setkey = safexcel_aead_aes_setkey,
- 		.encrypt = safexcel_aead_encrypt,
-@@ -1076,6 +1082,7 @@ static int safexcel_aead_sha384_cra_init(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_authenc_hmac_sha384_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_AEAD,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.aead = {
- 		.setkey = safexcel_aead_aes_setkey,
- 		.encrypt = safexcel_aead_encrypt,
-diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
-index dc7239945dc0..66edc1f388f1 100644
---- a/drivers/crypto/inside-secure/safexcel_hash.c
-+++ b/drivers/crypto/inside-secure/safexcel_hash.c
-@@ -796,6 +796,7 @@ static void safexcel_ahash_cra_exit(struct crypto_tfm *tfm)
- 
- struct safexcel_alg_template safexcel_alg_sha1 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_sha1_init,
- 		.update = safexcel_ahash_update,
-@@ -1029,6 +1030,7 @@ static int safexcel_hmac_sha1_setkey(struct crypto_ahash *tfm, const u8 *key,
- 
- struct safexcel_alg_template safexcel_alg_hmac_sha1 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_hmac_sha1_init,
- 		.update = safexcel_ahash_update,
-@@ -1092,6 +1094,7 @@ static int safexcel_sha256_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_sha256 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_sha256_init,
- 		.update = safexcel_ahash_update,
-@@ -1154,6 +1157,7 @@ static int safexcel_sha224_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_sha224 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_sha224_init,
- 		.update = safexcel_ahash_update,
-@@ -1209,6 +1213,7 @@ static int safexcel_hmac_sha224_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_hmac_sha224 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_hmac_sha224_init,
- 		.update = safexcel_ahash_update,
-@@ -1265,6 +1270,7 @@ static int safexcel_hmac_sha256_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_hmac_sha256 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_hmac_sha256_init,
- 		.update = safexcel_ahash_update,
-@@ -1336,6 +1342,7 @@ static int safexcel_sha512_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_sha512 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_sha512_init,
- 		.update = safexcel_ahash_update,
-@@ -1406,6 +1413,7 @@ static int safexcel_sha384_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_sha384 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_sha384_init,
- 		.update = safexcel_ahash_update,
-@@ -1461,6 +1469,7 @@ static int safexcel_hmac_sha512_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_hmac_sha512 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_hmac_sha512_init,
- 		.update = safexcel_ahash_update,
-@@ -1517,6 +1526,7 @@ static int safexcel_hmac_sha384_digest(struct ahash_request *areq)
- 
- struct safexcel_alg_template safexcel_alg_hmac_sha384 = {
- 	.type = SAFEXCEL_ALG_TYPE_AHASH,
-+	.engines = EIP97IES | EIP197B,
- 	.alg.ahash = {
- 		.init = safexcel_hmac_sha384_init,
- 		.update = safexcel_ahash_update,
+ 	crypto: crypto@800000 {
+-		compatible = "inside-secure,safexcel-eip197";
++		compatible = "inside-secure,safexcel-eip197b";
+ 		reg = <0x800000 0x200000>;
+ 		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.17.1
 
