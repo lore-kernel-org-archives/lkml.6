@@ -2,150 +2,187 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13A8C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DA0C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7397121654
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 00:53:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xOT02njw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7397121654
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5F00925953
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:00:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F00925953
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeF1Axj (ORCPT
+        id S1752704AbeF1BAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 20:53:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52658 "EHLO mail.kernel.org"
+        Wed, 27 Jun 2018 21:00:35 -0400
+Received: from mga02.intel.com ([134.134.136.20]:21694 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751072AbeF1Axh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 20:53:37 -0400
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D854D25386;
-        Thu, 28 Jun 2018 00:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530147217;
-        bh=vvrrQzSAl5rf+JrsKblFktm606TjW0PCleLZvPVM9i0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xOT02njwLWUJiV/fsj6goU89dVZYVdpX1qfFgKuT59byeQAmQeX9Z7NEvJU5trHZW
-         bnpaLksvbaXX8kQ77VtU+46XsIcJitlq6qf0GJ+t4FKN5c5w3RL5+HD02Zx6Tb8rLV
-         47bMyfiWFAOtYlsRdcVteUDPqQiuGLnOiUUUXFvU=
-Date:   Thu, 28 Jun 2018 08:52:18 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-        "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Message-ID: <20180628005217.GC22683@dragon>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+        id S1751011AbeF1BAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 27 Jun 2018 21:00:34 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jun 2018 18:00:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,281,1526367600"; 
+   d="scan'208";a="70581116"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
+  by orsmga002.jf.intel.com with ESMTP; 27 Jun 2018 18:00:32 -0700
+Date:   Wed, 27 Jun 2018 18:59:43 -0600
+From:   Keith Busch <keith.busch@linux.intel.com>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH] nvme: trace: add disk name to tracepoints
+Message-ID: <20180628005943.GC10657@localhost.localdomain>
+References: <20180626135141.14088-1-jthumshirn@suse.de>
+ <20180626135141.14088-3-jthumshirn@suse.de>
+ <20180626150106.GB6628@localhost.localdomain>
+ <20180627073328.aws2apvc357jobge@linux-x5ow.site>
+ <1e7d0f93-9d20-1b99-58c4-651b1d0dedf0@grimberg.me>
+ <20180627234313.GB10657@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180627234313.GB10657@localhost.localdomain>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> Gentle Ping...
+Thinking more on this, not using the hw qid really limits the utility
+out of using these trace events: We may not be able to match a completion
+to the submission without it since cmdid alone isn't enough to match up
+the two events.
 
-I cannot apply this dts patch until the clock patch is landed on
-mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-created by clock patch.
+Here's an updated proposal and actually tested. I was also able to
+combine admin and io submissions.
 
-Shawn
-
-> > -----Original Message-----
-> > From: Anson Huang
-> > Sent: Sunday, June 3, 2018 9:44 AM
-> > To: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> > <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> > mturquette@baylibre.com; sboyd@kernel.org;
-> > michael@amarulasolutions.com; matteo.lisi@engicam.com
-> > Cc: dl-linux-imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-clk@vger.kernel.org
-> > Subject: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-> > 
-> > i.MX6UL has GPIO clock gates in CCM CCGR, add clock property for GPIO driver
-> > to make sure all GPIO banks work as expected.
-> > 
-> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > ---
-> > 	no changes since V1.
-> >  arch/arm/boot/dts/imx6ul.dtsi | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-> > index 1241972..405e068 100644
-> > --- a/arch/arm/boot/dts/imx6ul.dtsi
-> > +++ b/arch/arm/boot/dts/imx6ul.dtsi
-> > @@ -437,6 +437,7 @@
-> >  				reg = <0x0209c000 0x4000>;
-> >  				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clks IMX6UL_CLK_GPIO1>;
-> >  				gpio-controller;
-> >  				#gpio-cells = <2>;
-> >  				interrupt-controller;
-> > @@ -450,6 +451,7 @@
-> >  				reg = <0x020a0000 0x4000>;
-> >  				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clks IMX6UL_CLK_GPIO2>;
-> >  				gpio-controller;
-> >  				#gpio-cells = <2>;
-> >  				interrupt-controller;
-> > @@ -462,6 +464,7 @@
-> >  				reg = <0x020a4000 0x4000>;
-> >  				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clks IMX6UL_CLK_GPIO3>;
-> >  				gpio-controller;
-> >  				#gpio-cells = <2>;
-> >  				interrupt-controller;
-> > @@ -474,6 +477,7 @@
-> >  				reg = <0x020a8000 0x4000>;
-> >  				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clks IMX6UL_CLK_GPIO4>;
-> >  				gpio-controller;
-> >  				#gpio-cells = <2>;
-> >  				interrupt-controller;
-> > @@ -486,6 +490,7 @@
-> >  				reg = <0x020ac000 0x4000>;
-> >  				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-> >  					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-> > +				clocks = <&clks IMX6UL_CLK_GPIO5>;
-> >  				gpio-controller;
-> >  				#gpio-cells = <2>;
-> >  				interrupt-controller;
-> > --
-> > 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index b429d51..c647883 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -466,6 +466,12 @@ struct request *blk_mq_alloc_request_hctx(struct request_queue *q,
+ }
+ EXPORT_SYMBOL_GPL(blk_mq_alloc_request_hctx);
+ 
++unsigned int blk_mq_request_hctx_idx(struct request *rq)
++{
++	return blk_mq_map_queue(rq->q, rq->mq_ctx->cpu)->queue_num;
++}
++EXPORT_SYMBOL_GPL(blk_mq_request_hctx_idx);
++
+ static void __blk_mq_free_request(struct request *rq)
+ {
+ 	struct request_queue *q = rq->q;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 46df030..f46bde2 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -652,10 +654,7 @@ blk_status_t nvme_setup_cmd(struct nvme_ns *ns, struct request *req,
+ 	}
+ 
+ 	cmd->common.command_id = req->tag;
+-	if (ns)
+-		trace_nvme_setup_nvm_cmd(req->q->id, cmd);
+-	else
+-		trace_nvme_setup_admin_cmd(cmd);
++	trace_nvme_setup_nvm_cmd(req, cmd);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nvme_setup_cmd);
+diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
+index 01390f0..bca3451 100644
+--- a/drivers/nvme/host/trace.h
++++ b/drivers/nvme/host/trace.h
+@@ -75,34 +75,9 @@ const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p, u8 opcode,
+ #define __parse_nvme_cmd(opcode, cdw10) \
+ 	nvme_trace_parse_nvm_cmd(p, opcode, cdw10)
+ 
+-TRACE_EVENT(nvme_setup_admin_cmd,
+-	    TP_PROTO(struct nvme_command *cmd),
+-	    TP_ARGS(cmd),
+-	    TP_STRUCT__entry(
+-		    __field(u8, opcode)
+-		    __field(u8, flags)
+-		    __field(u16, cid)
+-		    __field(u64, metadata)
+-		    __array(u8, cdw10, 24)
+-	    ),
+-	    TP_fast_assign(
+-		    __entry->opcode = cmd->common.opcode;
+-		    __entry->flags = cmd->common.flags;
+-		    __entry->cid = cmd->common.command_id;
+-		    __entry->metadata = le64_to_cpu(cmd->common.metadata);
+-		    memcpy(__entry->cdw10, cmd->common.cdw10,
+-			   sizeof(__entry->cdw10));
+-	    ),
+-	    TP_printk(" cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
+-		      __entry->cid, __entry->flags, __entry->metadata,
+-		      show_admin_opcode_name(__entry->opcode),
+-		      __parse_nvme_admin_cmd(__entry->opcode, __entry->cdw10))
+-);
+-
+-
+ TRACE_EVENT(nvme_setup_nvm_cmd,
+-	    TP_PROTO(int qid, struct nvme_command *cmd),
+-	    TP_ARGS(qid, cmd),
++	    TP_PROTO(struct request *req, struct nvme_command *cmd),
++	    TP_ARGS(req, cmd),
+ 	    TP_STRUCT__entry(
+ 		    __field(int, qid)
+ 		    __field(u8, opcode)
+@@ -113,7 +88,7 @@ TRACE_EVENT(nvme_setup_nvm_cmd,
+ 		    __array(u8, cdw10, 24)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = qid;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->opcode = cmd->common.opcode;
+ 		    __entry->flags = cmd->common.flags;
+ 		    __entry->cid = cmd->common.command_id;
+@@ -125,8 +100,12 @@ TRACE_EVENT(nvme_setup_nvm_cmd,
+ 	    TP_printk("qid=%d, nsid=%u, cmdid=%u, flags=0x%x, meta=0x%llx, cmd=(%s %s)",
+ 		      __entry->qid, __entry->nsid, __entry->cid,
+ 		      __entry->flags, __entry->metadata,
+-		      show_opcode_name(__entry->opcode),
+-		      __parse_nvme_cmd(__entry->opcode, __entry->cdw10))
++		      __entry->qid ?
++				show_opcode_name(__entry->opcode) :
++				show_admin_opcode_name(__entry->opcode),
++		      __entry->qid ?
++				__parse_nvme_cmd(__entry->opcode, __entry->cdw10) :
++				__parse_nvme_admin_cmd(__entry->opcode, __entry->cdw10))
+ );
+ 
+ TRACE_EVENT(nvme_complete_rq,
+@@ -141,7 +120,7 @@ TRACE_EVENT(nvme_complete_rq,
+ 		    __field(u16, status)
+ 	    ),
+ 	    TP_fast_assign(
+-		    __entry->qid = req->q->id;
++		    __entry->qid = blk_mq_request_hctx_idx(req) + !!req->rq_disk;
+ 		    __entry->cid = req->tag;
+ 		    __entry->result = le64_to_cpu(nvme_req(req)->result.u64);
+ 		    __entry->retries = nvme_req(req)->retries;
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index e3147eb..af91b2d 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -248,6 +248,7 @@ static inline u16 blk_mq_unique_tag_to_tag(u32 unique_tag)
+ }
+ 
+ 
++unsigned int blk_mq_request_hctx_idx(struct request *rq);
+ int blk_mq_request_started(struct request *rq);
+ void blk_mq_start_request(struct request *rq);
+ void blk_mq_end_request(struct request *rq, blk_status_t error);
+--
