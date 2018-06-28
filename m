@@ -3,65 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5259C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E153C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600CD27A19
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A4127A28
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:11:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="lNoQsQnK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600CD27A19
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="KnEZUpxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A4127A28
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967301AbeF1WK5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:10:57 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42012 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966704AbeF1WK4 (ORCPT
+        id S967325AbeF1WLu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:11:50 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39657 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966704AbeF1WLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:10:56 -0400
-Received: by mail-lf0-f68.google.com with SMTP id u202-v6so5344225lff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:10:55 -0700 (PDT)
+        Thu, 28 Jun 2018 18:11:49 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t7-v6so5710473ljj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lPQKNXDgKjxs4VpSMVhmyYh2WWXJfsx19qHpfo1V9hA=;
-        b=lNoQsQnKPc8Dsi4YnA4pQAycTmSH0Qx5R+BbZ0bGGidNagBCpuiJ+RuWOt+bn38/nr
-         EVt3ranWjlVIPsAK/JfjRC3jabZ1hUVdfZeNbORXH0pv+HE4pIwQ+Rt01YlTiiBd9q8s
-         IXX2k5ezlVQdzqorzeRvurXlyDIg0nj4Rrwvx+sEnZ54MHFL5+4y9Oy0+taWfZw1MU37
-         mqfYKdq06P0jIcwPUZgYrt+yU6FIErFOjKIlftTZuoBveCsQHy7T4PdxdXqxNShjq4LF
-         PEpBUWsvqHAdV6oSJRP1s+bEI9vWqcukcL/8a+5/dOU7mV+5fmklrUjAorxRmbSzB8uc
-         gohA==
+        bh=58qtdp4UqF31JOEv4yzW8gtTlX6/Iitkr8ZN+3mTlyA=;
+        b=KnEZUpxg8QPe2yiJsvTJP6KTbkBWH9K1YDS12MgSg4/pTXGc+19y5TYQPpGKduXpcl
+         Y1sBuSKLMI3OuVI0XeZI8jz4ibCWiVok57ZFNH40SNO6d0MiSk89kGqjxDG5Wad/aJov
+         p9XEBf+7LAB1QiIZml4sLleSeiTKzOEdEAZKuhGEuwNLXJwJMgR/htun2+MpxsesNrwF
+         kuXmeugDPq38M3G2bR3nTYMNgwnpWIVbaFmXUwzgOLbSZNGeBDfCf0xbtbBbEuARnPYp
+         s1E8BoEIyihvC5OkWwFsKGZfIvYUEMjtC+Ac4KQ+D934nXnjeY70kNgNNWmEBIk6X5EW
+         2rGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lPQKNXDgKjxs4VpSMVhmyYh2WWXJfsx19qHpfo1V9hA=;
-        b=t8H9IHego9D/Rgk24iDi8WTtaZFNABOqfKDTuZJiYcOmBKtrNksWlcS8D4IxwDX157
-         +0GxZMd/kWUgBWj3kaj5R71cdSbkl3ag4E1oCvW11XoOFz7TnIDsCytCiqbwA0RI34PI
-         9oTFCAD1IDbQJF1noeOAGPcKd9b3LXNDoSyg3fmNkXKOq4mWwG7RtumCDSaOfBhmfRHv
-         PoFGcT1ycpdAfa0+zvY41d1GlFxR2ceAKUzTAznN2ZnjrOIlLILxSUJL7W/pFvrSBWBg
-         5V8IfZGhlDwbCWI+BZFuZL8dKvKatLFYhwz96ilF+Kgw/DrnFA0grL14MXxK5w6Ky4r/
-         iIeg==
-X-Gm-Message-State: APt69E2eGoF4ZSUCwxpKLdIH4YIyBOhvezg33rCxItIXS77YoArMHeuD
-        N6bxTeo1AqmDl+RBuq74BXwjyKJ6EzpXy5nCPPB0
-X-Google-Smtp-Source: AAOMgpcO8OomWM0ZckuZ3Ud0ThDGx4Nzua4iRlC91sB9SjZrp7Uw6JBxa13P5l3vnZaUMpZjZJPWV45768K9ZJEAEI0=
-X-Received: by 2002:a19:c1c4:: with SMTP id r187-v6mr8389981lff.90.1530223854977;
- Thu, 28 Jun 2018 15:10:54 -0700 (PDT)
+        bh=58qtdp4UqF31JOEv4yzW8gtTlX6/Iitkr8ZN+3mTlyA=;
+        b=jVPRI55tvaLlLWDuxz4NlguNyaoPB0E6D3ktXNhIpi6NeK9r5gB7acFFV1n8n/OBdi
+         2qtFgT7LyT2jokmucE3rxh8kJypJ+6YESsRXVVn2skmdnuh6arlrDlIW7oDmNw/xr8zJ
+         VurzzE12OcCRXxFRkMKpVn+mIIgC4QJg/Hru9Cks14jM47PZScS+rVDlFs4Z5wlbA1st
+         NU1MDbCXRN4R7S/c5saASXrGr2yYITGwjROP59OoR7Xtr9VwlAzMDarOGjvZlF7/lLma
+         O/QN2PPXlu950z2TUl9QBsTdXsok/+TpDIjwKsotNxRhGSPlEeV4oPoIE+8zpUlhKxbd
+         YDXQ==
+X-Gm-Message-State: APt69E3yJRD0m9tXv/8InDlkfmsTc24RLLL2l4CtEUzGfw/gfNj4YfRp
+        GlfrfLLPvOaI6fGM916JTC8kc17EYwBDGdk2EltKZHk=
+X-Google-Smtp-Source: AAOMgpdtP0nL+9aFocUQdIjdOC8KrzotozvEWh2cqgWOqa/kPpFno7b/fB2Rnvfa7ZehMRNWxLy/ATJIxfqsZN6gamo=
+X-Received: by 2002:a2e:18b:: with SMTP id f11-v6mr8153964lji.83.1530223907734;
+ Thu, 28 Jun 2018 15:11:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1529003588.git.rgb@redhat.com> <244a8049197a23b0cee37dc3f00d070e646fd1b7.1529003588.git.rgb@redhat.com>
- <CAHC9VhTNOgpOAhi893v7EsMiYXDP47YYXUEcEnpexO+t1i7BgA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTNOgpOAhi893v7EsMiYXDP47YYXUEcEnpexO+t1i7BgA@mail.gmail.com>
+References: <cover.1529003588.git.rgb@redhat.com> <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
+In-Reply-To: <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 28 Jun 2018 18:10:44 -0400
-Message-ID: <CAHC9VhQB+mRmtwu6fN=bqwp9mX7bkqEaE6NAbXhbffc_EDSLgQ@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak59 V1 2/6] audit: add syscall information to
- CONFIG_CHANGE records
+Date:   Thu, 28 Jun 2018 18:11:36 -0400
+Message-ID: <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak59 V1 3/6] audit: exclude user records from
+ syscall context
 To:     rgb@redhat.com
 Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
@@ -72,115 +71,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 5:47 PM Paul Moore <paul@paul-moore.com> wrote:
+On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> Since the function audit_log_common_recv_msg() is shared by a number of
+> AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
+> and since the AUDIT_CONFIG_CHANGE message type has been converted to a
+> syscall accompanied record type, special-case the AUDIT_USER_* range of
+> messages so they remain standalone records.
 >
-> On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > Tie syscall information to all CONFIG_CHANGE calls since they are all a
-> > result of user actions.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > See: https://github.com/linux-audit/audit-kernel/issues/50
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c          | 4 ++--
-> >  kernel/audit_fsnotify.c | 2 +-
-> >  kernel/audit_tree.c     | 2 +-
-> >  kernel/audit_watch.c    | 2 +-
-> >  kernel/auditfilter.c    | 2 +-
-> >  5 files changed, 6 insertions(+), 6 deletions(-)
->
-> Merged, thanks.
+> See: https://github.com/linux-audit/audit-kernel/issues/59
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/audit.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 
-Actually, I take that back (good thing I hadn't pushed yet).
+I think this is fine, but see my previous comment about combining 2/6
+and 3/6 as a safety measure.
 
-Why don't you squash this patch with 3/6 so that a bisect or
-cherry-pick backport doesn't end up splitting 2/6 and 3/6 and causing
-a regression with the AUDIT_USER_* records.
-
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index ad54339..e469234 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -400,7 +400,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
-> >         struct audit_buffer *ab;
-> >         int rc = 0;
-> >
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> >         if (unlikely(!ab))
-> >                 return rc;
-> >         audit_log_format(ab, "op=set %s=%u old=%u", function_name, new, old);
-> > @@ -1067,7 +1067,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> >                 return;
-> >         }
-> >
-> > -       *ab = audit_log_start(NULL, GFP_KERNEL, msg_type);
-> > +       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
-> >         if (unlikely(!*ab))
-> >                 return;
-> >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
-> > diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-> > index 52f368b..1640eb6 100644
-> > --- a/kernel/audit_fsnotify.c
-> > +++ b/kernel/audit_fsnotify.c
-> > @@ -127,7 +127,7 @@ static void audit_mark_log_rule_change(struct audit_fsnotify_mark *audit_mark, c
-> >
-> >         if (!audit_enabled)
-> >                 return;
-> > -       ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(audit_context(), GFP_NOFS, AUDIT_CONFIG_CHANGE);
-> >         if (unlikely(!ab))
-> >                 return;
-> >         audit_log_format(ab, "auid=%u ses=%u op=%s",
-> > diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> > index 5e9d1e5..a01b9da 100644
-> > --- a/kernel/audit_tree.c
-> > +++ b/kernel/audit_tree.c
-> > @@ -499,7 +499,7 @@ static void audit_tree_log_remove_rule(struct audit_krule *rule)
-> >
-> >         if (!audit_enabled)
-> >                 return;
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> >         if (unlikely(!ab))
-> >                 return;
-> >         audit_log_format(ab, "op=remove_rule");
-> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> > index 9b4836b..da2978b 100644
-> > --- a/kernel/audit_watch.c
-> > +++ b/kernel/audit_watch.c
-> > @@ -242,7 +242,7 @@ static void audit_watch_log_rule_change(struct audit_krule *r, struct audit_watc
-> >
-> >         if (!audit_enabled)
-> >                 return;
-> > -       ab = audit_log_start(NULL, GFP_NOFS, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(audit_context(), GFP_NOFS, AUDIT_CONFIG_CHANGE);
-> >         if (!ab)
-> >                 return;
-> >         audit_log_format(ab, "auid=%u ses=%u op=%s",
-> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > index eaa3201..6e19acb 100644
-> > --- a/kernel/auditfilter.c
-> > +++ b/kernel/auditfilter.c
-> > @@ -1093,7 +1093,7 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
-> >         if (!audit_enabled)
-> >                 return;
-> >
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> >         if (!ab)
-> >                 return;
-> >         audit_log_session_info(ab);
-> > --
-> > 1.8.3.1
-> >
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index e469234..c8c2efc 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1057,7 +1057,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
+>         return err;
+>  }
 >
+> -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> +static void __audit_log_common_recv_msg(struct audit_context *context,
+> +                                       struct audit_buffer **ab, u16 msg_type)
+>  {
+>         uid_t uid = from_kuid(&init_user_ns, current_uid());
+>         pid_t pid = task_tgid_nr(current);
+> @@ -1067,7 +1068,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+>                 return;
+>         }
 >
+> -       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
+> +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
+>         if (unlikely(!*ab))
+>                 return;
+>         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
+> @@ -1075,6 +1076,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+>         audit_log_task_context(*ab);
+>  }
+>
+> +static inline void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> +{
+> +       __audit_log_common_recv_msg(audit_context(), ab, msg_type);
+> +}
+> +
+>  int is_audit_feature_set(int i)
+>  {
+>         return af.features & AUDIT_FEATURE_TO_MASK(i);
+> @@ -1341,7 +1347,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+>                                 if (err)
+>                                         break;
+>                         }
+> -                       audit_log_common_recv_msg(&ab, msg_type);
+> +                       __audit_log_common_recv_msg(NULL, &ab, msg_type);
+>                         if (msg_type != AUDIT_USER_TTY)
+>                                 audit_log_format(ab, " msg='%.*s'",
+>                                                  AUDIT_MESSAGE_TEXT_MAX,
 > --
-> paul moore
-> www.paul-moore.com
-
+> 1.8.3.1
+>
 
 
 -- 
