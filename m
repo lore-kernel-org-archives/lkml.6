@@ -2,314 +2,276 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FC6C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94348C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C14D727A1A
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FNIvtyfu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C14D727A1A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 337EB27A32
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:47:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337EB27A32
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967409AbeF1Won (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:44:43 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47396 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966690AbeF1Wn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:43:58 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5SMd6PM035421;
-        Thu, 28 Jun 2018 22:43:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2017-10-26;
- bh=nlbVjwuwOThetjb7cOYe4Zt2/7xzD2WU5GI3oIC8Cz8=;
- b=FNIvtyfuQEt8W5iQGvLjWLv53qLXoihuo7netwl5gT05xkpSx09hSvuIXh7ZyOFXetIO
- IxTk7fhJMV0R1eKhiJcmE1lUgF2etPRjabirmZXet6O5HfGG3Pb3Zr6rFNvAtI3FYBWk
- Ll75/Eogo+q9DnLdOLytSxEXmkYjt/6T2NFbLGWt+PWfvENdvzklLJhNzf452WjY0fyS
- 0RCvQJXqKkiFyq6whcl0TLooS9tuMpsi+1DQORTSk1/l+14SPRflM0QK3mO+AOnI/SNk
- e6MUjZ/g2whPwI3Jhxf4tExpFbw7bEye6Fou8ZCcHIy1sEyVYTogQRv+9mtQ9e0QZtBV 5Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jum5844y9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Jun 2018 22:43:22 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5SMhLwT000716
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Jun 2018 22:43:22 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5SMhK8W004522;
-        Thu, 28 Jun 2018 22:43:21 GMT
-Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.87)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 28 Jun 2018 15:43:20 -0700
-From:   subhra mazumdar <subhra.mazumdar@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com,
-        daniel.lezcano@linaro.org
-Subject: [RESEND RFC/RFT V2 PATCH 0/5] Improve scheduler scalability for fast path
-Date:   Thu, 28 Jun 2018 15:44:51 -0700
-Message-Id: <20180628224456.13548-1-subhra.mazumdar@oracle.com>
-X-Mailer: git-send-email 2.9.3
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8938 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=770
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806280249
+        id S1753827AbeF1Wrk (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:47:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:58113 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752335AbeF1Wrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 18:47:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 15:47:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="gz'50?scan'50,208,50";a="68187827"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Jun 2018 15:47:21 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fYfhB-000UvL-1l; Fri, 29 Jun 2018 06:47:21 +0800
+Date:   Fri, 29 Jun 2018 06:46:25 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: [rcu:dev 110/110] softirq.c:undefined reference to `rcu_softirq_qs'
+Message-ID: <201806290623.hRHgc7MJ%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current select_idle_sibling first tries to find a fully idle core using
-select_idle_core which can potentially search all cores and if it fails it
-finds any idle cpu using select_idle_cpu. select_idle_cpu can potentially
-search all cpus in the llc domain. This doesn't scale for large llc domains
-and will only get worse with more cores in future.
 
-This patch solves the scalability problem by:
- - Setting an upper and lower limit of idle cpu search in select_idle_cpu
-   to keep search time low and constant
- - Adding a new sched feature SIS_CORE to disable select_idle_core
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Additionally it also introduces a new per-cpu variable next_cpu to track
-the limit of search so that every time search starts from where it ended.
-This rotating search window over cpus in LLC domain ensures that idle
-cpus are eventually found in case of high load.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+head:   0028a1e4fdbb4263539595da08979d59954d4873
+commit: 0028a1e4fdbb4263539595da08979d59954d4873 [110/110] rcu: Apply RCU-bh QSes to RCU-sched and RCU-preempt when safe
+config: i386-alldefconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        git checkout 0028a1e4fdbb4263539595da08979d59954d4873
+        # save the attached .config to linux build tree
+        make ARCH=i386 
 
-Following are the performance numbers with various benchmarks with SIS_CORE
-true (idle core search enabled).
+All errors (new ones prefixed by >>):
 
-Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
-(lower is better):
-groups  baseline           %stdev  patch           %stdev
-1       0.5816             8.94    0.5903 (-1.5%)  11.28 
-2       0.6428             10.64   0.5843 (9.1%)   4.93
-4       1.0152             1.99    0.9965 (1.84%)  1.83
-8       1.8128             1.4     1.7921 (1.14%)  1.76
-16      3.1666             0.8     3.1345 (1.01%)  0.81
-32      5.6084             0.83    5.5677 (0.73%)  0.8 
+   kernel/softirq.o: In function `__do_softirq':
+>> softirq.c:(.softirqentry.text+0x1a9): undefined reference to `rcu_softirq_qs'
 
-Sysbench MySQL on 2 socket, 44 core and 88 threads Intel x86 machine
-(higher is better):
-threads baseline     %stdev     patch	           %stdev
-8       2095.45      1.82 	2102.6 (0.34%)	   2.11
-16      4218.45      0.06       4221.35 (0.07%)    0.38
-32      7531.36      0.49       7607.18 (1.01%)    0.25
-48      10206.42     0.21       10324.26 (1.15%)   0.13
-64      12053.73     0.1        12158.3 (0.87%)    0.24
-128     14810.33     0.04       14840.4 (0.2%)	   0.38
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Oracle DB on 2 socket, 44 core and 88 threads Intel x86 machine
-(normalized, higher is better):
-users   baseline        %stdev  patch            %stdev
-20      1               0.9     1.0068 (0.68%)   0.27
-40      1               0.8     1.0103 (1.03%)   1.24
-60      1               0.34    1.0178 (1.78%)   0.49
-80      1               0.53    1.0092 (0.92%)   1.5
-100     1               0.79    1.0090 (0.9%)    0.88
-120     1               0.06    1.0048 (0.48%)   0.72
-140     1               0.22    1.0116 (1.16%)   0.05
-160     1               0.57    1.0264 (2.64%)   0.67
-180     1               0.81    1.0194 (1.94%)   0.91
-200     1               0.44    1.028 (2.8%)     3.09
-220     1               1.74    1.0229 (2.29%)   0.21
+--EVF5PPMfhYS0aIcm
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
-message size = 8k (higher is better):
-threads baseline        %stdev  patch            %stdev
-8       45.36           0.43    46.28 (2.01%)    0.29
-16      87.81           0.82    89.67 (2.12%)    0.38
-32      151.19          0.02    153.5 (1.53%)    0.41
-48      190.2           0.21    194.79 (2.41%)   0.07
-64      190.42          0.35    202.9 (6.55%)    1.66
-128     323.86          0.28    343.56 (6.08%)   1.34 
+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
 
-Dbench on 2 socket, 44 core and 88 threads Intel x86 machine
-(higher is better):
-clients baseline        patch
-1       629.8           603.83 (-4.12%)
-2       1159.65         1155.75 (-0.34%)
-4       2121.61         2093.99 (-1.3%)
-8       2620.52         2641.51 (0.8%)
-16      2879.31         2897.6 (0.64%)
-32      2791.24         2936.47 (5.2%)
-64      1853.07         1894.74 (2.25%)
-128     1484.95         1494.29 (0.63%)
-
-Tbench on 2 socket, 44 core and 88 threads Intel x86 machine
-(higher is better):
-clients baseline        patch
-1       256.41          255.8 (-0.24%)
-2       509.89          504.52 (-1.05%)
-4       999.44          1003.74 (0.43%)
-8       1982.7          1976.42 (-0.32%)
-16      3891.51         3916.04 (0.63%)
-32      6819.24         6845.06 (0.38%)
-64      8542.95         8568.28 (0.3%)
-128     15277.6         15754.6 (3.12%)
-
-Schbench on 2 socket, 44 core and 88 threads Intel x86 machine with 44
-tasks (lower is better):
-percentile      baseline      %stdev   patch             %stdev
-50              94            2.82     92 (2.13%)        2.17
-75              124           2.13     122 (1.61%)       1.42
-90              152           1.74     151 (0.66%)       0.66 
-95              171           2.11     170 (0.58%)       0
-99              512.67        104.96   208.33 (59.36%)   1.2
-99.5            2296          82.55    3674.66 (-60.05%) 22.19
-99.9            12517.33      2.38     12784 (-2.13%)    0.66
-
-Hackbench process on 2 socket, 16 core and 128 threads SPARC machine
-(lower is better):  
-groups  baseline           %stdev  patch             %stdev 
-1       1.3085             6.65    1.2213 (6.66%)    10.32 
-2       1.4559             8.55    1.5048 (-3.36%)   4.72
-4       2.6271             1.74    2.5532 (2.81%)    2.02
-8       4.7089             3.01    4.5118 (4.19%)    2.74
-16      8.7406             2.25    8.6801 (0.69%)    4.78
-32      17.7835            1.01    16.759 (5.76%)    1.38
-64	36.1901		   0.65	   34.6652 (4.21%)   1.24
-128	72.6585		   0.51	   70.9762 (2.32%)   0.9
-
-Following are the performance numbers with various benchmarks with SIS_CORE
-false (idle core search disabled). This improves throughput of certain
-workloads but increases latency of other workloads.
-                                                                           
-Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine 
-(lower is better):
-groups  baseline           %stdev  patch            %stdev
-1       0.5816             8.94    0.5835 (-0.33%)  8.21  
-2       0.6428             10.64   0.5752 (10.52%)  4.05  
-4       1.0152             1.99    0.9946 (2.03%)   2.56  
-8       1.8128             1.4     1.7619 (2.81%)   1.88  
-16      3.1666             0.8     3.1275 (1.23%)   0.42  
-32      5.6084             0.83    5.5856 (0.41%)   0.89   
- 
-Sysbench MySQL on 2 socket, 44 core and 88 threads Intel x86 machine 
-(higher is better):
-threads baseline     %stdev     patch              %stdev 
-8       2095.45      1.82       2084.72 (-0.51%)   1.65
-16      4218.45      0.06       4179.69 (-0.92%)   0.18
-32      7531.36      0.49       7623.18 (1.22%)    0.39
-48      10206.42     0.21       10159.16 (-0.46%)  0.21
-64      12053.73     0.1        12087.21 (0.28%)   0.19
-128     14810.33     0.04       14894.08 (0.57%)   0.08
-
-Oracle DB on 2 socket, 44 core and 88 threads Intel x86 machine            
-(normalized, higher is better):                                            
-users   baseline        %stdev  patch            %stdev                    
-20      1               0.9     1.0056 (0.56%)   0.34
-40      1               0.8     1.0173 (1.73%)   0.13
-60      1               0.34    0.9995 (-0.05%)  0.85
-80      1               0.53    1.0175 (1.75%)   1.56
-100     1               0.79    1.0151 (1.51%)   1.31
-120     1               0.06    1.0244 (2.44%)   0.5 
-140     1               0.22    1.034 (3.4%)     0.66
-160     1               0.57    1.0362 (3.62%)   0.07
-180     1               0.81    1.041 (4.1%)     0.8
-200     1               0.44    1.0233 (2.33%)   1.4  
-220     1               1.74    1.0125 (1.25%)   1.41
-
-Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with  
-message size = 8k (higher is better):
-threads baseline        %stdev  patch            %stdev 
-8       45.36           0.43    46.94 (3.48%)    0.2  
-16      87.81           0.82    91.75 (4.49%)    0.43 
-32      151.19          0.02    167.74 (10.95%)  1.29 
-48      190.2           0.21    200.57 (5.45%)   0.89 
-64      190.42          0.35    226.74 (19.07%)  1.79 
-128     323.86          0.28    348.12 (7.49%)   0.77 
-
-Dbench on 2 socket, 44 core and 88 threads Intel x86 machine               
-(higher is better):         
-clients baseline        patch 
-1       629.8           600.19 (-4.7%)  
-2       1159.65         1162.07 (0.21%) 
-4       2121.61         2112.27 (-0.44%)
-8       2620.52         2645.55 (0.96%) 
-16      2879.31         2828.87 (-1.75%)
-32      2791.24         2760.97 (-1.08%)
-64      1853.07         1747.66 (-5.69%)
-128     1484.95         1459.81 (-1.69%)
-
-Tbench on 2 socket, 44 core and 88 threads Intel x86 machine               
-(higher is better):
-clients baseline        patch
-1       256.41          258.11 (0.67%)  
-2       509.89          509.13 (-0.15%) 
-4       999.44          1016.58 (1.72%) 
-8       1982.7          2006.53 (1.2%)  
-16      3891.51         3964.43 (1.87%) 
-32      6819.24         7376.92 (8.18%) 
-64      8542.95         9660.45 (13.08%) 
-128     15277.6         15438.4 (1.05%) 
-
-Schbench on 2 socket, 44 core and 88 threads Intel x86 machine with 44     
-tasks (lower is better):
-percentile      baseline      %stdev   patch                %stdev
-50              94            2.82     94.67 (-0.71%)       2.2  
-75              124           2.13     124.67 (-0.54%)      1.67 
-90              152           1.74     154.33 (-1.54%)      0.75 
-95              171           2.11     176.67 (-3.31%)      0.86 
-99              512.67        104.96   4130.33 (-705.65%)   79.41
-99.5            2296          82.55    10066.67 (-338.44%)  26.15
-99.9            12517.33      2.38     12869.33 (-2.81%)    0.8 
- 
-Hackbench process on 2 socket, 16 core and 128 threads SPARC machine       
-(lower is better): 
-groups  baseline           %stdev  patch             %stdev
-1       1.3085             6.65    1.2514 (4.36%)    11.1
-2       1.4559             8.55    1.5433 (-6%)      3.05
-4       2.6271             1.74    2.5626 (2.5%)     2.69
-8       4.7089             3.01    4.5316 (3.77%)    2.95
-16      8.7406             2.25    8.6585 (0.94%)    2.91
-32      17.7835            1.01    17.175 (3.42%)    1.38
-64      36.1901            0.65    35.5294 (1.83%)   1.02
-128     72.6585            0.51    71.8821 (1.07%)   1.05
-
-Following are the schbench performance numbers with SIS_CORE false and
-SIS_PROP false. This recovers the latency increase by having SIS_CORE
-false.
-
-Schbench on 2 socket, 44 core and 88 threads Intel x86 machine with 44     
-tasks (lower is better):
-percentile      baseline      %stdev   patch               %stdev
-50              94            2.82     93.33 (0.71%)       1.24  
-75              124           2.13     122.67 (1.08%)      1.7   
-90              152           1.74     149.33 (1.75%)      2.35  
-95              171           2.11     167 (2.34%)         2.74
-99              512.67        104.96   206 (59.82%)        8.86
-99.5            2296          82.55    3121.67 (-35.96%)   97.37 
-99.9            12517.33      2.38     12592 (-0.6%)       1.67
-
-Changes since v1
- - Compute the upper and lower limit based on number of cpus in a core
- - Split up the search limit and search window rotation into separate
-   patches
- - Add new sched feature to have option of disabling idle core search
-
-subhra mazumdar (5):
-  sched: limit cpu search in select_idle_cpu
-  sched: introduce per-cpu var next_cpu to track search limit
-  sched: rotate the cpu search window for better spread
-  sched: add sched feature to disable idle core search
-  sched: SIS_CORE to disable idle core search
-
- kernel/sched/core.c     |  2 ++
- kernel/sched/fair.c     | 31 +++++++++++++++++++++++--------
- kernel/sched/features.h |  1 +
- kernel/sched/sched.h    |  1 +
- 4 files changed, 27 insertions(+), 8 deletions(-)
-
--- 
-2.9.3
-
+--EVF5PPMfhYS0aIcm--
