@@ -2,185 +2,92 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F964C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B699BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2AB027736
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:16:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2AB027736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 61B2E214D5
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:18:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U0IUwNkm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B2E214D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965805AbeF1RQw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 13:16:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50738 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932186AbeF1RQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 13:16:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1799418A;
-        Thu, 28 Jun 2018 10:16:50 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DCBC3F318;
-        Thu, 28 Jun 2018 10:16:48 -0700 (PDT)
-Subject: Re: [PATCHv3 1/9] sched: Add static_key for asymmetric cpu capacity
- optimizations
-To:     Morten Rasmussen <morten.rasmussen@arm.com>
-Cc:     Quentin Perret <quentin.perret@arm.com>, peterz@infradead.org,
-        mingo@redhat.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
-        linux-kernel@vger.kernel.org
-References: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
- <1529485549-5191-2-git-send-email-morten.rasmussen@arm.com>
- <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
- <20180622143624.GD8461@e105550-lin.cambridge.arm.com>
- <4208ea5d-0c00-d17a-5524-b5d9caa70273@arm.com>
- <20180628084852.GA8596@e105550-lin.cambridge.arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <5dd8e47a-ebee-9c47-be4f-1c127f72834f@arm.com>
-Date:   Thu, 28 Jun 2018 19:16:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S967519AbeF1RSi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 13:18:38 -0400
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:46161 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967499AbeF1RSg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 13:18:36 -0400
+Received: by mail-oi0-f46.google.com with SMTP id y207-v6so5889289oie.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 10:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=CUz0G7il+vN90b6CihMzU/deiZXEMNZKwlRfQpN9ODs=;
+        b=U0IUwNkm8Uz4SOlaZIkNrNd+NgJ01LBSagvZVY+c7EDDG3mG7yugOhAHhhuhmuYPk+
+         wcIupJjYbWWL+5IC8fvEbf4KFj08BNElUfXILzl0pAYnxoSo4D7i5qgQLQRA4KQKdvbd
+         btJ7vXstnd4lzcDBNcHV9yGSK67wPdO3Iir0zSZsh1QETxY6ayx9Xkj6p8t4A7e608TL
+         PW3JLouu8VlUkR3E++JPM8JjhrzDsUBmhX4qR7+d34AksLTAuJ0o72UexaGcCwD8iIql
+         NG4ZGjpXqeG2JNkH0TUlA0eP817YE3gkE7QYaMjL4ruBkk4b+7R9CLPEDwSPO+vVvWzF
+         5shg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=CUz0G7il+vN90b6CihMzU/deiZXEMNZKwlRfQpN9ODs=;
+        b=gYbfTSJdqKHJ7uTdB8/Zj91sH9vpLs1YtVHivDof9oxQ15cied33mThqi5qSoyi5Mm
+         OzrUr8iassWXieOW3G9wQSF9KBM+PMy4+t/KWoP5FMIBqkIu0UE0Pm+/5k0tR2OWi7dZ
+         3LE7Xb31czwM2WlNWE+I8HTIaSWzswgYIv76QN2VLU2+uaakWe32yDDkWFzLo90xagPK
+         SXRN/hlAOicGYgZ66efVcDGKvMJ5WhLvTjzPL6km77OP0EkgnwYa3bPAjQktZ/UQiqGt
+         SxNKUGLQAPydgrTUXt7W4+V3Z80s1AAcQVWi+blJDErjibeG8q0wVdJMX2duyc3AkBOC
+         PaBg==
+X-Gm-Message-State: APt69E3++iUqYOlb5z6hIUoe44pvpbejc8wSysO2j7OwDhE2o+bXKTzv
+        E9FA8Jvy9am5JyEMDJLjDG9fH0MQzVAK+fi1xEdfSAJ81D0=
+X-Google-Smtp-Source: AAOMgpfe6cmw1yVknPS9uf69GlTsqtW8lUHFcyoWvUYrJO4Fu58Ml+sycZiShRaefm3pVtBuw7Fuh7VN2nnbnylEXh4=
+X-Received: by 2002:aca:ef8b:: with SMTP id n133-v6mr6747980oih.70.1530206315428;
+ Thu, 28 Jun 2018 10:18:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180628084852.GA8596@e105550-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac9:3404:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 10:18:34
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+bnUNtn3jO5fYMB5dSqA=vbc8KfnTmbajA6SYKex4KFoQ@mail.gmail.com>
+References: <883d24f79ad8fd475f0569a39ba6@google.com> <00000000000037b58a0569c49b70@google.com>
+ <CACT4Y+bnUNtn3jO5fYMB5dSqA=vbc8KfnTmbajA6SYKex4KFoQ@mail.gmail.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 28 Jun 2018 10:18:34 -0700
+Message-ID: <CALMp9eSDP3XRMU-ZvSPRqgyQrtOCajz90HyQ8GM7Mg2oNuBAHw@mail.gmail.com>
+Subject: Re: general protection fault in vmx_vcpu_run
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+cc483201a3c6436d3550@syzkaller.appspotmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/28/2018 10:48 AM, Morten Rasmussen wrote:
-> On Wed, Jun 27, 2018 at 05:41:22PM +0200, Dietmar Eggemann wrote:
->> On 06/22/2018 04:36 PM, Morten Rasmussen wrote:
->>> On Fri, Jun 22, 2018 at 09:22:22AM +0100, Quentin Perret wrote:
+  22: 0f 01 c3              vmresume
+  25: 48 89 4c 24 08        mov    %rcx,0x8(%rsp)
+  2a: 59                    pop    %rcx
 
-[...]
+<rip>:
+  2b: 0f 96 81 88 56 00 00 setbe  0x5688(%rcx)
+  32: 48 89 81 00 03 00 00 mov    %rax,0x300(%rcx)
+  39: 48 89 99 18 03 00 00 mov    %rbx,0x318(%rcx)
 
->>>> What would happen if you hotplugged an entire cluster ? You'd loose the
->>>> SD_ASYM_CPUCAPACITY flag but keep the static key is that right ? Should
->>>> we care ?
->>>
->>> I don't think we should care. The static key enables additional checks
->>> and tweaks but AFAICT none of them requires the SD_ASYM_CPUCAPACITY to
->>> be set and they should all be have no effect if that is the case. I
->>> added the static key just avoid the overhead on systems where they would
->>> have no effect. At least that is intention, I could course have broken
->>> things by mistake.
->>
->> I tent to agree for misfit but it would be easy to just add an
->> static_branch_disable_cpuslocked() into the else path of if(enable).
-> 
-> Depending on how we address the exclusive cpuset mess Quentin pointed
-> out, it isn't as simple as that. As it is with our current
-> not-yet-posted patches we would never remove the SD_ASYM_CPUCAPACITY
-> flag, so we would never do a static_branch_disable_cpuslocked().
-
-I was referring rather to the 'hotplug out an entire cluster' mentioned 
-above. Looking closer into the code, I see that this will only work for 
-traditional big.LITTLE (one big, one little cluster) since on them the 
-DIE level vanishes and so the SD_ASYM_CPUCAPACITY flag.
-Currently we only detect the flags when the system comes up (in the 
-init_cpu_capacity_callback()) and not when we hotplug cpus. That's why 
-it doesn't work for your 'three cluster system where 0-3 and 4-7 little 
-clusters, and 8-11 is a big cluster' example.
-So we don't re-detect the flags every time we call from the scheduler 
-into the arch code and so the the DIE level arch topology flag function 
-will return SD_ASYM_CPUCAPACITY.
-
-> However, I'm currently thinking that we should probably set the flag
-> according to the cpus in each root_domain. If we do that, we can't just
-> disable the static_key because one root_domain is SMP, so we would have
-> to track if _any_ root_domain (exclusive cpuset topology) has the flag
-> set.
-
-This is then in sync with the energy model where the static key should 
-be enabled if any root domain can do EAS. The static key would be system 
-wide, not per root domain.
-
-> Is it worth it to iterate over all the exclusive cpuset with all
-> the locking implications to disable the static_key in the corner case
-> where exclusive cpuset are set up for all cpu capacities in the system?
-
-Don't know either? But if the code to do this would include 'exclusive 
-cpusets' and platforms like your three cluster example then maybe ...
-
-[...]
-
->>> I'm tempted to say we shouldn't care in this situation. Setting the
->>> flags correctly in the three cluster example would require knowledge
->>> about the cpuset configuration which we don't have in the arch code so
->>> SD_ASYM_CPUCAPACITY flag detection would have be done by the
->>> sched_domain build code. However, not setting the flag according to the
->>> actual members of the exclusive cpuset means that homogeneous
->>> sched_domains might have SD_ASYM_CPUCAPACITY set enabling potentially
->>> wrong scheduling decisions.
->>
->> We could easily pass the CPU as an argument to all these
->> sched_domain_flags_f functions.
->>
->> -typedef int (*sched_domain_flags_f)(void);
->> +typedef int (*sched_domain_flags_f)(int cpu);
->>
->> In this case, the arch specific flag functions on a sched domain (sd) level
->> could use the corresponding sched_domain_mask_f function to iterate over the
->> span of the sd seen by CPU instead of all online cpus.
-> 
-> Yeah, but I'm afraid that doesn't solve the problem. The
-> sched_domain_mask_f function doesn't tell us anything about any
-> exclusive cpusets. We need sched_domain_span(sd) which is
-
-You're right, I checked again and even if we hotplug, the flag function 
-tl->mask(cpu) like cpu_coregroup_mask() always return the initial set of 
-cpus. So we are only save if the DIE sd vanishes and with it the 
-SD_ASYM_CPUCAPACITY flag since nobody will call the appropriate arch 
-topology flag function.
-
-> sched_domain_mask_f & cpu_map where cpu_map is the cpumask of the
-> exclusive cpuset. So we either need to pass the sched_domain_span() mask
-> through sched_domain_flags_f or work our way back to that information
-> based on the cpu id. I'm not sure if the latter is possible.
-
-Agreed.
-
-[...]
-
->> We could also say that systems with 2 clusters with the same uArch and same
->> max CPU frequency and additional clusters are insane, like we e.g. do with
->> the Energy Model and CPUs with different uArch within a frequency domain?
-> 
-> I fail to get the point here. Are you saying that SMP is insane? ;-)
-
-The '... and additional clusters' is important, a system like your three 
-cluster system you describe above.
-
-But the problem that if you hotplug-out the big cluster, the DIE level 
-is still there with the SD_ASYM_CPUCAPACITY flag is due to the fact that 
-we don't start the flag detection mechanism during hotplug, right?
-
->>> We can actually end up with this problem just by hotplugging too. If you
->>> unplug the entire big cluster in the three cluster example above, you
->>> preserve DIE level which would have SD_ASYM_CPUCAPACITY set even though
->>> we only have little cpus left.
-
-IMHO, again that's because we do flag detection only at system startup.
-
->>> As I see it, we have two choices: 1) Set the flags correctly for
->>> exclusive cpusets which means some additional "fun" in the sched_domain
->>> hierarchy set up, or 2) ignore it and make sure that setting
->>
->> I assume you refer to this cpu parameter for sched_domain_flags_f under 1).
-> 
-> No, what I had in mind was to let sd_init() set SD_ASYM_CPUCAPACITY
-> flag as the arch-code doesn't know about the exclusive cpusets as
-> discussed above. In the meantime I have thought about a different
-> approach where sd_init() only disables the flag when it is no longer
-> needed due to exclusive cpusets.
-
-In this case sd_init() has to know the cpu capacity values. I assume 
-that the arch still has to call rebuild_sched_domains() after cpufreq is 
-up and running due to the max cpu frequency dependency for cpu capacity.
+%rcx should be pointing to the vcpu_vmx structure, but it's not even
+canonical: 1ffff10035842e78.
