@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0C4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFFFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F5427446
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE9327446
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:28:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rfws2Cln"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F5427446
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d9aQNEIn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE9327446
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966262AbeF1N2C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:28:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49820 "EHLO
+        id S966229AbeF1N16 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:27:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49826 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753784AbeF1N07 (ORCPT
+        with ESMTP id S1753796AbeF1N07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 28 Jun 2018 09:26:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pKuPnBovgJ8+sywdr1QSI2Q8btKmadyyXncBiBb0Vtk=; b=rfws2ClnSSiSUXHWpu9Il866+
-        dUtsxucdfVlowMEAvUPWjdH75w/uVdHFGagndPN9v4NPMC1mUtKcoV9+8HaCsf1ttAmzwru9NM+W/
-        yO4MMdJrR/mJsD56PWvy7E+Wwq0MWI9zD3gFz97JpTPFEA9mqw36WGEo6+FFwPQ9hcsWd0bz8dJ5y
-        +5//0DCbRsJE8hP+EZYwkZcd5l3Tju9OUp9I/T4bExkh7XI67QGzVMzMHpMfzd6EFPqiBIf4aIg2M
-        /9RPIGiipfLTGHJYJ/rp9zFmVnLaRCF/7NIb+Zs/VZ17+s3D29SM6ePVnhLbYIeC561hjKno7Jlmm
-        9Az7M6Rpg==;
+         bh=FiCMHd44FfHVP0EFrdyRK2WV8hx0YoEGQEQjcNsr5/o=; b=d9aQNEInX4neEpk/cbwOJYAVB
+        wWs9WFEyvF+xyvqbdsfKww+FS8Y592aEk2s7EF/xJET+WYO/8mE3TtVRD92VBgZ/YKYBnS0r/2Dg9
+        2KiSjwCtEOAnm+N0Iy+1OszQyOB+NToRYpS13TomdxA0yCc86BsI9bV9j+5oAFZmtarW2IXwoUCvT
+        /r8fdJd+w6oLoNmCYBlv9C8171q3XqpIQT/GJDXKPysiN4rv48ntW9gYr3y1hzK+txMIE42XnmdQJ
+        WaCK4hzre4db/MjPtLnH6cxVnVdZkUj/VGZnU5h0qF5QXpaA5qdOcMNaMQTeCR5Aijb1+h32rEYla
+        P0Molh1Jw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYWws-0000rY-Aq; Thu, 28 Jun 2018 13:26:58 +0000
+        id 1fYWwt-0000rn-71; Thu, 28 Jun 2018 13:26:59 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     v9fs-developer@lists.sourceforge.net
 Cc:     linux-fsdevel@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Ron Minnich <rminnich@sandia.gov>,
         Latchesar Ionkov <lucho@ionkov.net>,
         linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 1/6] 9p: Change p9_fid_create calling convention
-Date:   Thu, 28 Jun 2018 06:26:24 -0700
-Message-Id: <20180628132629.3148-2-willy@infradead.org>
+Subject: [PATCH 3/6] 9p: Embed wait_queue_head into p9_req_t
+Date:   Thu, 28 Jun 2018 06:26:26 -0700
+Message-Id: <20180628132629.3148-4-willy@infradead.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180628132629.3148-1-willy@infradead.org>
 References: <20180628132629.3148-1-willy@infradead.org>
@@ -56,85 +56,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return NULL instead of ERR_PTR when we can't allocate a FID.  The ENOSPC
-return value was getting all the way back to userspace, and that's
-confusing for a userspace program which isn't expecting read() to tell it
-there's no space left on the filesystem.  The best error we can return to
-indicate a temporary failure caused by lack of client resources is ENOMEM.
-
-Maybe it would be better to sleep until a FID is available, but that's
-not a change I'm comfortable making.
+On a 64-bit system, the wait_queue_head_t is 24 bytes while the pointer
+to it is 8 bytes.  Growing the p9_req_t by 16 bytes is better than
+performing a 24-byte memory allocation.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- net/9p/client.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ include/net/9p/client.h |  2 +-
+ net/9p/client.c         | 19 +++++--------------
+ net/9p/trans_virtio.c   |  2 +-
+ 3 files changed, 7 insertions(+), 16 deletions(-)
 
+diff --git a/include/net/9p/client.h b/include/net/9p/client.h
+index e405729cd1c7..0fa0fbab33b0 100644
+--- a/include/net/9p/client.h
++++ b/include/net/9p/client.h
+@@ -113,7 +113,7 @@ enum p9_req_status_t {
+ struct p9_req_t {
+ 	int status;
+ 	int t_err;
+-	wait_queue_head_t *wq;
++	wait_queue_head_t wq;
+ 	struct p9_fcall *tc;
+ 	struct p9_fcall *rc;
+ 	void *aux;
 diff --git a/net/9p/client.c b/net/9p/client.c
-index 18c5271910dc..f8d58b0852fe 100644
+index bbab82f22c20..602f76de388a 100644
 --- a/net/9p/client.c
 +++ b/net/9p/client.c
-@@ -913,13 +913,11 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
- 	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
- 	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
- 	if (!fid)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
+@@ -282,8 +282,9 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
+ 				return ERR_PTR(-ENOMEM);
+ 			}
+ 			for (col = 0; col < P9_ROW_MAXTAG; col++) {
+-				c->reqs[row][col].status = REQ_STATUS_IDLE;
+-				c->reqs[row][col].tc = NULL;
++				req = &c->reqs[row][col];
++				req->status = REQ_STATUS_IDLE;
++				init_waitqueue_head(&req->wq);
+ 			}
+ 			c->max_tag += P9_ROW_MAXTAG;
+ 		}
+@@ -293,13 +294,6 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
+ 	col = tag % P9_ROW_MAXTAG;
  
- 	ret = p9_idpool_get(clnt->fidpool);
--	if (ret < 0) {
--		ret = -ENOSPC;
-+	if (ret < 0)
- 		goto error;
+ 	req = &c->reqs[row][col];
+-	if (!req->wq) {
+-		req->wq = kmalloc(sizeof(wait_queue_head_t), GFP_NOFS);
+-		if (!req->wq)
+-			goto grow_failed;
+-		init_waitqueue_head(req->wq);
 -	}
- 	fid->fid = ret;
- 
- 	memset(&fid->qid, 0, sizeof(struct p9_qid));
-@@ -935,7 +933,7 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
- 
- error:
- 	kfree(fid);
--	return ERR_PTR(ret);
-+	return NULL;
+-
+ 	if (!req->tc)
+ 		req->tc = p9_fcall_alloc(alloc_msize);
+ 	if (!req->rc)
+@@ -319,9 +313,7 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
+ 	pr_err("Couldn't grow tag array\n");
+ 	kfree(req->tc);
+ 	kfree(req->rc);
+-	kfree(req->wq);
+ 	req->tc = req->rc = NULL;
+-	req->wq = NULL;
+ 	return ERR_PTR(-ENOMEM);
  }
  
- static void p9_fid_destroy(struct p9_fid *fid)
-@@ -1137,9 +1135,8 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
- 	p9_debug(P9_DEBUG_9P, ">>> TATTACH afid %d uname %s aname %s\n",
- 		 afid ? afid->fid : -1, uname, aname);
- 	fid = p9_fid_create(clnt);
--	if (IS_ERR(fid)) {
--		err = PTR_ERR(fid);
--		fid = NULL;
-+	if (!fid) {
-+		err = -ENOMEM;
- 		goto error;
- 	}
- 	fid->uid = n_uname;
-@@ -1188,9 +1185,8 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
- 	clnt = oldfid->clnt;
- 	if (clone) {
- 		fid = p9_fid_create(clnt);
--		if (IS_ERR(fid)) {
--			err = PTR_ERR(fid);
--			fid = NULL;
-+		if (!fid) {
-+			err = -ENOMEM;
- 			goto error;
+@@ -409,7 +401,6 @@ static void p9_tag_cleanup(struct p9_client *c)
+ 	/* free requests associated with tags */
+ 	for (row = 0; row < (c->max_tag/P9_ROW_MAXTAG); row++) {
+ 		for (col = 0; col < P9_ROW_MAXTAG; col++) {
+-			kfree(c->reqs[row][col].wq);
+ 			kfree(c->reqs[row][col].tc);
+ 			kfree(c->reqs[row][col].rc);
  		}
+@@ -452,7 +443,7 @@ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
+ 	smp_wmb();
+ 	req->status = status;
  
-@@ -2018,9 +2014,8 @@ struct p9_fid *p9_client_xattrwalk(struct p9_fid *file_fid,
- 	err = 0;
- 	clnt = file_fid->clnt;
- 	attr_fid = p9_fid_create(clnt);
--	if (IS_ERR(attr_fid)) {
--		err = PTR_ERR(attr_fid);
--		attr_fid = NULL;
-+	if (!attr_fid) {
-+		err = -ENOMEM;
- 		goto error;
+-	wake_up(req->wq);
++	wake_up(&req->wq);
+ 	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc->tag);
+ }
+ EXPORT_SYMBOL(p9_client_cb);
+@@ -773,7 +764,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
  	}
- 	p9_debug(P9_DEBUG_9P,
+ again:
+ 	/* Wait for the response */
+-	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
++	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
+ 
+ 	/*
+ 	 * Make sure our req is coherent with regard to updates in other
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 05006cbb3361..3e096c98313c 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -490,7 +490,7 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 	virtqueue_kick(chan->vq);
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 	p9_debug(P9_DEBUG_TRANS, "virtio request kicked\n");
+-	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
++	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
+ 	/*
+ 	 * Non kernel buffers are pinned, unpin them
+ 	 */
 -- 
 2.18.0
 
