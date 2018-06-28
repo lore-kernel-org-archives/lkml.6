@@ -2,145 +2,112 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320CBC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5389C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D198626FEA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D198626FEA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 48D3926FFA
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:06:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="TEDX9UF0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D3926FFA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964824AbeF1HB5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:01:57 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:40064 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933361AbeF1HBy (ORCPT
+        id S933908AbeF1HGX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:06:23 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:32995 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933017AbeF1HGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:01:54 -0400
-Received: by mail-vk0-f68.google.com with SMTP id s23-v6so291350vks.7;
-        Thu, 28 Jun 2018 00:01:54 -0700 (PDT)
+        Thu, 28 Jun 2018 03:06:20 -0400
+Received: by mail-vk0-f65.google.com with SMTP id k194-v6so2255199vke.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 00:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1LZJr6f5vS3JQkmyoG7iPNHmXfruFsg9pthoHDriIV4=;
+        b=TEDX9UF0RkxNfjhGNWVtJcADgZGuEK9PUugaCV1CodgbHuKSAN/ryR1r+jimQhCDei
+         Vr3Tm3lFMsMcy91EkUygnHM+WWqgfFKtV0P1QprO93B/ipEU72Ml7Lrf2au2uaH5evZe
+         F9s5ZuofsSOTIQe17OKT6SftX/x66PV7LE3CiAevse6jdHvu8eyPrz4lDqzYr80zpal/
+         69+aVyKYZXxAGZWI6EKEN0UN1ASn2K6ES58eUhi/2hU8SgIzZDP80EjTx/+B6sT2uIfl
+         5rMd9XpGFFvudtoh0yKYhZ64QFzkwAUjtWdxdq4H3of/bo+bbokuRBc0p8vM7eGRU9zJ
+         Gdxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aAkg1L20ZteRX9kI12vsvdtXsfSm8eM3tTDFiVV+IZY=;
-        b=UqNHvgyTDLTLJlBtWUEX9Tl+/fxnMKAL7WDXvEapBV2MMezA2dBE21cZF5fLStyTYK
-         /EHqbvEAogl+239Ki/x8Ba8iUmP+QXZ2xvOUx8syKI0R5dEN1szeIcujJOXDSiaGp4xs
-         hsB+xTtUZTeMXZqbtxke1k8Ui1CESLErFBOYldb5Nf+ecW1Y6YLV1pcA+MXK0qVwffpQ
-         5Axdy47LXlcWkrElWVjfFkfPCT5RMinbQuFYjLQu4dGyE2qyf7vkFvZo8MnNVBmrQGc4
-         cj0KhU5V7/8oWF6J9r0WDeFBifbWQ5+sqPSkqsIm11ttj89TTrg+61oG1XfHoEkttRD8
-         JaVg==
-X-Gm-Message-State: APt69E0k0nWTBO1ceZw2iomQRlB6Vc7uyuBkWHpMY3jgYVIiDUCiXXWz
-        12CCA3Xy0zUl7gubMw0AkC4r5mX28oGTydg+JiJfNw==
-X-Google-Smtp-Source: AAOMgpfe8xhTqMhhrc7i4WKZdhAAZZIGRNZgT4CVFl4u9uF0GHoOUdtvfOJg529H4rHXyjiqqHyvqyJ+0dgL1spkZPk=
-X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr4445163vkg.159.1530169313568;
- Thu, 28 Jun 2018 00:01:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1LZJr6f5vS3JQkmyoG7iPNHmXfruFsg9pthoHDriIV4=;
+        b=kIf1vTN2EnUj1V86pMESZDDbT8rujiGmRmvujygvPb1qWtQP05hExf6d3FYaPbmJP+
+         UmG8PZsW2165JIeXIHBpzB3wLVVvkjQO89TIkUOKv/qtlafCTE1O3gOsjZvyLmVMybP2
+         C/If/HL+uB1CH66Yv74HQAhtEtMPS2IrR1zrEWzKO4ST2pdWaRlBB9iCbnCHta7DhVE1
+         OAXhMSThEgNEIWKZRVy/7xmpApA/QHK0n1WvLV6z9Xnv6BGwsW5YEEJ7A+CJQL/wGx1l
+         /FQfuxCxlubrMmmb8C8fs52Rr5OWDOAkIUkTByZDjKaJoYY1PL6DYFiRh5i6RzPxtW4e
+         yHbg==
+X-Gm-Message-State: APt69E3qYM+WjldyPUjvolS9vr3I6IecgJGyLbYfhz+gbK2o45qZl7IH
+        0LZhJsBLMCk8lVTy6oOp0KTv7+F1S+dX5GVpP1M1p4zd
+X-Google-Smtp-Source: AAOMgpdFZg97/uaLzUKlm4piEH73EDX+SDk7YrFC/woTbS4J9QUiDlEi10W+ljdj2b30sgqfJEk7uOnRrKfVJx0VCQo=
+X-Received: by 2002:a1f:b393:: with SMTP id c141-v6mr5574412vkf.37.1530169580132;
+ Thu, 28 Jun 2018 00:06:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
- <CAN=P9pivApAo76Kjc0TUDE0kvJn0pET=47xU6e=ioZV2VqO0Rg@mail.gmail.com>
-In-Reply-To: <CAN=P9pivApAo76Kjc0TUDE0kvJn0pET=47xU6e=ioZV2VqO0Rg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Jun 2018 09:01:42 +0200
-Message-ID: <CAMuHMdVVutxU3paxcjsuLVjCuooHqs61o0DEySkOK1zUeMj2tw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
-To:     Kostya Serebryany <kcc@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>, cpandya@codeaurora.org,
-        vishwath@google.com
+Received: by 2002:ab0:4de3:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 00:06:19
+ -0700 (PDT)
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <CAOtvUMc0j+5+uYZH9=kwV=Ptx_df=qSRceGsuouf-FuV7Mkw0w@mail.gmail.com>
+References: <1529581652-31294-1-git-send-email-hadar.gat@arm.com> <CAOtvUMc0j+5+uYZH9=kwV=Ptx_df=qSRceGsuouf-FuV7Mkw0w@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Thu, 28 Jun 2018 10:06:19 +0300
+Message-ID: <CAOtvUMeO3XuFUZvauc_z+bkSqnO9bJdK77oeDJ4CpTVSAiK3wg@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: fix finup
+To:     Hadar Gat <hadar.gat@arm.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad.BenYossef@arm.com>,
+        stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kostya,
+Hi Herbert,
 
-On Thu, Jun 28, 2018 at 2:04 AM Kostya Serebryany <kcc@google.com> wrote:
-> On Wed, Jun 27, 2018 at 4:08 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > On Tue, 26 Jun 2018 15:15:10 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
-> > > This patchset adds a new mode to KASAN [1], which is called KHWASAN
-> > > (Kernel HardWare assisted Address SANitizer).
-> > >
-> > > The plan is to implement HWASan [2] for the kernel with the incentive,
-> > > that it's going to have comparable to KASAN performance, but in the same
-> > > time consume much less memory, trading that off for somewhat imprecise
-> > > bug detection and being supported only for arm64.
-> >
-> > Why do we consider this to be a worthwhile change?
-> >
-> > Is KASAN's memory consumption actually a significant problem?  Some
-> > data regarding that would be very useful.
->
-> On mobile, ASAN's and KASAN's memory usage is a significant problem.
-> Not sure if I can find scientific evidence of that.
-> CC-ing Vishwath Mohan who deals with KASAN on Android to provide
-> anecdotal evidence.
->
-> There are several other benefits too:
-> * HWASAN more reliably detects non-linear-buffer-overflows compared to
-> ASAN (same for kernel-HWASAN vs kernel-ASAN)
-> * Same for detecting use-after-free (since HWASAN doesn't rely on quarantine).
-> * Much easier to implement stack-use-after-return detection (which
-> IIRC KASAN doesn't have yet, because in KASAN it's too hard)
->
-> > If it is a large problem then we still have that problem on x86, so the
-> > problem remains largely unsolved?
->
-> The problem is more significant on mobile devices than on desktop/server.
-> I'd love to have [K]HWASAN on x86_64 as well, but it's less trivial since x86_64
-> doesn't have an analog of aarch64's top-byte-ignore hardware feature.
 
-This depends on your mobile devices and desktops and servers.
-There exist mobile devices with more memory than some desktops or servers.
+On Thu, Jun 21, 2018 at 3:25 PM, Gilad Ben-Yossef <gilad@benyossef.com> wro=
+te:
+> On Thu, Jun 21, 2018 at 2:47 PM, Hadar Gat <hadar.gat@arm.com> wrote:
+>> finup() operation was incorrect, padding was missing.
+>> Fix by setting the ccree HW to enable padding.
+>>
+>> Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+>> Cc: stable@vger.kernel.org
+>
+> Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> Gilad
+>
 
-So actual numbers (O(KiB)? O(MiB)? O(GiB)?) would be nice to have.
+I took a 2nd look at this with Hadar and we realized we can write this
+in a way that allows
+for more code sharing. Please drop this patch. I'll be sending a revised ve=
+rsion
+in a second.
 
 Thanks!
+Gilad
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+values of =CE=B2 will give rise to dom!
