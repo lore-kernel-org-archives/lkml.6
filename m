@@ -6,28 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5952AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE1EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 130F9208A5
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130F9208A5
+	by mail.kernel.org (Postfix) with ESMTP id 81BC826FD9
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:34:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81BC826FD9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753777AbeF1MeD (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:34:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:46694 "EHLO foss.arm.com"
+        id S934887AbeF1MeC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:34:02 -0400
+Received: from foss.arm.com ([217.140.101.70]:46672 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753714AbeF1MeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:34:00 -0400
+        id S1753549AbeF1Md5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:33:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F241C15AD;
-        Thu, 28 Jun 2018 05:33:59 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BE9133F5C0;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14C231529;
         Thu, 28 Jun 2018 05:33:57 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D416A3F5C0;
+        Thu, 28 Jun 2018 05:33:54 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     akiyks@gmail.com, andrea.parri@amarulasolutions.com,
@@ -35,9 +34,9 @@ Cc:     akiyks@gmail.com, andrea.parri@amarulasolutions.com,
         luc.maranget@inria.fr, mark.rutland@arm.com, npiggin@gmail.com,
         paulmck@linux.vnet.ibm.com, peterz@infradead.org,
         stern@rowland.harvard.edu, will.deacon@arm.com
-Subject: [PATCH 2/2] tools/memory-model: remove ACCESS_ONCE() from model
-Date:   Thu, 28 Jun 2018 13:33:47 +0100
-Message-Id: <20180628123347.52963-3-mark.rutland@arm.com>
+Subject: [PATCH 1/2] tools/memory-model: remove ACCESS_ONCE() from recipes
+Date:   Thu, 28 Jun 2018 13:33:46 +0100
+Message-Id: <20180628123347.52963-2-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180628123347.52963-1-mark.rutland@arm.com>
 References: <20180628123347.52963-1-mark.rutland@arm.com>
@@ -53,8 +52,8 @@ Since commit:
 ... there has been no definition of ACCESS_ONCE() in the kernel tree,
 and it has been necessary to use READ_ONCE() or WRITE_ONCE() instead.
 
-Correspondingly, let's remove ACCESS_ONCE() from the kernel memory
-model.
+Let's update the exmaples in recipes.txt likewise for consistency, using
+READ_ONCE() for reads.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Alan Stern <stern@rowland.harvard.edu>
@@ -69,22 +68,25 @@ Cc: Luc Maranget <luc.maranget@inria.fr>
 Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Akira Yokosawa <akiyks@gmail.com>
 ---
- tools/memory-model/linux-kernel.bell | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/memory-model/Documentation/recipes.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-index 64f5740e0e75..b84fb2f67109 100644
---- a/tools/memory-model/linux-kernel.bell
-+++ b/tools/memory-model/linux-kernel.bell
-@@ -13,7 +13,7 @@
+diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+index ee4309a87fc4..1fea8ef2b184 100644
+--- a/tools/memory-model/Documentation/recipes.txt
++++ b/tools/memory-model/Documentation/recipes.txt
+@@ -322,9 +322,9 @@ the following write-side code fragment:
+ And the xlog_valid_lsn() function in fs/xfs/xfs_log_priv.h contains
+ the corresponding read-side code fragment:
  
- "Linux-kernel memory consistency model"
+-	cur_cycle = ACCESS_ONCE(log->l_curr_cycle);
++	cur_cycle = READ_ONCE(log->l_curr_cycle);
+ 	smp_rmb();
+-	cur_block = ACCESS_ONCE(log->l_curr_block);
++	cur_block = READ_ONCE(log->l_curr_block);
  
--enum Accesses = 'once (*READ_ONCE,WRITE_ONCE,ACCESS_ONCE*) ||
-+enum Accesses = 'once (*READ_ONCE,WRITE_ONCE*) ||
- 		'release (*smp_store_release*) ||
- 		'acquire (*smp_load_acquire*) ||
- 		'noreturn (* R of non-return RMW *)
+ Alternatively, consider the following comment in function
+ perf_output_put_handle() in kernel/events/ring_buffer.c:
 -- 
 2.11.0
 
