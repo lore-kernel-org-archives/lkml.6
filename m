@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DF0C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BBBC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D38627632
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EF9827633
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:46:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AeOeLXaO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D38627632
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HB6/D75V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF9827633
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935474AbeF1PqG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:46:06 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40739 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030214AbeF1Pph (ORCPT
+        id S935495AbeF1PqU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:46:20 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34877 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935010AbeF1Ppg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:45:37 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so9590943wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:45:37 -0700 (PDT)
+        Thu, 28 Jun 2018 11:45:36 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z137-v6so9613949wmc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=D5Qny5qPkCUDDQBYNsLYT5W10m4bYLoJk8RUhx4horE=;
-        b=AeOeLXaO0HkF+rsvuOrXrJbqXOHKiqi5FRP39VMPdR/9PGh+DLz3QaklmEWl59nMb5
-         bX8+O7tYJqwVyDzzxBSCi1OevO0lrp7r/mTSBSjGoXbq32mjSm1RavQNkwokRZ8pEYd3
-         2lAzCn9oVtH2s806qcXKtjPy5LzTI5R8hOCFM=
+        bh=Zl1T6q56msdYU0ByNc7HaXHBLSwGLVg5J9bQL90yjrE=;
+        b=HB6/D75VP9llFmXijrF8Pi7+2MV2uJ7hICGfVk38x//OXSMU0RET6k3syL9yeJDf/Z
+         u8YjjmdH9gXzGpBoZJ/+xe5gN5PrEmEFsfTZ/fv7QoVyxpAtexLig86MLkk9yVQSWMv5
+         5Zt5Sr6ZuJ7YavA+Z9z0Wyjkb7sv+oENNPIGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=D5Qny5qPkCUDDQBYNsLYT5W10m4bYLoJk8RUhx4horE=;
-        b=sUNvprNl2Ib13Tz2llczbf0drup3o9CFsOVyG2V7TRUkCp3u/WJXw17vXBWLQSU8qj
-         +p8aOc3aDSnOC8+hIrm8aqZP4WmfjVmc3CRs/qo2HPaaBUEBPZCLRnlCyOsHNKFP4X4T
-         XW1qX6SVZWI/c/CFbUp0R1uo3/vPmnUzVlHCQJOuYmHbHrYrcI3uQrWkNWtv738iwG0y
-         BLvPmLmszRYeI6xcCXEajdZNjreA03WuduzG+XnDc26kMYv4orsChvOJqtImYOu2YGRN
-         jhS70nOqyvLKcCYSL6PyHvIz3YZp04gppT8fJLPPKOI8cOQIh0fZnoh5DMSfWmWjRGug
-         mgsQ==
-X-Gm-Message-State: APt69E1T3QuOvy95KrvTmL0r+0x6uQ6x5MIqe/eoCawekxTnAce0iFbL
-        6CgluZ7fxxSJI5rbWlJ8Xl9ILw==
-X-Google-Smtp-Source: AAOMgpeSI5onOdrlzuCxLTaarBojCqjKAHTfvNOLM+gEI8gf0ZH257D9AMQuU2EsFy4qN453EUV8vw==
-X-Received: by 2002:a1c:5d0e:: with SMTP id r14-v6mr8384763wmb.152.1530200736285;
-        Thu, 28 Jun 2018 08:45:36 -0700 (PDT)
+        bh=Zl1T6q56msdYU0ByNc7HaXHBLSwGLVg5J9bQL90yjrE=;
+        b=nyUcRk1k3R1G1W4nFDFn1DcMigpCjqk01KKaJwQ9ZN62gEHzDiWY46E/klZYhktBxp
+         xM9d1p85mPFoVQzuSmD1V5YRkWSE2apDk11p/K3OEdAGRHaylUCT+e7VuGEfaLH/pDWX
+         Mbn/o8AvuTW/AUi+QqSzTJLwtcYjz6VXlqNKSZc3aG56wu1/wL1bW0acpIewZsxbhcQo
+         6MoAfHr8TPBsgVNLy2yxxY36NXhp6RCU0TIgdjhAWLiq6WuBxnPundELUM0HARm8xasU
+         xa9dvkuvWdJMHKyxGm/o6/ugxcbAZnUGRO5c/5pPS47uhDBTPYuhKUyFd05JA5mEn919
+         svUw==
+X-Gm-Message-State: APt69E3vaIgr08qBGoAFaBdt9j/UcAE4WcZECS+w45KtXoU0xPiVqMqy
+        lDNoY/qA3MxIuu2CSghkZMQ1Fg==
+X-Google-Smtp-Source: AAOMgpfH3MMitBE2ODnbstECQIiilteXDi+S9gHTT1DKQavY7ac+c8++peree3xsAloxnoQNfKRp7w==
+X-Received: by 2002:a1c:b801:: with SMTP id i1-v6mr8440469wmf.30.1530200734938;
+        Thu, 28 Jun 2018 08:45:34 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:21c3:ec41:bec9:c38])
-        by smtp.gmail.com with ESMTPSA id i4-v6sm6202115wrq.28.2018.06.28.08.45.34
+        by smtp.gmail.com with ESMTPSA id i4-v6sm6202115wrq.28.2018.06.28.08.45.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 08:45:35 -0700 (PDT)
+        Thu, 28 Jun 2018 08:45:34 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     peterz@infradead.org, mingo@kernel.org,
         linux-kernel@vger.kernel.org
@@ -64,9 +64,9 @@ Cc:     rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
         claudio@evidence.eu.com,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 10/11] sched: remove rt_avg code
-Date:   Thu, 28 Jun 2018 17:45:13 +0200
-Message-Id: <1530200714-4504-11-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH 09/11] sched: use pelt for scale_rt_capacity()
+Date:   Thu, 28 Jun 2018 17:45:12 +0200
+Message-Id: <1530200714-4504-10-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
 References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
@@ -75,144 +75,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rt_avg is no more used anywhere so we can remove all related code
+The utilization of the CPU by rt, dl and interrupts are now tracked with
+PELT so we can use these metrics instead of rt_avg to evaluate the remaining
+capacity available for cfs class.
+
+scale_rt_capacity() behavior has been changed and now returns the remaining
+capacity available for cfs instead of a scaling factor because rt, dl and
+interrupt provide now absolute utilization value.
+
+The same formula as schedutil is used:
+  irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
+but the implementation is different because it doesn't return the same value
+and doesn't benefit of the same optimization
 
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/core.c  | 26 --------------------------
- kernel/sched/fair.c  |  2 --
- kernel/sched/sched.h | 17 -----------------
- 3 files changed, 45 deletions(-)
+ kernel/sched/deadline.c |  2 --
+ kernel/sched/fair.c     | 41 +++++++++++++++++++----------------------
+ kernel/sched/pelt.c     |  2 +-
+ kernel/sched/rt.c       |  2 --
+ 4 files changed, 20 insertions(+), 27 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e5263a4..e9aae7f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -652,23 +652,6 @@ bool sched_can_stop_tick(struct rq *rq)
- 	return true;
- }
- #endif /* CONFIG_NO_HZ_FULL */
--
--void sched_avg_update(struct rq *rq)
--{
--	s64 period = sched_avg_period();
--
--	while ((s64)(rq_clock(rq) - rq->age_stamp) > period) {
--		/*
--		 * Inline assembly required to prevent the compiler
--		 * optimising this loop into a divmod call.
--		 * See __iter_div_u64_rem() for another example of this.
--		 */
--		asm("" : "+rm" (rq->age_stamp));
--		rq->age_stamp += period;
--		rq->rt_avg /= 2;
--	}
--}
--
- #endif /* CONFIG_SMP */
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index f4de2698..68b8a9f 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1180,8 +1180,6 @@ static void update_curr_dl(struct rq *rq)
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
  
- #if defined(CONFIG_RT_GROUP_SCHED) || (defined(CONFIG_FAIR_GROUP_SCHED) && \
-@@ -5719,13 +5702,6 @@ void set_rq_offline(struct rq *rq)
- 	}
- }
- 
--static void set_cpu_rq_start_time(unsigned int cpu)
--{
--	struct rq *rq = cpu_rq(cpu);
+-	sched_rt_avg_update(rq, delta_exec);
 -
--	rq->age_stamp = sched_clock_cpu(cpu);
--}
--
- /*
-  * used to mark begin/end of suspend/resume:
-  */
-@@ -5843,7 +5819,6 @@ static void sched_rq_cpu_starting(unsigned int cpu)
- 
- int sched_cpu_starting(unsigned int cpu)
- {
--	set_cpu_rq_start_time(cpu);
- 	sched_rq_cpu_starting(cpu);
- 	sched_tick_start(cpu);
- 	return 0;
-@@ -6111,7 +6086,6 @@ void __init sched_init(void)
- 
- #ifdef CONFIG_SMP
- 	idle_thread_set_boot_cpu();
--	set_cpu_rq_start_time(smp_processor_id());
- #endif
- 	init_sched_fair_class();
+ 	if (dl_entity_is_special(dl_se))
+ 		return;
  
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ce0dcbf..7ddb13a 100644
+index d2758e3..ce0dcbf 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5322,8 +5322,6 @@ static void cpu_load_update(struct rq *this_rq, unsigned long this_load,
- 
- 		this_rq->cpu_load[i] = (old_load * (scale - 1) + new_load) >> i;
- 	}
+@@ -7550,39 +7550,36 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
+ static unsigned long scale_rt_capacity(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	u64 total, used, age_stamp, avg;
+-	s64 delta;
 -
--	sched_avg_update(this_rq);
+-	/*
+-	 * Since we're reading these variables without serialization make sure
+-	 * we read them once before doing sanity checks on them.
+-	 */
+-	age_stamp = READ_ONCE(rq->age_stamp);
+-	avg = READ_ONCE(rq->rt_avg);
+-	delta = __rq_clock_broken(rq) - age_stamp;
++	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
++	unsigned long used, irq, free;
+ 
+-	if (unlikely(delta < 0))
+-		delta = 0;
++#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
++	irq = READ_ONCE(rq->avg_irq.util_avg);
+ 
+-	total = sched_avg_period() + delta;
++	if (unlikely(irq >= max))
++		return 1;
++#endif
+ 
+-	used = div_u64(avg, total);
++	used = READ_ONCE(rq->avg_rt.util_avg);
++	used += READ_ONCE(rq->avg_dl.util_avg);
+ 
+-	if (likely(used < SCHED_CAPACITY_SCALE))
+-		return SCHED_CAPACITY_SCALE - used;
++	if (unlikely(used >= max))
++		return 1;
+ 
+-	return 1;
++	free = max - used;
++#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
++	free *= (max - irq);
++	free /= max;
++#endif
++	return free;
  }
  
- /* Used instead of source_load when we know the type == 0 */
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 59a633d..c71ea81 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -846,8 +846,6 @@ struct rq {
+ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ {
+-	unsigned long capacity = arch_scale_cpu_capacity(sd, cpu);
++	unsigned long capacity = scale_rt_capacity(cpu);
+ 	struct sched_group *sdg = sd->groups;
  
- 	struct list_head cfs_tasks;
- 
--	u64			rt_avg;
--	u64			age_stamp;
- 	struct sched_avg	avg_rt;
- 	struct sched_avg	avg_dl;
- #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-@@ -1712,11 +1710,6 @@ extern const_debug unsigned int sysctl_sched_time_avg;
- extern const_debug unsigned int sysctl_sched_nr_migrate;
- extern const_debug unsigned int sysctl_sched_migration_cost;
- 
--static inline u64 sched_avg_period(void)
--{
--	return (u64)sysctl_sched_time_avg * NSEC_PER_MSEC / 2;
--}
+-	cpu_rq(cpu)->cpu_capacity_orig = capacity;
 -
- #ifdef CONFIG_SCHED_HRTICK
+-	capacity *= scale_rt_capacity(cpu);
+-	capacity >>= SCHED_CAPACITY_SHIFT;
++	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(sd, cpu);
+ 
+ 	if (!capacity)
+ 		capacity = 1;
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index ead6d8b..35475c0 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -237,7 +237,7 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runna
+ 	 */
+ 	sa->load_avg = div_u64(load * sa->load_sum, divider);
+ 	sa->runnable_load_avg =	div_u64(runnable * sa->runnable_load_sum, divider);
+-	sa->util_avg = sa->util_sum / divider;
++	WRITE_ONCE(sa->util_avg, sa->util_sum / divider);
+ }
  
  /*
-@@ -1753,8 +1746,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
- #endif
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 0e3e57a..2a881bd 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -970,8 +970,6 @@ static void update_curr_rt(struct rq *rq)
+ 	curr->se.exec_start = now;
+ 	cgroup_account_cputime(curr, delta_exec);
  
- #ifdef CONFIG_SMP
--extern void sched_avg_update(struct rq *rq);
+-	sched_rt_avg_update(rq, delta_exec);
 -
- #ifndef arch_scale_cpu_capacity
- static __always_inline
- unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
-@@ -1765,12 +1756,6 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
- 	return SCHED_CAPACITY_SCALE;
- }
- #endif
--
--static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta)
--{
--	rq->rt_avg += rt_delta * arch_scale_freq_capacity(cpu_of(rq));
--	sched_avg_update(rq);
--}
- #else
- #ifndef arch_scale_cpu_capacity
- static __always_inline
-@@ -1779,8 +1764,6 @@ unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
- 	return SCHED_CAPACITY_SCALE;
- }
- #endif
--static inline void sched_rt_avg_update(struct rq *rq, u64 rt_delta) { }
--static inline void sched_avg_update(struct rq *rq) { }
- #endif
+ 	if (!rt_bandwidth_enabled())
+ 		return;
  
- struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
 -- 
 2.7.4
 
