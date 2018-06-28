@@ -2,209 +2,246 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F21EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32E9C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D07E270BE
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07E270BE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 76CDD270C8
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:32:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDybwgPz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CDD270C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935010AbeF1Ib1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:31:27 -0400
-Received: from mga05.intel.com ([192.55.52.43]:46615 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933589AbeF1IbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:31:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 01:31:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,282,1526367600"; 
-   d="scan'208";a="60789653"
-Received: from gunzelma-mobl.ger.corp.intel.com (HELO [10.252.52.60]) ([10.252.52.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 28 Jun 2018 01:31:18 -0700
-Subject: Re: [RFC PATCH] drm/atomic: add ASYNC_UPDATE flag to the Atomic
- IOCTL.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dnicoara@chromium.org, alexandros.frantzis@collabora.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        tomasz Figa <tfiga@chromium.org>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-References: <20180627212506.24061-1-enric.balletbo@collabora.com>
-From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <b8fda72a-1ec6-4d47-ea5a-22f03802f4f3@linux.intel.com>
-Date:   Thu, 28 Jun 2018 10:31:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935040AbeF1Ib6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 04:31:58 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:41684 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934404AbeF1Ibs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 04:31:48 -0400
+Received: by mail-ua0-f196.google.com with SMTP id z12-v6so2904321uac.8;
+        Thu, 28 Jun 2018 01:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8uRrZxOdezoP99XUGz3lVco1yY3w8VlQ0vPhJ0jvoAg=;
+        b=JDybwgPzxhTH1SBGcphB94dgmWpzyVn7RUSpHIbHxHiS7+AtrinEfzJW5+7O1VooLX
+         6/nEd0mX7Iaeg0sBRcRj7YSu1sJSOxEuWj+iWNcFAf8BFC4xnj557Ctmo9gCFmyo4wfb
+         fJDBLt4Oig1WJBPp5dXyZt4WW7reJ/wNyZZ2lPi/EsYvzLZ2baUCfAN2cKj3O6ozFyln
+         MIde8V74SJpZgzi6wfCGqfLpgQcTL6vQqrvCu99OEVkhaiazBXPObxKbQy8YO4pCDr4L
+         fEBMHYQP8FUTpURYOBcOAfIRd2D1nYDNtVphM5qgeGQfnpbKm5coKof1o2WAw50/gGjA
+         xqYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8uRrZxOdezoP99XUGz3lVco1yY3w8VlQ0vPhJ0jvoAg=;
+        b=S+6yjTKI+EykyYUxBQnAMvxxv4QpFxyKflGq/y2YFzfOZ2bh8Coold+V33DaZ4UunY
+         +JxBmRw630046WUVSjvGHz87YTXQQM2KoSMtnKqWGKDKH9yn0XUsGL7HCyLn8zD/1cBS
+         UieJlMowhSpxWSkOsA2w6Uio42x9rjIb0Z8y4JZ4ve1M1H78j7At/mPHiCK1TQkeOWkB
+         Cpe/5Q/PlOxsFb8PxZhfwEMgGsOOCBG7vo8Nn6pSTdXyTUQ+bKE5xigkLtRp5emRDOT/
+         gxpDeiOI1AAptcFaVwvPmEbIxOo9iPOpea/z4J6Tg845uU0Z0uhimRUZrKhTEvhV72mE
+         5clw==
+X-Gm-Message-State: APt69E1T7+hpjaOzVvkzfG+/zYyjz72rauK/z94A6T/gjQwFUnqUj+R0
+        OJ4+AXkw/MNA4tbl6UVhmCsR6KaH19h380LB5DxexwwJ
+X-Google-Smtp-Source: AAOMgpfG6VSgCzTaikXuCNFKVa9OfXvSHn21tUSfbOB3zWSFw5WIUS9QggHNrwLX0x39W3y6dycHFkvabAhEXceMmws=
+X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr5832788uai.47.1530174707468;
+ Thu, 28 Jun 2018 01:31:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180627212506.24061-1-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 01:31:46
+ -0700 (PDT)
+In-Reply-To: <03bc9a51ccae38cdc86934746aee9f75ec667cfd.1530162340.git.baolin.wang@linaro.org>
+References: <03bc9a51ccae38cdc86934746aee9f75ec667cfd.1530162340.git.baolin.wang@linaro.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 28 Jun 2018 11:31:46 +0300
+Message-ID: <CAHp75Vfmr=VRtQaUWk4i8A2sws2sDS=QL3wTMfHTszrniAv-YA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] leds: core: Introduce generic pattern interface
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 27-06-18 om 23:25 schreef Enric Balletbo i Serra:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Thu, Jun 28, 2018 at 8:16 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
 >
-> This flag tells core to jump ahead the queued update if the conditions
-> in drm_atomic_async_check() are met. That means we are only able to do an
-> async update if no modeset is pending and update for the same plane is
-> not queued.
+> Some LED controllers have support for autonomously controlling
+> brightness over time, according to some preprogrammed pattern or
+> function.
 >
-> It uses the already in place infrastructure for async updates.
->
-> It is useful for cursor updates and async PageFlips over the atomic
-> ioctl, otherwise in some cases updates may be delayed to the point the
-> user will notice it.
->
-> DRM_MODE_ATOMIC_ASYNC_UPDATE should be passed to the Atomic IOCTL to use
-> this feature.
->
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> Hi,
->
-> This is an attempt to introduce the new ASYNC_UPDATE flag for atomic
-> operations, see the commit message for a more detailed description.
->
-> To test this patch we have created an IGT test that we plan to send to
-> the ML but also was tested using a small program that exercises the uAPI
-> for easy sanity testing. The program created by Alexandros can be found here
-> [2]. To test, just build the program and use the --atomic flag to use the
-> cursor plane in normal (blocking mode), and --atomic-async to use the cursor
-> plane with the ASYNC_UPDATE flag.E.g.
->
->   drm_cursor --atomic
->
-> or
->
->   drm_cursor --atomic-async
->
-> The test worked on a Samsung Chromebook Plus on top of mainline plus
-> the patch to update cursors asynchronously through atomic for the
-> drm/rockchip driver [3].
->
-> Alexandros also did a proof-of-concept to use this flag and draw cursors
-> using atomic if possible on ozone [1].
->
-> Best regards,
->  Enric
->
-> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
-> [2] https://gitlab.collabora.com/alf/drm-cursor
-> [3] https://patchwork.kernel.org/patch/10492693/
->
->
->  drivers/gpu/drm/drm_atomic.c        | 6 ++++++
->  drivers/gpu/drm/drm_atomic_helper.c | 9 ++++++---
->  include/uapi/drm/drm_mode.h         | 4 +++-
->  3 files changed, 15 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index c825c76edc1d..15b799f46982 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -80,6 +80,7 @@ drm_atomic_state_init(struct drm_device *dev, struct drm_atomic_state *state)
->  	 * setting this appropriately?
->  	 */
->  	state->allow_modeset = true;
-> +	state->async_update = true;
-Do we really want this by default?
+> This adds a new optional operator that LED class drivers can implement
+> if they support such functionality as well as a new device attribute to
+> configure the pattern for a given LED.
 
-Wouldn't it make more sense to only enable it if userspace requests it?
->  
->  	state->crtcs = kcalloc(dev->mode_config.num_crtc,
->  			       sizeof(*state->crtcs), GFP_KERNEL);
-> @@ -2320,6 +2321,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
->  			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
->  		return -EINVAL;
->  
-> +	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
-> +			(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE))
-> +		return -EINVAL;
+> +What: /sys/class/leds/<led>/pattern
+> +Date: June 2018
+> +KernelVersion: 4.18
+
+4.19 ?
+
+> +static ssize_t pattern_show(struct device *dev,
+> +                           struct device_attribute *attr, char *buf)
+> +{
+> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +       struct led_pattern *pattern;
+> +       size_t offset = 0;
+> +       int count, n, i;
+
+> +       if (!led_cdev->pattern_get)
+> +               return -EOPNOTSUPP;
 > +
->  	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
->  
->  	state = drm_atomic_state_alloc(dev);
-We should probably move it to be a flag only enabled when requested, and reject with the error returned by drm_atomic_helper_async_check() when things fail.
 
-~Maarten
-> @@ -2328,6 +2333,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
->  
->  	state->acquire_ctx = &ctx;
->  	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
-> +	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE);
->  
->  retry:
->  	plane_mask = 0;
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index c35654591c12..aeb0523d3bcf 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -891,7 +891,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
->  	if (ret)
->  		return ret;
->  
-> -	if (state->legacy_cursor_update)
-> +	if (state->async_update || state->legacy_cursor_update)
->  		state->async_update = !drm_atomic_helper_async_check(dev, state);
->  
->  	return ret;
-> @@ -1526,13 +1526,16 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
->  	if (new_plane_state->fence)
->  		return -EINVAL;
->  
-> +	/* Only do an async update if there is a pending commit. */
-> +	if (!old_plane_state->commit)
-> +		return -EINVAL;
+Perhaps just hide an attribute completely?
+
+> +       pattern = led_cdev->pattern_get(led_cdev, &count);
+> +       if (IS_ERR_OR_NULL(pattern))
+> +               return PTR_ERR(pattern);
+
+Hmm.. Here you shadow NULL case by returning 0.
+Even if it's correct behaviour IS_ERR_OR_NULL is a beast to hide such
+subtle detail.
+
+It also would be good idea to check for count == 0 and bail out
+immediately. Otherwise you will print an extra blank line.
+
+> +       for (i = 0; i < count; i++) {
+> +               n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d",
+> +                            pattern[i].brightness, pattern[i].delta_t);
 > +
->  	/*
->  	 * Don't do an async update if there is an outstanding commit modifying
->  	 * the plane.  This prevents our async update's changes from getting
->  	 * overridden by a previous synchronous update's state.
->  	 */
-> -	if (old_plane_state->commit &&
-> -	    !try_wait_for_completion(&old_plane_state->commit->hw_done))
-> +	if (!try_wait_for_completion(&old_plane_state->commit->hw_done))
->  		return -EBUSY;
->  
->  	return funcs->atomic_async_check(plane, new_plane_state);
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index 50bcf4214ff9..772e84f0edeb 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -718,13 +718,15 @@ struct drm_mode_destroy_dumb {
->  #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
->  #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
->  #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
-> +#define DRM_MODE_ATOMIC_ASYNC_UPDATE  0x0800
->  
->  #define DRM_MODE_ATOMIC_FLAGS (\
->  		DRM_MODE_PAGE_FLIP_EVENT |\
->  		DRM_MODE_PAGE_FLIP_ASYNC |\
->  		DRM_MODE_ATOMIC_TEST_ONLY |\
->  		DRM_MODE_ATOMIC_NONBLOCK |\
-> -		DRM_MODE_ATOMIC_ALLOW_MODESET)
-> +		DRM_MODE_ATOMIC_ALLOW_MODESET |\
-> +		DRM_MODE_ATOMIC_ASYNC_UPDATE)
->  
->  struct drm_mode_atomic {
->  	__u32 flags;
+
+> +               if (offset + n >= PAGE_SIZE)
+> +                       goto err_nospc;
+
+> +
+> +               offset += n;
+> +
+
+> +               if (i < count - 1)
+> +                       buf[offset++] = ' ';
+
+You might add this to the end of above format string and remove this
+conditional completely...
+
+> +       }
+> +
+
+> +       buf[offset++] = '\n';
+
+...and use here something like
+
+buf[offset - 1] = '\n';
+
+(we have such patterns in the kernel)
+
+> +
+> +       kfree(pattern);
+> +       return offset;
+> +
+> +err_nospc:
+> +       kfree(pattern);
+> +       return -ENOSPC;
+> +}
+> +
+> +static ssize_t pattern_store(struct device *dev,
+> +                            struct device_attribute *attr,
+> +                            const char *buf, size_t size)
+> +{
+> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +       struct led_pattern *pattern = NULL;
+> +       unsigned long val;
+> +       char *sbegin;
+> +       char *elem;
+> +       char *s;
+> +       int ret, len = 0;
+> +       bool odd = true;
+> +
+> +       s = sbegin = kstrndup(buf, size, GFP_KERNEL);
+> +       if (!s)
+> +               return -ENOMEM;
+> +
+
+> +       /* Trim trailing newline */
+> +       s[strcspn(s, "\n")] = '\0';
+
+It's usually done via strstrip().
+
+sbegin = kstrndup();
+...
+
+s = strstrip(sbegin);
+
+> +
+> +       /* If the remaining string is empty, clear the pattern */
+> +       if (!s[0]) {
+
+if (!*s) ?
+
+> +               ret = led_cdev->pattern_clear(led_cdev);
+> +               goto out;
+> +       }
+> +
+> +       pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
+> +       if (!pattern) {
+> +               ret = -ENOMEM;
+> +               goto out;
+> +       }
+> +
+> +       /* Parse out the brightness & delta_t touples */
+> +       while ((elem = strsep(&s, " ")) != NULL) {
+> +               ret = kstrtoul(elem, 10, &val);
+> +               if (ret)
+> +                       goto out;
+> +
+
+> +               if (odd) {
+
+This is effectivelly if (len % 2 == 0)
+
+> +                       pattern[len].brightness = val;
+> +               } else {
+> +                       pattern[len].delta_t = val;
+> +                       len++;
+> +               }
+> +
+> +               odd = !odd;
+> +       }
+> +
+> +       /*
+> +        * Fail if we didn't find any data points or last data point was partial
+> +        */
+> +       if (!len || !odd) {
+> +               ret = -EINVAL;
+> +               goto out;
+> +       }
+
+For partial data can we return different error code?
+Does it make sense?
+
+> +
+> +       ret = led_cdev->pattern_set(led_cdev, pattern, len);
+> +
+> +out:
+> +       kfree(pattern);
+> +       kfree(sbegin);
+> +       return ret < 0 ? ret : size;
+> +}
+> +static DEVICE_ATTR_RW(pattern);
 
 
+-- 
+With Best Regards,
+Andy Shevchenko
