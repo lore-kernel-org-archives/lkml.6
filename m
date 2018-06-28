@@ -2,54 +2,55 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C481C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F5EC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53883276A8
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8E8B276A9
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S0igsazf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53883276A8
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cOIhOhkD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E8B276A9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754482AbeF1QoZ (ORCPT
+        id S1754541AbeF1Qo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:44:25 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53384 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752603AbeF1QoX (ORCPT
+        Thu, 28 Jun 2018 12:44:28 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41426 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751735AbeF1QoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 28 Jun 2018 12:44:23 -0400
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180628164421euoutp017b16c9cd93c5f0534ca860de7aee51f6~8YKsv1Zw23224932249euoutp01g;
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180628164421euoutp020dbcbe70c6989c129b6363e7568b913d~8YKsxne4D1342713427euoutp02P;
         Thu, 28 Jun 2018 16:44:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180628164421euoutp017b16c9cd93c5f0534ca860de7aee51f6~8YKsv1Zw23224932249euoutp01g
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180628164421euoutp020dbcbe70c6989c129b6363e7568b913d~8YKsxne4D1342713427euoutp02P
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1530204261;
-        bh=lfaCIn/su4byC0JK9JB+pH8p+PBSZzzBuF4vISDuQdU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=S0igsazfnwdk2awfdwLRRWnT/tNd+XMOYkioe2q4DbWHr7Prk6+1RtS4t8EJe40kG
-         wV/jYk3aFYQB5jAdEQ4AAi16wmXQGDEx9RWyEtCZq6OJIm6tTnZ1QwARZiwnX5srmL
-         scREDTKmRXX/YqEIMe8djEzxBVlec/4BLolQYPOs=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        bh=0I4eEOn8stRSPIgk9a1xfTr6v2Ctc6V7l3kBw7Hv1J0=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=cOIhOhkD2K3uXWcUZD/TFTZXRN208/99EGJUPaL5IBDj24xdXjO5DO89erXgZDy48
+         DHEkUZZs/S/cO9PelRgBgV2rt2J3cfzbiUIMdAALQ/BKJuRwH3DLTeWYL6wZWp+5e8
+         Hp4ZCLLxsVeCJLdJOuqAQZFUTY366LNpYGo3cEE0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180628164420eucas1p2fb421eca984f7259d7fc875b1b3dd587~8YKrW9hPS1087610876eucas1p2Q;
+        20180628164420eucas1p25ad71a2c5e093c9815c35e1aa73f5d47~8YKrpvonc1087010870eucas1p25;
         Thu, 28 Jun 2018 16:44:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4C.49.10409.360153B5; Thu, 28
-        Jun 2018 17:44:19 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E8.16.05700.460153B5; Thu, 28
+        Jun 2018 17:44:20 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0~8YKqlalVS3253632536eucas1p1V;
+        20180628164419eucas1p138f041d9302891df39f4020032f4cc3f~8YKrAqO0N3253632536eucas1p1Y;
         Thu, 28 Jun 2018 16:44:19 +0000 (GMT)
-X-AuditID: cbfec7f5-b5fff700000028a9-c7-5b3510636513
+X-AuditID: cbfec7f2-1dbff70000011644-6c-5b3510645e85
 Received: from eusync3.samsung.com ( [203.254.199.213]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 69.2F.04178.360153B5; Thu, 28
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id BF.7A.04183.360153B5; Thu, 28
         Jun 2018 17:44:19 +0100 (BST)
 Received: from AMDC2075.DIGITAL.local ([106.120.51.25]) by
         eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
@@ -64,63 +65,176 @@ Cc:     Archit Taneja <architt@codeaurora.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-kernel@vger.kernel.org, Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 0/3]  Fix packed pixel modes display on MHL2
-Date:   Thu, 28 Jun 2018 18:44:00 +0200
-Message-id: <1530204243-6370-1-git-send-email-m.purski@samsung.com>
+Subject: [PATCH 1/3] drm/bridge/sii8620: Send AVI infoframe in all MHL
+ versions
+Date:   Thu, 28 Jun 2018 18:44:01 +0200
+Message-id: <1530204243-6370-2-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7djPc7opAqbRBr95LG6tO8dq0XvuJJNF
-        U8dbVouNM9azWlz5+p7NonPiEnaLy7vmsFkseHmLxWLtkbvsDpwel/t6mTxmd8xk9dj+7QGr
-        x/3u40wefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXFo/gn2glOsFdcndTM1MB5k6WLk5JAQ
-        MJFYcW0+YxcjF4eQwApGiXNTd0I5nxklzp/sZYOpurH3OFRiGaPEsrMNTCAJIYH/jBIP7+h3
-        MXJwsAloSaxpjwcJiwgoS/yduAqsnlngKpPEycvbweqFBWwkGjZ0sYLYLAKqEu0TP4Et4BVw
-        lrh4ZQ8jxDI5iZvnOplBmiUEOtgkzs87ywayQELARWLN6RyIGmGJV8e3sEPYMhKdHQeZIOxq
-        iZUvl7NA9DYwSny5e5kZImEtcfj4RbDFzAJ8EpO2TWeGmMkr0dEmBFHiIfHl71lmiL9iJV7N
-        vcg4gVFiASPDKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMAIPP3v+NcdjPv+JB1iFOBg
-        VOLhPXHFJFqINbGsuDL3EKMEB7OSCK8Qp2m0EG9KYmVValF+fFFpTmrxIUZpDhYlcd44jboo
-        IYH0xJLU7NTUgtQimCwTB6dUA2NhRpzGHmO/oq2vItWEVn35fCJB7uubrc6LvKI0RSsr2x5V
-        f/Z2mGEQtiOHZ0GVeaBe6UEWq6vpp54IzOBL2Lc/ZL140sEJgb7ro6RMXGdb77lve7K0tX11
-        7q+2DUfc39ZKMt6eK6sjzCj8qKvo9MX7R5gdznXnnvj+12yqlLP2p+ULL767IKfEUpyRaKjF
-        XFScCAD22crhvAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLJMWRmVeSWpSXmKPExsVy+t/xq7rJAqbRBhsPcVvcWneO1aL33Ekm
+In-reply-to: <1530204243-6370-1-git-send-email-m.purski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7djP87opAqbRBhdnC1ncWneO1aL33Ekm
         i6aOt6wWG2esZ7W48vU9m0XnxCXsFpd3zWGzWPDyFovF2iN32R04PS739TJ5zO6Yyeqx/dsD
-        Vo/73ceZPPq2rGL0+LxJLoAtissmJTUnsyy1SN8ugSvj0PwT7AWnWCuuT+pmamA8yNLFyMkh
-        IWAicWPvccYuRi4OIYEljBI3d5xmB0kICTQySbyc7dvFyMHBJqAlsaY9HiQsIqAs8XfiKrB6
-        ZoGbTBJ/z+5lBUkIC9hINGzoArNZBFQl2id+YgOxeQWcJS5e2cMIsUxO4ua5TuYJjFwLGBlW
-        MYqklhbnpucWG+oVJ+YWl+al6yXn525iBAbKtmM/N+9gvLQx+BCjAAejEg/viSsm0UKsiWXF
-        lbmHGCU4mJVEeIU4TaOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8543qIwSEkhPLEnNTk0tSC2C
-        yTJxcEo1MC5UUpk7Z91Ug/19Fl77j12+66z10+32tklJr5483/1FTNV3q/Jb3xCVnS1v5wV+
-        1y2a0mCQcnL5F76jip+e/dgvd1q6d8fXH9pcH9grDqcs4nNYq9+mF2I1q+JaRJVp46riQ+k6
-        1stvb7aW+vaSJy+42LbjVq22P7vh0yup/lk+LEtPP95ee1aJpTgj0VCLuag4EQAJNLnKEAIA
-        AA==
-X-CMS-MailID: 20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0
+        Vo/73ceZPPq2rGL0+LxJLoAtissmJTUnsyy1SN8ugStjwq4NrAW/lSo6fs9maWBslu1i5OSQ
+        EDCRuNL+krmLkYtDSGAFo8TBCb1MEM5nRonbR68ydjFygFUd/JcHEV/GKNHSNocJpFtI4D+j
+        xMM7+iA1bAJaEmva40HCIgLKEn8nrmIEqWcWuMokcfLydrB6YYFAiUVLn7GC2CwCqhJdv06A
+        xXkFnCWe7mxgh7hITuLmuU5mEJtTwEViTuMKsEESAgvYJM5MecAIUeQiMXXtYhYIW1ji1fEt
+        UM0yEpcnd0PFqyVWvlzOAtHcwCjx5e5lZoiEtcTh4xfBrmAW4JOYtG06M8SXvBIdbUIQJR4S
+        2693sEA8OZ1RYuN/jwmMkgsYGVYxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIExubpf8c/
+        7WD8einpEKMAB6MSD++JKybRQqyJZcWVuYcYJTiYlUR4hThNo4V4UxIrq1KL8uOLSnNSiw8x
+        SnOwKInzxmnURQkJpCeWpGanphakFsFkmTg4pRoYk/6YG+8Qm7NHcPne3g3iXbPMX754/LW7
+        w9R4Jnd2x39mH12ZmUvy3lyO1wyu2CVUtqkgvv2yXsTLn4wGH/8WvjXc9XhnTHFGZQAjQ7/j
+        se/dwkasmYLZMgdY/aWu9774fKZ75ZYujpr4uQ6vzOdYXn3cmNf69tqCB3PCv3ypfsF0iiPl
+        Rk+/EktxRqKhFnNRcSIA8PU/HMkCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMLMWRmVeSWpSXmKPExsVy+t/xq7rJAqbRBktfqlrcWneO1aL33Ekm
+        i6aOt6wWG2esZ7W48vU9m0XnxCXsFpd3zWGzWPDyFovF2iN32R04PS739TJ5zO6Yyeqx/dsD
+        Vo/73ceZPPq2rGL0+LxJLoAtissmJTUnsyy1SN8ugStjwq4NrAW/lSo6fs9maWBslu1i5OCQ
+        EDCROPgvr4uRi0NIYAmjxM8ta1i7GDmBnEYmiZezfUFq2AS0JNa0x4OERQSUJf5OXMUIUs8s
+        cJNJ4u/ZvawgNcIC/hLbV4aB1LAIqEp0/TrBBGLzCjhLPN3ZwA5iSwjISdw818kMYnMKuEjM
+        aVzBCLHKWeL03ia2CYw8CxgZVjGKpJYW56bnFhvpFSfmFpfmpesl5+duYgQG1bZjP7fsYOx6
+        F3yIUYCDUYmH98QVk2gh1sSy4srcQ4wSHMxKIrxCnKbRQrwpiZVVqUX58UWlOanFhxilOViU
+        xHnPG1RGCQmkJ5akZqemFqQWwWSZODilGhjty1+6bqiPuFXxIOIqN08+c9pth9YAC6mUS5LB
+        T14d111iPit8g0RDc7bJursT71uYNFx6kv5u468fM34fKNw1r66ScYrNMQXBGp7y80YNbF/0
+        BFNyFlksOcVzcGH4Poevj4/MLp0lxG9mUdi6Qf+Wi+7eO/eDxP78tTr4f/uys2KlgSsSNhso
+        sRRnJBpqMRcVJwIAyre0DiYCAAA=
+X-CMS-MailID: 20180628164419eucas1p138f041d9302891df39f4020032f4cc3f
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0
-References: <CGME20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180628164419eucas1p138f041d9302891df39f4020032f4cc3f
+References: <1530204243-6370-1-git-send-email-m.purski@samsung.com>
+        <CGME20180628164419eucas1p138f041d9302891df39f4020032f4cc3f@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Currently AVI infoframe is sent only in MHL3. However, some MHL2 dongles
+need AVI infoframe to work correctly in either packed pixel mode or
+non-packed pixel mode.
 
-this patchset is a next attempt to fix packed pixel modes display on MHL2. It appeared, that
-the current implementation does not work well with every dongle. Thanks to bigger number
-of test devices I managed to prepare a patchset, which should finally fix display
-of packed pixel modes on MHL2, while not breaking it on MHL3.
+Send AVI infoframe in set_infoframes() in every case. Create an
+infoframe using drm_hdmi_infoframe_from_display_mode() instead of
+manually filling each infoframe structure's field.
 
-Best regards,
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+---
+ drivers/gpu/drm/bridge/sil-sii8620.c | 39 ++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 20 deletions(-)
 
-Maciej Purski
-
-Maciej Purski (3):
-  drm/bridge/sii8620: Send AVI infoframe in all MHL versions
-  drm/bridge/sii8620: Fix display of packed pixel modes
-  drm/bridge/sii8620: Fix link mode selection
-
- drivers/gpu/drm/bridge/sil-sii8620.c | 86 +++++++++++++++++++++++-------------
- 1 file changed, 55 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+index 250effa..bd30ccf 100644
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -14,6 +14,7 @@
+ #include <drm/bridge/mhl.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_edid.h>
++#include <drm/drm_encoder.h>
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+@@ -72,9 +73,7 @@ struct sii8620 {
+ 	struct regulator_bulk_data supplies[2];
+ 	struct mutex lock; /* context lock, protects fields below */
+ 	int error;
+-	int pixel_clock;
+ 	unsigned int use_packed_pixel:1;
+-	int video_code;
+ 	enum sii8620_mode mode;
+ 	enum sii8620_sink_type sink_type;
+ 	u8 cbus_status;
+@@ -82,7 +81,6 @@ struct sii8620 {
+ 	u8 xstat[MHL_XDS_SIZE];
+ 	u8 devcap[MHL_DCAP_SIZE];
+ 	u8 xdevcap[MHL_XDC_SIZE];
+-	u8 avif[HDMI_INFOFRAME_SIZE(AVI)];
+ 	bool feature_complete;
+ 	bool devcap_read;
+ 	bool sink_detected;
+@@ -1082,18 +1080,28 @@ static ssize_t mhl3_infoframe_pack(struct mhl3_infoframe *frame,
+ 	return frm_len;
+ }
+ 
+-static void sii8620_set_infoframes(struct sii8620 *ctx)
++static void sii8620_set_infoframes(struct sii8620 *ctx,
++				   struct drm_display_mode *mode)
+ {
+ 	struct mhl3_infoframe mhl_frm;
+ 	union hdmi_infoframe frm;
+ 	u8 buf[31];
+ 	int ret;
+ 
++	ret = drm_hdmi_avi_infoframe_from_display_mode(&frm.avi,
++						       mode,
++						       true);
++	if (ctx->use_packed_pixel)
++		frm.avi.colorspace = HDMI_COLORSPACE_YUV422;
++
++	if (!ret)
++		ret = hdmi_avi_infoframe_pack(&frm.avi, buf, ARRAY_SIZE(buf));
++	if (ret > 0)
++		sii8620_write_buf(ctx, REG_TPI_AVI_CHSUM, buf + 3, ret - 3);
++
+ 	if (!sii8620_is_mhl3(ctx) || !ctx->use_packed_pixel) {
+ 		sii8620_write(ctx, REG_TPI_SC,
+ 			BIT_TPI_SC_TPI_OUTPUT_MODE_0_HDMI);
+-		sii8620_write_buf(ctx, REG_TPI_AVI_CHSUM, ctx->avif + 3,
+-			ARRAY_SIZE(ctx->avif) - 3);
+ 		sii8620_write(ctx, REG_PKT_FILTER_0,
+ 			BIT_PKT_FILTER_0_DROP_CEA_GAMUT_PKT |
+ 			BIT_PKT_FILTER_0_DROP_MPEG_PKT |
+@@ -1102,16 +1110,6 @@ static void sii8620_set_infoframes(struct sii8620 *ctx)
+ 		return;
+ 	}
+ 
+-	ret = hdmi_avi_infoframe_init(&frm.avi);
+-	frm.avi.colorspace = HDMI_COLORSPACE_YUV422;
+-	frm.avi.active_aspect = HDMI_ACTIVE_ASPECT_PICTURE;
+-	frm.avi.picture_aspect = HDMI_PICTURE_ASPECT_16_9;
+-	frm.avi.colorimetry = HDMI_COLORIMETRY_ITU_709;
+-	frm.avi.video_code = ctx->video_code;
+-	if (!ret)
+-		ret = hdmi_avi_infoframe_pack(&frm.avi, buf, ARRAY_SIZE(buf));
+-	if (ret > 0)
+-		sii8620_write_buf(ctx, REG_TPI_AVI_CHSUM, buf + 3, ret - 3);
+ 	sii8620_write(ctx, REG_PKT_FILTER_0,
+ 		BIT_PKT_FILTER_0_DROP_CEA_GAMUT_PKT |
+ 		BIT_PKT_FILTER_0_DROP_MPEG_PKT |
+@@ -1131,6 +1129,9 @@ static void sii8620_set_infoframes(struct sii8620 *ctx)
+ 
+ static void sii8620_start_video(struct sii8620 *ctx)
+ {
++	struct drm_display_mode *mode =
++		&ctx->bridge.encoder->crtc->state->adjusted_mode;
++
+ 	if (!sii8620_is_mhl3(ctx))
+ 		sii8620_stop_video(ctx);
+ 
+@@ -1167,7 +1168,7 @@ static void sii8620_start_video(struct sii8620 *ctx)
+ 			  MHL_XDS_LINK_RATE_6_0_GBPS, 0x40 },
+ 		};
+ 		u8 p0_ctrl = BIT_M3_P0CTRL_MHL3_P0_PORT_EN;
+-		int clk = ctx->pixel_clock * (ctx->use_packed_pixel ? 2 : 3);
++		int clk = mode->clock * (ctx->use_packed_pixel ? 2 : 3);
+ 		int i;
+ 
+ 		for (i = 0; i < ARRAY_SIZE(clk_spec) - 1; ++i)
+@@ -1196,7 +1197,7 @@ static void sii8620_start_video(struct sii8620 *ctx)
+ 			clk_spec[i].link_rate);
+ 	}
+ 
+-	sii8620_set_infoframes(ctx);
++	sii8620_set_infoframes(ctx, mode);
+ }
+ 
+ static void sii8620_disable_hpd(struct sii8620 *ctx)
+@@ -2242,8 +2243,6 @@ static bool sii8620_mode_fixup(struct drm_bridge *bridge,
+ 	mutex_lock(&ctx->lock);
+ 
+ 	ctx->use_packed_pixel = sii8620_is_packing_required(ctx, adjusted_mode);
+-	ctx->video_code = drm_match_cea_mode(adjusted_mode);
+-	ctx->pixel_clock = adjusted_mode->clock;
+ 
+ 	mutex_unlock(&ctx->lock);
+ 
 -- 
 2.7.4
 
