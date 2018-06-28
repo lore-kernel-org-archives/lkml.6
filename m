@@ -2,253 +2,89 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3553DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C917C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC71527487
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:53:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0ugyh1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC71527487
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CD7C92748F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7C92748F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966342AbeF1NxO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:53:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965482AbeF1NxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:53:12 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S966364AbeF1NxV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:53:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56104 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966310AbeF1NxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:53:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F32627480;
-        Thu, 28 Jun 2018 13:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530193991;
-        bh=ryEL2DGGdIzg1WsUQJpaU7nrPickqwNTCTaZAt0wAZs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q0ugyh1BpuRFg781fAQXDk4HPWekcqlTV7boydJ9TmTbQuHTfsyJvgXMo8soCkIkk
-         SHPPB0A7kk/vw9ZJ466drvgtarcPdNY7bkmnsemHmzrWZfb7JnuNSX5ZBJPD9LHQA9
-         7Mhwo5JXNH+wGlFOBeWldEYenZvSlvEX0z7u4hRc=
-Date:   Thu, 28 Jun 2018 08:53:10 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Xiaowei Song <songxiaowei@hisilicon.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v4 23/26] devicetree: fix a series of wrong file
- references
-Message-ID: <20180628135310.GD90450@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org>
- <266e5f874b36aa83f3327879d85921fab52d5461.1529079120.git.mchehab+samsung@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8EE9840BC066;
+        Thu, 28 Jun 2018 13:53:16 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8759F2026D69;
+        Thu, 28 Jun 2018 13:53:14 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] KVM: x86: hyperv: PV IPI support for Windows guests
+Date:   Thu, 28 Jun 2018 15:53:08 +0200
+Message-Id: <20180628135313.17468-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <266e5f874b36aa83f3327879d85921fab52d5461.1529079120.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 13:53:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 13:53:16 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 01:30:51PM -0300, Mauro Carvalho Chehab wrote:
-> As files got renamed, their references broke.
-> 
-> Manually fix a series of broken refs at the DT bindings.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Changes since v1 [Radim Krčmář]:
+- Implement VP_IDX -> VCPU_IDX mapping, use it for both PV IPIs and
+  TLB flush (PATCHes 1-3 added)
+- Minor tweaks.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Using hypercall for sending IPIs is faster because this allows to specify
+any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
+will take only one VMEXIT.
 
-Thanks for fixing these!
+Same as PV TLB flush, this allows Windows guests having > 64 vCPUs to boot
+on KVM when Hyper-V extensions are enabled.
 
-> ---
->  .../devicetree/bindings/input/rmi4/rmi_2d_sensor.txt |  2 +-
->  Documentation/devicetree/bindings/mfd/sun6i-prcm.txt |  2 +-
->  .../devicetree/bindings/pci/hisilicon-pcie.txt       |  2 +-
->  Documentation/devicetree/bindings/pci/kirin-pcie.txt |  2 +-
->  .../devicetree/bindings/pci/pci-keystone.txt         |  4 ++--
->  .../devicetree/bindings/sound/st,stm32-i2s.txt       |  2 +-
->  .../devicetree/bindings/sound/st,stm32-sai.txt       |  2 +-
->  MAINTAINERS                                          | 12 ++++++------
->  8 files changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt b/Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt
-> index f2c30c8b725d..9afffbdf6e28 100644
-> --- a/Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt
-> +++ b/Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt
-> @@ -12,7 +12,7 @@ Additional documentation for F11 can be found at:
->  http://www.synaptics.com/sites/default/files/511-000136-01-Rev-E-RMI4-Interfacing-Guide.pdf
->  
->  Optional Touch Properties:
-> -Description in Documentation/devicetree/bindings/input/touch
-> +Description in Documentation/devicetree/bindings/input/touchscreen
->  - touchscreen-inverted-x
->  - touchscreen-inverted-y
->  - touchscreen-swapped-x-y
-> diff --git a/Documentation/devicetree/bindings/mfd/sun6i-prcm.txt b/Documentation/devicetree/bindings/mfd/sun6i-prcm.txt
-> index 4d21ffdb0fc1..daa091c2e67b 100644
-> --- a/Documentation/devicetree/bindings/mfd/sun6i-prcm.txt
-> +++ b/Documentation/devicetree/bindings/mfd/sun6i-prcm.txt
-> @@ -8,7 +8,7 @@ Required properties:
->   - reg: The PRCM registers range
->  
->  The prcm node may contain several subdevices definitions:
-> - - see Documentation/devicetree/clk/sunxi.txt for clock devices
-> + - see Documentation/devicetree/bindings/clock/sunxi.txt for clock devices
->   - see Documentation/devicetree/bindings/reset/allwinner,sunxi-clock-reset.txt for reset
->     controller devices
->  
-> diff --git a/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt b/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
-> index 7bf9df047a1e..0dcb87d6554f 100644
-> --- a/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/hisilicon-pcie.txt
-> @@ -3,7 +3,7 @@ HiSilicon Hip05 and Hip06 PCIe host bridge DT description
->  HiSilicon PCIe host controller is based on the Synopsys DesignWare PCI core.
->  It shares common functions with the PCIe DesignWare core driver and inherits
->  common properties defined in
-> -Documentation/devicetree/bindings/pci/designware-pci.txt.
-> +Documentation/devicetree/bindings/pci/designware-pcie.txt.
->  
->  Additional properties are described here:
->  
-> diff --git a/Documentation/devicetree/bindings/pci/kirin-pcie.txt b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-> index 6e217c63123d..6bbe43818ad5 100644
-> --- a/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/kirin-pcie.txt
-> @@ -3,7 +3,7 @@ HiSilicon Kirin SoCs PCIe host DT description
->  Kirin PCIe host controller is based on the Synopsys DesignWare PCI core.
->  It shares common functions with the PCIe DesignWare core driver and
->  inherits common properties defined in
-> -Documentation/devicetree/bindings/pci/designware-pci.txt.
-> +Documentation/devicetree/bindings/pci/designware-pcie.txt.
->  
->  Additional properties are described here:
->  
-> diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
-> index 7e05487544ed..3d4a209b0fd0 100644
-> --- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
-> +++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
-> @@ -3,9 +3,9 @@ TI Keystone PCIe interface
->  Keystone PCI host Controller is based on the Synopsys DesignWare PCI
->  hardware version 3.65.  It shares common functions with the PCIe DesignWare
->  core driver and inherits common properties defined in
-> -Documentation/devicetree/bindings/pci/designware-pci.txt
-> +Documentation/devicetree/bindings/pci/designware-pcie.txt
->  
-> -Please refer to Documentation/devicetree/bindings/pci/designware-pci.txt
-> +Please refer to Documentation/devicetree/bindings/pci/designware-pcie.txt
->  for the details of DesignWare DT bindings.  Additional properties are
->  described here as well as properties that are not applicable.
->  
-> diff --git a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt b/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
-> index 4bda52042402..58c341300552 100644
-> --- a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
-> @@ -18,7 +18,7 @@ Required properties:
->      See Documentation/devicetree/bindings/dma/stm32-dma.txt.
->    - dma-names: Identifier for each DMA request line. Must be "tx" and "rx".
->    - pinctrl-names: should contain only value "default"
-> -  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/pinctrl-stm32.txt
-> +  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->  
->  Optional properties:
->    - resets: Reference to a reset controller asserting the reset controller
-> diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-> index f301cdf0b7e6..3a3fc506e43a 100644
-> --- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-> +++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
-> @@ -37,7 +37,7 @@ SAI subnodes required properties:
->  	"tx": if sai sub-block is configured as playback DAI
->  	"rx": if sai sub-block is configured as capture DAI
->    - pinctrl-names: should contain only value "default"
-> -  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/pinctrl-stm32.txt
-> +  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
->  
->  SAI subnodes Optional properties:
->    - st,sync: specify synchronization mode.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 783ce44b3e7a..fd3fc63f2759 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6966,7 +6966,7 @@ IIO MULTIPLEXER
->  M:	Peter Rosin <peda@axentia.se>
->  L:	linux-iio@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/iio/multiplexer/iio-mux.txt
-> +F:	Documentation/devicetree/bindings/iio/multiplexer/io-channel-mux.txt
->  F:	drivers/iio/multiplexer/iio-mux.c
->  
->  IIO SUBSYSTEM AND DRIVERS
-> @@ -9696,7 +9696,7 @@ MXSFB DRM DRIVER
->  M:	Marek Vasut <marex@denx.de>
->  S:	Supported
->  F:	drivers/gpu/drm/mxsfb/
-> -F:	Documentation/devicetree/bindings/display/mxsfb-drm.txt
-> +F:	Documentation/devicetree/bindings/display/mxsfb.txt
->  
->  MYRICOM MYRI-10G 10GbE DRIVER (MYRI10GE)
->  M:	Chris Lee <christopher.lee@cspi.com>
-> @@ -10885,7 +10885,7 @@ M:	Will Deacon <will.deacon@arm.com>
->  L:	linux-pci@vger.kernel.org
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/pci/controller-generic-pci.txt
-> +F:	Documentation/devicetree/bindings/pci/host-generic-pci.txt
->  F:	drivers/pci/controller/pci-host-common.c
->  F:	drivers/pci/controller/pci-host-generic.c
->  
-> @@ -11066,7 +11066,7 @@ M:	Xiaowei Song <songxiaowei@hisilicon.com>
->  M:	Binghui Wang <wangbinghui@hisilicon.com>
->  L:	linux-pci@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/pci/pcie-kirin.txt
-> +F:	Documentation/devicetree/bindings/pci/kirin-pcie.txt
->  F:	drivers/pci/controller/dwc/pcie-kirin.c
->  
->  PCIE DRIVER FOR HISILICON STB
-> @@ -12457,7 +12457,7 @@ L:	linux-crypto@vger.kernel.org
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
->  F:	drivers/crypto/exynos-rng.c
-> -F:	Documentation/devicetree/bindings/crypto/samsung,exynos-rng4.txt
-> +F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
->  
->  SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
->  M:	Łukasz Stelmach <l.stelmach@samsung.com>
-> @@ -13571,7 +13571,7 @@ F:	drivers/*/stm32-*timer*
->  F:	drivers/pwm/pwm-stm32*
->  F:	include/linux/*/stm32-*tim*
->  F:	Documentation/ABI/testing/*timer-stm32
-> -F:	Documentation/devicetree/bindings/*/stm32-*timer
-> +F:	Documentation/devicetree/bindings/*/stm32-*timer*
->  F:	Documentation/devicetree/bindings/pwm/pwm-stm32*
->  
->  STMMAC ETHERNET DRIVER
-> -- 
-> 2.17.1
-> 
+Vitaly Kuznetsov (5):
+  KVM: x86: hyperv: optimize 'all cpus' case in kvm_hv_flush_tlb()
+  KVM: x86: hyperv: introduce vp_index_to_vcpu_idx mapping
+  KVM: x86: hyperv: use vp_idx_to_vcpu_idx() in kvm_hv_flush_tlb()
+  x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
+  KVM: x86: hyperv: implement PV IPI send hypercalls
+
+ Documentation/virtual/kvm/api.txt  |   8 +
+ arch/x86/hyperv/hv_apic.c          |  12 +-
+ arch/x86/include/asm/hyperv-tlfs.h |  16 +-
+ arch/x86/include/asm/kvm_host.h    |  12 ++
+ arch/x86/kvm/hyperv.c              | 375 ++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/trace.h               |  42 +++++
+ arch/x86/kvm/x86.c                 |   1 +
+ include/uapi/linux/kvm.h           |   1 +
+ virt/kvm/kvm_main.c                |   6 +-
+ 9 files changed, 391 insertions(+), 82 deletions(-)
+
+-- 
+2.14.4
+
