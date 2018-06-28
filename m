@@ -2,118 +2,108 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A94C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0EDC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BBA27333
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BBA27333
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 24BAC27334
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:12:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TebH7dpn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BAC27334
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934797AbeF1MMY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:12:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:46432 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933830AbeF1MMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:12:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B53780D;
-        Thu, 28 Jun 2018 05:12:22 -0700 (PDT)
-Received: from [10.1.210.28] (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED4233F5C0;
-        Thu, 28 Jun 2018 05:12:20 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jeremy.linton@arm.com,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [RFC PATCH] arm64: topology: Map PPTT node offset to logic
- physical package id
-To:     Andrew Jones <drjones@redhat.com>
-References: <1530177508-15298-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <cb057c6a-0eb4-581e-c259-7a31545e0ae7@arm.com>
- <20180628115748.kprobde6c3joc6ll@kamzik.brq.redhat.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <f9376e47-e2ae-b2f4-db23-07698364f1bb@arm.com>
-Date:   Thu, 28 Jun 2018 13:12:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934835AbeF1MMo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:12:44 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46418 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933830AbeF1MMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:12:43 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5SC4FlI185876
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:12:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=Jq12nq3reiDKCYh+fPduG5hfM5jjtJBLoF53xlEMsJA=;
+ b=TebH7dpnLtO98sKtwnjqLbKQFt52JkdOPYToZBhkAJudy8YIB3bAP2YEhPa0snth1+HN
+ Wkr1B/rnhbv2FtWW5cGML9X4xEJpC5tmocwuQahdLn8CUfAIRbklfUEoVkIGuSW++ZHa
+ 89cW+69Xc4wO4ERvP4BVHI20UDeJq1FpUmHa+uW2E/DgIiJtqqeLquqo4r8uhYBu1oZ8
+ WoQEth8HdIWWFaynUAr0+VGa65NUoc/IKVfqpDg48y09Nr5f/mWHeKTTMaq/UNz9vn8J
+ oSIXzljs86ZNFhXMQgC9WQrlkOGk7d7nxvsvfRjDI4xN1b0oPYynDQwAaygXC2jeZc1I lQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jukmu24mv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:12:42 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5SCCfIg002729
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:12:41 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5SCCfIS000635
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:12:41 GMT
+Received: from mail-oi0-f45.google.com (/209.85.218.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 28 Jun 2018 05:12:41 -0700
+Received: by mail-oi0-f45.google.com with SMTP id r16-v6so4435637oie.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 05:12:40 -0700 (PDT)
+X-Gm-Message-State: APt69E16kIOsAYIJUotH02RcyyCVMY7+xlL3qlSNn5Bu01Sy1O5H54//
+        qtIB7m9/i8RK9+euLeBSc/5k3d1mbxK9m/M8jXY=
+X-Google-Smtp-Source: AAOMgpfOFA3YrwZw3avpNi/nS8ZlZGb35Gv7+0t+jjJj8VTyXlOtAmgyzek15R3Ow+YW6W2LF984Vo8FK+q0Pod/RJQ=
+X-Received: by 2002:aca:3b09:: with SMTP id i9-v6mr5904844oia.156.1530187960686;
+ Thu, 28 Jun 2018 05:12:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180628115748.kprobde6c3joc6ll@kamzik.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180628062857.29658-1-bhe@redhat.com> <20180628062857.29658-5-bhe@redhat.com>
+ <20180628120937.GC12956@techadventures.net>
+In-Reply-To: <20180628120937.GC12956@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 28 Jun 2018 08:12:04 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZsZVhhg2=dQZf6D-NmPTFRN-_95+s61pC7Axz5G5mkMQ@mail.gmail.com>
+Message-ID: <CAGM2reZsZVhhg2=dQZf6D-NmPTFRN-_95+s61pC7Axz5G5mkMQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] mm/sparse: Optimize memmap allocation during sparse_init()
+To:     osalvador@techadventures.net
+Cc:     bhe@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dave.hansen@intel.com, pagupta@redhat.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kirill.shutemov@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=504
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806280140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> > +             if (nr_consumed_maps >= nr_present_sections) {
+> > +                     pr_err("nr_consumed_maps goes beyond nr_present_sections\n");
+> > +                     break;
+> > +             }
+>
+> Hi Baoquan,
+>
+> I am sure I am missing something here, but is this check really needed?
+>
+> I mean, for_each_present_section_nr() only returns the section nr if the section
+> has been marked as SECTION_MARKED_PRESENT.
+> That happens in memory_present(), where now we also increment nr_present_sections whenever
+> we find a present section.
+>
+> So, for_each_present_section_nr() should return the same nr of section as nr_present_sections.
+> Since we only increment nr_consumed_maps once in the loop, I am not so sure we can
+> go beyond nr_present_sections.
+>
+> Did I overlook something?
 
-
-On 28/06/18 12:57, Andrew Jones wrote:
-> On Thu, Jun 28, 2018 at 10:38:24AM +0100, Sudeep Holla wrote:
->> Hi Shunyong,
->>
->> On 28/06/18 10:18, Shunyong Yang wrote:
->>> As PPTT spec doesn't define the physical package id,
->>> find_acpi_cpu_topology_package() will return offset of the node with
->>> Physical package field set when querying physical package id. So, it
->>> returns 162(0xA2) in following example.
->>>
->>> [0A2h 0162   1]                Subtable Type : 00 [Processor Hierarchy
->>> Node]
->>> [0A3h 0163   1]                       Length : 1C
->>> [0A4h 0164   2]                     Reserved : 0000
->>> [0A6h 0166   4]        Flags (decoded below) : 00000003
->>>                             Physical package : 1
->>>                      ACPI Processor ID valid : 1
->>> [0AAh 0170   4]                       Parent : 00000000
->>> [0AEh 0174   4]            ACPI Processor ID : 00001000
->>> [0B2h 0178   4]      Private Resource Number : 00000002
->>> [0B6h 0182   4]             Private Resource : 0000006C
->>> [0BAh 0186   4]             Private Resource : 00000084
->>>
->>> So, when "cat physical_package" in /sys/devices/system/cpu/cpu0/topology/,
->>> it will output 162(0xA2). And if some items are added before the node
->>> above, the output will change to other value.
->>>
->>> This patch maps the node offset to a logic package id. It maps the first
->>> node offset to 0, the second to 1, and so on.
->>>
->>> Then, it will not output a big value, such as 162 above. And it will
->>> not change when some nodes(Physical package not set) are added.
->>>
->>> And as long as the nodes with Physical package field set in PPTT keeps
->>> the real hardware order, the logic id can map to hardware package id to
->>> some extent.
->>>
->>> Hope to get feedback from you.
->>
->> Thanks for the patch, but Andrew Jones has also posted a patch[1] which
->> I had a look but was not sure what is the best approach to fix it yet.
->> I will think about it and respond to that.
->>
-> 
-> I'll send a v1 yet today. The RFC version was actually OK, as the concern
-> with ACPI nodes not being in the expected order wasn't actually a problem.
-> The thread-id or core-id would only be reset to zero when a yet to be
-> remapped core-id (and all its peers) was found when iterating the PEs.
-> Since all peers were handled at the same time, the counter reset was
-> correct, even when the ACPI nodes were out-of-order. The code didn't make
-> that very obvious, though, and there was some room for other cleanups,
-> so I've reworked it. Once I run it through a couple more rounds of testing
-> I'll repost.
-> 
-
-OK sure. I liked the approach in Shunyong's patch. I was thinking if we
-can avoid the list and dynamic allocation on each addition and make it
-more simpler.
-
--- 
-Regards,
-Sudeep
+You did not, this is basically a safety check. A BUG_ON() would be
+better here. As, this something that should really not happening, and
+would mean a bug in the current project.
