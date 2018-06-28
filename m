@@ -2,79 +2,123 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAE8C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB8AC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50AC724BE8
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50AC724BE8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id B0D1427282
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D1427282
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964998AbeF1MjF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:39:05 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:55238 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752207AbeF1MjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:39:03 -0400
-Received: from [IPv6:2001:16b8:4699:cc00:6163:d7c:5db5:b655] (200116b84699cc0061630d7c5db5b655.dip.versatel-1u1.de [IPv6:2001:16b8:4699:cc00:6163:d7c:5db5:b655])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 317F028BFE0;
-        Thu, 28 Jun 2018 12:35:48 +0000 (UTC)
-Subject: Re: [PATCH v2 4/4] power: ds2760_battery: add device tree glue
-To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc:     zbr@ioremap.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        szabolcs.gyurko@tlt.hu, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        robert.jarzmik@free.fr
-References: <20180628075540.1757-1-daniel@zonque.org>
- <20180628075540.1757-5-daniel@zonque.org>
- <20180628115246.6qqa3nwxwx2qpls6@earth.universe>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <cceb2363-9976-3f62-24f3-03022b0cdec5@zonque.org>
-Date:   Thu, 28 Jun 2018 14:39:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S965129AbeF1Mj0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:39:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934394AbeF1MjX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:39:23 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SCdFOU088964
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:39:23 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvwqt67nt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:39:22 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 28 Jun 2018 13:39:21 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Jun 2018 13:39:18 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SCdHVx34406506
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 Jun 2018 12:39:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4D7EA4059;
+        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3221A4057;
+        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 28 Jun 2018 13:39:06 +0100 (BST)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 25651)
+        id F294620F660; Thu, 28 Jun 2018 14:39:16 +0200 (CEST)
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+To:     linux-mm@kvack.org, linux-s390@vger.kernel.org
+Cc:     kvm@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: [PATCH/RFC] mm: do not drop unused pages when userfaultd is running
+Date:   Thu, 28 Jun 2018 14:39:16 +0200
+X-Mailer: git-send-email 2.17.0
+X-TM-AS-GCONF: 00
+x-cbid: 18062812-0008-0000-0000-0000024CD855
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062812-0009-0000-0000-000021B35228
+Message-Id: <20180628123916.96106-1-borntraeger@de.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-In-Reply-To: <20180628115246.6qqa3nwxwx2qpls6@earth.universe>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806280145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, June 28, 2018 01:52 PM, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Thu, Jun 28, 2018 at 09:55:40AM +0200, Daniel Mack wrote:
->> The w1 slave device used by this driver now has a of_node in case it
->> was matched against a devicetree sub-node of the bus master. This can
->> now be passed down to the power supply core which will parse more
->> properties from the node, such as 'power-supplies'.
->>
->> Signed-off-by: Daniel Mack <daniel@zonque.org>
->> ---
-> 
-> Thanks for the patch series. Having proper DT support is a nice
-> addition. But instead of extending the platform device hack, please
-> merge the w1 driver into ds2760_battery.c as it happened to the
-> bq27000 driver already. The intermediate platform device is completly
-> useless and only makes things more complicated.
-> 
-> Basically move all code from w1_ds2760.c into ds2760_battery.c,
-> drop some EXPORT_SYMBOL and make functions static instead. Then
-> move content from probe/remove function into add_slave/remove_slave
-> callbacks and drop all platform device things.
+KVM guests on s390 can notify the host of unused pages. This can result
+in pte_unused callbacks to be true for KVM guest memory.
 
-Okay, yes, that makes sense. I never understood why there are multiple 
-drivers for this.
+If a page is unused (checked with pte_unused) we might drop this page
+instead of paging it. This can have side-effects on userfaultd, when the
+page in question was already migrated:
 
+The next access of that page will trigger a fault and a user fault
+instead of faulting in a new and empty zero page. As QEMU does not
+expect a userfault on an already migrated page this migration will fail.
 
-Thanks,
-Daniel
+The most straightforward solution is to ignore the pte_unused hint if a
+userfault context is active for this VMA.
+
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+---
+ mm/rmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 6db729dc4c50..3f3a72aa99f2 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1481,7 +1481,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+ 			}
+ 
+-		} else if (pte_unused(pteval)) {
++		} else if (pte_unused(pteval) && !vma->vm_userfaultfd_ctx.ctx) {
+ 			/*
+ 			 * The guest indicated that the page content is of no
+ 			 * interest anymore. Simply discard the pte, vmscan
+-- 
+2.17.0
 
