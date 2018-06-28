@@ -6,71 +6,71 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FBBC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5297C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F11926889
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F11926889
+	by mail.kernel.org (Postfix) with ESMTP id 6049926A4E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:13:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6049926A4E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753405AbeF1EMp (ORCPT
+        id S1753415AbeF1ENQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:12:45 -0400
-Received: from mail-qt0-f182.google.com ([209.85.216.182]:34246 "EHLO
-        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753382AbeF1EMl (ORCPT
+        Thu, 28 Jun 2018 00:13:16 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:37277 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeF1ENO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:12:41 -0400
-Received: by mail-qt0-f182.google.com with SMTP id d23-v6so3637425qtp.1;
-        Wed, 27 Jun 2018 21:12:41 -0700 (PDT)
+        Thu, 28 Jun 2018 00:13:14 -0400
+Received: by mail-qt0-f196.google.com with SMTP id a18-v6so3621974qtj.4;
+        Wed, 27 Jun 2018 21:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=fN8hCwxtQwEM6xRNMJUxbh7l5EF16hTHzBycvduYrGA=;
-        b=Rfz3D2pyyX7gBwMqLUD7RE2kuBT9rMczP4f/l33bLlWsy1ZBKhBmnhZi0PgsZ+gkS0
-         Oaz4+hWly7jp/jEKXPM+ooDKbAlJ5ZNGn8YR+oLJS/GUjsCGCb9TA/B44m0LDd2f4Zu2
-         uxt1Yv636RG1M16gulZi6OWd2KqTN0RYy6zEu/0xm1Uk4JFOHuQnppYOFolAZqQyHxOh
-         rae4GDoSV+EmnyAMeonFhS1ktqYv06ZzBe1LjA4/uB6Pw11noUhyJv5WlaM9QAY3oPcf
-         CSBOoBBaKTdbZGD8E/L0dUQInWYPuuMRKiND29XPTf3gCxqpQvcg6Bw4b2++wBtTDmmV
-         T/fw==
+        bh=xYdLdL5NOhOanKBmDogwIFVhN3D1iPAwaIm1IGp6c8Q=;
+        b=saZqRdGUqTMT0RmnLQ99R0iOlLLTQW5l4wvJnshIPfccm3bLpwB/JXNYk8Zi9+/Xes
+         w48uSqb4WJ8EIldPlTKwcMk84eZFL0pUZxBKQVfw/9EQt7BORE9Fefril5gw/zSGisQR
+         6MvL5rIeSJ1/944LXIjBM2b7eB7DIHuVO18lbffATWlBIuZBgFucSASxasqVI9a3/0T4
+         tP5vzZbEft9gQdWw2TQkBU5rGSHEPLvJheT4E8ElnUEGonx7kC8TyOoSF4Ai9OMTSawL
+         /io+IO1FwWGyRfh9+LQXdV4a+RG2u353saD6GjmhtNoT+90E1LFN0ImiIj1XEeAx2RMI
+         93jg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=jms.id.au; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=fN8hCwxtQwEM6xRNMJUxbh7l5EF16hTHzBycvduYrGA=;
-        b=U475jhP4QUNj1xTqyXcGkSZobXKZunjTrXRYLKa//P3ol06KN/S9BTKNh+D69UrQtM
-         J1G9xVg81dCnSw6BZ5EYtNyknUApc1XP/74iwOowSZxNJebDbm2FpSvH1yp8Y4XUgHBU
-         91UBBpljl9bTpk4cY7Zvw0MUWcd4T9dBt1evc=
+        bh=xYdLdL5NOhOanKBmDogwIFVhN3D1iPAwaIm1IGp6c8Q=;
+        b=BlTAjUA9j+k5ghjUrJo3WsAxkep5bBSeeTBy1Ou7EOOo0PkXWkl9HaB09gbe8okISb
+         lXY/zIhJcEAxzYS0bHRTcraqkNiV9zQOil0T/+zMPbyVadKMdfSeWs0+/341FOXb4nzq
+         m7fBoRA2ZrXgw3VpKYIBC0xuGXeXFt+ouBbwo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=fN8hCwxtQwEM6xRNMJUxbh7l5EF16hTHzBycvduYrGA=;
-        b=B1y8FZxBUeWuxAx3hsTPNAjeyfFQ41ub1tI7xIeYgmYiuj1yzLnQ0qE/Tcw+HPM6DO
-         LiyBbX8+ZENZFXfNU0vgJzQdsvsdOLYcqX5sIMC3mQKJ7ZFCf3ZJUkDSpA6UuvTULqwv
-         E9Yrp1o2uOYK2g2DyVzWtalJ2VWOU3QfvMnYmc+j+J2NrfdxjbDFaPmnLYbKZF6wc1e5
-         makalwuvmd77Bl2xyBgRTjU/8RKPU2LJ9zLEd4d3IONd3a5KYsuPyTAMaGkR7enJ3SJC
-         QrjAVyoq7MsK/yr+OsQiN/fd8abdS9w3JJ8Yoq21IW0sJxg3w7JuYmfjGDPeYSIpMTV5
-         EEeA==
-X-Gm-Message-State: APt69E3FnqEkxVtCID2GZOoiR/oc/gubmY06ON91MUvuQJUfimnKHMqW
-        /XCtITRDDZ0Y1osY8vUHOTKAjI+W0jHOSxlaZGI=
-X-Google-Smtp-Source: AAOMgpdPdpGNacQ/5cuAnNpW1MUBieTj4rI4VIV4z3RqxcEdzS4E0e56TsoOPNIG2BMLh4B+gtKtPZCKwWk4Asyui60=
-X-Received: by 2002:a0c:b892:: with SMTP id y18-v6mr7759523qvf.188.1530159160620;
- Wed, 27 Jun 2018 21:12:40 -0700 (PDT)
+        bh=xYdLdL5NOhOanKBmDogwIFVhN3D1iPAwaIm1IGp6c8Q=;
+        b=Dei3UT1ETRheo8YhzPTYhydAH7trDKLEJn+jz8Wnxwo8m5RwRWDzoSLA8qf1WFiA2T
+         EE34op1JXSjNOVuEpXlaq5wMkVVZBW7hGNpipUnybxDK4va4Tqes/VLbSAAqmTc+Vujk
+         vNLG+zCbUvnbUmFaQPf3B8erlisH6PgGOqeQZO7MQALHz8uQ+mdGoOSV62Qdgi18yyZH
+         luJMmmxtg6P/e+zIZX3cuIS8y5RpAPmSfaL+FumjwjZN9U4mesdUzKw+LR7mq/WUriuX
+         mTjR4Bc2TaptbNJJjTXgU9noTijYQmksPwlWN8CiYy+/pkuiBNgIYGXinh+cOcdJ0RB5
+         xGNA==
+X-Gm-Message-State: APt69E0dZpUTGDkg6gDx/HgshbWHZmLV165JJNC+KLUaw7n9Edsx+AWM
+        e8niSgNG0LSUwkm48S5DR5xLRcD3NpJWcIs0Y/A=
+X-Google-Smtp-Source: AAOMgpe6TN7pLH/U9qXyfHQSGjKCvy9/mCDiQNWEW6azyUrbXAtbwi+SNBIvD+2WHlsmoDef/VUkOZyfFCHTSgqiMhE=
+X-Received: by 2002:aed:24f0:: with SMTP id u45-v6mr452399qtc.340.1530159193487;
+ Wed, 27 Jun 2018 21:13:13 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:169d:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 21:12:20
+Received: by 2002:ac8:169d:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 21:12:53
  -0700 (PDT)
-In-Reply-To: <20180626232605.13420-12-benh@kernel.crashing.org>
-References: <20180626232605.13420-1-benh@kernel.crashing.org> <20180626232605.13420-12-benh@kernel.crashing.org>
+In-Reply-To: <20180626232605.13420-14-benh@kernel.crashing.org>
+References: <20180626232605.13420-1-benh@kernel.crashing.org> <20180626232605.13420-14-benh@kernel.crashing.org>
 From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 28 Jun 2018 13:42:20 +0930
-X-Google-Sender-Auth: gwVSt078kkl2v3vegZs74cOOf9E
-Message-ID: <CACPK8Xc6zRXUzEyde=A2m8U2mzaeNMu8w=XFW77-5_uJgW3EgQ@mail.gmail.com>
-Subject: Re: [PATCH 11/14] dt-bindings: fsi: Document binding for the
- fsi-master-ast-cf "device"
+Date:   Thu, 28 Jun 2018 13:42:53 +0930
+X-Google-Sender-Auth: djlhkPWpR4JqcdJAomm9pcMi_68
+Message-ID: <CACPK8XcyncbmU3kMVPVZV49Hnt+avbzgUOL=KMP+Ed12axWqRQ@mail.gmail.com>
+Subject: Re: [PATCH 13/14] arm: dts: OpenPower Romulus system can use
+ coprocessor for FSI
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc:     linux-aspeed@lists.ozlabs.org,
         OpenBMC Maillist <openbmc@lists.ozlabs.org>,
@@ -85,17 +85,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 27 June 2018 at 08:56, Benjamin Herrenschmidt
 <benh@kernel.crashing.org> wrote:
-> This isn't per-se a real device, it's a pseudo-device that
-> represents the use of the Aspeed built-in ColdFire to
-> implement the FSI protocol by bitbanging the GPIOs instead
-> of doing it from the ARM core.
->
-> Thus it's a drop-in replacement for the existing
-> fsi-master-gpio pseudo-device for use on systems for which
-> a corresponding firmware file exists. It has most of the
-> same properties, plus some more needed to operate the
-> coprocessor.
->
 > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+I will take this through the ASPEED SoC tree once we've got acks on
+the bindings.
+
+Cheers,
+
+Joel
+
+> ---
+>  arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts b/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
+> index 347938673c83..070b8f8f1d62 100644
+> --- a/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
+> +++ b/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
+> @@ -37,6 +37,11 @@
+>                         compatible = "shared-dma-pool";
+>                         reusable;
+>                 };
+> +
+> +               coldfire_memory: codefire_memory@9ef00000 {
+> +                       reg = <0x9ef00000 0x00100000>;
+> +                       no-map;
+> +               };
+>         };
+>
+>         leds {
+> @@ -56,10 +61,16 @@
+>         };
+>
+>         fsi: gpio-fsi {
+> -               compatible = "fsi-master-gpio", "fsi-master";
+> +               compatible = "ibm,fsi-master-ast2500-cf", "fsi-master";
+>                 #address-cells = <2>;
+>                 #size-cells = <0>;
+> -               no-gpio-delays;
+> +
+> +               memory-region = <&coldfire_memory>;
+> +               sram = <&sram>;
+> +               cvic = <&cvic>;
+> +
+> +               fw-name = "romulus";
+> +               fw-platform-sig = <0x526d>;
+>
+>                 clock-gpios = <&gpio ASPEED_GPIO(AA, 0) GPIO_ACTIVE_HIGH>;
+>                 data-gpios = <&gpio ASPEED_GPIO(AA, 2) GPIO_ACTIVE_HIGH>;
+> --
+> 2.17.1
+>
