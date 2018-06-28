@@ -2,178 +2,101 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CA4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BA2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69A825663
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69A825663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 56D6E257C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 02:55:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D6E257C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932646AbeF1Cvg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 22:51:36 -0400
-Received: from mail-ed1-f50.google.com ([209.85.208.50]:39851 "EHLO
-        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751384AbeF1Cve (ORCPT
+        id S932312AbeF1CzK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 22:55:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:33691 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752258AbeF1CzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 22:51:34 -0400
-Received: by mail-ed1-f50.google.com with SMTP id w14-v6so4219584eds.6;
-        Wed, 27 Jun 2018 19:51:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9exk7gWEOGD7PgIAGo87g6p65P4t78WKrr3EacH3lFU=;
-        b=Rq6/esAeykaVQo1z2Km7QTGgLsFll2TqCQSgAVEa+s3REANS96tCUH4/yAZ9RoP5qT
-         wNT53Z/A1ZXvYkhHVZbfpKRb89Bwcte622WfPYvpsw5DlHF5Kt+EumAi0YO05X+/Ht6F
-         H6bFzn78BNcvv4Thh96zLxTKiMCvgFlmq9WqckRe1gxq5Yioem726xUEFEJNhbX2VjpO
-         p3P5TuGJ8K3BT9fWS2m6TH6N5SH4+0gXD8bNuodZccfDSctvINhbt2J82YNcYo11cSKG
-         PK1tn0CMPAKb56+Q4tQpf4mip9mLhtSSo0oCvdgLzYEqM5quVLhV1bzlRpqfk+5ZKOLM
-         AwNQ==
-X-Gm-Message-State: APt69E14x+rf41llNPTFszEV0v/zmo3mrcVUlnLFZhNFTJ5n7e0nsafE
-        N9zn/ljnxAR6CbRNo/PCpfHjlVel
-X-Google-Smtp-Source: AAOMgpeiJo2m/Lfa+9cKGV/Ak8dPm5aLCnn/8DvtJG3sSlWws5UbZPNpHGeLYjYF7+UXnfgHnriLvw==
-X-Received: by 2002:a50:aa8c:: with SMTP id q12-v6mr7648042edc.64.1530154292432;
-        Wed, 27 Jun 2018 19:51:32 -0700 (PDT)
-Received: from mail-wr0-f173.google.com (mail-wr0-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id l8-v6sm1627715eda.67.2018.06.27.19.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 19:51:32 -0700 (PDT)
-Received: by mail-wr0-f173.google.com with SMTP id f16-v6so3870636wrm.3;
-        Wed, 27 Jun 2018 19:51:32 -0700 (PDT)
-X-Received: by 2002:adf:ae09:: with SMTP id x9-v6mr6972453wrc.19.1530154291939;
- Wed, 27 Jun 2018 19:51:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 19:51:11
- -0700 (PDT)
-In-Reply-To: <20180625120304.7543-25-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-25-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 28 Jun 2018 10:51:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65AE4N6Jabo5co3nu+eitYoJwmakqU7QQtcYukG6JLY+w@mail.gmail.com>
-Message-ID: <CAGb2v65AE4N6Jabo5co3nu+eitYoJwmakqU7QQtcYukG6JLY+w@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v3 24/24] ARM: dts: sun8i: r40: Enable HDMI
- output on BananaPi M2 Ultra
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        Wed, 27 Jun 2018 22:55:09 -0400
+X-UUID: 70cb8de5a1024f40b7e111ed62c852e2-20180628
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1621143298; Thu, 28 Jun 2018 10:55:01 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 28 Jun 2018 10:54:58 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 28 Jun 2018 10:54:58 +0800
+Message-ID: <1530154498.29697.37.camel@mtkswgap22>
+Subject: Re: [PATCH v4 6/7] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
         devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        <linux-bluetooth@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 28 Jun 2018 10:54:58 +0800
+In-Reply-To: <CAHp75VehTeyyzR4bPKK3hFDTVqZnhdNy5vcBFJCSH_Zrx+QrKA@mail.gmail.com>
+References: <cover.1530004712.git.sean.wang@mediatek.com>
+         <48215a1276c36af7ad581c3d83759fe9f55e3c4b.1530004712.git.sean.wang@mediatek.com>
+         <CAHp75VehTeyyzR4bPKK3hFDTVqZnhdNy5vcBFJCSH_Zrx+QrKA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Since HDMI can be considered as main output, most capable mixer is
-> connected to it (mixer0).
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-> index 27d9ccd0ef2f..0ebc2f9a980e 100644
-> --- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-> +++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-> @@ -58,6 +58,17 @@
->                 stdout-path = "serial0:115200n8";
->         };
->
-> +       connector {
-> +               compatible = "hdmi-connector";
-> +               type = "a";
-> +
-> +               port {
-> +                       hdmi_con_in: endpoint {
-> +                               remote-endpoint = <&hdmi_out_con>;
-> +                       };
-> +               };
-> +       };
-> +
->         leds {
->                 compatible = "gpio-leds";
->
-> @@ -93,6 +104,10 @@
->         };
->  };
->
-> +&de {
-> +       status = "okay";
-> +};
-> +
->  &ehci1 {
->         status = "okay";
->  };
-> @@ -101,6 +116,16 @@
->         status = "okay";
->  };
->
-> +&hdmi {
-> +       status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +       hdmi_out_con: endpoint {
-> +               remote-endpoint = <&hdmi_con_in>;
-> +       };
-> +};
-> +
->  &i2c0 {
->         status = "okay";
->
-> @@ -195,6 +220,26 @@
->         status = "okay";
->  };
->
-> +&tcon_top_hdmi_in_tcon_tv0 {
-> +       remote-endpoint = <&tcon_tv0_out_tcon_top>;
-> +};
-> +
-> +&tcon_top_mixer0_out_tcon_tv0 {
-> +       remote-endpoint = <&tcon_tv0_in_tcon_top>;
-> +};
-> +
-> +&tcon_tv0_in {
-> +       tcon_tv0_in_tcon_top: endpoint {
-> +               remote-endpoint = <&tcon_top_mixer0_out_tcon_tv0>;
-> +       };
-> +};
-> +
-> +&tcon_tv0_out {
-> +       tcon_tv0_out_tcon_top: endpoint {
-> +               remote-endpoint = <&tcon_top_hdmi_in_tcon_tv0>;
-> +       };
-> +};
-> +
+On Wed, 2018-06-27 at 19:59 +0300, Andy Shevchenko wrote:
+> On Wed, Jun 27, 2018 at 8:43 AM,  <sean.wang@mediatek.com> wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> >
+> 
+> > +config BT_HCIBTUART_MTK
+> > +       tristate "MediaTek HCI UART driver"
+> > +       depends on BT_HCIBTUART
+> 
+> > +       default y
+> 
+> Perhaps it's an overkill for users which would like to have less
+> amount on stuff in kernel.
 
-This is the wrong place for this. Once removed,
+sure, the default y will be removed
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> > +#include <asm/unaligned.h>
+> > +#include <linux/atomic.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/firmware.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/serdev.h>
+> 
 
->  &uart0 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&uart0_pb_pins>;
-> --
-> 2.18.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+[ ... ]
+
+> >  MODULE_DEVICE_TABLE(of, btuart_of_match_table);
+> > --
+> > 2.7.4
+> >
+> 
+> 
+> 
+
+
