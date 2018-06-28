@@ -3,119 +3,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576B5C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A53DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CED426FA8
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:25:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CED426FA8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 2261226FB7
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2261226FB7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeF1GZC convert rfc822-to-8bit (ORCPT
+        id S1753631AbeF1G3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 02:25:02 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38068 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeF1GY7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 02:24:59 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a5-v6so4443102edt.5;
-        Wed, 27 Jun 2018 23:24:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=X3OkbO/Q35JX4Y79YgTl6Z4Dmneb1+In5kS3RYNzFSg=;
-        b=uFSf0V4d2ujaGhMNQzPtyTFy90umsIKURA8Qan/hPpIyYK9AEwZ2R+OzMwzKGXqRZM
-         z2hwheWa4X3me7MKmAgnj/L8X8SWLiO3sXygM4H79mH/FZxn3GKFlTEuRVI4HUYgRAKJ
-         mk5rSC+X2cHlkaXfrXM5IAUPkQIWJmwUPz98SCoe4dd+mf8cAa4L8Ck/sCy9VHnMnuiB
-         COym6HagAjXTHAUGNe3yxNCmnLKRr0qnGU/4G2vvM8dI3hkztX/udszDLxiow59u/gz7
-         jxHrXNDyzNRdzGw7I04p9Ernr8yboTQoOI7RUXUM1L5yEsIrga281/AH2A02+pL/dhUf
-         /d1w==
-X-Gm-Message-State: APt69E0Wx2mJ4vcLE35yrrMLCUbtMWdaPaMOmi1CPzMlrLba1ijOtuel
-        ouc1ajQq9q4IogO9oZlzqN7EijzO
-X-Google-Smtp-Source: AAOMgpcVKWo+z0JkI8F57L8x0P58y3ae3s7V6u/2UZudnmqyqbMR0iXqsDCfa7wzuQr5BPndKsFfxw==
-X-Received: by 2002:a50:ae62:: with SMTP id c89-v6mr8091600edd.257.1530167098094;
-        Wed, 27 Jun 2018 23:24:58 -0700 (PDT)
-Received: from mail-wr0-f177.google.com (mail-wr0-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id b20-v6sm2092641edr.26.2018.06.27.23.24.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 23:24:55 -0700 (PDT)
-Received: by mail-wr0-f177.google.com with SMTP id e18-v6so4211309wrs.5;
-        Wed, 27 Jun 2018 23:24:55 -0700 (PDT)
-X-Received: by 2002:adf:a54d:: with SMTP id j13-v6mr7944274wrb.155.1530167095194;
- Wed, 27 Jun 2018 23:24:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 23:24:34
- -0700 (PDT)
-In-Reply-To: <2676604.ZYCNkuCdbT@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-10-jernej.skrabec@siol.net> <CAGb2v64EkVK+AEngEuadBzAZagyU7eyOhHhBh0iFrxS+-BbCYQ@mail.gmail.com>
- <2676604.ZYCNkuCdbT@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 28 Jun 2018 14:24:34 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67kBRWkJpJogFR4GXgA66dsxVaMVWN8MDiP_wFTqxW-=g@mail.gmail.com>
-Message-ID: <CAGb2v67kBRWkJpJogFR4GXgA66dsxVaMVWN8MDiP_wFTqxW-=g@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if
- they don't have channel 0
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Thu, 28 Jun 2018 02:29:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751466AbeF1G3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 02:29:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7936540255D7;
+        Thu, 28 Jun 2018 06:29:05 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 99BF62156880;
+        Thu, 28 Jun 2018 06:29:00 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, pagupta@redhat.com,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Oscar Salvador <osalvador@techadventures.net>
+Cc:     linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH v6 0/5] mm/sparse: Optimize memmap allocation during sparse_init()
+Date:   Thu, 28 Jun 2018 14:28:52 +0800
+Message-Id: <20180628062857.29658-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 28 Jun 2018 06:29:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 28 Jun 2018 06:29:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
-<jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai napisal(a):
->> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
->> > TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
->> > Because of that, all output endpoints on such TCON node will point to a
->> > encoder which is part of component framework.
->> >
->> > Correct current graph traversing algorithm in such way that it doesn't
->> > skip output enpoints with id 0 on TV TCONs.
->>
->> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
->> have channel 0, it must be skipped.
->
-> I'm not sure where this is stated. I read TCON binding again. Can you please
-> point me to it?
+This is v6 post.
 
-https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt#L169
+In sparse_init(), two temporary pointer arrays, usemap_map and map_map
+are allocated with the size of NR_MEM_SECTIONS. They are used to store
+each memory section's usemap and mem map if marked as present. In
+5-level paging mode, this will cost 512M memory though they will be
+released at the end of sparse_init(). System with few memory, like
+kdump kernel which usually only has about 256M, will fail to boot
+because of allocation failure if CONFIG_X86_5LEVEL=y.
 
-Our TCON driver still expects RGB or LVDS panel / bridges on endpoint 0.
-So I guess this was sort of implied historically. It's no longer true.
-This is something we should probably fix.
+In this patchset, optimize the memmap allocation code to only use
+usemap_map and map_map with the size of nr_present_sections. This
+makes kdump kernel boot up with normal crashkernel='' setting when
+CONFIG_X86_5LEVEL=y.
 
-In practice our drivers don't look at it (yet), but rely on the downstream
-encoder type to determine which channel to use.
+The old version can be found below:
 
-But please add the "allwinner,tcon-channel" property as specified in
-the binding.
+v5:
+http://lkml.kernel.org/r/20180627013116.12411-1-bhe@redhat.com
+v4:
+http://lkml.kernel.org/r/20180521101555.25610-1-bhe@redhat.com
 
-> So on TV TCONs on R40 (without channel 0) TVE would be endpoint 1 and HDMI
-> endpoint 2 (or the other way around)?
+v3:
+https://lkml.org/lkml/2018/2/27/928
 
-Which one goes first doesn't quite matter. IIRC there's also a mux for TVE?
+V1 can be found here:
+https://www.spinics.net/lists/linux-mm/msg144486.html
 
-ChenYu
+Change log:
+v5->v6:
+  Oscar found the redundant "struct mem_section *ms" definition and
+  in the old patch 2/4, after deferring the clearing of section_mem_map.
+  Clean them up in this version.
+
+  Pavel pointed out that allocating memmap together for one node at
+  one time should be a default behaviour for all ARCH-es. And if failed
+  on large memory, it will drop to the fallback to allocate memmap
+  for one section at one time, it shoult not break anything. Add
+  patch 5/5 to remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean
+  up the related codes.
+v4->v5:
+  Improve patch 3/4 log according to Dave's suggestion.
+
+  Correct the wrong copy&paste of making 'nr_consumed_maps' to
+  'alloc_usemap_and_memmap' mistakenly which is pointed out by
+  Dave in patch 4/4 code comment.
+
+  Otherwise, no code change in this version.
+v3->v4:
+  Improve according to Dave's three concerns which are in patch 0004:
+
+  Rename variable 'idx_present' to 'nr_consumed_maps' which used to
+  index the memmap and usemap of present sections.
+
+  Add a check if 'nr_consumed_maps' goes beyond nr_present_sections.
+
+  Add code comment above the final for_each_present_section_nr() to
+  tell why 'nr_consumed_maps' need be increased in each iteration
+  whether the 'ms->section_mem_map' need cleared or out.
+
+v2->v3:
+  Change nr_present_sections as __initdata and add code comment
+  according to Andrew's suggestion.
+
+  Change the local variable 'i' as idx_present which loops over the
+  present sections, and improve the code. These are suggested by
+  Dave and Pankaj.
+
+  Add a new patch 0003 which adds a new parameter 'data_unit_size'
+  to function alloc_usemap_and_memmap() in which we will update 'data'
+  to make it point at new position. However its type 'void *' can't give
+  us needed info to do that. Need pass the unit size in. So change code
+  in patch 0004 accordingly. This is a code bug fix found when tested
+  the memory deployed on multiple nodes.
+
+v1-v2:
+  Split out the nr_present_sections adding as a single patch for easier
+  reviewing.
+
+  Rewrite patch log according to Dave's suggestion.
+
+  Fix code bug in patch 0002 reported by test robot.
+
+Baoquan He (5):
+  mm/sparse: Add a static variable nr_present_sections
+  mm/sparsemem: Defer the ms->section_mem_map clearing
+  mm/sparse: Add a new parameter 'data_unit_size' for
+    alloc_usemap_and_memmap
+  mm/sparse: Optimize memmap allocation during sparse_init()
+  mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+
+ mm/Kconfig          |   4 --
+ mm/sparse-vmemmap.c |   9 ++---
+ mm/sparse.c         | 109 ++++++++++++++++++++++++++++------------------------
+ 3 files changed, 62 insertions(+), 60 deletions(-)
+
+-- 
+2.13.6
+
