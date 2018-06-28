@@ -2,130 +2,145 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD33C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326F6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6583627A0E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB59927A1E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:22:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cH1g+vE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6583627A0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBLmiZJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB59927A1E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935443AbeF1WRA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:17:00 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37487 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933153AbeF1WQ7 (ORCPT
+        id S966987AbeF1WWa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:22:30 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38410 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966903AbeF1WW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:16:59 -0400
-Received: by mail-wr0-f196.google.com with SMTP id k6-v6so6958011wrp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:16:58 -0700 (PDT)
+        Thu, 28 Jun 2018 18:22:28 -0400
+Received: by mail-pl0-f68.google.com with SMTP id d10-v6so3427138plo.5
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Wg6EPR8kROalNpK3m966bmvq/1vI0FypjbSKpnUJTM=;
-        b=cH1g+vE8/vgNi7ceSWtNDTspZ/uLCz5lmop8rE+O1D1ICUWCSA53rlDZBbaUWG7W7s
-         q6fa1dI+PCwRmt6KdqvHokLFGRaYYhteJ7GYYhA+HVvVxmPzQVQcckKd/AB8azlp/k2a
-         M8kh6cvjv5q0ETmE85HsmX8MM0Uufa1CHPG5YFgNvlSujGra+JDKYqwf05YFhQpwDgBG
-         /tjRStqf+QQoDw/g2jwr8pgdSEW2Q8KXnw0cd49rdUEVMDm/RPtJM2WTXje38t2fuKA6
-         u4ZkuFKljH5j9paNk4qzrfxi4179iuabvFiNF4cW2zg2XsXIhtLzli3mf6TY7A2vVoAg
-         hygQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZS9lrgCKcH5cn/fUKhkwzimnM7jOIILFchM59oHHobQ=;
+        b=IBLmiZJBvFZFSgT2JEHmYxbMB6E2bZPwuzHdTgQRSCdo1OX7fVc561+0cda2cmXzPM
+         rPne2GO+Rl4L+qDtbkZ4E/PffLhQ1FJ4TJT7N/zoN0Jd4DfP45wjSARYCn+eep7LVmCH
+         j/vkpSo1H0Dp62hMPO5EHHzz9+34G9w5I09eZfZZ69hWoQl+X/Q+0oCLaX0TMNx4k5r2
+         7xvTvc7hNRth+O6QWgEntx9qay7WQRzvPAVIAoPvigsdoPjVBAa4NjJCiuHuKtIQP1CF
+         YmRd8VDHzszNPsFrDp0+EcwUkK5fwO3c1m//NzbEB0cnQeb1o1s5chIx3o0NgyqAtzib
+         9zHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Wg6EPR8kROalNpK3m966bmvq/1vI0FypjbSKpnUJTM=;
-        b=GQrN3wq2aK9F676pzg9l/Bk0TlDYPLEVN0y5T42VFJAsDDg5qsftar15PtNpwQg5Tj
-         PIGWMkbu3+nCNKhfSxO5jKIYj2Lz862cKYRicTLnhbYlahelP4R3szGzGwph3v9ZA0rs
-         EkzTIAydg2HyKZL4tHPA1gSfxfDIgWE/MzFeiIwBU5s7t8q9WLs3kkAwU9dLBzjtGYTE
-         VnpHRfnxB7jLw7tENce2jRWpOkxygpl8RY8JKgK0YPbnSCDkUd1yHfh2pcmkpWCEkwkY
-         4Y3pjRdxoj5ZN2T0JdsuMAuvIH2J2+YRkkVjX6py1z5ptWNxDkrDlyJj/CIXNYzUi5Ba
-         SDdw==
-X-Gm-Message-State: APt69E1b56ZovzLFNfupErlp7CX7P39UteKElNfftMvXcabbXEQrDfuW
-        SsZAQWtyslBL0DKgSAs5Lpbbe9iSl9i52AIGaXniAA==
-X-Google-Smtp-Source: AAOMgpd6hbOsYm4taA8Iadg7vyqoC4BLLuWxUMZyma7gjpm+X7LjtsM/kRczx1FO+53QTdG1OmFEXgbR2N8qYdWh7Ik=
-X-Received: by 2002:adf:b310:: with SMTP id j16-v6mr9752001wrd.207.1530224217727;
- Thu, 28 Jun 2018 15:16:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZS9lrgCKcH5cn/fUKhkwzimnM7jOIILFchM59oHHobQ=;
+        b=ou3ygRFO9OLolI7m3eQM87979C81E8eCSEE7FWcYi/byzD0AXW7fKhnstQ3yjRswcy
+         g4XRLf/voD0QjONBZMuIzr+DDhhuohQt1FXe9AvHBEuC8yRm3kpc3iiL409bFsgrqk7y
+         9LV0Ge+aC6EUpu/iaSHMGobbbmrshkq9+Q1j89N5CobhXRzm2YXfJvVmO+i87TO4DykI
+         AXdXis9GMQTuatBdwmXlHHSoEpMEKBw5NSHwUT/ML+uYo0eDAqD+vgQkSRoFGxi945lU
+         ige342fSa9aVCDyXLcmjrCUTq13FY3oeCglWNZzfMLAiiBsY1LWEy3Pd18ODJhrNVilX
+         xMsw==
+X-Gm-Message-State: APt69E2GTdpH/qb/CY9G3T3P3OIQBOr1LJ29eDQ4tB8p/yiOxGcLaBUj
+        I+oTTQo4r17nQsyGJTbqa6g=
+X-Google-Smtp-Source: AAOMgpfPPGc8UIrU21DpKMWOH3v3xdKdQhcz7QZtZgwEw/qb8Oc2L+qCj+ysg9qIyqb+ONHi+vfpeA==
+X-Received: by 2002:a17:902:530a:: with SMTP id b10-v6mr7902201pli.316.1530224548300;
+        Thu, 28 Jun 2018 15:22:28 -0700 (PDT)
+Received: from [192.168.11.4] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id e17-v6sm13687687pfd.15.2018.06.28.15.22.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 15:22:27 -0700 (PDT)
+Subject: Re: [PATCH 0/2] tools/memory-model: remove ACCESS_ONCE()
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        npiggin@gmail.com, peterz@infradead.org, stern@rowland.harvard.edu,
+        will.deacon@arm.com
+References: <20180628123347.52963-1-mark.rutland@arm.com>
+ <20180628123845.GA14456@andrea> <20180628152140.GK3593@linux.vnet.ibm.com>
+From:   Akira Yokosawa <akiyks@gmail.com>
+Message-ID: <1b382e0f-bfa8-8465-ba88-3a1431beefde@gmail.com>
+Date:   Fri, 29 Jun 2018 07:22:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180627214447.260804-1-cannonmatthews@google.com> <20180628112139.GC32348@dhcp22.suse.cz>
-In-Reply-To: <20180628112139.GC32348@dhcp22.suse.cz>
-From:   Cannon Matthews <cannonmatthews@google.com>
-Date:   Thu, 28 Jun 2018 15:16:46 -0700
-Message-ID: <CAJfu=Uc8zkN1fc73_UtiREW061xakrnMNP27oV5i3AreP1XS+w@mail.gmail.com>
-Subject: Re: [PATCH] mm: hugetlb: yield when prepping struct pages
-To:     mhocko@kernel.org, mike.kravetz@oracle.com
-Cc:     akpm@linux-foundation.org, nyc@holomorphy.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Greg Thelen <gthelen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180628152140.GK3593@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the quick turnaround.
+On 2018/06/28 08:21:40 -0700, Paul E. McKenney wrote:
+[...]
+> 
+> While I am at it, here is the current scorecard:
+> 
+> e9ff68680cd4 tools/memory-model: Add litmus test for full multicopy atomicity
+> c21fcc6594f1 tools/memory-model: Fix ISA2+pooncelock+pooncelock+pombonce name
+> aa838e0b70e1 MAINTAINERS: Add Daniel Lustig as an LKMM reviewer
+> 3cb0d7701c4c locking/memory-barriers.txt/kokr: Update Korean translation to fix broken DMA vs. MMIO ordering example
+> 0bde941f3629 tools/memory-model: Remove ACCESS_ONCE() from recipes
+> 80b7b05c3aa0 tools/memory-model: Remove ACCESS_ONCE() from model
+> 
+> 	The above patches are ready for the upcoming merge window because
+> 	each has at least one Acked-by or Reviewed-by.
+> 
+> 6098ce88bc4d tools/memory-model: Make scripts executable
 
-Good to know about the how the 2M code path differs, I have been
-trying to trace through some of this and it's easy to get lost between
-which applies to which size.
+In this commit, "Usage:" in the header of scripts/checklitmus.sh should
+also be updated.
 
-Thanks!
-On Thu, Jun 28, 2018 at 12:03 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Wed 27-06-18 14:44:47, Cannon Matthews wrote:
-> > When booting with very large numbers of gigantic (i.e. 1G) pages, the
-> > operations in the loop of gather_bootmem_prealloc, and specifically
-> > prep_compound_gigantic_page, takes a very long time, and can cause a
-> > softlockup if enough pages are requested at boot.
-> >
-> > For example booting with 3844 1G pages requires prepping
-> > (set_compound_head, init the count) over 1 billion 4K tail pages, which
-> > takes considerable time. This should also apply to reserving the same
-> > amount of memory as 2M pages, as the same number of struct pages
-> > are affected in either case.
-> >
-> > Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
-> > prevent this lockup.
-> >
-> > Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
-> > no softlockup is reported, and the hugepages are reported as
-> > successfully setup.
-> >
-> > Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
->
-> Thanks!
->
-> > ---
-> >  mm/hugetlb.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index a963f2034dfc..d38273c32d3b 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -2169,6 +2169,7 @@ static void __init gather_bootmem_prealloc(void)
-> >                */
-> >               if (hstate_is_gigantic(h))
-> >                       adjust_managed_page_count(page, 1 << h->order);
-> > +             cond_resched();
-> >       }
-> >  }
-> >
-> > --
-> > 2.18.0.rc2.346.g013aa6912e-goog
->
-> --
-> Michal Hocko
-> SUSE Labs
+When it is fixed,
+
+Acked-by: Akira Yokosawa <akiyks@gmail.com>
+
+      Thanks, Akira
+
+> 5bb22d0126f9 tools/memory-model: Rename litmus tests to comply to norm7
+> 1bc179880fba docs: atomic_ops: Describe atomic_set as a write operation
+> 
+> 	The above patches need at least one additional Acked-by
+> 	or Reviewed-by.  If any of you gets a chance, please do
+> 	look them over.
+> 
+> 51b0a8985c5a EXP tools/memory-model: Add litmus-test naming scheme
+> 
+> 	This patch needs me to get Will Deacon's feedback applied.  :-/
+> 
+> 06e99a0d9662 EXP tools/memory-model: Add .cfg and .cat files for s390
+> 
+> 	This is a placeholder, and probably won't ever go upstream
+> 	into the Linux kernel.  (Maybe someday into herd where the
+> 	other architecture-specific .cat files live.)
+> 
+> 							Thanx, Paul
+> 
+>> Cheers,
+>>   Andrea
+>>
+>>
+>>>
+>>>  tools/memory-model/Documentation/recipes.txt | 4 ++--
+>>>  tools/memory-model/linux-kernel.bell         | 2 +-
+>>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> -- 
+>>> 2.11.0
+>>>
+>>
+> 
+
