@@ -1,94 +1,127 @@
 Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7544BC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948D4C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B6226869
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B6226869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 560852687A
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:12:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560852687A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753271AbeF1EMS (ORCPT
+        id S1753312AbeF1EMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:12:18 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40025 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932124AbeF1EMQ (ORCPT
+        Thu, 28 Jun 2018 00:12:25 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44329 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932094AbeF1EMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:12:16 -0400
-Received: by mail-qt0-f196.google.com with SMTP id s47-v6so3618262qth.7;
-        Wed, 27 Jun 2018 21:12:16 -0700 (PDT)
+        Thu, 28 Jun 2018 00:12:21 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t22-v6so3300002ljc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 21:12:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=aWmg7im17exQy4rah0WROHH0M5ShiUcRIcxOcOPKVmE=;
-        b=pEz5WTvtXJ9N00GnB+OEInVKdXFjpqfcle97OdLfJguTVUhbawI7k5hGwkDre6fo7A
-         JOYHtnynkeCFG4q7eYKxtd52xAHe2B/got9rENANXeDGnm9SHxbElbi+6p6SCj12jirb
-         AtSZQHiZKZ/7F0opTMnmPaSx1GFSQseR1V+VNRDrhNtbkGzMzgNzljGaVITSeKR68xo9
-         oJkHXTT/XtV8xPHvLQJalS6p3CCR0vlHWuI7O7vu6yuczz2DNFXBYVYvv5dKR4P3c5Wi
-         DWGYHMaL5C844worG5vYC5aec6Djx3QpdaFy1wd4hK/Ix0KAwJ6rEeKAkLaKo/nxPKDm
-         KWUQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=aWmg7im17exQy4rah0WROHH0M5ShiUcRIcxOcOPKVmE=;
-        b=ZO1irrblRVJ2FoWsZ2b3USp5W0bXLKkOa9qVG5NSgO88CqA/1MU2UKnIrtY6SAZT+B
-         thiKIcipbdn2mu+jo3kwPfsEORTX9wERWojdXGKfEbwz8CKdtQI3q6+EvTXF4kKR1G6a
-         dzUucpZOhcbL0UU607RWZ6w8A+4w5DrvQ1E4c=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FlRX4rS4p0IRVrMh8fVyivQZmVxEA/5sry7SF1qCv0w=;
+        b=eL0pROPKz101Ocn7jHnn1Ut22nnOnWohQ8BkupxFe1b1d+4tw4TBsab5FBWVizumso
+         AD9UAz6SnPVViZp/hK6bCfM6YwguzOFGCtzwBGWx7U6USucMVkdiirIcLWTWftFBL076
+         sjiTtVCzi+ia8Sig3GVBF/pb5+7WZTPuKfaTjEReL4p5PZzHwQ+jiG5WnX/HelR39+BS
+         gTyKosOkxVzlr0ZCQViuFS2hOczld9tTNKxo4XYtUxYdAHgZIviNE/l6B5d7awNATiHZ
+         KR/vZKA7diamctGjTyV4yGOsHzS6KvPFfZuMIp/E8AGjR3M4IxGSyhgrcy8eeH1gRIX1
+         oSdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=aWmg7im17exQy4rah0WROHH0M5ShiUcRIcxOcOPKVmE=;
-        b=iTiJfMr/N6Rckd7do9Y68RsCQsLuK7bQ8IxlTmyAiqRbMiyWHLbEpYMX/lEkze59av
-         O2+7VBpxFPOl9sC3g/bj/xBfKzikPdc6ZCPC3p+pxBzH5TVRx0+hLLawJ2hlhFZidbvv
-         JHM4o0GTUm1lc4Kmt+KSv14K6pFAGZ08RNk7HloE1tUeY/Q0oBtt6JphNNQj9aQK1Gjb
-         7h62uzaKIqLj+VcLhyexNdd1fyqkIU20OKTZKXiAJbysL9IiAd69dO+BT2UjeldtDNkv
-         9mWw8t413GoBDTqJcDk7DDejq8TjU1gNqBW0MMWwdM143ztVjLiPXZbMXgjO60++w6qt
-         xePw==
-X-Gm-Message-State: APt69E2euB2ntzmxCsPB5DAA0C0dB1fAmv05mQErpUNrc0pQ5LpJaj1j
-        8cqm0y5GHy49dwwXUt35OJ8XZnD0eHDtPlC/7Ls=
-X-Google-Smtp-Source: AAOMgpe9dF27Uc4vd+e+zItSw0KVKI5pxguRwV7Nc/B3on9hKgHIQB5n0qWiunFEW3LzPo9xUn5dgjulC3My7Obt/sY=
-X-Received: by 2002:ac8:679a:: with SMTP id b26-v6mr907735qtp.347.1530159136156;
- Wed, 27 Jun 2018 21:12:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FlRX4rS4p0IRVrMh8fVyivQZmVxEA/5sry7SF1qCv0w=;
+        b=VibzMluWe2Jy9EenSgM04mZvSqup+CuQFfhao3bzQ5Z6rJNwo5nHovCupUSoCGU0wF
+         PiysbT+6NexeqVQsgz1OphL06l5GB8yoJ0xKz+SeYF4gOff/awR7zz5Y1RBtwPO+R26V
+         mC99PX2VaWssq2FhXsAh7YbXIKGDF9Igy8Uz22MV9we0yP0Fqx2Y4BKdkM24Uu6djOk6
+         SxKMBRuX7o0WRq2K6wlgBcKU1QUk4iP0+b5XxAneS2SwJ7vyM0j+SQviGMohY01SieMc
+         RSecNnElHi1qpomGuDQ3bxIphnmEPIS+q3epoxwUlDkhu/gbNDRTEoMD8QPmys9LDWoH
+         AJlw==
+X-Gm-Message-State: APt69E3Sie4vQpgrbp+zaZSsfBDDiVJT3ooWpzOReGuov1squ6V04fcX
+        e0xL9PzuBcjcI52B/GDKBKo=
+X-Google-Smtp-Source: AAOMgpdhOW+7O/Z33qMDUm9a5yXvsBUUoBTUaQotQWSHgzOmiWCxVJGaG0cCbv3PI6BJief1nzfNmg==
+X-Received: by 2002:a2e:5bc8:: with SMTP id m69-v6mr6129471lje.115.1530159140087;
+        Wed, 27 Jun 2018 21:12:20 -0700 (PDT)
+Received: from gmail.com (81-231-232-130-no39.tbcn.telia.com. [81.231.232.130])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm952861lje.21.2018.06.27.21.12.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 27 Jun 2018 21:12:18 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 06:12:18 +0200
+From:   "Edgar E. Iglesias" <edgar.iglesias@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>,
+        Sai Pavan Boddu <sai.pavan.boddu@xilinx.com>,
+        "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>,
+        Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, Alistair Francis <alistair@alistair23.me>,
+        KONRAD Frederic <frederic.konrad@adacore.com>
+Subject: Re: [Qemu-devel] Linux kernel configurations for various Microblaze
+ systems
+Message-ID: <20180628041217.qxlspqzqfm4gszxd@toto>
+References: <20180627185248.GA19743@roeck-us.net>
+ <96809884-2f46-ed63-48fd-9fd4c5050e20@amsat.org>
+ <20180627205915.GA22693@roeck-us.net>
+ <20180627224718.ewamlt42kvyirhjw@toto>
+ <ae120580-01f2-672d-edc0-440c2dd3f248@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:ac8:169d:0:0:0:0:0 with HTTP; Wed, 27 Jun 2018 21:11:55
- -0700 (PDT)
-In-Reply-To: <20180626232605.13420-9-benh@kernel.crashing.org>
-References: <20180626232605.13420-1-benh@kernel.crashing.org> <20180626232605.13420-9-benh@kernel.crashing.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 28 Jun 2018 13:41:55 +0930
-X-Google-Sender-Auth: OGgIS7P3poDCOMvNYW9-IRoOE0o
-Message-ID: <CACPK8XdgZeDjz+Niyfo5UxvvHTjYXB+fWfhO768CPrUMXj0nkw@mail.gmail.com>
-Subject: Re: [PATCH 08/14] fsi: master-gpio: Remove "GPIO" prefix on some definitions
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     linux-aspeed@lists.ozlabs.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae120580-01f2-672d-edc0-440c2dd3f248@roeck-us.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 08:55, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> Some definitions are generic to the FSI protocol or any
-> give master implementation. Rename them to remove the
-> "GPIO" prefix in preparation for moving them to a common
-> header.
->
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+On Wed, Jun 27, 2018 at 05:34:15PM -0700, Guenter Roeck wrote:
+> Hi Edgar,
+> 
+> On 06/27/2018 03:47 PM, Edgar E. Iglesias wrote:
+> 
+> > 
+> > Hi Guenter,
+> > 
+> > Re: ml605
+> > The thing to watch out for with kernel configs for microblaze systems is the
+> > physmem address setting. Unfortunately the kernel does not auto-detect this.
+> > 
+> > I'm attaching a kernelconfig for the ml605 that works for me and a qemu commandline.
+> > 
+> > qemu-system-microblazeel -M petalogix-ml605 -m 256 -serial mon:stdio -dtb petalogix-ml605.dtb -kernel arch/microblaze/boot/linux.bin -append rdinit=/bin/sh
+> > 
+> 
+> Can you also send me the dtb file or even better its source ? I don't think
+> the one in qemu is correct. It lists the serial port at 0x83e00000, but qemu
+> instantiates it at 0x83e01000.
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+I used the one from QEMU. IIRC, there's some offsetting going on there
+that differs between the Xilinx version and the PC version of these
+UARTs...
+
+Can you try again and see how it goes?
+If it doesn't work, I can share my kernel Image and we can compare from there.
+
+Cheers,
+Edgar
+
+> 
+> > Re: pmu
+> > The PMU board does not run Linux, it runs baremetal power-management related firmware.
+> > 
+> 
+> Ah, good to know.
+> 
+> Thanks!
+> Guenter
+> 
