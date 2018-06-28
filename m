@@ -2,318 +2,126 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779B8C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE6AC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244C026FDC
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:55:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244C026FDC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CED726FDE
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:57:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CED726FDE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933710AbeF1Gzx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 02:55:53 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49727 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933470AbeF1Gzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 02:55:51 -0400
-X-UUID: 1289ec5497f94bb7995c3f0fc43331c2-20180628
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <houlong.wei@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 6793205; Thu, 28 Jun 2018 14:55:43 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs01n2.mediatek.inc
- (172.21.101.79) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Thu, 28 Jun
- 2018 14:55:39 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 28 Jun 2018 14:55:37 +0800
-Message-ID: <1530168937.21275.4.camel@mhfsdcap03>
-Subject: Re: [PATCH v21 2/4] mailbox: mediatek: Add Mediatek CMDQ driver
-From:   houlong wei <houlong.wei@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Nicolas Boichat" <drinkcat@chromium.org>,
-        Cawa Cheng =?UTF-8?Q?=28=E9=84=AD=E6=9B=84=E7=A6=A7=29?= 
-        <cawa.cheng@mediatek.com>,
-        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
-        <Bibby.Hsieh@mediatek.com>,
-        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
-        <Yt.Shen@mediatek.com>,
-        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
-        <Daoyuan.Huang@mediatek.com>,
-        Damon Chu =?UTF-8?Q?=28=E6=9C=B1=E5=B3=BB=E8=B3=A2=29?= 
-        <Damon.Chu@mediatek.com>,
-        Josh-YC Liu =?UTF-8?Q?=28=E5=8A=89=E8=82=B2=E8=AA=A0=29?= 
-        <Josh-YC.Liu@mediatek.com>,
-        Glory Hung =?UTF-8?Q?=28=E6=B4=AA=E6=99=BA=E7=91=8B=29?= 
-        <glory.hung@mediatek.com>,
-        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
-        <Jiaguang.Zhang@mediatek.com>,
-        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
-        <Dennis-YC.Hsieh@mediatek.com>,
-        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
-        <monica.wang@mediatek.com>,
-        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
-        <Hs.Liao@mediatek.com>
-Date:   Thu, 28 Jun 2018 14:55:37 +0800
-In-Reply-To: <1530151059.6193.27.camel@mtksdaap41>
-References: <1517383693-25591-1-git-send-email-houlong.wei@mediatek.com>
-         <1517383693-25591-3-git-send-email-houlong.wei@mediatek.com>
-         <1519185212.8716.32.camel@mtksdaap41>
-         <1530100416.31725.15.camel@mhfsdcap03>
-         <1530151059.6193.27.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S933718AbeF1G52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 02:57:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36812 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752245AbeF1G51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 02:57:27 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B8A5BF569;
+        Thu, 28 Jun 2018 06:57:26 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3917F11166F1;
+        Thu, 28 Jun 2018 06:57:24 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 14:57:22 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dave.hansen@intel.com, pagupta@redhat.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v5 3/4] mm/sparse: Add a new parameter 'data_unit_size'
+ for alloc_usemap_and_memmap
+Message-ID: <20180628065722.GB32539@MiWiFi-R3L-srv>
+References: <20180627013116.12411-1-bhe@redhat.com>
+ <20180627013116.12411-4-bhe@redhat.com>
+ <CAGM2reb=2fmgJQzfPGJ_bCG-317-dsFfoG8vSr9LuYit4AVsyQ@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGM2reb=2fmgJQzfPGJ_bCG-317-dsFfoG8vSr9LuYit4AVsyQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 06:57:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 06:57:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-28 at 09:57 +0800, CK Hu wrote:
-> Hi, Houlong:
+On 06/27/18 at 11:14pm, Pavel Tatashin wrote:
+> Honestly, I do not like this new agrument, but it will do for now. I
+> could not think of a better way without rewriting everything.
 > 
-> On Wed, 2018-06-27 at 19:53 +0800, houlong wei wrote:
-> > On Wed, 2018-02-21 at 11:53 +0800, CK Hu wrote:
-> > > Hi, Houlong:
-> > > 
-> > > I've one inline comment.
-> > > 
-> > > On Wed, 2018-01-31 at 15:28 +0800, houlong.wei@mediatek.com wrote:
-> > > > From: "hs.liao@mediatek.com" <hs.liao@mediatek.com>
-> > > > 
-> > > > This patch is first version of Mediatek Command Queue(CMDQ) driver. The
-> > > > CMDQ is used to help write registers with critical time limitation,
-> > > > such as updating display configuration during the vblank. It controls
-> > > > Global Command Engine (GCE) hardware to achieve this requirement.
-> > > > Currently, CMDQ only supports display related hardwares, but we expect
-> > > > it can be extended to other hardwares for future requirements.
-> > > > 
-> > > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
-> > > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
-> > > > Signed-off-by: CK Hu <ck.hu@mediatek.com>
-> > > > ---
-> > > >  drivers/mailbox/Kconfig                  |   10 +
-> > > >  drivers/mailbox/Makefile                 |    2 +
-> > > >  drivers/mailbox/mtk-cmdq-mailbox.c       |  594 ++++++++++++++++++++++++++++++
-> > > >  include/linux/mailbox/mtk-cmdq-mailbox.h |   77 ++++
-> > > >  4 files changed, 683 insertions(+)
-> > > >  create mode 100644 drivers/mailbox/mtk-cmdq-mailbox.c
-> > > >  create mode 100644 include/linux/mailbox/mtk-cmdq-mailbox.h
-> > > > 
-> > > > diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> > > > index ba2f152..43bb26f 100644
-> > > > --- a/drivers/mailbox/Kconfig
-> > > > +++ b/drivers/mailbox/Kconfig
-> > > > @@ -171,4 +171,14 @@ config BCM_FLEXRM_MBOX
-> > > >  	  Mailbox implementation of the Broadcom FlexRM ring manager,
-> > > >  	  which provides access to various offload engines on Broadcom
-> > > >  	  SoCs. Say Y here if you want to use the Broadcom FlexRM.
-> > > > +
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 > 
-> [...]
-> 
-> > > > +
-> > > > +static void cmdq_task_exec(struct cmdq_pkt *pkt, struct cmdq_thread *thread)
-> > > > +{
-> > > > +	struct cmdq *cmdq;
-> > > > +	struct cmdq_task *task;
-> > > > +	unsigned long curr_pa, end_pa;
-> > > > +
-> > > > +	cmdq = dev_get_drvdata(thread->chan->mbox->dev);
-> > > > +
-> > > > +	/* Client should not flush new tasks if suspended. */
-> > > > +	WARN_ON(cmdq->suspended);
-> > > > +
-> > > > +	task = kzalloc(sizeof(*task), GFP_ATOMIC);
-> > > > +	task->cmdq = cmdq;
-> > > > +	INIT_LIST_HEAD(&task->list_entry);
-> > > > +	task->pa_base = pkt->pa_base;
-> > > > +	task->thread = thread;
-> > > > +	task->pkt = pkt;
-> > > > +
-> > > > +	if (list_empty(&thread->task_busy_list)) {
-> > > > +		WARN_ON(clk_enable(cmdq->clock) < 0);
-> > > > +		WARN_ON(cmdq_thread_reset(cmdq, thread) < 0);
-> > > > +
-> > > > +		writel(task->pa_base, thread->base + CMDQ_THR_CURR_ADDR);
-> > > > +		writel(task->pa_base + pkt->cmd_buf_size,
-> > > > +		       thread->base + CMDQ_THR_END_ADDR);
-> > > > +		writel(CMDQ_THR_IRQ_EN, thread->base + CMDQ_THR_IRQ_ENABLE);
-> > > > +		writel(CMDQ_THR_ENABLED, thread->base + CMDQ_THR_ENABLE_TASK);
-> > > > +
-> > > > +		mod_timer(&thread->timeout,
-> > > > +			  jiffies + msecs_to_jiffies(CMDQ_TIMEOUT_MS));
-> > > > +	} else {
-> > > > +		WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
-> > > > +		curr_pa = readl(thread->base + CMDQ_THR_CURR_ADDR);
-> > > > +		end_pa = readl(thread->base + CMDQ_THR_END_ADDR);
-> > > > +
-> > > > +		/*
-> > > > +		 * Atomic execution should remove the following wfe, i.e. only
-> > > > +		 * wait event at first task, and prevent to pause when running.
-> > > > +		 */
-> > > > +		if (thread->atomic_exec) {
-> > > > +			/* GCE is executing if command is not WFE */
-> > > > +			if (!cmdq_thread_is_in_wfe(thread)) {
-> > > > +				cmdq_thread_resume(thread);
-> > > > +				cmdq_thread_wait_end(thread, end_pa);
-> > > > +				WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
-> > > > +				/* set to this task directly */
-> > > > +				writel(task->pa_base,
-> > > > +				       thread->base + CMDQ_THR_CURR_ADDR);
-> > > > +			} else {
-> > > > +				cmdq_task_insert_into_thread(task);
-> > > > +				cmdq_task_remove_wfe(task);
-> > > > +				smp_mb(); /* modify jump before enable thread */
-> > > > +			}
-> > > > +		} else {
-> > > > +			/* check boundary */
-> > > > +			if (curr_pa == end_pa - CMDQ_INST_SIZE ||
-> > > > +			    curr_pa == end_pa) {
-> > > > +				/* set to this task directly */
-> > > > +				writel(task->pa_base,
-> > > > +				       thread->base + CMDQ_THR_CURR_ADDR);
-> > > > +			} else {
-> > > > +				cmdq_task_insert_into_thread(task);
-> > > > +				smp_mb(); /* modify jump before enable thread */
-> > > > +			}
-> > > > +		}
-> > > > +		writel(task->pa_base + pkt->cmd_buf_size,
-> > > > +		       thread->base + CMDQ_THR_END_ADDR);
-> > > > +		cmdq_thread_resume(thread);
-> > > > +	}
-> > > > +	list_move_tail(&task->list_entry, &thread->task_busy_list);
-> > > 
-> > > You implement a list to queue command because you need to execute
-> > > multiple packet in the same vblank period. I've a suggestion that you
-> > > need not to implement a list. Once cmdq driver receive two packet as
-> > > below:
-> > > 
-> > > Packet 1:
-> > > (1) clear vblank event
-> > > (2) wait vblank event
-> > > (3) write register setting 1
-> > > (4) no operation
-> > > 
-> > > Packet 2:
-> > > (1) clear vblank event
-> > > (2) wait vblank event
-> > > (3) write register setting 2
-> > > (4) no operation
-> > > 
-> > > In your current design, you modify these two packet as:
-> > > 
-> > > Packet 1:
-> > > (1) clear vblank event
-> > > (2) wait vblank event
-> > > (3) write register setting 1
-> > > (4) Jump to packet 2 (modified)
-> > > 
-> > > Packet 2:
-> > > (1) no operation (modified)
-> > > (2) no operation (modified)
-> > > (3) write register setting 2
-> > > (4) no operation
-> > > 
-> > > So the register setting 1 and register setting 2 could be executed in
-> > > the same vblank period.
-> > > 
-> > > My suggestion is: when the client want to send packet 2, it 'abort'
-> > > packet 1 at first. The 'abort' means remove it from channel. In current
-> > > mailbox interface, mbox_free_channel() is most like abort function, but
-> > > my abort would keep the channel. So maybe you need to implement a new
-> > > mailbox interface which could remove packet in the channel. So the step
-> > > would be:
-> > > 
-> > > (1) Client generate packet 1 which include write register setting 1
-> > > (2) Client send packet 1 to channel A
-> > > 
-> > > When client want to send register setting 2,
-> > > 
-> > > (3) Client abort channel A
-> > > (4) Client generate packet 2 which include write register setting 1 & 2
-> > > (5) Client send packet 2 to channel A
-> > > 
-> > > Once you have the abort function, you could use the queue mechanism in
-> > > mailbox core instead of implementing your own.
-> > > 
-> > > For the client which have the atomic requirement, it also need not to
-> > > implement a list to keep what command have not executed. So the abort
-> > > interface would make client and controller much simpler.
-> > > 
-> > > Regards,
-> > > CK
-> > > 
-> > 
-> > Hi CK, thanks for you suggestion. Since current mailbox framework has
-> > no 'abort' function and need add new interface. It may be complicated
-> > to do this. Could we keep current solution?
-> > 
-> 
-> I imagine that 'abort' is a simple function. Is my imagination
-> incorrect? So you would like choose implementing a complicated queue
-> mechanism in mtk_cmdq driver rather than implementing abort function.
-> Maybe both are complicated.
-> 
-> I think the more important thing is that do you and maintainer agree to
-> implement abort function which could reduce mtk-self-queue in mtk_cmdq
-> driver. If the answer is yes, there could be two patch sequence A and B,
+> However, I will submit a series of patches to cleanup sparse.c and
+> completely remove large and confusing temporary buffers: map_map, and
+> usemap_map. In those patches, I will remove alloc_usemap_and_memmap().
 
+Great, look forward to seeing them, I can help review.
 
-Hello Jassi, what's your opinion on 'abort' function ?
-
-
-> the patch sequence A is
-> 
-> A.1 mtk_cmdq driver with mtk-self-queue.
-> A.2 mtk display driver use mtk_cmdq without abort function.
-> A.3 add mailbox abort function
-> A.4 mtk_cmdq driver support abort function and remove mtk-self-queue.
-> A.5 mtk display driver use mtk_cmdq with abort function
-> 
-> And the patch sequence B is
-> 
-> B.1 add mailbox abort function
-> B.2 mtk_cmdq driver with abort function and no mtk-self-queue
-> B.3 mtk display driver use mtk_cmdq with abort function
-> 
-> Which one do you think is complicated?
-> 
-> So let's back to the more important thing: 'do you agree to implement
-> abort function which could reduce mtk-self-queue in mtk_cmdq driver?'
-> 
-> Regards,
-> CK
-> 
-> > > > +}
-> > > > +
-> 
-> [...]
-> 
-> > 
-> 
-> 
-
-
+> On Tue, Jun 26, 2018 at 9:31 PM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > alloc_usemap_and_memmap() is passing in a "void *" that points to
+> > usemap_map or memmap_map. In next patch we will change both of the
+> > map allocation from taking 'NR_MEM_SECTIONS' as the length to taking
+> > 'nr_present_sections' as the length. After that, the passed in 'void*'
+> > needs to update as things get consumed. But, it knows only the
+> > quantity of objects consumed and not the type.  This effectively
+> > tells it enough about the type to let it update the pointer as
+> > objects are consumed.
+> >
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> >  mm/sparse.c | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/mm/sparse.c b/mm/sparse.c
+> > index 71ad53da2cd1..b2848cc6e32a 100644
+> > --- a/mm/sparse.c
+> > +++ b/mm/sparse.c
+> > @@ -489,10 +489,12 @@ void __weak __meminit vmemmap_populate_print_last(void)
+> >  /**
+> >   *  alloc_usemap_and_memmap - memory alloction for pageblock flags and vmemmap
+> >   *  @map: usemap_map for pageblock flags or mmap_map for vmemmap
+> > + *  @unit_size: size of map unit
+> >   */
+> >  static void __init alloc_usemap_and_memmap(void (*alloc_func)
+> >                                         (void *, unsigned long, unsigned long,
+> > -                                       unsigned long, int), void *data)
+> > +                                       unsigned long, int), void *data,
+> > +                                       int data_unit_size)
+> >  {
+> >         unsigned long pnum;
+> >         unsigned long map_count;
+> > @@ -569,7 +571,8 @@ void __init sparse_init(void)
+> >         if (!usemap_map)
+> >                 panic("can not allocate usemap_map\n");
+> >         alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
+> > -                                                       (void *)usemap_map);
+> > +                               (void *)usemap_map,
+> > +                               sizeof(usemap_map[0]));
+> >
+> >  #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> >         size2 = sizeof(struct page *) * NR_MEM_SECTIONS;
+> > @@ -577,7 +580,8 @@ void __init sparse_init(void)
+> >         if (!map_map)
+> >                 panic("can not allocate map_map\n");
+> >         alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
+> > -                                                       (void *)map_map);
+> > +                               (void *)map_map,
+> > +                               sizeof(map_map[0]));
+> >  #endif
+> >
+> >         for_each_present_section_nr(0, pnum) {
+> > --
+> > 2.13.6
+> >
