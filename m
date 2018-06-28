@@ -2,150 +2,137 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBC4C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75700C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD742493D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B54F2460E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:30:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWKzM8lQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD742493D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="PRdR8kT7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B54F2460E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965438AbeF1P2t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:28:49 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38530 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753390AbeF1P2q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:28:46 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a5-v6so5428668edt.5;
-        Thu, 28 Jun 2018 08:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aTt1Cb5ofpN+7UGkRkwxqnhfncC46uAIKB12UtV93ZU=;
-        b=SWKzM8lQ9I1pTXSF/GnYfLpVVvvT2pEvMt9siigbSVDpXsCDB8+oTtDQ7Y+5beZAVJ
-         /9dKhDmruEuY8FRcjYhHMsw5uzdQZbFaB6AWw8TvzBTxSJ/e24gRkxwZ4xN/mUqyfkKo
-         QmijOrs8RuxHAMo+VYRxkZfI92ZyDrfbn04SbTQGeHd1aMabL6gZTG+hbmNMoFja2bbv
-         EF7vrJrXT6eFcJf32Zuk+lUUkU1Sv6Dgg3gyZR7uOGzBcEg+MENBib94ZdrAnekX4yDT
-         4UZnUCRuEzofya/J2JW9BFhxBzWwsOKqpJJR1UyHBjs7b/CH3AnhrQo/yPJdmSeq88cc
-         uxzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aTt1Cb5ofpN+7UGkRkwxqnhfncC46uAIKB12UtV93ZU=;
-        b=eezJbnATB/rAWAfowR9oviOhlPbV+yWkHYM5odrupL8ujeS3xM3gEpMD3/HxjmVG11
-         DC7/FP+8ziIpJv6Z1ftg6Mtro+taPexJzj/aFffkxtQXsOg4Woy2oGbckTfkksGCL3oT
-         9D7T8veCjRzfuOHbzioNPhyZRgNs5mWY80E4ti4VAXP99N5FeSuZKYlQnCxYOYIgCdWn
-         GSU8kpzIrurT4Jv8F5jF8heZeeD+6z2EE2NZ0K1V5Ke/1Rk2SYt3UNPNzLedjCM23VJG
-         Roi+cUL9Qtzj0u0VqKKTrXOEKGLmSwM12ppMmGYPeFReKLkz7OAEexsKTl8UUtLyWK9b
-         K0iw==
-X-Gm-Message-State: APt69E1dA15eeNyQNkSu5qkXOLFBw9BJZYAOkWMtRrHvF0ABsOlUsG4Z
-        PpMnlJ/3g9fRcQvBUfjCLPqCyYu3
-X-Google-Smtp-Source: AAOMgpeJODZ/2dH1tjdWFTF7uj3oeyviKbSObiv3yotJUzaDhcuUr2Va/Yn22xPUk+bCLQfJGqi6Og==
-X-Received: by 2002:a50:cc8c:: with SMTP id q12-v6mr9434050edi.98.1530199724849;
-        Thu, 28 Jun 2018 08:28:44 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:40dc:3d00:cc54:7de1:e161:def7])
-        by smtp.gmail.com with ESMTPSA id y32-v6sm2985234eda.38.2018.06.28.08.28.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 08:28:44 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 17:28:43 +0200
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, nd <nd@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
-Message-ID: <20180628152841.rgc62aqqckcuecaf@ltop.local>
-References: <cover.1529507994.git.andreyknvl@google.com>
- <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
- <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
- <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
- <0cef1643-a523-98e7-95e2-9ec595137642@arm.com>
- <20180627171757.amucnh5znld45cpc@armageddon.cambridge.arm.com>
- <20180628061758.j6bytsaj5jk4aocg@ltop.local>
- <20180628102741.vk6vphfinlj3lvhv@armageddon.cambridge.arm.com>
- <20180628104610.czsnq4w3lfhxrn53@ltop.local>
- <20180628144858.2fu7kq56cxhp2kpg@armageddon.cambridge.arm.com>
+        id S935303AbeF1Pa1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:30:27 -0400
+Received: from imap.thunk.org ([74.207.234.97]:36892 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933604AbeF1PaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:30:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=vz6JhvmmsHmYqdou6n8cS8VcCVHWEosn48QWhb3Gti0=; b=PRdR8kT72yOLnxb329XanasAVM
+        gmNwPW3Te6Y5GXewVxFitAw+tsQnAzZBDrOkhnNQ1rRvHof2wQyeHFMuoBwtvIyvkFeG5ClO/dwKv
+        cwQHIs2IMeaan9oMZdCGAlhO1r59TwEzvTH/bmVAGxPc1baYhZZWCbn6zyqmMq1rZkbw=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fYYsJ-0008Lo-5h; Thu, 28 Jun 2018 15:30:23 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7C5067A4480; Thu, 28 Jun 2018 11:30:22 -0400 (EDT)
+Date:   Thu, 28 Jun 2018 11:30:22 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
+Cc:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
+        "Shenchen (harry)" <harry.shen@huawei.com>,
+        "miaoxie (A)" <miaoxie@huawei.com>,
+        "yangfei (D)" <yangfei39@huawei.com>,
+        "Renlipeng (OS driver)" <renlipeng@huawei.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?=
+ =?utf-8?Q?H=5D_ext4=3A_e2fsprogs=3A_fix_inode_bitma?= =?utf-8?Q?p?= num not
+ integer,incompatible for ancient android devices
+Message-ID: <20180628153022.GA8521@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
+        "Shenchen (harry)" <harry.shen@huawei.com>,
+        "miaoxie (A)" <miaoxie@huawei.com>,
+        "yangfei (D)" <yangfei39@huawei.com>,
+        "Renlipeng (OS driver)" <renlipeng@huawei.com>
+References: <1530014046-62466-1-git-send-email-gaoming20@huawei.com>
+ <20180627140937.GA3348@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC41667@dggemm511-mbx.china.huawei.com>
+ <20180628022900.GA663@thunk.org>
+ <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628144858.2fu7kq56cxhp2kpg@armageddon.cambridge.arm.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 03:48:59PM +0100, Catalin Marinas wrote:
-> On Thu, Jun 28, 2018 at 12:46:11PM +0200, Luc Van Oostenryck wrote:
-> > On Thu, Jun 28, 2018 at 11:27:42AM +0100, Catalin Marinas wrote:
-> > > On Thu, Jun 28, 2018 at 08:17:59AM +0200, Luc Van Oostenryck wrote:
-> > > > On Wed, Jun 27, 2018 at 06:17:58PM +0100, Catalin Marinas wrote:
-> > > > > sparse is indeed an option. The current implementation doesn't warn on
-> > > > > an explicit cast from (void __user *) to (unsigned long) since that's a
-> > > > > valid thing in the kernel. I couldn't figure out if there's any other
-> > > > > __attribute__ that could be used to warn of such conversion.
-> > > > 
-> > > > sparse doesn't have such attribute but would an new option that would warn
-> > > > on such cast be a solution for your case?
-> > > 
-> > > I can't tell for sure whether such sparse option would be the full
-> > > solution but detecting explicit __user pointer casts to long is a good
-> > > starting point. So far this patchset pretty much relies on detecting
-> > > a syscall failure and trying to figure out why, patching the kernel. It
-> > > doesn't really scale.
-> > 
-> > OK, I'll add such an option this evening.
+On Thu, Jun 28, 2018 at 07:56:59AM +0000, Gaoming (ming, consumer BG) wrote:
+> You see, Inodes per group is 1708,which is illegal as you said.
 > 
-> That's great, thanks. I think this should cover casting pointers to any
-> integer types, not just "unsigned long" (e.g. long long).
+> So, the problem exists a long time until Jun 21th 2018.
+> 
+> You complained the problem in 2011, they do not fix it till 2018.
+> Just as
+> I complained, fix it,  and you do not accept it. ^_^
 
-Yes, of course.
- 
-> The only downside is that with this patchset the untagging can be done
-> after the conversion to ulong (get_user_pages()) as that's where the
-> problem was noticed. With a new sparse feature, we'd have to annotate
-> the conversion sites (not sure how many until we run the tool though).
+Here's the commit.  (Note the date.)   Do you see it in your repository?
 
-I've done a lot of hacking on sparse and as such I run a lot of tests.
-What I see with these tests is that a lot of annotations are wrong or
-missing so I'm very reluctant to add another attribute. Even more so
-one that would be only slightly different than an existing one. OTOH,
-if it's something localized or a one-shot and there is a need, ...
-why not?
+Or are you using an unusual inode size?  (e.g., not 256 bytes, or 16
+inodes per block).
 
-What would you ideally need?
 
--- Luc
+       	   	       	       	     	  - Ted
+
+commit 06c35f935a7adadceb9ee326b3231f952f6ad203
+Merge: 480a3b1 96cc54a
+Author: Colin Cross <ccross@android.com>
+Date:   Sat Apr 30 19:08:09 2011 -0700
+
+    Merge "Make inodes per group a multiple of inodes per block"
+
+diff --cc ext4_utils/make_ext4fs.c
+index c9fd992,e37d617..22c9424
+--- a/ext4_utils/make_ext4fs.c
++++ b/ext4_utils/make_ext4fs.c
+@@@ -214,26 -215,10 +214,27 @@@ static u32 compute_inodes_per_group(
+  {
+  	u32 blocks = DIV_ROUND_UP(info.len, info.block_size);
+  	u32 block_groups = DIV_ROUND_UP(blocks, info.blocks_per_group);
+- 	return DIV_ROUND_UP(info.inodes, block_groups);
++ 	u32 inodes = DIV_ROUND_UP(info.inodes, block_groups);
++ 	return ALIGN(inodes, (info.block_size / info.inode_size));
+  }
+  
+ +static u32 compute_bg_desc_reserve_blocks()
+ +{
+ +	u32 blocks = DIV_ROUND_UP(info.len, info.block_size);
+ +	u32 block_groups = DIV_ROUND_UP(blocks, info.blocks_per_group);
+ +	u32 bg_desc_blocks = DIV_ROUND_UP(block_groups * sizeof(struct ext2_group_desc),
+ +			info.block_size);
+ +
+ +	u32 bg_desc_reserve_blocks =
+ +			DIV_ROUND_UP(block_groups * 1024 * sizeof(struct ext2_group_desc),
+ +					info.block_size) - bg_desc_blocks;
+ +
+ +	if (bg_desc_reserve_blocks > info.block_size / sizeof(u32))
+ +		bg_desc_reserve_blocks = info.block_size / sizeof(u32);
+ +
+ +	return bg_desc_reserve_blocks;
+ +}
+ +
+  void reset_ext4fs_info() {
+      // Reset all the global data structures used by make_ext4fs so it
+      // can be called again.
