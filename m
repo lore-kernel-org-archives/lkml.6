@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23A5C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E57C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9766E27884
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F4AD27886
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:31:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E1cIOk0I";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E1cIOk0I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9766E27884
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B5YrQB0p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M5KCT2cJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F4AD27886
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934761AbeF1TbX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:31:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53074 "EHLO
+        id S935191AbeF1Tbh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:31:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53330 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933831AbeF1TbV (ORCPT
+        with ESMTP id S934767AbeF1Tbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:31:21 -0400
+        Thu, 28 Jun 2018 15:31:33 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A2C7860B3B; Thu, 28 Jun 2018 19:31:20 +0000 (UTC)
+        id DF77360B3B; Thu, 28 Jun 2018 19:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530214280;
-        bh=9qqbSAIvrLOXm1sGLNbwJ6hRHLI01Kdz2ijL3hAIYng=;
+        s=default; t=1530214292;
+        bh=nNUkfi9cPCjty4KmqTFblrE/xs7QQ6pYUajt41YIQNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E1cIOk0IRo5MZWCQe4gRKVIip2Do2F968bvtx9e9Z0fFZiHFxPbmjczeh/QEYOQa7
-         Aa0R91/1rIU9x8lnrvtkCHuQIhHOQ+INHCI0iqTCr0NmKg7e8JQ7oXa5GvmZJ+yYCl
-         zRVRY3G8/GxAkJXTeJdkaCkGQpxOQW2MmZ/OVzR4=
+        b=B5YrQB0pAALNJjFYeN8OLTURnqB0xxNiI5Ywn8nnX1D/0xF1Izqgp2Ry+5tvr8MOD
+         jMN0lxj/WCFI7VpkSRwc7DbJxHxfhwQi0tTSOzPmY3O9d56/CsjMbq1K+0XsG2TzDM
+         L49wD3BLiBSFlJ4pwJZ8K216GF+hJ3EIm3f4EleE=
 Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 34BD3606DD;
-        Thu, 28 Jun 2018 19:31:19 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 55061605A5;
+        Thu, 28 Jun 2018 19:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530214280;
-        bh=9qqbSAIvrLOXm1sGLNbwJ6hRHLI01Kdz2ijL3hAIYng=;
+        s=default; t=1530214291;
+        bh=nNUkfi9cPCjty4KmqTFblrE/xs7QQ6pYUajt41YIQNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E1cIOk0IRo5MZWCQe4gRKVIip2Do2F968bvtx9e9Z0fFZiHFxPbmjczeh/QEYOQa7
-         Aa0R91/1rIU9x8lnrvtkCHuQIhHOQ+INHCI0iqTCr0NmKg7e8JQ7oXa5GvmZJ+yYCl
-         zRVRY3G8/GxAkJXTeJdkaCkGQpxOQW2MmZ/OVzR4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34BD3606DD
+        b=M5KCT2cJhH0xj6+xiQIHZccD73yDzy+FFBJvOEI3Mu8hvbvx5/pb7D06xUMS/k/Ve
+         26dUyeib4UeaMwenjAZnu4U8o98VCGrwi7kLd7KQKxpscBrIInHS4RCa84DVNvfocG
+         RSgR9CBpKU2XpE2OuBOb3jUAsyyLOpFsi/dj4HJU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55061605A5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From:   Sinan Kaya <okaya@codeaurora.org>
@@ -55,15 +55,19 @@ To:     linux-pci@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org (open list:HFI1 DRIVER),
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Kees Cook <keescook@chromium.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V4 2/7] IB/hfi1: Use pci_try_reset_bus() for initiating pci secondary bus reset
-Date:   Thu, 28 Jun 2018 15:31:00 -0400
-Message-Id: <1530214274-21139-2-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH V4 3/7] PCI: Hide pci_reset_bridge_secondary_bus() from drivers
+Date:   Thu, 28 Jun 2018 15:31:01 -0400
+Message-Id: <1530214274-21139-3-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530214274-21139-1-git-send-email-okaya@codeaurora.org>
 References: <1530214274-21139-1-git-send-email-okaya@codeaurora.org>
@@ -74,32 +78,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Getting ready to hide pci_reset_bridge_secondary_bus() from the drivers.
-pci_reset_bridge_secondary_bus() should only be used internally by the
-PCI code itself.
-
-Other drivers should rely on higher level pci_try_reset_bus() API.
+Rename pci_reset_bridge_secondary_bus() to pci_bridge_secondary_bus_reset()
+and move the declartation from linux/pci.h to drivers/pci.h to be used
+internally in PCI directory only.
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/infiniband/hw/hfi1/pcie.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/pci/hotplug/pciehp_hpc.c |  2 +-
+ drivers/pci/pci.c                | 11 +++++------
+ drivers/pci/pci.h                |  1 +
+ drivers/pci/pcie/aer.c           |  2 +-
+ drivers/pci/pcie/err.c           |  2 +-
+ include/linux/pci.h              |  1 -
+ 6 files changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
-index 4d4371b..4570c4d 100644
---- a/drivers/infiniband/hw/hfi1/pcie.c
-+++ b/drivers/infiniband/hw/hfi1/pcie.c
-@@ -905,9 +905,7 @@ static int trigger_sbr(struct hfi1_devdata *dd)
- 	 * delay after a reset is required.  Per spec requirements,
- 	 * the link is either working or not after that point.
- 	 */
--	pci_reset_bridge_secondary_bus(dev->bus->self);
--
--	return 0;
-+	return pci_try_reset_bus(dev->bus);
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index bbaa211..8dae232 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -746,7 +746,7 @@ int pciehp_reset_slot(struct slot *slot, int probe)
+ 	if (pciehp_poll_mode)
+ 		del_timer_sync(&ctrl->poll_timer);
+ 
+-	rc = pci_reset_bridge_secondary_bus(ctrl->pcie->port);
++	rc = pci_bridge_secondary_bus_reset(ctrl->pcie->port);
+ 
+ 	pcie_capability_write_word(pdev, PCI_EXP_SLTSTA, stat_mask);
+ 	pcie_write_cmd_nowait(ctrl, ctrl_mask, ctrl_mask);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 98d1490..236220c 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4224,19 +4224,18 @@ void __weak pcibios_reset_secondary_bus(struct pci_dev *dev)
  }
  
- /*
+ /**
+- * pci_reset_bridge_secondary_bus - Reset the secondary bus on a PCI bridge.
++ * pci_bridge_secondary_bus_reset - Reset the secondary bus on a PCI bridge.
+  * @dev: Bridge device
+  *
+  * Use the bridge control register to assert reset on the secondary bus.
+  * Devices on the secondary bus are left in power-on state.
+  */
+-int pci_reset_bridge_secondary_bus(struct pci_dev *dev)
++int pci_bridge_secondary_bus_reset(struct pci_dev *dev)
+ {
+ 	pcibios_reset_secondary_bus(dev);
+ 
+ 	return pci_dev_wait(dev, "bus reset", PCIE_RESET_READY_POLL_MS);
+ }
+-EXPORT_SYMBOL_GPL(pci_reset_bridge_secondary_bus);
+ 
+ static int pci_parent_bus_reset(struct pci_dev *dev, int probe)
+ {
+@@ -4253,7 +4252,7 @@ static int pci_parent_bus_reset(struct pci_dev *dev, int probe)
+ 	if (probe)
+ 		return 0;
+ 
+-	return pci_reset_bridge_secondary_bus(dev->bus->self);
++	return pci_bridge_secondary_bus_reset(dev->bus->self);
+ }
+ 
+ static int pci_reset_hotplug_slot(struct hotplug_slot *hotplug, int probe)
+@@ -4860,7 +4859,7 @@ static int pci_bus_reset(struct pci_bus *bus, int probe)
+ 
+ 	might_sleep();
+ 
+-	ret = pci_reset_bridge_secondary_bus(bus->self);
++	ret = pci_bridge_secondary_bus_reset(bus->self);
+ 
+ 	pci_bus_unlock(bus);
+ 
+@@ -4924,7 +4923,7 @@ int pci_try_reset_bus(struct pci_bus *bus)
+ 
+ 	if (pci_bus_trylock(bus)) {
+ 		might_sleep();
+-		rc = pci_reset_bridge_secondary_bus(bus->self);
++		rc = pci_bridge_secondary_bus_reset(bus->self);
+ 		pci_bus_unlock(bus);
+ 	} else
+ 		rc = -EAGAIN;
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index c358e7a0..f784263 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -33,6 +33,7 @@ int pci_mmap_fits(struct pci_dev *pdev, int resno, struct vm_area_struct *vmai,
+ 		  enum pci_mmap_api mmap_api);
+ 
+ int pci_probe_reset_function(struct pci_dev *dev);
++int pci_bridge_secondary_bus_reset(struct pci_dev *dev);
+ 
+ /**
+  * struct pci_platform_pm_ops - Firmware PM callbacks
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index f1d0f3e..74ea6ec 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -1314,7 +1314,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+ 	reg32 &= ~ROOT_PORT_INTR_ON_MESG_MASK;
+ 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
+ 
+-	rc = pci_reset_bridge_secondary_bus(dev);
++	rc = pci_bridge_secondary_bus_reset(dev);
+ 	pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
+ 
+ 	/* Clear Root Error Status */
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 3a62a2e..a3a26f1 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -177,7 +177,7 @@ static pci_ers_result_t default_reset_link(struct pci_dev *dev)
+ {
+ 	int rc;
+ 
+-	rc = pci_reset_bridge_secondary_bus(dev);
++	rc = pci_bridge_secondary_bus_reset(dev);
+ 	pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
+ 	return !rc ? PCI_ERS_RESULT_RECOVERED : PCI_ERS_RESULT_DISCONNECT;
+ }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b..6b12ce2 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1102,7 +1102,6 @@ int pci_reset_bus(struct pci_bus *bus);
+ int pci_try_reset_bus(struct pci_bus *bus);
+ void pci_reset_secondary_bus(struct pci_dev *dev);
+ void pcibios_reset_secondary_bus(struct pci_dev *dev);
+-int pci_reset_bridge_secondary_bus(struct pci_dev *dev);
+ void pci_update_resource(struct pci_dev *dev, int resno);
+ int __must_check pci_assign_resource(struct pci_dev *dev, int i);
+ int __must_check pci_reassign_resource(struct pci_dev *dev, int i, resource_size_t add_size, resource_size_t align);
 -- 
 2.7.4
 
