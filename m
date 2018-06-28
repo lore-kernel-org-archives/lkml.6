@@ -7,132 +7,111 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC2DC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ABEC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEBDD26FB7
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:21:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D122787F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:30:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RjOqkSxF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEBDD26FB7
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V7TnwCZS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D122787F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965335AbeF1TVm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:21:42 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38600 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932809AbeF1TVk (ORCPT
+        id S1754796AbeF1TaV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:30:21 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35576 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754456AbeF1TaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:21:40 -0400
-Received: by mail-wr0-f195.google.com with SMTP id e18-v6so6590711wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:21:39 -0700 (PDT)
+        Thu, 28 Jun 2018 15:30:17 -0400
+Received: by mail-it0-f66.google.com with SMTP id l16-v6so13467950ita.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=sl4nwqWfnH9Gvz1ACEYRylPJ37Hrc1olYzQgqFwLlaQ=;
-        b=RjOqkSxFKoddwTbAamPV/hqIss4Pj36ZC08NHJGh0ggi/OnSyWS4ey8fHMwf7aL9X7
-         YDqo+gqR4VSk/KbmSWpsAsEdff2tYmZa1y4Bn4GOj8SOTRschD34IDdd/F1V73rcUwdu
-         Y+ZgKwyA7w1WT0a5cxEr/rvtLoLTqqgoNjwU9cl9ehhSd5EKHerLse6TzDXyV452EOZk
-         FpzOhLZ20Ze7QJXHKdI5WDnuTBh4Qi9sc8qPgxNoQc7+wFZf4Kr47USrCwnkJYS20hWl
-         jmSsF2AYe+X+rfLG/tBps3nTIYR1SfTEPU+ItFopptjDXwkpHZgEKdMxPkRJ/6bdX8WE
-         nPsQ==
+        bh=XfV0YwIao1ZThy48M/rzfQwaFP3aXW3fGxtnhPWGtws=;
+        b=V7TnwCZS3G9n5jIXFCypNlSF9O9FsGCezRgOsnjku8hdMyFfrgDneB+KarFl+m+JPE
+         mkWSsPUu2966xHsADYVpkYloYvHn+nKF83yvgexB5XlDv7hPpBYf7/9v2LeAvQRvmGJm
+         FdDOxPgfJzyNP0OZ1VzNihnR1MnQEsnfWuWn0ECeYGPSJV2oYiAa54w0/Xkk1RcLn152
+         b68wFzfOqQ3vq66MBUsR/ECIVz9dBow7jUA6WgFgxskjkpR5y3cqk7I8fx1HWAyAxCXZ
+         vcIE3LOGtcguN0Z7JwtAvLJfP1DoohKd3RwnlibhpLcF9ykLZDM8IL4ZcJh+V2hgz18r
+         tPEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=sl4nwqWfnH9Gvz1ACEYRylPJ37Hrc1olYzQgqFwLlaQ=;
-        b=tSGSu8l/ues3UBjv5tWiJntTffQezNeTXHionW6EM+H9tg/9cRFM5ulnaHlwy7TrH/
-         e4IEOBt6YVeqhc+ikvn3DT6jeU/Dj40Nj1DN4aHjPA0OhiXC3lhzrqd1xJkuB+7tj100
-         CZH3c+eCi029u6tysxElKGQ467UEjy+NgSMhxzcZCHfKqRKDP/YaZs9NDM761fVZlNhy
-         fkg5FTteEhcRNkEhPBrz7LkhLZI3W3ZfcRj2k4jgYMtnPgPjtsPOy/jLorBVFLE2+U6N
-         5QnfswqU3HxuuLmm/TEfWjBGA5V64/peV+Zmng4wGTdqAvRWIfS39C3P10ZHKCYGjwHF
-         HJkg==
-X-Gm-Message-State: APt69E21vILvg7hpLeNsU8E3BVAGvmcjoDGCWmqX8FOKXkNp6IXYiz8Y
-        +F2asF7sg7E1OtaJYF59gFHyZsd3s1CGtqtDfnP0GQ==
-X-Google-Smtp-Source: AAOMgpepAIlFn3h/K0sMAdfyWeqiGmHFBxq93nu8YLTm4U5AbzgHhzrDMUHQH7SE9XcJCjojpINMGL0WEFLJUqjdK0Q=
-X-Received: by 2002:adf:dd07:: with SMTP id a7-v6mr10183611wrm.2.1530213698809;
- Thu, 28 Jun 2018 12:21:38 -0700 (PDT)
+        bh=XfV0YwIao1ZThy48M/rzfQwaFP3aXW3fGxtnhPWGtws=;
+        b=HF72rSi1WYwFCBzms6kDJtqJRL+O22QqHiFHbCNTYjGTOoAYHkuJZm49A1oEFupmjj
+         7kioDYtuT8Y//lnzrIvuqmXW+LpOJwX1OIFjXBonNDHe8+WqOvkkMp7cpLLrANqWQ760
+         GjBY4lF13Q3WY2hXugL9iC6oinF7X/rWkTCnFnPr39f8in32Db6qD2TTOnpt5aBAU8PT
+         8f4q/VBYcg71rAley97WZN1AN3olKib6tqOx1FincmAn8PfQRpoXva125db5Lm0BlV6w
+         CsJgfu7KVhRsd6J3HmoR6bHk0RMsG3V3icu0wAht2yz2Y7Bda4bjk/jesxu1AGORvwoz
+         pSmg==
+X-Gm-Message-State: APt69E2ypwQP79+KwiX/2zqm76TZlDmtjz2sStLOUxec2NcyzVAsgR/e
+        StQ1SA91fNZhAdF+wIwwoTl1z+Ig7qhplpje1BDRgQ==
+X-Google-Smtp-Source: AAOMgpdKcg1s52OL8mN+GAkdGe2OK2W2ILU6cjow8+aqbaqkzkYw3R5ICkk2QHv7MNG7QSxAYMWIrgn50STZiVidOPI=
+X-Received: by 2002:a24:b046:: with SMTP id b6-v6mr10289685itj.48.1530214216643;
+ Thu, 28 Jun 2018 12:30:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180627191250.209150-1-shakeelb@google.com> <20180627191250.209150-2-shakeelb@google.com>
- <20180628100253.jscxkw2d6vfhnbo5@quack2.suse.cz>
-In-Reply-To: <20180628100253.jscxkw2d6vfhnbo5@quack2.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 28 Jun 2018 12:21:26 -0700
-Message-ID: <CALvZod5Fy7cUnqMvCqw8M52wm8+wBtGD-bhUibN=Uwdzb+5Kyw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs: fsnotify: account fsnotify metadata to kmemcg
-To:     Jan Kara <jack@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+Received: by 2002:a02:9082:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 12:30:16
+ -0700 (PDT)
+In-Reply-To: <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+References: <cover.1529507994.git.andreyknvl@google.com> <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com> <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 28 Jun 2018 21:30:16 +0200
+Message-ID: <CAAeHK+wJbbCZd+-X=9oeJgsqQJiq8h+Aagz3SQMPaAzCD+pvFw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-doc@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:03 PM Jan Kara <jack@suse.cz> wrote:
+On Wed, Jun 27, 2018 at 5:05 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> On Tue, Jun 26, 2018 at 7:29 PM, Catalin Marinas
+> <catalin.marinas@arm.com> wrote:
+>> While I support this work, as a maintainer I'd like to understand
+>> whether we'd be in a continuous chase of ABI breaks with every kernel
+>> release or we have a better way to identify potential issues. Is there
+>> any way to statically analyse conversions from __user ptr to long for
+>> example? Or, could we get the compiler to do this for us?
 >
-> On Wed 27-06-18 12:12:49, Shakeel Butt wrote:
-> > A lot of memory can be consumed by the events generated for the huge or
-> > unlimited queues if there is either no or slow listener.  This can cause
-> > system level memory pressure or OOMs.  So, it's better to account the
-> > fsnotify kmem caches to the memcg of the listener.
-> >
-> > However the listener can be in a different memcg than the memcg of the
-> > producer and these allocations happen in the context of the event
-> > producer. This patch introduces remote memcg charging API which the
-> > producer can use to charge the allocations to the memcg of the listener.
-> >
-> > There are seven fsnotify kmem caches and among them allocations from
-> > dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
-> > inotify_inode_mark_cachep happens in the context of syscall from the
-> > listener.  So, SLAB_ACCOUNT is enough for these caches.
-> >
-> > The objects from fsnotify_mark_connector_cachep are not accounted as they
-> > are small compared to the notification mark or events and it is unclear
-> > whom to account connector to since it is shared by all events attached to
-> > the inode.
-> >
-> > The allocations from the event caches happen in the context of the event
-> > producer.  For such caches we will need to remote charge the allocations
-> > to the listener's memcg.  Thus we save the memcg reference in the
-> > fsnotify_group structure of the listener.
-> >
-> > This patch has also moved the members of fsnotify_group to keep the size
-> > same, at least for 64 bit build, even with additional member by filling
-> > the holes.
 >
-> ...
->
-> >  static int __init fanotify_user_setup(void)
-> >  {
-> > -     fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
-> > +     fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-> > +                                      SLAB_PANIC|SLAB_ACCOUNT);
-> >       fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
-> >       if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
-> >               fanotify_perm_event_cachep =
->
-> Why don't you setup also fanotify_event_cachep and
-> fanotify_perm_event_cachep caches with SLAB_ACCOUNT and instead specify
-> __GFP_ACCOUNT manually? Otherwise the patch looks good to me.
->
+> OK, got it, I'll try to figure out a way to find these conversions.
 
-Hi Jan, IMHO having a visible __GFP_ACCOUNT along with
-memalloc_use_memcg() makes the code more explicit and readable that we
-want to targeted/remote memcg charging. However if you think
-otherwise, I will replace __GFP_ACCOUNT with SLAB_ACCOUNT.
+I've prototyped a checker on top of clang static analyzer (initially
+looked at sparse, but couldn't find any documentation or examples).
+The results are here [1], search for "warning: user pointer cast".
+Sharing in case anybody wants to take a look, will look at them myself
+tomorrow.
 
-thanks,
-Shakeel
+[1] https://gist.github.com/xairy/433edd5c86456a64026247cb2fef2115
