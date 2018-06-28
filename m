@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C2AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923F2C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F2A275D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F2A275D3
+	by mail.kernel.org (Postfix) with ESMTP id 418FF275D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418FF275D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967151AbeF1PVR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:21:17 -0400
+        id S967188AbeF1PVx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:21:53 -0400
 Received: from mail.bootlin.com ([62.4.15.54]:53339 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967063AbeF1PUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:20:07 -0400
+        id S967038AbeF1PUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:20:05 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9839720DD8; Thu, 28 Jun 2018 17:20:05 +0200 (CEST)
+        id 5309420DB4; Thu, 28 Jun 2018 17:20:03 +0200 (CEST)
 Received: from localhost (nat.foo.tf [163.172.35.26])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6CE89203EC;
-        Thu, 28 Jun 2018 17:20:05 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1A1E0203EC;
+        Thu, 28 Jun 2018 17:20:03 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
         gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net,
         sebastian.hesselbarth@gmail.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
-        igall@marvell.com
-Subject: [PATCH 13/14] arm64: dts: marvell: armada-cp110: update the crypto engine compatible
-Date:   Thu, 28 Jun 2018 17:15:43 +0200
-Message-Id: <20180628151544.22134-14-antoine.tenart@bootlin.com>
+Cc:     Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, igall@marvell.com,
+        Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: [PATCH 07/14] crypto: inside-secure - add multiple processing engine support
+Date:   Thu, 28 Jun 2018 17:15:37 +0200
+Message-Id: <20180628151544.22134-8-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628151544.22134-1-antoine.tenart@bootlin.com>
 References: <20180628151544.22134-1-antoine.tenart@bootlin.com>
@@ -46,29 +46,397 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New compatibles are now supported by the Inside Secure SafeXcel driver.
-As they are more specific than the old ones, they should be used
-whenever possible. This patch updates the Marvell cp110 device tree
-accordingly.
+From: Ofer Heifetz <oferh@marvell.com>
 
+So far a single processing engine (PE) was configured and used in the
+Inside Secure SafeXcel cryptographic engine driver. Some versions have
+more than a single PE. This patch rework the driver's initialization to
+take this into account and to allow configuring more than one PE.
+
+Signed-off-by: Ofer Heifetz <oferh@marvell.com>
+[Antoine: some reworks and commit message.]
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/inside-secure/safexcel.c | 224 +++++++++++++-----------
+ drivers/crypto/inside-secure/safexcel.h |  44 +++--
+ 2 files changed, 150 insertions(+), 118 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-index 2bf083272a87..bb2914f90048 100644
---- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-@@ -427,7 +427,7 @@
- 		};
+diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
+index baf8320d9c84..eefa6221533b 100644
+--- a/drivers/crypto/inside-secure/safexcel.c
++++ b/drivers/crypto/inside-secure/safexcel.c
+@@ -98,7 +98,7 @@ static void eip197_trc_cache_init(struct safexcel_crypto_priv *priv)
+ }
  
- 		CP110_LABEL(crypto): crypto@800000 {
--			compatible = "inside-secure,safexcel-eip197";
-+			compatible = "inside-secure,safexcel-eip197b";
- 			reg = <0x800000 0x200000>;
- 			interrupts = <ICU_GRP_NSR 87 IRQ_TYPE_LEVEL_HIGH>,
- 				<ICU_GRP_NSR 88 IRQ_TYPE_LEVEL_HIGH>,
+ static void eip197_write_firmware(struct safexcel_crypto_priv *priv,
+-				  const struct firmware *fw, u32 ctrl,
++				  const struct firmware *fw, int pe, u32 ctrl,
+ 				  u32 prog_en)
+ {
+ 	const u32 *data = (const u32 *)fw->data;
+@@ -112,7 +112,7 @@ static void eip197_write_firmware(struct safexcel_crypto_priv *priv,
+ 	       EIP197_PE(priv) + ctrl);
+ 
+ 	/* Enable access to the program memory */
+-	writel(prog_en, EIP197_PE(priv) + EIP197_PE_ICE_RAM_CTRL);
++	writel(prog_en, EIP197_PE(priv) + EIP197_PE_ICE_RAM_CTRL(pe));
+ 
+ 	/* Write the firmware */
+ 	for (i = 0; i < fw->size / sizeof(u32); i++)
+@@ -120,7 +120,7 @@ static void eip197_write_firmware(struct safexcel_crypto_priv *priv,
+ 		       priv->base + EIP197_CLASSIFICATION_RAMS + i * sizeof(u32));
+ 
+ 	/* Disable access to the program memory */
+-	writel(0, EIP197_PE(priv) + EIP197_PE_ICE_RAM_CTRL);
++	writel(0, EIP197_PE(priv) + EIP197_PE_ICE_RAM_CTRL(pe));
+ 
+ 	/* Release engine from reset */
+ 	val = readl(EIP197_PE(priv) + ctrl);
+@@ -133,7 +133,7 @@ static int eip197_load_firmwares(struct safexcel_crypto_priv *priv)
+ 	const char *fw_name[] = {"ifpp.bin", "ipue.bin"};
+ 	const struct firmware *fw[FW_NB];
+ 	char fw_path[31];
+-	int i, j, ret = 0;
++	int i, j, ret = 0, pe;
+ 	u32 val;
+ 
+ 	for (i = 0; i < FW_NB; i++) {
+@@ -151,22 +151,26 @@ static int eip197_load_firmwares(struct safexcel_crypto_priv *priv)
+ 		}
+ 	}
+ 
+-	/* Clear the scratchpad memory */
+-	val = readl(EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_CTRL);
+-	val |= EIP197_PE_ICE_SCRATCH_CTRL_CHANGE_TIMER |
+-	       EIP197_PE_ICE_SCRATCH_CTRL_TIMER_EN |
+-	       EIP197_PE_ICE_SCRATCH_CTRL_SCRATCH_ACCESS |
+-	       EIP197_PE_ICE_SCRATCH_CTRL_CHANGE_ACCESS;
+-	writel(val, EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_CTRL);
+-
+-	memset_io(EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_RAM, 0,
+-		  EIP197_NUM_OF_SCRATCH_BLOCKS * sizeof(u32));
+-
+-	eip197_write_firmware(priv, fw[FW_IFPP], EIP197_PE_ICE_FPP_CTRL,
+-			      EIP197_PE_ICE_RAM_CTRL_FPP_PROG_EN);
+-
+-	eip197_write_firmware(priv, fw[FW_IPUE], EIP197_PE_ICE_PUE_CTRL,
+-			      EIP197_PE_ICE_RAM_CTRL_PUE_PROG_EN);
++	for (pe = 0; pe < priv->config.pes; pe++) {
++		/* Clear the scratchpad memory */
++		val = readl(EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_CTRL(pe));
++		val |= EIP197_PE_ICE_SCRATCH_CTRL_CHANGE_TIMER |
++		       EIP197_PE_ICE_SCRATCH_CTRL_TIMER_EN |
++		       EIP197_PE_ICE_SCRATCH_CTRL_SCRATCH_ACCESS |
++		       EIP197_PE_ICE_SCRATCH_CTRL_CHANGE_ACCESS;
++		writel(val, EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_CTRL(pe));
++
++		memset_io(EIP197_PE(priv) + EIP197_PE_ICE_SCRATCH_RAM(pe), 0,
++			  EIP197_NUM_OF_SCRATCH_BLOCKS * sizeof(u32));
++
++		eip197_write_firmware(priv, fw[FW_IFPP], pe,
++				      EIP197_PE_ICE_FPP_CTRL(pe),
++				      EIP197_PE_ICE_RAM_CTRL_FPP_PROG_EN);
++
++		eip197_write_firmware(priv, fw[FW_IPUE], pe,
++				      EIP197_PE_ICE_PUE_CTRL(pe),
++				      EIP197_PE_ICE_RAM_CTRL_PUE_PROG_EN);
++	}
+ 
+ release_fw:
+ 	for (j = 0; j < i; j++)
+@@ -262,7 +266,7 @@ static int safexcel_hw_setup_rdesc_rings(struct safexcel_crypto_priv *priv)
+ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ {
+ 	u32 version, val;
+-	int i, ret;
++	int i, ret, pe;
+ 
+ 	/* Determine endianess and configure byte swap */
+ 	version = readl(EIP197_HIA_AIC(priv) + EIP197_HIA_VERSION);
+@@ -288,83 +292,92 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	/* Clear any pending interrupt */
+ 	writel(GENMASK(31, 0), EIP197_HIA_AIC_G(priv) + EIP197_HIA_AIC_G_ACK);
+ 
+-	/* Data Fetch Engine configuration */
+-
+-	/* Reset all DFE threads */
+-	writel(EIP197_DxE_THR_CTRL_RESET_PE,
+-	       EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL);
+-
+-	if (priv->version == EIP197B) {
+-		/* Reset HIA input interface arbiter */
+-		writel(EIP197_HIA_RA_PE_CTRL_RESET,
+-		       EIP197_HIA_AIC(priv) + EIP197_HIA_RA_PE_CTRL);
+-	}
++	/* Processing Engine configuration */
++	for (pe = 0; pe < priv->config.pes; pe++) {
++		/* Data Fetch Engine configuration */
+ 
+-	/* DMA transfer size to use */
+-	val = EIP197_HIA_DFE_CFG_DIS_DEBUG;
+-	val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(6) | EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(9);
+-	val |= EIP197_HIA_DxE_CFG_MIN_CTRL_SIZE(6) | EIP197_HIA_DxE_CFG_MAX_CTRL_SIZE(7);
+-	val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(RD_CACHE_3BITS);
+-	val |= EIP197_HIA_DxE_CFG_CTRL_CACHE_CTRL(RD_CACHE_3BITS);
+-	writel(val, EIP197_HIA_DFE(priv) + EIP197_HIA_DFE_CFG);
++		/* Reset all DFE threads */
++		writel(EIP197_DxE_THR_CTRL_RESET_PE,
++		       EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL(pe));
+ 
+-	/* Leave the DFE threads reset state */
+-	writel(0, EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL);
++		if (priv->version == EIP197B) {
++			/* Reset HIA input interface arbiter */
++			writel(EIP197_HIA_RA_PE_CTRL_RESET,
++			       EIP197_HIA_AIC(priv) + EIP197_HIA_RA_PE_CTRL(pe));
++		}
+ 
+-	/* Configure the procesing engine thresholds */
+-	writel(EIP197_PE_IN_xBUF_THRES_MIN(6) | EIP197_PE_IN_xBUF_THRES_MAX(9),
+-	       EIP197_PE(priv) + EIP197_PE_IN_DBUF_THRES);
+-	writel(EIP197_PE_IN_xBUF_THRES_MIN(6) | EIP197_PE_IN_xBUF_THRES_MAX(7),
+-	       EIP197_PE(priv) + EIP197_PE_IN_TBUF_THRES);
++		/* DMA transfer size to use */
++		val = EIP197_HIA_DFE_CFG_DIS_DEBUG;
++		val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(6) |
++		       EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(9);
++		val |= EIP197_HIA_DxE_CFG_MIN_CTRL_SIZE(6) |
++		       EIP197_HIA_DxE_CFG_MAX_CTRL_SIZE(7);
++		val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(RD_CACHE_3BITS);
++		val |= EIP197_HIA_DxE_CFG_CTRL_CACHE_CTRL(RD_CACHE_3BITS);
++		writel(val, EIP197_HIA_DFE(priv) + EIP197_HIA_DFE_CFG(pe));
++
++		/* Leave the DFE threads reset state */
++		writel(0, EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL(pe));
++
++		/* Configure the processing engine thresholds */
++		writel(EIP197_PE_IN_xBUF_THRES_MIN(6) |
++		       EIP197_PE_IN_xBUF_THRES_MAX(9),
++		       EIP197_PE(priv) + EIP197_PE_IN_DBUF_THRES(pe));
++		writel(EIP197_PE_IN_xBUF_THRES_MIN(6) |
++		       EIP197_PE_IN_xBUF_THRES_MAX(7),
++		       EIP197_PE(priv) + EIP197_PE_IN_TBUF_THRES(pe));
++
++		if (priv->version == EIP197B) {
++			/* enable HIA input interface arbiter and rings */
++			writel(EIP197_HIA_RA_PE_CTRL_EN |
++			       GENMASK(priv->config.rings - 1, 0),
++			       EIP197_HIA_AIC(priv) + EIP197_HIA_RA_PE_CTRL(pe));
++		}
+ 
+-	if (priv->version == EIP197B) {
+-		/* enable HIA input interface arbiter and rings */
+-		writel(EIP197_HIA_RA_PE_CTRL_EN |
+-		       GENMASK(priv->config.rings - 1, 0),
+-		       EIP197_HIA_AIC(priv) + EIP197_HIA_RA_PE_CTRL);
++		/* Data Store Engine configuration */
++
++		/* Reset all DSE threads */
++		writel(EIP197_DxE_THR_CTRL_RESET_PE,
++		       EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL(pe));
++
++		/* Wait for all DSE threads to complete */
++		while ((readl(EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_STAT(pe)) &
++			GENMASK(15, 12)) != GENMASK(15, 12))
++			;
++
++		/* DMA transfer size to use */
++		val = EIP197_HIA_DSE_CFG_DIS_DEBUG;
++		val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(7) |
++		       EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(8);
++		val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(WR_CACHE_3BITS);
++		val |= EIP197_HIA_DSE_CFG_ALWAYS_BUFFERABLE;
++		/* FIXME: instability issues can occur for EIP97 but disabling it impact
++		 * performances.
++		 */
++		if (priv->version == EIP197B)
++			val |= EIP197_HIA_DSE_CFG_EN_SINGLE_WR;
++		writel(val, EIP197_HIA_DSE(priv) + EIP197_HIA_DSE_CFG(pe));
++
++		/* Leave the DSE threads reset state */
++		writel(0, EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL(pe));
++
++		/* Configure the procesing engine thresholds */
++		writel(EIP197_PE_OUT_DBUF_THRES_MIN(7) |
++		       EIP197_PE_OUT_DBUF_THRES_MAX(8),
++		       EIP197_PE(priv) + EIP197_PE_OUT_DBUF_THRES(pe));
++
++		/* Processing Engine configuration */
++
++		/* H/W capabilities selection */
++		val = EIP197_FUNCTION_RSVD;
++		val |= EIP197_PROTOCOL_ENCRYPT_ONLY | EIP197_PROTOCOL_HASH_ONLY;
++		val |= EIP197_PROTOCOL_ENCRYPT_HASH | EIP197_PROTOCOL_HASH_DECRYPT;
++		val |= EIP197_ALG_AES_ECB | EIP197_ALG_AES_CBC;
++		val |= EIP197_ALG_SHA1 | EIP197_ALG_HMAC_SHA1;
++		val |= EIP197_ALG_SHA2 | EIP197_ALG_HMAC_SHA2;
++		writel(val, EIP197_PE(priv) + EIP197_PE_EIP96_FUNCTION_EN(pe));
+ 	}
+ 
+-	/* Data Store Engine configuration */
+-
+-	/* Reset all DSE threads */
+-	writel(EIP197_DxE_THR_CTRL_RESET_PE,
+-	       EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL);
+-
+-	/* Wait for all DSE threads to complete */
+-	while ((readl(EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_STAT) &
+-		GENMASK(15, 12)) != GENMASK(15, 12))
+-		;
+-
+-	/* DMA transfer size to use */
+-	val = EIP197_HIA_DSE_CFG_DIS_DEBUG;
+-	val |= EIP197_HIA_DxE_CFG_MIN_DATA_SIZE(7) | EIP197_HIA_DxE_CFG_MAX_DATA_SIZE(8);
+-	val |= EIP197_HIA_DxE_CFG_DATA_CACHE_CTRL(WR_CACHE_3BITS);
+-	val |= EIP197_HIA_DSE_CFG_ALWAYS_BUFFERABLE;
+-	/* FIXME: instability issues can occur for EIP97 but disabling it impact
+-	 * performances.
+-	 */
+-	if (priv->version == EIP197B)
+-		val |= EIP197_HIA_DSE_CFG_EN_SINGLE_WR;
+-	writel(val, EIP197_HIA_DSE(priv) + EIP197_HIA_DSE_CFG);
+-
+-	/* Leave the DSE threads reset state */
+-	writel(0, EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL);
+-
+-	/* Configure the procesing engine thresholds */
+-	writel(EIP197_PE_OUT_DBUF_THRES_MIN(7) | EIP197_PE_OUT_DBUF_THRES_MAX(8),
+-	       EIP197_PE(priv) + EIP197_PE_OUT_DBUF_THRES);
+-
+-	/* Processing Engine configuration */
+-
+-	/* H/W capabilities selection */
+-	val = EIP197_FUNCTION_RSVD;
+-	val |= EIP197_PROTOCOL_ENCRYPT_ONLY | EIP197_PROTOCOL_HASH_ONLY;
+-	val |= EIP197_PROTOCOL_ENCRYPT_HASH | EIP197_PROTOCOL_HASH_DECRYPT;
+-	val |= EIP197_ALG_AES_ECB | EIP197_ALG_AES_CBC;
+-	val |= EIP197_ALG_SHA1 | EIP197_ALG_HMAC_SHA1;
+-	val |= EIP197_ALG_SHA2 | EIP197_ALG_HMAC_SHA2;
+-	writel(val, EIP197_PE(priv) + EIP197_PE_EIP96_FUNCTION_EN);
+-
+ 	/* Command Descriptor Rings prepare */
+ 	for (i = 0; i < priv->config.rings; i++) {
+ 		/* Clear interrupts for this ring */
+@@ -414,13 +427,15 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 		       EIP197_HIA_RDR(priv, i) + EIP197_HIA_xDR_RING_SIZE);
+ 	}
+ 
+-	/* Enable command descriptor rings */
+-	writel(EIP197_DxE_THR_CTRL_EN | GENMASK(priv->config.rings - 1, 0),
+-	       EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL);
++	for (pe = 0; pe < priv->config.pes; pe++) {
++		/* Enable command descriptor rings */
++		writel(EIP197_DxE_THR_CTRL_EN | GENMASK(priv->config.rings - 1, 0),
++		       EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL(pe));
+ 
+-	/* Enable result descriptor rings */
+-	writel(EIP197_DxE_THR_CTRL_EN | GENMASK(priv->config.rings - 1, 0),
+-	       EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL);
++		/* Enable result descriptor rings */
++		writel(EIP197_DxE_THR_CTRL_EN | GENMASK(priv->config.rings - 1, 0),
++		       EIP197_HIA_DSE_THR(priv) + EIP197_HIA_DSE_THR_CTRL(pe));
++	}
+ 
+ 	/* Clear any HIA interrupt */
+ 	writel(GENMASK(30, 20), EIP197_HIA_AIC_G(priv) + EIP197_HIA_AIC_G_ACK);
+@@ -868,9 +883,20 @@ static void safexcel_unregister_algorithms(struct safexcel_crypto_priv *priv)
+ 
+ static void safexcel_configure(struct safexcel_crypto_priv *priv)
+ {
+-	u32 val, mask;
++	u32 val, mask = 0;
+ 
+ 	val = readl(EIP197_HIA_AIC_G(priv) + EIP197_HIA_OPTIONS);
++
++	/* Read number of PEs from the engine */
++	switch (priv->version) {
++	case EIP197B:
++		mask = EIP197_N_PES_MASK;
++		break;
++	default:
++		mask = EIP97_N_PES_MASK;
++	}
++	priv->config.pes = (val >> EIP197_N_PES_OFFSET) & mask;
++
+ 	val = (val & GENMASK(27, 25)) >> 25;
+ 	mask = BIT(val) - 1;
+ 
+diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
+index f370f055fd80..4b7445b1af22 100644
+--- a/drivers/crypto/inside-secure/safexcel.h
++++ b/drivers/crypto/inside-secure/safexcel.h
+@@ -95,13 +95,13 @@
+ #define EIP197_HIA_xDR_STAT			0x003c
+ 
+ /* register offsets */
+-#define EIP197_HIA_DFE_CFG			0x0000
+-#define EIP197_HIA_DFE_THR_CTRL			0x0000
+-#define EIP197_HIA_DFE_THR_STAT			0x0004
+-#define EIP197_HIA_DSE_CFG			0x0000
+-#define EIP197_HIA_DSE_THR_CTRL			0x0000
+-#define EIP197_HIA_DSE_THR_STAT			0x0004
+-#define EIP197_HIA_RA_PE_CTRL			0x0010
++#define EIP197_HIA_DFE_CFG(n)			(0x0000 + (128 * (n)))
++#define EIP197_HIA_DFE_THR_CTRL(n)		(0x0000 + (128 * (n)))
++#define EIP197_HIA_DFE_THR_STAT(n)		(0x0004 + (128 * (n)))
++#define EIP197_HIA_DSE_CFG(n)			(0x0000 + (128 * (n)))
++#define EIP197_HIA_DSE_THR_CTRL(n)		(0x0000 + (128 * (n)))
++#define EIP197_HIA_DSE_THR_STAT(n)		(0x0004 + (128 * (n)))
++#define EIP197_HIA_RA_PE_CTRL(n)		(0x0010 + (8   * (n)))
+ #define EIP197_HIA_RA_PE_STAT			0x0014
+ #define EIP197_HIA_AIC_R_OFF(r)			((r) * 0x1000)
+ #define EIP197_HIA_AIC_R_ENABLE_CTRL(r)		(0xe008 - EIP197_HIA_AIC_R_OFF(r))
+@@ -114,18 +114,18 @@
+ #define EIP197_HIA_MST_CTRL			0xfff4
+ #define EIP197_HIA_OPTIONS			0xfff8
+ #define EIP197_HIA_VERSION			0xfffc
+-#define EIP197_PE_IN_DBUF_THRES			0x0000
+-#define EIP197_PE_IN_TBUF_THRES			0x0100
+-#define EIP197_PE_ICE_SCRATCH_RAM		0x0800
+-#define EIP197_PE_ICE_PUE_CTRL			0x0c80
+-#define EIP197_PE_ICE_SCRATCH_CTRL		0x0d04
+-#define EIP197_PE_ICE_FPP_CTRL			0x0d80
+-#define EIP197_PE_ICE_RAM_CTRL			0x0ff0
+-#define EIP197_PE_EIP96_FUNCTION_EN		0x1004
+-#define EIP197_PE_EIP96_CONTEXT_CTRL		0x1008
+-#define EIP197_PE_EIP96_CONTEXT_STAT		0x100c
+-#define EIP197_PE_OUT_DBUF_THRES		0x1c00
+-#define EIP197_PE_OUT_TBUF_THRES		0x1d00
++#define EIP197_PE_IN_DBUF_THRES(n)		(0x0000 + (0x2000 * (n)))
++#define EIP197_PE_IN_TBUF_THRES(n)		(0x0100 + (0x2000 * (n)))
++#define EIP197_PE_ICE_SCRATCH_RAM(n)		(0x0800 + (0x2000 * (n)))
++#define EIP197_PE_ICE_PUE_CTRL(n)		(0x0c80 + (0x2000 * (n)))
++#define EIP197_PE_ICE_SCRATCH_CTRL(n)		(0x0d04 + (0x2000 * (n)))
++#define EIP197_PE_ICE_FPP_CTRL(n)		(0x0d80 + (0x2000 * (n)))
++#define EIP197_PE_ICE_RAM_CTRL(n)		(0x0ff0 + (0x2000 * (n)))
++#define EIP197_PE_EIP96_FUNCTION_EN(n)		(0x1004 + (0x2000 * (n)))
++#define EIP197_PE_EIP96_CONTEXT_CTRL(n)		(0x1008 + (0x2000 * (n)))
++#define EIP197_PE_EIP96_CONTEXT_STAT(n)		(0x100c + (0x2000 * (n)))
++#define EIP197_PE_OUT_DBUF_THRES(n)		(0x1c00 + (0x2000 * (n)))
++#define EIP197_PE_OUT_TBUF_THRES(n)		(0x1d00 + (0x2000 * (n)))
+ #define EIP197_MST_CTRL				0xfff4
+ 
+ /* EIP197-specific registers, no indirection */
+@@ -184,6 +184,11 @@
+ #define EIP197_HIA_RA_PE_CTRL_RESET		BIT(31)
+ #define EIP197_HIA_RA_PE_CTRL_EN		BIT(30)
+ 
++/* EIP197_HIA_OPTIONS */
++#define EIP197_N_PES_OFFSET			4
++#define EIP197_N_PES_MASK			GENMASK(4, 0)
++#define EIP97_N_PES_MASK			GENMASK(2, 0)
++
+ /* EIP197_HIA_AIC_R_ENABLE_CTRL */
+ #define EIP197_CDR_IRQ(n)			BIT((n) * 2)
+ #define EIP197_RDR_IRQ(n)			BIT((n) * 2 + 1)
+@@ -513,6 +518,7 @@ struct safexcel_request {
+ };
+ 
+ struct safexcel_config {
++	u32 pes;
+ 	u32 rings;
+ 
+ 	u32 cd_size;
 -- 
 2.17.1
 
