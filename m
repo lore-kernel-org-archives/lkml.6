@@ -2,169 +2,117 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AB3C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A984C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBD727670
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:24:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pJwO8rQW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBD727670
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 137D02767D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137D02767D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753351AbeF1QYU (ORCPT
+        id S1754128AbeF1Q1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:24:20 -0400
-Received: from mail.efficios.com ([167.114.142.138]:34558 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752981AbeF1QYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:24:15 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3745422E770;
-        Thu, 28 Jun 2018 12:24:14 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id LvB0bLZQdvx2; Thu, 28 Jun 2018 12:24:13 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 9DD3322E76D;
-        Thu, 28 Jun 2018 12:24:13 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9DD3322E76D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530203053;
-        bh=kJ3g3D83FnWKmKKsBpugLKb7HsAwEC6B5XuK99Rl3j0=;
-        h=From:To:Date:Message-Id;
-        b=pJwO8rQW1Wmp6nw5GBXVte24Tq87EQ4wWlmf135gkrrvbyIQJ/WRzF7xMPPf3mfoU
-         2XR+BAgl0wkLtSE+PO2/q+cnKRTljUqIQXEj8mG4zZrfrCZlsbeLsEvUry9WGzU73S
-         sjsh5U7INtINUq1xIsxlYYmkOOxBTv2245wT/D+yFiVX8kuLGdWvVkp0sA7ZjMendU
-         6fi057WB4mdvIG3G2zdaI6sH0+fEYAoQOX9yA2kcvMbQpuKOFvGtPILys1gOj8M4o+
-         VKvoWUN14c3khbx+ssJ57K8PWag2PlJR0+50xXLBpX+usCs2aJPHWiliLyjUdf6aHR
-         l+65LtRKDSCjg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id R6D_-40g4R5N; Thu, 28 Jun 2018 12:24:13 -0400 (EDT)
-Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 4643622E75B;
-        Thu, 28 Jun 2018 12:24:13 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
+        Thu, 28 Jun 2018 12:27:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41652 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753040AbeF1Q1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 12:27:50 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B49D076F9F;
+        Thu, 28 Jun 2018 16:27:49 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A367E1116717;
+        Thu, 28 Jun 2018 16:27:47 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     "the arch\/x86 maintainers" <x86@kernel.org>,
+        devel@linuxdriverproject.org, LKML <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 2/2] rseq: check that rseq->rseq_cs padding is zero
-Date:   Thu, 28 Jun 2018 12:23:59 -0400
-Message-Id: <20180628162359.9054-2-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
+        "H. Peter Anvin" <hpa@zytor.com>, Tianyu.Lan@microsoft.com,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
+Subject: Re: [PATCH 0/4] x86/hyper-v: optimize PV IPIs
+References: <20180622170625.30688-1-vkuznets@redhat.com>
+        <CANRm+CwNfOkosECeSGaXXDaqTDvh1u228ztU8C5Xe95FGgNsFQ@mail.gmail.com>
+        <8736x8h8wu.fsf@vitty.brq.redhat.com>
+Date:   Thu, 28 Jun 2018 18:27:46 +0200
+In-Reply-To: <8736x8h8wu.fsf@vitty.brq.redhat.com> (Vitaly Kuznetsov's message
+        of "Wed, 27 Jun 2018 11:32:17 +0200")
+Message-ID: <87o9fuev0d.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 16:27:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 16:27:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 32-bit kernels, the rseq->rseq_cs_padding field is never read by the
-kernel. However, 64-bit kernels dealing with 32-bit compat tasks read the
-full 64-bit in its entirety, and terminates the offending process with
-a segmentation fault if the upper 32 bits are set due to failure of
-copy_from_user().
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-Ensure that both 32-bit and 64-bit kernels dealing with 32-bit tasks end
-up terminating offending tasks with a segmentation fault if the upper
-32-bit padding bits (rseq->rseq_cs_padding) are set by adding an explicit
-check that padding is zero on 32-bit kernels.
+> Wanpeng Li <kernellwp@gmail.com> writes:
+>
+>> Hi Vitaly, (fix my reply mess this time)
+>> On Sat, 23 Jun 2018 at 01:09, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>>>
+>>> When reviewing my "x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_
+>>> {LIST,SPACE} hypercalls when possible" patch Michael suggested to apply the
+>>> same idea to PV IPIs. Here we go!
+>>>
+>>> Despite what Hyper-V TLFS says about HVCALL_SEND_IPI hypercall, it can
+>>> actually be 'fast' (passing parameters through registers). Use that too.
+>>>
+>>> This series can collide with my "KVM: x86: hyperv: PV IPI support for
+>>> Windows guests" series as I rename ipi_arg_non_ex/ipi_arg_ex structures
+>>> there. Depending on which one gets in first we may need to do tiny
+>>> adjustments.
+>>
+>> As hyperv PV TLB flush has already been merged, is there any other
+>> obvious multicast IPIs scenarios? qemu supports interrupt remapping
+>> since two years ago, I think windows guest can switch to cluster mode
+>> after entering x2APIC, so sending IPI per cluster. In addition, you
+>> can also post the benchmark result for this PV IPI optimization,
+>> although it also fixes the bug which you mentioned above.
+>
+> I got confused, which of my patch series are you actually looking at?
+> :-)
+>
+> This particular one ("x86/hyper-v: optimize PV IPIs") is not about
+> KVM/qemu, it is for Linux running on top on real Hyper-V server. We
+> already support PV IPIs and here I'm just trying to optimize the way how
+> we send them by switching to a cheaper hypercall (and using 'fast'
+> version of it) when possible. I don't actually have a good benchmark
+> (and I don't remember seeing one when K.Y. posted PV IPI support) but
+> this can be arranged I guess: I can write a dump 'IPI sender' in kernel
+> and send e.g. 1000 IPIs.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
----
- kernel/rseq.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+So I used the IPI benchmark (https://lkml.org/lkml/2017/12/19/141,
+thanks for the tip!) on this series. On a 16 vCPU guest (WS2016) I'm
+getting the following:
 
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 4ba582046fcd..b038f35a60d6 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -112,6 +112,29 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
- 	return 0;
- }
- 
-+#ifndef __LP64__
-+/*
-+ * Ensure that padding is zero.
-+ */
-+static int check_rseq_cs_padding(struct task_struct *t)
-+{
-+	unsigned long pad;
-+	int ret;
-+
-+	ret = __get_user(pad, &t->rseq->rseq_cs_padding);
-+	if (ret)
-+		return ret;
-+	if (pad)
-+		return -EFAULT;
-+	return 0;
-+}
-+#else
-+static int check_rseq_cs_padding(struct task_struct *t)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- {
- 	struct rseq_cs __user *urseq_cs;
-@@ -123,6 +146,8 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- 	ret = __get_user(ptr, &t->rseq->rseq_cs);
- 	if (ret)
- 		return ret;
-+	if (check_rseq_cs_padding(t))
-+		return -EFAULT;
- 	if (!ptr) {
- 		memset(rseq_cs, 0, sizeof(*rseq_cs));
- 		return 0;
+Before:
+Dry-run:		0		203110
+Self-IPI:		6167430		11645550
+Normal IPI:		380479300	475881820
+Broadcast IPI:		0		2557371420
+
+After:
+Dry-run:		0		214280     (not interesting)
+Self-IPI:		5706210		10697640   (- 8%)
+Normal IPI:		379330010	450158830  (- 5%)
+Broadcast IPI:		0		2340427160 (- 8%)
+
 -- 
-2.11.0
-
+  Vitaly
