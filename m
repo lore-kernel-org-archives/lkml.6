@@ -2,134 +2,223 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6506EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A76FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C27924B3F
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:19:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKfKIZzl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C27924B3F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C81D5262C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81D5262C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933005AbeF1FTv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 01:19:51 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:41711 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753165AbeF1FTt (ORCPT
+        id S1752617AbeF1FW0 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 01:22:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751354AbeF1FWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 01:19:49 -0400
-Received: by mail-lf0-f67.google.com with SMTP id y127-v6so3202877lfc.8;
-        Wed, 27 Jun 2018 22:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l0qfrv/Dgth6OMQYg2GtUChO1qv03sjYcYdZeharIv8=;
-        b=gKfKIZzlDaKMbSuqZ7iuUIE5RAvi02KuuXuNkQGWKLZZYvHiVjAZYMNSBAtiNlokCn
-         czPt2cyLaskX+VrvYAeGcuylq7sUWug62kPzyYYGJDQF1FlLGjNy/SjGDirX73Th2+Fi
-         UIGAksXyTBnRoNLv/yL9xm7BpLNp5U+3eie/k+wldpAgexY287x/M5p1HijTD82p2YjK
-         6yNTjUqVTvEGbmJ38JyRPUMk07k1qze1L3SYEu7iakAvTupX+Iq6uz+sB7sBVy4tmcCq
-         pK5qn38X5d1nNC801cPJZLeuBfHc7HZO4k54fm+X7RWy4om0dVbUE+cKAy6/jVtn7qli
-         Og4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l0qfrv/Dgth6OMQYg2GtUChO1qv03sjYcYdZeharIv8=;
-        b=eOkPd12yjX8Q6gEcl8LRZWSThDTy97K1g8Ty2u7pLi5t9V30AWhwS7MnGOhTXEE3++
-         qkk9/OVD79tBcCJEzTtoWiz/O55KRX6kOEzL1wzcj9XM0c35LZaMg9gzGIbDT4kjQPub
-         g8URk+/h4rl/2SZCG/KB0+N5iw07XaLB4ZpnAd63FWn3G5h3rKYytfQMEsgiF1fRYqhq
-         MLsRxfbW0GldpbGAHmJ1Y1gWKEvgzj8WNFM1vqD5lgKefENf6CcSX4E2AtKZTN3hCXxP
-         a7fEUuyMBYkWzxWCEjJxPq5FkrMM9rIfEBo6qMywsmp642cgH6lXcvylKAWv9+/goPt+
-         c0kg==
-X-Gm-Message-State: APt69E3efQm5JE8t74mh5w1MRpH5gAUccHggL/I5aIJxNyJEWn7orGWK
-        sDfoaNtzDdKTMDM9DXH6T2jJrQnK
-X-Google-Smtp-Source: AAOMgpcOLp+Y6onpaAqNSJASgG1QTyNL3O8RdlpkfgsYepOO2uAJrN4PV7cEJdL4jrfmjs960/wFSg==
-X-Received: by 2002:a19:8f10:: with SMTP id r16-v6mr983414lfd.92.1530163187544;
-        Wed, 27 Jun 2018 22:19:47 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id s26-v6sm1122288lfi.92.2018.06.27.22.19.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 22:19:46 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fYPLJ-0001N5-KP; Thu, 28 Jun 2018 07:19:41 +0200
-Date:   Thu, 28 Jun 2018 07:19:41 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Sean Wang <sean.wang@mediatek.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 6/7] Bluetooth: mediatek: Add protocol support for
- MediaTek serial devices
-Message-ID: <20180628051941.GF629@localhost>
-References: <cover.1530004712.git.sean.wang@mediatek.com>
- <48215a1276c36af7ad581c3d83759fe9f55e3c4b.1530004712.git.sean.wang@mediatek.com>
- <CAHp75VehTeyyzR4bPKK3hFDTVqZnhdNy5vcBFJCSH_Zrx+QrKA@mail.gmail.com>
- <CAHp75VedHLw52J_ymh3iYf2w=r8d+Kqg=fJZmBGnaCrEbNEPdQ@mail.gmail.com>
- <1530155173.29697.48.camel@mtkswgap22>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530155173.29697.48.camel@mtkswgap22>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 28 Jun 2018 01:22:24 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5S5J9nH005799
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 01:22:24 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jvmsra5bw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 01:22:24 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Thu, 28 Jun 2018 06:22:21 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Jun 2018 06:22:15 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5S5MEW521692500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 Jun 2018 05:22:14 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B2C14203F;
+        Thu, 28 Jun 2018 06:22:05 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B822142042;
+        Thu, 28 Jun 2018 06:22:01 +0100 (BST)
+Received: from bangoria.in.ibm.com (unknown [9.124.31.233])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 28 Jun 2018 06:22:01 +0100 (BST)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To:     srikar@linux.vnet.ibm.com, oleg@redhat.com, rostedt@goodmis.org,
+        mhiramat@kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH v5 00/10] Uprobes: Support SDT markers having reference count (semaphore)
+Date:   Thu, 28 Jun 2018 10:51:59 +0530
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18062805-0008-0000-0000-0000024CAA3F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062805-0009-0000-0000-000021B3221A
+Message-Id: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806280059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 11:06:13AM +0800, Sean Wang wrote:
-> On Wed, 2018-06-27 at 20:04 +0300, Andy Shevchenko wrote:
-> > On Wed, Jun 27, 2018 at 7:59 PM, Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Wed, Jun 27, 2018 at 8:43 AM,  <sean.wang@mediatek.com> wrote:
-> > >> From: Sean Wang <sean.wang@mediatek.com>
+Userspace Statically Defined Tracepoints[1] are dtrace style markers
+inside userspace applications. Applications like PostgreSQL, MySQL,
+Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+have these markers embedded in them. These markers are added by developer
+at important places in the code. Each marker source expands to a single
+nop instruction in the compiled code but there may be additional
+overhead for computing the marker arguments which expands to couple of
+instructions. In case the overhead is more, execution of it can be
+omitted by runtime if() condition when no one is tracing on the marker:
 
-> > >> +#include <net/bluetooth/bluetooth.h>
-> > >> +#include <net/bluetooth/hci_core.h>
-> > 
-> > >> +       /* Enable the power domain and clock the device requires. */
-> > >> +       pm_runtime_enable(dev);
-> > >> +       err = pm_runtime_get_sync(dev);
-> > >> +       if (err < 0)
-> > >> +               goto err_pm2;
+    if (reference_counter > 0) {
+        Execute marker instructions;
+    }
 
-> > >> +err_pm1:
-> > >> +       pm_runtime_put_sync(dev);
-> > >> +err_pm2:
-> > >> +       pm_runtime_disable(dev);
+Default value of reference counter is 0. Tracer has to increment the 
+reference counter before tracing on a marker and decrement it when
+done with the tracing.
 
-Please name error labels after what they do, not using numbers (see
-CodingStyle). Here you could use err_disable_rpm instead of err_pm2, for
-example.
+Currently, perf tool has limited supports for SDT markers. I.e. it
+can not trace markers surrounded by reference counter. Also, it's
+not easy to add reference counter logic in userspace tool like perf,
+so basic idea for this patchset is to add reference counter logic in
+the a uprobe infrastructure. Ex,[2]
 
-Also, if you really want to undo pm_runtime_get_sync() failing above,
-you still need a pm_runtime_put_noidle() to balance the usage count.
+  # cat tick.c
+    ... 
+    for (i = 0; i < 100; i++) {
+	DTRACE_PROBE1(tick, loop1, i);
+        if (TICK_LOOP2_ENABLED()) {
+            DTRACE_PROBE1(tick, loop2, i); 
+        }
+        printf("hi: %d\n", i); 
+        sleep(1);
+    }   
+    ... 
 
-> > >> +struct mtk_stp_hdr {
-> > >> +       __u8 prefix;
-> > >> +       __u8 dlen1:4;
-> > >> +       __u8 type:4;
-> > 
-> > >> +       __u8 dlen2:8;
-> > >> +       __u8 cs;
-> > >> +} __packed;
+Here tick:loop1 is marker without reference counter where as tick:loop2
+is surrounded by reference counter condition.
 
-Perhaps too much context have been lost here, but unless you're sharing
-this struct with user space, you should be using u8 (without __) above
-(and elsewhere).
+  # perf buildid-cache --add /tmp/tick
+  # perf probe sdt_tick:loop1
+  # perf probe sdt_tick:loop2
 
-Johan
+  # perf stat -e sdt_tick:loop1,sdt_tick:loop2 -- /tmp/tick
+  hi: 0
+  hi: 1
+  hi: 2
+  ^C
+  Performance counter stats for '/tmp/tick':
+             3      sdt_tick:loop1
+             0      sdt_tick:loop2
+     2.747086086 seconds time elapsed
+
+Perf failed to record data for tick:loop2. Same experiment with this
+patch series:
+
+  # ./perf buildid-cache --add /tmp/tick
+  # ./perf probe sdt_tick:loop2
+  # ./perf stat -e sdt_tick:loop2 /tmp/tick
+    hi: 0
+    hi: 1
+    hi: 2
+    ^C  
+     Performance counter stats for '/tmp/tick':
+                 3      sdt_tick:loop2
+       2.561851452 seconds time elapsed
+
+
+v5 changes:
+ - Fix build failure. 'struct uprobe' was local to uprobe.c file and I
+   was using it in some arch specific code which caused a build failure.
+   Added new patch [PATCH v5 1/10] to fix it.
+
+v4 changes:
+ - Previous version moved the implementation from trace_uprobe to core
+   uprobe. But it had some issues. I've fixed them in this version. To
+   cut a long story short, reference counter increment/decrement is
+   tied to instruction patching. Whenever instruction gets patched, we
+   update the reference counter. Now, what if vma holding reference
+   counter is not present while patching an instruction? To overcome
+   this issue, we will add such uprobe to delayed_uprobe list. Whenever
+   process maps the region holding the reference counter, we increment
+   it and remove the uprobe from delayed_uprobe list.
+ - Until last version, we were incrementing reference counter for each
+   uprobe_consumer. That isn't true now. With this implementation, we
+   increment and decrement the counter only once. This is fine because
+   we increment the counter when we find first valid consumer and we
+   decrement it when last consumer is going away. (For a tiny binary,
+   multiple vmas maps to the same file portion. In such case, we are
+   patching the instruction multiple time and thus we will increment /
+   decrement the reference counter multiple time as well.)
+ - Fortunately, there is no need to maintain sdt_mm_list now, because
+   we are sure that the increment and decrement will always happen in
+   sync. This make the implementation lot more simpler compared to
+   earlier versions.
+
+v4 can be foud at: https://lkml.org/lkml/2018/6/19/1324 
+
+Note:
+ - 'reference counter' is called as 'semaphore' in original Dtrace
+   (or Systemtap, bcc and even in ELF) documentation and code. But the 
+   term 'semaphore' is misleading in this context. This is just a counter
+   used to hold number of tracers tracing on a marker. This is not really
+   used for any synchronization. So we are referring it as 'reference
+   counter' in kernel / perf code.
+
+[1] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
+[2] https://github.com/iovisor/bcc/issues/327#issuecomment-200576506
+
+
+Ravi Bangoria (10):
+  Uprobes: Move uprobe structure to uprobe.h
+  Uprobes: Simplify uprobe_register() body
+  Uprobe: Change set_swbp definition
+  Uprobe: Change set_orig_insn definition
+  Uprobe: Change uprobe_write_opcode definition
+  Uprobes: Support SDT markers having reference count (semaphore)
+  trace_uprobe/sdt: Prevent multiple reference counter for same uprobe
+  Uprobes/sdt: Prevent multiple reference counter for same uprobe
+  Uprobes/sdt: Document about reference counter
+  perf probe: Support SDT markers having reference counter (semaphore)
+
+ Documentation/trace/uprobetracer.rst |  16 +-
+ arch/arm/probes/uprobes/core.c       |   6 +-
+ arch/mips/kernel/uprobes.c           |   6 +-
+ include/linux/uprobes.h              |  37 +++-
+ kernel/events/uprobes.c              | 390 ++++++++++++++++++++++++++++-------
+ kernel/trace/trace.c                 |   2 +-
+ kernel/trace/trace_uprobe.c          |  74 ++++++-
+ tools/perf/util/probe-event.c        |  39 +++-
+ tools/perf/util/probe-event.h        |   1 +
+ tools/perf/util/probe-file.c         |  34 ++-
+ tools/perf/util/probe-file.h         |   1 +
+ tools/perf/util/symbol-elf.c         |  46 +++--
+ tools/perf/util/symbol.h             |   7 +
+ 13 files changed, 542 insertions(+), 117 deletions(-)
+
+-- 
+2.14.4
+
