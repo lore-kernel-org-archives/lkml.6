@@ -2,77 +2,209 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B32C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F21EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1766270BD
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dkpD5Tvq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1766270BD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D07E270BE
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07E270BE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934955AbeF1IbU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:31:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41512 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933589AbeF1IbS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:31:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8wshj8M6vE3K5HF83ZDUFF8rUGIgQu/KFjEighiAUnc=; b=dkpD5TvqFSFAqMMS3QAvkny1A
-        JkFAwUG8Vr4yNh2HK6o2e5mSd9HIWT0uPXwDYW2YzfTrqinTi+F/dJck85431YoUJEsnUTcOGVIVN
-        39N2hphF3/X2pqzmVQSt45n8aMhJb3wcZnU6vaKJ45oRuSC0pgLZUDd5DGmILEJ5NUnJi0p8Gs/zT
-        B0QLo2ZucwAxuojPKAYZNmHnodAnwPF3jUzv1luquUwDXzCHeVz2OxDjz3H2Cui7RbQMlcge8jkb9
-        CDAMLxPlPSxcpsySJlRgedK/TnW7P7Wovl7PM5SFXjQVE7NzwSShl7hE8H1fKwlVbj7h2CrRR28sI
-        0XBM8MqLw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYSKb-0006BQ-IW; Thu, 28 Jun 2018 08:31:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1EBBA20297645; Thu, 28 Jun 2018 10:31:07 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 10:31:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        x86@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>, namit@vmware.com
-Subject: Re: [PATCH 5/5] x86/kernel: jump_table: use relative references
-Message-ID: <20180628083107.GY2494@hirez.programming.kicks-ass.net>
-References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
- <20180627160604.8154-6-ard.biesheuvel@linaro.org>
+        id S935010AbeF1Ib1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 04:31:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46615 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933589AbeF1IbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 04:31:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 01:31:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,282,1526367600"; 
+   d="scan'208";a="60789653"
+Received: from gunzelma-mobl.ger.corp.intel.com (HELO [10.252.52.60]) ([10.252.52.60])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Jun 2018 01:31:18 -0700
+Subject: Re: [RFC PATCH] drm/atomic: add ASYNC_UPDATE flag to the Atomic
+ IOCTL.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     dnicoara@chromium.org, alexandros.frantzis@collabora.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        tomasz Figa <tfiga@chromium.org>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+References: <20180627212506.24061-1-enric.balletbo@collabora.com>
+From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <b8fda72a-1ec6-4d47-ea5a-22f03802f4f3@linux.intel.com>
+Date:   Thu, 28 Jun 2018 10:31:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180627160604.8154-6-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180627212506.24061-1-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 06:06:04PM +0200, Ard Biesheuvel wrote:
-> Similar to the arm64 case, 64-bit x86 can benefit from using 32-bit
-> relative references rather than 64-bit absolute ones when emitting
-> struct jump_entry instances. Not only does this reduce the memory
-> footprint of the entries themselves by 50%, it also removes the need
-> for carrying relocation metadata on relocatable builds (i.e., for KASLR)
-> which saves a fair chunk of .init space as well (although the savings
-> are not as dramatic as on arm64)
+Op 27-06-18 om 23:25 schreef Enric Balletbo i Serra:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+>
+> This flag tells core to jump ahead the queued update if the conditions
+> in drm_atomic_async_check() are met. That means we are only able to do an
+> async update if no modeset is pending and update for the same plane is
+> not queued.
+>
+> It uses the already in place infrastructure for async updates.
+>
+> It is useful for cursor updates and async PageFlips over the atomic
+> ioctl, otherwise in some cases updates may be delayed to the point the
+> user will notice it.
+>
+> DRM_MODE_ATOMIC_ASYNC_UPDATE should be passed to the Atomic IOCTL to use
+> this feature.
+>
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> Hi,
+>
+> This is an attempt to introduce the new ASYNC_UPDATE flag for atomic
+> operations, see the commit message for a more detailed description.
+>
+> To test this patch we have created an IGT test that we plan to send to
+> the ML but also was tested using a small program that exercises the uAPI
+> for easy sanity testing. The program created by Alexandros can be found here
+> [2]. To test, just build the program and use the --atomic flag to use the
+> cursor plane in normal (blocking mode), and --atomic-async to use the cursor
+> plane with the ASYNC_UPDATE flag.E.g.
+>
+>   drm_cursor --atomic
+>
+> or
+>
+>   drm_cursor --atomic-async
+>
+> The test worked on a Samsung Chromebook Plus on top of mainline plus
+> the patch to update cursors asynchronously through atomic for the
+> drm/rockchip driver [3].
+>
+> Alexandros also did a proof-of-concept to use this flag and draw cursors
+> using atomic if possible on ozone [1].
+>
+> Best regards,
+>  Enric
+>
+> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+> [2] https://gitlab.collabora.com/alf/drm-cursor
+> [3] https://patchwork.kernel.org/patch/10492693/
+>
+>
+>  drivers/gpu/drm/drm_atomic.c        | 6 ++++++
+>  drivers/gpu/drm/drm_atomic_helper.c | 9 ++++++---
+>  include/uapi/drm/drm_mode.h         | 4 +++-
+>  3 files changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index c825c76edc1d..15b799f46982 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -80,6 +80,7 @@ drm_atomic_state_init(struct drm_device *dev, struct drm_atomic_state *state)
+>  	 * setting this appropriately?
+>  	 */
+>  	state->allow_modeset = true;
+> +	state->async_update = true;
+Do we really want this by default?
 
-This will conflict with:
+Wouldn't it make more sense to only enable it if userspace requests it?
+>  
+>  	state->crtcs = kcalloc(dev->mode_config.num_crtc,
+>  			       sizeof(*state->crtcs), GFP_KERNEL);
+> @@ -2320,6 +2321,10 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+>  			(arg->flags & DRM_MODE_PAGE_FLIP_EVENT))
+>  		return -EINVAL;
+>  
+> +	if ((arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET) &&
+> +			(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE))
+> +		return -EINVAL;
+> +
+>  	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+>  
+>  	state = drm_atomic_state_alloc(dev);
+We should probably move it to be a flag only enabled when requested, and reject with the error returned by drm_atomic_helper_async_check() when things fail.
 
-  https://lkml.kernel.org/r/20180622172212.199633-10-namit@vmware.com
+~Maarten
+> @@ -2328,6 +2333,7 @@ int drm_mode_atomic_ioctl(struct drm_device *dev,
+>  
+>  	state->acquire_ctx = &ctx;
+>  	state->allow_modeset = !!(arg->flags & DRM_MODE_ATOMIC_ALLOW_MODESET);
+> +	state->async_update = !!(arg->flags & DRM_MODE_ATOMIC_ASYNC_UPDATE);
+>  
+>  retry:
+>  	plane_mask = 0;
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index c35654591c12..aeb0523d3bcf 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -891,7 +891,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (state->legacy_cursor_update)
+> +	if (state->async_update || state->legacy_cursor_update)
+>  		state->async_update = !drm_atomic_helper_async_check(dev, state);
+>  
+>  	return ret;
+> @@ -1526,13 +1526,16 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+>  	if (new_plane_state->fence)
+>  		return -EINVAL;
+>  
+> +	/* Only do an async update if there is a pending commit. */
+> +	if (!old_plane_state->commit)
+> +		return -EINVAL;
+> +
+>  	/*
+>  	 * Don't do an async update if there is an outstanding commit modifying
+>  	 * the plane.  This prevents our async update's changes from getting
+>  	 * overridden by a previous synchronous update's state.
+>  	 */
+> -	if (old_plane_state->commit &&
+> -	    !try_wait_for_completion(&old_plane_state->commit->hw_done))
+> +	if (!try_wait_for_completion(&old_plane_state->commit->hw_done))
+>  		return -EBUSY;
+>  
+>  	return funcs->atomic_async_check(plane, new_plane_state);
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index 50bcf4214ff9..772e84f0edeb 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -718,13 +718,15 @@ struct drm_mode_destroy_dumb {
+>  #define DRM_MODE_ATOMIC_TEST_ONLY 0x0100
+>  #define DRM_MODE_ATOMIC_NONBLOCK  0x0200
+>  #define DRM_MODE_ATOMIC_ALLOW_MODESET 0x0400
+> +#define DRM_MODE_ATOMIC_ASYNC_UPDATE  0x0800
+>  
+>  #define DRM_MODE_ATOMIC_FLAGS (\
+>  		DRM_MODE_PAGE_FLIP_EVENT |\
+>  		DRM_MODE_PAGE_FLIP_ASYNC |\
+>  		DRM_MODE_ATOMIC_TEST_ONLY |\
+>  		DRM_MODE_ATOMIC_NONBLOCK |\
+> -		DRM_MODE_ATOMIC_ALLOW_MODESET)
+> +		DRM_MODE_ATOMIC_ALLOW_MODESET |\
+> +		DRM_MODE_ATOMIC_ASYNC_UPDATE)
+>  
+>  struct drm_mode_atomic {
+>  	__u32 flags;
+
+
