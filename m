@@ -2,114 +2,109 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA27C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89AEC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C8F3274C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:04:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w2DZV/Yf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C8F3274C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E525274C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:05:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E525274C6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935292AbeF1OEV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:04:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32806 "EHLO mail.kernel.org"
+        id S966297AbeF1OFU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:05:20 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26663 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934483AbeF1OET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:04:19 -0400
-Received: from mail-it0-f47.google.com (mail-it0-f47.google.com [209.85.214.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D65E274C5;
-        Thu, 28 Jun 2018 14:04:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530194658;
-        bh=j4XWBoJvimdaqESWUPcqR/mjpKhKiVca70dJFA9XwVc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=w2DZV/YfMS2rmUvHZEdYyuHX+KarHQcc/vV46rErgNhVEjG0XGEQCZhiyd4EqXWPo
-         78N6evHODZ3QWPLpNvZKCP89YvzdJYm+5v/wZMea26NcPfI3D+fc+P+WkzWjEn7ANc
-         oZ5cglhPuYs+Q/lmasSWJh5Jlx9j7FsHWLRmdnGk=
-Received: by mail-it0-f47.google.com with SMTP id u4-v6so12933888itg.0;
-        Thu, 28 Jun 2018 07:04:18 -0700 (PDT)
-X-Gm-Message-State: APt69E2XcYmns5fHXn+FDrF1No3B4cYrgJZHByty2Ghfrh2Z0UVoxp+q
-        kn9WSMi2xE9Hfl0lrX8hJ5GnonUi0hgyWG95ag==
-X-Google-Smtp-Source: AAOMgpdyUbosYn3Lvl54NqSvXLxk7GCjRnbUoytV9Mn9hA7CFdhea3F/YbZYJ++2TIpjAUmHvd0W7fhMeqkL1stJixU=
-X-Received: by 2002:a24:f04e:: with SMTP id p14-v6mr8570521iti.106.1530194657733;
- Thu, 28 Jun 2018 07:04:17 -0700 (PDT)
+        id S965506AbeF1OFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 10:05:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 07:05:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,283,1526367600"; 
+   d="scan'208";a="53610546"
+Received: from junliao-mobl.amr.corp.intel.com (HELO [10.252.141.210]) ([10.252.141.210])
+  by orsmga006.jf.intel.com with ESMTP; 28 Jun 2018 07:05:18 -0700
+Subject: Re: [PATCH v6 4/5] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        osalvador@techadventures.net
+References: <20180628062857.29658-1-bhe@redhat.com>
+ <20180628062857.29658-5-bhe@redhat.com>
+ <20180628120937.GC12956@techadventures.net>
+ <CAGM2reZsZVhhg2=dQZf6D-NmPTFRN-_95+s61pC7Axz5G5mkMQ@mail.gmail.com>
+Cc:     bhe@redhat.com, LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, pagupta@redhat.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kirill.shutemov@linux.intel.com
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <3e014554-abf9-8a18-e890-be43d48d5eb0@intel.com>
+Date:   Thu, 28 Jun 2018 07:05:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
- <1529578399-3633-2-git-send-email-rohitkr@codeaurora.org> <20180625191737.GA13246@rob-hp-laptop>
- <5c976a29-b1ff-4fb5-9346-2288dfecd4c3@codeaurora.org>
-In-Reply-To: <5c976a29-b1ff-4fb5-9346-2288dfecd4c3@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 28 Jun 2018 08:04:05 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJrpxz=W1zB8cr0CSUF9a+8yYMmNGQzQGEAcs3__D-GpQ@mail.gmail.com>
-Message-ID: <CAL_JsqJrpxz=W1zB8cr0CSUF9a+8yYMmNGQzQGEAcs3__D-GpQ@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: qcom: dt-bindings: Add sdm845
- machine bindings
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Patrick Lai <plai@codeaurora.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGM2reZsZVhhg2=dQZf6D-NmPTFRN-_95+s61pC7Axz5G5mkMQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:20 AM Rohit Kumar <rohitkr@codeaurora.org> wrote:
->
-> Thanks Rob for reviewing.
->
->
-> On 6/26/2018 12:47 AM, Rob Herring wrote:
-> > On Thu, Jun 21, 2018 at 04:23:18PM +0530, Rohit kumar wrote:
-> >> Add devicetree bindings documentation file for SDM845 sound card.
-> >>
-> >> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> >> ---
-> >>   .../devicetree/bindings/sound/qcom,sdm845.txt      | 82 ++++++++++++++++++++++
-> >>   1 file changed, 82 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/qcom,sdm845.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/sound/qcom,sdm845.txt b/Documentation/devicetree/bindings/sound/qcom,sdm845.txt
-> >> new file mode 100644
-> >> index 0000000..68feb08
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/sound/qcom,sdm845.txt
-> >> @@ -0,0 +1,82 @@
-> >> +* Qualcomm Technologies Inc. SDM845 ASoC sound card driver
-> >> +
-> >> +This binding describes the SDM845 sound card, which uses qdsp for audio.
-> >> +
-> >> +- compatible:
-> >> +    Usage: required
-> >> +    Value type: <stringlist>
-> >> +    Definition: must be "qcom,sdm845-sndcard"
-> >> +
-> >> +- qcom,audio-routing:
-> > Use just 'audio-routing'.
->
-> This is same which is being followed in apq8096 machine driver. As all
-> qcom machine drivers will
-> mostly follow the same design, Vinod asked to pull out the APIs in
-> common file - https://patchwork.kernel.org/patch/10479625/ .
-> Same is for qcom,model. I will add missing documentation for it in the
-> next patchset.
+On 06/28/2018 05:12 AM, Pavel Tatashin wrote:
+> You did not, this is basically a safety check. A BUG_ON() would be
+> better here. As, this something that should really not happening, and
+> would mean a bug in the current project.
 
-Yes, I know. There are lots of <vendor>,model and others, and I'm
-asking folks to drop the vendor prefix.
-
-Rob
+Is this at a point in boot where a BUG_ON() generally produces useful
+output, or will it just produce and early-boot silent hang with no
+console output?
