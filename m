@@ -3,88 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F8AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A78BC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666F727092
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666F727092
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id 41A2127099
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A2127099
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934581AbeF1H5W (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:57:22 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:53846 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934364AbeF1H4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:56:09 -0400
-Received: from localhost.localdomain (200116b84699cc0061630d7c5db5b655.dip.versatel-1u1.de [IPv6:2001:16b8:4699:cc00:6163:d7c:5db5:b655])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 889BB28BF05;
-        Thu, 28 Jun 2018 07:52:52 +0000 (UTC)
-From:   Daniel Mack <daniel@zonque.org>
-To:     zbr@ioremap.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        szabolcs.gyurko@tlt.hu
-Cc:     sre@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        robert.jarzmik@free.fr, Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v2 2/4] w1: core: match sub-nodes of bus masters in devicetree
-Date:   Thu, 28 Jun 2018 09:55:38 +0200
-Message-Id: <20180628075540.1757-3-daniel@zonque.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180628075540.1757-1-daniel@zonque.org>
-References: <20180628075540.1757-1-daniel@zonque.org>
+        id S934638AbeF1H5v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:57:51 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56187 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934364AbeF1H5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 03:57:49 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fYRoJ-0001LX-It; Thu, 28 Jun 2018 09:57:47 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1fYRoG-0003dN-IS; Thu, 28 Jun 2018 09:57:44 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Greg Kroah-Hartman <gregkh@suse.de>
+Cc:     linux-kernel@vger.kernel.org, Gavin Schenk <g.schenk@eckelmann.de>,
+        kernel@pengutronix.de, Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] siox: don't create a thread without starting it
+Date:   Thu, 28 Jun 2018 09:57:42 +0200
+Message-Id: <20180628075742.8991-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180626073134.GW2458@hirez.programming.kicks-ass.net>
+References: <20180626073134.GW2458@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Once a new slave device is detected, match it against all sub-nodes of the
-master bus controller. If a match is found, set the slave device's of_node
-pointer.
+When a siox master device is registered a kthread is created that is
+only started when triggered by userspace. So this thread might be in
+TASK_UNINTERRUPTIBLE state for long and trigger a warning
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
+	[  241.130465] INFO: task siox-0:626 blocked for more than 120 seconds.
+
+with the respective debug settings enabled. It might be right to put an
+unstarted thread to TASK_IDLE (in kernel/kthread.c:kthread()) instead,
+but independant of this discussion it is cleaner for
+siox_master_register() to start the thread immediately. The effect is
+that it enters its own waiting state and then stays in state TASK_IDLE
+which doesn't trigger the above warning.
+
+As siox_poll_thread() uses some variables of the device the
+initialisation of these is moved before thread creation.
+
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/w1/w1.c    | 3 +++
- include/linux/w1.h | 2 ++
- 2 files changed, 5 insertions(+)
+Hello,
 
-diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index caef0e0fd817..890c038c25f8 100644
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -26,6 +26,7 @@
- #include <linux/kthread.h>
- #include <linux/freezer.h>
- #include <linux/hwmon.h>
-+#include <linux/of.h>
+this is the same patch as before with an updated commit log. I added
+Peter's ack anyhow assuming my text isn't too bad to make him withdraw
+it.
+
+I think this issue isn't critical as the machine works fine otherwise,
+so applying it for 4.18-rc isn't necessary.
+(OTOH it's an SMP machine so the tests might not have noticed one blocked
+CPU, didn't test this.)
+
+Greg, you applied the initial patches creating drivers/siox. I assume
+you will continue to apply siox patches and tell if I should search a
+different path for these.
+
+Best regards
+Uwe
+
+ drivers/siox/siox-core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/siox/siox-core.c b/drivers/siox/siox-core.c
+index 16590dfaafa4..cef307c0399c 100644
+--- a/drivers/siox/siox-core.c
++++ b/drivers/siox/siox-core.c
+@@ -715,17 +715,17 @@ int siox_master_register(struct siox_master *smaster)
  
- #include <linux/atomic.h>
+ 	dev_set_name(&smaster->dev, "siox-%d", smaster->busno);
  
-@@ -686,6 +687,8 @@ static int __w1_attach_slave_device(struct w1_slave *sl)
- 	sl->dev.bus = &w1_bus_type;
- 	sl->dev.release = &w1_slave_release;
- 	sl->dev.groups = w1_slave_groups;
-+	sl->dev.of_node = of_find_matching_node(sl->master->dev.of_node,
-+						sl->family->of_match_table);
- 
- 	dev_set_name(&sl->dev, "%02x-%012llx",
- 		 (unsigned int) sl->reg_num.family,
-diff --git a/include/linux/w1.h b/include/linux/w1.h
-index 694101f744c7..3111585c371f 100644
---- a/include/linux/w1.h
-+++ b/include/linux/w1.h
-@@ -274,6 +274,8 @@ struct w1_family {
- 
- 	struct w1_family_ops	*fops;
- 
-+	const struct of_device_id *of_match_table;
++	mutex_init(&smaster->lock);
++	INIT_LIST_HEAD(&smaster->devices);
 +
- 	atomic_t		refcnt;
- };
+ 	smaster->last_poll = jiffies;
+-	smaster->poll_thread = kthread_create(siox_poll_thread, smaster,
+-					      "siox-%d", smaster->busno);
++	smaster->poll_thread = kthread_run(siox_poll_thread, smaster,
++					   "siox-%d", smaster->busno);
+ 	if (IS_ERR(smaster->poll_thread)) {
+ 		smaster->active = 0;
+ 		return PTR_ERR(smaster->poll_thread);
+ 	}
  
+-	mutex_init(&smaster->lock);
+-	INIT_LIST_HEAD(&smaster->devices);
+-
+ 	ret = device_add(&smaster->dev);
+ 	if (ret)
+ 		kthread_stop(smaster->poll_thread);
 -- 
-2.17.1
+2.18.0
 
