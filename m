@@ -2,176 +2,213 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2D0C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE51C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DCD240FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DCD240FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C73823C1C
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 01:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C73823C1C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeF1Bct (ORCPT
+        id S1752516AbeF1Bdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 21:32:49 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.2]:25823 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750936AbeF1Bcr (ORCPT
+        Wed, 27 Jun 2018 21:33:41 -0400
+Received: from regular1.263xmail.com ([211.150.99.135]:56731 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752214AbeF1Bdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 27 Jun 2018 21:32:47 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id AE09A400C6EE4
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Jun 2018 20:32:46 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id YLnOfcuiKaSeyYLnZfIWTc; Wed, 27 Jun 2018 20:32:45 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=51900 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fYLnM-002LCl-PZ; Wed, 27 Jun 2018 20:32:24 -0500
-Date:   Wed, 27 Jun 2018 20:32:23 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Chan <michael.chan@broadcom.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] bnx2x: Mark expected switch fall-throughs
-Message-ID: <20180628013223.GA22163@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fYLnM-002LCl-PZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:51900
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 27 Jun 2018 21:33:39 -0400
+Received: from david.wu?rock-chips.com (unknown [192.168.167.171])
+        by regular1.263xmail.com (Postfix) with ESMTP id ADB061E021;
+        Thu, 28 Jun 2018 09:33:31 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id E67CF3C1;
+        Thu, 28 Jun 2018 09:33:25 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: david.wu@rock-chips.com
+X-FST-TO: davem@davemloft.net
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: david.wu@rock-chips.com
+X-UNIQUE-TAG: <f084206f1d86d6bae4d67c5c65686f1d>
+X-ATTACHMENT-NUM: 0
+X-SENDER: wdc@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 9607239PC2;
+        Thu, 28 Jun 2018 09:33:28 +0800 (CST)
+From:   David Wu <david.wu@rock-chips.com>
+To:     davem@davemloft.net, heiko@sntech.de, robh+dt@kernel.org
+Cc:     mark.rutland@arm.com, huangtao@rock-chips.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Wu <david.wu@rock-chips.com>
+Subject: [PATCH v4] net: ethernet: stmmac: dwmac-rk: Add GMAC support for px30
+Date:   Thu, 28 Jun 2018 09:33:21 +0800
+Message-Id: <1530149601-23337-1-git-send-email-david.wu@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+Add constants and callback functions for the dwmac on px30 Soc.
+The base structure is the same, but registers and the bits in
+them are moved slightly, and add the clk_mac_speed for selecting
+mac speed.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David Wu <david.wu@rock-chips.com>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c  | 3 +++
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 4 ++--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c    | 4 ++--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c | 1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt.c         | 2 +-
- 5 files changed, 9 insertions(+), 5 deletions(-)
+Change in v4:
+- Fix the patch applied failed at net-next.
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index 22243c4..98d4c5a 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -6339,6 +6339,7 @@ int bnx2x_set_led(struct link_params *params,
- 		 */
- 		if (!vars->link_up)
- 			break;
-+		/* else: fall through */
- 	case LED_MODE_ON:
- 		if (((params->phy[EXT_PHY1].type ==
- 			  PORT_HW_CFG_XGXS_EXT_PHY_TYPE_BCM8727) ||
-@@ -12521,11 +12522,13 @@ static void bnx2x_phy_def_cfg(struct link_params *params,
- 	switch (link_config  & PORT_FEATURE_LINK_SPEED_MASK) {
- 	case PORT_FEATURE_LINK_SPEED_10M_HALF:
- 		phy->req_duplex = DUPLEX_HALF;
-+		/* fall through */
- 	case PORT_FEATURE_LINK_SPEED_10M_FULL:
- 		phy->req_line_speed = SPEED_10;
- 		break;
- 	case PORT_FEATURE_LINK_SPEED_100M_HALF:
- 		phy->req_duplex = DUPLEX_HALF;
-+		/* fall through */
- 	case PORT_FEATURE_LINK_SPEED_100M_FULL:
- 		phy->req_line_speed = SPEED_100;
- 		break;
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 5b1ed24..44a6f28 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -8561,11 +8561,11 @@ int bnx2x_set_int_mode(struct bnx2x *bp)
- 			       bp->num_queues,
- 			       1 + bp->num_cnic_queues);
+Change in v3:
+- Add the clock enable/disable for clk_mac_speed.
+
+Change in v2:
+- Fix some error in commit title and message.
+
+ .../devicetree/bindings/net/rockchip-dwmac.txt     |  1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     | 69 ++++++++++++++++++++++
+ 2 files changed, 70 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
+index 9c16ee2..3b71da7 100644
+--- a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
++++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
+@@ -4,6 +4,7 @@ The device node has following properties.
  
--		/* falling through... */
-+		/* fall through */
- 	case BNX2X_INT_MODE_MSI:
- 		bnx2x_enable_msi(bp);
+ Required properties:
+  - compatible: should be "rockchip,<name>-gamc"
++   "rockchip,px30-gmac":   found on PX30 SoCs
+    "rockchip,rk3128-gmac": found on RK312x SoCs
+    "rockchip,rk3228-gmac": found on RK322x SoCs
+    "rockchip,rk3288-gmac": found on RK3288 SoCs
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+index f08625a..7b92336 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+@@ -61,6 +61,7 @@ struct rk_priv_data {
+ 	struct clk *mac_clk_tx;
+ 	struct clk *clk_mac_ref;
+ 	struct clk *clk_mac_refout;
++	struct clk *clk_mac_speed;
+ 	struct clk *aclk_mac;
+ 	struct clk *pclk_mac;
+ 	struct clk *clk_phy;
+@@ -83,6 +84,64 @@ struct rk_priv_data {
+ 	(((tx) ? soc##_GMAC_TXCLK_DLY_ENABLE : soc##_GMAC_TXCLK_DLY_DISABLE) | \
+ 	 ((rx) ? soc##_GMAC_RXCLK_DLY_ENABLE : soc##_GMAC_RXCLK_DLY_DISABLE))
  
--		/* falling through... */
-+		/* fall through */
- 	case BNX2X_INT_MODE_INTX:
- 		bp->num_ethernet_queues = 1;
- 		bp->num_queues = bp->num_ethernet_queues + bp->num_cnic_queues;
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-index 8baf9d3..3f4d2c8 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-@@ -3258,7 +3258,7 @@ static int bnx2x_mcast_validate_e2(struct bnx2x *bp,
- 	/* DEL command deletes all currently configured MACs */
- 	case BNX2X_MCAST_CMD_DEL:
- 		o->set_registry_size(o, 0);
--		/* Don't break */
-+		/* fall through */
++#define PX30_GRF_GMAC_CON1		0x0904
++
++/* PX30_GRF_GMAC_CON1 */
++#define PX30_GMAC_PHY_INTF_SEL_RMII	(GRF_CLR_BIT(4) | GRF_CLR_BIT(5) | \
++					 GRF_BIT(6))
++#define PX30_GMAC_SPEED_10M		GRF_CLR_BIT(2)
++#define PX30_GMAC_SPEED_100M		GRF_BIT(2)
++
++static void px30_set_to_rmii(struct rk_priv_data *bsp_priv)
++{
++	struct device *dev = &bsp_priv->pdev->dev;
++
++	if (IS_ERR(bsp_priv->grf)) {
++		dev_err(dev, "%s: Missing rockchip,grf property\n", __func__);
++		return;
++	}
++
++	regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
++		     PX30_GMAC_PHY_INTF_SEL_RMII);
++}
++
++static void px30_set_rmii_speed(struct rk_priv_data *bsp_priv, int speed)
++{
++	struct device *dev = &bsp_priv->pdev->dev;
++	int ret;
++
++	if (IS_ERR(bsp_priv->clk_mac_speed)) {
++		dev_err(dev, "%s: Missing clk_mac_speed clock\n", __func__);
++		return;
++	}
++
++	if (speed == 10) {
++		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
++			     PX30_GMAC_SPEED_10M);
++
++		ret = clk_set_rate(bsp_priv->clk_mac_speed, 2500000);
++		if (ret)
++			dev_err(dev, "%s: set clk_mac_speed rate 2500000 failed: %d\n",
++				__func__, ret);
++	} else if (speed == 100) {
++		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
++			     PX30_GMAC_SPEED_100M);
++
++		ret = clk_set_rate(bsp_priv->clk_mac_speed, 25000000);
++		if (ret)
++			dev_err(dev, "%s: set clk_mac_speed rate 25000000 failed: %d\n",
++				__func__, ret);
++
++	} else {
++		dev_err(dev, "unknown speed value for RMII! speed=%d", speed);
++	}
++}
++
++static const struct rk_gmac_ops px30_ops = {
++	.set_to_rmii = px30_set_to_rmii,
++	.set_rmii_speed = px30_set_rmii_speed,
++};
++
+ #define RK3128_GRF_MAC_CON0	0x0168
+ #define RK3128_GRF_MAC_CON1	0x016c
  
- 	/* RESTORE command will restore the entire multicast configuration */
- 	case BNX2X_MCAST_CMD_RESTORE:
-@@ -3592,7 +3592,7 @@ static int bnx2x_mcast_validate_e1(struct bnx2x *bp,
- 	/* DEL command deletes all currently configured MACs */
- 	case BNX2X_MCAST_CMD_DEL:
- 		o->set_registry_size(o, 0);
--		/* Don't break */
-+		/* fall through */
- 
- 	/* RESTORE command will restore the entire multicast configuration */
- 	case BNX2X_MCAST_CMD_RESTORE:
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-index dc77bfd..62da465 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-@@ -1827,6 +1827,7 @@ int bnx2x_iov_eq_sp_event(struct bnx2x *bp, union event_ring_elem *elem)
- 		DP(BNX2X_MSG_IOV, "got VF [%d:%d] RSS update ramrod\n",
- 		   vf->abs_vfid, qidx);
- 		bnx2x_vf_handle_rss_update_eqe(bp, vf);
-+		/* fall through */
- 	case EVENT_RING_OPCODE_VF_FLR:
- 		/* Do nothing for now */
- 		return 0;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index b5fc641..d2dadad 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1727,7 +1727,7 @@ static int bnxt_async_event_process(struct bnxt *bp,
- 					    speed);
+@@ -1042,6 +1101,10 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
  		}
- 		set_bit(BNXT_LINK_SPEED_CHNG_SP_EVENT, &bp->sp_event);
--		/* fall thru */
-+		/* fall through */
  	}
- 	case ASYNC_EVENT_CMPL_EVENT_ID_LINK_STATUS_CHANGE:
- 		set_bit(BNXT_LINK_CHNG_SP_EVENT, &bp->sp_event);
+ 
++	bsp_priv->clk_mac_speed = devm_clk_get(dev, "clk_mac_speed");
++	if (IS_ERR(bsp_priv->clk_mac_speed))
++		dev_err(dev, "cannot get clock %s\n", "clk_mac_speed");
++
+ 	if (bsp_priv->clock_input) {
+ 		dev_info(dev, "clock input from PHY\n");
+ 	} else {
+@@ -1094,6 +1157,9 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
+ 			if (!IS_ERR(bsp_priv->mac_clk_tx))
+ 				clk_prepare_enable(bsp_priv->mac_clk_tx);
+ 
++			if (!IS_ERR(bsp_priv->clk_mac_speed))
++				clk_prepare_enable(bsp_priv->clk_mac_speed);
++
+ 			/**
+ 			 * if (!IS_ERR(bsp_priv->clk_mac))
+ 			 *	clk_prepare_enable(bsp_priv->clk_mac);
+@@ -1118,6 +1184,8 @@ static int gmac_clk_enable(struct rk_priv_data *bsp_priv, bool enable)
+ 			clk_disable_unprepare(bsp_priv->pclk_mac);
+ 
+ 			clk_disable_unprepare(bsp_priv->mac_clk_tx);
++
++			clk_disable_unprepare(bsp_priv->clk_mac_speed);
+ 			/**
+ 			 * if (!IS_ERR(bsp_priv->clk_mac))
+ 			 *	clk_disable_unprepare(bsp_priv->clk_mac);
+@@ -1414,6 +1482,7 @@ static int rk_gmac_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(rk_gmac_pm_ops, rk_gmac_suspend, rk_gmac_resume);
+ 
+ static const struct of_device_id rk_gmac_dwmac_match[] = {
++	{ .compatible = "rockchip,px30-gmac",	.data = &px30_ops   },
+ 	{ .compatible = "rockchip,rk3128-gmac", .data = &rk3128_ops },
+ 	{ .compatible = "rockchip,rk3228-gmac", .data = &rk3228_ops },
+ 	{ .compatible = "rockchip,rk3288-gmac", .data = &rk3288_ops },
 -- 
 2.7.4
+
 
