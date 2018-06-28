@@ -6,60 +6,67 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5151EC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE72C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:46:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30872729B
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890832736E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:46:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="t+YseCUT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30872729B
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="tgpzQTBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890832736E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965864AbeF1Mq2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:46:28 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:36079 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965788AbeF1MqY (ORCPT
+        id S965901AbeF1Mqj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:46:39 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:36231 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965788AbeF1Mqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:46:24 -0400
+        Thu, 28 Jun 2018 08:46:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1530189984; x=1561725984;
+  t=1530189997; x=1561725997;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=WhJ0nqbDGuuIUTblEDDfSxHZP/phjV7nKEW20b07xEE=;
-  b=t+YseCUTODXU9Gmcqt92mY2Ss99MjZmqNxSa0Kuk64C8nSU343VxamvQ
-   mLmuzXu0ug/DMBOPgBX2M+yn8rGKaSvSg8bTVodQhDRDJ3LlZnGxj44I9
-   bcuZ0NvkDt5akfawqbLZv83ChuexehQI+7wuRm3MtwZ4IGf9skayJ8I6l
-   Q=;
+  bh=kEFx0Nf6J4J9XhqwRpgnGzLrnp6MlJNY7N9FPdJ/mj8=;
+  b=tgpzQTBfa9dpLuLl5qOudaA/mkIdl+1KUF6gSz581Jf0okjQ8wWgEJdh
+   dlumycVRiCMZ7N7oVMY6dU0ja2LXRJAxlJb73NnZSrjP8DFWqgEsoE491
+   NFuA5DDl1O2Tfd1L/1++ADoKR+gx+LmPfc5VC3B60q3pVRv0Co1gGL3xY
+   c=;
 X-IronPort-AV: E=Sophos;i="5.51,283,1526342400"; 
-   d="scan'208";a="726297568"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Jun 2018 12:46:22 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w5SCkGxM123284
+   d="scan'208";a="740115556"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Jun 2018 12:46:34 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2b-8cc5d68b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w5SCkVww048699
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 28 Jun 2018 12:46:21 GMT
-Received: from EX13D02EUC002.ant.amazon.com (10.43.164.14) by
+        Thu, 28 Jun 2018 12:46:33 GMT
+Received: from EX13D02EUB003.ant.amazon.com (10.43.166.172) by
  EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 28 Jun 2018 12:46:21 +0000
+ id 15.0.1367.3; Thu, 28 Jun 2018 12:46:33 +0000
 Received: from EX13MTAUEE001.ant.amazon.com (10.43.62.200) by
- EX13D02EUC002.ant.amazon.com (10.43.164.14) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 28 Jun 2018 12:46:20 +0000
+ EX13D02EUB003.ant.amazon.com (10.43.166.172) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 28 Jun 2018 12:46:32 +0000
 Received: from uc1a35a69ae4659.ant.amazon.com (10.28.85.80) by
  mail-relay.amazon.com (10.43.62.226) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 28 Jun 2018 12:46:19 +0000
+ 15.0.1367.3 via Frontend Transport; Thu, 28 Jun 2018 12:46:30 +0000
 From:   Norbert Manthey <nmanthey@amazon.de>
 To:     Norbert Manthey <nmanthey@amazon.de>,
         <linux-kernel@vger.kernel.org>
-CC:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [less-CONFIG_NET v2 1/8] net: reorder filter code
-Date:   Thu, 28 Jun 2018 14:45:29 +0200
-Message-ID: <1530189936-25780-2-git-send-email-nmanthey@amazon.de>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        David Ahern <dsahern@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        "Simon Horman" <simon.horman@netronome.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Tom Herbert" <tom@quantonium.net>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        "Sven Eckelmann" <sven.eckelmann@openmesh.com>,
+        WANG Cong <xiyou.wangcong@gmail.com>, <netdev@vger.kernel.org>
+Subject: [less-CONFIG_NET v2 2/8] net: reorder flow_dissector
+Date:   Thu, 28 Jun 2018 14:45:30 +0200
+Message-ID: <1530189936-25780-3-git-send-email-nmanthey@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530189936-25780-1-git-send-email-nmanthey@amazon.de>
 References: <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
@@ -71,437 +78,256 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit reorders the definition of functions and struct in the
-file filter.c, such that in the next step we can easily cut the file
-into a commonly used part, as well as a part that is only required in
-case CONFIG_NET is actually set.
+This commit reorders the definitions, such that in the next step we
+can easily cut the file into a commonly used part, as well as a part
+that is only required in case CONFIG_NET is used.
 
 This is part of the effort to split CONFIG_SECCOMP_FILTER and
 CONFIG_NET.
 
 Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
 ---
- net/core/filter.c | 330 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 165 insertions(+), 165 deletions(-)
+ net/core/flow_dissector.c | 206 +++++++++++++++++++++++-----------------------
+ 1 file changed, 103 insertions(+), 103 deletions(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index e7f12e9..61c24c9 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -69,58 +69,6 @@
- #include <net/seg6.h>
- #include <net/seg6_local.h>
- 
--/**
-- *	sk_filter_trim_cap - run a packet through a socket filter
-- *	@sk: sock associated with &sk_buff
-- *	@skb: buffer to filter
-- *	@cap: limit on how short the eBPF program may trim the packet
-- *
-- * Run the eBPF program and then cut skb->data to correct size returned by
-- * the program. If pkt_len is 0 we toss packet. If skb->len is smaller
-- * than pkt_len we keep whole skb->data. This is the socket level
-- * wrapper to BPF_PROG_RUN. It returns 0 if the packet should
-- * be accepted or -EPERM if the packet should be tossed.
-- *
-- */
--int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap)
--{
--	int err;
--	struct sk_filter *filter;
--
--	/*
--	 * If the skb was allocated from pfmemalloc reserves, only
--	 * allow SOCK_MEMALLOC sockets to use it as this socket is
--	 * helping free memory
--	 */
--	if (skb_pfmemalloc(skb) && !sock_flag(sk, SOCK_MEMALLOC)) {
--		NET_INC_STATS(sock_net(sk), LINUX_MIB_PFMEMALLOCDROP);
--		return -ENOMEM;
--	}
--	err = BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb);
--	if (err)
--		return err;
--
--	err = security_sock_rcv_skb(sk, skb);
--	if (err)
--		return err;
--
--	rcu_read_lock();
--	filter = rcu_dereference(sk->sk_filter);
--	if (filter) {
--		struct sock *save_sk = skb->sk;
--		unsigned int pkt_len;
--
--		skb->sk = sk;
--		pkt_len = bpf_prog_run_save_cb(filter->prog, skb);
--		skb->sk = save_sk;
--		err = pkt_len ? pskb_trim(skb, max(cap, pkt_len)) : -EPERM;
--	}
--	rcu_read_unlock();
--
--	return err;
--}
--EXPORT_SYMBOL(sk_filter_trim_cap);
--
- BPF_CALL_1(bpf_skb_get_pay_offset, struct sk_buff *, skb)
- {
- 	return skb_get_poff(skb);
-@@ -256,12 +204,6 @@ BPF_CALL_0(bpf_get_raw_cpu_id)
- 	return raw_smp_processor_id();
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index 53f96e4..76d0b23 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -1085,36 +1085,6 @@ static inline size_t flow_keys_hash_length(const struct flow_keys *flow)
+ 	return (sizeof(*flow) - diff) / sizeof(u32);
  }
  
--static const struct bpf_func_proto bpf_get_raw_smp_processor_id_proto = {
--	.func		= bpf_get_raw_cpu_id,
--	.gpl_only	= false,
--	.ret_type	= RET_INTEGER,
+-__be32 flow_get_u32_src(const struct flow_keys *flow)
+-{
+-	switch (flow->control.addr_type) {
+-	case FLOW_DISSECTOR_KEY_IPV4_ADDRS:
+-		return flow->addrs.v4addrs.src;
+-	case FLOW_DISSECTOR_KEY_IPV6_ADDRS:
+-		return (__force __be32)ipv6_addr_hash(
+-			&flow->addrs.v6addrs.src);
+-	case FLOW_DISSECTOR_KEY_TIPC:
+-		return flow->addrs.tipckey.key;
+-	default:
+-		return 0;
+-	}
+-}
+-EXPORT_SYMBOL(flow_get_u32_src);
+-
+-__be32 flow_get_u32_dst(const struct flow_keys *flow)
+-{
+-	switch (flow->control.addr_type) {
+-	case FLOW_DISSECTOR_KEY_IPV4_ADDRS:
+-		return flow->addrs.v4addrs.dst;
+-	case FLOW_DISSECTOR_KEY_IPV6_ADDRS:
+-		return (__force __be32)ipv6_addr_hash(
+-			&flow->addrs.v6addrs.dst);
+-	default:
+-		return 0;
+-	}
+-}
+-EXPORT_SYMBOL(flow_get_u32_dst);
+-
+ static inline void __flow_hash_consistentify(struct flow_keys *keys)
+ {
+ 	int addr_diff, i;
+@@ -1162,49 +1132,6 @@ static inline u32 __flow_hash_from_keys(struct flow_keys *keys, u32 keyval)
+ 	return hash;
+ }
+ 
+-u32 flow_hash_from_keys(struct flow_keys *keys)
+-{
+-	__flow_hash_secret_init();
+-	return __flow_hash_from_keys(keys, hashrnd);
+-}
+-EXPORT_SYMBOL(flow_hash_from_keys);
+-
+-static inline u32 ___skb_get_hash(const struct sk_buff *skb,
+-				  struct flow_keys *keys, u32 keyval)
+-{
+-	skb_flow_dissect_flow_keys(skb, keys,
+-				   FLOW_DISSECTOR_F_STOP_AT_FLOW_LABEL);
+-
+-	return __flow_hash_from_keys(keys, keyval);
+-}
+-
+-struct _flow_keys_digest_data {
+-	__be16	n_proto;
+-	u8	ip_proto;
+-	u8	padding;
+-	__be32	ports;
+-	__be32	src;
+-	__be32	dst;
 -};
 -
- static u32 convert_skb_access(int skb_field, int dst_reg, int src_reg,
- 			      struct bpf_insn *insn_buf)
- {
-@@ -1138,71 +1080,6 @@ static void __bpf_prog_release(struct bpf_prog *prog)
- 	}
- }
+-void make_flow_keys_digest(struct flow_keys_digest *digest,
+-			   const struct flow_keys *flow)
+-{
+-	struct _flow_keys_digest_data *data =
+-	    (struct _flow_keys_digest_data *)digest;
+-
+-	BUILD_BUG_ON(sizeof(*data) > sizeof(*digest));
+-
+-	memset(digest, 0, sizeof(*digest));
+-
+-	data->n_proto = flow->basic.n_proto;
+-	data->ip_proto = flow->basic.ip_proto;
+-	data->ports = flow->ports.ports;
+-	data->src = flow->addrs.v4addrs.src;
+-	data->dst = flow->addrs.v4addrs.dst;
+-}
+-EXPORT_SYMBOL(make_flow_keys_digest);
+-
+ static struct flow_dissector flow_keys_dissector_symmetric __read_mostly;
  
--static void __sk_filter_release(struct sk_filter *fp)
--{
--	__bpf_prog_release(fp->prog);
--	kfree(fp);
--}
--
+ u32 __skb_get_hash_symmetric(const struct sk_buff *skb)
+@@ -1222,36 +1149,6 @@ u32 __skb_get_hash_symmetric(const struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL_GPL(__skb_get_hash_symmetric);
+ 
 -/**
-- * 	sk_filter_release_rcu - Release a socket filter by rcu_head
-- *	@rcu: rcu_head that contains the sk_filter to free
-- */
--static void sk_filter_release_rcu(struct rcu_head *rcu)
--{
--	struct sk_filter *fp = container_of(rcu, struct sk_filter, rcu);
--
--	__sk_filter_release(fp);
--}
--
--/**
-- *	sk_filter_release - release a socket filter
-- *	@fp: filter to remove
+- * __skb_get_hash: calculate a flow hash
+- * @skb: sk_buff to calculate flow hash from
 - *
-- *	Remove a filter from a socket and release its resources.
+- * This function calculates a flow hash based on src/dst addresses
+- * and src/dst port numbers.  Sets hash in skb to non-zero hash value
+- * on success, zero indicates no valid hash.  Also, sets l4_hash in skb
+- * if hash is a canonical 4-tuple hash over transport ports.
 - */
--static void sk_filter_release(struct sk_filter *fp)
+-void __skb_get_hash(struct sk_buff *skb)
 -{
--	if (refcount_dec_and_test(&fp->refcnt))
--		call_rcu(&fp->rcu, sk_filter_release_rcu);
--}
+-	struct flow_keys keys;
+-	u32 hash;
 -
--void sk_filter_uncharge(struct sock *sk, struct sk_filter *fp)
+-	__flow_hash_secret_init();
+-
+-	hash = ___skb_get_hash(skb, &keys, hashrnd);
+-
+-	__skb_set_sw_hash(skb, hash, flow_keys_have_l4(&keys));
+-}
+-EXPORT_SYMBOL(__skb_get_hash);
+-
+-__u32 skb_get_hash_perturb(const struct sk_buff *skb, u32 perturb)
 -{
--	u32 filter_size = bpf_prog_size(fp->prog->len);
+-	struct flow_keys keys;
 -
--	atomic_sub(filter_size, &sk->sk_omem_alloc);
--	sk_filter_release(fp);
+-	return ___skb_get_hash(skb, &keys, perturb);
 -}
+-EXPORT_SYMBOL(skb_get_hash_perturb);
 -
--/* try to charge the socket memory if there is space available
-- * return true on success
-- */
--static bool __sk_filter_charge(struct sock *sk, struct sk_filter *fp)
--{
--	u32 filter_size = bpf_prog_size(fp->prog->len);
--
--	/* same check as in sock_kmalloc() */
--	if (filter_size <= sysctl_optmem_max &&
--	    atomic_read(&sk->sk_omem_alloc) + filter_size < sysctl_optmem_max) {
--		atomic_add(filter_size, &sk->sk_omem_alloc);
--		return true;
--	}
--	return false;
--}
--
--bool sk_filter_charge(struct sock *sk, struct sk_filter *fp)
--{
--	if (!refcount_inc_not_zero(&fp->refcnt))
--		return false;
--
--	if (!__sk_filter_charge(sk, fp)) {
--		sk_filter_release(fp);
--		return false;
--	}
--	return true;
--}
--
- static struct bpf_prog *bpf_migrate_filter(struct bpf_prog *fp)
+ u32 __skb_get_poff(const struct sk_buff *skb, void *data,
+ 		   const struct flow_keys_basic *keys, int hlen)
  {
- 	struct sock_filter *old_prog;
-@@ -1314,19 +1191,22 @@ static struct bpf_prog *bpf_prepare_filter(struct bpf_prog *fp,
+@@ -1322,6 +1219,109 @@ u32 skb_get_poff(const struct sk_buff *skb)
+ 	return __skb_get_poff(skb, skb->data, &keys, skb_headlen(skb));
  }
  
- /**
-- *	bpf_prog_create - create an unattached filter
-+ *	bpf_prog_create_from_user - create an unattached filter from user buffer
-  *	@pfp: the unattached filter that is created
-  *	@fprog: the filter program
-+ *	@trans: post-classic verifier transformation handler
-+ *	@save_orig: save classic BPF program
-  *
-- * Create a filter independent of any socket. We first run some
-- * sanity checks on it to make sure it does not explode on us later.
-- * If an error occurs or there is insufficient memory for the filter
-- * a negative errno code is returned. On success the return is zero.
-+ * This function effectively does the same as bpf_prog_create(), only
-+ * that it builds up its insns buffer from user space provided buffer.
-+ * It also allows for passing a bpf_aux_classic_check_t handler.
-  */
--int bpf_prog_create(struct bpf_prog **pfp, struct sock_fprog_kern *fprog)
-+int bpf_prog_create_from_user(struct bpf_prog **pfp, struct sock_fprog *fprog,
-+			      bpf_aux_classic_check_t trans, bool save_orig)
- {
- 	unsigned int fsize = bpf_classic_proglen(fprog);
- 	struct bpf_prog *fp;
-+	int err;
- 
- 	/* Make sure new filter is there and in the right amounts. */
- 	if (!bpf_check_basics_ok(fprog->filter, fprog->len))
-@@ -1336,44 +1216,177 @@ int bpf_prog_create(struct bpf_prog **pfp, struct sock_fprog_kern *fprog)
- 	if (!fp)
- 		return -ENOMEM;
- 
--	memcpy(fp->insns, fprog->filter, fsize);
-+	if (copy_from_user(fp->insns, fprog->filter, fsize)) {
-+		__bpf_prog_free(fp);
-+		return -EFAULT;
-+	}
- 
- 	fp->len = fprog->len;
--	/* Since unattached filters are not copied back to user
--	 * space through sk_get_filter(), we do not need to hold
--	 * a copy here, and can spare us the work.
--	 */
- 	fp->orig_prog = NULL;
- 
-+	if (save_orig) {
-+		err = bpf_prog_store_orig_filter(fp, fprog);
-+		if (err) {
-+			__bpf_prog_free(fp);
-+			return -ENOMEM;
-+		}
-+	}
-+
- 	/* bpf_prepare_filter() already takes care of freeing
- 	 * memory in case something goes wrong.
- 	 */
--	fp = bpf_prepare_filter(fp, NULL);
-+	fp = bpf_prepare_filter(fp, trans);
- 	if (IS_ERR(fp))
- 		return PTR_ERR(fp);
- 
- 	*pfp = fp;
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(bpf_prog_create);
-+EXPORT_SYMBOL_GPL(bpf_prog_create_from_user);
-+
-+void bpf_prog_destroy(struct bpf_prog *fp)
++__be32 flow_get_u32_src(const struct flow_keys *flow)
 +{
-+	__bpf_prog_release(fp);
++	switch (flow->control.addr_type) {
++	case FLOW_DISSECTOR_KEY_IPV4_ADDRS:
++		return flow->addrs.v4addrs.src;
++	case FLOW_DISSECTOR_KEY_IPV6_ADDRS:
++		return (__force __be32)ipv6_addr_hash(
++			&flow->addrs.v6addrs.src);
++	case FLOW_DISSECTOR_KEY_TIPC:
++		return flow->addrs.tipckey.key;
++	default:
++		return 0;
++	}
 +}
-+EXPORT_SYMBOL_GPL(bpf_prog_destroy);
- 
- /**
-- *	bpf_prog_create_from_user - create an unattached filter from user buffer
-+ *	sk_filter_trim_cap - run a packet through a socket filter
-+ *	@sk: sock associated with &sk_buff
-+ *	@skb: buffer to filter
-+ *	@cap: limit on how short the eBPF program may trim the packet
-+ *
-+ * Run the eBPF program and then cut skb->data to correct size returned by
-+ * the program. If pkt_len is 0 we toss packet. If skb->len is smaller
-+ * than pkt_len we keep whole skb->data. This is the socket level
-+ * wrapper to BPF_PROG_RUN. It returns 0 if the packet should
-+ * be accepted or -EPERM if the packet should be tossed.
-+ *
-+ */
-+int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap)
++EXPORT_SYMBOL(flow_get_u32_src);
++
++__be32 flow_get_u32_dst(const struct flow_keys *flow)
 +{
-+	int err;
-+	struct sk_filter *filter;
-+
-+	/*
-+	 * If the skb was allocated from pfmemalloc reserves, only
-+	 * allow SOCK_MEMALLOC sockets to use it as this socket is
-+	 * helping free memory
-+	 */
-+	if (skb_pfmemalloc(skb) && !sock_flag(sk, SOCK_MEMALLOC)) {
-+		NET_INC_STATS(sock_net(sk), LINUX_MIB_PFMEMALLOCDROP);
-+		return -ENOMEM;
++	switch (flow->control.addr_type) {
++	case FLOW_DISSECTOR_KEY_IPV4_ADDRS:
++		return flow->addrs.v4addrs.dst;
++	case FLOW_DISSECTOR_KEY_IPV6_ADDRS:
++		return (__force __be32)ipv6_addr_hash(
++			&flow->addrs.v6addrs.dst);
++	default:
++		return 0;
 +	}
-+	err = BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb);
-+	if (err)
-+		return err;
-+
-+	err = security_sock_rcv_skb(sk, skb);
-+	if (err)
-+		return err;
-+
-+	rcu_read_lock();
-+	filter = rcu_dereference(sk->sk_filter);
-+	if (filter) {
-+		struct sock *save_sk = skb->sk;
-+		unsigned int pkt_len;
-+
-+		skb->sk = sk;
-+		pkt_len = bpf_prog_run_save_cb(filter->prog, skb);
-+		skb->sk = save_sk;
-+		err = pkt_len ? pskb_trim(skb, max(cap, pkt_len)) : -EPERM;
-+	}
-+	rcu_read_unlock();
-+
-+	return err;
 +}
-+EXPORT_SYMBOL(sk_filter_trim_cap);
++EXPORT_SYMBOL(flow_get_u32_dst);
 +
-+static const struct bpf_func_proto bpf_get_raw_smp_processor_id_proto = {
-+	.func		= bpf_get_raw_cpu_id,
-+	.gpl_only	= false,
-+	.ret_type	= RET_INTEGER,
++u32 flow_hash_from_keys(struct flow_keys *keys)
++{
++	__flow_hash_secret_init();
++	return __flow_hash_from_keys(keys, hashrnd);
++}
++EXPORT_SYMBOL(flow_hash_from_keys);
++
++static inline u32 ___skb_get_hash(const struct sk_buff *skb,
++				  struct flow_keys *keys, u32 keyval)
++{
++	skb_flow_dissect_flow_keys(skb, keys,
++				   FLOW_DISSECTOR_F_STOP_AT_FLOW_LABEL);
++
++	return __flow_hash_from_keys(keys, keyval);
++}
++
++struct _flow_keys_digest_data {
++	__be16	n_proto;
++	u8	ip_proto;
++	u8	padding;
++	__be32	ports;
++	__be32	src;
++	__be32	dst;
 +};
 +
-+static void __sk_filter_release(struct sk_filter *fp)
++void make_flow_keys_digest(struct flow_keys_digest *digest,
++			   const struct flow_keys *flow)
 +{
-+	__bpf_prog_release(fp->prog);
-+	kfree(fp);
++	struct _flow_keys_digest_data *data =
++	    (struct _flow_keys_digest_data *)digest;
++
++	BUILD_BUG_ON(sizeof(*data) > sizeof(*digest));
++
++	memset(digest, 0, sizeof(*digest));
++
++	data->n_proto = flow->basic.n_proto;
++	data->ip_proto = flow->basic.ip_proto;
++	data->ports = flow->ports.ports;
++	data->src = flow->addrs.v4addrs.src;
++	data->dst = flow->addrs.v4addrs.dst;
 +}
++EXPORT_SYMBOL(make_flow_keys_digest);
 +
 +/**
-+ * 	sk_filter_release_rcu - Release a socket filter by rcu_head
-+ *	@rcu: rcu_head that contains the sk_filter to free
-+ */
-+static void sk_filter_release_rcu(struct rcu_head *rcu)
-+{
-+	struct sk_filter *fp = container_of(rcu, struct sk_filter, rcu);
-+
-+	__sk_filter_release(fp);
-+}
-+
-+/**
-+ *	sk_filter_release - release a socket filter
-+ *	@fp: filter to remove
++ * __skb_get_hash: calculate a flow hash
++ * @skb: sk_buff to calculate flow hash from
 + *
-+ *	Remove a filter from a socket and release its resources.
++ * This function calculates a flow hash based on src/dst addresses
++ * and src/dst port numbers.  Sets hash in skb to non-zero hash value
++ * on success, zero indicates no valid hash.  Also, sets l4_hash in skb
++ * if hash is a canonical 4-tuple hash over transport ports.
 + */
-+static void sk_filter_release(struct sk_filter *fp)
++void __skb_get_hash(struct sk_buff *skb)
 +{
-+	if (refcount_dec_and_test(&fp->refcnt))
-+		call_rcu(&fp->rcu, sk_filter_release_rcu);
-+}
++	struct flow_keys keys;
++	u32 hash;
 +
-+void sk_filter_uncharge(struct sock *sk, struct sk_filter *fp)
++	__flow_hash_secret_init();
++
++	hash = ___skb_get_hash(skb, &keys, hashrnd);
++
++	__skb_set_sw_hash(skb, hash, flow_keys_have_l4(&keys));
++}
++EXPORT_SYMBOL(__skb_get_hash);
++
++__u32 skb_get_hash_perturb(const struct sk_buff *skb, u32 perturb)
 +{
-+	u32 filter_size = bpf_prog_size(fp->prog->len);
++	struct flow_keys keys;
 +
-+	atomic_sub(filter_size, &sk->sk_omem_alloc);
-+	sk_filter_release(fp);
++	return ___skb_get_hash(skb, &keys, perturb);
 +}
++EXPORT_SYMBOL(skb_get_hash_perturb);
 +
-+/* try to charge the socket memory if there is space available
-+ * return true on success
-+ */
-+static bool __sk_filter_charge(struct sock *sk, struct sk_filter *fp)
-+{
-+	u32 filter_size = bpf_prog_size(fp->prog->len);
-+
-+	/* same check as in sock_kmalloc() */
-+	if (filter_size <= sysctl_optmem_max &&
-+	    atomic_read(&sk->sk_omem_alloc) + filter_size < sysctl_optmem_max) {
-+		atomic_add(filter_size, &sk->sk_omem_alloc);
-+		return true;
-+	}
-+	return false;
-+}
-+
-+bool sk_filter_charge(struct sock *sk, struct sk_filter *fp)
-+{
-+	if (!refcount_inc_not_zero(&fp->refcnt))
-+		return false;
-+
-+	if (!__sk_filter_charge(sk, fp)) {
-+		sk_filter_release(fp);
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/**
-+ *	bpf_prog_create - create an unattached filter
-  *	@pfp: the unattached filter that is created
-  *	@fprog: the filter program
-- *	@trans: post-classic verifier transformation handler
-- *	@save_orig: save classic BPF program
-  *
-- * This function effectively does the same as bpf_prog_create(), only
-- * that it builds up its insns buffer from user space provided buffer.
-- * It also allows for passing a bpf_aux_classic_check_t handler.
-+ * Create a filter independent of any socket. We first run some
-+ * sanity checks on it to make sure it does not explode on us later.
-+ * If an error occurs or there is insufficient memory for the filter
-+ * a negative errno code is returned. On success the return is zero.
-  */
--int bpf_prog_create_from_user(struct bpf_prog **pfp, struct sock_fprog *fprog,
--			      bpf_aux_classic_check_t trans, bool save_orig)
-+int bpf_prog_create(struct bpf_prog **pfp, struct sock_fprog_kern *fprog)
+ __u32 __get_hash_from_flowi6(const struct flowi6 *fl6, struct flow_keys *keys)
  {
- 	unsigned int fsize = bpf_classic_proglen(fprog);
- 	struct bpf_prog *fp;
--	int err;
- 
- 	/* Make sure new filter is there and in the right amounts. */
- 	if (!bpf_check_basics_ok(fprog->filter, fprog->len))
-@@ -1383,39 +1396,26 @@ int bpf_prog_create_from_user(struct bpf_prog **pfp, struct sock_fprog *fprog,
- 	if (!fp)
- 		return -ENOMEM;
- 
--	if (copy_from_user(fp->insns, fprog->filter, fsize)) {
--		__bpf_prog_free(fp);
--		return -EFAULT;
--	}
-+	memcpy(fp->insns, fprog->filter, fsize);
- 
- 	fp->len = fprog->len;
-+	/* Since unattached filters are not copied back to user
-+	 * space through sk_get_filter(), we do not need to hold
-+	 * a copy here, and can spare us the work.
-+	 */
- 	fp->orig_prog = NULL;
- 
--	if (save_orig) {
--		err = bpf_prog_store_orig_filter(fp, fprog);
--		if (err) {
--			__bpf_prog_free(fp);
--			return -ENOMEM;
--		}
--	}
--
- 	/* bpf_prepare_filter() already takes care of freeing
- 	 * memory in case something goes wrong.
- 	 */
--	fp = bpf_prepare_filter(fp, trans);
-+	fp = bpf_prepare_filter(fp, NULL);
- 	if (IS_ERR(fp))
- 		return PTR_ERR(fp);
- 
- 	*pfp = fp;
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(bpf_prog_create_from_user);
--
--void bpf_prog_destroy(struct bpf_prog *fp)
--{
--	__bpf_prog_release(fp);
--}
--EXPORT_SYMBOL_GPL(bpf_prog_destroy);
-+EXPORT_SYMBOL_GPL(bpf_prog_create);
- 
- static int __sk_attach_prog(struct bpf_prog *prog, struct sock *sk)
- {
+ 	memset(keys, 0, sizeof(*keys));
 -- 
 2.7.4
 
