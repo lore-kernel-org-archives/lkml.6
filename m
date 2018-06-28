@@ -2,153 +2,144 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E8BC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B9DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D4527345
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D4527345
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
+	by mail.kernel.org (Postfix) with ESMTP id ACC37274C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:03:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MbI7ljFI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC37274C0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966478AbeF1OAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:00:41 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:38987 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966369AbeF1OAj (ORCPT
+        id S1753816AbeF1ODS (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:03:18 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33033 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeF1ODQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:00:39 -0400
-Received: from cpe-2606-a000-111b-40b7-640c-26a-4e16-9225.dyn6.twc.com ([2606:a000:111b:40b7:640c:26a:4e16:9225] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1fYXTI-0002NM-ON; Thu, 28 Jun 2018 10:00:35 -0400
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     linux-rdma@vger.kernel.org
-Cc:     Neil Horman <nhorman@tuxdriver.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        VMware PV-Drivers <pv-drivers@vmware.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
-Subject: [PATCH] vmw_pvrdma: Release netdev when vmxnet3 module is removed
-Date:   Thu, 28 Jun 2018 09:59:38 -0400
-Message-Id: <20180628135938.19625-1-nhorman@tuxdriver.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 28 Jun 2018 10:03:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z6-v6so20934072wma.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=54IaGINc7EPrVviZUY2cez86fG7QH5OUOnEHq1qwQ8I=;
+        b=MbI7ljFINvvpGrf/lqCuXFAF3/9zHLcApaau8OkPMwWqLWYnphM7oLZexI15SjUrrT
+         y8Vzu0YAdDikUHIE8M48n+HAENzjDqe1quQu+s/M9bd5/+LHbI2FkT/K1ySLE/nGMWWE
+         95LMdoiBM99l9q6mrQTnMBln+TFRiNN+iWtcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=54IaGINc7EPrVviZUY2cez86fG7QH5OUOnEHq1qwQ8I=;
+        b=trb2tA05hC5JX6WgiypLbB4yaEzOX0jtKikRuQsdLGmP1VVrW9OMA5Hlel7n3jXQD2
+         qr1qQuvn4zkjvBTa4ERvIY5OLngiIrf+PennqBvqMhktJKXrePinpp+DGqSfr+2SZMmy
+         TR5AQK3MHhMyxljBP8z2bF1WWjkhHNrY0Y5ZwulH0PCaTq8EoY7FU37tMyXo7EpmXyBV
+         qEuK51F0iX6T/T+GQrPkACpC95iOiGkw6X9YI35UhKhKI4DbOGNyZlpWUT6jKIwcRXWX
+         34x+YMcf8b4R6fWjs1Us9FnIgxgI0KBWNQIz/Z/I3b2pCGzGw0woupQnx/tmOCcYAaZd
+         OQOQ==
+X-Gm-Message-State: APt69E1akyZDY9K5p88HgGmzLz+9XFlgdvFq5ivgYRIuv7aelHuRvOxO
+        K0YmEqWxOQRR0aKwqVUBsdjViw==
+X-Google-Smtp-Source: AAOMgpfArvUiwDaz37FhhYbR9+Vzr37U5koszxPHPKgQzAOxop4BNScX/qIYzMZ1JXe1AQeWDSs//Q==
+X-Received: by 2002:a1c:110a:: with SMTP id 10-v6mr7822092wmr.130.1530194594946;
+        Thu, 28 Jun 2018 07:03:14 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:3923:5e2e:38ae:83dc? ([2001:41d0:fe90:b800:3923:5e2e:38ae:83dc])
+        by smtp.googlemail.com with ESMTPSA id h15-v6sm9323810wrp.79.2018.06.28.07.03.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 07:03:14 -0700 (PDT)
+Subject: Re: [PATCH v3 4/5] clocksource/drivers/timer-mediatek: Convert the
+ driver to timer-of
+To:     Stanley Chu <stanley.chu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
+References: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+ <1530182744-10731-5-git-send-email-stanley.chu@mediatek.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <5cdfbfdf-4d6e-de18-0f20-2f3b50129b87@linaro.org>
+Date:   Thu, 28 Jun 2018 16:03:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1530182744-10731-5-git-send-email-stanley.chu@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On repeated module load/unload cycles, its possible for the pvrmda
-driver to encounter this crash:
+On 28/06/2018 12:45, Stanley Chu wrote:
+> Convert the driver to use the timer_of helpers.
+> This allows to remove custom proprietary structure,
+> factors out and simplifies the code.
+> 
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+> ---
+>  drivers/clocksource/timer-mediatek.c |  222 ++++++++++++++++------------------
+>  1 file changed, 104 insertions(+), 118 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
+> index ff284f2..d94d8e1 100644
+> --- a/drivers/clocksource/timer-mediatek.c
+> +++ b/drivers/clocksource/timer-mediatek.c
+> @@ -18,16 +18,13 @@
+>  
+>  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>  
+> -#include <linux/clk.h>
+>  #include <linux/clockchips.h>
+> +#include <linux/clocksource.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/irq.h>
+>  #include <linux/irqreturn.h>
+> -#include <linux/of.h>
+> -#include <linux/of_address.h>
+> -#include <linux/of_irq.h>
+>  #include <linux/sched_clock.h>
+>  #include <linux/slab.h>
+> +#include "timer-of.h"
+>  
+>  #define GPT_IRQ_EN_REG		0x00
+>  #define GPT_IRQ_ENABLE(val)	BIT((val) - 1)
+> @@ -56,49 +53,57 @@
+>  #define GPT_CLK_EVT	1
+>  #define GPT_CLK_SRC	2
+>  
+> -struct mtk_clock_event_device {
+> -	void __iomem *gpt_base;
+> -	u32 ticks_per_jiffy;
+> -	struct clock_event_device dev;
+> +struct mtk_timer_private {
+> +	unsigned long ticks_per_jiffy;
+>  };
 
-...
-297.032448] RIP: 0010:[<ffffffff839e4620>]  [<ffffffff839e4620>] netdev_walk_all_upper_dev_rcu+0x50/0xb0
-[  297.034078] RSP: 0018:ffff95087780bd08  EFLAGS: 00010286
-[  297.034986] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff95087a0c0000
-[  297.036196] RDX: ffff95087a0c0000 RSI: ffffffff839e44e0 RDI: ffff950835d0c000
-[  297.037421] RBP: ffff95087780bd40 R08: ffff95087a0e0ea0 R09: abddacd03f8e0ea0
-[  297.038636] R10: abddacd03f8e0ea0 R11: ffffef5901e9dbc0 R12: ffff95087a0c0000
-[  297.039854] R13: ffffffff839e44e0 R14: ffff95087a0c0000 R15: ffff950835d0c828
-[  297.041071] FS:  0000000000000000(0000) GS:ffff95087fc00000(0000) knlGS:0000000000000000
-[  297.042443] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  297.043429] CR2: ffffffffffffffe8 CR3: 000000007a652000 CR4: 00000000003607f0
-[  297.044674] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  297.045893] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  297.047109] Call Trace:
-[  297.047545]  [<ffffffff839e4698>] netdev_has_upper_dev_all_rcu+0x18/0x20
-[  297.048691]  [<ffffffffc05d31af>] is_eth_port_of_netdev+0x2f/0xa0 [ib_core]
-[  297.049886]  [<ffffffffc05d3180>] ? is_eth_active_slave_of_bonding_rcu+0x70/0x70 [ib_core]
-...
+This private structure is not needed. There is timer_of_clk->period
 
-This occurs because vmw_pvrdma on probe stores a pointer to the netdev
-that exists on function 0 of the same bus/device/slot (which represents
-the vmxnet3 ethernet driver).  However, it never removes this pointer if
-the vmxnet3 module is removed, leading to crashes resulting from use
-after free dereferencing incidents like the one above.
+cf.
 
-The fix is pretty straightforward.  vmw_pvrdma should listen for
-NETDEV_REGISTER and NETDEV_UNREGISTER events in its event listener code
-block, and update the stored netdev pointer accordingly.  This solution
-has been tested by myself and the reporter with successful results.
-This fix also allows the pvrdma driver to find its underlying ethernet
-device in the event that vmxnet3 is loaded after pvrdma, which it was
-not able to do before.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clocksource/timer-of.c#n144
 
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-Reported-by: ruquin@redhat.com
-CC: Adit Ranadive <aditr@vmware.com>
-CC: VMware PV-Drivers <pv-drivers@vmware.com>
-CC: Doug Ledford <dledford@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>
-CC: linux-kernel@vger.kernel.org
----
- .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    | 25 +++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-index 0be33a81bbe6..5b4782078a74 100644
---- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-+++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
-@@ -699,8 +699,12 @@ static int pvrdma_del_gid(const struct ib_gid_attr *attr, void **context)
- }
- 
- static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
-+					  struct net_device *ndev,
- 					  unsigned long event)
- {
-+	struct pci_dev *pdev_net;
-+
-+
- 	switch (event) {
- 	case NETDEV_REBOOT:
- 	case NETDEV_DOWN:
-@@ -718,6 +722,21 @@ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
- 		else
- 			pvrdma_dispatch_event(dev, 1, IB_EVENT_PORT_ACTIVE);
- 		break;
-+	case NETDEV_UNREGISTER:
-+		dev_put(dev->netdev);
-+		dev->netdev = NULL;
-+		break;
-+	case NETDEV_REGISTER:
-+		/* Paired vmxnet3 will have same bus, slot. But func will be 0 */
-+		pdev_net = pci_get_slot(dev->pdev->bus, PCI_DEVFN(PCI_SLOT(dev->pdev->devfn), 0));
-+		if ((dev->netdev == NULL) && (pci_get_drvdata(pdev_net) == ndev)) {
-+			/* this is our netdev */
-+			dev->netdev = ndev;
-+			dev_hold(ndev);
-+		}
-+		pci_dev_put(pdev_net);
-+		break;
-+
- 	default:
- 		dev_dbg(&dev->pdev->dev, "ignore netdevice event %ld on %s\n",
- 			event, dev->ib_dev.name);
-@@ -734,8 +753,9 @@ static void pvrdma_netdevice_event_work(struct work_struct *work)
- 
- 	mutex_lock(&pvrdma_device_list_lock);
- 	list_for_each_entry(dev, &pvrdma_device_list, device_link) {
--		if (dev->netdev == netdev_work->event_netdev) {
--			pvrdma_netdevice_event_handle(dev, netdev_work->event);
-+		if ((netdev_work->event == NETDEV_REGISTER) ||
-+		    (dev->netdev == netdev_work->event_netdev)) {
-+			pvrdma_netdevice_event_handle(dev, netdev_work->event_netdev, netdev_work->event);
- 			break;
- 		}
- 	}
-@@ -962,6 +982,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
- 	}
- 
- 	dev->netdev = pci_get_drvdata(pdev_net);
-+	dev_hold(dev->netdev);
- 	pci_dev_put(pdev_net);
- 	if (!dev->netdev) {
- 		dev_err(&pdev->dev, "failed to get vmxnet3 device\n");
+
+
+
 -- 
-2.17.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
