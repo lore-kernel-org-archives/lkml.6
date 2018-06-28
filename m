@@ -2,112 +2,97 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7730AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F82FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364EE270E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364EE270E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 1584121522
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:39:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j9EsLuZ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1584121522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752177AbeF1IhT (ORCPT
+        id S1752231AbeF1IjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:37:19 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:61068 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeF1IhO (ORCPT
+        Thu, 28 Jun 2018 04:39:14 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51606 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750802AbeF1IjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:37:14 -0400
-X-IronPort-AV: E=Sophos;i="5.51,282,1526367600"; 
-   d="scan'208";a="13559370"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Jun 2018 01:37:13 -0700
-Received: from localhost.localdomain (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 28 Jun 2018 01:37:12 -0700
-Subject: Re: [RFC PATCH 1/2] spi: Add QuadSPI driver for Atmel SAMA5D2
-To:     Piotr Bugalski <bugalski.piotr@gmail.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, <linux-spi@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Piotr Bugalski <pbu@cryptera.com>
-References: <20180618162124.21749-1-bugalski.piotr@gmail.com>
- <20180618162124.21749-2-bugalski.piotr@gmail.com>
- <20180621233321.0f25f572@bbrezillon>
- <alpine.DEB.2.20.1806220719190.21824@carbonite>
- <20180622093905.62a3b936@bbrezillon>
- <455adb76-530a-1fd5-303c-cfa158ad7870@microchip.com>
- <alpine.DEB.2.20.1806270940500.32198@carbonite>
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <1d736934-b3e7-7b23-0f34-1d22d36b2b18@microchip.com>
-Date:   Thu, 28 Jun 2018 11:37:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 28 Jun 2018 04:39:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pyJzunvr74w7FKUMDsnOI8piHo79VejrRDDM5YBU/5U=; b=j9EsLuZ6Ah3yNoemmmFzFYqs0
+        OR7vY9x4pZ6OGrpHNLgbQ+nwLSOAO8y7XJOg11W+K+7jiOKap7+GqE4Cc/oQEwBoTv0GTv07Uq0K+
+        1fo9QRCeBwxmrCD0kmWBCy4JDdVNbKWXAcn6Hv0xrvuQEakySr531GtJlSLPFyIpWAPsuRaLPdkMV
+        5WzrIxUBM0WuQWib1dfkYcVdzcOhKZL75CJ02+fWqpICBqwyLdxfkD5ORD2A7KBSYbi1ME8TPMCsJ
+        J+WGlTmPJLBJ5OkdfFoxq3MjNvbK/hqU5FmyAjs5S4OAk2tskNnUqj2G15gfw/r9hREu1bhJ7QxWl
+        aa1ZchTWA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYSSL-0000zl-V1; Thu, 28 Jun 2018 08:39:09 +0000
+Date:   Thu, 28 Jun 2018 01:39:09 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180628083909.GA7646@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
+ <20180619171638.GE1438@bombadil.infradead.org>
+ <20180627110529.GA19606@bombadil.infradead.org>
+ <20180627194438.GA20774@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1806270940500.32198@carbonite>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180627194438.GA20774@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Piotr,
+On Wed, Jun 27, 2018 at 01:44:38PM -0600, Ross Zwisler wrote:
+> On Wed, Jun 27, 2018 at 04:05:29AM -0700, Matthew Wilcox wrote:
+> > On Tue, Jun 19, 2018 at 10:16:38AM -0700, Matthew Wilcox wrote:
+> > > I think I see a bug.  No idea if it's the one you're hitting ;-)
+> > > 
+> > > I had been intending to not use the 'entry' to decide whether we were
+> > > waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+> > > but not before dropping the DAX_PMD flag being passed from the PMD
+> > > pagefault caller.  So if I put that back ...
+> > 
+> > Did you get a chance to test this?
+> 
+> With this patch it doesn't deadlock, but the test dies with a SIGBUS and we
+> hit a WARN_ON in the DAX code:
+> 
+> WARNING: CPU: 5 PID: 1678 at fs/dax.c:226 get_unlocked_entry+0xf7/0x120
+> 
+> I don't have a lot of time this week to debug further.  The quickest path to
+> victory is probably for you to get this reproducing in your test setup.  Does
+> XFS + DAX + generic/340 pass for you?
 
-On 06/27/2018 10:52 AM, Piotr Bugalski wrote:
-> 
->> General things to consider for the limitation in performance:
->> - is the serial flash memory operating in Quad SPI?
-> 
-> Yes, I've checked signal using logic analyzer, data is transferred using
-> all four lines.
-> 
->> - QSCLK should be as high as possible
-> 
-> Sure, but when we are using lower frequency CPU impact should be
-> negligible while efficiency is crap on every speed.
-> 
->> - transfer delays - I checked them, they have default values, we should be good.
->> - use DMA, as you suggested
->>
-> 
-> I don't understand one thing. While CPU is not busy and during my tests
-> 100% of CPU can be used for communication, efficiency is still very low.
-> Why DMA has such impact?
-> 
-> It is very interesting to observe signals using logic analyzer.
-> When CPU is used for communication, there are long delays after
-> every byte transferred. These delays are  much longer than it should be only because of writing next value by CPU.
-
-Are those consecutive transfers (same peripheral without removing chip select)?
-The delays between consecutive transfers can be set just in SPI mode. It would
-be strange to see this kind of delays in serial memory mode.
-
-> I tried to change SPI frequency. If delay were CPU related,
-> delay time should stay the same. Unfortunately results were different -
-> lowering SPI freqency extends delay time.
-
-If QSCK is less than f-perif-clock/2, then setting DLYBS to 1 will shorten the
-DLYBS delay, but this is peanuts.
-
-Thanks,
-ta
-
-> Using DMA makes these delays to disappear, but how to acheive CPU
-> communication without delays?
+I won't be back in front of my test box until Tuesday, but that test
+does work for me because I couldn't get your instructions to give me a
+2MB aligned DAX setup.  I had to settle for 4k, so none of the 2MB stuff
+has been tested properly.
