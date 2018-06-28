@@ -2,135 +2,80 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1808EC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8752C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF7827754
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:30:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BDjiTO1b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BF7827754
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B5E127759
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 17:32:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5E127759
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935203AbeF1Ra4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 13:30:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51367 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934931AbeF1Ray (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 13:30:54 -0400
-Received: by mail-wm0-f67.google.com with SMTP id w137-v6so10625447wmw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 10:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A0QHU8mL+6CDYRZhCz74GYSF4Kf0iPJGJzoqxFNfZlw=;
-        b=BDjiTO1b2tBcu4jRtIm4VSmC817Y24sAlw1sNJYeV6hmm1wMHuS3QAKD2prIayS9VF
-         xfcQn30TnJR8xvCc9eHLZzZ2QaYw/fDH0uXq5S8CPevH1UP1Jlk2d/reV6qt0VwHZGGF
-         Ck3aUnliC6nytjxNDL9MCZJf6/VUHxpPy6EMU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A0QHU8mL+6CDYRZhCz74GYSF4Kf0iPJGJzoqxFNfZlw=;
-        b=gHTz+mm8WTY/Ey0KmOPbiQOqsjOPZuZXN7aqBkv/f+yD9R2i2+IPnKuqTYWvON7MQO
-         l01Ip7oXumna7iN2PsBhAI/6CsAXC+b4zYqy51bpo/6ZQdXh1WxStX6dSvaK9vUhTlCO
-         XYPNB4c4zc1sZZ6tcHhppkrM7JXulMV3+QuHKS8kD207FuM5pQrudt2hMODnyVl6HR9M
-         H2uceSRO6h3wHDGWVH9PbuK9oKHHQHgEHSpI6pT8gXSnSTdFzspxOqa91L5kuJg63ZYy
-         LmZnyLAcOplmkJToljfynff1jhKbR3Imvb7A0DIUzfAhxgCBzngS6KcQ1yQgp4ZMluBH
-         B8Ug==
-X-Gm-Message-State: APt69E3xG5PvlAY2T9qvsG5hgruBGdXfDm5lkCRXieZUdZ0oJF+6bvY/
-        SvRcuXbj5rGc+kdFyNIt9ZDy9Q==
-X-Google-Smtp-Source: AAOMgpc0RiyUfXMmQSBttFY3RRx79fGE5aFCTRShoXgxnxH6gtalxH/jNOk3SZDYBtMGF10gVJ15ig==
-X-Received: by 2002:a7b:c058:: with SMTP id u24-v6mr9036613wmc.136.1530207052957;
-        Thu, 28 Jun 2018 10:30:52 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id h3-v6sm5335306wro.87.2018.06.28.10.30.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 10:30:52 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 19:30:45 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 2/3] locking: Clarify requirements for
- smp_mb__after_spinlock()
-Message-ID: <20180628173045.GA4975@andrea>
-References: <1530182480-13205-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1530182480-13205-3-git-send-email-andrea.parri@amarulasolutions.com>
- <20180628150550.GI2494@hirez.programming.kicks-ass.net>
+        id S935813AbeF1Rcs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 13:32:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934583AbeF1Rcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 13:32:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 191CA40255D7;
+        Thu, 28 Jun 2018 17:32:47 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C6FF21565E1;
+        Thu, 28 Jun 2018 17:32:45 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 19:32:43 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jeremy.linton@arm.com, ard.biesheuvel@linaro.org,
+        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
+        catalin.marinas@arm.com, will.deacon@arm.com
+Subject: Re: [PATCH] arm64: acpi: reenumerate topology ids
+Message-ID: <20180628173243.obydzakh2stfs26w@kamzik.brq.redhat.com>
+References: <20180628145128.10057-1-drjones@redhat.com>
+ <a38fb684-c023-1a96-464e-dd268f3132ea@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628150550.GI2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a38fb684-c023-1a96-464e-dd268f3132ea@arm.com>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 28 Jun 2018 17:32:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 28 Jun 2018 17:32:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'drjones@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 05:05:50PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 28, 2018 at 12:41:19PM +0200, Andrea Parri wrote:
-> > - * This barrier must provide two things:
-> > - *
-> > - *   - it must guarantee a STORE before the spin_lock() is ordered against a
-> > - *     LOAD after it, see the comments at its two usage sites.
-> > - *
-> > - *   - it must ensure the critical section is RCsc.
-> > - *
-> > - * The latter is important for cases where we observe values written by other
-> > - * CPUs in spin-loops, without barriers, while being subject to scheduling.
-> > - *
-> > - * CPU0			CPU1			CPU2
-> > - *
-> > - *			for (;;) {
-> > - *			  if (READ_ONCE(X))
-> > - *			    break;
-> > - *			}
-> > - * X=1
-> > - *			<sched-out>
-> > - *						<sched-in>
-> > - *						r = X;
-> > - *
-> > - * without transitivity it could be that CPU1 observes X!=0 breaks the loop,
-> > - * we get migrated and CPU2 sees X==0.
+On Thu, Jun 28, 2018 at 05:30:51PM +0100, Sudeep Holla wrote:
+> I am not sure if we can ever guarantee that DT and ACPI will get the
+> same ids whatever counter we use as it depends on the order presented in
+> the firmware(DT or ACPI). So I am not for generating ids for core and
+> threads in that way.
+
+I don't believe we have to guarantee that the exact (package,core,thread)
+triplet describing a PE with DT matches ACPI. We just need to guarantee
+that each triplet we select properly puts a PE in the same group as its
+peers. So, as long as we keep the grouping described by DT or ACPI, then
+the (package,core,thread) IDs assigned are pretty arbitrary.
+
+I could change the commit message to state we can generate IDs *like*
+DT does (i.e. with counters), even if they may not result in identical
+triplet to PE mappings.
+
 > 
-> Please don't remove that; that explains _why_ we need a full memory
-> barrier here.
+> So I would like to keep it simple and just have this counters for
+> package ids as demonstrated in Shunyong's patch.
+> 
 
-Peter:
+If we don't also handle cores when there are threads, then the cores
+will also end up having weird IDs.
 
-Both you and Boqun stated that the above snippet is "bad":
-
-  http://lkml.kernel.org/r/20180312085646.GE4064@hirez.programming.kicks-ass.net
-
-and I do agree with your assessment! ;-)
-
-I've no objection to keep that comment (together with the
-"clarification" suggested in this patch) _once_ replaced
-that snippet with something else (say, with the snippet
-Boqun suggested in:
-
-  http://lkml.kernel.org/r/20180312085600.aczjkpn73axzs2sb@tardis ):
-
-is this what you mean?
-
-  Andrea
+Thanks,
+drew
