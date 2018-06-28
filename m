@@ -2,127 +2,101 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3498AC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2282BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F193727850
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F193727850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id BAFEC27855
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="vIANIUn4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAFEC27855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753891AbeF1TMQ (ORCPT
+        id S1754686AbeF1TMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:12:16 -0400
-Received: from gateway30.websitewelcome.com ([192.185.193.11]:42567 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752108AbeF1TMP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:12:15 -0400
-X-Greylist: delayed 1273 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Jun 2018 15:12:15 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id E1C3E35870
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 13:51:01 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Yc0IfekwAaSeyYc0PfKFcH; Thu, 28 Jun 2018 13:51:01 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=60646 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fYc0H-004BIb-EO; Thu, 28 Jun 2018 13:50:49 -0500
-Date:   Thu, 28 Jun 2018 13:50:48 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] net: usb: Mark expected switch fall-throughs
-Message-ID: <20180628185048.GA26623@embeddedor.com>
+        Thu, 28 Jun 2018 15:12:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:37737 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752108AbeF1TMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:12:18 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41GqCg6Gyrz9ry1;
+        Fri, 29 Jun 2018 05:12:15 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1530213136;
+        bh=cCXDW4Tbn1M+2do8hFNjTzCyftVcjIymH8ie3x/lHfI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vIANIUn403XyorlkbT0tFgqXpxacnnkPd8XPLIhuNmXgPP/8f6W8a8x8uyMDHulO3
+         zq8/GfMeozuEk/vEUJvn8OfU0o+FGzPkmqJTRianodupKxAHgc1zua4HAuinzc+y0D
+         UVDN5xObaRvTBRtUESHog5YUFtCC/wDMl3BgBU2kPGLAAJ/TZOAtTMGxDOCP8IN3Vf
+         /+AW5TxTUSSXIbQGlZdeJn7uLuFSfW7Omoz0ET8Ggf01DdO5WQbhnKyJEorhBErn8I
+         UW+qhr2LDMA/+FWED/AccZBUri3lOPtz59hU8DDhnXpjTLo/Zr39emYsVv6yKV8piy
+         rOvodRDPT9V7Q==
+Date:   Fri, 29 Jun 2018 05:12:09 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Daniel =?UTF-8?B?RMOtYXo=?= <daniel.diaz@linaro.org>,
+        Eli Cohen <eli@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: linux-next: Signed-off-by missing for commits in the net tree
+Message-ID: <20180629051209.0189ce01@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fYc0H-004BIb-EO
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:60646
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sb4XTE35jmrg6xXOuhBtGyK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+--Sig_/sb4XTE35jmrg6xXOuhBtGyK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/usb/catc.c       | 1 +
- drivers/net/usb/cdc-phonet.c | 1 +
- drivers/net/usb/r8152.c      | 2 ++
- 3 files changed, 4 insertions(+)
+Hi all,
 
-diff --git a/drivers/net/usb/catc.c b/drivers/net/usb/catc.c
-index 18d36df..424053b 100644
---- a/drivers/net/usb/catc.c
-+++ b/drivers/net/usb/catc.c
-@@ -869,6 +869,7 @@ static int catc_probe(struct usb_interface *intf, const struct usb_device_id *id
- 		default:
- 			dev_warn(&intf->dev,
- 				 "Couldn't detect memory size, assuming 32k\n");
-+			/* fall through */
- 		case 0x87654321:
- 			catc_set_reg(catc, TxBufCount, 4);
- 			catc_set_reg(catc, RxBufCount, 16);
-diff --git a/drivers/net/usb/cdc-phonet.c b/drivers/net/usb/cdc-phonet.c
-index 3c40312..78b16eb 100644
---- a/drivers/net/usb/cdc-phonet.c
-+++ b/drivers/net/usb/cdc-phonet.c
-@@ -110,6 +110,7 @@ static void tx_complete(struct urb *req)
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
- 		dev->stats.tx_aborted_errors++;
-+		/* fall through */
- 	default:
- 		dev->stats.tx_errors++;
- 		dev_dbg(&dev->dev, "TX error (%d)\n", status);
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 1fd1650..124211a 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -1376,6 +1376,7 @@ static void intr_callback(struct urb *urb)
- 	case -ECONNRESET:	/* unlink */
- 	case -ESHUTDOWN:
- 		netif_device_detach(tp->netdev);
-+		/* fall through */
- 	case -ENOENT:
- 	case -EPROTO:
- 		netif_info(tp, intr, tp->netdev,
-@@ -2741,6 +2742,7 @@ static void r8153b_ups_en(struct r8152 *tp, bool enable)
- 			r8152_mdio_write(tp, MII_BMCR, data);
- 
- 			data = r8153_phy_status(tp, PHY_STAT_LAN_ON);
-+			/* fall through */
- 
- 		default:
- 			if (data != PHY_STAT_LAN_ON)
--- 
-2.7.4
+Commit
 
+  933e671f8cff ("selftests/net: Fix permissions for fib_tests.sh")
+
+is missing a Signed-off-by from its author.
+
+Commit
+
+  a8d70a054a71 ("net/mlx5: E-Switch, Disallow vlan/spoofcheck setup if not =
+being esw manager")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/sb4XTE35jmrg6xXOuhBtGyK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1MwkACgkQAVBC80lX
+0GzEkAf+KcwkMepgsf2oTSXV4MU/fQdomj3i7PBszu4QdBCw4F74aXeJ/MfI6gEs
+s7uCDfqkMPT/eXnQHDRPrTOkRD40Nllfb//MWzIT1pfLvvP9ULlBVN/2LBbeiMNM
+704cNVSKPztyJnGr6X8seNVFnBdchfGQ3SHUcKXGBmh9JOMsUh/Nk9bbTq7Jhvtf
+IoNdGyUMCgYXgh3oWNbhC5wqCc9G04Szj36sDaJNdERy+M5xYxIzMcuIkwh3d2UQ
+jjvcJpBsYXc+ESheO+2CHz4RqTf7eJ6VIpVkWVti915o93DjLxiYyDE7PtK6ymLZ
+I/HBwF1yIC1nLYuUm48E2dj9tAji9w==
+=uNqj
+-----END PGP SIGNATURE-----
+
+--Sig_/sb4XTE35jmrg6xXOuhBtGyK--
