@@ -3,69 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B898C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CB0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A89270BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A89270BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 145A3270B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145A3270B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934816AbeF1ISd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:18:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56461 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932350AbeF1ISb (ORCPT
+        id S934844AbeF1IUW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 04:20:22 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:48134 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932361AbeF1IUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:18:31 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fYS8L-0004W3-7y; Thu, 28 Jun 2018 10:18:29 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fYS8K-00048v-VN; Thu, 28 Jun 2018 10:18:28 +0200
-Date:   Thu, 28 Jun 2018 10:18:28 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] siox: don't create a thread without starting it
-Message-ID: <20180628081828.utstylcpdq3vxeep@pengutronix.de>
-References: <20180626073134.GW2458@hirez.programming.kicks-ass.net>
- <20180628075742.8991-1-u.kleine-koenig@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180628075742.8991-1-u.kleine-koenig@pengutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 28 Jun 2018 04:20:20 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id 48LJ1y00K3XaVaC068LJoL; Thu, 28 Jun 2018 10:20:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fYSA6-0003KV-97; Thu, 28 Jun 2018 10:20:18 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fYSA6-00056C-6v; Thu, 28 Jun 2018 10:20:18 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] mtd: Use kasprintf() instead of fixed buffer formatting
+Date:   Thu, 28 Jun 2018 10:20:11 +0200
+Message-Id: <20180628082011.19553-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Using "%4.4X" in the calculation of the buffer size is misleading, as
+the format string literal has no relation to the actual size needed.
+Hence this is fragile w.r.t. future modification.
 
-I sent the patch from a different machine than usual and there had an
-old email address from Greg in my aliases. I will bounce the original to
-the right address, please make sure to correct his address to
-@linuxfoundation.org when replying.
+As this is not a hot path, fix this by replacing the formatting in a
+fixed buffer by kasprintf().
 
-Thanks and sorry,
-Uwe
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Compile-tested only.
 
+Interestingly, this decreases code size (by 16 resp. 24 bytes on arm32
+resp. arm64).
+---
+ drivers/mtd/chips/gen_probe.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/chips/gen_probe.c b/drivers/mtd/chips/gen_probe.c
+index 879bebf9d8b12038..837b04ab96a9c526 100644
+--- a/drivers/mtd/chips/gen_probe.c
++++ b/drivers/mtd/chips/gen_probe.c
+@@ -202,16 +202,19 @@ static inline struct mtd_info *cfi_cmdset_unknown(struct map_info *map,
+ 	struct cfi_private *cfi = map->fldrv_priv;
+ 	__u16 type = primary?cfi->cfiq->P_ID:cfi->cfiq->A_ID;
+ #ifdef CONFIG_MODULES
+-	char probename[sizeof("cfi_cmdset_%4.4X")];
+ 	cfi_cmdset_fn_t *probe_function;
++	char *probename;
+ 
+-	sprintf(probename, "cfi_cmdset_%4.4X", type);
++	probename = kasprintf(GFP_KERNEL, "cfi_cmdset_%4.4X", type);
++	if (!probename)
++		return NULL;
+ 
+ 	probe_function = __symbol_get(probename);
+ 	if (!probe_function) {
+ 		request_module("cfi_cmdset_%4.4X", type);
+ 		probe_function = __symbol_get(probename);
+ 	}
++	kfree(probename);
+ 
+ 	if (probe_function) {
+ 		struct mtd_info *mtd;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.1
+
