@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AD7C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A85C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089DE277F9
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29833279A5
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:25:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="eq/rysHx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089DE277F9
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="GjeFD3MN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29833279A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967016AbeF1WYF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:24:05 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40529 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966989AbeF1WYD (ORCPT
+        id S966989AbeF1WZj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:25:39 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41199 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966506AbeF1WZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:24:03 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a6-v6so5737811ljj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:24:03 -0700 (PDT)
+        Thu, 28 Jun 2018 18:25:38 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a17-v6so2624286ljd.8
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a/YlVDztboctX8LEKl48nxtRX1IAYQ9bBUlXIWB0SlY=;
-        b=eq/rysHxFLutHL5ecr9IfKH1vX2IjCr3O75WxUu1AEeQQfE71JpwKLPHoTmy845b0r
-         fenyMJ3PF7eTSNA8iGobL9F8+QdKYf3VlYvb0QjS5K1bgfAGl5ShpoPMUOBXcp7ez5n2
-         uOJe+wsdKwcVfWUNRtVdi42KtYfIf5kndjy8zh1yVtC84c+8Hj4G1qwSV7/t1CnxqqXk
-         7Sq2alVQDqTXLnViUDjp56e/eCdTWRU3GsFPPIIdB1/Opmbm5OJ68jJom3SP5fzcWhiM
-         TRE+yQdtnXm4i8OzPXZuAV7VHF1+njY/xH63xySgBTRcUkMWAIWm8TaG8/xrqKFGXJsU
-         VHWQ==
+        bh=A6R2lfP904LhmmzgXcFm8EoGldETTmubQTwkyQc3jzM=;
+        b=GjeFD3MNaAosGrx7NE7+5kYrnsEHIOpsAoloPl41LYGM0JQXwcL6dTJ37GoLqJshRy
+         S0WfzwhW8tuUYQLxtU2gobCsHfOteYr7Uy18F4bdbtk/10K7Jc6yJk1OKoqsuqex+Nz/
+         ayHu4yKtv3FrGE2qioUQeL5PIfPMH0FHBmMMMOxogFv+LXKsxDPFz8mQ4Ns3vM6WLwFt
+         Vc9HkvkgLPjpJnv1i15ATDhFpa5Ps8WCw+VsQHYmYYPbdYuq1oZ3FucSNTMvNcUYMma1
+         S+OLyHooW9aboXRfe7sw573KzDeZ7LM8vaXI7+uae863HHYr+MWfKkg1TvyjDFADl5pJ
+         gUOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a/YlVDztboctX8LEKl48nxtRX1IAYQ9bBUlXIWB0SlY=;
-        b=qtLBCod8BncGJI7qMGGYu2sPUtojQUGSm7lfmWIbY9BlA5c6XS/mWoYih7SitkZ6yy
-         dcPetiVCMbgtVdJF1P6rOj0WkPxO5wsBdDnwS7I57nZZ1OrMwndSrqOzjz0SC8dqLLrT
-         3G12B0tBSwSqoq6Fsrl4Jcoz3E7sHtLA7AKwK89P4ByaGxqqf8BCMriFbW0QkhYbdISl
-         t7hjcuDKHXrEvBBDS8yVXddJy4hAm51eHmQv+7QKmuzjLM9c7lwYERoJHnUHsI/x4zz6
-         lSe9V1GXylfYIyAa9gMT3rpF3VBUoXHLJUVIn+yoDBA67tNSml/fZAZw+Jj/2/ai+th2
-         ZG6Q==
-X-Gm-Message-State: APt69E2L4Tf7YEDKt2sjw3Nfatl8W3yCgNAO09WMiNGKX+G9aGbpJcpF
-        7Qzh4APkRRqdI5eopnk9IK7K5aHTpNUA3WdVpkL7
-X-Google-Smtp-Source: AAOMgpddbUpx5hknQ8np1CbejHSmN14ngsdAx4AK+/4epomazXgEdhR7QbdjOwuUoQbj5XtEOCol+bx6AZ4ya5qr5dY=
-X-Received: by 2002:a2e:4b01:: with SMTP id y1-v6mr8059349lja.135.1530224642128;
- Thu, 28 Jun 2018 15:24:02 -0700 (PDT)
+        bh=A6R2lfP904LhmmzgXcFm8EoGldETTmubQTwkyQc3jzM=;
+        b=KOpj6koalRx44HBANacbVrIcBmrXrN6psV9+qXufy6vb1xGpFJC7DuiS0ETRH5g8bO
+         oAQDuxUuErheQBhlHJn4Dw46ABX1ebjPXW1SWJyMaPAsRKDvhUmv2WlkT1H+dhT/jZ0S
+         61S2O24b2St713f+W9O4bV6X6XIQn5WSuqPL1qRPk/dX3z6w/BTfvJk1Zy40OY25t2xY
+         RhZMuepTEIpQoFtCNpjfYoun6sT9u5DW/5cvgZc/Mi2ZIZB42+EwNl0gV2fZNePAcxSi
+         tuljhdVngGvPOVkHcJI+o4ocNHHAMFYiBQWhWfHu2WYVZTw6Qn4h+DfMlggIwcu0TqW9
+         d3lQ==
+X-Gm-Message-State: APt69E2p+K8vLyvL1yaKeytg2PRWiXqBnxkIgrskTXuMwZfAv+Vtjueq
+        wmCn08GQVyzFWprj5MQS1QbWvRVJcCWCrJbOIlHG
+X-Google-Smtp-Source: ADUXVKLeTsNAapwEZn+VuMi441WmePtfh3QVXGZe7GCt0G5gz6J1sXQ0/IUVY6BQhp2JSU+lxX05p4fwyaoE71WRDe4=
+X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr8226732ljd.72.1530224736275;
+ Thu, 28 Jun 2018 15:25:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1529003588.git.rgb@redhat.com> <7a95a34c5e90053f8214090e0d73cd54d6d281a2.1529003588.git.rgb@redhat.com>
-In-Reply-To: <7a95a34c5e90053f8214090e0d73cd54d6d281a2.1529003588.git.rgb@redhat.com>
+References: <cover.1529003588.git.rgb@redhat.com> <65299efddc04e19e6ad4b06fbde0bb3db2643cb5.1529003588.git.rgb@redhat.com>
+In-Reply-To: <65299efddc04e19e6ad4b06fbde0bb3db2643cb5.1529003588.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 28 Jun 2018 18:23:51 -0400
-Message-ID: <CAHC9VhRMhX8iL2N2TN7qQmZ=3rb8uAr=kUiOjc04JAR0QzR6fg@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak59 V1 4/6] audit: hand taken context to
- audit_kill_trees for syscall logging
+Date:   Thu, 28 Jun 2018 18:25:25 -0400
+Message-ID: <CAHC9VhTffdnaymGk0LiCqXQfDK_7TW-_wxVTNuT9deS5SwsNBA@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak59 V1 5/6] audit: move EOE record after kill_trees
+ for exit/free
 To:     rgb@redhat.com
 Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
@@ -72,154 +72,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Since the context is taken from the task in __audit_syscall_exit() and
-> __audit_free(), hand it to audit_kill_trees() so it can be used to
-> associate with a syscall record.  This requires adding the context
-> parameter to kill_rules() rather than using the current audit_context
-> (which has been taken).
+> The EOE record was being issued prior to the pruning of the killed_tree
+> list.
 >
-> The callers of trim_marked() and evict_chunk() still have their context.
+> Move the EOE record creation out of audit_log_exit() and into its
+> callers __audit_free() and __audit_syscall_exit() so that
+> audit_kill_trees() can be called prior to the EOE record creation and
+> any purged trees CONFIG_CHANGE records included in the syscall record
+> event.
 >
 > See: https://github.com/linux-audit/audit-kernel/issues/50
 > See: https://github.com/linux-audit/audit-kernel/issues/59
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  kernel/audit.h      |  4 ++--
->  kernel/audit_tree.c | 18 ++++++++++--------
->  kernel/auditsc.c    |  4 ++--
->  3 files changed, 14 insertions(+), 12 deletions(-)
->
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 214e149..f39f7aa 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -312,7 +312,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
->  extern int audit_tag_tree(char *old, char *new);
->  extern const char *audit_tree_path(struct audit_tree *tree);
->  extern void audit_put_tree(struct audit_tree *tree);
-> -extern void audit_kill_trees(struct list_head *list);
-> +extern void audit_kill_trees(struct audit_context *context);
->  #else
->  #define audit_remove_tree_rule(rule) BUG()
->  #define audit_add_tree_rule(rule) -EINVAL
-> @@ -321,7 +321,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
->  #define audit_put_tree(tree) (void)0
->  #define audit_tag_tree(old, new) -EINVAL
->  #define audit_tree_path(rule) ""       /* never called */
-> -#define audit_kill_trees(list) BUG()
-> +#define audit_kill_trees(context) BUG()
->  #endif
->
->  extern char *audit_unpack_string(void **bufp, size_t *remain, size_t len);
-> diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> index a01b9da..2d3e1071 100644
-> --- a/kernel/audit_tree.c
-> +++ b/kernel/audit_tree.c
-> @@ -493,13 +493,13 @@ static int tag_chunk(struct inode *inode, struct audit_tree *tree)
->         return 0;
->  }
->
-> -static void audit_tree_log_remove_rule(struct audit_krule *rule)
-> +static void audit_tree_log_remove_rule(struct audit_context *context, struct audit_krule *rule)
->  {
->         struct audit_buffer *ab;
->
->         if (!audit_enabled)
->                 return;
-> -       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
->         if (unlikely(!ab))
->                 return;
->         audit_log_format(ab, "op=remove_rule");
-> @@ -510,7 +510,7 @@ static void audit_tree_log_remove_rule(struct audit_krule *rule)
->         audit_log_end(ab);
->  }
->
-> -static void kill_rules(struct audit_tree *tree)
-> +static void kill_rules(struct audit_context *context, struct audit_tree *tree)
->  {
->         struct audit_krule *rule, *next;
->         struct audit_entry *entry;
-> @@ -521,7 +521,7 @@ static void kill_rules(struct audit_tree *tree)
->                 list_del_init(&rule->rlist);
->                 if (rule->tree) {
->                         /* not a half-baked one */
-> -                       audit_tree_log_remove_rule(rule);
-> +                       audit_tree_log_remove_rule(context, rule);
->                         if (entry->rule.exe)
->                                 audit_remove_mark(entry->rule.exe);
->                         rule->tree = NULL;
-> @@ -584,7 +584,7 @@ static void trim_marked(struct audit_tree *tree)
->                 tree->goner = 1;
->                 spin_unlock(&hash_lock);
->                 mutex_lock(&audit_filter_mutex);
-> -               kill_rules(tree);
-> +               kill_rules(audit_context(), tree);
->                 list_del_init(&tree->list);
->                 mutex_unlock(&audit_filter_mutex);
->                 prune_one(tree);
-> @@ -924,8 +924,10 @@ static void audit_schedule_prune(void)
->   * ... and that one is done if evict_chunk() decides to delay until the end
->   * of syscall.  Runs synchronously.
->   */
-> -void audit_kill_trees(struct list_head *list)
-> +void audit_kill_trees(struct audit_context *context)
->  {
-> +       struct list_head *list = &context->killed_trees;
-> +
->         audit_ctl_lock();
->         mutex_lock(&audit_filter_mutex);
->
-> @@ -933,7 +935,7 @@ void audit_kill_trees(struct list_head *list)
->                 struct audit_tree *victim;
->
->                 victim = list_entry(list->next, struct audit_tree, list);
-> -               kill_rules(victim);
-> +               kill_rules(context, victim);
->                 list_del_init(&victim->list);
->
->                 mutex_unlock(&audit_filter_mutex);
-> @@ -972,7 +974,7 @@ static void evict_chunk(struct audit_chunk *chunk)
->                 list_del_init(&owner->same_root);
->                 spin_unlock(&hash_lock);
->                 if (!postponed) {
-> -                       kill_rules(owner);
-> +                       kill_rules(audit_context(), owner);
->                         list_move(&owner->list, &prune_list);
->                         need_prune = 1;
->                 } else {
+>  kernel/auditsc.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+
+See my comments in 4/6.  Assuming we are able to shuffle the ordering
+of audit_log_exit() and audit_kill_trees() this patch would no longer
+be needed, yes?
+
 > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index ceb1c45..2590c9e 100644
+> index 2590c9e..d56aead 100644
 > --- a/kernel/auditsc.c
 > +++ b/kernel/auditsc.c
-> @@ -1490,7 +1490,7 @@ void __audit_free(struct task_struct *tsk)
->         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
+> @@ -1460,10 +1460,6 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
+>
+>         audit_log_proctitle(tsk, context);
+>
+> -       /* Send end of event record to help user space know we are finished */
+> -       ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+> -       if (ab)
+> -               audit_log_end(ab);
+>         if (call_panic)
+>                 audit_panic("error converting sid to string");
+>  }
+> @@ -1491,6 +1487,14 @@ void __audit_free(struct task_struct *tsk)
 >                 audit_log_exit(context, tsk);
 >         if (!list_empty(&context->killed_trees))
-> -               audit_kill_trees(&context->killed_trees);
-> +               audit_kill_trees(context);
-
-See my comment below about the ordering of audit_kill_trees() and
-audit_log_exit().
-
+>                 audit_kill_trees(context);
+> +       if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT) {
+> +               struct audit_buffer *ab;
+> +
+> +               /* Send end of event record to help user space know we are finished */
+> +               ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+> +               if (ab)
+> +                       audit_log_end(ab);
+> +       }
+>
 >         audit_free_context(context);
 >  }
-> @@ -1577,7 +1577,7 @@ void __audit_syscall_exit(int success, long return_code)
+> @@ -1572,13 +1576,19 @@ void __audit_syscall_exit(int success, long return_code)
+>
+>         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
+>                 audit_log_exit(context, current);
+> +       if (!list_empty(&context->killed_trees))
+> +               audit_kill_trees(context);
+> +       if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT) {
+> +               struct audit_buffer *ab;
+>
+> +               /* Send end of event record to help user space know we are finished */
+> +               ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
+> +               if (ab)
+> +                       audit_log_end(ab);
+> +       }
+>         context->in_syscall = 0;
 >         context->prio = context->state == AUDIT_RECORD_CONTEXT ? ~0ULL : 0;
 >
->         if (!list_empty(&context->killed_trees))
-> -               audit_kill_trees(&context->killed_trees);
-> +               audit_kill_trees(context);
-
-I wonder if we should move the kill_trees if-block above the
-audit_log_exit() block so that any records that are emitted will be
-before the SYSCALL record.  I didn't chase down all the code paths,
-but it seems like it should be safe, no?
-
+> -       if (!list_empty(&context->killed_trees))
+> -               audit_kill_trees(context);
+> -
 >         audit_free_names(context);
 >         unroll_tree_refs(context, NULL, 0);
+>         audit_free_aux(context);
 > --
 > 1.8.3.1
+>
+
 
 -- 
 paul moore
