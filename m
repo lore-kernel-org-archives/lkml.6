@@ -2,95 +2,76 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBF4C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4201BC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5481827573
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:44:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUWjmgif"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5481827573
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 62B27275D1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:05:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B27275D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966654AbeF1Oof (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966491AbeF1Ooe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:44:34 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9001A27572;
-        Thu, 28 Jun 2018 14:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530197073;
-        bh=g86Rud0DewP2LKVDOlZPPwoYlFo4rYKHN00MqBCOTXE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FUWjmgifqy6OCR6HIhMGM4txxbvATfLx6ygDlNxmyTu5EVRJcxUR7c+lO2Z7YnSqD
-         n2dyma/fwF0EEFwxt3Q1lMpheCUKaB4BQeOb/iY5Db2Z6OcuNO2IeWhMYg+aZSGVB4
-         A9GKl5buBBQg05BkzuY8usg5OmXKQHoceQ/ZDM3I=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 61B981401E5; Thu, 28 Jun 2018 11:44:31 -0300 (-03)
-Date:   Thu, 28 Jun 2018 11:44:31 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jeremy Cline <jeremy@jcline.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Herton R . Krzesinski" <herton@redhat.com>,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] Improve Python 3 support in perf
-Message-ID: <20180628144431.GA20184@kernel.org>
-References: <0100016341a7217a-d48a8d8a-c7ed-4857-82ef-9e2e599364e2-000000@email.amazonses.com>
+        id S966978AbeF1PFv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:05:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47304 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965016AbeF1PFu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:05:50 -0400
+Received: from localhost (unknown [104.153.224.166])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26E18D10;
+        Thu, 28 Jun 2018 15:05:37 +0000 (UTC)
+Date:   Thu, 28 Jun 2018 22:07:48 +0900
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vitor Fernandes Ferreira <vferr.862729@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: comedi: fix operator '=' coding style issue
+Message-ID: <20180628130748.GA30384@kroah.com>
+References: <20180619162352.12324-1-vferr.862729@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0100016341a7217a-d48a8d8a-c7ed-4857-82ef-9e2e599364e2-000000@email.amazonses.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180619162352.12324-1-vferr.862729@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, May 08, 2018 at 09:27:42PM +0000, Jeremy Cline escreveu:
-> Hi folks,
-> 
-> This patch set adds Python 3 support to a number of perf scripts,
-> including those generated by "perf script -g python", without breaking
-> Python 2 compatibility.
+On Tue, Jun 19, 2018 at 06:23:52PM +0200, Vitor Fernandes Ferreira wrote:
+> Signed-off-by: Vitor Fernandes Ferreira <vferr.862729@gmail.com>
+> ---
+>  drivers/staging/comedi/comedi_fops.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Argh, this fell thru the cracks, sorry, all seems ok, applied,
+Hi,
 
-- Arnaldo
- 
-> Jeremy Cline (8):
->   perf tools: Generate a Python script compatible with Python 2 and 3
->   perf scripts python: Add Python 3 support to Core.py
->   perf scripts python: Add Python 3 support to SchedGui.py
->   perf scripts python: Add Python 3 support to Util.py
->   perf scripts python: Add Python 3 support to EventClass.py
->   perf scripts python: Add Python 3 support to sched-migration.py
->   perf scripts python: Add Python 3 support to stat-cpi.py
->   perf tests: Add Python 3 support to attr.py
-> 
->  .../Perf-Trace-Util/lib/Perf/Trace/Core.py    | 40 ++++++++-----------
->  .../lib/Perf/Trace/EventClass.py              |  4 +-
->  .../lib/Perf/Trace/SchedGui.py                |  2 +-
->  .../Perf-Trace-Util/lib/Perf/Trace/Util.py    | 11 ++---
->  tools/perf/scripts/python/sched-migration.py  | 14 ++++---
->  tools/perf/scripts/python/stat-cpi.py         |  5 ++-
->  tools/perf/tests/attr.py                      | 32 +++++++++------
->  .../scripting-engines/trace-event-python.c    | 29 +++++++-------
->  8 files changed, 74 insertions(+), 63 deletions(-)
-> 
-> -- 
-> 2.17.0
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
