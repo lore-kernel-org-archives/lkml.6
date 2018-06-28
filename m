@@ -6,55 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 432F4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD349C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE9A271A0
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EFA12719F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:58:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Rmmfwlgd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE9A271A0
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iNjjtkwf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EFA12719F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934222AbeF1J56 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:57:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54835 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932131AbeF1J55 (ORCPT
+        id S935201AbeF1J6B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:58:01 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54260 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933853AbeF1J56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:57:57 -0400
-Received: by mail-wm0-f65.google.com with SMTP id i139-v6so8880381wmf.4
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:57:56 -0700 (PDT)
+        Thu, 28 Jun 2018 05:57:58 -0400
+Received: by mail-wm0-f66.google.com with SMTP id b188-v6so2794649wme.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=ONiei6RmaUl6H3XQTFyawkMW5vALH4DATytRQukQTEg=;
-        b=RmmfwlgdmyRS3zl0XPyZsev8u8+JuYETd9gSVYh2Q2GDXhu4FBlCqzNQsDX0kEBeZ5
-         o2RGw06Mtc3fPVKuzhDNVCJY5DRJmIeuiQFcAddAinHfonXb0y86gxSSgPMdyelJ/S/S
-         nT1eEoSNUzE82QVigebnNLeC9t824dCSi/4bxHmlzhhCu5CEwRzSbHeN1/eVsevimqY/
-         syK4JSpGdmDoLl6frV43YgbH28oG1Q8AIiz5Zr4ruRhnhv4hSZcKw0bmHNg/hoXcKLGp
-         z794FePcOzTcfVZlS9a7oclpx8qhWPGx0MhJsImTpJM8Zaf9LkYByIxIUPEiASvB0GZn
-         EAgQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=l7oO174CH9dyNVcYLBoLq+bVs3JdeUpSqH3ZvJoY2m4=;
+        b=iNjjtkwfcrmmFsup8iFqVgyu5YGZoZLnR7LSY/efz3eaHvPATUfrTlU+CxR4ydE8oO
+         91oLStxbFSRpeNI6wOv1sBvUe7E4p8AFIV+nB5+KLryS3FwWa305HuvfxbPDH4TEWbIx
+         S60rjD8yk5UXajPL/AC92FMtajyWYaJXaoFbB52/EdSDJuisG57m8E7AQo3zs4bpoNYQ
+         5y5cBCnQq3xpT5Cb/BT3z8x+sVjUXBNkHNIA17uxmTnL8ZQ9FK8NSLSdir13bojjxRpX
+         w1M/uWTKeTsGX5A3oaE8k2E2XEp+qrOw64pdDXdknIDiG8p5Ns55r/oeCS5NK11jv12p
+         4OOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ONiei6RmaUl6H3XQTFyawkMW5vALH4DATytRQukQTEg=;
-        b=f/vovcb5XiTjK82Kps7j/kgMqmr8KSekd08/A8usvOu0/VKLwP6o14s9ylmGz/J2si
-         TKvwcV6Uw9HenAjuz+TA665YDJIvGPAlo5XTeQhFAkO7khpfLCvJaL+eF1Pkke/2Zg4V
-         33A7zvPDGV7Ez1UmNsAgfjs3MOWF7WzmsNo5oJxFyxvCw1USbc5LLZqK8Udbm+qcaP4F
-         oMFSVoEzfvMrgO7QxT956xlHUAsyU9xi1TAvnTZwbpOyT8alQdJd7AmJW8Kbtq0zkbVD
-         hUz9wjqxSG5uoT0Ry6ZtASAX0NYokNfgdRYWniUm9uFTOVKz8Bb86LjVz7VlAsdysZq6
-         uXLA==
-X-Gm-Message-State: APt69E0+7HJltYHpSVvmFfzkrr/eufxvoS5J8X2MlvNXoViJyBO9x6Qc
-        HddC4OGuxjyw7v2eRqovoCtFIg==
-X-Google-Smtp-Source: AAOMgpcFMoYMCYAbDTLEwa/CJbywazqV+Krctp5JTXPP9jNqmrEnLbI3IQKNkR+wz9ASonfbmNOZKg==
-X-Received: by 2002:a1c:150d:: with SMTP id 13-v6mr8079709wmv.100.1530179876043;
-        Thu, 28 Jun 2018 02:57:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=l7oO174CH9dyNVcYLBoLq+bVs3JdeUpSqH3ZvJoY2m4=;
+        b=SWx6VRWsdEU7SeSeLS6o62JLNv/T0jV2Ohli2emds1+cHjWgXRkT4I872rgVteOGQd
+         Mp4EOOw0dsW5K7RE+jTxo9WHuNsvx6reEXyUI8n4bVUEwo7IEY4u9218pgNqlECW7Y1t
+         ZRadONA35yNXJEHGyT4xB8qHxG3teDn/9JJGpK0MOwjK+L3ASisvWbXA+FzjUSarq9jZ
+         BXnqOj3foTIHawZAWAOB0KgHhLG6EL7vhkU9d1RJ+2YbDxEHU40N0E4oSYyjHfoCh7ta
+         0x080j/0Od8eOTYgq7u+jHQekX+m/Nsxg7FbZJ7IcuUTveaDItPFfCoigT3MqzPsb5EG
+         Mj2A==
+X-Gm-Message-State: APt69E3S+5zfjXFRpVk+iyXfyFuXi1cu+H9r/qyOOSwagPtZ0V3Ug+f2
+        m4zThFWhZ5l1udr+UvBvEvNmQQ==
+X-Google-Smtp-Source: AAOMgpcZWFlq/62DDglb8Mqq/KdpdVFCq7sUHy6ZeS24pv/247gH64t9dT3NuzuTx9d697RKsf5iAg==
+X-Received: by 2002:a1c:90c2:: with SMTP id s185-v6mr4609822wmd.5.1530179877143;
+        Thu, 28 Jun 2018 02:57:57 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-87-41.w90-86.abo.wanadoo.fr. [90.86.29.41])
-        by smtp.gmail.com with ESMTPSA id s8-v6sm1550352wrm.84.2018.06.28.02.57.54
+        by smtp.gmail.com with ESMTPSA id s8-v6sm1550352wrm.84.2018.06.28.02.57.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 02:57:55 -0700 (PDT)
+        Thu, 28 Jun 2018 02:57:56 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -64,10 +65,12 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-Date:   Thu, 28 Jun 2018 11:57:35 +0200
-Message-Id: <20180628095748.4462-1-brgl@bgdev.pl>
+Subject: [PATCH v3 01/13] clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
+Date:   Thu, 28 Jun 2018 11:57:36 +0200
+Message-Id: <20180628095748.4462-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,57 +78,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This series moves all aemif/nand users to using the ti-aemif platform
-driver located in drivers/memory instead of the older API located in
-mach-davinci.
+Since commit a8e3923ab571 ("mtd: rawnand: davinci: don't acquire and
+enable clock") we no longer acquire the aemif clock from the davinci
+nand driver - we only do it from the ti-aemif driver. Remove the nand
+entry from the psc lookup table.
 
-First five patches add necessary changes to the clock driver. Next
-seven convert the board files to using the ti-aemif driver. Last patch
-removes now dead code.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/psc-da850.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-v1 -> v2:
-- added missing clock lookups for ti-aemif where needed
-- removed an unnecessary davinci_nand clock lookup from psc-da850
-- moved the .id field initialization of aemif platform devices next to .name
-- tweaked the commit message for the last patch
-
-v2 -> v3:
-- in patch 6: change the davinci_nand device's id to -1 and keep the
-  includes sorted
-
-Bartosz Golaszewski (13):
-  clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
-  clk: davinci: psc-dm365: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-  clk: davinci: psc-da830: add a lookup entry for aemif clock
-  ARM: davinci: omapl138-hawk: add aemif & nand support
-  ARM: davinci: da850-evm: use aemif platform driver in legacy mode
-  ARM: davinci: dm365-evm: use the ti-aemif soc driver
-  ARM: davinci: dm644x-evm: use aemif platform driver
-  ARM: davinci: da830-evm: use aemif platform driver
-  ARM: davinci: dm646x-evm: use aemif platform driver
-  ARM: davinci: mityomapl138: use aemif platform driver
-  ARM: davinci: unduplicate aemif support
-
- arch/arm/mach-davinci/Makefile                |   2 +-
- arch/arm/mach-davinci/aemif.c                 | 218 ------------------
- arch/arm/mach-davinci/board-da830-evm.c       |  56 ++++-
- arch/arm/mach-davinci/board-da850-evm.c       |  93 ++++----
- arch/arm/mach-davinci/board-dm365-evm.c       |  59 +++--
- arch/arm/mach-davinci/board-dm644x-evm.c      |  55 +++--
- arch/arm/mach-davinci/board-dm646x-evm.c      |  52 ++++-
- arch/arm/mach-davinci/board-mityomapl138.c    |  55 +++--
- arch/arm/mach-davinci/board-omapl138-hawk.c   | 132 +++++++++++
- drivers/clk/davinci/psc-da830.c               |   3 +-
- drivers/clk/davinci/psc-da850.c               |   3 +-
- drivers/clk/davinci/psc-dm365.c               |   3 +-
- drivers/clk/davinci/psc-dm644x.c              |   3 +-
- drivers/clk/davinci/psc-dm646x.c              |   3 +-
- .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
- 15 files changed, 407 insertions(+), 331 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/aemif.c
-
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+index d196dcbed560..5a18bca464cd 100644
+--- a/drivers/clk/davinci/psc-da850.c
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -16,8 +16,7 @@
+ 
+ #include "psc.h"
+ 
+-LPSC_CLKDEV2(emifa_clkdev,	NULL,		"ti-aemif",
+-				"aemif",	"davinci_nand.0");
++LPSC_CLKDEV1(emifa_clkdev,	NULL,		"ti-aemif");
+ LPSC_CLKDEV1(spi0_clkdev,	NULL,		"spi_davinci.0");
+ LPSC_CLKDEV1(mmcsd0_clkdev,	NULL,		"da830-mmc.0");
+ LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
 -- 
 2.17.1
 
