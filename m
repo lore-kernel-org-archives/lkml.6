@@ -2,114 +2,132 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6AAC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE67C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FE12745D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:35:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOiqXPLk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78FE12745D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E8BCF20882
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 13:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BCF20882
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966137AbeF1Nfx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 09:35:53 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:40239 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965482AbeF1Nfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 09:35:52 -0400
-Received: by mail-ot0-f194.google.com with SMTP id f17-v6so6143129otl.7
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 06:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WGHJe90gfzDzfxicE2Cmq39nLoE44KEiCSUFAJUrwGg=;
-        b=NOiqXPLkynFhCH4iu41B/tRYNhr9KvL9aSLxvAT3OYqrrnXOnBlocOEGeQqqVlarRe
-         ReaKy6henhvnyijKnAVfkFVsXBdbbXYOtlJ39T7fQwgxteK53HhNZkoHjwPSwCYsAvBF
-         dyGyh6aciQBoaqNC4S7TKTunCLMMEjYnkYept1mnXRiMWnQ6D0NhTciGwYRCijY+pZtY
-         OdqrR+oNbQL1B9Eju2i+kiFoXXaSbuDy7pMTyEjTQ6iUQzySkXF4HD2eAB2ALjEygMpA
-         Rwq1UiBfqYkehrBJ41kYc9eAfa79HJ17XuRxZyIK2BZYnNlBosbybDbUpnRgQj/Clnne
-         zcHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WGHJe90gfzDzfxicE2Cmq39nLoE44KEiCSUFAJUrwGg=;
-        b=WPOPRH2XABOgiK9Z5j8Q8olS4fmV+A26bGe7XbbljCBNIhauFLjq4ByviropuzT3pB
-         CX1rkegiT/mlCeqvwOExenuhzKgmaXfDPkuR+fKlXqWvvgN/KpyZryvKCNp4J9kpVx7y
-         onqPq/JCPDBYjkDqF30sznK61W17JT2RsnTd20b997ClMWxKuvgey/Ogwj9KvBWjYm7C
-         cKVUIj/epGIUYcJpdvzqTmHzo6GckOF3MWnDlZh+IB0LDfhkeQqNW0Txz4EhVDa3Bbho
-         eac4WhXhzTBxl16mnmGqph8PAPGUtg63Lr9gWP3UxHGN7zx+kjB3Wpyyl5pDBKW0cXDY
-         CdSw==
-X-Gm-Message-State: APt69E1bWjZVlvLsC1McZfgs0X/vgsA6WYQKk62vq0wAzu8xkjj7mWh1
-        kQdrv7VOMBdXv1CO3Qtf5ARKN08j4cwDXDKquRM=
-X-Google-Smtp-Source: AAOMgpeO9U2Yr3YUH+3T/qzRiC2myjeeBGGQUbx5Z7Zgh2aScFR3fl8bVC10WFPS2bEqIpYwXGHNfB15l9A7Wkat7xU=
-X-Received: by 2002:a9d:30c2:: with SMTP id r2-v6mr6274266otg.25.1530192951556;
- Thu, 28 Jun 2018 06:35:51 -0700 (PDT)
+        id S966085AbeF1Nig (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 09:38:36 -0400
+Received: from verein.lst.de ([213.95.11.211]:49045 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753771AbeF1Nie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 09:38:34 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 4F94968B97; Thu, 28 Jun 2018 15:38:33 +0200 (CEST)
+Date:   Thu, 28 Jun 2018 15:38:33 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ye Xiaolong <xiaolong.ye@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [lkp-robot] [fs]  3deb642f0d:  will-it-scale.per_process_ops
+        -8.8% regression
+Message-ID: <20180628133833.GA11790@lst.de>
+References: <20180622082752.GX11011@yexl-desktop> <20180622150251.GA12802@lst.de> <20180626060338.GU12146@yexl-desktop> <20180627070745.GA9765@lst.de> <20180628003834.GH18756@yexl-desktop>
 MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 06:35:51
- -0700 (PDT)
-In-Reply-To: <20180628043713.14425-1-andrew.smirnov@gmail.com>
-References: <20180628043713.14425-1-andrew.smirnov@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 28 Jun 2018 10:35:51 -0300
-Message-ID: <CAOMZO5DqkfotddSRbibD0UE2R=QZMef2-4Gr3LaeGT=Fq9qMyw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: imx51-babbage: Fix reg for usbh1phy
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180628003834.GH18756@yexl-desktop>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
+On Thu, Jun 28, 2018 at 08:38:34AM +0800, Ye Xiaolong wrote:
+> Update the result:
+> 
+> testcase/path_params/tbox_group/run: will-it-scale/poll2-performance/lkp-sb03
 
-On Thu, Jun 28, 2018 at 1:37 AM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> There's already a USB PHY with reg of zero on that bus - usbphy0, used
-> by usbotg (included from imx51.dtsi). Move usbh1phy to @1 avoid
-> address collision.
->
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  arch/arm/boot/dts/imx51-babbage.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/imx51-babbage.dts b/arch/arm/boot/dts/imx51-babbage.dts
-> index b8ca73d3d379..541c6e67ad1a 100644
-> --- a/arch/arm/boot/dts/imx51-babbage.dts
-> +++ b/arch/arm/boot/dts/imx51-babbage.dts
-> @@ -175,9 +175,9 @@
->                 #size-cells = <0>;
->                 compatible = "simple-bus";
->
-> -               usbh1phy: usbh1phy@0 {
-> +               usbh1phy: usbh1phy@1 {
->                         compatible = "usb-nop-xceiv";
-> -                       reg = <0>;
-> +                       reg = <1>;
+So this looks like a huge improvement in the per process ops, but not
+as large as the original regression, and no change in the per-thread
+ops.
 
-We don't really need the 'reg' property here.
+But the baseline already looks much lower, e.g. this shows an improvement
+from 404611 to 424608 for the per-process ops, while the original showed
+a regression from 501456 to 457120.  Are we measuring on different
+hardware?   Did we gain new spectre mitigations elsewhere?  Either way
+I'm going to send these patches out for review, but I'd like to understand
+the numbers a bit more.
 
-I have sent a previous fix for this on an attempt to fix dtc warnings
-with W=1,  so let me send a v2 based on the feedback I got previously:
-https://patchwork.kernel.org/patch/10399085/
-
-Thanks
+> 
+> 894b8c000ae6c106  8fbedc19c94fd25a2b9b327015  
+> ----------------  --------------------------  
+>          %stddev      change         %stddev
+>              \          |                \  
+>     404611 ±  4%         5%     424608        will-it-scale.per_process_ops
+>       1489 ± 21%        28%       1899 ± 18%  will-it-scale.time.voluntary_context_switches
+>   45828560                    46155690        will-it-scale.workload
+>       2337                        2342        will-it-scale.time.system_time
+>        806                         806        will-it-scale.time.percent_of_cpu_this_job_got
+>        310                         310        will-it-scale.time.elapsed_time
+>        310                         310        will-it-scale.time.elapsed_time.max
+>       4096                        4096        will-it-scale.time.page_size
+>     233917                      233862        will-it-scale.per_thread_ops
+>      17196                       17179        will-it-scale.time.minor_page_faults
+>       9901                        9862        will-it-scale.time.maximum_resident_set_size
+>      14705 ±  3%                 14397 ±  4%  will-it-scale.time.involuntary_context_switches
+>        167                         163        will-it-scale.time.user_time
+>       0.66 ± 25%       -17%       0.54        will-it-scale.scalability
+>     120508 ± 15%        -7%     112098 ±  5%  interrupts.CAL:Function_call_interrupts
+>       1670 ±  3%        10%       1845 ±  3%  vmstat.system.cs
+>      32707                       32635        vmstat.system.in
+>        121                         122        turbostat.CorWatt
+>        149                         150        turbostat.PkgWatt
+>       1573                        1573        turbostat.Avg_MHz
+>      17.54 ± 19%                 17.77 ± 19%  boot-time.kernel_boot
+>        824 ± 12%                   834 ± 12%  boot-time.idle
+>      27.45 ± 12%                 27.69 ± 12%  boot-time.boot
+>      16.96 ± 21%                 16.93 ± 21%  boot-time.dhcp
+>       1489 ± 21%        28%       1899 ± 18%  time.voluntary_context_switches
+>       2337                        2342        time.system_time
+>        806                         806        time.percent_of_cpu_this_job_got
+>        310                         310        time.elapsed_time
+>        310                         310        time.elapsed_time.max
+>       4096                        4096        time.page_size
+>      17196                       17179        time.minor_page_faults
+>       9901                        9862        time.maximum_resident_set_size
+>      14705 ±  3%                 14397 ±  4%  time.involuntary_context_switches
+>        167                         163        time.user_time
+>      18320               6%      19506 ±  8%  proc-vmstat.nr_slab_unreclaimable
+>       1518 ±  7%                  1558 ± 10%  proc-vmstat.numa_hint_faults
+>       1387 ±  8%                  1421 ±  9%  proc-vmstat.numa_hint_faults_local
+>       1873 ±  5%                  1917 ±  8%  proc-vmstat.numa_pte_updates
+>      19987                       20005        proc-vmstat.nr_anon_pages
+>       8464                        8471        proc-vmstat.nr_kernel_stack
+>     309815                      310062        proc-vmstat.nr_file_pages
+>      50828                       50828        proc-vmstat.nr_free_cma
+>   16065590                    16064831        proc-vmstat.nr_free_pages
+>    3194669                     3194517        proc-vmstat.nr_dirty_threshold
+>    1595384                     1595308        proc-vmstat.nr_dirty_background_threshold
+>     798886                      797937        proc-vmstat.pgfault
+>       6510                        6499        proc-vmstat.nr_mapped
+>     659089                      657491        proc-vmstat.numa_local
+>     665458                      663786        proc-vmstat.numa_hit
+>       1037                        1033        proc-vmstat.nr_page_table_pages
+>     669923                      665906        proc-vmstat.pgfree
+>     676982                      672385        proc-vmstat.pgalloc_normal
+>       6368                        6294        proc-vmstat.numa_other
+>      13013              -7%      12152 ± 11%  proc-vmstat.nr_slab_reclaimable
+>   51213164 ± 18%        23%   63014695 ± 25%  perf-stat.node-loads
+>   22096136 ± 28%        20%   26619357 ± 35%  perf-stat.node-load-misses
+>  2.079e+08 ±  9%        12%  2.323e+08 ± 11%  perf-stat.cache-misses
+>     515039 ±  3%        10%     568299 ±  3%  perf-stat.context-switches
+>  3.283e+08 ± 22%        10%  3.622e+08 ±  5%  perf-stat.iTLB-loads
+> 
+> Thanks,
+> Xiaolong
+---end quoted text---
