@@ -6,154 +6,141 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8ABEC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320CBC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7116626FE4
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7116626FE4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id D198626FEA
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:01:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D198626FEA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964786AbeF1HA6 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:00:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37093 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933361AbeF1HA4 (ORCPT
+        id S964824AbeF1HB5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:01:57 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:40064 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933361AbeF1HBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:00:56 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v22-v6so4493919edq.4;
-        Thu, 28 Jun 2018 00:00:55 -0700 (PDT)
+        Thu, 28 Jun 2018 03:01:54 -0400
+Received: by mail-vk0-f68.google.com with SMTP id s23-v6so291350vks.7;
+        Thu, 28 Jun 2018 00:01:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=urXhfHTY3AsAltQuuau4lr0igcRK+phHSMvDsgjkTtA=;
-        b=QweHOjV9Tc9N7uucxK11HPcEYtiQm2Ks5gnWYDs5bpIYomVwDj6b6pD8es44DmvXbk
-         KML63CKm3jYutjz7cln/7iJaRwg7jXpikWAIn/N01/UamXJWa7ehJEyYo/XCjuyaaHF+
-         a3ntE4wrlhDZixNmcEf6sKqzI0Ptycv4prcLWNeIZJJN4LrgHR2M6kHwdQZ7J7oIFkFS
-         YGV5iBK53KL67US6sLOoPgarzJDHbh3WHqdITK6a02oP25gUtcyogb1K0ZjKM7VKoAaL
-         kGwlC6N0IBIyztxNhojt+OOn98ii7ezmkll5zDMBuRm+/t/lmlOuY32Is4z99PBmQV5j
-         r+pA==
-X-Gm-Message-State: APt69E0+akfmUNqbn+RXYGEUeko7Sz6HUIjFC0+uHq9cZTfIljRpOIz7
-        dzXRUk7zoiYqdgPQSpXKULQ6g38C
-X-Google-Smtp-Source: AAOMgpex1eginINmz1oDSu9ej/Pzd16+OsyrlhqxvTK8tzNIPEn7yhHvf6G0VTjWNA+XQUBoV18z+g==
-X-Received: by 2002:a50:9135:: with SMTP id e50-v6mr5260951eda.191.1530169254384;
-        Thu, 28 Jun 2018 00:00:54 -0700 (PDT)
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com. [74.125.82.53])
-        by smtp.gmail.com with ESMTPSA id o15-v6sm2747990edt.4.2018.06.28.00.00.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 00:00:53 -0700 (PDT)
-Received: by mail-wm0-f53.google.com with SMTP id z13-v6so7787613wma.5;
-        Thu, 28 Jun 2018 00:00:52 -0700 (PDT)
-X-Received: by 2002:a1c:850c:: with SMTP id h12-v6mr6963261wmd.116.1530169252596;
- Thu, 28 Jun 2018 00:00:52 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aAkg1L20ZteRX9kI12vsvdtXsfSm8eM3tTDFiVV+IZY=;
+        b=UqNHvgyTDLTLJlBtWUEX9Tl+/fxnMKAL7WDXvEapBV2MMezA2dBE21cZF5fLStyTYK
+         /EHqbvEAogl+239Ki/x8Ba8iUmP+QXZ2xvOUx8syKI0R5dEN1szeIcujJOXDSiaGp4xs
+         hsB+xTtUZTeMXZqbtxke1k8Ui1CESLErFBOYldb5Nf+ecW1Y6YLV1pcA+MXK0qVwffpQ
+         5Axdy47LXlcWkrElWVjfFkfPCT5RMinbQuFYjLQu4dGyE2qyf7vkFvZo8MnNVBmrQGc4
+         cj0KhU5V7/8oWF6J9r0WDeFBifbWQ5+sqPSkqsIm11ttj89TTrg+61oG1XfHoEkttRD8
+         JaVg==
+X-Gm-Message-State: APt69E0k0nWTBO1ceZw2iomQRlB6Vc7uyuBkWHpMY3jgYVIiDUCiXXWz
+        12CCA3Xy0zUl7gubMw0AkC4r5mX28oGTydg+JiJfNw==
+X-Google-Smtp-Source: AAOMgpfe8xhTqMhhrc7i4WKZdhAAZZIGRNZgT4CVFl4u9uF0GHoOUdtvfOJg529H4rHXyjiqqHyvqyJ+0dgL1spkZPk=
+X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr4445163vkg.159.1530169313568;
+ Thu, 28 Jun 2018 00:01:53 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 00:00:32
- -0700 (PDT)
-In-Reply-To: <1669385.k4L9lni8DF@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-16-jernej.skrabec@siol.net> <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
- <1669385.k4L9lni8DF@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 28 Jun 2018 15:00:32 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
-Message-ID: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 15/24] dt-bindings: display:
- sun4i-drm: Add description of A64 HDMI PHY
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
+References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
+ <CAN=P9pivApAo76Kjc0TUDE0kvJn0pET=47xU6e=ioZV2VqO0Rg@mail.gmail.com>
+In-Reply-To: <CAN=P9pivApAo76Kjc0TUDE0kvJn0pET=47xU6e=ioZV2VqO0Rg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Jun 2018 09:01:42 +0200
+Message-ID: <CAMuHMdVVutxU3paxcjsuLVjCuooHqs61o0DEySkOK1zUeMj2tw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
+To:     Kostya Serebryany <kcc@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>, cpandya@codeaurora.org,
+        vishwath@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:51 PM, Jernej Škrabec
-<jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
->> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
->> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
->> > clock parents. It is compatible to other HDMI PHYs, like that found in
->> > R40.
->> >
->> > Acked-by: Rob Herring <robh@kernel.org>
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> > ---
->> >
->> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
->> >  1 file changed, 3 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
->> > 84fe38dbb900..dc83f21ef188 100644
->> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > @@ -101,6 +101,7 @@ DWC HDMI PHY
->> >
->> >  Required properties:
->> >    - compatible: value must be one of:
->> > +    * allwinner,sun50i-a64-hdmi-phy
->> >
->> >      * allwinner,sun8i-a83t-hdmi-phy
->> >      * allwinner,sun8i-h3-hdmi-phy
->>
->> Nit: the list is sorted by family first, then SoC name, so it should
->> be the last on the list.
->
-> I went alphabetically, since "5" is before "8"...
+Hi Kostya,
 
-I see. I think version sort applies here, given that sun50i is newer
-than sun8i.
+On Thu, Jun 28, 2018 at 2:04 AM Kostya Serebryany <kcc@google.com> wrote:
+> On Wed, Jun 27, 2018 at 4:08 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> > On Tue, 26 Jun 2018 15:15:10 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
+> > > This patchset adds a new mode to KASAN [1], which is called KHWASAN
+> > > (Kernel HardWare assisted Address SANitizer).
+> > >
+> > > The plan is to implement HWASan [2] for the kernel with the incentive,
+> > > that it's going to have comparable to KASAN performance, but in the same
+> > > time consume much less memory, trading that off for somewhat imprecise
+> > > bug detection and being supported only for arm64.
+> >
+> > Why do we consider this to be a worthwhile change?
+> >
+> > Is KASAN's memory consumption actually a significant problem?  Some
+> > data regarding that would be very useful.
+>
+> On mobile, ASAN's and KASAN's memory usage is a significant problem.
+> Not sure if I can find scientific evidence of that.
+> CC-ing Vishwath Mohan who deals with KASAN on Android to provide
+> anecdotal evidence.
+>
+> There are several other benefits too:
+> * HWASAN more reliably detects non-linear-buffer-overflows compared to
+> ASAN (same for kernel-HWASAN vs kernel-ASAN)
+> * Same for detecting use-after-free (since HWASAN doesn't rely on quarantine).
+> * Much easier to implement stack-use-after-return detection (which
+> IIRC KASAN doesn't have yet, because in KASAN it's too hard)
+>
+> > If it is a large problem then we still have that problem on x86, so the
+> > problem remains largely unsolved?
+>
+> The problem is more significant on mobile devices than on desktop/server.
+> I'd love to have [K]HWASAN on x86_64 as well, but it's less trivial since x86_64
+> doesn't have an analog of aarch64's top-byte-ignore hardware feature.
 
-ChenYu
+This depends on your mobile devices and desktops and servers.
+There exist mobile devices with more memory than some desktops or servers.
 
-> Best regards,
-> Jernej
->
->>
->> Otherwise,
->>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->>
->> >    - reg: base address and size of memory-mapped region
->> >
->> > @@ -111,8 +112,9 @@ Required properties:
->> >    - resets: phandle to the reset controller driving the PHY
->> >    - reset-names: must be "phy"
->> >
->> > -H3 HDMI PHY requires additional clock:
->> >
->> > +H3 and A64 HDMI PHY require additional clocks:
->> >    - pll-0: parent of phy clock
->> >
->> > +  - pll-1: second possible phy clock parent (A64 only)
->> >
->> >  TV Encoder
->> >  ----------
->> >
->> > --
->> > 2.18.0
->
->
->
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+So actual numbers (O(KiB)? O(MiB)? O(GiB)?) would be nice to have.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
