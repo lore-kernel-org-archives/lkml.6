@@ -2,100 +2,264 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B0FC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532F3C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CCA2733E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F327A2733E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="phXdoCKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CCA2733E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="D84PvwEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F327A2733E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935014AbeF1MQC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 08:16:02 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48862 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934923AbeF1MP4 (ORCPT
+        id S935087AbeF1MQR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:16:17 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:53657 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934923AbeF1MQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 08:15:56 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5SCEB0c166975
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:15:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=d4FgTD/8iTCfR5dm4WMMXnmLs7+PRZJBW5TVC9PSHUI=;
- b=phXdoCKAK7+Gy7J39ekVDWn3YLxh6pd1l5U0RRc29XjE7wlIVrAwwxKgyqF51KlOda1N
- iA+LKq6PB0uqRuT6kTvYwjT/zmklu3MFws+3XtiAbbs/JIp62jIjpUX7HeDBWq7RwhLl
- ERxungs0+Tm1FHRlNRgZ5KzSb+5UlcE11MB/KeQuJJdAcFlvhgZRsg2TvVBTXLWL9BBA
- Aa7MpzNQ8qBDjdqLPeLiysh1WMDDQ5TM7QD/jBcaDscXIISt830woP9swOUuNpwHjkw3
- VhIrBt8faAhDkZnhLT4o+O2Wq6AhYSt25uaVfU9CjxnAyWyTYS2tF+hIlUmlMALjsn/D Pw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jum0aa0yj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:15:55 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5SCFsjp010738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:15:54 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5SCFrVL005877
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:15:53 GMT
-Received: from mail-ot0-f182.google.com (/74.125.82.182)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 28 Jun 2018 05:15:53 -0700
-Received: by mail-ot0-f182.google.com with SMTP id c15-v6so5875470otl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 05:15:53 -0700 (PDT)
-X-Gm-Message-State: APt69E1IC9Mxfl2Y14J4ItfGjjazdEMDL51T0p5fMO3g7fUmEj5gXtQ7
-        K8TAW6FZEezkJUP1GTz2quApKGICW9igoGIuIaI=
-X-Google-Smtp-Source: AAOMgpcx/1UOreWVDVh/Oc1bNMnI3JcYe4mfC0l+EemNk2YgCBUfmuT3khfje21k7VnRQ2dxR4cqpfu6+or8g9Tq1FA=
-X-Received: by 2002:a9d:2e0e:: with SMTP id q14-v6mr3884558otb.275.1530188153336;
- Thu, 28 Jun 2018 05:15:53 -0700 (PDT)
+        Thu, 28 Jun 2018 08:16:14 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4D26625B7E0;
+        Thu, 28 Jun 2018 22:16:12 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1530188172; bh=+G6K9CqjYUlOtD/Q1hrTzLHvckg6N73bkuH1luHuxlI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D84PvwEu4xWMO4pfa6ImAZPijP+LVNqWeFe0KSbzd/IUK57C8yzDnRVUIOGY3Q69e
+         XBUHJ8KYd32aYVWxN1QsD5NeRltl1ywUAl5DIBJdDuuhnQciSKPjiaMxLzmLMeO/je
+         UuFoHNFpWgrV561X6VABgYNeIE6K/Cj3NSvq5/4k=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 354E1940760; Thu, 28 Jun 2018 14:16:10 +0200 (CEST)
+Date:   Thu, 28 Jun 2018 14:16:10 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Michel Pollet <michel.pollet@bp.renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Message-ID: <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180628120031.eq2yuysz4re2olwn@verge.net.au>
 MIME-Version: 1.0
-References: <20180628062857.29658-1-bhe@redhat.com> <20180628062857.29658-6-bhe@redhat.com>
-In-Reply-To: <20180628062857.29658-6-bhe@redhat.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Thu, 28 Jun 2018 08:15:17 -0400
-X-Gmail-Original-Message-ID: <CAGM2reb1=f6mhfuLSWGo2BSSdpherEsRB9-u87b2Q5eT11tJUg@mail.gmail.com>
-Message-ID: <CAGM2reb1=f6mhfuLSWGo2BSSdpherEsRB9-u87b2Q5eT11tJUg@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-To:     bhe@redhat.com
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        dave.hansen@intel.com, pagupta@redhat.com,
-        osalvador@techadventures.net,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kirill.shutemov@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=813
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806280141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 2:29 AM Baoquan He <bhe@redhat.com> wrote:
->
-> Pavel pointed out that the behaviour of allocating memmap together
-> for one node should be defaulted for all ARCH-es. It won't break
-> anything because it will drop to the fallback action to allocate
-> imemmap for each section at one time if failed on large chunk of
-> memory.
->
-> So remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean up the
-> related codes.
->
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
+> On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> > This adds the Renesas R9A06G032 bare bone support.
+> > 
+> > This currently only handles the SYSCTRL block note,
+> > generic parts (gic, architected timer) and a UART.
+> > 
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks, applied with the following appended:
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9d5eeff51b5f..4c85ac04872d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1969,6 +1969,7 @@ S:	Supported
+>  F:	arch/arm/boot/dts/emev2*
+>  F:	arch/arm/boot/dts/r7s*
+>  F:	arch/arm/boot/dts/r8a*
+> +F:	arch/arm/boot/dts/r9a*
+>  F:	arch/arm/boot/dts/sh*
+>  F:	arch/arm/configs/shmobile_defconfig
+>  F:	arch/arm/include/debug/renesas-scif.S
 
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+One more update.
+
+dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
+current base of the renesas tree and likely base for the rest of the v4.19
+development cycle.
+
+Accordingly I have removed the include of that header and replaced
+the use of symbols it defines with numeric constants. The result is below.
+
+Please:
+1) Check that this is correct and
+2) Post a follow-up patch to include r9a06g032-sysctrl.h and use its
+   symbols once the renesas tree includes that file. This is likely
+   to occur shortly after v4.19-rc1 is released.
+
+
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
+
+This adds the Renesas R9A06G032 bare bone support.
+
+This currently only handles the SYSCTRL block note,
+generic parts (gic, architected timer) and a UART.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[simon: updated MAINTAINERS file
+[simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+fixes
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ MAINTAINERS                      |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi | 113 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d5eeff51b5f..4c85ac04872d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1969,6 +1969,7 @@ S:	Supported
+ F:	arch/arm/boot/dts/emev2*
+ F:	arch/arm/boot/dts/r7s*
+ F:	arch/arm/boot/dts/r8a*
++F:	arch/arm/boot/dts/r9a*
+ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 000000000000..339d0958011e
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl 84>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl 84>;
++		};
++	};
++
++	ext_jtag_clk: extjtagclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_mclk: extmclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <40000000>;
++	};
++
++	ext_rgmii_ref: extrgmiiref {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	ext_rtc_clk: extrtcclk {
++		#clock-cells = <0>;
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: system-controller@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++
++			clocks = <&ext_mclk>, <&ext_rtc_clk>,
++					<&ext_jtag_clk>, <&ext_rgmii_ref>;
++			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl 146>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++		};
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
+-- 
+2.11.0
+
