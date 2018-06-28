@@ -2,501 +2,236 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2F7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B274DC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD7126F88
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDAD0257A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 05:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5A3jfob"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD7126F88
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="fnEHa7UZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAD0257A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933672AbeF1Fnv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 01:43:51 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36591 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752655AbeF1Fnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 01:43:45 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so2071854pfh.3;
-        Wed, 27 Jun 2018 22:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=fXvyM3YQA98axRASrzwGEdUM+x03ATpgcMHWa90Yx7E=;
-        b=V5A3jfobYxJhT9WKOY8m3aoR/seLGykoyX0jvmdIvltaZiPZeiLfO77ugpWuWQs5rb
-         lAbuav5GoW6IatpymNyMMGCVuSGaQdHXc9CyEii7FdI0gUSI1y5zFrIar0rOyMLVhE0N
-         7Hy0Iqhi7gkCbEjntPS5K3nSnVyXZouIsDTlZCqnYh6/khAicXSr6GjLNNBhSweTcQ8P
-         dZWFqVpRvWOqQ8uXueQwJcny5Svg6nyLA4l9To4ZA8p27s3/v1WqsC+Gwx6cmU3Oz1yV
-         AZmYPHW9KWH/K0MS4mdQ6NzNCjE+uS/A1/H73q2rZryBy5p+hprfZFvguXqeyZ9EiqRJ
-         JbFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=fXvyM3YQA98axRASrzwGEdUM+x03ATpgcMHWa90Yx7E=;
-        b=Y8dZ5x9r/jqyTLfcCwjvauliLoOakbidFbMxGH/U5kI2b8cFVv6J9LslaPlaGMVCPH
-         dvjfUsPll1o+NxPMFUv33erTl/gSsjsjHzzDIBRRfmTnAu/rYORF7RumZNGLoXvz7qe+
-         NQckf0b9305pbP8aRFRwONQt5ZEXLrAe6CvBmEuvNNjpn+/L0n2+NamIN0iMUbKfzJaK
-         hQxyiiwG9a66HlVm/sk91nJUMSgjr5ujeF83hUmT8jiZnG7G0/Qu9fcwE/Wfax5Gp6iL
-         c6W/XpwguuBKCehgKso0dmDlNbRclmynPFCxuDXqoV0eQdeZLh+caGvKFQnx5TZyJ/j3
-         BuqA==
-X-Gm-Message-State: APt69E381kyr8Kvm+8k+Tf0vnncWKvgbmrLTHx/3S6AXE68htinAro/P
-        4CsISAakI7WnweC8TbO1FTZSJ3zc
-X-Google-Smtp-Source: ADUXVKLFwAuekAyhAeFyL2iGucW0wJLKwlYE9kAAMrhY+RtMtRIm/CGbqGFdnTu+xW8w03kEsd/GyA==
-X-Received: by 2002:a63:6383:: with SMTP id x125-v6mr7612603pgb.127.1530164624892;
-        Wed, 27 Jun 2018 22:43:44 -0700 (PDT)
-Received: from [192.168.1.101] (222-154-41-72-adsl.bb.spark.co.nz. [222.154.41.72])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm8813295pfn.182.2018.06.27.22.43.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 27 Jun 2018 22:43:43 -0700 (PDT)
-Subject: Re: moving affs + RDB partition support to staging?
-To:     jdow <jdow@earthlink.net>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
- <CAOmrzkKunsjZzwpj9gtovKwXVkj1kTt81ea1zmB7BCDtZz409g@mail.gmail.com>
- <1910962.ItDVNtUG5Q@merkaba>
- <c76b4e4d-7e8e-13ac-81e4-9132f4235eb8@earthlink.net>
- <CAOmrzk+CuuraUnWWKDKen9FV6=UcgKgc6+qJ3g-Fx+tkt5HHQw@mail.gmail.com>
- <45e05e92-e2b1-d46c-11fb-4bd75e793712@earthlink.net>
- <00416cde-ddda-a9e6-f4e8-ee424b2e2a1c@gmail.com>
- <8ef4bdc6-4ed0-675e-e26d-0b6e7ab4a00e@earthlink.net>
- <CAOmrzkKLJiWvDwsER0ca09UJbi57Rj6PUmdxizSNPXzZLMErOA@mail.gmail.com>
- <83f7c594-b24e-69f5-03fb-3c9229d15438@earthlink.net>
- <c5691a23-dc03-be49-6213-ee24afe72087@gmail.com>
- <b1b9944d-c31b-1c06-555a-b9603bdb3f87@earthlink.net>
-Cc:     Martin Steigerwald <martin@lichtvoll.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Sterba <dsterba@suse.cz>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <c552b9e3-03ff-75ef-18e1-35d39cfdaca5@gmail.com>
-Date:   Thu, 28 Jun 2018 17:43:35 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        id S1753358AbeF1Fu2 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 01:50:28 -0400
+Received: from mail-db5eur01on0114.outbound.protection.outlook.com ([104.47.2.114]:28264
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752250AbeF1FuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 01:50:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VU7J5V4bBjQ0vd1EPcSTCf3kDl50+eI5xpO+b7tiEgM=;
+ b=fnEHa7UZPhmnvG1BtFQnV2EspxTVNJ0t4vRfZyjtIITmGA+LZSCve2M1lG11pgF+2GRKgQ8McqpgTqpd69Bp23XvNJfxjBAlHLVK10wG/KyxfPbmqOzUfSmudDXt4erMQr+x6VTb1ySWRF1Gg81xVReCYdJL+Kgm+ztbe4M2KH4=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=avagin@virtuozzo.com; 
+Received: from outlook.office365.com (73.140.212.29) by
+ AM6PR08MB3255.eurprd08.prod.outlook.com (2603:10a6:209:47::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.20; Thu, 28 Jun 2018 05:50:18 +0000
+Date:   Wed, 27 Jun 2018 22:50:04 -0700
+From:   Andrei Vagin <avagin@virtuozzo.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: [12/24] proc: Add fs_context support to procfs [ver #7]
+Message-ID: <20180628055003.GA15563@outlook.office365.com>
+References: <20180626072736.GA31860@outlook.office365.com>
+ <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+ <20180619033450.GA11639@outlook.office365.com>
+ <20180626061320.GA12548@outlook.office365.com>
+ <31831.1530003427@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <b1b9944d-c31b-1c06-555a-b9603bdb3f87@earthlink.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+In-Reply-To: <31831.1530003427@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Originating-IP: [73.140.212.29]
+X-ClientProxiedBy: MWHPR17CA0052.namprd17.prod.outlook.com
+ (2603:10b6:300:93::14) To AM6PR08MB3255.eurprd08.prod.outlook.com
+ (2603:10a6:209:47::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 159b8ea6-a85e-4ad5-ea48-08d5dcbb0885
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652034)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:AM6PR08MB3255;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;3:P1CSlqiW446rrb8TcVPtJSHfH4pPz8vu+SsJUGQkf8kHn2RJawiIANgyWjMC83Q9pLAHlo7n5xZ5yHHx42SBPC6198NBnB58REYcHlej8UL5KlWVFOygREVdzTjzDxkCuiLvk41isTJBtNgMv/9bOUwcs44VRZCMujfFkZ7Gvd9MM9chmYzpZ30vadhLPaqoA4PB//WIzpR193YZHZH6i9NSv0fpKWM8fgsdhQ7C2QScHqS15dIRFHLstWYrugrx;25:ZbEfwr58CAqABIf47RvfejzOudEMWK9NeEIiOgLQpFF6Mam2kTkpkmDXQegB7Q1MPJE5xDYENyf2pxbQ8wz6zMLcNoMh1V0TED9zHp/iv60ETSbXzp0nEnbzqlyAVuN9drvDcSj0SuUktQWfhAichc4E5hthBSVLsU1eiLrWMnrzzV8EAjm2Gve+8eHKPwlzxtoKv/t6DWpNMSoQQU1S3PqIp0NgPU123Z7cdM1Jidx1daJtTohZT183W0+t2Ru36iS0bwO7MOAn6axPiwV2pcL7cbnObU9z8IzbxCWgQTI6dJlEcEIjW/vCNXUORVpfuLNxgq0m7IOENp1YfS4qwQ==;31:7KVIJDK6YRxuZd8ryIdCp+c3SsomC8C6X+AH4eGHIXfTzZyBrSc6D41M+z126C5BZ4ViVwcQuguT40Lo2x/hfCjhjbj2tKBDJBmsIUf3AaAhbwO+ktSGHsjUmRtvf9yYyTTSu0hodBwzPkcl9TVbdAaQ03UyUfOcyH0KAuimihrAEdXcKSn5sRH7mjoipP6FIKbyjujAaIf/sZL9J3F8rpfjThH7yIVqLCsFzvlzTi8=
+X-MS-TrafficTypeDiagnostic: AM6PR08MB3255:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;20:Sh9T9SeaYxrBoAJx0ZSjvlkkPb2dlPN7+TsKzp6SUTAbsWqqS+edxlcGA4MO5Wv5SlSsQu9iU0NfuBXKryG4T76lGtnN24sCkPCz48PQ6n58sNJq5VGLs/3kGmq7INVapcYTr1Kl8pp2K/TECPoaHSExnAcb9wbWmG6zLK05pvmHCMs3QMv7qeYUaR+2KUasa9w8s+2K15XJJmKwcjDaxn4CGZO8xGz0EemgXhqiqnVIFQvaI9SYLtgqNuwKJ1QUFDw2U4yPnKN0S+nBS3FrBGMzN981aFE/dbQ82T8OPFn98IapX4Mk0521yFmrd7Coi/FkZDcWnu+a3P3jDTYHeSk8a1G+5bJGE1qAfyOeuGA3q9NDrSS5CDV7apxo0WU+BojaF3+mRSsAkIjIFrqFW33WS/dzIW0NuOm6n8PM4awn2Wrxx88bc2/QZcqmalYRZIm3Uggxs0rK+ehRi2HZMI+gS/kvp7Z9iUc4NPADP/64w/gVDXBL21YRVtznIk4W;4:zsJYRYMIMgsnA0y6Ndtcc2abX7Pdjee4rwWxV5tEO8F+80J0tOFdCCsiecDC8CuabHvEGnBH2DoDgmi7YNr60pt31Tu8AiBauYMw/B4WMn01LePWaDkQ4v1PFY87apojDKheeoTOR2TVe+rlDMOzKUsSTKkfn0OlQThOAdCcaMPSt+ItdqbQJGWoKhdLMpbbhd59FF9wuw7MFD4MZWEpXg8gcbjc/Rb0785ClqWf1c+8gyOKOH/3NSKu8dl3aJd0J1ywt2jEx8dhW3zMLQT6DI0psRRqC5CE78erw23bSrWspPnHk8hkojrFolIO1Ld0
+X-Microsoft-Antispam-PRVS: <AM6PR08MB3255E20705C08C8F835F0C1DCF4F0@AM6PR08MB3255.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(64507834874202);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM6PR08MB3255;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3255;
+X-Forefront-PRVS: 0717E25089
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39850400004)(366004)(136003)(376002)(199004)(189003)(26005)(305945005)(7736002)(486006)(58126008)(386003)(512884003)(6506007)(16586007)(105586002)(106356001)(4326008)(5660300001)(44144004)(446003)(8936002)(476003)(86362001)(8676002)(81166006)(316002)(11346002)(956004)(81156014)(4610100001)(76176011)(2476003)(229853002)(6666003)(1076002)(93886005)(55016002)(97736004)(6916009)(6116002)(3846002)(9686003)(16526019)(186003)(68736007)(7696005)(53416004)(52116002)(568964002)(53936002)(5024004)(25786009)(478600001)(66066001)(6246003)(2906002)(84326002)(33656002)(69596002)(18370500001)(2700100001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR08MB3255;H:outlook.office365.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR08MB3255;23:2yJyE7eoCdbf4rNdBcnGHMYKHgcjvExQr9K0nICZ+?=
+ =?us-ascii?Q?7vMBKwv/DTE05fM1p6wNSTUsJoNEEi+sxzo7nBxZk/daHiDdC1F7UXqWAl5c?=
+ =?us-ascii?Q?ppvnqDM8+oF+SvzDxghiqCRlvs/a7AOJ38BkDtD8nqJ+MIydmTUkgJw4LnaO?=
+ =?us-ascii?Q?GGETa9JZNIe1Y/p7RkpfbV7P4UgKUMAjLb4+Nh171ID9f8L/kCjKHdMMhLmt?=
+ =?us-ascii?Q?V4hkPatRP8Mljb1c55pEv0shfrEZp0GBUqUGzLZevbMgDxiwbHl8HxbBY6zB?=
+ =?us-ascii?Q?pnX8jL4lmWJ8F1NChBWoDdFCRiPDqr82MCRuwqfOWGjlWkcvYXOkTgrI3UAL?=
+ =?us-ascii?Q?6EP663yBmggiwQ9cprHD38B471jSh4CSObzJQNlQrMLdRbDXFksfm9rHefF4?=
+ =?us-ascii?Q?B9mGtn9a80cDXPJps3/l6RdPfd6SE51JKM0UVm0XUtS53ZdwIWq0eDGw7lIO?=
+ =?us-ascii?Q?jmPeHre7MOjlLIG/1giJMhyaauNaZw+v40H8JpFs4RbJ88Cd72YrkpVBBXaG?=
+ =?us-ascii?Q?EsJ3tGQBjuiyLgfR/ORZlt4IJzxaYTVBAN4kyS5FyKOkBkb6phsYteApIrCH?=
+ =?us-ascii?Q?Ih2wCgYhF5gHZus9k9it4SxhpPd0ZsC9haFwlkJTntY7LbmYtkRDztloGK5q?=
+ =?us-ascii?Q?jqokNjnPedcn9qAqN7A5f0wQeb0cvvN+EdQRroIvm4b1CXEBSTgWeRZLu6aR?=
+ =?us-ascii?Q?KyykfmdWoeIsIhvZUpDEUxRq5t4d3Wj6NXhU08SI6GRSx46HZGzxRBTglvIC?=
+ =?us-ascii?Q?Z66OqtbC4JWZMBKM5qvpc+sEF/OPnGRg2zBwtQOHVuC9supdNEPpN12r61gT?=
+ =?us-ascii?Q?JYYAwSt/ka3WFdmc5SfcLAaWWTvpFMqLDbo19XRIr3EOokiV/cUYVv1SXjWj?=
+ =?us-ascii?Q?WEHswkh6xatkC9jKpPHxVQhC1tkCNYXQBYFCYqfuSfuUKqF7A3sAwkroc0CR?=
+ =?us-ascii?Q?3dulNo+pZ/Hq3UqYbxoAfgIGZrzG5zfJ4XolbMBKf/uxcJyl3UlODTVMctJN?=
+ =?us-ascii?Q?QmkCrlA0IAdBpbOa3/kCiEsFNGcNXuakfu56EgZFaI09Uk1l7zXQqn6TjyGb?=
+ =?us-ascii?Q?G4NU8zPMUzEr7IZG5gJPQjenSHclgAE0pTwpniE/dPNcPnyK6AxVXrYZJZRF?=
+ =?us-ascii?Q?pGbaGn8lwo6KS6UCsrSidg+bQu5bGvaRr3KXRHYEgmSPEMK3l87KYNOUNfLL?=
+ =?us-ascii?Q?UymdDizCzvo0sJK2EP/FqNSHO4ncnoXOPUwJoB1uQstkKnxNA35vtsElJqlm?=
+ =?us-ascii?Q?U1yfjuNbTxtMVSN7Etr/G9J+6xBFOSUfXOT6ayhgu1pr7n7iRXyQrFeUptfg?=
+ =?us-ascii?Q?mZrTyQ9TlrQ781phOGHPFTAosYC3U77ANpBARuNyJa3tO0cSODgkyrLOAWOM?=
+ =?us-ascii?Q?MPtoRqoFO+Qml/7lm6M979oUEh3hWPDHJWHvFPjRdR2v/V4Bw0hrOw5HRPMK?=
+ =?us-ascii?Q?AZQni5oww=3D=3D?=
+X-Microsoft-Antispam-Message-Info: PscpDbmPckplqPQvRwN//MDprYd16ukN9juR1dkTbIRk8P5Pfi/8ieeUsXLtxruZuoCcuFelTtobi/MqPusDtv/NNWXpZH3wPvwWD2NvYvXOJ17AIgC9LBCChjhJAMiyiLf+ewhYZrAyNAKV4tE+qGG4vnLFIxm7mIK+7+dV3o9YnCo3NyjCP0eoRwET1S1ll+yh5pBV07oA3SzBvbT6NWnEid/+RRdzcG1OwnFyR3fEie8fiJ5z5+48/Fy4hqjUcPXn5NerB9T6c3OUNxZepGeom+PlYk15dATJKAaHVln0seCm619OcR+hcVF2gB3Y6Av3+gF58KotemBfTdC0296M/ci4Q/2GuGaIpTLXTko=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;6:WGfxpRH474DF9iafdJJPRLkHiBJY2Z3KvDYFaSmt5LgjGpzp7JReqxe26us29prqVmX1ZT4eCkYlt7KAT4BP/e5ntJoZa0TVORB4iY7GWpnf/ajwClpwSQb/C7HTseTlgjibNTPk1Ow7PTCbT4fS40ue+7KxW3XLdK5T4R/471re/auCwBHseFo0V0oCmvRl7Frfw8myhDAv6N0RA/PpwlGKEUWhwrmOfwYg0v5RQIbMdoBewW3fYRhj/ftwQ6o79g+U9YUwkm7zicjl1dFYUWQr5K/CN89rq2xT7ffB6Eh2OagetmOQIYbi7vGL4+pI7o3DkY00wxGxALKY2wqbdMmLYR5nPZZjtIFoJfli5evrRManmalg+lBR7AcnRX0yW/SFlQsWE3Pwl/LVhmuzI3n0X1SGfHg3U4DEry4SXHFxvbTcP2aXVBSjtsPMOoYipP2wF54lkuXVOY98dGGbug==;5:cqckSWlp2m1zY4heusAIdgQm2prRl0n+rhf2+N0pPl585tQIsvZCa4myhNxyanZmwcIR7JxhW7tnj0KC+kc782MATcI8FCipjdivpbFeMWAlN+2uRKdzMH/tc7blfP6p1JlDwpXNF50BuWYoGMW7Y4cCcASg4odJN2oR9tx3t8A=;24:ProlgunHBF/WeCRyaLhW+fCkaqupfYygc6rwinX0/mn6d7ZkUf5xOO3DcqB1pPW0RadQB19Fy2gLHTLBr0AnYvKWsMLRRWQMuv4QTw906Fw=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;7:/Y6KwhNSfx6Gdf08G9NeIifXsbmvvBmU6YSngzSzoNPaUd+fvSJXiNxThlac+hUfxFFiPvIkbVJ5n8OFu5cz7C8frjV5uyinFuizvYjIliJinHxmJU0SRX24ZamTVFVSD0ir+Ao7B7H3qmtxLGjRmg+hVl4NhA5deKpKrFiS8AndaLmSPF5U1reyc8/tw9Q0Z2nXW+YCjVVQY8W84vCoU0/YvaCvkRNCeaWbZZ+iB440aMksmMnOqNSy8a8YNUrP;20:/SYnIK8BQSLyJldj5YScXbNLGo+TIIp1OBki0+4MAmwFwodMacr3v2YTSLvBvdPIcTM84mAilcpnMF20goL6p3AV73gJRblm1TbCTVQWgNs1Qr9vnHv0QoP4awxRHDTRFrZ9xNfWuX6nljJL4Z/vp1G2DG6fEGTTQUlvyRoQCJk=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2018 05:50:18.7410 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 159b8ea6-a85e-4ad5-ea48-08d5dcbb0885
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3255
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joanne,
 
-Linux on m68k has supported lseek64 (or llseek) for a long time (from 
-glibc version 2.1 according to what I found). About the only area where 
-we are limited by 32 bits is the virtual memory size.
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
 
-I'm not proposing to modify the RDB format definition, though an 
-extension to store 64 bit offsets separate from the 32 bit ones would be 
-one way to make certain such disks are safe to use on 3.1 and earlier 
-versions of AmigaOS. (Another one would be to modify the disk drivers on 
-older versions to do the offset calculation in 64 bit, and check for 
-overflow just as we do here. Not sure whether that's feasible. And as 
-you so eloquently describe, we can't rely on users listening.)
+On Tue, Jun 26, 2018 at 09:57:07AM +0100, David Howells wrote:
+> Andrei Vagin <avagin@virtuozzo.com> wrote:
+> 
+> > > > > -	mnt = kern_mount_data(&proc_fs_type, ns, 0);
+> > > 
+> > > Here ns->user_ns and get_current_cred()->user_ns are not always equal
+> > 
+> > What do you think about the attached patch?
+> > ...
+> > -	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
+> > -				FS_CONTEXT_FOR_KERNEL_MOUNT);
+> > +	fc = vfs_new_fs_context_userns(&proc_fs_type, NULL, 0,
+> > +				FS_CONTEXT_FOR_KERNEL_MOUNT, ns->user_ns);
+> 
+> Or you could just change fc->user_ns immediately after calling
+> vfs_new_fs_context().  This is what network filesystems should do with
+> fc->net_ns, for example.
 
-Either way, we need the cooperation of partitioning tool writers to 
-ensure partition information that is prone to overflows is never stored 
-in the 32 bit, classic RDB. That appears to have failed already, as 
-Martin's experience illustrates.
+Ok, it works for me. The patch is attached.
 
-I'm only concerned with fixing the (dangerous) but in the Linux 
-partition format parser for RDB. Refusing to use any partitions that 
-will cause havoc on old AmigaOS versions is all I can do to try and get 
-the users' attention.
+> 
+> > -struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+> > +struct fs_context *vfs_new_fs_context_userns(struct file_system_type *fs_type,
+> >  				      struct dentry *reference,
+> >  				      unsigned int sb_flags,
+> > -				      enum fs_context_purpose purpose)
+> > +				      enum fs_context_purpose purpose,
+> > +				      struct user_namespace *user_ns)
+> 
+> 
+> If you'd really rather add a new parameter, please don't rename the function
+> to vfs_new_fs_context_userns() - just add a new parameter.  There don't need
+> to be two versions of it.
+> 
+> 
+> This brings me to another thought:  I want to add the ability to let
+> namespaces be configured by userspace, for example:
 
-Your warning makes me wonder whether the log message should just say 
-'report this bug to linux-m68k@vger.kernel.org' to at least try and 
-educate any that respond about the dangers of their partitioning scheme 
-before telling them about the override option. Problem with that is, in 
-about three years no one will remember any of this ...
+It may be a good feature, but I am not sure about procfs. A procfs
+instance is created per pidns, so they should have the same owner
+userns.
 
-Cheers,
+> 
+> 	fd = fsopen("nfs");
+> 	sprintf(buf, "ns user %d", my_user_ns_fd);
+> 	write(fd, buf);
+> 	sprintf(buf, "ns net %d", my_net_ns_fd);
+> 	write(fd, buf);
+> 	write(fd, "s fedoraproject.org:/pub");
+> 	write(fd, "o intr");
+> 	...
+> 
+> I think therefore, I might need to insert another phase between creating the
+> context and calling the filesystem initialiser:
+> 
+> 	fc = vfs_new_fs_context(&afs_fs_type, mntpt, 0,
+> 				FS_CONTEXT_FOR_SUBMOUNT);
+> 
+> followed by:
+> 
+> 	vfs_sb_set_namespace(fc, THIS_IS_USER_NS, user_ns);
+> 	vfs_sb_set_namespace(fc, THIS_IS_NET_NS, net_ns);
+> 
+> but then we'd need to do:
+> 
+> 	vfs_begin_options(fc);
+> 
+> before continuing (unless we made this happen automatically on the receipt of
+> the first option):
+> 
+> 	afs_mntpt_set_params(fc, mntpt);
+> 	vfs_get_tree(fc);
+> 	mnt = vfs_create_mount(fc, 0);
+> 
+> Alternatively, we could do the namespace setting after initialisation and let
+> the fs apply the changes itself.
+> 
+> David
 
-	Michael
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: attachment; filename="0001-proc-set-a-proper-user-namespace-for-fs_context.patch"
+
+From 2297ffb333a7bcee466a5273a3fc84202b9695a6 Mon Sep 17 00:00:00 2001
+From: Andrei Vagin <avagin@openvz.org>
+Date: Wed, 27 Jun 2018 22:45:43 -0700
+Subject: [PATCH] proc: set a proper user namespace for fs_context
+
+A user namespace should be taken from a pidns for which a procfs is created.
+
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
+---
+ fs/proc/root.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index efbdc08a3c86..59aaf06a40c7 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -303,6 +303,11 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
+ 	if (IS_ERR(fc))
+ 		return PTR_ERR(fc);
+ 
++	if (fc->user_ns != ns->user_ns) {
++		put_user_ns(fc->user_ns);
++		fc->user_ns = get_user_ns(ns->user_ns);
++	}
++
+ 	ctx = fc->fs_private;
+ 	if (ctx->pid_ns != ns) {
+ 		put_pid_ns(ctx->pid_ns);
+-- 
+2.17.0
 
 
-Am 28.06.2018 um 15:44 schrieb jdow:
-> Michael, as long as m68k only supports int fseek( int ) 4 GB * block
-> size is your HARD limit. Versions that support __int64 fseek64( __int64
-> ) can work with larger disks. RDBs could include RDSK and a new set of
-> other blocks that replace the last two characters with "64" and use
-> __int64 where needed in the various values. That way a clever disk
-> partitioner could give allow normal (32 bit) RDB definitions where
-> possible. Then at least SOME of the disk could be supported AND a very
-> clever filesystem that abstracts very large disks properly could give
-> access to the whole disk. (Read the RDBs first 32 bits. Then if a
-> filesystem or driveinit was loaded re-read the RDBs to see if new 64 bit
-> partitions are revealed.
->
-> I could be wrong but I do not think RDBs could be safely modified any
-> other way to work. And, trust me as I bet this is still true, you will
-> need a SERIOUSLY good bomb shelter on the Moon if you change RDBs.
-> Suppose Joe Amigoid uses it, and then Joe Amigoid loads Amigados 2.4
-> because he wants to run a game that crashes on anything newer. Then Joe
-> got far enough something writes to the disk and data is corrupted. Note
-> further that Amigoids do NOT, repeat NOT, listen to facts in such cases.
-> Hell, some of them never listened to facts about an incident at Jerry
-> Pournelle's place when a 1.1 DPaint session with Kelly Freas hung and we
-> lost a delightful drawing. Jerry reported it. Amigoids screamed. I tried
-> to tell them I was there, it was my machine, and 1.1 was, indeed, crap.
->
-> {o.o}
->
-> On 20180627 02:00, Michael Schmitz wrote:
->> Joanne,
->>
->> I'm not at all allergic to avoiding RDB at all cost for new disks. If
->> AmigaOS 4.1 supports more recent partition formats, all the better.
->> This is all about supporting use of legacy RDB disks on Linux (though
->> 2 TB does stretch the definition of 'legacy' a little). My interest in
->> this is to ensure we can continue to use RDB format disks on m68k
->> Amiga computers which have no other way to boot Linux from disk.
->>
->> Not proposing to change the RDB format at all, either. Just trying to
->> make sure we translate RDB info into Linux 512-byte block offset and
->> size numbers correctly. The kernel won't modify the RDB at all
->> (intentionally, that is - with the correct choice of partition sizes,
->> Martin might well have wiped out his RDB with the current version of
->> the parser).
->>
->> The choice of refusing to mount a disk (or mounting read-only) rests
->> with the VFS drivers alone - AFFS in that case. Not touching any of
->> that. At partition scan time, we only have the option of making the
->> partition available (with a warning printed), or refusing to make it
->> available to the kernel. Once it's made available, all bets are off.
->>
->>  From what Martin writes, his test case RDB was valid and worked as
->> expected on 32 bit AmigaOS (4.1). Apparently, that version has the
->> necessary extensions to handle the large offsets resulting from 2 TB
->> disks. Not sure what safeguards are in place when connecting such a
->> disk to older versions of AmigaOS, but that is a different matter
->> entirely.
->>
->> The overflows in partition offset and size are the only ones I can see
->> in the partition parser - there is no other overflow I've identified.
->> I just stated that in order to place a partition towards the end of a
->> 2 TB disk, the offset calculation will overflow regardless of what
->> combination of rdb->rdb_BlockBytes and sector addresses stored in the
->> RDB (in units of 512 byte blocks) we use:
->>
->>          blksize = be32_to_cpu( rdb->rdb_BlockBytes ) / 512;
->>
->>
->>                  nr_sects = (be32_to_cpu(pb->pb_Environment[10]) + 1 -
->>                              be32_to_cpu(pb->pb_Environment[9])) *
->>                             be32_to_cpu(pb->pb_Environment[3]) *
->>                             be32_to_cpu(pb->pb_Environment[5]) *
->>                             blksize;
->>                  if (!nr_sects)
->>                          continue;
->>                  start_sect = be32_to_cpu(pb->pb_Environment[9]) *
->>                               be32_to_cpu(pb->pb_Environment[3]) *
->>                               be32_to_cpu(pb->pb_Environment[5]) *
->>                               blksize;
->>
->> But in the interest of avoiding any accidental use of a RDB partition
->> where calculations currently overflow, I'll make the default behaviour
->> to bail out (instead of using wrong offset or size as we currently
->> do). Given the 'eat_my_RDB_disk=1' boot option, the user may proceed
->> at their own risk (though I still can't see what harm should result
->> from now translating a well formed v4.1 2 TB disk RDB correctly for
->> the first time).
->>
->> Whether or not Linux correctly handles AFFS filesystems larger than 1
->> TB is a matter for VFS experts. Bailing out on nr_sects overflowing
->> ought to prevent accidental use of AFFS filesystems on RDB disks which
->> I suppose is the majority of use cases.
->>
->> Bugs in partitioning tools on Linux are entirely out of scope - the
->> partitioning tools bypass the partition structure discovered by the
->> kernel, and work straight on the raw device. No protecting against that.
->>
->> If you can point out a way to cause data loss with these precautions,
->> for a disk 2 TB or larger that was partitioned and used on a recent
->> version or AmigaOS supporting such large disks, I'd consider omitting
->> the 'eat_my_RDB_disk' boot option, and just bail out as the only safe
->> option.
->>
->> Cheers,
->>
->>      Michael
->>
->>
->> Am 27.06.2018 um 18:24 schrieb jdow:
->>> You allergic to using a GPT solution? It will get away from some of the
->>> evils that RDB has inherent in it because they are also features?
->>> (Loading a filesystem or DriveInit code from RDBs is just asking for a
->>> nearly impossible to remove malware infection.) Furthermore, any 32 bit
->>> system that sees an RDSK block is going to try to translate it. If you
->>> add a new RDB format you are going to get bizarre and probably quite
->>> destructive results from the mistake. Fail safe is a rather good notion,
->>> methinks.
->>>
->>> Personally I figure this is all rather surreal. 2TG of junk on an Amiga
->>> system seems utterly outlandish to me. You cited another overflow
->>> potential. There are at least three we've identified, I believe. Are you
->>> 100% sure there are no more? The specific one you mention of translating
->>> RDB to Linux has a proper solution in the RDB reader. It should recover
->>> such overflow errors in the RDB as it can with due care and polish. It
->>> should flag any other overflow error it detects within the RDBs and
->>> return an error such as to leave the disk unmounted or mounted read-only
->>> if you feel like messing up a poor sod's backups. The simple solution is
->>> to read each of the variables with the nominal RDB size and convert it
->>> to uint64_t before calculating byte indices.
->>>
->>> However, consider my inputs as advice from an adult who has seen the
->>> Amiga Elephant so to speak. I am not trying to assert any control. Do as
->>> you wish; but, I would plead with you to avoid ANY chance you can for
->>> the user to make a bonehead stupid move and lose all his treasured disk
->>> archives. Doing otherwise is very poor form.
->>>
->>> {o.o}   Joanne "Said enough, she has" Dow
->>>
->>> On 20180626 18:07, Michael Schmitz wrote:
->>>> Joanne,
->>>>
->>>> As far as I have been able to test, the change is backwards compatible
->>>> (RDB partitions from an old disk 80 GB disk are still recognized OK).
->>>> That"s only been done on an emulator though.
->>>>
->>>> Your advice about the dangers of using RDB disks that would have
->>>> failed the current Linux RDB parser on legacy 32 bit systems is well
->>>> taken though. Maybe Martin can clarify that for me - was the 2 TB disk
->>>> in question ever used on a 32 bit Amiga system?
->>>>
->>>> RDB disk format is meant for legacy use only, so I think we can get
->>>> away with printing a big fat warning during boot, advising the user
->>>> that the oversize RDB partition(s) scanned are not compatible with
->>>> legacy 32 bit AmigaOS. With the proposed fix they will work under both
->>>> AmigaOS 4.1 and Linux instead of truncating the first overflowing
->>>> partition at disk end and trashing valid partitions that overlap,
->>>> which is what Martin was after.
->>>>
->>>> If that still seems too risky, we can make the default behaviour to
->>>> bail out once a potential overflow is detected, and allow the user to
->>>> override that through a boot parameter. I'd leave that decision up for
->>>> the code review on linux-block.
->>>>
->>>> Two more comments: Linux uses 512 byte block sizes for the partition
->>>> start and size calculations, so a change of the RDB blocksize to
->>>> reduce the block counts stored in the RDB would still result in the
->>>> same overflow. And amiga-fdisk is indeed utterly broken and needs
->>>> updating (along with probably most legacy m68k partitioners). Adrian
->>>> has advertised parted as replacement for the old tools - maybe this
->>>> would make a nice test case for parted?
->>>>
->>>> Cheers,
->>>>
->>>>    Michael
->>>>
->>>>
->>>>
->>>> On Tue, Jun 26, 2018 at 9:45 PM, jdow <jdow@earthlink.net> wrote:
->>>>> If it is not backwards compatible I for one would refuse to use it.
->>>>> And if
->>>>> it still mattered that much to me I'd also generate a reasonable
->>>>> alternative. Modifying RDBs nay not be even an approximation of a
->>>>> good idea.
->>>>> You'd discover that as soon as an RDB uint64_t disk is tasted by a
->>>>> uint32_t
->>>>> only system. If it is for your personal use then you're entirely
->>>>> free to
->>>>> reject my advice and are probably smart enough to keep it working for
->>>>> yourself.
->>>>>
->>>>> GPT is probably the right way to go. Preserve the ability to read
->>>>> RDBs for
->>>>> legacy disks only.
->>>>>
->>>>> {^_^}
->>>>>
->>>>>
->>>>> On 20180626 01:31, Michael Schmitz wrote:
->>>>>>
->>>>>> Joanne,
->>>>>>
->>>>>> I think we all agree that doing 32 bit calculations on 512-byte block
->>>>>> addresses that overflow on disks 2 TB and larger is a bug, causing
->>>>>> the
->>>>>> issues Martin reported. Your patch addresses that by using the
->>>>>> correct
->>>>>> data type for the calculations (as do other partition parsers that
->>>>>> may
->>>>>> have to deal with large disks) and fixes Martin's bug, so appears
->>>>>> to be
->>>>>> the right thing to do.
->>>>>>
->>>>>> Using 64 bit data types for disks smaller than 2 TB where
->>>>>> calculations
->>>>>> don't currently overflow is not expected to cause new issues, other
->>>>>> than
->>>>>> enabling use of disk and partitions larger than 2 TB (which may have
->>>>>> ramifications with filesystems on these partitions). So
->>>>>> comptibility is
->>>>>> preserved.
->>>>>>
->>>>>> Forcing larger block sizes might be a good strategy to avoid overflow
->>>>>> issues in filesystems as well, but I can't see how the block size
->>>>>> stored
->>>>>> in the RDB would enforce use of the same block size in filesystems.
->>>>>> We'll have to rely on the filesystem tools to get that right, too.
->>>>>> Linux
->>>>>> AFFS does allow block sizes up to 4k (VFS limitation) so this should
->>>>>> allow partitions larger than 2 TB to work already (but I suspect Al
->>>>>> Viro
->>>>>> may have found a few issues when he looked at the AFFS code so I
->>>>>> won't
->>>>>> say more). Anyway partitioning tools and filesystems are unrelated to
->>>>>> the Linux partition parser code which is all we aim to fix in this
->>>>>> patch.
->>>>>>
->>>>>> If you feel strongly about unknown ramifications of any
->>>>>> filesystems on
->>>>>> partitions larger than 2 TB, say so and I'll have the kernel print a
->>>>>> warning about these partitions.
->>>>>>
->>>>>> I'll get this patch tested on Martin's test case image as well as
->>>>>> on a
->>>>>> RDB image from a disk known to currently work under Linux (thanks
->>>>>> Geert
->>>>>> for the losetup hint). Can't do much more without procuring a working
->>>>>> Amiga disk image to use with an emulator, sorry. The Amiga I plan to
->>>>>> use
->>>>>> for tests is a long way away from my home indeed.
->>>>>>
->>>>>> Cheers,
->>>>>>
->>>>>>       Michael
->>>>>>
->>>>>> Am 26.06.18 um 17:17 schrieb jdow:
->>>>>>>
->>>>>>> As long as it preserves compatibility it should be OK, I suppose.
->>>>>>> Personally I'd make any partitioning tool front end gently force the
->>>>>>> block size towards 8k as the disk size gets larger. The file systems
->>>>>>> may also run into 2TB issues that are not obvious. An unused blocks
->>>>>>> list will have to go beyond a uint32_t size, for example. But a
->>>>>>> block
->>>>>>> list (OFS for sure, don't remember for the newer AFS) uses a tad
->>>>>>> under
->>>>>>> 1% of the disk all by itself. A block bitmap is not quite so bad.
->>>>>>> {^_-}
->>>>>>>
->>>>>>> Just be sure you are aware of all the ramifications when you make a
->>>>>>> change. I remember thinking about this for awhile and then
->>>>>>> determining
->>>>>>> I REALLY did not want to think about it as my brain was getting tied
->>>>>>> into a gordian knot.
->>>>>>>
->>>>>>> {^_^}
->>>>>>>
->>>>>>> On 20180625 19:23, Michael Schmitz wrote:
->>>>>>>>
->>>>>>>> Joanne,
->>>>>>>>
->>>>>>>> Martin's boot log (including your patch) says:
->>>>>>>>
->>>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.843284]  sdb: RDSK (512)
->>>>>>>> sdb1
->>>>>>>> (LNX^@)(res 2 spb 1) sdb2 (JXF^D)(res 2 spb 1) sdb3 (DOS^C)(res
->>>>>>>> 2 spb
->>>>>>>> 4)
->>>>>>>> Jun 19 21:19:09 merkaba kernel: [ 7891.844055] sd 7:0:0:0: [sdb]
->>>>>>>> Attached SCSI disk
->>>>>>>>
->>>>>>>> so it's indeed a case of self inflicted damage (RDSK (512) means
->>>>>>>> 512
->>>>>>>> byte blocks) and can be worked around by using a different block
->>>>>>>> size.
->>>>>>>>
->>>>>>>> Your memory serves right indeed - blocksize is in 512 bytes units.
->>>>>>>> I'll still submit a patch to Jens anyway as this may bite others
->>>>>>>> yet.
->>>>>>>>
->>>>>>>> Cheers,
->>>>>>>>
->>>>>>>>      Michael
->>>>>>>>
->>>>>>>>
->>>>>>>> On Sun, Jun 24, 2018 at 11:40 PM, jdow <jdow@earthlink.net> wrote:
->>>>>>>>>
->>>>>>>>> BTW - anybody who uses 512 byte blocks with an Amiga file
->>>>>>>>> system is
->>>>>>>>> a famn
->>>>>>>>> dool.
->>>>>>>>>
->>>>>>>>> If memory serves the RDBs think in blocks rather than bytes so it
->>>>>>>>> should
->>>>>>>>> work up to 2 gigablocks whatever your block size is. 512 blocks is
->>>>>>>>> 2199023255552 bytes. But that wastes just a WHOLE LOT of disk in
->>>>>>>>> block maps.
->>>>>>>>> Go up to 4096 or 8192. The latter is 35 TB.
->>>>>>>>>
->>>>>>>>> {^_^}
->>>>>>>>> On 20180624 02:06, Martin Steigerwald wrote:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Hi.
->>>>>>>>>>
->>>>>>>>>> Michael Schmitz - 27.04.18, 04:11:
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> test results at
->>>>>>>>>>> https://bugzilla.kernel.org/show_bug.cgi?id=43511
->>>>>>>>>>> indicate the RDB parser bug is fixed by the patch given there,
->>>>>>>>>>> so if
->>>>>>>>>>> Martin now submits the patch, all should be well?
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Ok, better be honest than having anyone waiting for it:
->>>>>>>>>>
->>>>>>>>>> I do not care enough about this, in order to motivate myself
->>>>>>>>>> preparing
->>>>>>>>>> the a patch from Joanne Dow´s fix.
->>>>>>>>>>
->>>>>>>>>> I am not even using my Amiga boxes anymore, not even the Sam440ep
->>>>>>>>>> which
->>>>>>>>>> I still have in my apartment.
->>>>>>>>>>
->>>>>>>>>> So RDB support in Linux it remains broken for disks larger 2 TB,
->>>>>>>>>> unless
->>>>>>>>>> someone else does.
->>>>>>>>>>
->>>>>>>>>> Thanks.
->>>>>>>>>>
->>>>>>>>> --
->>>>>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>>>>> linux-m68k" in
->>>>>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>>>
->>>>>>>>
->>>>>>> --
->>>>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>>>> linux-m68k" in
->>>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>>>
->>>>>>
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe
->>>>> linux-m68k" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>
+--EVF5PPMfhYS0aIcm--
