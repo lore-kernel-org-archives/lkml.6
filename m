@@ -2,165 +2,99 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B759FC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B498C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590792483E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:02:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5251C2538E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:03:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EnLfJr6M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 590792483E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J3WgpO/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5251C2538E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753172AbeF1JCj (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:02:39 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37015 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeF1JCh (ORCPT
+        id S933005AbeF1JDF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:03:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39350 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932262AbeF1JDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:02:37 -0400
-Received: by mail-it0-f66.google.com with SMTP id p17-v6so6501897itc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 02:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=N837V8s17hZoWhQ1OUVPVoWNbJUo+w9UaZNebt1VuYE=;
-        b=EnLfJr6MB/cj0pGt8CJcZE+rs+SNsPZwSH3VKHj1G8xWFlS+3DR5pijdmUBvR5QAFJ
-         JI77oP0mXoDzPYHNmhHUrDYNahnjiKCq+mBNbHLp7QlXni6jSJNp49kVmiPLJZUmt0/c
-         OQE4cJ/1tKI+MM2NyJdonRJDxhidkHgLFXMpw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=N837V8s17hZoWhQ1OUVPVoWNbJUo+w9UaZNebt1VuYE=;
-        b=Ys569/RBl2XGhhbt5O6Yv4UihOLmDxLx0VS3kimcCWikcdW2TMlQ+7lLuHfzKmU7AO
-         77klrYISC8VyxId0vhdItnCm2BgAlZxF4F8kzP7/Iys84+JUX+/duMx7/asVzwGMMI/K
-         wNgfWdTwmuHwhGbGPiXVGoam9vebbKySD+MbjK5C4K2B/McG2YrjXf8SVKgIatXGtabT
-         YaPAaKQQ7MehLHYvTOuDQlN9lWa2uN0UaslCMcV/uSFyWMc9BPSj9+njgBtI11PEcZuX
-         slG+muuuGtBmFLsqRHT0P86dvY779zN+abv5CUELZoWO+Ws8vlKWwZwcaHyb9LRRQF92
-         pJ7g==
-X-Gm-Message-State: APt69E0Ih7twW2Q1kV4cum0kYZLLgQFggn1TBkR4o3pgRi/UpDumr7NG
-        FKOV8nHMvVxxhqydNgB6PtyMPtWxe8tiQ65GPsaIkg==
-X-Google-Smtp-Source: ADUXVKJiIfE8YVSzTuE2ygKVguP6PQ8l8HBNqC4V4gBWHFmqO5RwhtDYN7rSgkd0AEVQ6PWku1v42gax/Y64R8RSd5k=
-X-Received: by 2002:a24:6196:: with SMTP id s144-v6mr7740673itc.68.1530176556683;
- Thu, 28 Jun 2018 02:02:36 -0700 (PDT)
+        Thu, 28 Jun 2018 05:03:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=CwXYGm+G3U+xuipIqbn7lqL7pvnVJ5aS8Wwwk4ZgbbY=; b=J3WgpO/+sFAo8BIWnIU1k7r+/g
+        mebLtka9Nfy+XxIDTscI+jaxOf3acB0rcearyNrZCrIY8yPgXxs5+bp4fy7hyAvV4OuBlcXAlmf6T
+        NHjdkBLvozdmQY689MWwPR9Uoh1AHIfYx9X+7BXSja0YtKdxA0zCvqCs4FApdq2OWgXVoPEH3FZfm
+        C5kxfS0WYcxDBRU7tfY1yv1Rt1yyY3WBRmMDJo0dap+iTQCrwkvb9AMEmSpjgqO7ACjAiEpaT5jhZ
+        MCTeNn3RJECNf5FeQF0qzyzcNBtoeCPP7/QPUzlVtt9cN6bxlG2kZM0zMb95r2dJZuX++1HFVA8pB
+        ffUVkIsw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYSpR-0003XO-VF; Thu, 28 Jun 2018 09:03:01 +0000
+Date:   Thu, 28 Jun 2018 02:03:01 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -mm -v4 00/21] mm, THP, swap: Swapout/swapin THP in one
+ piece
+Message-ID: <20180628090301.GC7646@bombadil.infradead.org>
+References: <20180622035151.6676-1-ying.huang@intel.com>
+ <20180627215144.73e98b01099191da59bff28c@linux-foundation.org>
+ <87r2krfpi2.fsf@yhuang-dev.intel.com>
+ <20180627223118.dd2f52d87f53e7e002ed0153@linux-foundation.org>
+ <87muvffp7w.fsf@yhuang-dev.intel.com>
+ <20180627231839.e5ac2f38e0397979d3db7765@linux-foundation.org>
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 02:02:36
- -0700 (PDT)
-In-Reply-To: <20180628085003.GA2494@hirez.programming.kicks-ass.net>
-References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
- <20180627160604.8154-3-ard.biesheuvel@linaro.org> <20180628085003.GA2494@hirez.programming.kicks-ass.net>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 28 Jun 2018 11:02:36 +0200
-Message-ID: <CAKv+Gu87DmGLG7N8X8+V7LppXm72SJUmCcEpaehCE5Rt0Z4FNw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] kernel/jump_label: implement generic support for
- relative references
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180627231839.e5ac2f38e0397979d3db7765@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 June 2018 at 10:50, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Wed, Jun 27, 2018 at 06:06:01PM +0200, Ard Biesheuvel wrote:
->> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
->> index 86ec0652d3b1..aa203dffe72c 100644
->> --- a/include/linux/jump_label.h
->> +++ b/include/linux/jump_label.h
->> @@ -121,6 +121,32 @@ struct static_key {
->>  #include <asm/jump_label.h>
->>
->>  #ifndef __ASSEMBLY__
->> +#ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
->> +
->> +struct jump_entry {
->> +     int code;
->> +     int target;
->> +     int key;
->> +};
->
-> I much prefer you use 'u32' there.
->
+On Wed, Jun 27, 2018 at 11:18:39PM -0700, Andrew Morton wrote:
+> On Thu, 28 Jun 2018 13:35:15 +0800 "Huang\, Ying" <ying.huang@intel.com> wrote:
+> > No problem.  I will rebase the patchset on your latest -mm tree, or the
+> > next version to be released?
+> 
+> We need to figure that out with Matthew.
+> 
+> Probably the xarray conversions are simpler and more mature so yes,
+> probably they should be staged first.
 
-Actually, they are signed so that would be s32. But yeah, I can change that.
+I'll take a look.  Honestly, my biggest problem with this patch set is
+overuse of tagging:
 
->
->> +static void jump_label_swap(void *a, void *b, int size)
->> +{
->> +     long delta = (unsigned long)a - (unsigned long)b;
->> +     struct jump_entry *jea = a;
->> +     struct jump_entry *jeb = b;
->> +     struct jump_entry tmp = *jea;
->> +
->> +     jea->code       = jeb->code - delta;
->> +     jea->target     = jeb->target - delta;
->> +     jea->key        = jeb->key - delta;
->> +
->> +     jeb->code       = tmp.code + delta;
->> +     jeb->target     = tmp.target + delta;
->> +     jeb->key        = tmp.key + delta;
->> +}
->> +
->>  static void
->>  jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
->>  {
->> @@ -56,7 +72,9 @@ jump_label_sort_entries(struct jump_entry *start, struct jump_entry *stop)
->>
->>       size = (((unsigned long)stop - (unsigned long)start)
->>                                       / sizeof(struct jump_entry));
->> -     sort(start, size, sizeof(struct jump_entry), jump_label_cmp, NULL);
->> +     sort(start, size, sizeof(struct jump_entry), jump_label_cmp,
->> +          IS_ENABLED(CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE) ? jump_label_swap
->> +                                                           : NULL);
->>  }
->
-> That will result in jump_label_swap being an unused symbol for some
-> compile options.
->
+59832     Jun 22 Huang, Ying     ( 131) [PATCH -mm -v4 00/21] mm, THP, swap: Swa
+59833 N   Jun 22 Huang, Ying     ( 126) ├─>[PATCH -mm -v4 01/21] mm, THP, swap:
+59834 N   Jun 22 Huang, Ying     (  44) ├─>[PATCH -mm -v4 02/21] mm, THP, swap:
+59835 N   Jun 22 Huang, Ying     ( 583) ├─>[PATCH -mm -v4 03/21] mm, THP, swap:
+59836 N   Jun 22 Huang, Ying     ( 104) ├─>[PATCH -mm -v4 04/21] mm, THP, swap:
+59837 N   Jun 22 Huang, Ying     ( 394) ├─>[PATCH -mm -v4 05/21] mm, THP, swap:
+59838 N   Jun 22 Huang, Ying     ( 198) ├─>[PATCH -mm -v4 06/21] mm, THP, swap:
+59839 N   Jun 22 Huang, Ying     ( 161) ├─>[PATCH -mm -v4 07/21] mm, THP, swap:
+59840 N   Jun 22 Huang, Ying     ( 351) ├─>[PATCH -mm -v4 08/21] mm, THP, swap:
+59841 N   Jun 22 Huang, Ying     ( 293) ├─>[PATCH -mm -v4 09/21] mm, THP, swap:
+59842 N   Jun 22 Huang, Ying     ( 138) ├─>[PATCH -mm -v4 10/21] mm, THP, swap:
+59843 N   Jun 22 Huang, Ying     ( 264) ├─>[PATCH -mm -v4 11/21] mm, THP, swap:
+59844 N   Jun 22 Huang, Ying     ( 251) ├─>[PATCH -mm -v4 12/21] mm, THP, swap:
+59845 N   Jun 22 Huang, Ying     ( 121) ├─>[PATCH -mm -v4 13/21] mm, THP, swap:
+59846 N   Jun 22 Huang, Ying     ( 517) ├─>[PATCH -mm -v4 14/21] mm, cgroup, THP
+59847 N   Jun 22 Huang, Ying     ( 128) ├─>[PATCH -mm -v4 15/21] mm, THP, swap:
+59848 N   Jun 22 Huang, Ying     (  85) ├─>[PATCH -mm -v4 16/21] mm, THP, swap:
+59849 N   Jun 22 Huang, Ying     (  70) ├─>[PATCH -mm -v4 17/21] mm, THP, swap:
 
-No, and isn't that the point of IS_ENABLED()? The compiler sees a
-reference to jump_label_swap(), so it won't complain about it being
-unused.
-
-> Would it not be much nicer to write that like:
->
-> static void jump_label_swap(void *a, void *b, int size)
-> {
->         struct jump_entry *jea = a, *jeb = b;
->
-> #ifdef CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE
->         long delta = a - b;
->
->         jea->code += delta;
->         jea->target += delta;
->         jea->key += delta;
->
->         jeb->code -= delta;
->         jeb->target -= delta;
->         jeb->key -= delta;
-> #else
->
->         swap(*jea, *jeb);
-> }
->
-> And then unconditionally use jump_label_swap().
-
-Meh. I thought IS_ENABLED() was preferred over #ifdef, no? That way,
-the compiler always sees the code, and simply discards it without
-complaining if it ends up left unused.
+There's literally zero useful information displayed in the patch subjects.
