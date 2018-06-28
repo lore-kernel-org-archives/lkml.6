@@ -3,291 +3,179 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB52C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A73C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8C0279F6
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB502279FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 22:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="C8BsDErf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8C0279F6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AtoCL+gY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB502279FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935630AbeF1W3J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 18:29:09 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40817 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932522AbeF1W3I (ORCPT
+        id S935869AbeF1W3W (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 18:29:22 -0400
+Received: from mail.efficios.com ([167.114.142.138]:55972 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932522AbeF1W3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 18:29:08 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a6-v6so5745611ljj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 15:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bCDtEpV9dMbkPS/3LL9T2xJOB65ebxEvghcdrpVHLwI=;
-        b=C8BsDErfGxWUcXLxsQx2jenuLeExkHZ0OXyImAKWoJS+1V5lDHfJ80s9gVZi436wJG
-         GME5aEdS71Fvzr8Qmuk4/rHygN3ia66O3mVY8tbGhFBhLHRq6oYU3/Da9fAgg7JH4eiQ
-         zSw7dpUWMAc7GyKVhh7lxDtMT8y3RWl/QsZw6eSc1KJP3Xv6UN/Ucf1j9SB0LXast43M
-         WyjlB5jPdbNvZTke5OHAFka+4tkeecTUWLs1LTEzgpkIVDKT2S9d+/reuGfNCWd+wcsl
-         LEc8GA+cp3CyymMwyH2LkAdtRfGRwJLWLFyUDKyLG+au94HpGhC4k58NXKteQ9+nDdO9
-         MhEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bCDtEpV9dMbkPS/3LL9T2xJOB65ebxEvghcdrpVHLwI=;
-        b=bAuWy2GPxWF3uj4d8bxHoH38aulqKqrootFYeWrG2fGnQqWTgoGu7oA25Wk/kNdryG
-         XhMvDykP61WYtQ3hUlMD9lIEttd/evVNeuHd8NXJvxs3bna7qAke+iGJ6JWwOfTyLMtx
-         1qDEHDywHYHk1xhwX0CRdrZJpx4wq1A7MywzgLEUDF8/JGunmjuUQXuzA1bCmqU54oCy
-         o3MvUwSwubFi7WQmIRjycfvPPAfMEBxaL895boyfBUbnWVXUnINebqCE5O/qXb9Q/7X3
-         dKdMv3qI9xerZZ5nQJ6HV1REM7gSxfmqU/b8hjQMwwLkKo8u7azFG5FHYFKuhhausq5F
-         Jr9A==
-X-Gm-Message-State: APt69E1Noc8sWSFPAh3yISk62q6pz+UTojO9nuRjAEIwNKkFSJvHFMP+
-        T213DB2+7QQBkwJe6FaAhrPB00Dw1ZAM3KpRSQLklQA=
-X-Google-Smtp-Source: AAOMgpcBNteOTraGXO5Bt4crUYiTIme9sUcolfPCZpSruIcy9hQn66NlK1p95lCtfhgIyBfOTDbE7c1OEMFOBqQWKB4=
-X-Received: by 2002:a2e:9e57:: with SMTP id g23-v6mr8064838ljk.14.1530224946510;
- Thu, 28 Jun 2018 15:29:06 -0700 (PDT)
+        Thu, 28 Jun 2018 18:29:21 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 19CE222ECB4;
+        Thu, 28 Jun 2018 18:29:20 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id nBjt-Rf-398N; Thu, 28 Jun 2018 18:29:19 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 55F1F22ECAD;
+        Thu, 28 Jun 2018 18:29:19 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 55F1F22ECAD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530224959;
+        bh=YckiZvn5wBuACqA+RRhpifkE73IH1S7cDe+V0Iqhaqw=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=AtoCL+gYlUo8KkqhJyJKtvYmuVouIw3xNYrgGp8MYZlU3l5TWq9/NyFooXSW9zchs
+         VK46h6ICcr1Mul5f/LjoCLAcU5gvl7J3a/Z2DEu5wFXPttU4+HbR28PtbJ4+hQ0IgA
+         wN+9HXZH8fFErK7LWxPM2zleK4IWNRnYcWK0M8vqwsOIZUs4XOtFQ+SDNCwg2dRaRQ
+         ZbwlL297JAEtX5qDk99SRs70ZIAYhrrtp2SSInmr52YowgnlJsFbjJ2rLfLECz3JLu
+         ZDqQmbrhzXyNT06bP7rsbCLmTnG/FndhIgwLRd1lpJAD95VR8iaI3KxldjXUYtGXWk
+         iwz63fQ0zfHTg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id ub1kI70s2xVN; Thu, 28 Jun 2018 18:29:19 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 37ABF22ECA4;
+        Thu, 28 Jun 2018 18:29:19 -0400 (EDT)
+Date:   Thu, 28 Jun 2018 18:29:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <1821591223.9479.1530224958939.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
+ TASK_SIZE
 MIME-Version: 1.0
-References: <cover.1529003588.git.rgb@redhat.com> <e3584154c8594cf64e9293ec6f473cdaaabe2954.1529003588.git.rgb@redhat.com>
-In-Reply-To: <e3584154c8594cf64e9293ec6f473cdaaabe2954.1529003588.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 28 Jun 2018 18:28:55 -0400
-Message-ID: <CAHC9VhScxWn9jP7wMdkVoQM-5i2RnMM2HJe-baHGu3D4NpJvpQ@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak59 V1 6/6] audit: extend config_change
- mark/watch/tree rule changes
-To:     rgb@redhat.com
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>, sgrubb@redhat.com,
-        aviro@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
+Thread-Index: 11XCFtdD9OAfrodbawODhQ2jv3dcYg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Give a clue as to the source of mark, watch and tree rule changes.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/50
-> See: https://github.com/linux-audit/audit-kernel/issues/59
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/audit.h          |  4 ++--
->  kernel/audit_fsnotify.c |  2 +-
->  kernel/audit_tree.c     | 24 ++++++++++++------------
->  kernel/audit_watch.c    |  6 ++++--
->  kernel/auditsc.c        |  4 ++--
->  5 files changed, 21 insertions(+), 19 deletions(-)
+----- On Jun 28, 2018, at 5:22 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-I think having some additional context here would be helpful for
-everyone, so I agree with this on principle.  However, I think we need
-to get clarification from Steve that his parser is able to handle
-these richer "op" values.
+> On Thu, Jun 28, 2018 at 1:23 PM Andy Lutomirski <luto@kernel.org> wrote:
+>>
+>> This is okay with me for a fix outside the merge window.  Can you do a
+>> followup for the next merge window that fixes it better, though?  In
+>> particular, TASK_SIZE is generally garbage.  I think a better fix
+>> would be something like adding a new arch-overridable helper like:
+>>
+>> static inline unsigned long current_max_user_addr(void) { return TASK_SIZE; }
+> 
+> We already have that. It's called "user_addr_max()".
+> 
+> It's the limit we use for user accesses.
 
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index f39f7aa..5e072f5 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -312,7 +312,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
->  extern int audit_tag_tree(char *old, char *new);
->  extern const char *audit_tree_path(struct audit_tree *tree);
->  extern void audit_put_tree(struct audit_tree *tree);
-> -extern void audit_kill_trees(struct audit_context *context);
-> +extern void audit_kill_trees(struct audit_context *context, char *trig);
->  #else
->  #define audit_remove_tree_rule(rule) BUG()
->  #define audit_add_tree_rule(rule) -EINVAL
-> @@ -321,7 +321,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
->  #define audit_put_tree(tree) (void)0
->  #define audit_tag_tree(old, new) -EINVAL
->  #define audit_tree_path(rule) ""       /* never called */
-> -#define audit_kill_trees(context) BUG()
-> +#define audit_kill_trees(context, trig) BUG()
->  #endif
->
->  extern char *audit_unpack_string(void **bufp, size_t *remain, size_t len);
-> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-> index 1640eb6..c10ba91 100644
-> --- a/kernel/audit_fsnotify.c
-> +++ b/kernel/audit_fsnotify.c
-> @@ -158,7 +158,7 @@ static void audit_autoremove_mark_rule(struct audit_fsnotify_mark *audit_mark)
->         struct audit_krule *rule = audit_mark->rule;
->         struct audit_entry *entry = container_of(rule, struct audit_entry, rule);
->
-> -       audit_mark_log_rule_change(audit_mark, "autoremove_rule");
-> +       audit_mark_log_rule_change(audit_mark, "autoremove_rule(mark)");
->         audit_del_rule(entry);
->  }
->
-> diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> index 2d3e1071..1726cfa 100644
-> --- a/kernel/audit_tree.c
-> +++ b/kernel/audit_tree.c
-> @@ -493,7 +493,7 @@ static int tag_chunk(struct inode *inode, struct audit_tree *tree)
->         return 0;
->  }
->
-> -static void audit_tree_log_remove_rule(struct audit_context *context, struct audit_krule *rule)
-> +static void audit_tree_log_remove_rule(struct audit_context *context, struct audit_krule *rule, char *trig)
->  {
->         struct audit_buffer *ab;
->
-> @@ -502,7 +502,7 @@ static void audit_tree_log_remove_rule(struct audit_context *context, struct aud
->         ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
->         if (unlikely(!ab))
->                 return;
-> -       audit_log_format(ab, "op=remove_rule");
-> +       audit_log_format(ab, "op=remove_rule(tree:%s)", trig);
->         audit_log_format(ab, " dir=");
->         audit_log_untrustedstring(ab, rule->tree->pathname);
->         audit_log_key(ab, rule->filterkey);
-> @@ -510,7 +510,7 @@ static void audit_tree_log_remove_rule(struct audit_context *context, struct aud
->         audit_log_end(ab);
->  }
->
-> -static void kill_rules(struct audit_context *context, struct audit_tree *tree)
-> +static void kill_rules(struct audit_context *context, struct audit_tree *tree, char *trig)
->  {
->         struct audit_krule *rule, *next;
->         struct audit_entry *entry;
-> @@ -521,7 +521,7 @@ static void kill_rules(struct audit_context *context, struct audit_tree *tree)
->                 list_del_init(&rule->rlist);
->                 if (rule->tree) {
->                         /* not a half-baked one */
-> -                       audit_tree_log_remove_rule(context, rule);
-> +                       audit_tree_log_remove_rule(context, rule, trig);
->                         if (entry->rule.exe)
->                                 audit_remove_mark(entry->rule.exe);
->                         rule->tree = NULL;
-> @@ -551,7 +551,7 @@ static void prune_one(struct audit_tree *victim)
->
->  /* trim the uncommitted chunks from tree */
->
-> -static void trim_marked(struct audit_tree *tree)
-> +static void trim_marked(struct audit_tree *tree, char *trig)
->  {
->         struct list_head *p, *q;
->         spin_lock(&hash_lock);
-> @@ -584,7 +584,7 @@ static void trim_marked(struct audit_tree *tree)
->                 tree->goner = 1;
->                 spin_unlock(&hash_lock);
->                 mutex_lock(&audit_filter_mutex);
-> -               kill_rules(audit_context(), tree);
-> +               kill_rules(audit_context(), tree, trig);
->                 list_del_init(&tree->list);
->                 mutex_unlock(&audit_filter_mutex);
->                 prune_one(tree);
-> @@ -665,7 +665,7 @@ void audit_trim_trees(void)
->                                 node->index &= ~(1U<<31);
->                 }
->                 spin_unlock(&hash_lock);
-> -               trim_marked(tree);
-> +               trim_marked(tree, "trim");
->                 drop_collected_mounts(root_mnt);
->  skip_it:
->                 put_tree(tree);
-> @@ -798,7 +798,7 @@ int audit_add_tree_rule(struct audit_krule *rule)
->                         node->index &= ~(1U<<31);
->                 spin_unlock(&hash_lock);
->         } else {
-> -               trim_marked(tree);
-> +               trim_marked(tree, "add");
->                 goto Err;
->         }
->
-> @@ -900,7 +900,7 @@ int audit_tag_tree(char *old, char *new)
->                                 node->index &= ~(1U<<31);
->                         spin_unlock(&hash_lock);
->                 } else {
-> -                       trim_marked(tree);
-> +                       trim_marked(tree, "equiv");
->                 }
->
->                 put_tree(tree);
-> @@ -924,7 +924,7 @@ static void audit_schedule_prune(void)
->   * ... and that one is done if evict_chunk() decides to delay until the end
->   * of syscall.  Runs synchronously.
->   */
-> -void audit_kill_trees(struct audit_context *context)
-> +void audit_kill_trees(struct audit_context *context, char *trig)
->  {
->         struct list_head *list = &context->killed_trees;
->
-> @@ -935,7 +935,7 @@ void audit_kill_trees(struct audit_context *context)
->                 struct audit_tree *victim;
->
->                 victim = list_entry(list->next, struct audit_tree, list);
-> -               kill_rules(context, victim);
-> +               kill_rules(context, victim, trig);
->                 list_del_init(&victim->list);
->
->                 mutex_unlock(&audit_filter_mutex);
-> @@ -974,7 +974,7 @@ static void evict_chunk(struct audit_chunk *chunk)
->                 list_del_init(&owner->same_root);
->                 spin_unlock(&hash_lock);
->                 if (!postponed) {
-> -                       kill_rules(audit_context(), owner);
-> +                       kill_rules(audit_context(), owner, "evict");
->                         list_move(&owner->list, &prune_list);
->                         need_prune = 1;
->                 } else {
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index da2978b..693d0a8 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -317,7 +317,9 @@ static void audit_update_watch(struct audit_parent *parent,
->                         if (oentry->rule.exe)
->                                 audit_remove_mark(oentry->rule.exe);
->
-> -                       audit_watch_log_rule_change(r, owatch, "updated_rules");
-> +                       audit_watch_log_rule_change(r, owatch, invalidating ?
-> +                                                   "updated_rules(watch:inval)" :
-> +                                                   "updated_rules(watch:set)");
->
->                         call_rcu(&oentry->rcu, audit_free_rule_rcu);
->                 }
-> @@ -345,7 +347,7 @@ static void audit_remove_parent_watches(struct audit_parent *parent)
->         list_for_each_entry_safe(w, nextw, &parent->watches, wlist) {
->                 list_for_each_entry_safe(r, nextr, &w->rules, rlist) {
->                         e = container_of(r, struct audit_entry, rule);
-> -                       audit_watch_log_rule_change(r, w, "remove_rule");
-> +                       audit_watch_log_rule_change(r, w, "remove_rule(watch:parent)");
->                         if (e->rule.exe)
->                                 audit_remove_mark(e->rule.exe);
->                         list_del(&r->rlist);
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index d56aead..32428a3 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1486,7 +1486,7 @@ void __audit_free(struct task_struct *tsk)
->         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
->                 audit_log_exit(context, tsk);
->         if (!list_empty(&context->killed_trees))
-> -               audit_kill_trees(context);
-> +               audit_kill_trees(context, "free");
->         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT) {
->                 struct audit_buffer *ab;
->
-> @@ -1577,7 +1577,7 @@ void __audit_syscall_exit(int success, long return_code)
->         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT)
->                 audit_log_exit(context, current);
->         if (!list_empty(&context->killed_trees))
-> -               audit_kill_trees(context);
-> +               audit_kill_trees(context, "exit");
->         if (context->in_syscall && context->current_state == AUDIT_RECORD_CONTEXT) {
->                 struct audit_buffer *ab;
->
-> --
-> 1.8.3.1
->
+Good point. I will simply replace TASK_SIZE with user_addr_max() then.
+
+> That said, I don't see why we should even check the IP. It's not like
+> that's done by signal handling either.
+
+The goal stated by Andy and Thomas is to design rseq so it
+does not need any compat syscall whatsoever. Considering
+that this is a new system call, we should be able to do that.
+One thing we want is to provide a consistent behavior when
+a 32-bit binary is executed on native 32-bit kernel or on
+64-bit kernel in compat mode, even if userspace chooses to
+put garbage in the upper 32-bit of padding within 64-bit
+fields.
+
+Now let's look at the comparison with signals. If we look
+at ia32_setup_frame() for instance, it sets:
+
+  regs->ip = (unsigned long) ksig->ka.sa.sa_handler;
+
+where the sa_handler pointer has been received as input
+as a 32-bit pointer by the compat syscall rt_sigaction
+through struct compat_sigaction. I agree with you that
+it does not appear to validate that it's below
+user_addr_max(), but at least it's guaranteed to never be
+over 32-bit.
+
+The first big difference between rseq and signals: rseq
+does not have a compat structure. The layout is the same
+for both 32-bit and 64-bit userspace (see include/uapi/linux/rseq.h).
+
+Another difference between rseq and signals is that rseq
+only registers the TLS struct rseq for each thread. Then,
+it's up to user-space to update the rseq_cs field of
+struct rseq to indicate that it enters a critical section.
+
+So the actual content of (struct rseq *)->rseq_cs is updated
+with single-copy atomicity after registration of rseq.
+Therefore, the current critical section pointed to by the current
+rseq_cs user-space pointer also changes after registration. So we
+cannot validate the content of the rseq_cs field, nor of the fields
+contained within every possible struct rseq_cs descriptor when
+registering rseq through sys_rseq: those need to be read when
+returning to user-space. Not just on return from system call, but
+also on return from interrupt/trap after a preemption.
+
+This is very much different from registering a sigaction,
+where the kernel can validate or truncate the content of
+sa_handler at will.
+
+Without validation of the content of e.g. rseq_cs->abort_ip
+(read as a 64-bit integer by a 64-bit kernel), we end up setting
+the return IP to that address on abort, even though user-space may
+have put garbage in the high bits:
+
+   instruction_pointer_set(regs, (unsigned long)rseq_cs.abort_ip);
+
+without any validation or truncation whatsoever.
+
+I'm concerned that some architecture code may not deal so well without
+prior validation or truncation of the IP register content upper 32 bits
+when returning to a 32-bit compat task.
+
+This is why I'm considering comparison of abort_ip against user_addr_max()
+to ensure we're not provided with an incorrect user input.
+
+Thanks,
+
+Mathieu
 
 
 -- 
-paul moore
-www.paul-moore.com
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
