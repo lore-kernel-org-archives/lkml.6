@@ -2,117 +2,180 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A984C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5780C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137D02767D
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:27:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137D02767D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 708FE24CB4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:28:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="bSIpnobd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708FE24CB4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=foxmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754128AbeF1Q1v (ORCPT
+        id S1754296AbeF1Q2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:27:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41652 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753040AbeF1Q1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:27:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B49D076F9F;
-        Thu, 28 Jun 2018 16:27:49 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A367E1116717;
-        Thu, 28 Jun 2018 16:27:47 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     "the arch\/x86 maintainers" <x86@kernel.org>,
-        devel@linuxdriverproject.org, LKML <linux-kernel@vger.kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tianyu.Lan@microsoft.com,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
-Subject: Re: [PATCH 0/4] x86/hyper-v: optimize PV IPIs
-References: <20180622170625.30688-1-vkuznets@redhat.com>
-        <CANRm+CwNfOkosECeSGaXXDaqTDvh1u228ztU8C5Xe95FGgNsFQ@mail.gmail.com>
-        <8736x8h8wu.fsf@vitty.brq.redhat.com>
-Date:   Thu, 28 Jun 2018 18:27:46 +0200
-In-Reply-To: <8736x8h8wu.fsf@vitty.brq.redhat.com> (Vitaly Kuznetsov's message
-        of "Wed, 27 Jun 2018 11:32:17 +0200")
-Message-ID: <87o9fuev0d.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 16:27:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 16:27:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        Thu, 28 Jun 2018 12:28:51 -0400
+Received: from smtpbg298.qq.com ([184.105.67.102]:32990 "EHLO smtpbg298.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753040AbeF1Q2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 12:28:50 -0400
+X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Thu, 28 Jun 2018 12:28:49 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1530203328;
+        bh=bZYI38z6ho5xlx54PgTehgQhbrnBKv64KAJMQs/bC6U=;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        b=bSIpnobdMwmaaW4OlVrFxm+esZ4fVuRbCKXKwR1LBNrMVCa4gzX1rYRxvfGJ8pDZn
+         eldvAc5/adwfxhve6tRrpNGGTkaX2M8o52X3UlFgSNk3c6OOI8pLB++7H4psMBBTFe
+         a/lR3T/YPVfAq0gqllgJM4q5/GrProlfjvZJ5D/A=
+X-QQ-mid: esmtp2t1530202816t5wlg9qx2
+Received: from localhost.localdomain (unknown [218.72.0.54])
+        by esmtp4.qq.com (ESMTP) with 
+        id ; Fri, 29 Jun 2018 00:20:15 +0800 (CST)
+X-QQ-SSF: B100000000000070FG120000000000V
+X-QQ-FEAT: p/Y2uUKTrsyRzbCDfHn7YaZUTirfsgL8pGJW2wMGpMkWy5vI3s3wtQHiTb7nF
+        505zIGfUMUtPjixwKcgZgOXHFnPntdzakDf0XO8svUour7JY7taRhE7KoMGJbHHDSNh5WSb
+        tqFfftd0rQJsnkBJ5nJv9OQaucqlcCZ4FLc3wNzkGoh7xrFFLwanJqc5ZrOXFURgPYs+ow7
+        +JGYy3o90tgJ0d5YzKI7sFiu10PA1nonwlTyUV2lb0hcKzMBKKdNDMfxja+OKVQjROXU0JC
+        6hjMaIVXdJ4xBSWaRdqmMw1llixs6zgpW7dA==
+X-QQ-GoodBg: 0
+From:   Yisheng Xie <ysxie@foxmail.com>
+To:     b.zolnierkie@samsung.com, keescook@chromium.org,
+        j.w.r.degoede@gmail.com, david@lechnology.com
+Cc:     andriy.shevchenko@linux.intel.com, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yisheng Xie <ysxie@foxmail.com>
+Subject: [PATCH] fbcon: introduce for_each_registered_fb() helper
+Date:   Fri, 29 Jun 2018 00:20:09 +0800
+Message-Id: <1530202809-24105-1-git-send-email-ysxie@foxmail.com>
+X-Mailer: git-send-email 1.9.1
+X-QQ-SENDSIZE: 520
+X-QQ-FName: A1FFDC7A76AE4C82BE4DF7BD98E76F79
+X-QQ-LocalIP: 10.208.130.95
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Following pattern is often used:
 
-> Wanpeng Li <kernellwp@gmail.com> writes:
->
->> Hi Vitaly, (fix my reply mess this time)
->> On Sat, 23 Jun 2018 at 01:09, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>>
->>> When reviewing my "x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_
->>> {LIST,SPACE} hypercalls when possible" patch Michael suggested to apply the
->>> same idea to PV IPIs. Here we go!
->>>
->>> Despite what Hyper-V TLFS says about HVCALL_SEND_IPI hypercall, it can
->>> actually be 'fast' (passing parameters through registers). Use that too.
->>>
->>> This series can collide with my "KVM: x86: hyperv: PV IPI support for
->>> Windows guests" series as I rename ipi_arg_non_ex/ipi_arg_ex structures
->>> there. Depending on which one gets in first we may need to do tiny
->>> adjustments.
->>
->> As hyperv PV TLB flush has already been merged, is there any other
->> obvious multicast IPIs scenarios? qemu supports interrupt remapping
->> since two years ago, I think windows guest can switch to cluster mode
->> after entering x2APIC, so sending IPI per cluster. In addition, you
->> can also post the benchmark result for this PV IPI optimization,
->> although it also fixes the bug which you mentioned above.
->
-> I got confused, which of my patch series are you actually looking at?
-> :-)
->
-> This particular one ("x86/hyper-v: optimize PV IPIs") is not about
-> KVM/qemu, it is for Linux running on top on real Hyper-V server. We
-> already support PV IPIs and here I'm just trying to optimize the way how
-> we send them by switching to a cheaper hypercall (and using 'fast'
-> version of it) when possible. I don't actually have a good benchmark
-> (and I don't remember seeing one when K.Y. posted PV IPI support) but
-> this can be arranged I guess: I can write a dump 'IPI sender' in kernel
-> and send e.g. 1000 IPIs.
+ for (i = 0; i < FB_MAX; i++) {
+        if (registered_fb[i]) {
+                ...
+        }
+ }
 
-So I used the IPI benchmark (https://lkml.org/lkml/2017/12/19/141,
-thanks for the tip!) on this series. On a 16 vCPU guest (WS2016) I'm
-getting the following:
+Therefore, as Andy's suggestion, for_each_registered_fb() helper can
+be introduced to make the code easier to read and write by reducing
+indentation level. It also saves few lines of code in each occurrence.
 
-Before:
-Dry-run:		0		203110
-Self-IPI:		6167430		11645550
-Normal IPI:		380479300	475881820
-Broadcast IPI:		0		2557371420
+This patch convert all part here at the same time.
 
-After:
-Dry-run:		0		214280     (not interesting)
-Self-IPI:		5706210		10697640   (- 8%)
-Normal IPI:		379330010	450158830  (- 5%)
-Broadcast IPI:		0		2340427160 (- 8%)
+Signed-off-by: Yisheng Xie <ysxie@foxmail.com>
+---
+ drivers/video/fbdev/core/fbcon.c | 25 +++++++++----------------
+ drivers/video/fbdev/core/fbmem.c |  4 +---
+ include/linux/fb.h               |  4 ++++
+ 3 files changed, 14 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index c910e74..610853d 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -2220,8 +2220,8 @@ static int fbcon_switch(struct vc_data *vc)
+ 	 *
+ 	 * info->currcon = vc->vc_num;
+ 	 */
+-	for (i = 0; i < FB_MAX; i++) {
+-		if (registered_fb[i] != NULL && registered_fb[i]->fbcon_par) {
++	for_each_registered_fb(i) {
++		if (registered_fb[i]->fbcon_par) {
+ 			struct fbcon_ops *o = registered_fb[i]->fbcon_par;
+ 
+ 			o->currcon = vc->vc_num;
+@@ -3103,11 +3103,9 @@ static int fbcon_fb_unregistered(struct fb_info *info)
+ 	if (idx == info_idx) {
+ 		info_idx = -1;
+ 
+-		for (i = 0; i < FB_MAX; i++) {
+-			if (registered_fb[i] != NULL) {
+-				info_idx = i;
+-				break;
+-			}
++		for_each_registered_fb(i) {
++			info_idx = i;
++			break;
+ 		}
+ 	}
+ 
+@@ -3562,11 +3560,9 @@ static void fbcon_start(void)
+ 
+ 		console_lock();
+ 
+-		for (i = 0; i < FB_MAX; i++) {
+-			if (registered_fb[i] != NULL) {
+-				info_idx = i;
+-				break;
+-			}
++		for_each_registered_fb(i) {
++			info_idx = i;
++			break;
+ 		}
+ 
+ 		do_fbcon_takeover(0);
+@@ -3586,15 +3582,12 @@ static void fbcon_exit(void)
+ 	kfree((void *)softback_buf);
+ 	softback_buf = 0UL;
+ 
+-	for (i = 0; i < FB_MAX; i++) {
++	for_each_registered_fb(i) {
+ 		int pending = 0;
+ 
+ 		mapped = 0;
+ 		info = registered_fb[i];
+ 
+-		if (info == NULL)
+-			continue;
+-
+ 		if (info->queue.func)
+ 			pending = cancel_work_sync(&info->queue);
+ 		DPRINTK("fbcon: %s pending work\n", (pending ? "canceled" :
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 609438d..645c6ac 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1593,10 +1593,8 @@ static int do_remove_conflicting_framebuffers(struct apertures_struct *a,
+ 	int i, ret;
+ 
+ 	/* check all firmware fbs and kick off if the base addr overlaps */
+-	for (i = 0 ; i < FB_MAX; i++) {
++	for_each_registered_fb(i) {
+ 		struct apertures_struct *gen_aper;
+-		if (!registered_fb[i])
+-			continue;
+ 
+ 		if (!(registered_fb[i]->flags & FBINFO_MISC_FIRMWARE))
+ 			continue;
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index aa74a22..3e13b95 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -650,6 +650,10 @@ extern int fb_get_color_depth(struct fb_var_screeninfo *var,
+ extern int num_registered_fb;
+ extern struct class *fb_class;
+ 
++#define for_each_registered_fb(i)		\
++	for (i = 0; i < FB_MAX; i++)		\
++		if (registered_fb[i])
++
+ extern int lock_fb_info(struct fb_info *info);
+ 
+ static inline void unlock_fb_info(struct fb_info *info)
 -- 
-  Vitaly
+1.9.1
+
