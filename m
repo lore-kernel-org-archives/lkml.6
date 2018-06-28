@@ -2,79 +2,96 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EF4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78E2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9E6D27021
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9E6D27021
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 94B0C27022
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B0C27022
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933995AbeF1HPu convert rfc822-to-8bit (ORCPT
+        id S1753682AbeF1HQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:15:50 -0400
-Received: from shards.monkeyblae.net ([23.128.96.9]:46968 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S933521AbeF1HPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:15:48 -0400
-Received: from localhost (unknown [211.196.191.92])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5FE62125A7A1A;
-        Thu, 28 Jun 2018 00:15:44 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 16:15:42 +0900 (KST)
-Message-Id: <20180628.161542.1549781477221134232.davem@davemloft.net>
-To:     shuah@kernel.org
-Cc:     daniel.diaz@linaro.org, shuahkh@osg.samsung.com,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/net: Fix permissions for fib_tests.sh
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <8f5b0575-2213-5f7a-5b08-7502f65a1d16@kernel.org>
-References: <1529425232-25242-1-git-send-email-daniel.diaz@linaro.org>
-        <8f5b0575-2213-5f7a-5b08-7502f65a1d16@kernel.org>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 28 Jun 2018 00:15:48 -0700 (PDT)
+        Thu, 28 Jun 2018 03:16:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:21208 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753262AbeF1HQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 03:16:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 00:16:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,282,1526367600"; 
+   d="scan'208";a="60773124"
+Received: from keunhyun-mobl1.amr.corp.intel.com (HELO haswell-OptiPlex-9020.ccr.corp.intel.com) ([10.255.29.56])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Jun 2018 00:16:06 -0700
+From:   Li Zhijian <lizhijian@cn.fujitsu.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Li Zhijian <lizhijian@cn.fujitsu.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf test record+probe_libc_inet_pton: expect [unknown] for ping as well
+Date:   Thu, 28 Jun 2018 15:16:00 +0800
+Message-Id: <1530170160-4979-1-git-send-email-lizhijian@cn.fujitsu.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <shuah@kernel.org>
-Date: Tue, 26 Jun 2018 12:22:28 -0600
+On system which has not installed debuginfo of iputils(ping) will fail like:
+~/lkp/linux/tools/perf$ sudo ./perf test ping -v
+63: probe libc's inet_pton & backtrace it with ping       :
+--- start ---
+test child forked, pid 4207
+ping 4224 [007] 3034121.295510: probe_libc:inet_pton: (7fedfccb2200)
+7fedfccb2200 __GI___inet_pton+0x0 (/lib/x86_64-linux-gnu/libc-2.23.so)
+7fedfcc7ad5e getaddrinfo+0xee (/lib/x86_64-linux-gnu/libc-2.23.so)
+55e3239a9f4d [unknown] (/bin/ping)
+FAIL: expected backtrace entry 3
+".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" got "55e3239a9f4d [unknown] (/bin/ping)"
+test child finished with -1
+---- end ----
+probe libc's inet_pton & backtrace it with ping: FAILED!
 
-> On 06/19/2018 10:20 AM, Daniel Díaz wrote:
->> fib_tests.sh became non-executable at some point. This is
->> what happens:
->>   selftests: net: fib_tests.sh: Warning: file fib_tests.sh is
->>   not executable, correct this.
->>   not ok 1..11 selftests: net: fib_tests.sh [FAIL]
->> 
->> Fixes: d69faad76584 ("selftests: fib_tests: Add prefix route tests with metric")
->> 
->> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
->> ---
->>  tools/testing/selftests/net/fib_tests.sh | 0
->>  1 file changed, 0 insertions(+), 0 deletions(-)
->>  mode change 100644 => 100755 tools/testing/selftests/net/fib_tests.sh
->> 
->> diff --git a/tools/testing/selftests/net/fib_tests.sh b/tools/testing/selftests/net/fib_tests.sh
->> old mode 100644
->> new mode 100755
->> 
-> 
-> Hi David,
-> 
-> Are you planning to pick this up for 4.18-rc3 or later?
+To be compatible with this system, expects [unknown] as well
 
-Applied, thanks.
+Fixes: 7903a7086723 ("perf script: Show symbol offsets by default")
+CC: Sandipan Das <sandipan@linux.vnet.ibm.com>
+CC: Thomas Richter <tmricht@linux.ibm.com>
+Reported-by: kernel test robot <xiaolong.ye@intel.com>
+Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 2630570..ebb6549 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -22,12 +22,12 @@ trace_libc_inet_pton_backtrace() {
+ 		eventattr='call-graph=dwarf,max-stack=4'
+ 		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+ 		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+-		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
++		expected[4]=".*(\+0x[[:xdigit:]]|\[unknown\])+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	*)
+ 		eventattr='max-stack=3'
+ 		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
+-		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
++		expected[3]=".*(\+0x[[:xdigit:]]|\[unknown\])+[[:space:]]\(.*/bin/ping.*\)$"
+ 		;;
+ 	esac
+ 
+-- 
+2.7.4
+
