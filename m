@@ -3,84 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132D4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD5C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A583923F6C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8BFB214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 04:23:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="padPkUHj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A583923F6C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLlTop09"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8BFB214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932140AbeF1EVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 00:21:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751544AbeF1EVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 00:21:32 -0400
-Received: from localhost (unknown [106.201.104.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DC3823C00;
-        Thu, 28 Jun 2018 04:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530159691;
-        bh=9/jJtRwatNFkdeqNOH75EsnimWh2YZgpU0HNOV2ozjE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=padPkUHjudOV14HzkeGp3extyq3wr2xsIx173Rx2T7sQwlLXj2Fe/dp+czgei9xNR
-         KYLzcfP13zLlRcXhrc5qHxNcECrvHCPe2ZX3y9LqDMDcmCESPfOiv10pYgm24F22Z9
-         +Js5rKHtBxej64tlm0mFAEjWvekyvm9n2HPEjEgY=
-Date:   Thu, 28 Jun 2018 09:51:23 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        dmaengine@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3] dmaengine: rcar-dmac: don't use DMAC error interrupt
-Message-ID: <20180628042123.GJ22377@vkoul-mobl>
-References: <87lgbgswl5.wl%kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87lgbgswl5.wl%kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753083AbeF1EXf (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 00:23:35 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39472 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751414AbeF1EXe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 00:23:34 -0400
+Received: by mail-pl0-f66.google.com with SMTP id s24-v6so2104804plq.6;
+        Wed, 27 Jun 2018 21:23:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=80oQ5BXM/Zqa4PsJVTYoHlyaKq7RnK4JoIQmTlYc7gM=;
+        b=PLlTop092VwwaQgrRhEVAniO5BZJi62Pj0lk4WUCt3DwzFt1zJ3s0qUOKVqLWB/J2Z
+         i/YIkHuzDaBUjFCJWgthdjIM8Box6qC/oWHtMP6jZ9zcVqXsgBMYhggKRrLZvLwisRlJ
+         YpSLRXIFWMJevXNLKe38ZZXsIZQjeKQs/lWwLz66aS4YPD4ClZJi2pgvgsSg+IDWPHHV
+         u0YjXrItiTkefKrVqURNuReIXbZW93sTFnHZMYtWiXoWPyR25FbfUleY+k9vHtjQmwkD
+         w9WmHeSrDq0dv7IWc7HlaGOHvapjzmRdStVmi0Gd51q/1eAgnmyWGOrOr5HxKDaA940r
+         LvxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=80oQ5BXM/Zqa4PsJVTYoHlyaKq7RnK4JoIQmTlYc7gM=;
+        b=QQlB/7PslyQM+7ry2YBIgp+zmCfG+Ju72KU07Ir197lkGu9YibNZIPTcdMqD1/2U+0
+         54eLnJDNnhkbN/KfPhsD1dlsbEXDoQmPyMxZrdrIC9dVz1TMDTN1RqsDt5ao+TG8awKn
+         vQvLeEfEg008fGkPttyiHXnNaB0ZX784kEJ71+RUgRFg1jlouW+UUTk7XPOk1Rvarc3o
+         Sa1J2AZaCqaagiEgzVIi1FDU4kpr4d2W7kN/ljazk6Cq0h6s6mLtlnje0Y+uIhiz/cMa
+         GUmD+phG6eB4ov9b2Qg0QW2tp7mYH+cEmxBcbbQmySSGgpzMncZThNgRs6Q0YmZtIPsH
+         LY6A==
+X-Gm-Message-State: APt69E3kmDo/HG08LT4CjovNFc2Rr/MBiBC8w0x1ndZUsMc5Ev5aewHN
+        TcOhmVGHemGmKg5eqhr00FA=
+X-Google-Smtp-Source: ADUXVKJKFOT5lkUj78WEFuo8aFiGicu1zJImgt7QJHCeDqDr79HLBovygTDPROWnxfD8fGm0Kbbc0A==
+X-Received: by 2002:a17:902:a9:: with SMTP id a38-v6mr9045270pla.102.1530159813684;
+        Wed, 27 Jun 2018 21:23:33 -0700 (PDT)
+Received: from localhost.didichuxing.com ([13.94.31.177])
+        by smtp.gmail.com with ESMTPSA id h13-v6sm8371307pgp.13.2018.06.27.21.23.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Jun 2018 21:23:33 -0700 (PDT)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     edumazet@google.com
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v2 net-next] tcp: add new SNMP counter for drops when try to queue in rcv queue
+Date:   Thu, 28 Jun 2018 00:22:56 -0400
+Message-Id: <1530159776-29919-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-06-18, 00:53, Kuninori Morimoto wrote:
-> 
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> rcar-dmac has 2 types of interrupt, 1) error IRQ (for all),
-> 2) IRQ for each channels.
-> If error happens on some channels, the error IRQ will be handled
-> by 1), and "all" channels will be restarted.
-> But in this design, error handling itself will be problem for
-> non error channel users.
-> This patch removes 1) handler, and handles error IRQ on 2)
-> 
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> [Kuninori: updated patch to adjust DMACHCR/DMAOR]
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+When sk_rmem_alloc is larger than the receive buffer and we can't
+schedule more memory for it, the skb will be dropped.
 
-Applied, thanks
+In above situation, if this skb is put into the ofo queue,
+LINUX_MIB_TCPOFODROP is incremented to track it.
 
+While if this skb is put into the receive queue, there's no record.
+So a new SNMP counter is introduced to track this behavior.
+
+LINUX_MIB_TCPRCVQDROP:  Number of packets meant to be queued in rcv queue
+			but dropped because socket rcvbuf limit hit.
+
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ include/uapi/linux/snmp.h | 1 +
+ net/ipv4/proc.c           | 1 +
+ net/ipv4/tcp_input.c      | 8 ++++++--
+ 3 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/snmp.h b/include/uapi/linux/snmp.h
+index 97517f3..e5ebc83 100644
+--- a/include/uapi/linux/snmp.h
++++ b/include/uapi/linux/snmp.h
+@@ -280,6 +280,7 @@ enum
+ 	LINUX_MIB_TCPDELIVEREDCE,		/* TCPDeliveredCE */
+ 	LINUX_MIB_TCPACKCOMPRESSED,		/* TCPAckCompressed */
+ 	LINUX_MIB_TCPZEROWINDOWDROP,		/* TCPZeroWindowDrop */
++	LINUX_MIB_TCPRCVQDROP,			/* TCPRcvQDrop */
+ 	__LINUX_MIB_MAX
+ };
+ 
+diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
+index 225ef34..b46e4cf 100644
+--- a/net/ipv4/proc.c
++++ b/net/ipv4/proc.c
+@@ -288,6 +288,7 @@ static int sockstat_seq_show(struct seq_file *seq, void *v)
+ 	SNMP_MIB_ITEM("TCPDeliveredCE", LINUX_MIB_TCPDELIVEREDCE),
+ 	SNMP_MIB_ITEM("TCPAckCompressed", LINUX_MIB_TCPACKCOMPRESSED),
+ 	SNMP_MIB_ITEM("TCPZeroWindowDrop", LINUX_MIB_TCPZEROWINDOWDROP),
++	SNMP_MIB_ITEM("TCPRcvQDrop", LINUX_MIB_TCPRCVQDROP),
+ 	SNMP_MIB_SENTINEL
+ };
+ 
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 9c5b341..eecd359 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4611,8 +4611,10 @@ int tcp_send_rcvq(struct sock *sk, struct msghdr *msg, size_t size)
+ 	skb->data_len = data_len;
+ 	skb->len = size;
+ 
+-	if (tcp_try_rmem_schedule(sk, skb, skb->truesize))
++	if (tcp_try_rmem_schedule(sk, skb, skb->truesize)) {
++		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP);
+ 		goto err_free;
++	}
+ 
+ 	err = skb_copy_datagram_from_iter(skb, 0, &msg->msg_iter, size);
+ 	if (err)
+@@ -4677,8 +4679,10 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
+ queue_and_out:
+ 		if (skb_queue_len(&sk->sk_receive_queue) == 0)
+ 			sk_forced_mem_schedule(sk, skb->truesize);
+-		else if (tcp_try_rmem_schedule(sk, skb, skb->truesize))
++		else if (tcp_try_rmem_schedule(sk, skb, skb->truesize)) {
++			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPRCVQDROP);
+ 			goto drop;
++		}
+ 
+ 		eaten = tcp_queue_rcv(sk, skb, 0, &fragstolen);
+ 		tcp_rcv_nxt_update(tp, TCP_SKB_CB(skb)->end_seq);
 -- 
-~Vinod
+1.8.3.1
+
