@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F6CC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CABC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709A525FEB
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709A525FEB
+	by mail.kernel.org (Postfix) with ESMTP id 674BA25293
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 03:43:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 674BA25293
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932692AbeF1Dna (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 27 Jun 2018 23:43:30 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8740 "EHLO huawei.com"
+        id S932988AbeF1Dnv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 27 Jun 2018 23:43:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8741 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752993AbeF1DlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753024AbeF1DlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 27 Jun 2018 23:41:12 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 462068A003719;
+        by Forcepoint Email with ESMTP id 53FB5B1248E14;
         Thu, 28 Jun 2018 11:40:58 +0800 (CST)
 Received: from linux-ioko.site (10.71.200.31) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 28 Jun 2018 11:40:52 +0800
+ 14.3.382.0; Thu, 28 Jun 2018 11:40:53 +0800
 From:   Peng Li <lipeng321@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <lipeng321@huawei.com>
-Subject: [PATCH net-next 04/11] net: hns3: add l4_type check for both ipv4 and ipv6
-Date:   Thu, 28 Jun 2018 12:12:22 +0800
-Message-ID: <1530159149-122284-5-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 05/11] net: hns3: add unlikely for error check
+Date:   Thu, 28 Jun 2018 12:12:23 +0800
+Message-ID: <1530159149-122284-6-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1530159149-122284-1-git-send-email-lipeng321@huawei.com>
 References: <1530159149-122284-1-git-send-email-lipeng321@huawei.com>
@@ -47,36 +47,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HW supports UDP, TCP and SCTP packets checksum for both ipv4 and
-ipv6,  but do not support other type packets checksum for ipv4 or
-ipv6.
+The first bd of a packet is invalid and invalid ring head for tx
+IRQ is not offen, they may occur when there is error,
+Add unlikely for error check branch is better for performance.
 
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 25a73bb..99bb6a8 100644
+index 99bb6a8..1a68952 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2103,11 +2103,11 @@ static void hns3_rx_checksum(struct hns3_enet_ring *ring, struct sk_buff *skb,
- 		skb->csum_level = 1;
- 	case HNS3_OL4_TYPE_NO_TUN:
- 		/* Can checksum ipv4 or ipv6 + UDP/TCP/SCTP packets */
--		if (l3_type == HNS3_L3_TYPE_IPV4 ||
--		    (l3_type == HNS3_L3_TYPE_IPV6 &&
--		     (l4_type == HNS3_L4_TYPE_UDP ||
--		      l4_type == HNS3_L4_TYPE_TCP ||
--		      l4_type == HNS3_L4_TYPE_SCTP)))
-+		if ((l3_type == HNS3_L3_TYPE_IPV4 ||
-+		     l3_type == HNS3_L3_TYPE_IPV6) &&
-+		    (l4_type == HNS3_L4_TYPE_UDP ||
-+		     l4_type == HNS3_L4_TYPE_TCP ||
-+		     l4_type == HNS3_L4_TYPE_SCTP))
- 			skb->ip_summed = CHECKSUM_UNNECESSARY;
- 		break;
- 	}
+@@ -1917,7 +1917,7 @@ bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
+ 	if (is_ring_empty(ring) || head == ring->next_to_clean)
+ 		return true; /* no data to poll */
+ 
+-	if (!is_valid_clean_head(ring, head)) {
++	if (unlikely(!is_valid_clean_head(ring, head))) {
+ 		netdev_err(netdev, "wrong head (%d, %d-%d)\n", head,
+ 			   ring->next_to_use, ring->next_to_clean);
+ 
+@@ -2174,7 +2174,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
+ 
+ 	/* Check valid BD */
+-	if (!hnae_get_bit(bd_base_info, HNS3_RXD_VLD_B))
++	if (unlikely(!hnae_get_bit(bd_base_info, HNS3_RXD_VLD_B)))
+ 		return -EFAULT;
+ 
+ 	va = (unsigned char *)desc_cb->buf + desc_cb->page_offset;
 -- 
 2.9.3
 
