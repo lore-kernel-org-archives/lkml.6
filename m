@@ -2,97 +2,97 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4EFC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A40C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BC127089
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:52:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="luYEjD0n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BC127089
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CA152707F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 07:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA152707F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933843AbeF1Hwl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 03:52:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933594AbeF1Hwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 03:52:39 -0400
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9363A27081;
-        Thu, 28 Jun 2018 07:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530172358;
-        bh=0ihMN7CPJuUMY7Es2Yl6vDA3Sxr67o5qmJRANKHu94g=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=luYEjD0ngpmDxILh7X/X7zhtmQ8i0/472BTZiCwvdQZMsAGEeXtFg0Mb9ipLeljtI
-         BbUVZY8VMlgLuwyjahXrGLW/Hir50mBcxr4oJWUAMOceqvmgTzLKszFZd057+aTnGi
-         VL77fiwf6W9a0OQdsshiBJOobLRZuFJ8in3/M50s=
-Received: by mail-wm0-f53.google.com with SMTP id z13-v6so7939882wma.5;
-        Thu, 28 Jun 2018 00:52:38 -0700 (PDT)
-X-Gm-Message-State: APt69E3vxBMmzxFzH/Sheqp613TDFgcBBgpW/4SN1YP7nKQeg6yKipWu
-        ZyzeyJoU9Sz/wn9bivA/UGHvEYtuHvns3ZhDSSc=
-X-Google-Smtp-Source: AAOMgpfLwKihrJnxi9pmcuyHlgFf0vob45CwBhLB5MBBVRwvHx6P1+1WYygutBo0Oi4H02yTx8jD+L8P5T1njRKvqKQ=
-X-Received: by 2002:a1c:c05:: with SMTP id 5-v6mr7667469wmm.117.1530172357065;
- Thu, 28 Jun 2018 00:52:37 -0700 (PDT)
+        id S934309AbeF1Hxc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 03:53:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55414 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934041AbeF1Hxb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 03:53:31 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fYRk2-0002pc-UL; Thu, 28 Jun 2018 09:53:23 +0200
+Date:   Thu, 28 Jun 2018 09:53:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 04/16] x86/split_lock: Use non locked bit set
+ instruction in set_cpu_cap
+In-Reply-To: <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
+Message-ID: <alpine.DEB.2.21.1806280945120.1778@nanos.tec.linutronix.de>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com> <1527435965-202085-5-git-send-email-fenghua.yu@intel.com> <20180621195540.GC13636@worktop.programming.kicks-ass.net> <20180627233504.GJ18979@romley-ivt3.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Thu, 28 Jun 2018 00:52:36
- -0700 (PDT)
-In-Reply-To: <1530119544-30023-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1530119544-30023-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <1530119544-30023-6-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 28 Jun 2018 09:52:36 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcZJWW49TL-eybV5486pnik0+-G9ByVg=b1iWbTJwAvAw@mail.gmail.com>
-Message-ID: <CAJKOXPcZJWW49TL-eybV5486pnik0+-G9ByVg=b1iWbTJwAvAw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] dt-bindings: samsung: Add S5PV210 as possible
- soc in Samsung boards
-To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xc-racer2@live.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 June 2018 at 19:12, Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com=
-> wrote:
-> There are Samsung devices, which are not Exynos-based boards,
-> like it's in case of S5PV210. Document this information at beginning
-> of file.
->
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-.txt b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> index 14510b215480..175f669d9bb6 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.txt
-> @@ -1,4 +1,4 @@
-> -* Samsung's Exynos SoC based boards
-> +* Samsung's Exynos and S5P SoC based boards
+On Wed, 27 Jun 2018, Fenghua Yu wrote:
+> On Thu, Jun 21, 2018 at 09:55:40PM +0200, Peter Zijlstra wrote:
+> > On Sun, May 27, 2018 at 08:45:53AM -0700, Fenghua Yu wrote:
+> > > set_bit() called by set_cpu_cap() is a locked bit set instruction for
+> > > atomic operation.
+> > > 
+> > > Since the c->x86_capability can span two cache lines depending on kernel
+> > > configuration and building evnironment, the locked bit set instruction may
+> > > cause #AC exception when #AC exception for split lock is enabled.
+> > 
+> > That doesn't make sense. Sure the bitmap may be longer, but depending on
+> > if the argument is an immediate or not we either use a byte instruction
+> > (which can never cross a cacheline boundary) or a 'word' aligned BTS.
+> > And the bitmap really _should_ be 'unsigned long' aligned.
+> > 
+> > If it is not aligned, fix that too.
+> > 
+> > /me looks at cpuinfo_x86 and finds x86_capability is in fact a __u32
+> > array.. see that's broken and needs fixing first.
+> 
+> Do you mean x86_capability's type should be changed from __u32 to unsigned
+> long?
+> 
+> Changing x86_capability's type won't directly fix the split lock in
+> set_cpu_cap(), right? BTS still may access x86_capability across cache
+> line no matter x86_capability's type.
 
-At the point of this commit, there are no S5P boards mentioned. These
-will be added with next commit so please just squash it with the next
-one.
+Errm. No.  BTS & al are accessing a single 64bit location which is
 
-I saw that Rob reviewed your v1 after you sent v2, so don't forget to
-include it in v3:
-Reviewed-by: Rob Herring <robh@kernel.org>
+   base_address + (bit_offset % 64) * 8
 
-Best regards,
-Krzysztof
+So if the base address is properly aligned then BTS & al will _NEVER_ have
+to lock more than a single cache line. And it does not matter wheter we fix
+the type or enforce 64bit alignement of the array by other means.
+
+If that's not true then BTS & al are terminally broken and you can stop
+working on #AC right away.
+
+Thanks,
+
+	tglx
