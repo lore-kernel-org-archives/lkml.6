@@ -2,272 +2,817 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E190EC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2ADC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F91A27594
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05CFC24C6A
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjMS8Uu/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F91A27594
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dnfof9me"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CFC24C6A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967150AbeF1QUX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:20:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933853AbeF1QUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:20:22 -0400
-Received: from localhost.localdomain (unknown [49.77.216.212])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FDEE23DE4;
-        Thu, 28 Jun 2018 16:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530202819;
-        bh=WcH4LGer3k2QbTuVOwElsxaY6fOyCjeLBVlE/udGkZg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kjMS8Uu/JLf3hQLdf0u7WDusG8LLrG6aj6NlBl66Ka4IYFrs4zw6F+ZhCM9BURAnY
-         XNx28gQ4d+J5RFZpss9ilb0Uml88VZUs7Nw8jBRZPPn1zMsdhyvCE4TIQPhCEbl9S9
-         FRcgdyYyJjesj5Qtmzob53HIpC4iOqjp+qveQAk8=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix to do sanity check with inline flags
-Date:   Fri, 29 Jun 2018 00:19:25 +0800
-Message-Id: <20180628161925.25860-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        id S934655AbeF1QYM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 12:24:12 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39946 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752967AbeF1QYL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 12:24:11 -0400
+Received: by mail-wr0-f195.google.com with SMTP id l2-v6so5544346wro.7
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 09:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I3InDp4sxkDm3iwSqPid47mK+CLu0TJfZd/ERj5uFb0=;
+        b=Dnfof9megb2DAS5gShD7/31EsGj4+l/8l0GXSd/hL6QNVevGnuTjuGSwQTpY964qBe
+         pBxoVMnS0Yxu4X90A4DLCWk/BMwQBYBDu8fLkrhcQkfMEtwL1WRvv/h1P8JPEYtpybTv
+         5W+qCxIosYyXt0ri0ohKxBt8wmDVby4kYx/iw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I3InDp4sxkDm3iwSqPid47mK+CLu0TJfZd/ERj5uFb0=;
+        b=SqaFnEB0qkR3Tao6jYwL/T2RS+Yaz4z/nJPZp09rUlW8zZsu8FXbp6wkAxE7RNL6Ky
+         iKTjzo2n+a5Ms0mGcU6vLUXqefgrARgfY0jb2wD/1myLKaUMXMrOiqofr3czIoGPlyrh
+         h0Cx4WkrTZsOHs1ItSJgNgTvniUhBzMwckq8R2aEjq0r2YCGF7TFtOfB3PPGiSk8wjLL
+         LeHFxoealCddvoJXF5Ip0CAfU+62ITEFGoPNTa2tJP8dDPmvec/s7yz23vDzbBegcrJ6
+         0x1hV3UC8t9M6ikrxJd5BltoUG9NFRSgvZ+wB58hFC55E8T0sQWbwALy5pdFQDLDZf0s
+         yDIQ==
+X-Gm-Message-State: APt69E1Xi2hcjfsXliwrST/ebs5IzggUAeVYq32IUTkpTBah8hN6Bx43
+        WkhShB86yaieVza2WfS8tNf4JKGiFIE=
+X-Google-Smtp-Source: AAOMgpe34v/V7RGX1Sc3UwV4w3gM3+cgLUT29fHyTNSI9FEqTe7JUmzGeaoYBmO/pkjpsnU0hwXRhw==
+X-Received: by 2002:adf:d08b:: with SMTP id y11-v6mr9509031wrh.152.1530203049405;
+        Thu, 28 Jun 2018 09:24:09 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:3923:5e2e:38ae:83dc? ([2001:41d0:fe90:b800:3923:5e2e:38ae:83dc])
+        by smtp.googlemail.com with ESMTPSA id h18-v6sm10945406wrq.36.2018.06.28.09.24.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 09:24:08 -0700 (PDT)
+Subject: Re: [PATCH v5 2/6] clocksource/drivers: Add a new driver for the
+ Atmel ARM TC blocks
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexander Dahl <ada@thorsis.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180619211929.22908-1-alexandre.belloni@bootlin.com>
+ <20180619211929.22908-3-alexandre.belloni@bootlin.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <0ebef205-a6c8-0da2-86b4-6b1c982a1fdf@linaro.org>
+Date:   Thu, 28 Jun 2018 18:24:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180619211929.22908-3-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On 19/06/2018 23:19, Alexandre Belloni wrote:
+> Add a driver for the Atmel Timer Counter Blocks. This driver provides a
+> clocksource and two clockevent devices.
+> 
+> One of the clockevent device is linked to the clocksource counter and so it
+> will run at the same frequency. This will be used when there is only on TCB
+> channel available for timers.
+> 
+> The other clockevent device runs on a separate TCB channel when available.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200221
+Can you split this patch in two. clockevent2 and clocksource/clockevent ?
 
-- Overview
-BUG() in clear_inode() when mounting and un-mounting a corrupted f2fs image
+> This driver uses regmap and syscon to be able to probe early in the boot
+> and avoid having to switch on the TCB clocksource later. Using regmap also
+> means that unused TCB channels may be used by other drivers (PWM for
+> example). read/writel are still used to access channel specific registers
+> to avoid the performance impact of regmap (mainly locking).
+> 
+> Tested-by: Alexander Dahl <ada@thorsis.com>
+> Tested-by: Andras Szemzo <szemzo.andras@gmail.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  drivers/clocksource/Kconfig           |   8 +
+>  drivers/clocksource/Makefile          |   3 +-
+>  drivers/clocksource/timer-atmel-tcb.c | 630 ++++++++++++++++++++++++++
+>  3 files changed, 640 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clocksource/timer-atmel-tcb.c
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index dec0dd88ec15..0b1b0de2abcc 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -403,6 +403,14 @@ config ATMEL_ST
+>  	help
+>  	  Support for the Atmel ST timer.
+>  
+> +config ATMEL_ARM_TCB_CLKSRC
+> +	bool "Microchip ARM TC Block" if COMPILE_TEST
+> +	select REGMAP_MMIO
+> +	depends on GENERIC_CLOCKEVENTS
+> +	help
+> +	  This enables build of clocksource and clockevent driver for
+> +	  the integrated Timer Counter Blocks in Microchip ARM SoCs.
+> +
+>  config CLKSRC_EXYNOS_MCT
+>  	bool "Exynos multi core timer driver" if COMPILE_TEST
+>  	depends on ARM || ARM64
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index 00caf37e52f9..6991348aa24a 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -3,7 +3,8 @@ obj-$(CONFIG_TIMER_OF)		+= timer-of.o
+>  obj-$(CONFIG_TIMER_PROBE)	+= timer-probe.o
+>  obj-$(CONFIG_ATMEL_PIT)		+= timer-atmel-pit.o
+>  obj-$(CONFIG_ATMEL_ST)		+= timer-atmel-st.o
+> -obj-$(CONFIG_ATMEL_TCB_CLKSRC)	+= tcb_clksrc.o
+> +obj-$(CONFIG_ATMEL_TCB_CLKSRC) += tcb_clksrc.o
+> +obj-$(CONFIG_ATMEL_ARM_TCB_CLKSRC)	+= timer-atmel-tcb.o
+>  obj-$(CONFIG_X86_PM_TIMER)	+= acpi_pm.o
+>  obj-$(CONFIG_SCx200HR_TIMER)	+= scx200_hrt.o
+>  obj-$(CONFIG_CS5535_CLOCK_EVENT_SRC)	+= cs5535-clockevt.o
+> diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+> new file mode 100644
+> index 000000000000..73e6b2783dda
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-atmel-tcb.c
+> @@ -0,0 +1,630 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/clocksource.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/regmap.h>
+> +#include <linux/sched_clock.h>
+> +#include <soc/at91/atmel_tcb.h>
+> +
+> +static struct atmel_tcb_clksrc {
+> +	struct clocksource clksrc;
+> +	struct clock_event_device clkevt;
+> +	struct regmap *regmap;
+> +	void __iomem *base;
+> +	struct clk *clk[2];
+> +	char name[20];
+> +	int channels[2];
+> +	int bits;
+> +	int irq;
+> +	struct {
+> +		u32 cmr;
+> +		u32 imr;
+> +		u32 rc;
+> +		bool clken;
+> +	} cache[2];
+> +	u32 bmr_cache;
+> +	bool registered;
+> +} tc = {
+> +	.clksrc = {
+> +		.rating		= 200,
+> +		.mask		= CLOCKSOURCE_MASK(32),
+> +		.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+> +	},
+> +	.clkevt	= {
+> +		.features	= CLOCK_EVT_FEAT_ONESHOT,
+> +		/* Should be lower than at91rm9200's system timer */
+> +		.rating		= 125,
+> +	},
+> +};
+> +
+> +static struct tc_clkevt_device {
+> +	struct clock_event_device clkevt;
+> +	struct regmap *regmap;
+> +	void __iomem *base;
+> +	struct clk *slow_clk;
+> +	struct clk *clk;
+> +	char name[20];
+> +	int channel;
+> +	int irq;
+> +	struct {
+> +		u32 cmr;
+> +		u32 imr;
+> +		u32 rc;
+> +		bool clken;
+> +	} cache;
+> +	bool registered;
+> +	bool clk_enabled;
+> +} tce = {
+> +	.clkevt	= {
+> +		.features		= CLOCK_EVT_FEAT_PERIODIC |
+> +					  CLOCK_EVT_FEAT_ONESHOT,
+> +		/*
+> +		 * Should be lower than at91rm9200's system timer
+> +		 * but higher than tc.clkevt.rating
+> +		 */
+> +		.rating			= 140,
+> +	},
+> +};
+> +
+> +/*
+> + * Clockevent device using its own channel
+> + */
+> +
+> +static void tc_clkevt2_clk_disable(struct clock_event_device *d)
+> +{
+> +	clk_disable(tce.clk);
+> +	tce.clk_enabled = false;
+> +}
+> +
+> +static void tc_clkevt2_clk_enable(struct clock_event_device *d)
+> +{
+> +	if (tce.clk_enabled)
+> +		return;
 
-- Reproduce
+Why this test ?
 
-- Kernel message
-[  538.601448] F2FS-fs (loop0): Invalid segment/section count (31, 24 x 1376257)
-[  538.601458] F2FS-fs (loop0): Can't find valid F2FS filesystem in 2th superblock
-[  538.724091] F2FS-fs (loop0): Try to recover 2th superblock, ret: 0
-[  538.724102] F2FS-fs (loop0): Mounted with checkpoint version = 2
-[  540.970834] ------------[ cut here ]------------
-[  540.970838] kernel BUG at fs/inode.c:512!
-[  540.971750] invalid opcode: 0000 [#1] SMP KASAN PTI
-[  540.972755] CPU: 1 PID: 1305 Comm: umount Not tainted 4.18.0-rc1+ #4
-[  540.974034] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  540.982913] RIP: 0010:clear_inode+0xc0/0xd0
-[  540.983774] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
-[  540.987570] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
-[  540.988636] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
-[  540.990063] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
-[  540.991499] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
-[  540.992923] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
-[  540.994360] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
-[  540.995786] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  540.997403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  540.998571] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
-[  541.000015] Call Trace:
-[  541.000554]  f2fs_evict_inode+0x253/0x630
-[  541.001381]  evict+0x16f/0x290
-[  541.002015]  iput+0x280/0x300
-[  541.002654]  dentry_unlink_inode+0x165/0x1e0
-[  541.003528]  __dentry_kill+0x16a/0x260
-[  541.004300]  dentry_kill+0x70/0x250
-[  541.005018]  dput+0x154/0x1d0
-[  541.005635]  do_one_tree+0x34/0x40
-[  541.006354]  shrink_dcache_for_umount+0x3f/0xa0
-[  541.007285]  generic_shutdown_super+0x43/0x1c0
-[  541.008192]  kill_block_super+0x52/0x80
-[  541.008978]  kill_f2fs_super+0x62/0x70
-[  541.009750]  deactivate_locked_super+0x6f/0xa0
-[  541.010664]  deactivate_super+0x5e/0x80
-[  541.011450]  cleanup_mnt+0x61/0xa0
-[  541.012151]  __cleanup_mnt+0x12/0x20
-[  541.012893]  task_work_run+0xc8/0xf0
-[  541.013635]  exit_to_usermode_loop+0x125/0x130
-[  541.014555]  do_syscall_64+0x138/0x170
-[  541.015340]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  541.016375] RIP: 0033:0x7f46624bf487
-[  541.017104] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e1 c9 2b 00 f7 d8 64 89 01 48
-[  541.020923] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[  541.022452] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
-[  541.023885] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
-[  541.025318] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
-[  541.026755] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
-[  541.028186] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
-[  541.029626] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-[  541.039445] ---[ end trace 4ce02f25ff7d3df5 ]---
-[  541.040392] RIP: 0010:clear_inode+0xc0/0xd0
-[  541.041240] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
-[  541.045042] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
-[  541.046099] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
-[  541.047537] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
-[  541.048965] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
-[  541.050402] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
-[  541.051832] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
-[  541.053263] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-[  541.054891] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  541.056039] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
-[  541.058506] ==================================================================
-[  541.059991] BUG: KASAN: stack-out-of-bounds in update_stack_state+0x38c/0x3e0
-[  541.061513] Read of size 8 at addr ffff8801e34a7970 by task umount/1305
+> +	clk_enable(tce.clk);
+> +	tce.clk_enabled = true;
+> +}
+>
+> +static int tc_clkevt2_stop(struct clock_event_device *d)
+> +{
+> +	writel(0xff, tce.base + ATMEL_TC_IDR(tce.channel));
+> +	writel(ATMEL_TC_CCR_CLKDIS, tce.base + ATMEL_TC_CCR(tce.channel));
+> +
+> +	return 0;
+> +}
+> +
+> +static int tc_clkevt2_shutdown(struct clock_event_device *d)
+> +{
+> +	tc_clkevt2_stop(d);
+> +	if (!clockevent_state_detached(d))
 
-[  541.063302] CPU: 1 PID: 1305 Comm: umount Tainted: G      D           4.18.0-rc1+ #4
-[  541.064838] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  541.066778] Call Trace:
-[  541.067294]  dump_stack+0x7b/0xb5
-[  541.067986]  print_address_description+0x70/0x290
-[  541.068941]  kasan_report+0x291/0x390
-[  541.069692]  ? update_stack_state+0x38c/0x3e0
-[  541.070598]  __asan_load8+0x54/0x90
-[  541.071315]  update_stack_state+0x38c/0x3e0
-[  541.072172]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
-[  541.073340]  ? vprintk_func+0x27/0x60
-[  541.074096]  ? printk+0xa3/0xd3
-[  541.074762]  ? __save_stack_trace+0x5e/0x100
-[  541.075634]  unwind_next_frame.part.5+0x18e/0x490
-[  541.076594]  ? unwind_dump+0x290/0x290
-[  541.077368]  ? __show_regs+0x2c4/0x330
-[  541.078142]  __unwind_start+0x106/0x190
-[  541.085422]  __save_stack_trace+0x5e/0x100
-[  541.086268]  ? __save_stack_trace+0x5e/0x100
-[  541.087161]  ? unlink_anon_vmas+0xba/0x2c0
-[  541.087997]  save_stack_trace+0x1f/0x30
-[  541.088782]  save_stack+0x46/0xd0
-[  541.089475]  ? __alloc_pages_slowpath+0x1420/0x1420
-[  541.090477]  ? flush_tlb_mm_range+0x15e/0x220
-[  541.091364]  ? __dec_node_state+0x24/0xb0
-[  541.092180]  ? lock_page_memcg+0x85/0xf0
-[  541.092979]  ? unlock_page_memcg+0x16/0x80
-[  541.093812]  ? page_remove_rmap+0x198/0x520
-[  541.094674]  ? mark_page_accessed+0x133/0x200
-[  541.095559]  ? _cond_resched+0x1a/0x50
-[  541.096326]  ? unmap_page_range+0xcd4/0xe50
-[  541.097179]  ? rb_next+0x58/0x80
-[  541.097845]  ? rb_next+0x58/0x80
-[  541.098518]  __kasan_slab_free+0x13c/0x1a0
-[  541.099352]  ? unlink_anon_vmas+0xba/0x2c0
-[  541.100184]  kasan_slab_free+0xe/0x10
-[  541.100934]  kmem_cache_free+0x89/0x1e0
-[  541.101724]  unlink_anon_vmas+0xba/0x2c0
-[  541.102534]  free_pgtables+0x101/0x1b0
-[  541.103299]  exit_mmap+0x146/0x2a0
-[  541.103996]  ? __ia32_sys_munmap+0x50/0x50
-[  541.104829]  ? kasan_check_read+0x11/0x20
-[  541.105649]  ? mm_update_next_owner+0x322/0x380
-[  541.106578]  mmput+0x8b/0x1d0
-[  541.107191]  do_exit+0x43a/0x1390
-[  541.107876]  ? mm_update_next_owner+0x380/0x380
-[  541.108791]  ? deactivate_super+0x5e/0x80
-[  541.109610]  ? cleanup_mnt+0x61/0xa0
-[  541.110351]  ? __cleanup_mnt+0x12/0x20
-[  541.111115]  ? task_work_run+0xc8/0xf0
-[  541.111879]  ? exit_to_usermode_loop+0x125/0x130
-[  541.112817]  rewind_stack_do_exit+0x17/0x20
-[  541.113666] RIP: 0033:0x7f46624bf487
-[  541.114404] Code: Bad RIP value.
-[  541.115094] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[  541.116605] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
-[  541.118034] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
-[  541.119472] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
-[  541.120890] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
-[  541.122321] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
+Why this test ?
 
-[  541.124061] The buggy address belongs to the page:
-[  541.125042] page:ffffea00078d29c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  541.126651] flags: 0x2ffff0000000000()
-[  541.127418] raw: 02ffff0000000000 dead000000000100 dead000000000200 0000000000000000
-[  541.128963] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  541.130516] page dumped because: kasan: bad access detected
+> +		tc_clkevt2_clk_disable(d);
+> +
+> +	return 0;
+> +}
+> +
+> +/* For now, we always use the 32K clock ... this optimizes for NO_HZ,
+> + * because using one of the divided clocks would usually mean the
+> + * tick rate can never be less than several dozen Hz (vs 0.5 Hz).
+> + *
+> + * A divided clock could be good for high resolution timers, since
+> + * 30.5 usec resolution can seem "low".
+> + */
+> +static int tc_clkevt2_set_oneshot(struct clock_event_device *d)
+> +{
+> +	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
+> +		tc_clkevt2_stop(d);
 
-[  541.131954] Memory state around the buggy address:
-[  541.132924]  ffff8801e34a7800: 00 f1 f1 f1 f1 00 f4 f4 f4 f3 f3 f3 f3 00 00 00
-[  541.134378]  ffff8801e34a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  541.135814] >ffff8801e34a7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-[  541.137253]                                                              ^
-[  541.138637]  ffff8801e34a7980: f1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  541.140075]  ffff8801e34a7a00: 00 00 00 00 00 00 00 00 f3 00 00 00 00 00 00 00
-[  541.141509] ==================================================================
+Why these tests ? :)
 
-- Location
-https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/inode.c#L512
-	BUG_ON(inode->i_data.nrpages);
+> +	tc_clkevt2_clk_enable(d);
+> +
+> +	/* slow clock, count up to RC, then irq and stop */
+> +	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_CPCSTOP |
+> +	       ATMEL_TC_CMR_WAVE | ATMEL_TC_CMR_WAVESEL_UPRC,
+> +	       tce.base + ATMEL_TC_CMR(tce.channel));
+> +	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channel));
+> +
+> +	return 0;
+> +}
+> +
+> +static int tc_clkevt2_set_periodic(struct clock_event_device *d)
+> +{
+> +	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
+> +		tc_clkevt2_stop(d);
 
-The root cause is root directory inode is corrupted, it has both
-inline_data and inline_dentry flag, and its nlink is zero, so in
-->evict(), after dropping all page cache, it grabs page #0 for inline
-data truncation, result in panic in later clear_inode() where we will
-check inode->i_data.nrpages value.
+?
 
-This patch adds inline flags check in sanity_check_inode, in addition,
-do sanity check with root inode's nlink.
+> +	/* By not making the gentime core emulate periodic mode on top
+> +	 * of oneshot, we get lower overhead and improved accuracy.
+> +	 */
+> +	tc_clkevt2_clk_enable(d);
+> +
+> +	/* slow clock, count up to RC, then irq and restart */
+> +	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_WAVE |
+> +	       ATMEL_TC_CMR_WAVESEL_UPRC,
+> +	       tce.base + ATMEL_TC_CMR(tce.channel));
+> +	writel((32768 + HZ / 2) / HZ, tce.base + ATMEL_TC_RC(tce.channel));
 
-Reported-by Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- fix wrong condition of inode type.
- fs/f2fs/inode.c | 20 ++++++++++++++++++++
- fs/f2fs/super.c |  3 ++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
+Do this computation at init time.
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 24d9c93941d4..cd183c135e3d 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -229,6 +229,26 @@ static bool sanity_check_inode(struct inode *inode)
- 			return false;
- 		}
- 	}
-+
-+	if (f2fs_has_inline_data(inode) &&
-+			(!S_ISREG(inode->i_mode) && !S_ISLNK(inode->i_mode))) {
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"%s: inode (ino=%lx, mode=%u) should not have "
-+			"inline_data, run fsck to fix",
-+			__func__, inode->i_ino, inode->i_mode);
-+		return false;
-+	}
-+
-+	if (f2fs_has_inline_dentry(inode) && !S_ISDIR(inode->i_mode)) {
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"%s: inode (ino=%lx, mode=%u) should not have "
-+			"inline_dentry, run fsck to fix",
-+			__func__, inode->i_ino, inode->i_mode);
-+		return false;
-+	}
-+
- 	return true;
- }
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a64fee9137dc..a61dd0cf6cc5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2933,7 +2933,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		err = PTR_ERR(root);
- 		goto free_stats;
- 	}
--	if (!S_ISDIR(root->i_mode) || !root->i_blocks || !root->i_size) {
-+	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
-+			!root->i_size || !root->i_nlink) {
- 		iput(root);
- 		err = -EINVAL;
- 		goto free_stats;
+> +	/* Enable clock and interrupts on RC compare */
+> +	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channel));
+> +	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+> +	       tce.base + ATMEL_TC_CCR(tce.channel));
+> +
+> +	return 0;
+> +}
+> +
+> +static int tc_clkevt2_next_event(unsigned long delta,
+> +				 struct clock_event_device *d)
+> +{
+> +	writel(delta, tce.base + ATMEL_TC_RC(tce.channel));
+> +	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+> +	       tce.base + ATMEL_TC_CCR(tce.channel));
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tc_clkevt2_irq(int irq, void *handle)
+> +{
+> +	unsigned int sr;
+> +
+> +	sr = readl(tce.base + ATMEL_TC_SR(tce.channel));
+> +	if (sr & ATMEL_TC_CPCS) {
+> +		tce.clkevt.event_handler(&tce.clkevt);
+> +		return IRQ_HANDLED;
+
+Isn't an clear irq missing ?
+
+> +	}
+> +
+> +	return IRQ_NONE;
+> +}
+> +
+> +static void tc_clkevt2_suspend(struct clock_event_device *d)
+> +{
+> +	tce.cache.cmr = readl(tce.base + ATMEL_TC_CMR(tce.channel));
+> +	tce.cache.imr = readl(tce.base + ATMEL_TC_IMR(tce.channel));
+> +	tce.cache.rc = readl(tce.base + ATMEL_TC_RC(tce.channel));
+> +	tce.cache.clken = !!(readl(tce.base + ATMEL_TC_SR(tce.channel)) &
+> +				ATMEL_TC_CLKSTA);
+
+Who is in charge of powering down the timer ?
+
+> +}
+> +
+> +static void tc_clkevt2_resume(struct clock_event_device *d)
+> +{
+> +	/* Restore registers for the channel, RA and RB are not used  */
+> +	writel(tce.cache.cmr, tc.base + ATMEL_TC_CMR(tce.channel));
+> +	writel(tce.cache.rc, tc.base + ATMEL_TC_RC(tce.channel));
+> +	writel(0, tc.base + ATMEL_TC_RA(tce.channel));
+> +	writel(0, tc.base + ATMEL_TC_RB(tce.channel));
+> +	/* Disable all the interrupts */
+> +	writel(0xff, tc.base + ATMEL_TC_IDR(tce.channel));
+> +	/* Reenable interrupts that were enabled before suspending */
+> +	writel(tce.cache.imr, tc.base + ATMEL_TC_IER(tce.channel));
+> +
+> +	/* Start the clock if it was used */
+> +	if (tce.cache.clken)
+> +		writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+> +		       tc.base + ATMEL_TC_CCR(tce.channel));
+> +}
+> +
+> +static int __init tc_clkevt_register(struct device_node *node,
+> +				     struct regmap *regmap, void __iomem *base,
+> +				     int channel, int irq, int bits)
+> +{
+> +	int ret;
+> +
+> +	tce.regmap = regmap;
+> +	tce.base = base;
+> +	tce.channel = channel;
+> +	tce.irq = irq;
+> +
+> +	tce.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
+> +	if (IS_ERR(tce.slow_clk))
+> +		return PTR_ERR(tce.slow_clk);
+> +
+> +	ret = clk_prepare_enable(tce.slow_clk);
+> +	if (ret)
+> +		return ret;
+
+It is not mandatory to have the slow_clk variable in the structure, you
+can declare it locally and for the rest use the timer-of API. That will
+save you a lot of line of code.
+
+> +
+> +	tce.clk = tcb_clk_get(node, tce.channel);
+> +	if (IS_ERR(tce.clk)) {
+> +		ret = PTR_ERR(tce.clk);
+> +		goto err_slow;
+> +	}
+> +
+> +	snprintf(tce.name, sizeof(tce.name), "%s:%d",
+> +		 kbasename(node->parent->full_name), channel);
+> +	tce.clkevt.cpumask = cpumask_of(0);
+> +	tce.clkevt.name = tce.name;
+> +	tce.clkevt.set_next_event = tc_clkevt2_next_event,
+> +	tce.clkevt.set_state_shutdown = tc_clkevt2_shutdown,
+> +	tce.clkevt.set_state_periodic = tc_clkevt2_set_periodic,
+> +	tce.clkevt.set_state_oneshot = tc_clkevt2_set_oneshot,
+> +	tce.clkevt.suspend = tc_clkevt2_suspend,
+> +	tce.clkevt.resume = tc_clkevt2_resume,
+> +
+> +	/* try to enable clk to avoid future errors in mode change */
+> +	ret = clk_prepare_enable(tce.clk);
+> +	if (ret)
+> +		goto err_slow;
+> +	clk_disable(tce.clk);
+> +
+> +	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
+
+s/BIT(bits) - 1/CLOCKSOURCE_MASK/
+
+> +	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+> +			  tce.clkevt.name, &tce);
+> +	if (ret)
+> +		goto err_clk;
+> +
+> +	tce.registered = true;
+> +
+> +	return 0;
+> +
+> +err_clk:
+> +	clk_unprepare(tce.clk);
+> +err_slow:
+> +	clk_disable_unprepare(tce.slow_clk);
+> +
+> +	return ret;
+> +}
+
+I let you send the split version before continuing the review.
+
+  -- Daniel
+
+> +/*
+> + * Clocksource and clockevent using the same channel(s)
+> + */
+> +static u64 tc_get_cycles(struct clocksource *cs)
+> +{
+> +	u32 lower, upper;
+> +
+> +	do {
+> +		upper = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1]));
+> +		lower = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +	} while (upper != readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1])));
+> +
+> +	return (upper << 16) | lower;
+> +}
+> +
+> +static u64 tc_get_cycles32(struct clocksource *cs)
+> +{
+> +	return readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +}
+> +
+> +static u64 notrace tc_sched_clock_read(void)
+> +{
+> +	return tc_get_cycles(&tc.clksrc);
+> +}
+> +
+> +static u64 notrace tc_sched_clock_read32(void)
+> +{
+> +	return tc_get_cycles32(&tc.clksrc);
+> +}
+> +
+> +static int tcb_clkevt_next_event(unsigned long delta,
+> +				 struct clock_event_device *d)
+> +{
+> +	u32 old, next, cur;
+> +
+> +	old = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +	next = old + delta;
+> +	writel(next, tc.base + ATMEL_TC_RC(tc.channels[0]));
+> +	cur = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +
+> +	/* check whether the delta elapsed while setting the register */
+> +	if ((next < old && cur < old && cur > next) ||
+> +	    (next > old && (cur < old || cur > next))) {
+> +		/*
+> +		 * Clear the CPCS bit in the status register to avoid
+> +		 * generating a spurious interrupt next time a valid
+> +		 * timer event is configured.
+> +		 */
+> +		old = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
+> +		return -ETIME;
+> +	}
+> +
+> +	writel(ATMEL_TC_CPCS, tc.base + ATMEL_TC_IER(tc.channels[0]));
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tc_clkevt_irq(int irq, void *handle)
+> +{
+> +	unsigned int sr;
+> +
+> +	sr = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
+> +	if (sr & ATMEL_TC_CPCS) {
+> +		tc.clkevt.event_handler(&tc.clkevt);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	return IRQ_NONE;
+> +}
+> +
+> +static int tcb_clkevt_oneshot(struct clock_event_device *dev)
+> +{
+> +	if (clockevent_state_oneshot(dev))
+> +		return 0;
+> +
+> +	/*
+> +	 * Because both clockevent devices may share the same IRQ, we don't want
+> +	 * the less likely one to stay requested
+> +	 */
+> +	return request_irq(tc.irq, tc_clkevt_irq, IRQF_TIMER | IRQF_SHARED,
+> +			   tc.name, &tc);
+> +}
+> +
+> +static int tcb_clkevt_shutdown(struct clock_event_device *dev)
+> +{
+> +	writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[0]));
+> +	if (tc.bits == 16)
+> +		writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[1]));
+> +
+> +	if (!clockevent_state_detached(dev))
+> +		free_irq(tc.irq, &tc);
+> +
+> +	return 0;
+> +}
+> +
+> +static void __init tcb_setup_dual_chan(struct atmel_tcb_clksrc *tc,
+> +				       int mck_divisor_idx)
+> +{
+> +	/* first channel: waveform mode, input mclk/8, clock TIOA on overflow */
+> +	writel(mck_divisor_idx			/* likely divide-by-8 */
+> +	       | ATMEL_TC_CMR_WAVE
+> +	       | ATMEL_TC_CMR_WAVESEL_UP	/* free-run */
+> +	       | ATMEL_TC_CMR_ACPA(SET)		/* TIOA rises at 0 */
+> +	       | ATMEL_TC_CMR_ACPC(CLEAR),	/* (duty cycle 50%) */
+> +	       tc->base + ATMEL_TC_CMR(tc->channels[0]));
+> +	writel(0x0000, tc->base + ATMEL_TC_RA(tc->channels[0]));
+> +	writel(0x8000, tc->base + ATMEL_TC_RC(tc->channels[0]));
+> +	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[0]));	/* no irqs */
+> +	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[0]));
+> +
+> +	/* second channel: waveform mode, input TIOA */
+> +	writel(ATMEL_TC_CMR_XC(tc->channels[1])		/* input: TIOA */
+> +	       | ATMEL_TC_CMR_WAVE
+> +	       | ATMEL_TC_CMR_WAVESEL_UP,		/* free-run */
+> +	       tc->base + ATMEL_TC_CMR(tc->channels[1]));
+> +	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[1]));	/* no irqs */
+> +	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[1]));
+> +
+> +	/* chain both channel, we assume the previous channel */
+> +	regmap_write(tc->regmap, ATMEL_TC_BMR,
+> +		     ATMEL_TC_BMR_TCXC(1 + tc->channels[1], tc->channels[1]));
+> +	/* then reset all the timers */
+> +	regmap_write(tc->regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
+> +}
+> +
+> +static void __init tcb_setup_single_chan(struct atmel_tcb_clksrc *tc,
+> +					 int mck_divisor_idx)
+> +{
+> +	/* channel 0:  waveform mode, input mclk/8 */
+> +	writel(mck_divisor_idx			/* likely divide-by-8 */
+> +	       | ATMEL_TC_CMR_WAVE
+> +	       | ATMEL_TC_CMR_WAVESEL_UP,	/* free-run */
+> +	       tc->base + ATMEL_TC_CMR(tc->channels[0]));
+> +	writel(0xff, tc->base + ATMEL_TC_IDR(tc->channels[0]));	/* no irqs */
+> +	writel(ATMEL_TC_CCR_CLKEN, tc->base + ATMEL_TC_CCR(tc->channels[0]));
+> +
+> +	/* then reset all the timers */
+> +	regmap_write(tc->regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
+> +}
+> +
+> +static void tc_clksrc_suspend(struct clocksource *cs)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < 1 + (tc.bits == 16); i++) {
+> +		tc.cache[i].cmr = readl(tc.base + ATMEL_TC_CMR(tc.channels[i]));
+> +		tc.cache[i].imr = readl(tc.base + ATMEL_TC_IMR(tc.channels[i]));
+> +		tc.cache[i].rc = readl(tc.base + ATMEL_TC_RC(tc.channels[i]));
+> +		tc.cache[i].clken = !!(readl(tc.base +
+> +					     ATMEL_TC_SR(tc.channels[i])) &
+> +				       ATMEL_TC_CLKSTA);
+> +	}
+> +
+> +	if (tc.bits == 16)
+> +		regmap_read(tc.regmap, ATMEL_TC_BMR, &tc.bmr_cache);
+> +}
+> +
+> +static void tc_clksrc_resume(struct clocksource *cs)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < 1 + (tc.bits == 16); i++) {
+> +		/* Restore registers for the channel, RA and RB are not used  */
+> +		writel(tc.cache[i].cmr, tc.base + ATMEL_TC_CMR(tc.channels[i]));
+> +		writel(tc.cache[i].rc, tc.base + ATMEL_TC_RC(tc.channels[i]));
+> +		writel(0, tc.base + ATMEL_TC_RA(tc.channels[i]));
+> +		writel(0, tc.base + ATMEL_TC_RB(tc.channels[i]));
+> +		/* Disable all the interrupts */
+> +		writel(0xff, tc.base + ATMEL_TC_IDR(tc.channels[i]));
+> +		/* Reenable interrupts that were enabled before suspending */
+> +		writel(tc.cache[i].imr, tc.base + ATMEL_TC_IER(tc.channels[i]));
+> +
+> +		/* Start the clock if it was used */
+> +		if (tc.cache[i].clken)
+> +			writel(ATMEL_TC_CCR_CLKEN, tc.base +
+> +			       ATMEL_TC_CCR(tc.channels[i]));
+> +	}
+> +
+> +	/* in case of dual channel, chain channels */
+> +	if (tc.bits == 16)
+> +		regmap_write(tc.regmap, ATMEL_TC_BMR, tc.bmr_cache);
+> +	/* Finally, trigger all the channels*/
+> +	regmap_write(tc.regmap, ATMEL_TC_BCR, ATMEL_TC_BCR_SYNC);
+> +}
+> +
+> +static int __init tcb_clksrc_register(struct device_node *node,
+> +				      struct regmap *regmap, void __iomem *base,
+> +				      int channel, int channel1, int irq,
+> +				      int bits)
+> +{
+> +	u32 rate, divided_rate = 0;
+> +	int best_divisor_idx = -1;
+> +	int i, err = -1;
+> +	u64 (*tc_sched_clock)(void);
+> +
+> +	tc.regmap = regmap;
+> +	tc.base = base;
+> +	tc.channels[0] = channel;
+> +	tc.channels[1] = channel1;
+> +	tc.irq = irq;
+> +	tc.bits = bits;
+> +
+> +	tc.clk[0] = tcb_clk_get(node, tc.channels[0]);
+> +	if (IS_ERR(tc.clk[0]))
+> +		return PTR_ERR(tc.clk[0]);
+> +	err = clk_prepare_enable(tc.clk[0]);
+> +	if (err) {
+> +		pr_debug("can't enable T0 clk\n");
+> +		goto err_clk;
+> +	}
+> +
+> +	/* How fast will we be counting?  Pick something over 5 MHz.  */
+> +	rate = (u32)clk_get_rate(tc.clk[0]);
+> +	for (i = 0; i < 5; i++) {
+> +		unsigned int divisor = atmel_tc_divisors[i];
+> +		unsigned int tmp;
+> +
+> +		if (!divisor)
+> +			continue;
+> +
+> +		tmp = rate / divisor;
+> +		pr_debug("TC: %u / %-3u [%d] --> %u\n", rate, divisor, i, tmp);
+> +		if (best_divisor_idx > 0) {
+> +			if (tmp < 5 * 1000 * 1000)
+> +				continue;
+> +		}
+> +		divided_rate = tmp;
+> +		best_divisor_idx = i;
+> +	}
+> +
+> +	if (tc.bits == 32) {
+> +		tc.clksrc.read = tc_get_cycles32;
+> +		tcb_setup_single_chan(&tc, best_divisor_idx);
+> +		tc_sched_clock = tc_sched_clock_read32;
+> +		snprintf(tc.name, sizeof(tc.name), "%s:%d",
+> +			 kbasename(node->parent->full_name), tc.channels[0]);
+> +	} else {
+> +		tc.clk[1] = tcb_clk_get(node, tc.channels[1]);
+> +		if (IS_ERR(tc.clk[1]))
+> +			goto err_disable_t0;
+> +
+> +		err = clk_prepare_enable(tc.clk[1]);
+> +		if (err) {
+> +			pr_debug("can't enable T1 clk\n");
+> +			goto err_clk1;
+> +		}
+> +		tc.clksrc.read = tc_get_cycles,
+> +		tcb_setup_dual_chan(&tc, best_divisor_idx);
+> +		tc_sched_clock = tc_sched_clock_read;
+> +		snprintf(tc.name, sizeof(tc.name), "%s:%d,%d",
+> +			 kbasename(node->parent->full_name), tc.channels[0],
+> +			 tc.channels[1]);
+> +	}
+> +
+> +	pr_debug("%s at %d.%03d MHz\n", tc.name,
+> +		 divided_rate / 1000000,
+> +		 ((divided_rate + 500000) % 1000000) / 1000);
+> +
+> +	tc.clksrc.name = tc.name;
+> +	tc.clksrc.suspend = tc_clksrc_suspend;
+> +	tc.clksrc.resume = tc_clksrc_resume;
+> +
+> +	err = clocksource_register_hz(&tc.clksrc, divided_rate);
+> +	if (err)
+> +		goto err_disable_t1;
+> +
+> +	sched_clock_register(tc_sched_clock, 32, divided_rate);
+> +
+> +	tc.registered = true;
+> +
+> +	/* Set up and register clockevents */
+> +	tc.clkevt.name = tc.name;
+> +	tc.clkevt.cpumask = cpumask_of(0);
+> +	tc.clkevt.set_next_event = tcb_clkevt_next_event;
+> +	tc.clkevt.set_state_oneshot = tcb_clkevt_oneshot;
+> +	tc.clkevt.set_state_shutdown = tcb_clkevt_shutdown;
+> +	clockevents_config_and_register(&tc.clkevt, divided_rate, 1,
+> +					BIT(tc.bits) - 1);
+> +
+> +	return 0;
+> +
+> +err_disable_t1:
+> +	if (tc.bits == 16)
+> +		clk_disable_unprepare(tc.clk[1]);
+> +
+> +err_clk1:
+> +	if (tc.bits == 16)
+> +		clk_put(tc.clk[1]);
+> +
+> +err_disable_t0:
+> +	clk_disable_unprepare(tc.clk[0]);
+> +
+> +err_clk:
+> +	clk_put(tc.clk[0]);
+> +
+> +	pr_err("%s: unable to register clocksource/clockevent\n",
+> +	       tc.clksrc.name);
+> +
+> +	return err;
+> +}
+> +
+> +static int __init tcb_clksrc_init(struct device_node *node)
+> +{
+> +	const struct of_device_id *match;
+> +	const struct atmel_tcb_info *tcb_info;
+> +	struct regmap *regmap;
+> +	void __iomem *tcb_base;
+> +	u32 channel;
+> +	int bits, irq, err, chan1 = -1;
+> +
+> +	if (tc.registered && tce.registered)
+> +		return -ENODEV;
+> +
+> +	/*
+> +	 * The regmap has to be used to access registers that are shared
+> +	 * between channels on the same TCB but we keep direct IO access for
+> +	 * the counters to avoid the impact on performance
+> +	 */
+> +	regmap = syscon_node_to_regmap(node->parent);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	tcb_base = of_iomap(node->parent, 0);
+> +	if (!tcb_base) {
+> +		pr_err("%s +%d %s\n", __FILE__, __LINE__, __func__);
+> +		return -ENXIO;
+> +	}
+> +
+> +	match = of_match_node(atmel_tcb_dt_ids, node->parent);
+> +	tcb_info = match->data;
+> +	bits = tcb_info->bits;
+> +
+> +	err = of_property_read_u32_index(node, "reg", 0, &channel);
+> +	if (err)
+> +		return err;
+> +
+> +	irq = tcb_irq_get(node, channel);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	if (tc.registered)
+> +		return tc_clkevt_register(node, regmap, tcb_base, channel, irq,
+> +					  bits);
+> +
+> +	if (bits == 16) {
+> +		of_property_read_u32_index(node, "reg", 1, &chan1);
+> +		if (chan1 == -1) {
+> +			if (tce.registered) {
+> +				pr_err("%s: clocksource needs two channels\n",
+> +				       node->parent->full_name);
+> +				return -EINVAL;
+> +			} else {
+> +				return tc_clkevt_register(node, regmap,
+> +							  tcb_base, channel,
+> +							  irq, bits);
+> +			}
+> +		}
+> +	}
+> +
+> +	return tcb_clksrc_register(node, regmap, tcb_base, channel, chan1, irq,
+> +				   bits);
+> +}
+> +CLOCKSOURCE_OF_DECLARE(atmel_tcb_clksrc, "atmel,tcb-timer",
+> +		       tcb_clksrc_init);
+> 
+
+
 -- 
-2.16.2.17.g38e79b1fd
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
