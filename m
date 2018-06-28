@@ -2,98 +2,105 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E3AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96180C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBD727163
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B9B02411F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 09:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qJeCeDP5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBD727163
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hMQi3+T8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R301iYuB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9B02411F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935101AbeF1J2a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 05:28:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933194AbeF1J23 (ORCPT
+        id S935160AbeF1J3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 05:29:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935103AbeF1J3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 05:28:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hYYDbc+R/nlM7I17YKyvqtFKsVgFSEudSqAqJlnY2uU=; b=qJeCeDP5a+y7p4GEUxiAXIW1Y
-        z6Dda/XYV+Hp4qp5rEGshI9MPzZ2eFigfx0OBM22dFIYBH3o6GKzF/075nHPYNG3eIrLuVVJCCnJ9
-        zs0vsNlSIf0j42etYL2dZM4OsreKJ3I4MjS1jb9tv0EvBRpyGMogSR+q4WUqm2oGCfjGmxghLWq2T
-        f0Up4y/eaLHnkNqGDF7h6rQQkBPkOGCDsVcbqvUG9d+C6Gxx6+bDCRtkREE86G6mcZlVThdPPr6gh
-        NayuQ+12xvy2f//xP26QG+cEmiKjOT79+GnUsh7cWd8N0Us4744UzYPNw4wojOM9Bj7RPYHgTWv1l
-        UNSg9RONA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYTDt-0007Jw-FY; Thu, 28 Jun 2018 09:28:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DBEE52029764D; Thu, 28 Jun 2018 11:28:15 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 11:28:15 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Steven Rostedt <rostedt@goodmis.org>, namit@vmware.com
-Subject: Re: [PATCH 5/5] x86/kernel: jump_table: use relative references
-Message-ID: <20180628092815.GD2494@hirez.programming.kicks-ass.net>
-References: <20180627160604.8154-1-ard.biesheuvel@linaro.org>
- <20180627160604.8154-6-ard.biesheuvel@linaro.org>
- <20180628083107.GY2494@hirez.programming.kicks-ass.net>
- <CAKv+Gu9oxJCvpxRKpkndci1RGuewBsAPQW9W1=uXU1boGTSRrQ@mail.gmail.com>
+        Thu, 28 Jun 2018 05:29:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 63600608C8; Thu, 28 Jun 2018 09:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530178144;
+        bh=3ODUuId7atWp+61PfCi0G9AGdJuPPxgwVserjUxgnro=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=hMQi3+T80OdGc2/HZbFw0K1gZwUIwQLUpV/5tfKzVYnCflRFPeX7cHGAt1NwJ8Gse
+         WJhFoJ/9IMGid5GS/U98YYw0RlitVTiGSpgNNN8VJy29J1ViHSRNQYCqgA9Hr5A+2t
+         onYmT1xodadfs/7JrSUhqfvD+y1AblWao6xdi8ks=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 808E460711;
+        Thu, 28 Jun 2018 09:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530178143;
+        bh=3ODUuId7atWp+61PfCi0G9AGdJuPPxgwVserjUxgnro=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=R301iYuBZhHBKjjPh+kYsH1NBb1LoKE8o82vaQnWUsuMSXK0+zH7rtm8O9fvqsjzj
+         7+v4G6ozU+XEjTwj+HQjkb7abKvYThXkLZP3c68jpx2gkgvUNcQN5Yjmb27Z4QtWAJ
+         FYJd1sBiLBfbwGc7QA75y6+hJgiYg+cW5oQjYDFE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 808E460711
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9oxJCvpxRKpkndci1RGuewBsAPQW9W1=uXU1boGTSRrQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+Subject: Re: wcn36xx: Remove Unicode Byte Order Mark from testcode
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1528375527-22761-1-git-send-email-geert@linux-m68k.org>
+References: <1528375527-22761-1-git-send-email-geert@linux-m68k.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Eyal Ilsar <eilsar@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>, wcn36xx@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180628092904.63600608C8@smtp.codeaurora.org>
+Date:   Thu, 28 Jun 2018 09:29:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:34:54AM +0200, Ard Biesheuvel wrote:
-> On 28 June 2018 at 10:31, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Wed, Jun 27, 2018 at 06:06:04PM +0200, Ard Biesheuvel wrote:
-> >> Similar to the arm64 case, 64-bit x86 can benefit from using 32-bit
-> >> relative references rather than 64-bit absolute ones when emitting
-> >> struct jump_entry instances. Not only does this reduce the memory
-> >> footprint of the entries themselves by 50%, it also removes the need
-> >> for carrying relocation metadata on relocatable builds (i.e., for KASLR)
-> >> which saves a fair chunk of .init space as well (although the savings
-> >> are not as dramatic as on arm64)
-> >
-> > This will conflict with:
-> >
-> >   https://lkml.kernel.org/r/20180622172212.199633-10-namit@vmware.com
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> Older gcc (< 4.4) doesn't like files starting with a Unicode BOM:
 > 
-> Thanks for the head's up. Fortunately, it does not conflict
-> fundamentally, so it should be a straight-forward rebase after that
-> code is merged.
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\357’ in program
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\273’ in program
+>     drivers/net/wireless/ath/wcn36xx/testmode.c:1: error: stray ‘\277’ in program
+> 
+> Remove the BOM, the rest of the file is plain ASCII anyway.
+> 
+> Output of "file drivers/net/wireless/ath/wcn36xx/testmode.c" before:
+> 
+>     drivers/net/wireless/ath/wcn36xx/testmode.c: C source, UTF-8 Unicode (with BOM) text
+> 
+> and after:
+> 
+>     drivers/net/wireless/ath/wcn36xx/testmode.c: C source, ASCII text
+> 
+> Fixes: 87f825e6e246cee0 ("wcn36xx: Add support for Factory Test Mode (FTM)")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Acked-by: Ramon Fried <ramon.fried@gmail.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Yeah, shouldn't be hard to cure.
+Patch applied to ath-current branch of ath.git, thanks.
 
-There's another patch set that might have a little conflict, but that's
-not near ready I think, so that'll have to just cope with things
-shifting underneath (and there too, the fixup shouldn't be hard).
+371d5e9d99e1 wcn36xx: Remove Unicode Byte Order Mark from testcode
 
-> Do you think this is likely to get merged for v4.19?
+-- 
+https://patchwork.kernel.org/patch/10451875/
 
-I'm thinking it is near ready so it might, but I'm not in charge of
-those bits :-)
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
