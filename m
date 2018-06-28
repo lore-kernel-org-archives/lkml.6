@@ -2,239 +2,96 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92382C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72824C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D12227863
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D12227863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BE5327863
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:17:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="aw4awhBk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE5327863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754315AbeF1TPW (ORCPT
+        id S1754878AbeF1TRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:15:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48236 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753174AbeF1TPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:15:18 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 593EDF013C;
-        Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E261C1116717;
-        Thu, 28 Jun 2018 19:15:16 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     amd-gfx@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Shaoyun Liu <Shaoyun.Liu@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] drm/amdgpu: Make struct amdgpu_atif private to amdgpu_acpi.c
-Date:   Thu, 28 Jun 2018 15:14:52 -0400
-Message-Id: <20180628191505.10015-2-lyude@redhat.com>
-In-Reply-To: <20180628191505.10015-1-lyude@redhat.com>
-References: <20180628191505.10015-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 28 Jun 2018 19:15:17 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Thu, 28 Jun 2018 15:17:25 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46338 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753410AbeF1TRX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:17:23 -0400
+Received: by mail-io0-f195.google.com with SMTP id u23-v6so6261476ioc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:17:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9vGLKomZ6mOhWk8FNFP50yCf39PN/eMDoDt2056ucsk=;
+        b=aw4awhBkPutEzf+iaS+FATEoMYrnO+b/FxdXZv1S66jD03kFMEf8Aw1RpZJsdFVUnT
+         xAqfn0VvBG5QS/sO17cJRgeWQE9Ma1mGurjnK55m8oOhetDRhnM6OuvdaVAPOUPWesnS
+         2bgqyTQguzd9irV5O7Y6W/AxVFLVEFvqMoe8zK0IneU6N5ieqAeh1IITOTX+pepgGhKh
+         SKIfETFAaD1fwKIEVgo7SHFaui6vwIcn/8g7aXmcKpuS240R37ujhlG6+e8DeqKzJkXl
+         Wg129bQyha9jibFwKPQ4qgynO0sjpvfvC4a0DQyOounytVRRIKsqYtSN0R8WoeAC7egs
+         4Dpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9vGLKomZ6mOhWk8FNFP50yCf39PN/eMDoDt2056ucsk=;
+        b=AwwklJ2T58zpOLzwBrIysdrdNOdy9vEHIfriaxocloLgrvNp4qDjHJRD/VcBAGIv/Q
+         of8SZJ8Zg2eZhhoeH7VIWBNpJ7g7ruIpF2wosIEaV9/jvs0IwNVsg5z1VxFlidl8cG2W
+         7SzYybPeuh3VBaMlX4iHSPDDp2FTUaXnA2GRXvNBHLdYBWnqadO+fukBGKpsk1zp4tBO
+         NZdyjNrFc67DDPzecqaQITYIxrE+TPdFaj8snDk8+tuK8LCBk7X2onLgEQkx4SQ7hwJ4
+         BwGp8S9kJZnjwNC7RLVlcWJI6FZBQ0d5/74h9dAas8Cg+Conj5eUhtf9QWdNPUyusLwg
+         KGLQ==
+X-Gm-Message-State: APt69E3AuTnZwmCgQ8j0M7oKS2bBt+VA8bCpfvvCPtY++xEU0zTR8vFu
+        u6gM+eol7Wzt25w18OA4tnZhaQ==
+X-Google-Smtp-Source: AAOMgpfSjZweGNnPex3C8nbUrIiv1mPrzoMeYfuN36vxoo4FkJ+4/RyoHaqHN7HN/m27LBcWx+bu/w==
+X-Received: by 2002:a6b:be05:: with SMTP id o5-v6mr9583375iof.45.1530213442972;
+        Thu, 28 Jun 2018 12:17:22 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id m1-v6sm3915025iti.31.2018.06.28.12.17.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 12:17:21 -0700 (PDT)
+Subject: Re: [PATCH BUGFIX RESEND 0/4] bfq: fix bugs breaking bandwidth
+ guarantees occasionally
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, broonie@kernel.org,
+        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name
+References: <20180625195537.7769-1-paolo.valente@linaro.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <359b2f24-f680-2e76-d6e1-3b8b67fcacc7@kernel.dk>
+Date:   Thu, 28 Jun 2018 13:17:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180625195537.7769-1-paolo.valente@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there is nothing in amdgpu that actually uses these structs
-other than amdgpu_acpi.c. Additionally, since we're about to start
-saving the correct ACPI handle to use for calling ATIF in this struct
-this saves us from having to handle making sure that the acpi_handle
-(and by proxy, the type definition for acpi_handle and all of the other
-acpi headers) doesn't need to be included within the amdgpu_drv struct
-itself. This follows the example set by amdgpu_atpx_handler.c.
+On 6/25/18 1:55 PM, Paolo Valente wrote:
+> Hi,
+> during some bandwidth tests, I found some occasional but severe
+> malfunctions (losses of bandwidth control). The first three patches in
+> this series fix the bugs that caused these malfunctions. The last
+> patch is a fix/improvement of the name of one of the functions
+> involved with these bugs.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
----
- drivers/gpu/drm/amd/amdgpu/amdgpu.h      | 40 +-----------------
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 54 ++++++++++++++++++++++--
- 2 files changed, 53 insertions(+), 41 deletions(-)
+Applied for 4.19, thanks.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index a59c07590cee..7df5d3d11aff 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -190,6 +190,7 @@ struct amdgpu_job;
- struct amdgpu_irq_src;
- struct amdgpu_fpriv;
- struct amdgpu_bo_va_mapping;
-+struct amdgpu_atif;
- 
- enum amdgpu_cp_irq {
- 	AMDGPU_CP_IRQ_GFX_EOP = 0,
-@@ -1269,43 +1270,6 @@ struct amdgpu_vram_scratch {
- /*
-  * ACPI
-  */
--struct amdgpu_atif_notification_cfg {
--	bool enabled;
--	int command_code;
--};
--
--struct amdgpu_atif_notifications {
--	bool display_switch;
--	bool expansion_mode_change;
--	bool thermal_state;
--	bool forced_power_state;
--	bool system_power_state;
--	bool display_conf_change;
--	bool px_gfx_switch;
--	bool brightness_change;
--	bool dgpu_display_event;
--};
--
--struct amdgpu_atif_functions {
--	bool system_params;
--	bool sbios_requests;
--	bool select_active_disp;
--	bool lid_state;
--	bool get_tv_standard;
--	bool set_tv_standard;
--	bool get_panel_expansion_mode;
--	bool set_panel_expansion_mode;
--	bool temperature_change;
--	bool graphics_device_types;
--};
--
--struct amdgpu_atif {
--	struct amdgpu_atif_notifications notifications;
--	struct amdgpu_atif_functions functions;
--	struct amdgpu_atif_notification_cfg notification_cfg;
--	struct amdgpu_encoder *encoder_for_bl;
--};
--
- struct amdgpu_atcs_functions {
- 	bool get_ext_state;
- 	bool pcie_perf_req;
-@@ -1466,7 +1430,7 @@ struct amdgpu_device {
- #if defined(CONFIG_DEBUG_FS)
- 	struct dentry			*debugfs_regs[AMDGPU_DEBUGFS_MAX_COMPONENTS];
- #endif
--	struct amdgpu_atif		atif;
-+	struct amdgpu_atif		*atif;
- 	struct amdgpu_atcs		atcs;
- 	struct mutex			srbm_mutex;
- 	/* GRBM index mutex. Protects concurrent access to GRBM index */
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index 8fa850a070e0..22c7e8ec0b9a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -34,6 +34,43 @@
- #include "amd_acpi.h"
- #include "atom.h"
- 
-+struct amdgpu_atif_notification_cfg {
-+	bool enabled;
-+	int command_code;
-+};
-+
-+struct amdgpu_atif_notifications {
-+	bool display_switch;
-+	bool expansion_mode_change;
-+	bool thermal_state;
-+	bool forced_power_state;
-+	bool system_power_state;
-+	bool display_conf_change;
-+	bool px_gfx_switch;
-+	bool brightness_change;
-+	bool dgpu_display_event;
-+};
-+
-+struct amdgpu_atif_functions {
-+	bool system_params;
-+	bool sbios_requests;
-+	bool select_active_disp;
-+	bool lid_state;
-+	bool get_tv_standard;
-+	bool set_tv_standard;
-+	bool get_panel_expansion_mode;
-+	bool set_panel_expansion_mode;
-+	bool temperature_change;
-+	bool graphics_device_types;
-+};
-+
-+struct amdgpu_atif {
-+	struct amdgpu_atif_notifications notifications;
-+	struct amdgpu_atif_functions functions;
-+	struct amdgpu_atif_notification_cfg notification_cfg;
-+	struct amdgpu_encoder *encoder_for_bl;
-+};
-+
- /* Call the ATIF method
-  */
- /**
-@@ -292,7 +329,7 @@ static int amdgpu_atif_get_sbios_requests(acpi_handle handle,
- static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 			struct acpi_bus_event *event)
- {
--	struct amdgpu_atif *atif = &adev->atif;
-+	struct amdgpu_atif *atif = adev->atif;
- 	struct atif_sbios_requests req;
- 	acpi_handle handle;
- 	int count;
-@@ -303,7 +340,8 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 	if (strcmp(event->device_class, ACPI_VIDEO_CLASS) != 0)
- 		return NOTIFY_DONE;
- 
--	if (!atif->notification_cfg.enabled ||
-+	if (!atif ||
-+	    !atif->notification_cfg.enabled ||
- 	    event->type != atif->notification_cfg.command_code)
- 		/* Not our event */
- 		return NOTIFY_DONE;
-@@ -642,7 +680,7 @@ static int amdgpu_acpi_event(struct notifier_block *nb,
- int amdgpu_acpi_init(struct amdgpu_device *adev)
- {
- 	acpi_handle handle;
--	struct amdgpu_atif *atif = &adev->atif;
-+	struct amdgpu_atif *atif;
- 	struct amdgpu_atcs *atcs = &adev->atcs;
- 	int ret;
- 
-@@ -659,11 +697,19 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
- 	}
- 
- 	/* Call the ATIF method */
-+	atif = kzalloc(sizeof(*atif), GFP_KERNEL);
-+	if (!atif) {
-+		DRM_WARN("Not enough memory to initialize ATIF\n");
-+		goto out;
-+	}
-+
- 	ret = amdgpu_atif_verify_interface(handle, atif);
- 	if (ret) {
- 		DRM_DEBUG_DRIVER("Call to ATIF verify_interface failed: %d\n", ret);
-+		kfree(atif);
- 		goto out;
- 	}
-+	adev->atif = atif;
- 
- 	if (atif->notifications.brightness_change) {
- 		struct drm_encoder *tmp;
-@@ -720,4 +766,6 @@ int amdgpu_acpi_init(struct amdgpu_device *adev)
- void amdgpu_acpi_fini(struct amdgpu_device *adev)
- {
- 	unregister_acpi_notifier(&adev->acpi_nb);
-+	if (adev->atif)
-+		kfree(adev->atif);
- }
 -- 
-2.17.1
+Jens Axboe
 
