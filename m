@@ -2,102 +2,114 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644A3C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C08BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1FE278C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:51:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1FE278C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E898322ACD
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 19:53:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E898322ACD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935893AbeF1TvP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 15:51:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935793AbeF1TvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 15:51:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C38D6BF573;
-        Thu, 28 Jun 2018 19:51:12 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 21E932026D69;
-        Thu, 28 Jun 2018 19:51:06 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 28 Jun 2018 21:51:12 +0200 (CEST)
-Date:   Thu, 28 Jun 2018 21:51:06 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-Message-ID: <20180628195106.GA3952@redhat.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+        id S965415AbeF1Txk convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 15:53:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:11568 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752704AbeF1Txj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 15:53:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 12:53:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,284,1526367600"; 
+   d="scan'208";a="241497844"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga006.fm.intel.com with ESMTP; 28 Jun 2018 12:53:21 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 28 Jun 2018 12:53:21 -0700
+Received: from fmsmsx104.amr.corp.intel.com ([169.254.3.207]) by
+ FMSMSX112.amr.corp.intel.com ([169.254.5.199]) with mapi id 14.03.0319.002;
+ Thu, 28 Jun 2018 12:53:20 -0700
+From:   "Calciano, Jess" <jess.calciano@intel.com>
+To:     "'linux-rdma@vger.kernel.org'" <linux-rdma@vger.kernel.org>
+CC:     "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: iscsi_trx oops in 4.18.0-rc2 and potential patch for percpu_ida.c
+Thread-Topic: iscsi_trx oops in 4.18.0-rc2 and potential patch for
+ percpu_ida.c
+Thread-Index: AdQPGB2tMgbfWvM7SUeHUKhtR3eNhw==
+Date:   Thu, 28 Jun 2018 19:53:21 +0000
+Message-ID: <E079A211AAA8AD48953B67A89DB71C856E7DBC38@fmsmsx104.amr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.107]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 19:51:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 19:51:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have to admit that after a quick glance I can't understand this patch
-at all... I'll try to read it again tomorrow, but could you at least explain
-how find_node_in_range/build_probe_list can work if off_type==REF_CTR_OFFSET?
+Hello,
 
-On 06/28, Ravi Bangoria wrote:
->
-> -find_node_in_range(struct inode *inode, loff_t min, loff_t max)
-> +find_node_in_range(struct inode *inode, int off_type, loff_t min, loff_t max)
->  {
->  	struct rb_node *n = uprobes_tree.rb_node;
->  
->  	while (n) {
->  		struct uprobe *u = rb_entry(n, struct uprobe, rb_node);
-> +		loff_t offset = uprobe_get_offset(u, off_type);
->  
->  		if (inode < u->inode) {
->  			n = n->rb_left;
->  		} else if (inode > u->inode) {
->  			n = n->rb_right;
->  		} else {
-> -			if (max < u->offset)
-> +			if (max < offset)
->  				n = n->rb_left;
-> -			else if (min > u->offset)
-> +			else if (min > offset)
->  				n = n->rb_right;
->  			else
->  				break;
+In 4.18.0-rc1 and rc2, we're seeing a kernel oops on the SCSI target host when an initiator issues an "iscsiadm -m discovery" command.
+Stack trace is below.
 
-To simplify, lets forget about uprobe->inode (which acts as a key too). So uprobes_tree
-is a binary tree sorted by uprobe->offset key and that is why the binary search works.
+It seems to be the same bug discussed on the target-devel list in this thread: https://www.spinics.net/lists/target-devel/msg16815.html
+...and resolved with the patch posted there: [PATCH] lib/percpu_ida.c: don't do alloc from per-CPU list if there is none
+We tried the patch, and it works to fix the problem in our testing as well.
 
-But it is not sorted by uprobe->ref_ctr_offset. So for example n->rb_left can have the
-n->ref_ctr_offset key that is greater than the n's ref_ctr_offset. So how we can use the
-binary search if REF_CTR_OFFSET?
+So although the problem has already been reported, we're wondering if there are any updates on the status of the fix, or if it will be available in an upcoming mainline build.
 
-I must have missed something, I assume you tested this patch and it works somehow...
 
-Oleg.
+Thanks,
+Jess
 
+
+
+[  278.870830] BUG: unable to handle kernel paging request at ffffc128bfa06b34
+[  278.878629] PGD 85e46d067 P4D 85e46d067 PUD 0
+[  278.883600] Oops: 0000 [#1] SMP PTI
+[  278.887500] CPU: 0 PID: 3331 Comm: iscsi_trx Not tainted 4.18.0-rc2 #1
+[  278.894799] Hardware name: Intel Corporation S2600WT2R/S2600WT2R, BIOS SE5C610.86B.01.01.0016.033120161139 03/31/2016
+[  278.906669] RIP: 0010:percpu_ida_alloc+0x67/0x90
+[  278.911831] Code: 8c 48 89 44 24 18 48 89 44 24 20 65 48 03 1d e8 6e c6 73 48 89 df e8 58 b8 3e 00 8b 4b 04 48 89 c6 48 89 df 8d 51 ff 89 53 04 <8b> 6c 93 08 e8 70 b6 3e 00 48 8b 74 24 28 65 48 33 34 25 28 00 00
+[  278.932933] RSP: 0018:ffffa12cc8e87db0 EFLAGS: 00010046
+[  278.938775] RAX: 0000000000000286 RBX: ffffc124bfa06b30 RCX: 0000000000000000
+[  278.946753] RDX: 00000000ffffffff RSI: 0000000000000286 RDI: ffffc124bfa06b30
+[  278.954730] RBP: ffff90a819b92000 R08: 0000000000000000 R09: 0000000000000030
+[  278.962707] R10: ffff90a016f080c8 R11: 000000000000000c R12: ffffa12cc8e87e58
+[  278.970683] R13: ffff90a01baa8000 R14: ffff90a819b92000 R15: ffff90a8197a62d8
+[  278.979145] FS:  0000000000000000(0000) GS:ffff90a01f200000(0000) knlGS:0000000000000000
+[  278.988606] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  278.995440] CR2: ffffc128bfa06b34 CR3: 000000064220a001 CR4: 00000000003606f0
+[  279.003831] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  279.012233] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  279.020609] Call Trace:
+[  279.023746]  ? remove_wait_queue+0x60/0x60
+[  279.028741]  iscsit_allocate_cmd+0x28/0x110 [iscsi_target_mod]
+[  279.035670]  iscsit_get_rx_pdu+0x4bb/0x880 [iscsi_target_mod]
+[  279.042506]  ? pick_next_task_fair+0x291/0x620
+[  279.047888]  ? __switch_to+0xa8/0x480
+[  279.052405]  iscsi_target_rx_thread+0xb5/0xf0 [iscsi_target_mod]
+[  279.059552]  kthread+0xf5/0x130
+[  279.063499]  ? iscsi_target_tx_thread+0x1f0/0x1f0 [iscsi_target_mod]
+[  279.071042]  ? kthread_bind+0x10/0x10
+[  279.075576]  ret_from_fork+0x35/0x40
+[  279.080007] Modules linked in: target_core_user uio tcm_fc libfc scsi_transport_fc tcm_loop target_core_pscsi target_core_iblock target_core_file rpcrdma ib_isert iscsi_target_mod sunrpc target_core_mod rdma_ucm ib_uverbs ib_ipoib dm_mirror ib_iser dm_region_hash ib_umad dm_log rdma_cm libiscsi ib_cm dm_mod iw_cm scsi_transport_iscsi intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm hfi1 irqbypass joydev crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc rdmavt iTCO_wdt mei_me aesni_intel mei iTCO_vendor_support sg lpc_ich ib_core i2c_i801 crypto_simd cryptd glue_helper ipmi_si mxm_wmi ipmi_devintf ipmi_msghandler pcspkr ioatdma acpi_pad wmi acpi_power_meter ip_tables ext4 mbcache jbd2 sd_mod mgag200 drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm igb
+[  279.162388]  ahci libahci libata crc32c_intel dca i2c_algo_bit i2c_core
+[  279.170337] CR2: ffffc128bfa06b34
+[  279.174655] ---[ end trace 3b147417c7ae0be8 ]---
