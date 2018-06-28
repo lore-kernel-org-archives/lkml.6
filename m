@@ -2,117 +2,88 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C68C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B401C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20DCC27305
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:57:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DCC27305
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F8F52730F
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 12:00:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CNF3vIFz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8F52730F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753706AbeF1L5x (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 07:57:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47988 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753146AbeF1L5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 07:57:52 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 360DB8A3AB;
-        Thu, 28 Jun 2018 11:57:52 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C774F1C4E7;
-        Thu, 28 Jun 2018 11:57:50 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 13:57:48 +0200
-From:   Andrew Jones <drjones@redhat.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jeremy.linton@arm.com,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [RFC PATCH] arm64: topology: Map PPTT node offset to logic
- physical package id
-Message-ID: <20180628115748.kprobde6c3joc6ll@kamzik.brq.redhat.com>
-References: <1530177508-15298-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <cb057c6a-0eb4-581e-c259-7a31545e0ae7@arm.com>
+        id S933075AbeF1MAi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 08:00:38 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:53477 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932235AbeF1MAg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 08:00:36 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6735225B7A3;
+        Thu, 28 Jun 2018 22:00:34 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1530187234; bh=G8fVmF538MDPEKSonpsvcK7XC0tq8PePZuEjuXmL3XE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CNF3vIFz4X44qxzdgcq5KD/6dypWIFKfJqAl0XSQphF7xZ2JYiK66zuzaZzsjeC1V
+         LQTAionEldiwWae4mEl7LBjZUA9efOONSHU0iVTChq2rV5MVi+fMjOTU50KLs/80fg
+         eIB0dNDb3UYwqobF8eTNWnb2tIgwdf0+dPJN1Coc=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 4F8A1940760; Thu, 28 Jun 2018 14:00:32 +0200 (CEST)
+Date:   Thu, 28 Jun 2018 14:00:32 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Michel Pollet <michel.pollet@bp.renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Message-ID: <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb057c6a-0eb4-581e-c259-7a31545e0ae7@arm.com>
-User-Agent: NeoMutt/20180622
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 11:57:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 28 Jun 2018 11:57:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'drjones@redhat.com' RCPT:''
+In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:38:24AM +0100, Sudeep Holla wrote:
-> Hi Shunyong,
+On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> This adds the Renesas R9A06G032 bare bone support.
 > 
-> On 28/06/18 10:18, Shunyong Yang wrote:
-> > As PPTT spec doesn't define the physical package id,
-> > find_acpi_cpu_topology_package() will return offset of the node with
-> > Physical package field set when querying physical package id. So, it
-> > returns 162(0xA2) in following example.
-> > 
-> > [0A2h 0162   1]                Subtable Type : 00 [Processor Hierarchy
-> > Node]
-> > [0A3h 0163   1]                       Length : 1C
-> > [0A4h 0164   2]                     Reserved : 0000
-> > [0A6h 0166   4]        Flags (decoded below) : 00000003
-> >                             Physical package : 1
-> >                      ACPI Processor ID valid : 1
-> > [0AAh 0170   4]                       Parent : 00000000
-> > [0AEh 0174   4]            ACPI Processor ID : 00001000
-> > [0B2h 0178   4]      Private Resource Number : 00000002
-> > [0B6h 0182   4]             Private Resource : 0000006C
-> > [0BAh 0186   4]             Private Resource : 00000084
-> > 
-> > So, when "cat physical_package" in /sys/devices/system/cpu/cpu0/topology/,
-> > it will output 162(0xA2). And if some items are added before the node
-> > above, the output will change to other value.
-> > 
-> > This patch maps the node offset to a logic package id. It maps the first
-> > node offset to 0, the second to 1, and so on.
-> > 
-> > Then, it will not output a big value, such as 162 above. And it will
-> > not change when some nodes(Physical package not set) are added.
-> > 
-> > And as long as the nodes with Physical package field set in PPTT keeps
-> > the real hardware order, the logic id can map to hardware package id to
-> > some extent.
-> > 
-> > Hope to get feedback from you.
+> This currently only handles the SYSCTRL block note,
+> generic parts (gic, architected timer) and a UART.
 > 
-> Thanks for the patch, but Andrew Jones has also posted a patch[1] which
-> I had a look but was not sure what is the best approach to fix it yet.
-> I will think about it and respond to that.
->
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-I'll send a v1 yet today. The RFC version was actually OK, as the concern
-with ACPI nodes not being in the expected order wasn't actually a problem.
-The thread-id or core-id would only be reset to zero when a yet to be
-remapped core-id (and all its peers) was found when iterating the PEs.
-Since all peers were handled at the same time, the counter reset was
-correct, even when the ACPI nodes were out-of-order. The code didn't make
-that very obvious, though, and there was some room for other cleanups,
-so I've reworked it. Once I run it through a couple more rounds of testing
-I'll repost.
+Thanks, applied with the following appended:
 
-FYI, I'm able to easily test a variety of configs using a KVM guest and
-this QEMU branch[*]. To use threads it's necessary to revert the last
-QEMU patch and to hack KVM to set MPIDR.MT for the VCPUs.
-
-Thanks,
-drew
-
-[*] https://github.com/rhdrjones/qemu/commits/virt-cpu-topology
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9d5eeff51b5f..4c85ac04872d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1969,6 +1969,7 @@ S:	Supported
+ F:	arch/arm/boot/dts/emev2*
+ F:	arch/arm/boot/dts/r7s*
+ F:	arch/arm/boot/dts/r8a*
++F:	arch/arm/boot/dts/r9a*
+ F:	arch/arm/boot/dts/sh*
+ F:	arch/arm/configs/shmobile_defconfig
+ F:	arch/arm/include/debug/renesas-scif.S
