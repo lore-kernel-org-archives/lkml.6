@@ -2,157 +2,172 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4E0C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CC0C43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B349276AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:41:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B349276AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ni.com
+	by mail.kernel.org (Postfix) with ESMTP id A84A2276A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:42:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84A2276A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935685AbeF1Ql0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:41:26 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:41500 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935628AbeF1QlL (ORCPT
+        id S1753510AbeF1Qmr (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 12:42:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43524 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752603AbeF1Qmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:41:11 -0400
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SGa0BZ014758;
-        Thu, 28 Jun 2018 11:40:52 -0500
-Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2jvdqwun5u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jun 2018 11:40:52 -0500
-Received: from us-aus-exhub1.ni.corp.natinst.com (us-aus-exhub1.ni.corp.natinst.com [130.164.68.41])
-        by us-aus-skprod2.natinst.com (8.16.0.22/8.16.0.22) with ESMTPS id w5SGepDv018133
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jun 2018 11:40:51 -0500
-Received: from us-aus-exch5.ni.corp.natinst.com (130.164.68.15) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Thu, 28 Jun 2018 11:40:51 -0500
-Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
- us-aus-exch5.ni.corp.natinst.com (130.164.68.15) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Thu, 28 Jun 2018 11:40:51 -0500
-Received: from harisdt.amer.corp.natinst.com (130.164.49.7) by
- us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
- id 15.0.1156.6 via Frontend Transport; Thu, 28 Jun 2018 11:40:51 -0500
-From:   Haris Okanovic <haris.okanovic@ni.com>
-To:     <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <haris.okanovic@ni.com>, <harisokn@gmail.com>,
-        <bigeasy@linutronix.de>, <tglx@linutronix.de>,
-        <julia.cartwright@ni.com>, <gratian.crisan@ni.com>,
-        <anna-maria@linutronix.de>, <daniel@bristot.me>, <efault@gmx.de>
-Subject: [PATCH v5 2/2] timers: Don't search for expired timers while TIMER_SOFTIRQ is scheduled
-Date:   Thu, 28 Jun 2018 11:40:36 -0500
-Message-ID: <20180628164036.27378-2-haris.okanovic@ni.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180628164036.27378-1-haris.okanovic@ni.com>
-References: <7d21ff63-3dce-b8ea-a0f1-81d53617747d@ni.com>
- <20180628164036.27378-1-haris.okanovic@ni.com>
+        Thu, 28 Jun 2018 12:42:46 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SGcvDb110324
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:42:45 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jw3ax89wn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:42:45 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 28 Jun 2018 12:42:44 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 28 Jun 2018 12:42:42 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SGgfWF17957296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 28 Jun 2018 16:42:41 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4A21AB206C;
+        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1435DB2067;
+        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1752116C3EDF; Thu, 28 Jun 2018 09:44:48 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 09:44:48 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: sched/core warning triggers on rcu torture test
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <alpine.DEB.2.21.1806261709001.19188@somnus>
+ <20180626163255.GG2458@hirez.programming.kicks-ass.net>
+ <20180626174826.GB3593@linux.vnet.ibm.com>
+ <20180627104014.GB10102@lerouge>
+ <20180627142529.GU3593@linux.vnet.ibm.com>
+ <20180628163323.GB19886@lerouge>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628163323.GB19886@lerouge>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062816-0068-0000-0000-0000030FA5F5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009271; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01053619; UDB=6.00540239; IPR=6.00831542;
+ MB=3.00021909; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-28 16:42:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062816-0069-0000-0000-000044D7485A
+Message-Id: <20180628164448.GL3593@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_08:,,
  signatures=0
-X-Proofpoint-Spam-Reason: safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806280189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change avoids needlessly searching for more timers in
-run_local_timers() (hard interrupt context) when they can't fire.
-For example, when ktimersoftd/run_timer_softirq() is scheduled but
-preempted due to cpu contention. When it runs, run_timer_softirq() will
-discover newly expired timers up to current jiffies in addition to
-firing previously expired timers.
+On Thu, Jun 28, 2018 at 06:33:24PM +0200, Frederic Weisbecker wrote:
+> On Wed, Jun 27, 2018 at 07:25:29AM -0700, Paul E. McKenney wrote:
+> > On Wed, Jun 27, 2018 at 12:40:15PM +0200, Frederic Weisbecker wrote:
+> > > On Tue, Jun 26, 2018 at 10:48:26AM -0700, Paul E. McKenney wrote:
+> > > > On Tue, Jun 26, 2018 at 06:32:55PM +0200, Peter Zijlstra wrote:
+> > > > > On Tue, Jun 26, 2018 at 06:16:04PM +0200, Anna-Maria Gleixner wrote:
+> > > > > > Hi,
+> > > > > > 
+> > > > > > during rcu torture tests (TREE04 and TREE07) I noticed, that a
+> > > > > > WARN_ON_ONCE() in sched core triggers on a recent 4.18-rc2 based
+> > > > > > kernel (6f0d349d922b ("Merge
+> > > > > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")) as well as
+> > > > > > on a 4.17.3.
+> > > > 
+> > > > First, I am very glad that I am not the only one running rcutorture!  ;-)
+> > > > 
+> > > > > > I'm running the tests on a machine with 144 cores:
+> > > > > > 
+> > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "9*TREE07"
+> > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "18*TREE04"
+> > > > > > 
+> > > > > > 
+> > > > > > The warning was introduced by commit d84b31313ef8 ("sched/isolation:
+> > > > > > Offload residual 1Hz scheduler tick").
+> > > > > > 
+> > > > > > 
+> > > > > > Output looks similar for all tests I did (this one is the output of
+> > > > > > the 4.18-rc2 based kernel):
+> > > > > > 
+> > > > > > WARNING: CPU: 11 PID: 906 at kernel/sched/core.c:3138 sched_tick_remote+0xb6/0xc0
+> > > > > 
+> > > > > That's nohz_full stuff, is that a normal part of rcutorture? In any
+> > > > > case, is the one housekeeping CPU getting seriously overloaded or
+> > > > > something?
+> > > > 
+> > > > Yes, nohz_full is a normal part for rcutorture because RCU has to deal
+> > > > differently with userspace execution in the nohz_full case.
+> > > > 
+> > > > I do see this splat (at least when I don't comment it out), but I
+> > > > do share my system with others, so I could easily be overloading the
+> > > > housekeeping vCPUs due to hypervisor preemption.  I was intending to
+> > > > dig into this one once I got done consolidating RCU-bh, RCU-preempt,
+> > > > and RCU-sched at Linus's behest.
+> > > > 
+> > > > On overloading the housekeeping CPU without outside load, let's look at
+> > > > TREE04 and TREE07 separately.
+> > > > 
+> > > > TREE04 uses eight CPUs, and seven of them ("nohz_full=1-7") are nohz_full
+> > > > CPUs, and rcutorture doesn't generate all that large of a callback load.
+> > > > It looks like all 144 CPUs are used in this case (18*8), though RCU
+> > > > enforces idle periods in order to test idle/non-idle transitions.
+> > > > But was there anything else running on the machine at the time?
+> > > > 
+> > > > TREE07 uses 16 CPUs, and eight of them ("nohz_full=2-9") are nohz_full
+> > > > CPUs.  Again, it looks like all 144 CPUs are used (9*8).
+> > > > 
+> > > > I sometimes see this on TASKS03 as well, which uses two CPUs, and one of
+> > > > them ("nohz_full=1") is a nohz_full CPU.
+> > > > 
+> > > > If your system is otherwise idle, would it make sense to trace context
+> > > > switches on CPU 0 to see what it is up to?  And to do an ftrace_dump()
+> > > > and turn tracing off when the warning triggers as well?
+> > > 
+> > > Yeah you guys reported me this warning a few times ago. I didn't manage to reproduce
+> > > it because I fought and failed with a high NR_CPUS machine. But apparently 8 CPUs
+> > > are enough. Let me try that with TREE04.
+> > 
+> > Looking forward to hearing what you find!
+> 
+> Please check "[PATCH] sched/nohz: Skip remote tick on idle task entirely" which I
+> just posted. In the hope that the warning didn't trigger for another reason on
+> your testings.
 
-However, this change also adds an edge case where non-hrtimer firing
-is sometimes delayed by an additional tick. This is acceptable since we
-don't make latency guarantees for non-hrtimers and would prefer to
-minimize hard interrupt time instead.
+Very cool, thank you!  Firing up rcutorture with this now.
 
-Signed-off-by: Haris Okanovic <haris.okanovic@ni.com>
----
-[PATCH v3]
- - Split block_softirq into separate commit
-[PATCH v4]
- - Rebase onto v4.14.20-rt17
-[PATCH v5]
-   no change
-
-https://github.com/harisokanovic/linux/tree/dev/hokanovi/timer-peek-v7
----
- kernel/time/timer.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index dd67c18c16d0..723c3667de2b 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -207,6 +207,7 @@ struct timer_base {
- 	unsigned int		cpu;
- 	bool			is_idle;
- 	bool			must_forward_clk;
-+	bool			block_softirq;
- 	DECLARE_BITMAP(pending_map, WHEEL_SIZE);
- 	struct hlist_head	vectors[WHEEL_SIZE];
- 	struct hlist_head	expired_lists[LVL_DEPTH];
-@@ -1404,9 +1405,11 @@ static int __collect_expired_timers(struct timer_base *base)
- 
- 	/*
- 	 * expire_timers() must be called at least once before we can
--	 * collect more timers.
-+	 * collect more timers. We should never hit this case unless
-+	 * TIMER_SOFTIRQ got raised without expired timers.
- 	 */
--	if (base->expired_levels)
-+	if (WARN_ONCE(base->expired_levels,
-+			"Must expire collected timers before collecting more"))
- 		return base->expired_levels;
- 
- 	clk = base->clk;
-@@ -1748,6 +1751,9 @@ static __latent_entropy void run_timer_softirq(struct softirq_action *h)
- 	__run_timers(base);
- 	if (IS_ENABLED(CONFIG_NO_HZ_COMMON))
- 		__run_timers(this_cpu_ptr(&timer_bases[BASE_DEF]));
-+
-+	/* Allow new TIMER_SOFTIRQs to get scheduled by run_local_timers() */
-+	base->block_softirq = false;
- }
- 
- /*
-@@ -1758,6 +1764,14 @@ void run_local_timers(void)
- 	struct timer_base *base = this_cpu_ptr(&timer_bases[BASE_STD]);
- 
- 	hrtimer_run_queues();
-+
-+	/*
-+	 * Skip if TIMER_SOFTIRQ is already running on this CPU, since it
-+	 * will find and expire all timers up to current jiffies.
-+	 */
-+	if (base->block_softirq)
-+		return;
-+
- 	/* Raise the softirq only if required. */
- 	if (time_before(jiffies, base->clk) || !tick_find_expired(base)) {
- 		if (!IS_ENABLED(CONFIG_NO_HZ_COMMON))
-@@ -1766,7 +1780,10 @@ void run_local_timers(void)
- 		base++;
- 		if (time_before(jiffies, base->clk) || !tick_find_expired(base))
- 			return;
-+		base--;
- 	}
-+
-+	base->block_softirq = true;
- 	raise_softirq(TIMER_SOFTIRQ);
- }
- 
--- 
-2.17.1
+							Thanx, Paul
 
