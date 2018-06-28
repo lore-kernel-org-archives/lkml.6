@@ -2,122 +2,106 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0631BC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9D5C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BDA273AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D63AC273AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 14:11:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ku+XKKA+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BDA273AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SwjgIbmV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63AC273AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966492AbeF1OKP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 10:10:15 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44094 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965506AbeF1OKN (ORCPT
+        id S966507AbeF1OLA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 10:11:00 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51072 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966313AbeF1OK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 10:10:13 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5SE8ZaR058582
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 14:10:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=kqKYphjlijNWV+rEhV8WBq6g2+q8VsGx7QlEWWMkNk0=;
- b=Ku+XKKA+BvS7Kmd8WOqaXZ6/HYkXVpPikO/fpnJMX1a7weQ5tSdJ+qLZ8pTSIm1Am+MT
- H7OAHyX4OrM4qt9k3KeQRe1kTQ9Nr+4Up+Ni8IUos5bqFme9LLEx3QqxID+LYu/qxM/4
- D//5K2e4rt44ao8LjBmon5rV+A2YSx8Yqf86WgrClhFLK3UEdPJj4hz2tz9oI3fCSOmq
- v/4X2CEDLxmhhLy8BA1SoTBg7KkOFPJmayRY1WwaoeSGvDeoS5HzqTuTsn3eKyjgLDlW
- K2Fsr9hnEEM648M0diyFIkT7MoPGy09IiGLc+oOnqu+yWDtIVqvzzJDyUri+PajMMIwq GA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2jum0aaf35-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 14:10:13 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5SEACLX021001
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 14:10:12 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5SEACQt014858
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 14:10:12 GMT
-Received: from mail-qt0-f174.google.com (/209.85.216.174)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 28 Jun 2018 07:10:12 -0700
-Received: by mail-qt0-f174.google.com with SMTP id l10-v6so4823318qtj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:10:11 -0700 (PDT)
-X-Gm-Message-State: APt69E3Ep32dvjBWEsu4XRTXxfS5l3WPqM1WL3ctyIVzhcK0p/kI8kqh
-        R9Hvs9ZtPzv3gPpBbmn3WRzJjQYVxJq+dyxzkg8=
-X-Google-Smtp-Source: AAOMgpfIiLZ8HCP87mttrtLKwEOs80sUyyJVOsZ4Pay1czu2gMyftg+DinFkH5A/+qEQOC6vh8ibjbSOxvgXPyXmfb8=
-X-Received: by 2002:a0c:9448:: with SMTP id i8-v6mr9255269qvi.231.1530195011259;
- Thu, 28 Jun 2018 07:10:11 -0700 (PDT)
+        Thu, 28 Jun 2018 10:10:57 -0400
+Received: by mail-it0-f67.google.com with SMTP id u4-v6so12969187itg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 07:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZG2ijEldkyXQ6xGqj/ylaidWDnMoQou4dmOWsopOLR4=;
+        b=SwjgIbmVGWIPQFav97Zats+vhkSKAa0mogOn1YK5HEjeg4LfA5VM9sEMz3wVxMd7AP
+         2I4+AiLXMEuTWWbCPlKfkfeeEf3dqXPsCXxCM069xiXT14r+ERvv3fdhhXE8auifekAJ
+         +to7XKBSn40Zp9b8+TdIaytd2s/C9JHdBdAuM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZG2ijEldkyXQ6xGqj/ylaidWDnMoQou4dmOWsopOLR4=;
+        b=GPT/FAIJcqt5mdBn59Z6NyHcuiRvKzhQcBeCRWRefxLJ2fe5QjyCLgbwIGuflXWHqt
+         V/HjFFmKUkb3hztIIQicnYMlbCLGYcjLzf3JbMwxsK4FgXHJV2ysHSE2pKg9HLaY2RVC
+         Xha3InDFpYkdm4IynfN+RSeY3a1TI8nFIOVNfR6VgNWO4jVtIc6Ax7Kw8hh4ssbBI+t/
+         h1USsqoAyWIw9dxbySsetSmNeqFOaoCxODvXMTGdkTSRCSNzYx0VBHcnB6mHojh/6QQY
+         6oEeEsYulXoLl6EIQfBPmQCqJb3ehmx7VgItRTFgF/a8jQZSDp3b9fE0w/AYO7Zblmg4
+         +nNQ==
+X-Gm-Message-State: APt69E1VkEitxBunifPo3eRj6IMVC7oeDRYSR1ic9ew8k0Ns1d9M5qVi
+        beWrGU2Yy7qdts4Ejo+yCPp5DqKSsRxTrzKu3DTWNQ==
+X-Google-Smtp-Source: AAOMgpfPVqwafnL0oyPkncT1Yp7BNeSnK3G57IQLDqbfJQQc+M0ZILFpGEvOlD2PopykJ61d88Cvh+gNIInM+Wp4sK4=
+X-Received: by 2002:a24:8989:: with SMTP id s131-v6mr8447692itd.70.1530195056896;
+ Thu, 28 Jun 2018 07:10:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180628062857.29658-1-bhe@redhat.com> <20180628062857.29658-5-bhe@redhat.com>
- <20180628120937.GC12956@techadventures.net> <CAGM2reZsZVhhg2=dQZf6D-NmPTFRN-_95+s61pC7Axz5G5mkMQ@mail.gmail.com>
- <3e014554-abf9-8a18-e890-be43d48d5eb0@intel.com>
-In-Reply-To: <3e014554-abf9-8a18-e890-be43d48d5eb0@intel.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Thu, 28 Jun 2018 10:09:06 -0400
-X-Gmail-Original-Message-ID: <CAGM2reasSYwj7DtCiSFctA4q8eP9FShiAj5ou=xz4Pbk4C7mzw@mail.gmail.com>
-Message-ID: <CAGM2reasSYwj7DtCiSFctA4q8eP9FShiAj5ou=xz4Pbk4C7mzw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] mm/sparse: Optimize memmap allocation during sparse_init()
-To:     dave.hansen@intel.com
-Cc:     osalvador@techadventures.net, bhe@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, pagupta@redhat.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kirill.shutemov@linux.intel.com
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <CACRpkdbX0R+ipasLfZi80yf2OBU0TuDT-0KoUJBvrQz3Zj6eFQ@mail.gmail.com> <CAMuHMdVL-00gb7ZfgNGr8-VawFUpg+iY5mpPF6UZPfjFqM1_jg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVL-00gb7ZfgNGr8-VawFUpg+iY5mpPF6UZPfjFqM1_jg@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 28 Jun 2018 16:10:45 +0200
+Message-ID: <CACRpkdag1snZfeCC1y5TJdgVzAXbv+nDJrA-3R=49haTM8Kxpw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Renesas R9A06G032 PINCTRL Driver
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michel Pollet <michel.pollet@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Magnus Damm <damm+renesas@opensource.se>
 Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8937 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=462
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806280161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Is this at a point in boot where a BUG_ON() generally produces useful
-> output, or will it just produce and early-boot silent hang with no
-> console output?
+On Mon, Jun 18, 2018 at 10:57 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Mon, Jun 18, 2018 at 10:46 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Thu, Jun 14, 2018 at 1:00 PM, Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
 
-Probably depends on the platform, but in KVM, I see a nice panic
-message (inserted BUG_ON(1) into sparse_init()):
+> > Is it totally different from the other "great old ones" in the SuperH-PFC
+> > series or is there some other reason why it was done like this?
+>
+> Yes it is, cfr. drivers/pinctrl/pinctrl-rza1.c, which lives outside sh-pfc, too.
 
-[    0.000000] kernel BUG at mm/sparse.c:490!
-PANIC: early exception 0x06 IP 10:ffffffffb6bd43d9 error 0 cr2
-0xffff898747575000
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc2_pt_sparse #6
-[    0.000000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-[    0.000000] RIP: 0010:sparse_init+0x0/0x2
-[    0.000000] Code: fe 3b 05 ba d0 16 00 7e 06 89 05 b2 d0 16 00 49
-83 08 01 48 81 c3 00 80 00 00 e9 73 ff ff ff 48 83 c4 10 5b 5d 41 5c
-41 5d c3 <0f> 0b 48 8b 05 ae 46 8f ff 48 c1 e2 15 48 01 d0 c3 41 56 48
-8b 05
-[    0.000000] RSP: 0000:ffffffffb6603e98 EFLAGS: 00010086 ORIG_RAX:
-0000000000000000
-[    0.000000] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffb6603e80
-[    0.000000] RDX: ffffffffb6603e78 RSI: 0000000000000040 RDI: ffffffffb6603e70
-[    0.000000] RBP: 0000000007f7ec00 R08: ffffffffb6603e74 R09: 0000000000007fe0
-[    0.000000] R10: 0000000000000100 R11: 0000000007fd6000 R12: 0000000000000000
-[    0.000000] R13: ffffffffb6603f18 R14: 0000000000000000 R15: 0000000000000000
-[    0.000000] FS:  0000000000000000(0000) GS:ffffffffb6b82000(0000)
-knlGS:0000000000000000
-[    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.000000] CR2: ffff898747575000 CR3: 0000000006e0a000 CR4: 00000000000606b0
-[    0.000000] Call Trace:
-[    0.000000]  ? paging_init+0xf/0x2c
-[    0.000000]  ? setup_arch+0xae8/0xc17
-[    0.000000]  ? printk+0x53/0x6a
-[    0.000000]  ? start_kernel+0x62/0x4b3
-[    0.000000]  ? load_ucode_bsp+0x3d/0x129
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+OK I see.
+
+I take it that it is also totally different from the rza1 HW?
+
+It's fine like this, if there are many of them we might want
+to create something like a renesas/ subfolder at some point
+and stash them in there.
+
+> Of course I can take it through my sh-pfc tree, once the rough edges have been
+> removed.
+
+That's best I think, it always works smooth.
+
+Yours,
+Linus Walleij
