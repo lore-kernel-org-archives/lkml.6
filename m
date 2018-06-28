@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19748C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A03CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D34CB275D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34CB275D3
+	by mail.kernel.org (Postfix) with ESMTP id EE5F4275D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5F4275D3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967110AbeF1PUh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:20:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53331 "EHLO mail.bootlin.com"
+        id S967064AbeF1PUG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:20:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53302 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967067AbeF1PUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:20:08 -0400
+        id S964979AbeF1PUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:20:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 608B420DDC; Thu, 28 Jun 2018 17:20:06 +0200 (CEST)
+        id 5718E20737; Thu, 28 Jun 2018 17:20:01 +0200 (CEST)
 Received: from localhost (nat.foo.tf [163.172.35.26])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3118720703;
-        Thu, 28 Jun 2018 17:20:06 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 25AEB203EC;
+        Thu, 28 Jun 2018 17:20:01 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     herbert@gondor.apana.org.au, davem@davemloft.net,
         gregory.clement@bootlin.com, andrew@lunn.ch, jason@lakedaemon.net,
         sebastian.hesselbarth@gmail.com
-Cc:     Ofer Heifetz <oferh@marvell.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, igall@marvell.com,
-        Antoine Tenart <antoine.tenart@bootlin.com>
-Subject: [PATCH 12/14] crypto: inside-secure - set tx_max_cmd_queue to 32
-Date:   Thu, 28 Jun 2018 17:15:42 +0200
-Message-Id: <20180628151544.22134-13-antoine.tenart@bootlin.com>
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, oferh@marvell.com,
+        igall@marvell.com
+Subject: [PATCH 02/14] crypto: inside-secure - use precise compatibles
+Date:   Thu, 28 Jun 2018 17:15:32 +0200
+Message-Id: <20180628151544.22134-3-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180628151544.22134-1-antoine.tenart@bootlin.com>
 References: <20180628151544.22134-1-antoine.tenart@bootlin.com>
@@ -46,49 +46,229 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ofer Heifetz <oferh@marvell.com>
+At first we used two compatibles in the SafeXcel driver, named after the
+engine revision: eip97 and eip197. However this family of engines has
+more precise versions and in fact we're supporting the eip97ies and
+eip197b. More versions will be supported in the future, such as the
+eip197d, and we'll need to differentiate them.
 
-The ORO bridge (connected to the EIP197 write channel) does not
-generate back pressure towards the EIP197 when its internal FIFO is
-full. It assumes that the EIP will not drive more write transactions
-than the maximal supported outstanding (32).
+This patch fixes the compatibles used in the driver, to now use precise
+ones. The two historical compatibles are kept for backward
+compatibility.
 
-Hence tx_max_cmd_queue must be configured to 5 (or less).
-
-Signed-off-by: Ofer Heifetz <oferh@marvell.com>
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel.c | 4 ++++
- drivers/crypto/inside-secure/safexcel.h | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/crypto/inside-secure/safexcel.c       | 24 +++++++++++++------
+ drivers/crypto/inside-secure/safexcel.h       |  4 ++--
+ .../crypto/inside-secure/safexcel_cipher.c    | 16 ++++++-------
+ drivers/crypto/inside-secure/safexcel_hash.c  |  8 +++----
+ 4 files changed, 31 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 5feb83c6238b..9e5d2bf232eb 100644
+index a04d39231aaf..c28ab137d721 100644
 --- a/drivers/crypto/inside-secure/safexcel.c
 +++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -306,6 +306,10 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
- 	else if (((version >> 16) & 0xffff) == EIP197_HIA_VERSION_LE)
- 		val |= (EIP197_MST_CTRL_NO_BYTE_SWAP >> 24);
+@@ -294,7 +294,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	writel(EIP197_DxE_THR_CTRL_RESET_PE,
+ 	       EIP197_HIA_DFE_THR(priv) + EIP197_HIA_DFE_THR_CTRL);
  
-+	/* For EIP197 set maximum number of TX commands to 2^5 = 32 */
-+	if (priv->version == EIP197B || priv->version == EIP197D)
-+		val |= EIP197_MST_CTRL_TX_MAX_CMD(5);
-+
- 	writel(val, EIP197_HIA_AIC(priv) + EIP197_HIA_MST_CTRL);
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		/* Reset HIA input interface arbiter */
+ 		writel(EIP197_HIA_RA_PE_CTRL_RESET,
+ 		       EIP197_HIA_AIC(priv) + EIP197_HIA_RA_PE_CTRL);
+@@ -317,7 +317,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	writel(EIP197_PE_IN_xBUF_THRES_MIN(6) | EIP197_PE_IN_xBUF_THRES_MAX(7),
+ 	       EIP197_PE(priv) + EIP197_PE_IN_TBUF_THRES);
  
- 	/* Configure wr/rd cache values */
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		/* enable HIA input interface arbiter and rings */
+ 		writel(EIP197_HIA_RA_PE_CTRL_EN |
+ 		       GENMASK(priv->config.rings - 1, 0),
+@@ -343,7 +343,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	/* FIXME: instability issues can occur for EIP97 but disabling it impact
+ 	 * performances.
+ 	 */
+-	if (priv->version == EIP197)
++	if (priv->version == EIP197B)
+ 		val |= EIP197_HIA_DSE_CFG_EN_SINGLE_WR;
+ 	writel(val, EIP197_HIA_DSE(priv) + EIP197_HIA_DSE_CFG);
+ 
+@@ -425,7 +425,7 @@ static int safexcel_hw_init(struct safexcel_crypto_priv *priv)
+ 	/* Clear any HIA interrupt */
+ 	writel(GENMASK(30, 20), EIP197_HIA_AIC_G(priv) + EIP197_HIA_AIC_G_ACK);
+ 
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		eip197_trc_cache_init(priv);
+ 
+ 		ret = eip197_load_firmwares(priv);
+@@ -879,7 +879,7 @@ static void safexcel_init_register_offsets(struct safexcel_crypto_priv *priv)
+ {
+ 	struct safexcel_register_offsets *offsets = &priv->offsets;
+ 
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		offsets->hia_aic	= EIP197_HIA_AIC_BASE;
+ 		offsets->hia_aic_g	= EIP197_HIA_AIC_G_BASE;
+ 		offsets->hia_aic_r	= EIP197_HIA_AIC_R_BASE;
+@@ -1063,12 +1063,22 @@ static int safexcel_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id safexcel_of_match_table[] = {
+ 	{
++		.compatible = "inside-secure,safexcel-eip97ies",
++		.data = (void *)EIP97IES,
++	},
++	{
++		.compatible = "inside-secure,safexcel-eip197b",
++		.data = (void *)EIP197B,
++	},
++	{
++		/* Deprecated. Kept for backward compatibility. */
+ 		.compatible = "inside-secure,safexcel-eip97",
+-		.data = (void *)EIP97,
++		.data = (void *)EIP97IES,
+ 	},
+ 	{
++		/* Deprecated. Kept for backward compatibility. */
+ 		.compatible = "inside-secure,safexcel-eip197",
+-		.data = (void *)EIP197,
++		.data = (void *)EIP197B,
+ 	},
+ 	{},
+ };
 diff --git a/drivers/crypto/inside-secure/safexcel.h b/drivers/crypto/inside-secure/safexcel.h
-index 94a89664f3d0..95095cb95ba4 100644
+index 5d6b3b705d0c..6e6bdad6a6f5 100644
 --- a/drivers/crypto/inside-secure/safexcel.h
 +++ b/drivers/crypto/inside-secure/safexcel.h
-@@ -222,6 +222,7 @@
- #define WR_CACHE_4BITS				(WR_CACHE_3BITS << 1 | BIT(0))
- #define EIP197_MST_CTRL_RD_CACHE(n)		(((n) & 0xf) << 0)
- #define EIP197_MST_CTRL_WD_CACHE(n)		(((n) & 0xf) << 4)
-+#define EIP197_MST_CTRL_TX_MAX_CMD(n)		(((n) & 0xf) << 20)
- #define EIP197_MST_CTRL_BYTE_SWAP		BIT(24)
- #define EIP197_MST_CTRL_NO_BYTE_SWAP		BIT(25)
+@@ -529,8 +529,8 @@ struct safexcel_work_data {
+ };
  
+ enum safexcel_eip_version {
+-	EIP97,
+-	EIP197,
++	EIP97IES,
++	EIP197B,
+ };
+ 
+ struct safexcel_register_offsets {
+diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
+index ca4bc2d28d2a..845546129d09 100644
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -145,7 +145,7 @@ static int safexcel_skcipher_aes_setkey(struct crypto_skcipher *ctfm,
+ 		return ret;
+ 	}
+ 
+-	if (priv->version == EIP197 && ctx->base.ctxr_dma) {
++	if (priv->version == EIP197B && ctx->base.ctxr_dma) {
+ 		for (i = 0; i < len / sizeof(u32); i++) {
+ 			if (ctx->key[i] != cpu_to_le32(aes.key_enc[i])) {
+ 				ctx->base.needs_inv = true;
+@@ -179,7 +179,7 @@ static int safexcel_aead_aes_setkey(struct crypto_aead *ctfm, const u8 *key,
+ 		goto badkey;
+ 
+ 	/* Encryption key */
+-	if (priv->version == EIP197 && ctx->base.ctxr_dma &&
++	if (priv->version == EIP197B && ctx->base.ctxr_dma &&
+ 	    memcmp(ctx->key, keys.enckey, keys.enckeylen))
+ 		ctx->base.needs_inv = true;
+ 
+@@ -218,7 +218,7 @@ static int safexcel_aead_aes_setkey(struct crypto_aead *ctfm, const u8 *key,
+ 	crypto_aead_set_flags(ctfm, crypto_aead_get_flags(ctfm) &
+ 				    CRYPTO_TFM_RES_MASK);
+ 
+-	if (priv->version == EIP197 && ctx->base.ctxr_dma &&
++	if (priv->version == EIP197B && ctx->base.ctxr_dma &&
+ 	    (memcmp(ctx->ipad, istate.state, ctx->state_sz) ||
+ 	     memcmp(ctx->opad, ostate.state, ctx->state_sz)))
+ 		ctx->base.needs_inv = true;
+@@ -612,7 +612,7 @@ static int safexcel_skcipher_send(struct crypto_async_request *async, int ring,
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	int ret;
+ 
+-	BUG_ON(priv->version == EIP97 && sreq->needs_inv);
++	BUG_ON(priv->version == EIP97IES && sreq->needs_inv);
+ 
+ 	if (sreq->needs_inv)
+ 		ret = safexcel_cipher_send_inv(async, ring, request, commands,
+@@ -635,7 +635,7 @@ static int safexcel_aead_send(struct crypto_async_request *async, int ring,
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	int ret;
+ 
+-	BUG_ON(priv->version == EIP97 && sreq->needs_inv);
++	BUG_ON(priv->version == EIP97IES && sreq->needs_inv);
+ 
+ 	if (sreq->needs_inv)
+ 		ret = safexcel_cipher_send_inv(async, ring, request, commands,
+@@ -725,7 +725,7 @@ static int safexcel_aes(struct crypto_async_request *base,
+ 	ctx->mode = mode;
+ 
+ 	if (ctx->base.ctxr) {
+-		if (priv->version == EIP197 && ctx->base.needs_inv) {
++		if (priv->version == EIP197B && ctx->base.needs_inv) {
+ 			sreq->needs_inv = true;
+ 			ctx->base.needs_inv = false;
+ 		}
+@@ -802,7 +802,7 @@ static void safexcel_skcipher_cra_exit(struct crypto_tfm *tfm)
+ 	if (safexcel_cipher_cra_exit(tfm))
+ 		return;
+ 
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		ret = safexcel_skcipher_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "skcipher: invalidation error %d\n",
+@@ -822,7 +822,7 @@ static void safexcel_aead_cra_exit(struct crypto_tfm *tfm)
+ 	if (safexcel_cipher_cra_exit(tfm))
+ 		return;
+ 
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		ret = safexcel_aead_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "aead: invalidation error %d\n",
+diff --git a/drivers/crypto/inside-secure/safexcel_hash.c b/drivers/crypto/inside-secure/safexcel_hash.c
+index 188ba0734337..dc7239945dc0 100644
+--- a/drivers/crypto/inside-secure/safexcel_hash.c
++++ b/drivers/crypto/inside-secure/safexcel_hash.c
+@@ -442,7 +442,7 @@ static int safexcel_handle_result(struct safexcel_crypto_priv *priv, int ring,
+ 	struct safexcel_ahash_req *req = ahash_request_ctx(areq);
+ 	int err;
+ 
+-	BUG_ON(priv->version == EIP97 && req->needs_inv);
++	BUG_ON(priv->version == EIP97IES && req->needs_inv);
+ 
+ 	if (req->needs_inv) {
+ 		req->needs_inv = false;
+@@ -575,7 +575,7 @@ static int safexcel_ahash_enqueue(struct ahash_request *areq)
+ 	req->needs_inv = false;
+ 
+ 	if (ctx->base.ctxr) {
+-		if (priv->version == EIP197 && !ctx->base.needs_inv &&
++		if (priv->version == EIP197B && !ctx->base.needs_inv &&
+ 		    (req->processed[0] || req->processed[1]) &&
+ 		    req->digest == CONTEXT_CONTROL_DIGEST_PRECOMPUTED)
+ 			/* We're still setting needs_inv here, even though it is
+@@ -784,7 +784,7 @@ static void safexcel_ahash_cra_exit(struct crypto_tfm *tfm)
+ 	if (!ctx->base.ctxr)
+ 		return;
+ 
+-	if (priv->version == EIP197) {
++	if (priv->version == EIP197B) {
+ 		ret = safexcel_ahash_exit_inv(tfm);
+ 		if (ret)
+ 			dev_warn(priv->dev, "hash: invalidation error %d\n", ret);
+@@ -1004,7 +1004,7 @@ static int safexcel_hmac_alg_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (priv->version == EIP197 && ctx->base.ctxr) {
++	if (priv->version == EIP197B && ctx->base.ctxr) {
+ 		for (i = 0; i < state_sz / sizeof(u32); i++) {
+ 			if (ctx->ipad[i] != le32_to_cpu(istate.state[i]) ||
+ 			    ctx->opad[i] != le32_to_cpu(ostate.state[i])) {
 -- 
 2.17.1
 
