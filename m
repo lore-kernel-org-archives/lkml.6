@@ -5,167 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49ACC43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E0CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F64F2710E
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:58:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F64F2710E
+	by mail.kernel.org (Postfix) with ESMTP id C3A992710E
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 08:58:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A992710E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932837AbeF1I63 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 04:58:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45688 "EHLO mx1.redhat.com"
+        id S933035AbeF1I6e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 04:58:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46284 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932166AbeF1I6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:58:24 -0400
+        id S932166AbeF1I6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 04:58:30 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 27891406802D;
-        Thu, 28 Jun 2018 08:58:24 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 829FA407607D;
+        Thu, 28 Jun 2018 08:58:30 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-12-163.pek2.redhat.com [10.72.12.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 600B72026D69;
-        Thu, 28 Jun 2018 08:58:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDB912026D69;
+        Thu, 28 Jun 2018 08:58:24 +0000 (UTC)
 From:   Lianbo Jiang <lijiang@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         ebiederm@xmission.com, joro@8bytes.org, thomas.lendacky@amd.com,
         dyoung@redhat.com, kexec@lists.infradead.org,
         iommu@lists.linux-foundation.org, bhe@redhat.com
-Subject: [PATCH 1/5 V4] Add a function(ioremap_encrypted) for kdump when AMD sme enabled
-Date:   Thu, 28 Jun 2018 16:58:02 +0800
-Message-Id: <20180628085806.9280-2-lijiang@redhat.com>
+Subject: [PATCH 2/5 V4] Allocate pages for kdump without encryption when SME is enabled
+Date:   Thu, 28 Jun 2018 16:58:03 +0800
+Message-Id: <20180628085806.9280-3-lijiang@redhat.com>
 In-Reply-To: <20180628085806.9280-1-lijiang@redhat.com>
 References: <20180628085806.9280-1-lijiang@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 28 Jun 2018 08:58:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 28 Jun 2018 08:58:24 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 08:58:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 28 Jun 2018 08:58:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is convenient to remap the old memory encrypted to the second
-kernel by calling ioremap_encrypted().
+When SME is enabled in the first kernel, we will allocate pages
+for kdump without encryption in order to be able to boot the
+second kernel in the same manner as kexec, which helps to keep
+the same code style.
 
 Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
 ---
 Some changes:
-1. remove the sme_active() check in __ioremap_caller().
-2. revert some logic in the early_memremap_pgprot_adjust() for
-early memremap and make it separate a new patch.
+1. remove some redundant codes for crash control pages.
+2. add some comments.
 
- arch/x86/include/asm/io.h |  3 +++
- arch/x86/mm/ioremap.c     | 25 +++++++++++++++++--------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ kernel/kexec_core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 6de6484..f8795f9 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -192,6 +192,9 @@ extern void __iomem *ioremap_cache(resource_size_t offset, unsigned long size);
- #define ioremap_cache ioremap_cache
- extern void __iomem *ioremap_prot(resource_size_t offset, unsigned long size, unsigned long prot_val);
- #define ioremap_prot ioremap_prot
-+extern void __iomem *ioremap_encrypted(resource_size_t phys_addr,
-+					unsigned long size);
-+#define ioremap_encrypted ioremap_encrypted
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 23a83a4..e7efcd1 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+ 		}
+ 	}
  
- /**
-  * ioremap     -   map bus memory into CPU space
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index c63a545..e01e6c6 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -24,6 +24,7 @@
- #include <asm/pgalloc.h>
- #include <asm/pat.h>
- #include <asm/setup.h>
-+#include <linux/crash_dump.h>
- 
- #include "physaddr.h"
- 
-@@ -131,7 +132,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
-  * caller shouldn't need to know that small detail.
-  */
- static void __iomem *__ioremap_caller(resource_size_t phys_addr,
--		unsigned long size, enum page_cache_mode pcm, void *caller)
-+		unsigned long size, enum page_cache_mode pcm,
-+		void *caller, bool encrypted)
- {
- 	unsigned long offset, vaddr;
- 	resource_size_t last_addr;
-@@ -199,7 +201,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
- 	 * resulting mapping.
- 	 */
- 	prot = PAGE_KERNEL_IO;
--	if (sev_active() && mem_flags.desc_other)
-+	if ((sev_active() && mem_flags.desc_other) || encrypted)
- 		prot = pgprot_encrypted(prot);
- 
- 	switch (pcm) {
-@@ -291,7 +293,7 @@ void __iomem *ioremap_nocache(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC_MINUS;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
++	if (pages) {
++		/*
++		 * For kdump, we need to ensure that these pages are
++		 * unencrypted pages if SME is enabled.
++		 * By the way, it is unnecessary to call the arch_
++		 * kexec_pre_free_pages(), which will make the code
++		 * become more simple.
++		 */
++		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
++	}
+ 	return pages;
  }
- EXPORT_SYMBOL(ioremap_nocache);
  
-@@ -324,7 +326,7 @@ void __iomem *ioremap_uc(resource_size_t phys_addr, unsigned long size)
- 	enum page_cache_mode pcm = _PAGE_CACHE_MODE_UC;
- 
- 	return __ioremap_caller(phys_addr, size, pcm,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL_GPL(ioremap_uc);
- 
-@@ -341,7 +343,7 @@ EXPORT_SYMBOL_GPL(ioremap_uc);
- void __iomem *ioremap_wc(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WC,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wc);
- 
-@@ -358,14 +360,21 @@ EXPORT_SYMBOL(ioremap_wc);
- void __iomem *ioremap_wt(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WT,
--					__builtin_return_address(0));
-+					__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_wt);
- 
-+void __iomem *ioremap_encrypted(resource_size_t phys_addr, unsigned long size)
-+{
-+	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
-+				__builtin_return_address(0), true);
-+}
-+EXPORT_SYMBOL(ioremap_encrypted);
-+
- void __iomem *ioremap_cache(resource_size_t phys_addr, unsigned long size)
- {
- 	return __ioremap_caller(phys_addr, size, _PAGE_CACHE_MODE_WB,
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_cache);
- 
-@@ -374,7 +383,7 @@ void __iomem *ioremap_prot(resource_size_t phys_addr, unsigned long size,
- {
- 	return __ioremap_caller(phys_addr, size,
- 				pgprot2cachemode(__pgprot(prot_val)),
--				__builtin_return_address(0));
-+				__builtin_return_address(0), false);
- }
- EXPORT_SYMBOL(ioremap_prot);
- 
+@@ -867,6 +877,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result  = -ENOMEM;
+ 			goto out;
+ 		}
++		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+ 		ptr = kmap(page);
+ 		ptr += maddr & ~PAGE_MASK;
+ 		mchunk = min_t(size_t, mbytes,
+@@ -884,6 +895,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+ 			result = copy_from_user(ptr, buf, uchunk);
+ 		kexec_flush_icache_page(page);
+ 		kunmap(page);
++		arch_kexec_pre_free_pages(page_address(page), 1);
+ 		if (result) {
+ 			result = -EFAULT;
+ 			goto out;
 -- 
 2.9.5
 
