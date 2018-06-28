@@ -2,127 +2,294 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EF3C4314C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A12C4314D
 	for <linux-kernel@archiver.kernel.org>; Wed, 27 Jun 2018 19:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD27E275AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:01:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD27E275AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 853F6275B1
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 15:02:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F6275B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966774AbeF1PBV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 11:01:21 -0400
-Received: from mail-ed1-f50.google.com ([209.85.208.50]:47019 "EHLO
-        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966385AbeF1PBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 11:01:19 -0400
-Received: by mail-ed1-f50.google.com with SMTP id r17-v6so5365587edo.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 08:01:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/GoQlwvUgniSEQJxAdN1gQL3TALrFVFw1tzMpl/2/Ic=;
-        b=W1CJqsTjH3LsIvynLl6YUagZmFdoNW1YsnAg63+YUTqAVq6VQ4MRLE3CqtcCgeoyl9
-         uvXLEN3dCx10elWqR1rcVB5mDcpVCd+9tJzP+Ebobb2MZ5UtjKuMND9GBvTsh9guBJoU
-         pvaoYF46Y3BO0AAO5DoaMNNJt/VqGjRyTGi+ypnkTNnCTDVrUzOzmxBthTsNBtLHjNDi
-         YUDEnzJ6bvS3jSf7mQ1l0XUqaUSSxpECNwO0q97gDRQB989PgvPstLNYT4rhwJGRA9xt
-         ZMyrfplrshgxSUQxeljwl9L8/hx170ymNmr5lO60W0L4q1/VSH9thwxXEOPhcxtcMvX3
-         c2bA==
-X-Gm-Message-State: APt69E1QxjYkisA+LZJElLg5BxO2DopAKYcg7o/+U01UM9fQ6qgyba0Y
-        nO6V5hCCJdbKa/bzN//ARxVmSDy3ad0=
-X-Google-Smtp-Source: AAOMgpcZzU1O6d2igxCrN0OrZauWQcsJjO0mSHTs8ljY8BuBtgG1HjsY1qeQXFXPGDDls41fmxVCBg==
-X-Received: by 2002:a50:a446:: with SMTP id v6-v6mr2891872edb.237.1530198078384;
-        Thu, 28 Jun 2018 08:01:18 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id t20-v6sm2988671edd.93.2018.06.28.08.01.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 08:01:17 -0700 (PDT)
-Subject: Re: staging: rtl8723bs: bug or pointless if else ?
-To:     Michael Straube <straube.linux@gmail.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <473d9997-8c30-a3f3-85b6-076decc7a7c2@gmail.com>
- <9b1993c2-0b81-35cd-fe27-293f9e8f45c6@redhat.com>
- <b5f394c5f8395cd72ecdd5b6f9b2ff2d24253cf7.camel@hadess.net>
- <817fd3cd-bc10-fc63-f04f-6262230ee2f8@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <db3a8adf-c617-af85-2ac8-10c109954393@redhat.com>
-Date:   Thu, 28 Jun 2018 17:01:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966837AbeF1PCf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 11:02:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47357 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932522AbeF1PCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 11:02:34 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 29BF76E896B0A;
+        Thu, 28 Jun 2018 23:02:29 +0800 (CST)
+Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.382.0; Thu, 28 Jun
+ 2018 23:02:22 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+CC:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Yu <yuchao0@huawei.com>, Miao Xie <miaoxie@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH RESEND v3] <linux/tagptr.h>: Introduce tagged pointer
+Date:   Thu, 28 Jun 2018 23:02:15 +0800
+Message-ID: <1530198135-112481-1-git-send-email-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1530176789-107541-1-git-send-email-gaoxiang25@huawei.com>
+References: <1530176789-107541-1-git-send-email-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <817fd3cd-bc10-fc63-f04f-6262230ee2f8@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.162.55.131]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Currently kernel has scattered tagged pointer usages hacked
+by hand in plain code, without a unique and portable functionset
+to highlight the tagged pointer itself and wrap these hacked code
+in order to clean up all over meaningless magic masks.
 
-On 28-06-18 17:00, Michael Straube wrote:
-> On 06/28/18 11:34, Bastien Nocera wrote:
->> On Thu, 2018-06-28 at 10:22 +0200, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 28-06-18 09:43, Michael Straube wrote:
->>>> Hi,
->>>>
->>>> I stumbled upon the following if else construct in
->>>> drivers/staging/rtl8723bs/os_dep/sdio_intf.c:618
->>>>
->>>>           if (pwrpriv->bInternalAutoSuspend)
->>>>           {
->>>>                   ret = rtw_resume_process(padapter);
->>>>           }
->>>>           else
->>>>           {
->>>>                   if (pwrpriv->wowlan_mode || pwrpriv-
->>>>> wowlan_ap_mode)
->>>>                   {
->>>>                           ret = rtw_resume_process(padapter);
->>>>                   }
->>>>                   else
->>>>                   {
->>>>                           ret = rtw_resume_process(padapter);
->>>>                   }
->>>>           }
->>>>
->>>> It does not matter if the conditions are true or not,
->>>> ret is always set to:
->>>>
->>>> ret = rtw_resume_process(padapter)
->>>>
->>>> Is this a bug or is the if else construct just pointless?
->>>
->>> It probably is just pointless, my guess would be that once
->>> upon a time there was a difference in the paths and at some
->>> point that difference went away.
->>
->> Quite:
->> https://github.com/hadess/rtl8723bs/blob/7d36e26f78bbc709844c12ad0c62e3e8503fdbc5/os_dep/linux/sdio_intf.c#L1757
->>
-> 
-> So it can be safly removed?
+Therefore, this patch introduces simple generic methods to fold
+tags into a pointer integer. It currently supports the last n bits
+of the pointer for tags, which can be selected by users.
 
-Simplified to a single:
+In addition, it will also be used for the upcoming EROFS filesystem,
+which heavily uses tagged pointer approach for high performance
+and reducing extra memory allocation.
 
-	ret = rtw_resume_process(padapter);
+Refer to:
+https://en.wikipedia.org/wiki/Tagged_pointer
 
-Yes that should be fine.
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Miao Xie <miaoxie@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+change log v3:
+  - include/linux/file.h: define a unique alias fdtagptr_t (tagptr2_t)
 
-Regards,
+change log v2:
+  - add support to select the last {1,2,3,...} bits for tags
 
-Hans
+
+Tagged pointers are good for performance and memory saving,
+hoping for a generic taggedptr approach to clean up redundant dirty code.
+
+Any comments, suggestions or alternative approaches are welcomed. :)
+
+Thanks,
+Gao Xiang
+
+ fs/file.c              | 24 +++++++++-------
+ include/linux/file.h   | 15 ++++++----
+ include/linux/tagptr.h | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+), 16 deletions(-)
+ create mode 100644 include/linux/tagptr.h
+
+diff --git a/fs/file.c b/fs/file.c
+index 7ffd6e9..a54a551 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -727,42 +727,44 @@ struct file *fget_raw(unsigned int fd)
+  * The fput_needed flag returned by fget_light should be passed to the
+  * corresponding fput_light.
+  */
+-static unsigned long __fget_light(unsigned int fd, fmode_t mask)
++static fdtagptr_t __fget_light(unsigned int fd, fmode_t mask)
+ {
++	const fdtagptr_t nil = tagptr_fold(fdtagptr_t, NULL, 0);
+ 	struct files_struct *files = current->files;
+ 	struct file *file;
+ 
+ 	if (atomic_read(&files->count) == 1) {
+ 		file = __fcheck_files(files, fd);
+ 		if (!file || unlikely(file->f_mode & mask))
+-			return 0;
+-		return (unsigned long)file;
++			return nil;
++		return tagptr_fold(fdtagptr_t, file, 0);
+ 	} else {
+ 		file = __fget(fd, mask);
+ 		if (!file)
+-			return 0;
+-		return FDPUT_FPUT | (unsigned long)file;
++			return nil;
++		return tagptr_fold(fdtagptr_t, file, FDPUT_FPUT);
+ 	}
+ }
+-unsigned long __fdget(unsigned int fd)
++
++fdtagptr_t __fdget(unsigned int fd)
+ {
+ 	return __fget_light(fd, FMODE_PATH);
+ }
+ EXPORT_SYMBOL(__fdget);
+ 
+-unsigned long __fdget_raw(unsigned int fd)
++fdtagptr_t __fdget_raw(unsigned int fd)
+ {
+ 	return __fget_light(fd, 0);
+ }
+ 
+-unsigned long __fdget_pos(unsigned int fd)
++fdtagptr_t __fdget_pos(unsigned int fd)
+ {
+-	unsigned long v = __fdget(fd);
+-	struct file *file = (struct file *)(v & ~3);
++	fdtagptr_t v = __fdget(fd);
++	struct file *file = tagptr_unfold_ptr(v);
+ 
+ 	if (file && (file->f_mode & FMODE_ATOMIC_POS)) {
+ 		if (file_count(file) > 1) {
+-			v |= FDPUT_POS_UNLOCK;
++			tagptr_set_tags(&v, FDPUT_POS_UNLOCK);
+ 			mutex_lock(&file->f_pos_lock);
+ 		}
+ 	}
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 279720d..38b6641 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -9,6 +9,7 @@
+ #include <linux/compiler.h>
+ #include <linux/types.h>
+ #include <linux/posix_types.h>
++#include <linux/tagptr.h>
+ 
+ struct file;
+ 
+@@ -34,6 +35,9 @@ struct fd {
+ #define FDPUT_FPUT       1
+ #define FDPUT_POS_UNLOCK 2
+ 
++/* tagged pointer for fd */
++typedef tagptr2_t	fdtagptr_t;
++
+ static inline void fdput(struct fd fd)
+ {
+ 	if (fd.flags & FDPUT_FPUT)
+@@ -42,14 +46,15 @@ static inline void fdput(struct fd fd)
+ 
+ extern struct file *fget(unsigned int fd);
+ extern struct file *fget_raw(unsigned int fd);
+-extern unsigned long __fdget(unsigned int fd);
+-extern unsigned long __fdget_raw(unsigned int fd);
+-extern unsigned long __fdget_pos(unsigned int fd);
++extern fdtagptr_t __fdget(unsigned int fd);
++extern fdtagptr_t __fdget_raw(unsigned int fd);
++extern fdtagptr_t __fdget_pos(unsigned int fd);
+ extern void __f_unlock_pos(struct file *);
+ 
+-static inline struct fd __to_fd(unsigned long v)
++static inline struct fd __to_fd(fdtagptr_t v)
+ {
+-	return (struct fd){(struct file *)(v & ~3),v & 3};
++	return (struct fd){ tagptr_unfold_ptr(v),
++		tagptr_unfold_tags(v) };
+ }
+ 
+ static inline struct fd fdget(unsigned int fd)
+diff --git a/include/linux/tagptr.h b/include/linux/tagptr.h
+new file mode 100644
+index 0000000..50d2f89
+--- /dev/null
++++ b/include/linux/tagptr.h
+@@ -0,0 +1,78 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Tagged pointer implementation
++ *
++ * Copyright (C) 2018 Gao Xiang <gaoxiang25@huawei.com>
++ */
++#ifndef _LINUX_TAGPTR_H
++#define _LINUX_TAGPTR_H
++
++#include <linux/types.h>
++#include <linux/build_bug.h>
++
++/* the name of types are tagptr{1, 2, 3...}_t */
++#define __MAKE_TAGPTR(n) \
++typedef struct tagptr##n {	\
++	uintptr_t v;	\
++} tagptr##n##_t;
++
++__MAKE_TAGPTR(1)
++__MAKE_TAGPTR(2)
++__MAKE_TAGPTR(3)
++__MAKE_TAGPTR(4)
++
++#undef __MAKE_TAGPTR
++
++extern void __compiletime_error("bad tagptr tags")
++	__bad_tagptr_tags(void);
++
++extern void __compiletime_error("bad tagptr type")
++	__bad_tagptr_type(void);
++
++#define __tagptr_mask_1(ptr, n)	\
++	__builtin_types_compatible_p(typeof(ptr), tagptr##n##_t) ? \
++		(1UL << (n)) - 1 :
++
++#define __tagptr_mask(ptr)	(\
++	__tagptr_mask_1(ptr, 1) ( \
++	__tagptr_mask_1(ptr, 2) ( \
++	__tagptr_mask_1(ptr, 3) ( \
++	__tagptr_mask_1(ptr, 4) ( \
++	__bad_tagptr_type(), 0)))))
++
++/* encode the tagged pointer */
++#define tagptr_fold(type, ptr, _tags) ({ \
++	const typeof(_tags) tags = (_tags); \
++	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(type))) \
++		__bad_tagptr_tags(); \
++((typeof(type)){ .v = (uintptr_t)ptr | tags }); })
++
++#define tagptr_unfold_ptr(tptr) \
++	((void *)((tptr).v & ~__tagptr_mask(tptr)))
++
++#define tagptr_unfold_tags(tptr) \
++	((tptr).v & __tagptr_mask(tptr))
++
++#define tagptr_replace_tags(_ptptr, tags) ({ \
++	typeof(_ptptr) ptptr = (_ptptr); \
++	*ptptr = tagptr_fold(*ptptr, tagptr_unfold_ptr(*ptptr), tags); \
++*ptptr; })
++
++#define tagptr_set_tags(_ptptr, _tags) ({ \
++	typeof(_ptptr) ptptr = (_ptptr); \
++	const typeof(_tags) tags = (_tags); \
++	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
++		__bad_tagptr_tags(); \
++	ptptr->v |= tags; \
++*ptptr; })
++
++#define tagptr_clear_tags(_ptptr, _tags) ({ \
++	typeof(_ptptr) ptptr = (_ptptr); \
++	const typeof(_tags) tags = (_tags); \
++	if (__builtin_constant_p(tags) && (tags & ~__tagptr_mask(*ptptr))) \
++		__bad_tagptr_tags(); \
++	ptptr->v &= ~tags; \
++*ptptr; })
++
++#endif
++
+-- 
+1.9.1
 
