@@ -6,64 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAF7C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D68C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC2726FD0
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E74225D63
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 06:44:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Gvbeki5c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC2726FD0
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Z7cQqkXX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E74225D63
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeF1GmW (ORCPT
+        id S1753629AbeF1Gob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 02:42:22 -0400
-Received: from mail-eopbgr700087.outbound.protection.outlook.com ([40.107.70.87]:38352
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Thu, 28 Jun 2018 02:44:31 -0400
+Received: from mail-dm3nam03on0072.outbound.protection.outlook.com ([104.47.41.72]:26903
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751344AbeF1GmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 02:42:20 -0400
+        id S1752108AbeF1Go3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 28 Jun 2018 02:44:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6lnsoUPvpDY/8HUan7SHkXqyLABdoVa9AuWevi3eL7Q=;
- b=Gvbeki5cgtOMsH1fxM0y0ChGqLWYoNOo+NTPNGZomi/k39mgWnuau2g0SaruO+x6XuW0NK2s1znkE3DhfcY7t84hoQmsho+/9Klun9m2qT6tHwNdjF23PVroc/FzqWvDjSjwzWir9a3No2uN0TMnZFqvaal2FbXlvASmoamRq/8=
-Received: from BN7PR02CA0034.namprd02.prod.outlook.com (2603:10b6:408:20::47)
- by CO1PR02MB173.namprd02.prod.outlook.com (2a01:111:e400:101e::19) with
+ bh=r8C7e8l6h1TQImh/B3wNN+CahG1MEw01Az6Fr/oDep4=;
+ b=Z7cQqkXX7ur9m8gCGnpx4OUziuthGT4LzhKyqoXuqKhmitAXkE/8hofadarB45bwuLUHKaO6pzHVLrku0AQjxyCiPbpi5CHrA8mtbnJUJO9zqnKf/cRne+SDs2BFU62ECEi7Y8cqjPNZnVZxfOxtvfDK6hPgSeQMzg7mfGYGSus=
+Received: from BL0PR02CA0102.namprd02.prod.outlook.com (2603:10b6:208:51::43)
+ by BY2PR02MB170.namprd02.prod.outlook.com (2a01:111:e400:2c20::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.906.20; Thu, 28
- Jun 2018 06:42:17 +0000
-Received: from CY1NAM02FT022.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::207) by BN7PR02CA0034.outlook.office365.com
- (2603:10b6:408:20::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.906.20 via Frontend
- Transport; Thu, 28 Jun 2018 06:42:16 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.20.884.20; Thu, 28
+ Jun 2018 06:44:26 +0000
+Received: from BL2NAM02FT050.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::209) by BL0PR02CA0102.outlook.office365.com
+ (2603:10b6:208:51::43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.884.21 via Frontend
+ Transport; Thu, 28 Jun 2018 06:44:25 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT022.mail.protection.outlook.com (10.152.75.185) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT050.mail.protection.outlook.com (10.152.77.101) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.906.15
- via Frontend Transport; Thu, 28 Jun 2018 06:42:15 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+ via Frontend Transport; Thu, 28 Jun 2018 06:44:25 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:52440 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <michal.simek@xilinx.com>)
-        id 1fYQdC-0003DU-Tp; Wed, 27 Jun 2018 23:42:14 -0700
+        id 1fYQfI-00042t-Fr; Wed, 27 Jun 2018 23:44:24 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <michal.simek@xilinx.com>)
-        id 1fYQd6-0004K3-CI; Wed, 27 Jun 2018 23:42:08 -0700
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w5S6g03Y028585;
-        Wed, 27 Jun 2018 23:42:00 -0700
+        id 1fYQfD-0004bp-D5; Wed, 27 Jun 2018 23:44:19 -0700
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w5S6i8ow029142;
+        Wed, 27 Jun 2018 23:44:09 -0700
 Received: from [172.30.17.111]
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <michals@xilinx.com>)
-        id 1fYQcy-0004Hd-8z; Wed, 27 Jun 2018 23:42:00 -0700
-Subject: Re: [RFC PATCH 5/5] arm: dts: zynq: remove "zynq" prefix from
- compatible property
+        id 1fYQf2-0004aI-MD; Wed, 27 Jun 2018 23:44:08 -0700
+Subject: Re: [RFC PATCH 2/5] dt-bindings: xilinx: Add missing zynq boards
 To:     Luis Araneda <luaraneda@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -72,14 +75,14 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <20180628054205.17737-1-luaraneda@gmail.com>
- <20180628054205.17737-6-luaraneda@gmail.com>
+ <20180628054205.17737-3-luaraneda@gmail.com>
 From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <042f6632-f4f6-d278-9859-b8998468c3bf@xilinx.com>
-Date:   Thu, 28 Jun 2018 08:41:57 +0200
+Message-ID: <eda7ca2a-e2de-8939-0784-89b619f6035e@xilinx.com>
+Date:   Thu, 28 Jun 2018 08:44:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180628054205.17737-6-luaraneda@gmail.com>
+In-Reply-To: <20180628054205.17737-3-luaraneda@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,290 +91,125 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(346002)(376002)(2980300002)(438002)(199004)(189003)(31696002)(31686004)(9786002)(64126003)(77096007)(39060400002)(186003)(4326008)(47776003)(2906002)(2486003)(336012)(54906003)(65956001)(36386004)(229853002)(110136005)(58126008)(65806001)(230700001)(106002)(6346003)(53546011)(316002)(23676004)(63266004)(356003)(44832011)(2616005)(26005)(486006)(6246003)(575784001)(446003)(426003)(8936002)(5660300001)(36756003)(81156014)(11346002)(65826007)(476003)(8676002)(126002)(81166006)(6666003)(305945005)(76176011)(50466002)(106466001)(478600001)(107986001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO1PR02MB173;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT022;1:N+DBWVE6cFvIRVcRiF4Ds0ar+DSlB67qEBpo05Sd8l/1NVoqUuE6bbb/qp5RU/CmF01m/rr6W5eWNVeJIy1L4ZDMsA+FihKHVGbXvs+3YGPXoetIH6S1XeUiyWVD5w9b
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(2980300002)(438002)(189003)(199004)(39060400002)(65826007)(36386004)(229853002)(106002)(58126008)(316002)(50466002)(5660300001)(478600001)(476003)(2616005)(9786002)(426003)(126002)(8676002)(336012)(44832011)(446003)(11346002)(486006)(31696002)(76176011)(81166006)(63266004)(186003)(77096007)(26005)(47776003)(31686004)(81156014)(65956001)(305945005)(230700001)(23676004)(2486003)(65806001)(106466001)(6246003)(4326008)(36756003)(110136005)(8936002)(54906003)(53546011)(356003)(64126003)(2906002)(107986001)(5001870100001)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR02MB170;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT050;1:yZc/jwcp73r1YrtG6eE8qoYVIzyZ1cn2Vm6HL2XFUNVSe+3/OTDEHb0Agb8Tzn+70YKVoJk7zE8wVeIuSQJKBHxpJovGFkl5E3LKp8UiVADDG8F+EaJS+r1DSHMUdUGY
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0294ce35-9e3a-4ff6-045f-08d5dcc2499d
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652034)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(4608076)(2017052603328)(7153060);SRVR:CO1PR02MB173;
-X-Microsoft-Exchange-Diagnostics: 1;CO1PR02MB173;3:yXGADToiV8nCVZ1DuA4ZTTZKMf+o/IK1sZpS+ITGFqx3jrBqgrSyVlgjA/IJsRoRnuZhvtF+mtTGpfNaYI9u6coAvbjbsvXW9oQBVhQ35Gt4F/1ApVqoM/zicMTybHwlhGusVsNQ85hDKR5I1NkdRw/l+/qjr6t5yf0PJLZ0CoIgYPE+cch3Ml/U9qrw0FI1QwOsLUH2Df8zkjhzIYhJ4MLSVMoLXeJQuCSisYyhebZBotZRWGwYIsn6fvFFr1i0xkx5BCEPECHHs0aKVtNyz+gjQR7iAtBQv05gnmvhU5ELqLFnNrk1544beEqDsdTv9Bun9/af48uang/C0FQk/cgQ/CiIUMq6cN4NRp5VDXM=;25:8Uzodzpj1hPfAvMR3BniSB2HHm94US+SyAWByZdAcOi69tnhp1wsl/DYWLKDg45jPMDLCxw4b0iNdl28atnYo/Pw4qy3TYzRj8iHj/R3Z5baADaGRzfs0W6dg9lvNcZrRXNNkBalVqtwNGAxM1/SCG7rvWo2tDbBEZMp69Sj/X73VZfqI906I+tNcPAc1GxjkqV7Sa2jO9L1PtwQE/+nf7kBart67EjclMa4Dui1DP4BIZmobDVhQxT6UK91uBAukF5nfDljJZZfTAOYiccru5B9vKS88LObhs/j1H3813inGOqZLRqPhUjUNPOnnqBnHmYWxVfFfLWXZkXQmMiIhQ==
-X-MS-TrafficTypeDiagnostic: CO1PR02MB173:
-X-Microsoft-Exchange-Diagnostics: 1;CO1PR02MB173;31:hRio9e5y3UNHWZPe94t8J4QNXRdc/BZ60OYn2YpeMMWSpO8z6FUaKxP6bKMlK0gLe50ZYoB74vcF1vTkovnZHLdWtGMqY811H+sRtWY2KMogEnQIKmmo3GVa7Z6fWc+9o9xB7FUfCNdL8x5GppKm+XLdkd4wK2WxlZJEslEL7iky6QKoxHazbbCfnoH5jvBuJ/IB124Rghew2RislR029XGuMRMG4WSkC30NXDDPXFA=;20:hzzPsXJj/txFofMZYa6UEoZDmKCinZ6VfgGCCI+AufZkxEw1+77F/96sSwQvEGjxogpiQCrXYUji3eZC0laeO7qqp5ZsuKkhV53c4MSQwcEhRon68OXkNa/yY7XoSTdIzIcNVdSbAr/usejbUnOr5Cr3HWH7ISVV7+UJIV3OCZi36OBo1TbDnrgds8zgaVTmpPFUC5fjDabdfOQpaKmJR309lpb1zJUhTlfHf12M8Ni9dOroEeixFMyKVfG0vuJxRLmLmRFj2/DiF//f6ZrF8X2TI5JfiUhPaXn1/l03YEFMsyD0GQ1/YFeFvRs6SQoAxtjIiTWFsvblnbHMAYi9Y18fejr+pZDnMYx5BdjyKJ4eDlR4J0ZfXWH5hbm1TnsOnC6VAJdw6UmdB4avAczQPSAeILjgyKjgNdNringTrawTcwEkLsgO+dbZH4B3jXHk82CNOaNc4Q+PT4RT/W1/RmQ3MzlSbWFpX4UoiXYyG5GGEIbdQjS2hv5LArmvx9Ya
+X-MS-Office365-Filtering-Correlation-Id: ef44f5d1-4f86-4ffa-fda9-08d5dcc296ae
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(4608076)(2017052603328)(7153060);SRVR:BY2PR02MB170;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB170;3:65vj0w6O5U9OvtfRxyaWebfbJIru9thWTMbs6J9FOtPuWwFz8rG7169373cCXS6ON73/RvxXknexEm0cUq7z61ba2X4DuJbXRRNcCpXjFDBfNOBkKisfeIUajocJhEciyow/yk2UdBI+/31HEYKlLVDTpcbIpbwTK1UARuX/URXFTOAN/EVWbjLmWrnRvJi0toi95rfvpNXJXDY5gRdw/YHUfeU8IELoh9h8StcAkPE7TmNlvYt5RVxfERAbTkfayUpBOru/cLpNWuyPiD/1KOtHHUCts11PY2RKjdQhsm4Gtx/TGMAgHzPI/lAVKkd8zUJCg0QIlCorEeVlna5DQObAf3ZuhiKqTKg63lBHVWw=;25:+H2QLpanKF/N2kH9L/d5fs5oE4BrvcSI7JmjX+W1xGnh8MVj4Y4dCjf1OQK7YH5JwODennq6rHF/KpN2R92pmYWSnPVUg535Vl+q5L17z9NKDoutyzKot/zkkD4mPw3M9rU3gd2HYNfoemlDShpYMGUiPhAbY3slGuHWGs7V2dyE/7fuEYVjORsmwcaADFKq+43fbcqOHLPgBbf8fTJr+MpwqjsSqES8foAHZnKy9DgK+kQAmRSoVu4ClPXiHH8US5yGbyj2wdfrV4jeTwb9HxblhIZDAGDryOQ37nCS/wqMht2JaoJlickQNxbFfHw30ESptpkpviFa1w2Nl/Y8Kg==
+X-MS-TrafficTypeDiagnostic: BY2PR02MB170:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB170;31:dBKoXKz+UhS/qJJgRo7Y5TQBXYxWJigkIFKstV7WetBTm7LA5/xbgSGOxZSBjibDBgNMVRUG5ndgySSbXxzaHguYLFjreL1uAl2ImJxytXV80ZZpzY9oIFhmE4TkeXp2s+93MqIcSOIC4yZS1V/hUUYgA5Nf3G1WK3nMrd9t6dy89SjKrhbGwmie2zotuufZrdmhREthamc3pyBO4d4s1wxqkFZV1hgOhTofNFm6Ato=;20:T8jvzk6yPhnvEb7oOpktBNPcI/K7STJrS0GSq/Y7O2OGV0ksLeQ7hJA6IE03Ah22l19KN1A1LWDyFADKTR1C0AdLMuA7k9tdxEqsripjZxhlOB0MnQow4POSGkMAhpr7szLxFsUE4w/gB4xE/Anr+uHyMUJyZ8hcBimshyb7CnTiM/1D5RGl2rD4gwH1Y4TBj++dlJTfQQJ1O3zhinyC7SFwufDMy1RHZQ+w1WlGSkm0RyLY/qKBmZykZV+Ohg7QhleipQrBVXCtEldN4R6YuZ7LlvHfV1q4ZpOHlC5+af/cQQ18Kq7k28U8xfaI0Zf80uabuE7pozjiCcn3aNn6W7SHZ22dHjuyk4bZMk6INEJ9PR3vnCoIaofM7rTHzy5HUWrbO0Bz4P+rFakhFXjF7JiQyX9Cq/dpdnPuB6LrQp71RTY4Lsr28C8JsaX2BsXgqSDZt3+BZPUYCjr5tCkymCa0jrddiJK+uzz/NrCq+LhBFwQ7SOuFOpAWEUzwXCH4
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CO1PR02MB1735016E35D594D4D19A04DC64F0@CO1PR02MB173.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BY2PR02MB17053DE90FCB73AF9BB8200C64F0@BY2PR02MB170.namprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CO1PR02MB173;BCL:0;PCL:0;RULEID:;SRVR:CO1PR02MB173;
-X-Microsoft-Exchange-Diagnostics: 1;CO1PR02MB173;4:j5/N07T9fkR3jz3sYd70UWSIVdw9eR0EJPQakna+Ao2toBUz5o54XkA8Z4D1QldYEnf4NtpK3Na+qlS4INbopKqgh9dwoN2qxeRDss2vnK/trtZVy3tk8grbzBuXlml5P03ftUqHWHQS7Lh0o9ppngsSqX5Wmtr0Hs0f8NxqEn1vq4V69G10ett8REc5i75BVk0gJxQlrJSe59om5VC2GyzAmVWRnXpRXYbukn0Y8tgLcFYWQMlUsCaKRzZ4MECBOa7OORxuho4JrzCxzzzwNbB8xaQ259KKAgMeCRWf4WD+4RpkVzs4+Xswli+nlADL
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93004095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BY2PR02MB170;BCL:0;PCL:0;RULEID:;SRVR:BY2PR02MB170;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB170;4:4IbrfR6/Pe+Dc3K9L08XV8kbWAlz+qbYLx5aVWG860GSPtaAKEiH1bBGna627s2Au3aiZcgatNUUSqR/D1l9b5xTCh8XB6xQZrVXoo2Rm4ImP7YYJr4S5njGJQjEt+Jmfxr3CiXDcEq4opqTVkrKgHmF1ufq1XFYlImfIV1ZXP0GR/+PtJo5JAlBEu9pJ/zyey8p40+rEJ/XJrvJ91pvryQI+axJjh+xfw8VJr4OJ7vMnkwsLSbHgqvU5kK/X5BgyIODAIW1P7horSpcdl1plB49WDpZnRLpwqObzu0dGU6oE0hMB6FaEzkTYgcbDcR0
 X-Forefront-PRVS: 0717E25089
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDTzFQUjAyTUIxNzM7MjM6TXhxV2pBTEpxY3FRYkxSRG02bkJ1SFJXMHFQ?=
- =?utf-8?B?Si95Q2RnaklDWWFZZDQ0MGhoTlFJQ0JXdlZ3N1JpK01iWDROb2xFZUt0NEdH?=
- =?utf-8?B?NHdvWXhDclRKNVVRUDNFS0ZWUTRJcDgzNmUybmxpVEE3dHlxYnNRLytxaU9k?=
- =?utf-8?B?L2J5RUVwQlRoOStaL1FjWG05VUlvZ2xBcDdGOXF3MTN6YjAwOXN6R3R3eVhl?=
- =?utf-8?B?b2pEOUJYemRVa0NzWVkwQ1RYa1pjT2JvVHFjNncxM2FWUHBWOUFndWE4Yjdh?=
- =?utf-8?B?ekZCa2FqYTZkRGZydFhRakNLYTE2c29nZENsQnhjMmRWOFJmNXJVcXFnQlhx?=
- =?utf-8?B?SHpKUk54dUlVUy9TV0lpVWtRZlpURGZQVUo3cTFybDREVmFxOVduVWRBd0lP?=
- =?utf-8?B?UEN5a0JuQm9OL2U1ZlJaT0puR3pzcC9SWUV3R3o2d3VnMW03b1dPWi9TeFMw?=
- =?utf-8?B?cExpWEpxL214cllWOFBjdGlFZHUzUTRiZnlBeXpFNzVqa0lUUzRKdGhFdHN3?=
- =?utf-8?B?dXJRTGlDT0dVL0ZJT0c2MXB1TTRnREhBenNMMVVKVi9Gd25lY252Y0o4czkw?=
- =?utf-8?B?NDN2ZElXd1MvSEUwOUFwWm9Qd0llSGJLUUkyU3NJQzhzRTRNVldRQkZnbVJ0?=
- =?utf-8?B?MUpUM3FGUmlRalBYcDJxTlJ1NUhyY0NDTEVCcCtta2NPSUtqUm8rZ01LMTk4?=
- =?utf-8?B?ZW1lZHNTZFk4UTY5Y2t5cW9ESzJmWjR3RmFsVkhvVW43SDhCa2szc0pFR2Nr?=
- =?utf-8?B?TVA2R20zaVJNakRxT3N3TEdvaTF2ZmZDUDRnUEpOeWMvNXJNSFRCdGlkNXpT?=
- =?utf-8?B?cFlIUVRMSTVBTC93byt4aFppTTFTZ3JxSVNwVnR5cWtxcUk4V2YxaTZVa0xE?=
- =?utf-8?B?dHJ1WXFXTEp3ZDBDUEx6aHd2RTJtMmpFdGRxWmM3cEg1WVppU1RZZWF6a1dO?=
- =?utf-8?B?c0VWZUVLdXA0cmlKMDRMM0F1b0tCTnpjVGYrdm9vMFVZWk9tY25GdzAwQ2JB?=
- =?utf-8?B?dG9BaVVlekFhWjBmQnoyS0IxWG13a0hEeitKaFA3VHYyd2RTSzJqaktoRzY3?=
- =?utf-8?B?M0pRQk8va2VtaTFxYVgyTkRDMTFCOER0ZmhVSWtxM056VkJTM2JDbjFJZDVl?=
- =?utf-8?B?d3grakJvL3JhaXNoa1I2eVVCd25hUzJSY3JSMlEwZHVlTHQxbVVFRWxXN25n?=
- =?utf-8?B?dHg3WEVjM2FOVUZZcDR2TmlnNFIrSE8wNmpwNmVoQkdQL2xWOXU4bFJKOUpE?=
- =?utf-8?B?dHJONXhiV1IxRUo4MTMvQjgvUGN6MWZTTTVQSGZEZHhxSG9LSEkrU0cxcGJv?=
- =?utf-8?B?OHVQT2JNUE1MazR0TWpxRVhBcHRvWjhOb3ZZWUx0ZEYvNkRQa244dDNoRzZx?=
- =?utf-8?B?MDZISXpLZWVVR0JvRlM2MHdyQUt3bHNIcFlud1VpalJoRHdIbG8vT2hIcm5D?=
- =?utf-8?B?MjVuN0RBQm9Wazh4eFFsM0ZqcnhUa1pPcjdzcUFwUWxiYUwyNlYxaWVmUDJh?=
- =?utf-8?B?STFqNndkaEt2UzBmVGdnMGhpL2VtVmV2VmRMVHF5QWsyUW93YUNaSHd2TkZO?=
- =?utf-8?B?RDBRVjh2bG55M3EwWXlhdTBQUVRFOEZWRWplVDd2WmhKWThpemd0UldSNjlZ?=
- =?utf-8?B?RjRxZS8zMVJJdWRkclZTTFZQWmlLY2pzM3R2OEVkclZac3BZMm1uN05WRzZD?=
- =?utf-8?B?MmppUTJUdkNjb09oTTgxamFUTEVPVk0vVmxTeU95RGN5UWh4Y0wyNjd6ZFk5?=
- =?utf-8?B?ZEw3NG9rMUEyanBvczNibzdzU2JteEhiaWo0ZmRkZ21BUUlENlkrcktIZGhn?=
- =?utf-8?B?dHZQVExEQno1bVZiWmtmUlE4ZXRUZElPOFdDejB0UTY0RWhpcGRJTG45Tlh3?=
- =?utf-8?Q?a1sIAzli6M=3D?=
-X-Microsoft-Antispam-Message-Info: uSZfaMU17xzbg0zR4OYoSkC8nuw9NuyWH+aoeuEMMiQaJPwQD7Cksi03n75DcIDRZk6RCGCxOTzymZ081clUO/fjhuwr2XlQ8PNNTd5s7ybQzwd1M7ye3mHtD1q+mWtdUMkxuQpkd1/wxm2mq2CuQBkinfPDd17vnERQh2st3kCcRUCJToTGcvnO4UfFEWS6c+ZFy6ClbGPLZiWvqa/YWy8quGmIGD3hTRIhlL4eXqp48bGsITtv3giaTUnVlZUCLqeyCux85TQPr0Y7U9fDkQ6nJ871mCsoccY3ESe/gK874ushFI4GgY8O4Prquj69rIY6rah8oKNjMBbBTybDdgLYZMAmoPdtLIQykWEADF4=
-X-Microsoft-Exchange-Diagnostics: 1;CO1PR02MB173;6:LATiBxive1pMsb40VL5RTdjGvNUe/6IXVXrt/mFtnVlP4pnhf297GqdMF/G0lZTMJ2E3W8JiGPYuBpjPRXABgPKUJGrfwF5pI6jiCK0svasYoDIyIBQOpW4uYuu2VSMs19OQ1QOuvR/NvTTg7pSzer6CQxlvaRMwo1DkTPe7UTiwxBbHkPwDqtq5c0B+5Qp7aq9wl3tm8pGAQanuhcJeidZ+GYcEaYddOhLEqLGU7LsVn+K1F+gEuC++tXvK99tYr2ZSWqSu/IpAaDTm1/N4+c9nCkkViR4E6ECkudwW0S3fj73Xi+ucvy2dHnpkM5CVTpYdxnNAAgPF/5ucGrIiUrxSR0oL33POwoDrO7rMACQsx20vOXUnmPfyUSc7VHqDHhe8z0+wVkOTqSqU4iiTvSJRcXn70/2Rlq5Hb8jE1rU3XVeyyvHZbsPCrsDxFJcsjADGy+cb5vBqsz1BQD5hvA==;5:MGo9uUbbAbHIi7RzJVP02ic9zVpDaVK1mbIZuLP59vjhQ9j/WrwEu75ude1sAl6eAyhEzztasp8SM4oHew/C0JNX5qwktekRNxXQMujWyPI0s6s0kW4ELOZeFNKzabs97GkCw9VMwHdX/+9NibudOaqPdNUuvsqY3bbFZ3s3AEw=;24:4uViMljEqQw566vM3ntuV+OhFuAVrYLraI1csFBfe3AN9Edg5o8kOdCgUDDXLed/8kjkynssMuh8d/gx/BaYTTZSw1UN44E7B4QU50avSM4=
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWTJQUjAyTUIxNzA7MjM6SUdKQWxLWW5CdUtMWTIvc1ZCYkVMaUVyMmov?=
+ =?utf-8?B?ZklwcVRZekYyc0ZlenlLdXo3bVJPbzRyanZwOUZTQXkwbHdaWkdTQ21CN2g4?=
+ =?utf-8?B?NlhxSmRMMFNNVnhUanB4S2hCWmtGMFI5YVhUTUtzSldwakp2T2JET0Q4REhT?=
+ =?utf-8?B?OGtWWjRTV2VOaU1OdHBMbXVQbk9mYmpFUFBjbHRrZWZqeW51ZyszOFVkNEFP?=
+ =?utf-8?B?VHNUUVVQTytKMnQwbEQ3cnpOUzJ0QjhLcHorL2wza1ByeWNYRCtEM3pLWU9I?=
+ =?utf-8?B?Z1ovUjdSS1ZBekd6UWpJaGF1Q3MzQnlBQzNRVHlKUDU2Skl1L0drVTlyMEZa?=
+ =?utf-8?B?Qk1VZXZjK3lsNjFWK1JQS1FNbnZOZUg1Y2F4clF6WGRzNEpHaFdwdm50UVVh?=
+ =?utf-8?B?SFg5U04yaDFWbW15MmtrcXlTaTVyN0hVN3Q3S1pDalRYcW01NCtMUWxhM0tJ?=
+ =?utf-8?B?dW9hVm1KcmNDNm5vVTRMS1NDcFZtbVdSVkovM3g1V2pDRXB1UXVyYUdva3h4?=
+ =?utf-8?B?bGt4d2xZU2g4RXlCSHVzNEZpNWxCU3NVelZKU3E3d0RYVzdKMFgwZkdEZ2lv?=
+ =?utf-8?B?cUlkVjNYbyswN2xsVDAwVlBIZEZnTDVEMU03ZmxqZ1J3Y01HTUV1amdOcnY4?=
+ =?utf-8?B?NFFoVlZtd3pMbThSWm02Ums0OHlLQjFORDhvZWFpL1JaN2k5azh2OFdqckFM?=
+ =?utf-8?B?dUhxT2g0V2NSd1JSa0ZibWZlRWxOU09vYkErRWlRVHllVGZWMzhGNWNtVGtO?=
+ =?utf-8?B?NTBBVmtucnVBZ203Ly9xcXkvTkVEQUNLYjliM2UwZ0ZZcktPUHEvOStaL1Mr?=
+ =?utf-8?B?ZE80enl3WFNIR0M0UVcvYTR4cndtNXZkVmdkandTRjVGWHpoZXJyR2FQMG5M?=
+ =?utf-8?B?MVRkcWhmWnZQMWZHYkhXQzBpTEovQUszSGpwTUdBVE5YWDBwazZWWlJzYTdn?=
+ =?utf-8?B?d1FYTnRYR2hlNHZxL0pUTEhkTG85dTlEc2E4aUVHbi9aQWp0Q3VvZkc2STdF?=
+ =?utf-8?B?UzJ1cjlWYnBzRTdSOHRUV2lYbDQ3ZWVwSHdyNmRZTVdSRFhvM2pla1dVSDZT?=
+ =?utf-8?B?bEtWUXpVNnlwZVUrZ0dHZlhHeE5FL0MweE5RTXVYUlNWalo2SzhtNmN4UUZa?=
+ =?utf-8?B?dVpSZGJWWm1NaXovUExFRWtqRmtFcW1LbzJxQlRHZGwyNU0vQWIwK0g0SHRD?=
+ =?utf-8?B?dXJ1Mkh2K1o0MG5QNXR1eC91V2N6ajBVczljT0hMZ21xMkxIUWlwTU9obHFz?=
+ =?utf-8?B?SGZzMHdzaitrUGt4UUw3dG5LbEx0MEZoR3JSMWhWUkZSYkN2VjJhaUc1Y1li?=
+ =?utf-8?B?QXhSRXlyenJLajJTREZCMHpMTDdvUWxKbHRyRy83ZDlma2VyWmxsRlJlaFlW?=
+ =?utf-8?B?VVFjSE4rY2dYdC9pTWdicTA0T0htekgrd2Y1Q0s1TUh6eGt5YUZRVXBxbk9T?=
+ =?utf-8?B?NmhMT1V6ZmJ5V0wrenhzUFJJZUltUFBsTGwwRk1lemNuQTljZ3RnN0FOZWEr?=
+ =?utf-8?B?TVlQUTMrWU5OcEUwTk9STGFIS0F6WGJ1S1A3azVWb3FZZGErMUVYcmE2VUVN?=
+ =?utf-8?B?UDVUSFplbGVXZGxGMWpVZWR6Qy8xN0U5Y3F5Mk1OSnJVVWx6UWVjODJ5dFlV?=
+ =?utf-8?B?bEcvQmZHbEc4UUQvRVRRQUV3cW1VUWwrbzEyaGxJU0NpdVJXWDl2UDRBVEND?=
+ =?utf-8?B?VG9LbHovQzFnakdzZWI3b2ljdEhNeFU1VmdIMTlHUXhxMVNLSXIyNGx4RVZF?=
+ =?utf-8?B?ZEtMcGwrUkljTWVYME85VTE1bnNsK2xMWDZzU1NsKzk3TFZsRGd4dVo4TU1E?=
+ =?utf-8?Q?4gNhm0q0egPs?=
+X-Microsoft-Antispam-Message-Info: aJ5Ycw+l0iWvyE10dMKx3jKP0kA0eBWboeEZ6wmb3cUrzHsQOVHk5O46tNvo9wNaWEWKfMmNXnp3EKYKpJgxjHucp53/tkydZJqci9IlZnwoMwlUuH63R/c3nRozstcGKSz4M7BuMGZjk2nCTJ+T5qRkOan77p1pMPK8QBSWNRwa2D7YkkmTQo1VpFXyiPPFU+ON3Z2u7zbj9tvbGskrjtsipiLIanx2DmCGtxtvt3t+C/aShqZQ68LmGuFMDjyXcltuhWiVmpdFBSs3O6WLXPdLhiocPIC8BfSZJ8te9MGEC1iNyR/R1SHTHS8jVNTNeo/5CFq/5ToXyniJa98w/pmT6L8I9dGWy28dtzHXbW4=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB170;6:JUVh6v7Ix7zs1H53BPTsd/wLEvCX5VpuVHZ/y/hH1EFu7CSn4VKf21MhpSHFa8SzdqB/Ag05bja7VnuY8p0lIGX6NSLDC0RO9la25VCj/JwEbjjOK/d7atZLXbfvgi7nd3ZGGaVTQXWkMy0SwimGATTfRpxpIk8+O3H9M6TMUktoY32C73Rs37qslmmCkyvsjE0jIJjxLdlwvHtxH0MxF2MsoGjRzHHmLF9RZRw8WU01k3Cc7T48lz0uwU9mFVs0CoLkC8dBpQobgrBmC4a0JnoQQuHUvn+4riIsv150k/tcRmghgOm0jcXOmQEcEmmv40GLvFFk/AX4cL0JMGy0iR613n1Ne+J3uOAf/MYmmC2m078nofPpQtwTtleCcVUiQVpJQi4UmJbOmK0vHqp4VmxoYR0JZ2bNKOsaM1+na1cKjFrp1j1RzdVh4Qg9E1TeU93tPUOcUBVphM5PTVbxkA==;5:WbE21MaLeBua8B8GPz0kCLda+3F7pbDGPeeEspBaRYtLe68juy4yKEZeZQsOt7LdLLxBNwqJnquMaKDhCB8WgMhgn+XgEG1BOOdnu/TNdqySNWsb7i2RFK7+G6zcOgZ9/kiEHmDj3twfAoJSfvIPHhV+bXhA5Y9x2ZfrW0iTQaE=;24:nIVu7RzJMJnojGFSttBozCR/wJ4O+7UwwqBrBNGl+9zxPJMMqeUoPWgg0kQ843TU/Ma8ujbmzKvx4hVIl8RXcOd/LFqfGPeqQAgqtqDmjF4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CO1PR02MB173;7:GgnDh/zFwM41IWQb3n6CUlEzq9i2pYG+i88pKo6+ay1gmkPobMfFz6Cn72CS4qfX5VlG6cMJGrfmplTXkednjW8VnbTlbqA2lt3rWrCJotdt9GuU5jVBYty8wi185c8HQeC11tc8we0B++/BRD+kRFWwMXMAQ4J6bB6HHmGsIkZpKyfwXDAC/IJ6TsdObYJf9sNro7c61cGd0P0euWkNyDDg7YiHPdGiS+8mRVrr6tZvlXNHJ1//wJJS0Av1+J9I
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR02MB170;7:CJ//R/cTIrc7qdkzCIL5gyFqKF1LNHCWpSt4P9inXXv+SRSjsJ9BwVKWgFHGllptx9uo1jm7PZcRRtV3IRon0X3I/3HcHpi9hhrzfdqIuJ5Pny2ehxfQVFqzDA52d6cZZoyeWBVEcGT8QcRFC8B6p5sFj0nFBI/2j8dr10bnOkwz61c39wKrDs5uuM5miRaUPpMfQFD7I/9C5ir6NUZUkOjhGtILmVoMV2OQ5y7gtC4zDErj8m0Sqdn0VvRL6Uot
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2018 06:42:15.5055
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2018 06:44:25.0734
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0294ce35-9e3a-4ff6-045f-08d5dcc2499d
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef44f5d1-4f86-4ffa-fda9-08d5dcc296ae
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR02MB173
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR02MB170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 28.6.2018 07:42, Luis Araneda wrote:
-> The value "zynq" isn't officially part of the model on any board.
-> Additionally, the value is redundant as it's included in a
-> subsequent value of the property.
+> The bindings were missing when adding the device-tree files
+> Also, improve description of existing boards
 > 
 > Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 > ---
->  .../devicetree/bindings/arm/xilinx.txt        | 22 +++++++++----------
->  arch/arm/boot/dts/zynq-cc108.dts              |  2 +-
->  arch/arm/boot/dts/zynq-microzed.dts           |  2 +-
->  arch/arm/boot/dts/zynq-zc702.dts              |  2 +-
->  arch/arm/boot/dts/zynq-zc706.dts              |  2 +-
->  arch/arm/boot/dts/zynq-zc770-xm010.dts        |  2 +-
->  arch/arm/boot/dts/zynq-zc770-xm011.dts        |  2 +-
->  arch/arm/boot/dts/zynq-zc770-xm012.dts        |  2 +-
->  arch/arm/boot/dts/zynq-zc770-xm013.dts        |  2 +-
->  arch/arm/boot/dts/zynq-zedboard.dts           |  2 +-
->  arch/arm/boot/dts/zynq-zybo-z7.dts            |  2 +-
->  arch/arm/boot/dts/zynq-zybo.dts               |  2 +-
->  12 files changed, 22 insertions(+), 22 deletions(-)
+>  .../devicetree/bindings/arm/xilinx.txt        | 22 +++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
 > 
 > diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-> index d10adc4d0..0785acce4 100644
+> index b9043bc35..f1e911058 100644
 > --- a/Documentation/devicetree/bindings/arm/xilinx.txt
 > +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
-> @@ -9,34 +9,34 @@ Required root node properties:
+> @@ -8,15 +8,33 @@ Required root node properties:
+>  
 >  Additional compatible strings:
 >  
->  - Xilinx CC108 board
-> -  "xlnx,zynq-cc108"
-> +  "xlnx,cc108"
+> -- Xilinx internal board cc108
+> +- Xilinx CC108 board
+
+No reason to remove internal word from here.
+
+>    "xlnx,zynq-cc108"
 >  
->  - Avnet MicroZed board
-> -  "avnet,zynq-microzed"
-> +  "avnet,microzed"
+> -- Xilinx internal board zc770 with different FMC cards
+> +- Avnet MicroZed board
+> +  "avnet,zynq-microzed"
+> +
+> +- Adapteva Parallella board
+> +  "adapteva,parallella"
+> +
+> +- Xilinx ZC702 board
+> +  "xlnx,zynq-zc702"
+> +
+> +- Xilinx ZC706 board
+> +  "xlnx,zynq-zc706"
+> +
+> +- Xilinx ZC770 board, with different FMC cards
+>    "xlnx,zynq-zc770-xm010"
+>    "xlnx,zynq-zc770-xm011"
+>    "xlnx,zynq-zc770-xm012"
+>    "xlnx,zynq-zc770-xm013"
 >  
->  - Adapteva Parallella board
->    "adapteva,parallella"
->  
->  - Xilinx ZC702 board
-> -  "xlnx,zynq-zc702"
-> +  "xlnx,zc702"
->  
->  - Xilinx ZC706 board
-> -  "xlnx,zynq-zc706"
-> +  "xlnx,zc706"
->  
->  - Xilinx ZC770 board, with different FMC cards
-> -  "xlnx,zynq-zc770-xm010"
-> -  "xlnx,zynq-zc770-xm011"
-> -  "xlnx,zynq-zc770-xm012"
-> -  "xlnx,zynq-zc770-xm013"
-> +  "xlnx,zc770-xm010"
-> +  "xlnx,zc770-xm011"
-> +  "xlnx,zc770-xm012"
-> +  "xlnx,zc770-xm013"
->  
->  - Avnet ZedBoard board
-> -  "avnet,zynq-zedboard"
-> +  "avnet,zedboard"
->  
->  - Digilent Zybo board
-> -  "digilent,zynq-zybo"
-> +  "digilent,zybo"
->  
+> +- Avnet ZedBoard board
+> +  "avnet,zynq-zed"
+> +
+> +- Digilent Zybo board
+> +  "digilent,zynq-zybo"
+> +
 >  - Digilent Zybo Z7 board
-> -  "digilent,zynq-zybo-z7"
-> +  "digilent,zybo-z7"
+>    "digilent,zynq-zybo-z7"
 >  
->  ---------------------------------------------------------------
->  
-> diff --git a/arch/arm/boot/dts/zynq-cc108.dts b/arch/arm/boot/dts/zynq-cc108.dts
-> index 8b9ab9bba..ccff20099 100644
-> --- a/arch/arm/boot/dts/zynq-cc108.dts
-> +++ b/arch/arm/boot/dts/zynq-cc108.dts
-> @@ -13,7 +13,7 @@
->  
->  / {
->  	model = "Xilinx CC108 board";
-> -	compatible = "xlnx,zynq-cc108", "xlnx,zynq-7000";
-> +	compatible = "xlnx,cc108", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-microzed.dts b/arch/arm/boot/dts/zynq-microzed.dts
-> index 3cc957428..ef55adb02 100644
-> --- a/arch/arm/boot/dts/zynq-microzed.dts
-> +++ b/arch/arm/boot/dts/zynq-microzed.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "Avnet MicroZed board";
-> -	compatible = "avnet,zynq-microzed", "xlnx,zynq-7000";
-> +	compatible = "avnet,microzed", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
-> index 3f84b94db..bd633a9bc 100644
-> --- a/arch/arm/boot/dts/zynq-zc702.dts
-> +++ b/arch/arm/boot/dts/zynq-zc702.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "Xilinx ZC702 board";
-> -	compatible = "xlnx,zynq-zc702", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc702", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-zc706.dts
-> index a15908cac..f4805f01b 100644
-> --- a/arch/arm/boot/dts/zynq-zc706.dts
-> +++ b/arch/arm/boot/dts/zynq-zc706.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "Xilinx ZC706 board";
-> -	compatible = "xlnx,zynq-zc706", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc706", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zc770-xm010.dts b/arch/arm/boot/dts/zynq-zc770-xm010.dts
-> index 0e1bfdd34..21f457656 100644
-> --- a/arch/arm/boot/dts/zynq-zc770-xm010.dts
-> +++ b/arch/arm/boot/dts/zynq-zc770-xm010.dts
-> @@ -9,7 +9,7 @@
->  
->  / {
->  	model = "Xilinx ZC770 XM010 board";
-> -	compatible = "xlnx,zynq-zc770-xm010", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc770-xm010", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zc770-xm011.dts b/arch/arm/boot/dts/zynq-zc770-xm011.dts
-> index b7f65862c..e4a0b2629 100644
-> --- a/arch/arm/boot/dts/zynq-zc770-xm011.dts
-> +++ b/arch/arm/boot/dts/zynq-zc770-xm011.dts
-> @@ -9,7 +9,7 @@
->  
->  / {
->  	model = "Xilinx ZC770 XM011 board";
-> -	compatible = "xlnx,zynq-zc770-xm011", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc770-xm011", "xlnx,zynq-7000";
->  
->  	aliases {
->  		i2c0 = &i2c1;
-> diff --git a/arch/arm/boot/dts/zynq-zc770-xm012.dts b/arch/arm/boot/dts/zynq-zc770-xm012.dts
-> index d2359b789..d2ee09590 100644
-> --- a/arch/arm/boot/dts/zynq-zc770-xm012.dts
-> +++ b/arch/arm/boot/dts/zynq-zc770-xm012.dts
-> @@ -9,7 +9,7 @@
->  
->  / {
->  	model = "Xilinx ZC770 XM012 board";
-> -	compatible = "xlnx,zynq-zc770-xm012", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc770-xm012", "xlnx,zynq-7000";
->  
->  	aliases {
->  		i2c0 = &i2c0;
-> diff --git a/arch/arm/boot/dts/zynq-zc770-xm013.dts b/arch/arm/boot/dts/zynq-zc770-xm013.dts
-> index 651913f1a..9d6090ee4 100644
-> --- a/arch/arm/boot/dts/zynq-zc770-xm013.dts
-> +++ b/arch/arm/boot/dts/zynq-zc770-xm013.dts
-> @@ -9,7 +9,7 @@
->  
->  / {
->  	model = "Xilinx ZC770 XM013 board";
-> -	compatible = "xlnx,zynq-zc770-xm013", "xlnx,zynq-7000";
-> +	compatible = "xlnx,zc770-xm013", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem1;
-> diff --git a/arch/arm/boot/dts/zynq-zedboard.dts b/arch/arm/boot/dts/zynq-zedboard.dts
-> index 540581c56..8a7894552 100644
-> --- a/arch/arm/boot/dts/zynq-zedboard.dts
-> +++ b/arch/arm/boot/dts/zynq-zedboard.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "Avnet ZedBoard board";
-> -	compatible = "avnet,zynq-zedboard", "xlnx,zynq-7000";
-> +	compatible = "avnet,zedboard", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zybo-z7.dts b/arch/arm/boot/dts/zynq-zybo-z7.dts
-> index be40be9b7..bcb633860 100644
-> --- a/arch/arm/boot/dts/zynq-zybo-z7.dts
-> +++ b/arch/arm/boot/dts/zynq-zybo-z7.dts
-> @@ -4,7 +4,7 @@
->  
->  / {
->  	model = "Digilent Zybo Z7 board";
-> -	compatible = "digilent,zynq-zybo-z7", "xlnx,zynq-7000";
-> +	compatible = "digilent,zybo-z7", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
-> diff --git a/arch/arm/boot/dts/zynq-zybo.dts b/arch/arm/boot/dts/zynq-zybo.dts
-> index 0439e9f1e..776d3d77d 100644
-> --- a/arch/arm/boot/dts/zynq-zybo.dts
-> +++ b/arch/arm/boot/dts/zynq-zybo.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "Digilent Zybo board";
-> -	compatible = "digilent,zynq-zybo", "xlnx,zynq-7000";
-> +	compatible = "digilent,zybo", "xlnx,zynq-7000";
->  
->  	aliases {
->  		ethernet0 = &gem0;
 > 
 
-zynq name here is correct which is saying that hardblock is going to be
-described. Without it it is suggesting that hardblock is not used and it
-is for example on zybo with microblaze.
+Not a problem to add missing strings.
 
 Thanks,
 Michal
