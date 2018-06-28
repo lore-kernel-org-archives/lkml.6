@@ -2,94 +2,79 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 929A8C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D1CC43144
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5551123D15
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5551123D15
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BFCB270E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 11:04:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFCB270E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965419AbeF1LBW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 07:01:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54480 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934000AbeF1LBV (ORCPT
+        id S965446AbeF1LEa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 07:04:30 -0400
+Received: from smtprelay0070.hostedemail.com ([216.40.44.70]:35969 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S934222AbeF1LE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 07:01:21 -0400
-Received: from localhost (unknown [104.153.224.166])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94F4686A;
-        Thu, 28 Jun 2018 11:01:17 +0000 (UTC)
-Date:   Thu, 28 Jun 2018 19:52:41 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: storage: add error handling for kcalloc
-Message-ID: <20180628105241.GC5191@kroah.com>
-References: <20180625123326.GA14987@kroah.com>
- <Pine.LNX.4.44L0.1806251118110.1779-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1806251118110.1779-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 28 Jun 2018 07:04:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 95FE81803F08F;
+        Thu, 28 Jun 2018 11:04:27 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hope64_7e1305543153c
+X-Filterd-Recvd-Size: 1825
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 28 Jun 2018 11:04:26 +0000 (UTC)
+Message-ID: <fc15913c3800923ef35e9db9508cbb9f67d0525f.camel@perches.com>
+Subject: Re: [PATCH v2 2/5] net: emaclite: Simplify if-else statements
+From:   Joe Perches <joe@perches.com>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        davem@davemloft.net, michal.simek@xilinx.com, andrew@lunn.ch
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 28 Jun 2018 04:04:24 -0700
+In-Reply-To: <1530171584-20673-3-git-send-email-radhey.shyam.pandey@xilinx.com>
+References: <1530171584-20673-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+         <1530171584-20673-3-git-send-email-radhey.shyam.pandey@xilinx.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 11:22:34AM -0400, Alan Stern wrote:
-> On Mon, 25 Jun 2018, Greg Kroah-Hartman wrote:
-> 
-> > On Thu, Jun 14, 2018 at 09:29:11PM +0800, Zhouyang Jia wrote:
-> > > When kcalloc fails, the lack of error-handling code may
-> > > cause unexpected results.
-> > > 
-> > > This patch adds error-handling code after calling kcalloc.
-> > > 
-> > > Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> > > Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> > > ---
-> > > v1->v2:
-> > > - Remove pr_warn statement.
-> > > ---
-> > >  drivers/usb/storage/alauda.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> > > index 900591d..4e17609 100644
-> > > --- a/drivers/usb/storage/alauda.c
-> > > +++ b/drivers/usb/storage/alauda.c
-> > > @@ -437,6 +437,9 @@ static int alauda_init_media(struct us_data *us)
-> > >  		+ MEDIA_INFO(us).blockshift + MEDIA_INFO(us).pageshift);
-> > >  	MEDIA_INFO(us).pba_to_lba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
-> > >  	MEDIA_INFO(us).lba_to_pba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
-> > > +	if ((MEDIA_INFO(us).pba_to_lba == NULL)
-> > > +		|| (MEDIA_INFO(us).lba_to_pba == NULL))
-> > > +		return USB_STOR_TRANSPORT_ERROR;
-> > 
-> > You just leaked memory if only one of these succeeded :(
-> 
-> That's not really true.  The memory gets deallocated later on in any 
-> case, when alauda_info_destructor() calls alauda_free_maps() if not 
-> before.
-> 
-> More troubling is the fact that this routine (i.e, alauda_init_media)  
-> gets called from only one place, in alauda_check_media, and the caller
-> completely ignores the return value!  Furthermore, the caller always
-> returns USB_STOR_TRANSPORT_FAILED.
-> 
-> So on the whole, I don't think this patch is going to make any 
-> difference to the driver's operation.
+On Thu, 2018-06-28 at 13:09 +0530, Radhey Shyam Pandey wrote:
+> Remove else as it is not required with if doing a return.
+> Fixes below checkpatch warning.
+[]
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+[]
+> @@ -1052,13 +1051,13 @@ static bool get_bool(struct platform_device *ofdev, const char *s)
+>  {
+>  	u32 *p = (u32 *)of_get_property(ofdev->dev.of_node, s, NULL);
+>  
+> -	if (p) {
+> -		return (bool)*p;
+> -	} else {
+> +	if (!p) {
+>  		dev_warn(&ofdev->dev, "Parameter %s not found,"
+>  			"defaulting to false\n", s);
 
-Ok, I'm just going to drop it then.
+Please coalesce the format onto a single line
+and add the missing space after the comma.
 
-thanks,
-
-greg k-h
+>  		return false;
+>  	}
+> +
+> +	return (bool)*p;
+>  }
+>  
+>  static const struct net_device_ops xemaclite_netdev_ops;
