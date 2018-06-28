@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811BFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41446C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF182724C
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF182724C
+	by mail.kernel.org (Postfix) with ESMTP id E1AAA2724D
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 10:46:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AAA2724D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965261AbeF1Kpy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 06:45:54 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34119 "EHLO
+        id S1753384AbeF1KqM (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 06:46:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:26951 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932218AbeF1Kpw (ORCPT
+        with ESMTP id S964952AbeF1Kpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 06:45:52 -0400
-X-UUID: dc2baf526a3945c7b0856001fe871e86-20180628
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        Thu, 28 Jun 2018 06:45:54 -0400
+X-UUID: 06e328885deb4d0f9010e0348b33219c-20180628
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <stanley.chu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1849970054; Thu, 28 Jun 2018 18:45:49 +0800
+        with ESMTP id 918245787; Thu, 28 Jun 2018 18:45:49 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 28 Jun 2018 18:45:47 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 28 Jun 2018 18:45:48 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 28 Jun 2018 18:45:47 +0800
+ Transport; Thu, 28 Jun 2018 18:45:48 +0800
 From:   Stanley Chu <stanley.chu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -40,11 +41,13 @@ To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>
-Subject: [PATCH v3 0/5] Add system timer driver for Mediatek SoCs
-Date:   Thu, 28 Jun 2018 18:45:39 +0800
-Message-ID: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+        <wsd_upstream@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
+Subject: [PATCH v3 4/5] clocksource/drivers/timer-mediatek: Convert the driver to timer-of
+Date:   Thu, 28 Jun 2018 18:45:43 +0800
+Message-ID: <1530182744-10731-5-git-send-email-stanley.chu@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+References: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -53,33 +56,351 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v2:
-- Rename existed mtk_timer.c to timer-mediatek.c.
-- Add system timer support into timer-mediatek.c instead of creating a new file.
-- Use _gpt_ and _syst_ to identify different timers.
-- Convert gpt driver to use timer_of.
-- Fix system timer driver: irq flags.
-- Fix bindings of both gpt and system timer.
+Convert the driver to use the timer_of helpers.
+This allows to remove custom proprietary structure,
+factors out and simplifies the code.
 
-Changes since v1:
-- Use timer_of structure and APIs to make driver more clean.
-- Remove unnecessary headers.
-- Use fixed-clock.
-- Fix indent.
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+---
+ drivers/clocksource/timer-mediatek.c |  222 ++++++++++++++++------------------
+ 1 file changed, 104 insertions(+), 118 deletions(-)
 
-
-Stanley Chu (5):
-  clocksource/drivers/timer-mediatek: Add system timer bindings
-  clocksource/drivers/timer-mediatek: Rename mtk_timer to timer-mediatek
-  clocksource/drivers/timer-mediatek: Rename function prefix
-  clocksource/drivers/timer-mediatek: Convert the driver to timer-of
-  clocksource/drivers/timer-mediatek: Add support for system timer
-
- .../bindings/timer/mediatek,mtk-timer.txt          |  38 ++-
- drivers/clocksource/Makefile                       |   2 +-
- drivers/clocksource/mtk_timer.c                    | 268 ---------------
- drivers/clocksource/timer-mediatek.c               | 363 +++++++++++++++++++++
- 4 files changed, 396 insertions(+), 275 deletions(-)
- delete mode 100644 drivers/clocksource/mtk_timer.c
- create mode 100644 drivers/clocksource/timer-mediatek.c
+diff --git a/drivers/clocksource/timer-mediatek.c b/drivers/clocksource/timer-mediatek.c
+index ff284f2..d94d8e1 100644
+--- a/drivers/clocksource/timer-mediatek.c
++++ b/drivers/clocksource/timer-mediatek.c
+@@ -18,16 +18,13 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
+-#include <linux/clk.h>
+ #include <linux/clockchips.h>
++#include <linux/clocksource.h>
+ #include <linux/interrupt.h>
+-#include <linux/irq.h>
+ #include <linux/irqreturn.h>
+-#include <linux/of.h>
+-#include <linux/of_address.h>
+-#include <linux/of_irq.h>
+ #include <linux/sched_clock.h>
+ #include <linux/slab.h>
++#include "timer-of.h"
+ 
+ #define GPT_IRQ_EN_REG		0x00
+ #define GPT_IRQ_ENABLE(val)	BIT((val) - 1)
+@@ -56,49 +53,57 @@
+ #define GPT_CLK_EVT	1
+ #define GPT_CLK_SRC	2
+ 
+-struct mtk_clock_event_device {
+-	void __iomem *gpt_base;
+-	u32 ticks_per_jiffy;
+-	struct clock_event_device dev;
++struct mtk_timer_private {
++	unsigned long ticks_per_jiffy;
+ };
+ 
+ static void __iomem *gpt_sched_reg __read_mostly;
+ 
+-static u64 notrace mtk_gpt_read_sched_clock(void)
++static void mtk_timer_of_priv_set(struct timer_of *to, u32 ticks_per_jiffy)
+ {
+-	return readl_relaxed(gpt_sched_reg);
++	struct mtk_timer_private *pd = to->private_data;
++
++	pd->ticks_per_jiffy = ticks_per_jiffy;
++}
++
++static void mtk_timer_of_priv_get(struct timer_of *to,
++				 unsigned long *ticks_per_jiffy)
++{
++	struct mtk_timer_private *pd = to->private_data;
++
++	if (ticks_per_jiffy)
++		*ticks_per_jiffy = pd->ticks_per_jiffy;
+ }
+ 
+-static inline struct mtk_clock_event_device *to_mtk_clk(
+-				struct clock_event_device *c)
++static u64 notrace mtk_gpt_read_sched_clock(void)
+ {
+-	return container_of(c, struct mtk_clock_event_device, dev);
++	return readl_relaxed(gpt_sched_reg);
+ }
+ 
+-static void mtk_gpt_clkevt_time_stop(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_clkevt_time_stop(struct timer_of *to, u8 timer)
+ {
+ 	u32 val;
+ 
+-	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
+-	writel(val & ~TIMER_CTRL_ENABLE, evt->gpt_base +
+-			TIMER_CTRL_REG(timer));
++	val = readl(timer_of_base(to) + TIMER_CTRL_REG(timer));
++	writel(val & ~TIMER_CTRL_ENABLE, timer_of_base(to) +
++	       TIMER_CTRL_REG(timer));
+ }
+ 
+-static void mtk_gpt_clkevt_time_setup(struct mtk_clock_event_device *evt,
+-				unsigned long delay, u8 timer)
++static void mtk_gpt_clkevt_time_setup(struct timer_of *to,
++				      unsigned long delay, u8 timer)
+ {
+-	writel(delay, evt->gpt_base + TIMER_CMP_REG(timer));
++	writel(delay, timer_of_base(to) + TIMER_CMP_REG(timer));
+ }
+ 
+-static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
+-		bool periodic, u8 timer)
++static void mtk_gpt_clkevt_time_start(struct timer_of *to,
++				      bool periodic, u8 timer)
+ {
+ 	u32 val;
+ 
+ 	/* Acknowledge interrupt */
+-	writel(GPT_IRQ_ACK(timer), evt->gpt_base + GPT_IRQ_ACK_REG);
++	writel(GPT_IRQ_ACK(timer), timer_of_base(to) + GPT_IRQ_ACK_REG);
+ 
+-	val = readl(evt->gpt_base + TIMER_CTRL_REG(timer));
++	val = readl(timer_of_base(to) + TIMER_CTRL_REG(timer));
+ 
+ 	/* Clear 2 bit timer operation mode field */
+ 	val &= ~TIMER_CTRL_OP(0x3);
+@@ -109,160 +114,141 @@ static void mtk_gpt_clkevt_time_start(struct mtk_clock_event_device *evt,
+ 		val |= TIMER_CTRL_OP(TIMER_CTRL_OP_ONESHOT);
+ 
+ 	writel(val | TIMER_CTRL_ENABLE | TIMER_CTRL_CLEAR,
+-	       evt->gpt_base + TIMER_CTRL_REG(timer));
++	       timer_of_base(to) + TIMER_CTRL_REG(timer));
+ }
+ 
+ static int mtk_gpt_clkevt_shutdown(struct clock_event_device *clk)
+ {
+-	mtk_gpt_clkevt_time_stop(to_mtk_clk(clk), GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(to_timer_of(clk), GPT_CLK_EVT);
+ 	return 0;
+ }
+ 
+ static int mtk_gpt_clkevt_set_periodic(struct clock_event_device *clk)
+ {
+-	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
++	struct timer_of *to = to_timer_of(clk);
++	unsigned long ticks_per_jiffy;
+ 
+-	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_gpt_clkevt_time_setup(evt, evt->ticks_per_jiffy, GPT_CLK_EVT);
+-	mtk_gpt_clkevt_time_start(evt, true, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(to, GPT_CLK_EVT);
++	mtk_timer_of_priv_get(to, &ticks_per_jiffy);
++	mtk_gpt_clkevt_time_setup(to, ticks_per_jiffy, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_start(to, true, GPT_CLK_EVT);
+ 	return 0;
+ }
+ 
+ static int mtk_gpt_clkevt_next_event(unsigned long event,
+-				   struct clock_event_device *clk)
++				     struct clock_event_device *clk)
+ {
+-	struct mtk_clock_event_device *evt = to_mtk_clk(clk);
++	struct timer_of *to = to_timer_of(clk);
+ 
+-	mtk_gpt_clkevt_time_stop(evt, GPT_CLK_EVT);
+-	mtk_gpt_clkevt_time_setup(evt, event, GPT_CLK_EVT);
+-	mtk_gpt_clkevt_time_start(evt, false, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_stop(to, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_setup(to, event, GPT_CLK_EVT);
++	mtk_gpt_clkevt_time_start(to, false, GPT_CLK_EVT);
+ 
+ 	return 0;
+ }
+ 
+ static irqreturn_t mtk_gpt_interrupt(int irq, void *dev_id)
+ {
+-	struct mtk_clock_event_device *evt = dev_id;
++	struct clock_event_device *clkevt = (struct clock_event_device *)dev_id;
++	struct timer_of *to = to_timer_of(clkevt);
+ 
+ 	/* Acknowledge timer0 irq */
+-	writel(GPT_IRQ_ACK(GPT_CLK_EVT), evt->gpt_base + GPT_IRQ_ACK_REG);
+-	evt->dev.event_handler(&evt->dev);
++	writel(GPT_IRQ_ACK(GPT_CLK_EVT), timer_of_base(to) + GPT_IRQ_ACK_REG);
++	clkevt->event_handler(clkevt);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
+ static void
+-__init mtk_gpt_setup(struct mtk_clock_event_device *evt, u8 timer, u8 option)
++__init mtk_gpt_setup(struct timer_of *to, u8 timer, u8 option)
+ {
+ 	writel(TIMER_CTRL_CLEAR | TIMER_CTRL_DISABLE,
+-		evt->gpt_base + TIMER_CTRL_REG(timer));
++		timer_of_base(to) + TIMER_CTRL_REG(timer));
+ 
+ 	writel(TIMER_CLK_SRC(TIMER_CLK_SRC_SYS13M) | TIMER_CLK_DIV1,
+-			evt->gpt_base + TIMER_CLK_REG(timer));
++			timer_of_base(to) + TIMER_CLK_REG(timer));
+ 
+-	writel(0x0, evt->gpt_base + TIMER_CMP_REG(timer));
++	writel(0x0, timer_of_base(to) + TIMER_CMP_REG(timer));
+ 
+ 	writel(TIMER_CTRL_OP(option) | TIMER_CTRL_ENABLE,
+-			evt->gpt_base + TIMER_CTRL_REG(timer));
++			timer_of_base(to) + TIMER_CTRL_REG(timer));
+ }
+ 
+-static void mtk_gpt_enable_irq(struct mtk_clock_event_device *evt, u8 timer)
++static void mtk_gpt_enable_irq(struct timer_of *to, u8 timer)
+ {
+ 	u32 val;
+ 
+ 	/* Disable all interrupts */
+-	writel(0x0, evt->gpt_base + GPT_IRQ_EN_REG);
++	writel(0x0, timer_of_base(to) + GPT_IRQ_EN_REG);
+ 
+ 	/* Acknowledge all spurious pending interrupts */
+-	writel(0x3f, evt->gpt_base + GPT_IRQ_ACK_REG);
++	writel(0x3f, timer_of_base(to) + GPT_IRQ_ACK_REG);
+ 
+-	val = readl(evt->gpt_base + GPT_IRQ_EN_REG);
++	val = readl(timer_of_base(to) + GPT_IRQ_EN_REG);
+ 	writel(val | GPT_IRQ_ENABLE(timer),
+-			evt->gpt_base + GPT_IRQ_EN_REG);
++			timer_of_base(to) + GPT_IRQ_EN_REG);
+ }
+ 
+-static int __init mtk_gpt_init(struct device_node *node)
+-{
+-	struct mtk_clock_event_device *evt;
+-	struct resource res;
+-	unsigned long rate = 0;
+-	struct clk *clk;
+-
+-	evt = kzalloc(sizeof(*evt), GFP_KERNEL);
+-	if (!evt)
+-		return -ENOMEM;
+-
+-	evt->dev.name = "mtk_tick";
+-	evt->dev.rating = 300;
+-	evt->dev.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
+-	evt->dev.set_state_shutdown = mtk_gpt_clkevt_shutdown;
+-	evt->dev.set_state_periodic = mtk_gpt_clkevt_set_periodic;
+-	evt->dev.set_state_oneshot = mtk_gpt_clkevt_shutdown;
+-	evt->dev.tick_resume = mtk_gpt_clkevt_shutdown;
+-	evt->dev.set_next_event = mtk_gpt_clkevt_next_event;
+-	evt->dev.cpumask = cpu_possible_mask;
+-
+-	evt->gpt_base = of_io_request_and_map(node, 0, "mtk-timer-gpt");
+-	if (IS_ERR(evt->gpt_base)) {
+-		pr_err("Can't get resource\n");
+-		goto err_kzalloc;
+-	}
++static struct timer_of to = {
++	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+ 
+-	evt->dev.irq = irq_of_parse_and_map(node, 0);
+-	if (evt->dev.irq <= 0) {
+-		pr_err("Can't parse IRQ\n");
+-		goto err_mem;
+-	}
+-
+-	clk = of_clk_get(node, 0);
+-	if (IS_ERR(clk)) {
+-		pr_err("Can't get timer clock\n");
+-		goto err_irq;
+-	}
++	.clkevt = {
++		.name = "mtk-clkevt",
++		.rating = 300,
++		.cpumask = cpu_possible_mask,
++	},
+ 
+-	if (clk_prepare_enable(clk)) {
+-		pr_err("Can't prepare clock\n");
+-		goto err_clk_put;
+-	}
+-	rate = clk_get_rate(clk);
++	.of_irq = {
++		.flags = IRQF_TIMER | IRQF_IRQPOLL,
++	},
++};
+ 
+-	if (request_irq(evt->dev.irq, mtk_gpt_interrupt,
+-			IRQF_TIMER | IRQF_IRQPOLL, "mtk_timer", evt)) {
+-		pr_err("failed to setup irq %d\n", evt->dev.irq);
+-		goto err_clk_disable;
++static int __init mtk_gpt_init(struct device_node *node)
++{
++	int ret;
++
++	to.clkevt.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
++	to.clkevt.set_state_shutdown = mtk_gpt_clkevt_shutdown;
++	to.clkevt.set_state_periodic = mtk_gpt_clkevt_set_periodic;
++	to.clkevt.set_state_oneshot = mtk_gpt_clkevt_shutdown;
++	to.clkevt.tick_resume = mtk_gpt_clkevt_shutdown;
++	to.clkevt.set_next_event = mtk_gpt_clkevt_next_event;
++	to.of_irq.handler = mtk_gpt_interrupt;
++
++	ret = timer_of_init(node, &to);
++	if (ret)
++		goto err;
++
++	to.private_data = kzalloc(sizeof(struct mtk_timer_private),
++				  GFP_KERNEL);
++
++	if (!to.private_data) {
++		ret = -ENOMEM;
++		goto deinit;
+ 	}
+ 
+-	evt->ticks_per_jiffy = DIV_ROUND_UP(rate, HZ);
++	mtk_timer_of_priv_set(&to, DIV_ROUND_UP(timer_of_rate(&to), HZ));
+ 
+ 	/* Configure clock source */
+-	mtk_gpt_setup(evt, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
+-	clocksource_mmio_init(evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC),
+-			node->name, rate, 300, 32, clocksource_mmio_readl_up);
+-	gpt_sched_reg = evt->gpt_base + TIMER_CNT_REG(GPT_CLK_SRC);
+-	sched_clock_register(mtk_gpt_read_sched_clock, 32, rate);
++	mtk_gpt_setup(&to, GPT_CLK_SRC, TIMER_CTRL_OP_FREERUN);
++	clocksource_mmio_init(timer_of_base(&to) + TIMER_CNT_REG(GPT_CLK_SRC),
++			      node->name, timer_of_rate(&to), 300, 32,
++			      clocksource_mmio_readl_up);
++	gpt_sched_reg = timer_of_base(&to) + TIMER_CNT_REG(GPT_CLK_SRC);
++	sched_clock_register(mtk_gpt_read_sched_clock, 32, timer_of_rate(&to));
+ 
+ 	/* Configure clock event */
+-	mtk_gpt_setup(evt, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
+-	clockevents_config_and_register(&evt->dev, rate, 0x3,
++	mtk_gpt_setup(&to, GPT_CLK_EVT, TIMER_CTRL_OP_REPEAT);
++	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to), 0x3,
+ 					0xffffffff);
+ 
+-	mtk_gpt_enable_irq(evt, GPT_CLK_EVT);
++	mtk_gpt_enable_irq(&to, GPT_CLK_EVT);
+ 
+ 	return 0;
+ 
+-err_clk_disable:
+-	clk_disable_unprepare(clk);
+-err_clk_put:
+-	clk_put(clk);
+-err_irq:
+-	irq_dispose_mapping(evt->dev.irq);
+-err_mem:
+-	iounmap(evt->gpt_base);
+-	of_address_to_resource(node, 0, &res);
+-	release_mem_region(res.start, resource_size(&res));
+-err_kzalloc:
+-	kfree(evt);
+-
+-	return -EINVAL;
++deinit:
++	timer_of_cleanup(&to);
++err:
++	return ret;
+ }
+ TIMER_OF_DECLARE(mtk_mt6577, "mediatek,mt6577-timer", mtk_gpt_init);
+-- 
+1.7.9.5
 
