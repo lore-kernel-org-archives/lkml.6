@@ -2,172 +2,125 @@ Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CC0C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C481C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A84A2276A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:42:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84A2276A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 53883276A8
+	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 16:44:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="S0igsazf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53883276A8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeF1Qmr (ORCPT
+        id S1754482AbeF1QoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 12:42:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752603AbeF1Qmq (ORCPT
+        Thu, 28 Jun 2018 12:44:25 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53384 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752603AbeF1QoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 12:42:46 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5SGcvDb110324
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:42:45 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jw3ax89wn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 12:42:45 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 28 Jun 2018 12:42:44 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 28 Jun 2018 12:42:42 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5SGgfWF17957296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Jun 2018 16:42:41 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A21AB206C;
-        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1435DB2067;
-        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Jun 2018 12:42:32 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1752116C3EDF; Thu, 28 Jun 2018 09:44:48 -0700 (PDT)
-Date:   Thu, 28 Jun 2018 09:44:48 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: sched/core warning triggers on rcu torture test
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <alpine.DEB.2.21.1806261709001.19188@somnus>
- <20180626163255.GG2458@hirez.programming.kicks-ass.net>
- <20180626174826.GB3593@linux.vnet.ibm.com>
- <20180627104014.GB10102@lerouge>
- <20180627142529.GU3593@linux.vnet.ibm.com>
- <20180628163323.GB19886@lerouge>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628163323.GB19886@lerouge>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062816-0068-0000-0000-0000030FA5F5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009271; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01053619; UDB=6.00540239; IPR=6.00831542;
- MB=3.00021909; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-28 16:42:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062816-0069-0000-0000-000044D7485A
-Message-Id: <20180628164448.GL3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806280189
+        Thu, 28 Jun 2018 12:44:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180628164421euoutp017b16c9cd93c5f0534ca860de7aee51f6~8YKsv1Zw23224932249euoutp01g;
+        Thu, 28 Jun 2018 16:44:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180628164421euoutp017b16c9cd93c5f0534ca860de7aee51f6~8YKsv1Zw23224932249euoutp01g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530204261;
+        bh=lfaCIn/su4byC0JK9JB+pH8p+PBSZzzBuF4vISDuQdU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=S0igsazfnwdk2awfdwLRRWnT/tNd+XMOYkioe2q4DbWHr7Prk6+1RtS4t8EJe40kG
+         wV/jYk3aFYQB5jAdEQ4AAi16wmXQGDEx9RWyEtCZq6OJIm6tTnZ1QwARZiwnX5srmL
+         scREDTKmRXX/YqEIMe8djEzxBVlec/4BLolQYPOs=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180628164420eucas1p2fb421eca984f7259d7fc875b1b3dd587~8YKrW9hPS1087610876eucas1p2Q;
+        Thu, 28 Jun 2018 16:44:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4C.49.10409.360153B5; Thu, 28
+        Jun 2018 17:44:19 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0~8YKqlalVS3253632536eucas1p1V;
+        Thu, 28 Jun 2018 16:44:19 +0000 (GMT)
+X-AuditID: cbfec7f5-b5fff700000028a9-c7-5b3510636513
+Received: from eusync3.samsung.com ( [203.254.199.213]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 69.2F.04178.360153B5; Thu, 28
+        Jun 2018 17:44:19 +0100 (BST)
+Received: from AMDC2075.DIGITAL.local ([106.120.51.25]) by
+        eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PB1006SUL5Q0Y10@eusync3.samsung.com>;
+        Thu, 28 Jun 2018 17:44:19 +0100 (BST)
+From:   Maciej Purski <m.purski@samsung.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, Maciej Purski <m.purski@samsung.com>
+Subject: [PATCH 0/3]  Fix packed pixel modes display on MHL2
+Date:   Thu, 28 Jun 2018 18:44:00 +0200
+Message-id: <1530204243-6370-1-git-send-email-m.purski@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsWy7djPc7opAqbRBr95LG6tO8dq0XvuJJNF
+        U8dbVouNM9azWlz5+p7NonPiEnaLy7vmsFkseHmLxWLtkbvsDpwel/t6mTxmd8xk9dj+7QGr
+        x/3u40wefVtWMXp83iQXwBbFZZOSmpNZllqkb5fAlXFo/gn2glOsFdcndTM1MB5k6WLk5JAQ
+        MJFYcW0+YxcjF4eQwApGiXNTd0I5nxklzp/sZYOpurH3OFRiGaPEsrMNTCAJIYH/jBIP7+h3
+        MXJwsAloSaxpjwcJiwgoS/yduAqsnlngKpPEycvbweqFBWwkGjZ0sYLYLAKqEu0TP4Et4BVw
+        lrh4ZQ8jxDI5iZvnOplBmiUEOtgkzs87ywayQELARWLN6RyIGmGJV8e3sEPYMhKdHQeZIOxq
+        iZUvl7NA9DYwSny5e5kZImEtcfj4RbDFzAJ8EpO2TWeGmMkr0dEmBFHiIfHl71lmiL9iJV7N
+        vcg4gVFiASPDKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMAIPP3v+NcdjPv+JB1iFOBg
+        VOLhPXHFJFqINbGsuDL3EKMEB7OSCK8Qp2m0EG9KYmVValF+fFFpTmrxIUZpDhYlcd44jboo
+        IYH0xJLU7NTUgtQimCwTB6dUA2NhRpzGHmO/oq2vItWEVn35fCJB7uubrc6LvKI0RSsr2x5V
+        f/Z2mGEQtiOHZ0GVeaBe6UEWq6vpp54IzOBL2Lc/ZL140sEJgb7ro6RMXGdb77lve7K0tX11
+        7q+2DUfc39ZKMt6eK6sjzCj8qKvo9MX7R5gdznXnnvj+12yqlLP2p+ULL767IKfEUpyRaKjF
+        XFScCAD22crhvAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLJMWRmVeSWpSXmKPExsVy+t/xq7rJAqbRBhsPcVvcWneO1aL33Ekm
+        i6aOt6wWG2esZ7W48vU9m0XnxCXsFpd3zWGzWPDyFovF2iN32R04PS739TJ5zO6Yyeqx/dsD
+        Vo/73ceZPPq2rGL0+LxJLoAtissmJTUnsyy1SN8ugSvj0PwT7AWnWCuuT+pmamA8yNLFyMkh
+        IWAicWPvccYuRi4OIYEljBI3d5xmB0kICTQySbyc7dvFyMHBJqAlsaY9HiQsIqAs8XfiKrB6
+        ZoGbTBJ/z+5lBUkIC9hINGzoArNZBFQl2id+YgOxeQWcJS5e2cMIsUxO4ua5TuYJjFwLGBlW
+        MYqklhbnpucWG+oVJ+YWl+al6yXn525iBAbKtmM/N+9gvLQx+BCjAAejEg/viSsm0UKsiWXF
+        lbmHGCU4mJVEeIU4TaOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8543qIwSEkhPLEnNTk0tSC2C
+        yTJxcEo1MC5UUpk7Z91Ug/19Fl77j12+66z10+32tklJr5483/1FTNV3q/Jb3xCVnS1v5wV+
+        1y2a0mCQcnL5F76jip+e/dgvd1q6d8fXH9pcH9grDqcs4nNYq9+mF2I1q+JaRJVp46riQ+k6
+        1stvb7aW+vaSJy+42LbjVq22P7vh0yup/lk+LEtPP95ee1aJpTgj0VCLuag4EQAJNLnKEAIA
+        AA==
+X-CMS-MailID: 20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0
+References: <CGME20180628164419eucas1p1906efbe47edc243f0ddab32d194eeba0@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 06:33:24PM +0200, Frederic Weisbecker wrote:
-> On Wed, Jun 27, 2018 at 07:25:29AM -0700, Paul E. McKenney wrote:
-> > On Wed, Jun 27, 2018 at 12:40:15PM +0200, Frederic Weisbecker wrote:
-> > > On Tue, Jun 26, 2018 at 10:48:26AM -0700, Paul E. McKenney wrote:
-> > > > On Tue, Jun 26, 2018 at 06:32:55PM +0200, Peter Zijlstra wrote:
-> > > > > On Tue, Jun 26, 2018 at 06:16:04PM +0200, Anna-Maria Gleixner wrote:
-> > > > > > Hi,
-> > > > > > 
-> > > > > > during rcu torture tests (TREE04 and TREE07) I noticed, that a
-> > > > > > WARN_ON_ONCE() in sched core triggers on a recent 4.18-rc2 based
-> > > > > > kernel (6f0d349d922b ("Merge
-> > > > > > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")) as well as
-> > > > > > on a 4.17.3.
-> > > > 
-> > > > First, I am very glad that I am not the only one running rcutorture!  ;-)
-> > > > 
-> > > > > > I'm running the tests on a machine with 144 cores:
-> > > > > > 
-> > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "9*TREE07"
-> > > > > >   tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 144 --duration 120 --configs "18*TREE04"
-> > > > > > 
-> > > > > > 
-> > > > > > The warning was introduced by commit d84b31313ef8 ("sched/isolation:
-> > > > > > Offload residual 1Hz scheduler tick").
-> > > > > > 
-> > > > > > 
-> > > > > > Output looks similar for all tests I did (this one is the output of
-> > > > > > the 4.18-rc2 based kernel):
-> > > > > > 
-> > > > > > WARNING: CPU: 11 PID: 906 at kernel/sched/core.c:3138 sched_tick_remote+0xb6/0xc0
-> > > > > 
-> > > > > That's nohz_full stuff, is that a normal part of rcutorture? In any
-> > > > > case, is the one housekeeping CPU getting seriously overloaded or
-> > > > > something?
-> > > > 
-> > > > Yes, nohz_full is a normal part for rcutorture because RCU has to deal
-> > > > differently with userspace execution in the nohz_full case.
-> > > > 
-> > > > I do see this splat (at least when I don't comment it out), but I
-> > > > do share my system with others, so I could easily be overloading the
-> > > > housekeeping vCPUs due to hypervisor preemption.  I was intending to
-> > > > dig into this one once I got done consolidating RCU-bh, RCU-preempt,
-> > > > and RCU-sched at Linus's behest.
-> > > > 
-> > > > On overloading the housekeeping CPU without outside load, let's look at
-> > > > TREE04 and TREE07 separately.
-> > > > 
-> > > > TREE04 uses eight CPUs, and seven of them ("nohz_full=1-7") are nohz_full
-> > > > CPUs, and rcutorture doesn't generate all that large of a callback load.
-> > > > It looks like all 144 CPUs are used in this case (18*8), though RCU
-> > > > enforces idle periods in order to test idle/non-idle transitions.
-> > > > But was there anything else running on the machine at the time?
-> > > > 
-> > > > TREE07 uses 16 CPUs, and eight of them ("nohz_full=2-9") are nohz_full
-> > > > CPUs.  Again, it looks like all 144 CPUs are used (9*8).
-> > > > 
-> > > > I sometimes see this on TASKS03 as well, which uses two CPUs, and one of
-> > > > them ("nohz_full=1") is a nohz_full CPU.
-> > > > 
-> > > > If your system is otherwise idle, would it make sense to trace context
-> > > > switches on CPU 0 to see what it is up to?  And to do an ftrace_dump()
-> > > > and turn tracing off when the warning triggers as well?
-> > > 
-> > > Yeah you guys reported me this warning a few times ago. I didn't manage to reproduce
-> > > it because I fought and failed with a high NR_CPUS machine. But apparently 8 CPUs
-> > > are enough. Let me try that with TREE04.
-> > 
-> > Looking forward to hearing what you find!
-> 
-> Please check "[PATCH] sched/nohz: Skip remote tick on idle task entirely" which I
-> just posted. In the hope that the warning didn't trigger for another reason on
-> your testings.
+Hi all,
 
-Very cool, thank you!  Firing up rcutorture with this now.
+this patchset is a next attempt to fix packed pixel modes display on MHL2. It appeared, that
+the current implementation does not work well with every dongle. Thanks to bigger number
+of test devices I managed to prepare a patchset, which should finally fix display
+of packed pixel modes on MHL2, while not breaking it on MHL3.
 
-							Thanx, Paul
+Best regards,
+
+Maciej Purski
+
+Maciej Purski (3):
+  drm/bridge/sii8620: Send AVI infoframe in all MHL versions
+  drm/bridge/sii8620: Fix display of packed pixel modes
+  drm/bridge/sii8620: Fix link mode selection
+
+ drivers/gpu/drm/bridge/sil-sii8620.c | 86 +++++++++++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 31 deletions(-)
+
+-- 
+2.7.4
 
