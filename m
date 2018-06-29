@@ -2,96 +2,100 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 373BAC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE26C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A7D27EE7
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:28:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMl0AFmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A7D27EE7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DB4BA27EED
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB4BA27EED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755439AbeF2M2Y (ORCPT
+        id S1755444AbeF2Maj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 08:28:24 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:54673 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeF2M2W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:28:22 -0400
-Received: by mail-it0-f65.google.com with SMTP id 76-v6so2578155itx.4
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 05:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zZXIzxLHY+PxFtvIxwDDBdxl9u2SOq1gwXmLqtCUh0c=;
-        b=ZMl0AFmEMT5DLNsPG571x7IFpqjWNE2+dzP52e9hHUWOFvCm4hoSl+64t642kHaW4h
-         gBSz5p5pkOgDNlz3aUt7t2ewBRSmiPFeHnkGVyvqpzJ/+HMmfXVJkSwo6O6uwC89eZLA
-         GQfed8Hhqja900f2THTTdz9isAZYwIMysT+ik=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zZXIzxLHY+PxFtvIxwDDBdxl9u2SOq1gwXmLqtCUh0c=;
-        b=D2sJAWU1+37UTdZnyQosfq2RX63HfEjsrdfwkGYHyk01bHoBKvcbmKPm/7/pi57P1t
-         qwvdHo2zYOdekevGlvoZJm/uosBUYyl8sT4BYhJPfekLYRWF6gfYjfxm9awxEqZEv9kZ
-         pEafKfkBJcxnWAvooaPuSAP7InPV4WVlN14GEAX2khCZW0i8Pbx05nw5T89S2XoMa8ZO
-         fdu/brVALA59zrr+oe3b+HECgCTKUS78ckZ5eUBsajEFeYl7NNwYr65DHW7DrINuopLJ
-         bVjNF+37z+EzLk3d+Gt1MIapbwvqzCBZpP5/OMGk1GS8Y8m+QkCOVsDv+/hVxkQRaFju
-         LNow==
-X-Gm-Message-State: APt69E2GYsrrRoFQkKchOUljrtlOr+AeX4wrmaYyNYhbFxxSSZ7eoeAG
-        OeYvxk0Mx67AR71IA0La6OZ2P/tCW+Cl9G75Hu4PMg==
-X-Google-Smtp-Source: AAOMgpezcHzc6pvKgedHj4NMQvJ4ucHP0rd+OXsnVtwlj2OzTe3WAFGGeAzA4iqShHokgoR9lAesxQnu7qXsXKAUv4M=
-X-Received: by 2002:a24:79c3:: with SMTP id z186-v6mr1245793itc.38.1530275301896;
- Fri, 29 Jun 2018 05:28:21 -0700 (PDT)
+        Fri, 29 Jun 2018 08:30:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54018 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752260AbeF2Mah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 08:30:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 05:30:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="70997605"
+Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.88])
+  by orsmga002.jf.intel.com with ESMTP; 29 Jun 2018 05:30:32 -0700
+Date:   Fri, 29 Jun 2018 15:30:30 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        Struk@linux.intel.com, Tadeusz <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v8] tpm: separate cmd_ready/go_idle from runtime_pm
+Message-ID: <20180629123029.GA21735@linux.intel.com>
+References: <20180628151333.14368-1-tomas.winkler@intel.com>
+ <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
 MIME-Version: 1.0
-References: <20180623045954.6729-1-manivannan.sadhasivam@linaro.org> <20180623045954.6729-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180623045954.6729-3-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 29 Jun 2018 14:28:10 +0200
-Message-ID: <CACRpkdaedj9bgadowSK3Qa2_76wFpsLAv1BdmzvLFcfsNF0HBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: actions: Add interrupt properties to
- pinctrl node for S900
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        Jeff Chen <jeff.chen@actions-semi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 23, 2018 at 7:00 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Fri, Jun 29, 2018 at 01:35:52PM +0300, Jarkko Sakkinen wrote:
+> On Thu, 2018-06-28 at 18:13 +0300, Tomas Winkler wrote:
+> > Fix tpm ptt initialization error:
+> > tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
+> > 
+> > We cannot use go_idle cmd_ready commands via runtime_pm handles
+> > as with the introduction of localities this is no longer an optional
+> > feature, while runtime pm can be not enabled.
+> > Though cmd_ready/go_idle provides a power saving, it's also a part of
+> > TPM2 protocol and should be called explicitly.
+> > This patch exposes cmd_read/go_idle via tpm class ops and removes
+> > runtime pm support as it is not used by any driver.
+> > 
+> > When calling from nested context always use both flags:
+> > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
+> > tpm spaces and locality request recursive calls to tpm_transmit().
+> > TPM_TRANSMIT_RAW should never be used standalone as it will fail
+> > on double locking. While TPM_TRANSMIT_UNLOCKED standalone should be
+> > called from non-recursive locked contexts.
+> > 
+> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
+> > streamline tpm_try_transmit code.
+> > 
+> > tpm_crb no longer needs own power saving functions and can drop using
+> > tpm_pm_suspend/resume.
+> > 
+> > This patch cannot be really separated from the locality fix.
+> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> > locality)
+> > 
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
+> > locality)
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> 
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> Add interrupt properties to pinctrl node for Actions Semi S900 SoC.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Noticed that your author field is malformed (Should be "Tomas Winkler"
+instead of "Winkler, Tomas") but I'll fix that.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Please take this through the ARM SoC tree.
-
-Yours,
-Linus Walleij
+/Jarkko
