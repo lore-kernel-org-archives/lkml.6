@@ -2,91 +2,83 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495A3C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BC6C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC0127C9C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC0127C9C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=candelatech.com
+	by mail.kernel.org (Postfix) with ESMTP id B392727CB8
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:04:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B392727CB8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936550AbeF2TBJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:01:09 -0400
-Received: from mail2.candelatech.com ([208.74.158.173]:33460 "EHLO
-        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932377AbeF2TBH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:01:07 -0400
-Received: from [192.168.100.149] (firewall.candelatech.com [50.251.239.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail2.candelatech.com (Postfix) with ESMTPSA id 78D4440A626;
-        Fri, 29 Jun 2018 12:01:04 -0700 (PDT)
-Subject: Re: [PATCH] cfg80211: use IDA to allocate wiphy indeces
-To:     Brian Norris <briannorris@chromium.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-References: <20180621012945.185705-1-briannorris@chromium.org>
- <1530258140.3481.4.camel@sipsolutions.net>
- <20180629184847.GA251207@ban.mtv.corp.google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-From:   Ben Greear <greearb@candelatech.com>
-Organization: Candela Technologies
-Message-ID: <278cfd54-204b-2ff7-a8d2-575a01151667@candelatech.com>
-Date:   Fri, 29 Jun 2018 12:01:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.0
+        id S1755359AbeF2TEq (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:04:46 -0400
+Received: from mga17.intel.com ([192.55.52.151]:21610 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753127AbeF2TEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 15:04:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 12:04:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
+   d="scan'208";a="51547228"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Jun 2018 12:04:28 -0700
+Date:   Fri, 29 Jun 2018 12:03:48 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 2/4] x86/split_lock: Align x86_capability to unsigned
+ long to avoid split locked access
+Message-ID: <20180629190346.GO18979@romley-ivt3.sc.intel.com>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-3-git-send-email-fenghua.yu@intel.com>
+ <ae0b8cb1-a8a9-f0ef-3c20-f4fe4b9b6f4a@intel.com>
+ <alpine.DEB.2.21.1806291824010.1595@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180629184847.GA251207@ban.mtv.corp.google.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806291824010.1595@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 11:48 AM, Brian Norris wrote:
-> Hi Johannes,
->
-> On Fri, Jun 29, 2018 at 09:42:20AM +0200, Johannes Berg wrote:
->> On Wed, 2018-06-20 at 18:29 -0700, Brian Norris wrote:
->>> It's annoying to see the phy index increase arbitrarily, just because a
->>> device got removed and re-probed (e.g., during a device reset, or due to
->>> probe testing). We can use the in-kernel index allocator for this,
->>> instead of just an increasing counter.
->>
->> I can understand that it's somewhat annoying to people, but it was
->> actually done on purpose to avoid userspace talking to the wrong device.
->
-> Hmm, interesting. I'm not dead-set on this patch, so if there are good
-> reasons to reject it, I won't fret.
->
->> Imagine you have some userspace process running that has remembered the
->> wiphy index to use it to talk to nl80211, and now underneath the device
->> goes away and reappears. This process should understand that situation,
->> and handle it accordingly, rather than being blind to the reset.
->
-> How is this different from the wlan (netdev) device naming? We allow
-> 'wlan0' to leave and return under the same name. Isn't the right answer
-> that user space should be listening for udev and/or netlink events?
->
-> Brian
->
+On Fri, Jun 29, 2018 at 06:35:39PM +0200, Thomas Gleixner wrote:
+> On Fri, 29 Jun 2018, Dave Hansen wrote:
+> 
+> Plus what enforces proper alignment for the other capability related
+> u32 arrays? 
 
-For what it is worth, we use udev to rename the phyX to wiphyZ devices based on
-their MAC address, and that seems to work OK.
+Do you want me to enforce unsigned long alignment for all that are used by
+locked BTS/BTR? There are quite a few/many those places. x86_capability
+is one that is found in boot time. I tried to find split lock issues
+in (very limited) tests; but so far only find the issue in x86_capability
+in the tests.
 
-I can't think of any reason why user-space would need the phy index number
-to increase as modules are loaded/unloaded though.
+Or you think we can push the patches upstream to allow broad test to find
+and fix the issues?
 
-Thanks,
-Ben
+Thanks.
 
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+-Fenghua
+
 
