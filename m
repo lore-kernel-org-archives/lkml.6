@@ -2,140 +2,179 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A0CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1E6C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2840F208EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:45:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SXjzkGpl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2840F208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 387F127F72
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387F127F72
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753731AbeF2NpN (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:45:13 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:49522 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965409AbeF2NpK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:45:10 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5TDcgMA105643;
-        Fri, 29 Jun 2018 13:43:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=IYnfXID1scputwOuPyQwoT7N16OKsKGAjw0dZIx9kKk=;
- b=SXjzkGplFiSMl2Deo9Q1oHPovy+vsI2ybWnFVg/S7TaKU9o15C8fepenZ69PW6aBQh8U
- +0HeSaOHgWiteM1ySKp+TFvZ1DReRKhIHrexsvQd1odAWaP9Npu/Z9CLptVgAvWltNl0
- atbTd9Qr3MTPnJEtPQLMg3+Ufus1LW1+cEkPYtEEvoAhZzXf2FW3vNUZ3k67k+GxlKgJ
- wTBHmEowWLvoh8BsFW1RR5yxyZdERpm7u/YMOmoPkbZxt0d4KiGC4f1564jQnN4Sp9JZ
- 8p0F+l79Vvuon2hAicTN4qpZvPRZbP8eKk6EfwLEitKChMJSuZA2MuSKs4m1U6nohSS7 GA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jukmu6n9b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Jun 2018 13:43:27 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5TDhQqj013812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Jun 2018 13:43:26 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5TDhNvV004644;
-        Fri, 29 Jun 2018 13:43:23 GMT
-Received: from mwanda (/197.157.0.49)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 29 Jun 2018 06:43:22 -0700
-Date:   Fri, 29 Jun 2018 16:42:57 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Potapenko <glider@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Christoph Lameter <cl@linux.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-sparse@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        smatch@vger.kernel.org
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-ID: <20180629134257.ci5ninozkh2ni6wd@mwanda>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <20180628105057.GA26019@e103592.cambridge.arm.com>
- <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
- <20180629110419.GC26019@e103592.cambridge.arm.com>
- <20180629112613.7i4xesjyxolc63gu@ltop.local>
+        id S966098AbeF2NsJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:48:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965397AbeF2NsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 09:48:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8FE2AFE8;
+        Fri, 29 Jun 2018 13:48:06 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 15:48:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: make DEFERRED_STRUCT_PAGE_INIT explicitly depend on
+ SPARSEMEM
+Message-ID: <20180629134806.GE5963@dhcp22.suse.cz>
+References: <1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629112613.7i4xesjyxolc63gu@ltop.local>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8938 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=601
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806290147
+In-Reply-To: <1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 01:26:14PM +0200, Luc Van Oostenryck wrote:
-> On Fri, Jun 29, 2018 at 12:04:22PM +0100, Dave Martin wrote:
-> > 
-> > Can sparse be hacked to identify pointer subtractions where the pointers
-> > are cannot be statically proved to point into the same allocation?
+On Fri 29-06-18 16:35:08, Mike Rapoport wrote:
+> The deferred memory initialization relies on section definitions, e.g
+> PAGES_PER_SECTION, that are only available when CONFIG_SPARSEMEM=y on most
+> architectures.
 > 
-> sparse only see the (deatils of) the function it analyses and all
-> visible declarations, nothing more.
+> Initially DEFERRED_STRUCT_PAGE_INIT depended on explicit
+> ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT configuration option, but since the
+> commit 2e3ca40f03bb13709df4 ("mm: relax deferred struct page requirements")
+> this requirement was relaxed and now it is possible to enable
+> DEFERRED_STRUCT_PAGE_INIT on architectures that support DISCONTINGMEM and
+> NO_BOOTMEM which causes build failures.
 > 
-> It would be more a job for smatch which do global analysis.
-> But to identify such subtractions yu must already have a (good)
-> pointer alias analysis which I don't think smatch do (but I can
-> be wrong, Dan & smatch's ml added in CC).
+> For instance, setting SMP=y and DEFERRED_STRUCT_PAGE_INIT=y on arc causes
+> the following build failure:
+> 
+>   CC      mm/page_alloc.o
+> mm/page_alloc.c: In function 'update_defer_init':
+> mm/page_alloc.c:321:14: error: 'PAGES_PER_SECTION'
+> undeclared (first use in this function); did you mean 'USEC_PER_SEC'?
+>       (pfn & (PAGES_PER_SECTION - 1)) == 0) {
+>               ^~~~~~~~~~~~~~~~~
+>               USEC_PER_SEC
+> mm/page_alloc.c:321:14: note: each undeclared
+> identifier is reported only once for each function it appears in
+> In file included from include/linux/cache.h:5:0,
+>                  from include/linux/printk.h:9,
+>                  from include/linux/kernel.h:14,
+>                  from
+> include/asm-generic/bug.h:18,
+>                  from
+> arch/arc/include/asm/bug.h:32,
+>                  from include/linux/bug.h:5,
+>                  from include/linux/mmdebug.h:5,
+>                  from include/linux/mm.h:9,
+>                  from mm/page_alloc.c:18:
+> mm/page_alloc.c: In function 'deferred_grow_zone':
+> mm/page_alloc.c:1624:52: error:
+> 'PAGES_PER_SECTION' undeclared (first use in this function); did you mean
+> 'USEC_PER_SEC'?
+>   unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+>                                                     ^
+> include/uapi/linux/kernel.h:11:47: note: in
+> definition of macro '__ALIGN_KERNEL_MASK'
+>  #define __ALIGN_KERNEL_MASK(x, mask) (((x) + (mask)) & ~(mask))
+>                                                ^~~~
+> include/linux/kernel.h:58:22: note: in expansion
+> of macro '__ALIGN_KERNEL'
+>  #define ALIGN(x, a)  __ALIGN_KERNEL((x), (a))
+>                       ^~~~~~~~~~~~~~
+> mm/page_alloc.c:1624:34: note: in expansion of
+> macro 'ALIGN'
+>   unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+>                                   ^~~~~
+> In file included from
+> include/asm-generic/bug.h:18:0,
+>                  from
+> arch/arc/include/asm/bug.h:32,
+>                  from include/linux/bug.h:5,
+>                  from include/linux/mmdebug.h:5,
+>                  from include/linux/mm.h:9,
+>                  from mm/page_alloc.c:18:
+> mm/page_alloc.c: In function
+> 'free_area_init_node':
+> mm/page_alloc.c:6379:50: error:
+> 'PAGES_PER_SECTION' undeclared (first use in this function); did you mean
+> 'USEC_PER_SEC'?
+>   pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+>                                                   ^
+> include/linux/kernel.h:812:22: note: in definition
+> of macro '__typecheck'
+>    (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+>                       ^
+> include/linux/kernel.h:836:24: note: in expansion
+> of macro '__safe_cmp'
+>   __builtin_choose_expr(__safe_cmp(x, y), \
+>                         ^~~~~~~~~~
+> include/linux/kernel.h:904:27: note: in expansion
+> of macro '__careful_cmp'
+>  #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
+>                            ^~~~~~~~~~~~~
+> mm/page_alloc.c:6379:29: note: in expansion of
+> macro 'min_t'
+>   pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+>                              ^~~~~
+> include/linux/kernel.h:836:2: error: first
+> argument to '__builtin_choose_expr' not a constant
+>   __builtin_choose_expr(__safe_cmp(x, y), \
+>   ^
+> include/linux/kernel.h:904:27: note: in expansion
+> of macro '__careful_cmp'
+>  #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
+>                            ^~~~~~~~~~~~~
+> mm/page_alloc.c:6379:29: note: in expansion of
+> macro 'min_t'
+>   pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+>                              ^~~~~
+> scripts/Makefile.build:317: recipe for target
+> 'mm/page_alloc.o' failed
+> 
+> Let's make the DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM as
+> the systems that support DISCONTIGMEM do not seem to have that huge
+> amounts of memory that would make DEFERRED_STRUCT_PAGE_INIT relevant.
 
-That would be hard to manage.  Maybe in a year from now...
+OK, I do not see any reasonable large machine would use DISCONTIGMEM.
+So this makes sense to me.
 
-Pointer math errors tend to get caught pretty quick because they're on
-the success path so I don't imagine there are huge numbers of bugs.
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-regards,
-dan carpenter
+Acked-by: Michal Hocko <mhocko@suse.com>
 
+> ---
+>  mm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index ce95491..94af022 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -635,7 +635,7 @@ config DEFERRED_STRUCT_PAGE_INIT
+>  	bool "Defer initialisation of struct pages to kthreads"
+>  	default n
+>  	depends on NO_BOOTMEM
+> -	depends on !FLATMEM
+> +	depends on SPARSEMEM
+>  	depends on !NEED_PER_CPU_KM
+>  	help
+>  	  Ordinarily all struct pages are initialised during early boot in a
+> -- 
+> 2.7.4
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
