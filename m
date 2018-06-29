@@ -6,63 +6,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD11C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DA4C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E408820CAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D8E623DDF
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="osPCwBJF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E408820CAA
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="bKNNmnMO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8E623DDF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936880AbeF2T2i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:28:38 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:38964 "EHLO
+        id S936950AbeF2T2n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:28:43 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35487 "EHLO
         mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935133AbeF2TZw (ORCPT
+        with ESMTP id S934665AbeF2TZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:25:52 -0400
-Received: by mail-qt0-f194.google.com with SMTP id q12-v6so4910570qtp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:52 -0700 (PDT)
+        Fri, 29 Jun 2018 15:25:50 -0400
+Received: by mail-qt0-f194.google.com with SMTP id z6-v6so8839338qti.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=bxA6cMGXvEe6N+gMDPkoHZMx5A3XRvMVyzrtT6Xehm8=;
-        b=osPCwBJFdNZ44qSNyc87CIACn0BK8abMTzPVHxQaQVwTZpAdG9xNtnk4fFBysNshXN
-         WkGWFR2+QsyK61IevlqQiVhXovrYf1GQkfuTPIhnz/+qBNXY4lE1jJC7y8LOe3VfNlWC
-         MYYkf0xrFItsXhsB8cwNO/h600KWLcE43zOmZZ+U0lXGiEPBFSGujSPuauVACHAB6aOL
-         FmzL9OW8f+CrKvGPsc0whleRj3klwO9BhOfuq7ydVKGwQZ/GdhIpq4T3hMK7emH+SKwZ
-         Pf3MBJO4jSbCBDYOHx0lArBBMPDwlfJcJktEHf3dnsze4pKRnrutHg96djNQ0He87TWH
-         yabw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bsgWu1TKdn1eFx08H/mtF5/g/DuCTuFzEleLnBIeP18=;
+        b=bKNNmnMOOQdqG9gVduE+k1l3mWUMPXmSaZVJDv3pLGhccaPP8MhLjvFuqQoZXHSivJ
+         vlPeVas7YeIhB0hpW1zwsGtNkPEiYnWTmWgDPrnCNYRl/neGHge8Hd49yVuC0slHU4u1
+         axe2yloTa3GVzwXHo2IRWaeD8W24mkxhpNvXBR6O+S1lTdYEaE329278sgOQrBoVAglb
+         R/j7MjH3ptM/cF4XGJBnZ9LXFzbkkjVnaFlbQKYg2tmukfKLPdBYMQxx+TDanTciwZjb
+         ZP0j4hZCj1rvCCpclcN6dvbcf3qqQvhLG4+7069mulACSzSo8DXGXucj0D1+/9b94H5V
+         qqKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bxA6cMGXvEe6N+gMDPkoHZMx5A3XRvMVyzrtT6Xehm8=;
-        b=hKvOTOE+wM2Xxmrk7F9+OtzM/HpVZ045c3ybuGswdqxKAJyOos9cP36JGAF6XapNVY
-         Y3NqHSzQoRa7EibTwCyL4mBI2RuPqWWanFVD1mhMku7soyaWjjhwFvtvakez9iDVETlD
-         F3zmGNqFQZj0qy1cplmSi2zb06pp4qHhb94cjAp6PFab4N41rDfg9+25mq8giFepvwB4
-         HUHMb6++hRvaz7jutDdsYk9nzmg45rhV5fAW0YECgZRWpYdDuJow2p/y0Xgy58inNtJp
-         NZoANgbbFPsfn6x0XRI+iOrqGl2RziBuZQQdY07zuWXWRhcx0NeMOKN1vKIOJeXda8+s
-         N/Jw==
-X-Gm-Message-State: APt69E2/VgosTSVLcG0RGQIoX4OdBZNxqboX0uAdc2hhKRImtym37AIs
-        VW9nNQN67gwsuYp0HaJCYnRQSQ==
-X-Google-Smtp-Source: AAOMgpfcm8+ccIp4MLlldfNwIupoxvAn4CLkzxLd35XfWa5AlCYoDKbz5HRSo1AI8zx483boaw3LLA==
-X-Received: by 2002:a0c:da90:: with SMTP id z16-v6mr6532386qvj.55.1530300352090;
-        Fri, 29 Jun 2018 12:25:52 -0700 (PDT)
+        bh=bsgWu1TKdn1eFx08H/mtF5/g/DuCTuFzEleLnBIeP18=;
+        b=SdEkJQyQ7YcLqhJbew91E0Dw0ulY+lLLAemft3dpt0Af31DSbfjxWRlwjBBvRQaZEY
+         JeqE2AUrXzZ8oMaq9r2K0pksrOajXRdBnqim4jykt/ffCdmI39foCFnIrLtuuYoG5t6c
+         VHhPeeVHIgSwGDjZpUEW0yAvnnnT8Yyg34eEzMwevMJPHoD03PR41JGgPk2sr8TZa6QX
+         byXD5BSXSkSxrtkI4T5YHqPAKMfnZqdD5wQt58iZEg2tiyVKuXvFwHGrrCiWvwyZOuFo
+         8vSFJVpg3d6d0tjOXNpwvQSNVzDKOooazgYgYQZkKri+FycnhNuWdJ3TmEQiSM9g1EaW
+         IvGA==
+X-Gm-Message-State: APt69E2xmquI1OxeXuxDrn2mICVQnJec2LxGONlCC7aUeKt0TyFI3+V/
+        lEz6Kavxmk152NlYSdfoYOneRg==
+X-Google-Smtp-Source: AAOMgpc/PJoqOA+brX97+sYIjJ6l5bw6SD2L8aHO0BcpjDIRbsUHpQUNcakbB9wa7WBftmUJUrosYA==
+X-Received: by 2002:ac8:367:: with SMTP id w39-v6mr15090245qtg.334.1530300349382;
+        Fri, 29 Jun 2018 12:25:49 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm4122675qth.73.2018.06.29.12.25.51
+        by smtp.gmail.com with ESMTPSA id z23-v6sm6278893qki.16.2018.06.29.12.25.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 12:25:51 -0700 (PDT)
+        Fri, 29 Jun 2018 12:25:48 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/14] swap,blkcg: issue swap io with the appropriate context
-Date:   Fri, 29 Jun 2018 15:25:33 -0400
-Message-Id: <20180629192542.26649-6-josef@toxicpanda.com>
+Cc:     Josef Bacik <jbacik@fb.com>
+Subject: [PATCH 03/14] blk-cgroup: allow controllers to output their own stats
+Date:   Fri, 29 Jun 2018 15:25:31 -0400
+Message-Id: <20180629192542.26649-4-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180629192542.26649-1-josef@toxicpanda.com>
 References: <20180629192542.26649-1-josef@toxicpanda.com>
@@ -71,87 +72,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Josef Bacik <jbacik@fb.com>
 
-For backcharging we need to know who the page belongs to when swapping
-it out.  We don't worry about things that do ->rw_page (zram etc) at the
-moment, we're only worried about pages that actually go to a block
-device.
+blk-iolatency has a few stats that it would like to print out, and
+instead of adding a bunch of crap to the generic code just provide a
+helper so that controllers can add stuff to the stat line if they want
+to.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Hide it behind a boot option since it changes the output of io.stat from
+normal, and these stats are only interesting to developers.
+
 Signed-off-by: Josef Bacik <jbacik@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- block/bio.c         | 24 ++++++++++++++++++++++++
- include/linux/bio.h |  7 +++++++
- mm/page_io.c        |  1 +
- 3 files changed, 32 insertions(+)
+ block/blk-cgroup.c         | 47 +++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/blk-cgroup.h |  3 +++
+ 2 files changed, 47 insertions(+), 3 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 57c4b1986e76..c77fe1b4caa8 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -2005,6 +2005,30 @@ EXPORT_SYMBOL(bioset_create);
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index eb85cb87c40f..7dc6f05cc44b 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -50,6 +50,8 @@ static struct blkcg_policy *blkcg_policy[BLKCG_MAX_POLS];
  
- #ifdef CONFIG_BLK_CGROUP
+ static LIST_HEAD(all_blkcgs);		/* protected by blkcg_pol_mutex */
  
-+#ifdef CONFIG_MEMCG
-+/**
-+ * bio_associate_blkcg_from_page - associate a bio with the page's blkcg
-+ * @bio: target bio
-+ * @page: the page to lookup the blkcg from
-+ *
-+ * Associate @bio with the blkcg from @page's owning memcg.  This works like
-+ * every other associate function wrt references.
-+ */
-+int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
-+{
-+	struct cgroup_subsys_state *blkcg_css;
++static bool blkcg_debug_stats = false;
 +
-+	if (unlikely(bio->bi_css))
-+		return -EBUSY;
-+	if (!page->mem_cgroup)
-+		return 0;
-+	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
-+				     &io_cgrp_subsys);
-+	bio->bi_css = blkcg_css;
-+	return 0;
-+}
-+#endif /* CONFIG_MEMCG */
-+
- /**
-  * bio_associate_blkcg - associate a bio with the specified blkcg
-  * @bio: target bio
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f2f3f1428e81..eef1e8877048 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -545,6 +545,13 @@ do {						\
- #define bio_dev(bio) \
- 	disk_devt((bio)->bi_disk)
+ static bool blkcg_policy_enabled(struct request_queue *q,
+ 				 const struct blkcg_policy *pol)
+ {
+@@ -954,13 +956,25 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
  
-+#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
-+int bio_associate_blkcg_from_page(struct bio *bio, struct page *page);
-+#else
-+static inline int bio_associate_blkcg_from_page(struct bio *bio,
-+						struct page *page) {  return 0; }
-+#endif
+ 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
+ 		const char *dname;
++		char *buf;
+ 		struct blkg_rwstat rwstat;
+ 		u64 rbytes, wbytes, rios, wios;
++		size_t size = seq_get_buf(sf, &buf), off = 0;
++		int i;
++		bool has_stats = false;
+ 
+ 		dname = blkg_dev_name(blkg);
+ 		if (!dname)
+ 			continue;
+ 
++		/*
++		 * Hooray string manipulation, count is the size written NOT
++		 * INCLUDING THE \0, so size is now count+1 less than what we
++		 * had before, but we want to start writing the next bit from
++		 * the \0 so we only add count to buf.
++		 */
++		off += scnprintf(buf+off, size-off, "%s ", dname);
 +
- #ifdef CONFIG_BLK_CGROUP
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
- int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index a552cb37e220..aafd19ec1db4 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -339,6 +339,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 		goto out;
+ 		spin_lock_irq(blkg->q->queue_lock);
+ 
+ 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
+@@ -975,9 +989,33 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 
+ 		spin_unlock_irq(blkg->q->queue_lock);
+ 
+-		if (rbytes || wbytes || rios || wios)
+-			seq_printf(sf, "%s rbytes=%llu wbytes=%llu rios=%llu wios=%llu\n",
+-				   dname, rbytes, wbytes, rios, wios);
++		if (rbytes || wbytes || rios || wios) {
++			has_stats = true;
++			off += scnprintf(buf+off, size-off,
++					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu",
++					 rbytes, wbytes, rios, wios);
++		}
++
++		if (!blkcg_debug_stats)
++			goto next;
++
++		for (i = 0; i < BLKCG_MAX_POLS; i++) {
++			struct blkcg_policy *pol = blkcg_policy[i];
++			size_t written;
++
++			if (!blkg->pd[i] || !pol->pd_stat_fn)
++				continue;
++
++			written = pol->pd_stat_fn(blkg->pd[i], buf+off, size-off);
++			if (written)
++				has_stats = true;
++			off += written;
++		}
++next:
++		if (has_stats) {
++			off += scnprintf(buf+off, size-off, "\n");
++			seq_commit(sf, off);
++		}
  	}
- 	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
-+	bio_associate_blkcg_from_page(bio, page);
- 	count_swpout_vm_event(page);
- 	set_page_writeback(page);
- 	unlock_page(page);
+ 
+ 	rcu_read_unlock();
+@@ -1547,3 +1585,6 @@ void blkcg_policy_unregister(struct blkcg_policy *pol)
+ 	mutex_unlock(&blkcg_pol_register_mutex);
+ }
+ EXPORT_SYMBOL_GPL(blkcg_policy_unregister);
++
++module_param(blkcg_debug_stats, bool, 0644);
++MODULE_PARM_DESC(blkcg_debug_stats, "True if you want debug stats, false if not");
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index 69aa71dc0c04..b41292726c0f 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -148,6 +148,8 @@ typedef void (blkcg_pol_online_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_offline_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_free_pd_fn)(struct blkg_policy_data *pd);
+ typedef void (blkcg_pol_reset_pd_stats_fn)(struct blkg_policy_data *pd);
++typedef size_t (blkcg_pol_stat_pd_fn)(struct blkg_policy_data *pd, char *buf,
++				      size_t size);
+ 
+ struct blkcg_policy {
+ 	int				plid;
+@@ -167,6 +169,7 @@ struct blkcg_policy {
+ 	blkcg_pol_offline_pd_fn		*pd_offline_fn;
+ 	blkcg_pol_free_pd_fn		*pd_free_fn;
+ 	blkcg_pol_reset_pd_stats_fn	*pd_reset_stats_fn;
++	blkcg_pol_stat_pd_fn		*pd_stat_fn;
+ };
+ 
+ extern struct blkcg blkcg_root;
 -- 
 2.14.3
 
