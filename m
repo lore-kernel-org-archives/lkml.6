@@ -2,134 +2,149 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E4EC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02464C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A2A257BF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A2A257BF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A54C027B79
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:37:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPEOEjwB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54C027B79
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeF2HfE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:35:04 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:57570 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753303AbeF2HfD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 03:35:03 -0400
-Received: by mail-it0-f70.google.com with SMTP id 13-v6so1072997itl.7
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 00:35:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=mcyC56Flf4sGEh6kZOFTZrpUsbU9Ut1dNmifoHZp1jw=;
-        b=Tg34kFLjjz37e43B8LOlzg3mVTK+sPJtK6KNzj544sbpmSlYtlKsH2S5ScSd8qNY91
-         L0bcmRL35CqNVP4LTYQ4He3t58Vu9DMOJEQJAozAGNd14vMRHB3kealvAOdTIah1qfa/
-         50qDW96DdL3QDLclQF9L8ZkYZ80YbVPVjMRVGOcJnvex8k2JX8LoD2zopQbx0T/LsTyY
-         qe25K6oGu8EfhzmmJKnzr/7lnQyfUNWdvpujiCX1E5YN8FbazBdot80pyoJSUB0PmlbU
-         Drzr4dxEL+byPjbCdBO7+SCuXSTkveUkwuLQpjsZIew+O6j2gUYumsorg72ayhSkqM9I
-         2xLQ==
-X-Gm-Message-State: APt69E0jShqBy529roMNhlPhVz2XdGP2FToDg7bXNHeo1mjBL/F6t6oJ
-        EtKDSzNV3sYoMvKTsX9EZ2AD1BeclB/Jg6uQczgABmwWIFqM
-X-Google-Smtp-Source: AAOMgpfG1B6BtFwXBOtNpaETB4GP15pCdGZ+1a6xEjcGZPS0JY1txfgtefyGmC8nY4YPOoknbzqIn1GLUN5BIsd0upNkr97Gu4cw
+        id S933267AbeF2HhT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:37:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752082AbeF2HhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 03:37:17 -0400
+Received: from localhost (unknown [122.167.66.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B00F327A88;
+        Fri, 29 Jun 2018 07:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530257836;
+        bh=SKF0zyKxp2RgYDUsXa/g9yEkf9UDEEXNxyixbvib1B0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZPEOEjwBpYdzd6313DbHuIu9JpTbldLsLak0+LcMKDxGba+fPFRGe50rdYt76LZDW
+         V+tAzl2DauNoDN0Vf+Ftep1XBXm7zQ1NgUP20uTZgmhmpk/+7fjLJ2hnYaiwoAmi5K
+         NqPYjjpZUIRTMYbosmBsm6IORC6Nv5If6Rv/Iaww=
+Date:   Fri, 29 Jun 2018 13:07:07 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Andrea Merello <andrea.merello@gmail.com>
+Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
+        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Subject: Re: [PATCH v3 4/5] dmaengine: xilinx_dma: autodetect whether the HW
+ supports scatter-gather
+Message-ID: <20180629073707.GZ22377@vkoul-mobl>
+References: <20180625092724.22164-1-andrea.merello@gmail.com>
+ <20180625092724.22164-4-andrea.merello@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b9d4:: with SMTP id j203-v6mr5300750iof.84.1530257702408;
- Fri, 29 Jun 2018 00:35:02 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 00:35:02 -0700
-In-Reply-To: <0000000000004a5d64056fc140c0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c45ecf056fc2e26c@google.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in ep_item_poll
-From:   syzbot <syzbot+57727883dbad76db2ef0@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180625092724.22164-4-andrea.merello@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On 25-06-18, 11:27, Andrea Merello wrote:
+> The AXIDMA and CDMA HW can be either direct-access or scatter-gather
+> version. These are SW incompatible.
+> 
+> The driver can handle both version: a DT property was used to
+                                ^^^^
+versions
 
-HEAD commit:    90368a37fbbe Merge tag 'printk-for-4.18-rc3' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11edd588400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a63be0c83e84d370
-dashboard link: https://syzkaller.appspot.com/bug?extid=57727883dbad76db2ef0
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12e46d14400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16867eb0400000
+> tell the driver whether to assume the HW is is scatter-gather mode.
+                                           ^^^^^
+is in?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+57727883dbad76db2ef0@syzkaller.appspotmail.com
+> 
+> This patch makes the driver to autodetect this information. The DT
+> property is not required anymore.
+> 
+> No changes for VDMA.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> ---
+> Changes in v2:
+> 	- autodetect only in !VDMA case
+> Changes in v3:
+> 	- cc DT maintainers/ML
+> ---
+>  drivers/dma/xilinx/xilinx_dma.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+> index 7f0ab904b749..43fcc71ff287 100644
+> --- a/drivers/dma/xilinx/xilinx_dma.c
+> +++ b/drivers/dma/xilinx/xilinx_dma.c
+> @@ -86,6 +86,7 @@
+>  #define XILINX_DMA_DMASR_DMA_DEC_ERR		BIT(6)
+>  #define XILINX_DMA_DMASR_DMA_SLAVE_ERR		BIT(5)
+>  #define XILINX_DMA_DMASR_DMA_INT_ERR		BIT(4)
+> +#define XILINX_DMA_DMASR_SG_MASK		BIT(3)
+>  #define XILINX_DMA_DMASR_IDLE			BIT(1)
+>  #define XILINX_DMA_DMASR_HALTED		BIT(0)
+>  #define XILINX_DMA_DMASR_DELAY_MASK		GENMASK(31, 24)
+> @@ -406,7 +407,6 @@ struct xilinx_dma_config {
+>   * @dev: Device Structure
+>   * @common: DMA device structure
+>   * @chan: Driver specific DMA channel
+> - * @has_sg: Specifies whether Scatter-Gather is present or not
+>   * @mcdma: Specifies whether Multi-Channel is present or not
+>   * @flush_on_fsync: Flush on frame sync
+>   * @ext_addr: Indicates 64 bit addressing is supported by dma device
+> @@ -426,7 +426,6 @@ struct xilinx_dma_device {
+>  	struct device *dev;
+>  	struct dma_device common;
+>  	struct xilinx_dma_chan *chan[XILINX_DMA_MAX_CHANS_PER_DEVICE];
+> -	bool has_sg;
+>  	bool mcdma;
+>  	u32 flush_on_fsync;
+>  	bool ext_addr;
+> @@ -2393,7 +2392,6 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
+>  
+>  	chan->dev = xdev->dev;
+>  	chan->xdev = xdev;
+> -	chan->has_sg = xdev->has_sg;
+>  	chan->desc_pendingcount = 0x0;
+>  	chan->ext_addr = xdev->ext_addr;
+>  	/* This variable ensures that descriptors are not
+> @@ -2486,6 +2484,15 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
+>  		chan->stop_transfer = xilinx_dma_stop_transfer;
+>  	}
+>  
+> +	/* check if SG is enabled (only for AXIDMA and CDMA) */
+> +	if (xdev->dma_config->dmatype != XDMA_TYPE_VDMA) {
+> +		if (dma_ctrl_read(chan, XILINX_DMA_REG_DMASR) &
+> +		    XILINX_DMA_DMASR_SG_MASK)
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-PGD 1ab51a067 P4D 1ab51a067 PUD 1ab510067 PMD 0
-Oops: 0010 [#1] SMP KASAN
-CPU: 0 PID: 4552 Comm: syz-executor998 Not tainted 4.18.0-rc2+ #121
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:          (null)
-Code: Bad RIP value.
-RSP: 0018:ffff8801ab4ef568 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8801d4ff34c0 RCX: ffffffff85ec9112
-RDX: ffff8801ab4ef7c0 RSI: ffff8801d4ff34c0 RDI: ffff8801ad3f3800
-RBP: ffff8801ab4ef610 R08: ffff8801d9596180 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: ffff8801ab4ef7c0
-R13: ffff8801ad3f3800 R14: ffffffff8818a920 R15: ffff8801ab414280
-FS:  0000000000829880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000001ab53c000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  vfs_poll include/linux/poll.h:86 [inline]
-  ep_item_poll.isra.14+0x15c/0x400 fs/eventpoll.c:887
-  ep_insert+0x6c1/0x1c20 fs/eventpoll.c:1459
-  __do_sys_epoll_ctl fs/eventpoll.c:2113 [inline]
-  __se_sys_epoll_ctl fs/eventpoll.c:1999 [inline]
-  __x64_sys_epoll_ctl+0xf00/0x10a0 fs/eventpoll.c:1999
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fce9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 6b 45 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe5e985b48 EFLAGS: 00000217 ORIG_RAX: 00000000000000e9
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fce9
-RDX: 0000000000000003 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000020000000 R11: 0000000000000217 R12: 0000000000401610
-R13: 00000000004016a0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-CR2: 0000000000000000
----[ end trace 1c1566da350a05d9 ]---
-RIP: 0010:          (null)
-Code: Bad RIP value.
-RSP: 0018:ffff8801ab4ef568 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8801d4ff34c0 RCX: ffffffff85ec9112
-RDX: ffff8801ab4ef7c0 RSI: ffff8801d4ff34c0 RDI: ffff8801ad3f3800
-RBP: ffff8801ab4ef610 R08: ffff8801d9596180 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: ffff8801ab4ef7c0
-R13: ffff8801ad3f3800 R14: ffffffff8818a920 R15: ffff8801ab414280
-FS:  0000000000829880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 00000001ab53c000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+why not read this for VDMA too, will it return false?
 
+> +			chan->has_sg = true;
+> +		dev_dbg(chan->dev, "ch %d: SG %s\n", chan->id,
+> +			chan->has_sg ? "enabled" : "disabled");
+
+this debug print can be removed
+
+-- 
+~Vinod
