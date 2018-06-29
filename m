@@ -2,131 +2,81 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F628C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D982C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A8023DEF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:30:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHG/e9Eg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A8023DEF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D545B27D8E
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:31:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D545B27D8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937030AbeF2TaS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:30:18 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44271 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936958AbeF2T3l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:29:41 -0400
-Received: by mail-ua0-f196.google.com with SMTP id v15-v6so6466261ual.11;
-        Fri, 29 Jun 2018 12:29:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Hz7z2dBUxRuAZ/qh7K0wl4kE7KiPvoDxlDLn/0uP588=;
-        b=nHG/e9EglTTONeuoZA3FmUbz8La2mG6QcilN6IIxGfeFB0RjvfPBI7om4Umng8gpw5
-         ocHxZrWvxsq/VLPIMDgADEol+4Xk/wU21H27PykrxOiGWFFt9tBocskrE5j6V6c/2Uww
-         1vwc5qhVBWJK9u2HoAvSGrzU0AzimFfmFD1NrFzuvTd6XtEnCQbRbWNqlbcDTh3Tkhbh
-         L8rx1yBOUUYvD7Cp4PReWo5EqdqQ+7ibuvKOG9J8VxrNDDI1xE+HDWVPaMsUIz20BlYH
-         59L0gjvNcDtBiSx8pO6eq/Zj7hat+hB8LnalQQ3r5klZkahAd+3XL4Zs8ZdUWGiDbsPX
-         SMHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Hz7z2dBUxRuAZ/qh7K0wl4kE7KiPvoDxlDLn/0uP588=;
-        b=TgcHZ14cKMyfhRpfZQdLTyp3FKmtNoS/asJvA/PmkkdyK0EIYsHuIT2KcEI4V1C58P
-         mfsTsrSztylnz2p8G3HK8S+PvFidkgIhiwvD2lHyCUOYtoUQ+vqk8ycP051pRATn1Ejc
-         zuccbgTnNjXY2zq1Zdx0ucRMHPbkHTZYZHHPHj10ZH16QuksWyQqL9dMQgTZNHMolKkt
-         DW98cEqPTOa/0WriQiAnhY/R2Fda+wNktH/D2pwLeEWCNiuIzXVrE3wCDC9M2P+VbEmj
-         Xbhi9vQ7Gwx4xWYRJsU5uWd8H8dGK/vQbcezcP2siC7vk5DZEnLjJn+SEqkMHw/tAkfM
-         10pA==
-X-Gm-Message-State: APt69E2ebEZvD/G6DDA9PUBun2DNUeVBu6nBEv4ML1JCsY0mwEeM73V2
-        hrhaB0yosjLhxfHlLmIIRJAK0KZBD0ac+30H++I+MEzu
-X-Google-Smtp-Source: AAOMgpfZc2KZUwOs+ePqYpzNPWna5/mrwQ+LiK96Xm4vaQgbVVb8NwYrbv4ZbqKb3hq0xnKOWONsbl/MC52+j7F779A=
-X-Received: by 2002:ab0:15ad:: with SMTP id i42-v6mr10058871uae.199.1530300580592;
- Fri, 29 Jun 2018 12:29:40 -0700 (PDT)
+        id S937160AbeF2TbT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:31:19 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17992 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937054AbeF2TbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 15:31:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 12:31:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
+   d="scan'208";a="63262066"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 29 Jun 2018 12:31:10 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id C119C62A; Fri, 29 Jun 2018 22:31:13 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/6] x86/tsc: Add missed header to tsc_msr.c
+Date:   Fri, 29 Jun 2018 22:31:10 +0300
+Message-Id: <20180629193113.84425-4-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
+References: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 12:29:39
- -0700 (PDT)
-In-Reply-To: <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com>
-References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
- <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com> <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
- <20180609010420.GA112645@localhost.localdomain> <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
- <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com> <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
- <8307f1e0-c480-3f78-9327-e248208e5349@gmail.com> <CAHp75VdTGXqE__VHjRphEmpMVfxaVVik=u-_0NRhQAKeq=+ZKA@mail.gmail.com>
- <b5652ed8-5fff-4f8b-ec0f-467bce853bf8@gmail.com> <CAHp75VfL3v8U6o36-e3+XPL53sb9wMUOXsL6gn3XE4=-kJjuKQ@mail.gmail.com>
- <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 29 Jun 2018 22:29:39 +0300
-Message-ID: <CAHp75VdSVLzNHnrOzzrBMf4X2Cg4QACRrnxKNkQzcYJ0h5W+tw@mail.gmail.com>
-Subject: Re: [PATCH v3] dcdbas: Add support for WSMT ACPI table
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 9:56 PM, Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
-> On 06/27/2018 06:52 PM, Andy Shevchenko wrote:
->> On Fri, Jun 15, 2018 at 1:31 AM, Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
->>> On 6/14/2018 12:25 PM, Andy Shevchenko wrote:
->>>> On Thu, Jun 14, 2018 at 5:22 PM, Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
->>>>> On 6/13/2018 3:54 AM, Andy Shevchenko wrote:
+Add a missed header otherwise compiler warns about missed prototype:
 
->>>> Thanks, but here I meant += 1 vs += 16 step.
+CC      arch/x86/kernel/tsc_msr.o
+arch/x86/kernel/tsc_msr.c:73:15: warning: no previous prototype for ‘cpu_khz_from_msr’ [-Wmissing-prototypes]
+   unsigned long cpu_khz_from_msr(void)
+                 ^~~~~~~~~~~~~~~~
 
-> I did realize that the debug code that printed the address of the EPS table was not
-> working right, and the table on my system is actually 16-byte aligned.  However,
-> the documentation on the EPS does not specify that it will be 16-byte aligned, so I
-> don't think the driver should make that assumption, especially since scanning a 64K
-> region byte by byte should take very little extra time over scanning every 16th byte.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ arch/x86/kernel/tsc_msr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> I guess this isn't needed since the table on my system actually is 16-byte aligned.
-
-I think the 16 byte is a natural alignment applicable to all tables like a such.
-I would rather go with it until we will get a (weird) BIOS which does
-not support that.
-
-(I believe this alignment just comes by definition of C ABIs for the
-structures / types. So, each defined type is located on an aligned
-boundaries)
-
->>> [ 4680.194012] dcdbas dcdbas: WSMT found, using firmware-provided SMI buffer.
->>> [ 4680.195327] dcdbas dcdbas: Dell Systems Management Base Driver (version 5.6.0-3.3)
->>
->> OK, now the most important question, did you investigate "SMM
->> Communication ACPI Table"?
->> Can you utilize information in it?
-
-> Dell BIOS does not provide a "SMM Communication ACPI Table", just the EPS.  It appears
-> that the "SMM Communication ACPI Table" is deprecated in the UEFI 2.7 spec.  Also, the
-> dcdbas driver is for Dell systems only.
-
-> The EPS table isn't an ACPI table,
-> it's just a Dell-defined table.
-
-Hmm... It's either strange or has some background why is so.
-OK it has a note that there is no use case, but here it is!
-
-Mario, can we consider this as a BIOS bug which doesn't provide SMM
-Communication ACPI table?
-
-Can it be escalated on UEFI committee?
-
+diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
+index c12e9cd92272..1465aaee543a 100644
+--- a/arch/x86/kernel/tsc_msr.c
++++ b/arch/x86/kernel/tsc_msr.c
+@@ -14,6 +14,7 @@
+ #include <asm/intel-family.h>
+ #include <asm/msr.h>
+ #include <asm/param.h>
++#include <asm/tsc.h>
+ 
+ #define MAX_NUM_FREQS	9
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.18.0
+
