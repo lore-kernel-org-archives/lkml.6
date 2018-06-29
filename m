@@ -2,113 +2,100 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C30C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB0CC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E8EC27C85
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:57:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8EC27C85
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 90A1027C49
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:59:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a2c/cghg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A1027C49
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936911AbeF2S5J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:57:09 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21256 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936184AbeF2S5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:57:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 11:57:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
-   d="scan'208";a="68861251"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga001.jf.intel.com with ESMTP; 29 Jun 2018 11:56:50 -0700
-Subject: Re: [PATCH v5 4/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-References: <20180627013116.12411-1-bhe@redhat.com>
- <20180627013116.12411-5-bhe@redhat.com>
- <cb67381c-078c-62e6-e4c0-9ecf3de9e84d@intel.com>
- <CAGM2rebsL_fS8XKRvN34NWiFN3Hh63ZOD8jDj8qeSOUPXcZ2fA@mail.gmail.com>
- <88f16247-aea2-f429-600e-4b54555eb736@intel.com>
- <b8d5b9cb-ca09-4bcc-0a31-3db1232fe787@oracle.com>
-Cc:     bhe@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, pagupta@redhat.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kirill.shutemov@linux.intel.com
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <7ad120fb-377b-6963-62cb-a1a5eaa6cad4@intel.com>
-Date:   Fri, 29 Jun 2018 11:56:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <b8d5b9cb-ca09-4bcc-0a31-3db1232fe787@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1755190AbeF2S7J (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:59:09 -0400
+Received: from mail-io0-f201.google.com ([209.85.223.201]:41553 "EHLO
+        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbeF2S7H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 14:59:07 -0400
+Received: by mail-io0-f201.google.com with SMTP id t14-v6so7588562ioj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 11:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=DiOeDF4Qg8Nq27NSV8xjyeiyDTe9lh85B1mDmsAQp1k=;
+        b=a2c/cghgED8Wtc1/rcLm5LcTuB9+tCbezzoXbhDjeeJUqBxWBq7l/TQEDwwkkG4k3V
+         FooxioO8gyAHq2jjjK4dSTlYwdzO4vcXYIY5ryGfGQoOPPZ+JArC4v5aSsSrNQzHpcCw
+         z92mL2gy3SU8g7bz3lF4aCbtzi17lwH6xvR/hdI1Zqj1M0da2bWrobHeD/MRuQmhRkUm
+         NDTSyFzqP78UtkTJIOXX584HD8QGd2HHLhWUZrak6AW4KsfinIM2CwEonpXfRfax2rv+
+         A2l75HZvmWq+AjevFv9hPfq++wVzFLeeaNIELBjELcA78+cN0I2RgXuqnUG/Y4ezDqG0
+         7NhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=DiOeDF4Qg8Nq27NSV8xjyeiyDTe9lh85B1mDmsAQp1k=;
+        b=lR2YnmH54ErHiH9OQqE95Y0tuhQhE4Pcmi7uJGbE0vMg8QNIrn8gvd07XMJqBY6Kjq
+         paPMlzJL6aJY6LrlST5cV1A2ZeOVZwN0fKbEE1LAoVZtsDQnxaq5R8sTIodnN3U85zee
+         Hz1GBwCaA6KJ4TVK4FsRcBtVbI75xa4bCkf7Yjpdb365MqP4pY/j08QM3JYIY5wUlqjY
+         8ow7XVVK15SHuSAznH1mM3XYv84Z55+poUgig0HNJ6zQDo6j4QRr3PQ8xPj+6WK2/GP6
+         JCP5yLvsfoNZ9xLSleg4WExbsaswlBdxoUF8b4+S3F3ly+QxrbHL3tCsAHnOLVHrnSAk
+         nQsg==
+X-Gm-Message-State: APt69E2xKxoUrflCcl4RSRN4D9D0He+iwZTv43ODQApLtt2KEJqmOrtN
+        Mgg0QRuDVzhUXaucOL/7FyorXD2Cz8Hy
+X-Google-Smtp-Source: AAOMgpc4CGgXxQFav0W6vVcLxLGDhCv4Ir1KEsTOOQ7Fucu6X7BaOhfZrLc4f6DXzTlb6YEkV7qRcNFev3HA
+X-Received: by 2002:a24:212:: with SMTP id 18-v6mr1301136itu.32.1530298747048;
+ Fri, 29 Jun 2018 11:59:07 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 11:59:04 -0700
+In-Reply-To: <20180629072132.GA13860@dhcp22.suse.cz>
+Message-Id: <xr93bmbtju6f.fsf@gthelen.svl.corp.google.com>
+Mime-Version: 1.0
+References: <20180628151101.25307-1-mhocko@kernel.org> <xr93in62jy8k.fsf@gthelen.svl.corp.google.com>
+ <20180629072132.GA13860@dhcp22.suse.cz>
+Subject: Re: [PATCH] memcg, oom: move out_of_memory back to the charge path
+From:   Greg Thelen <gthelen@google.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 11:01 AM, Pavel Tatashin wrote:
-> Correct: it should be incremented on every iteration of the loop. No matter if the entries contained valid data or NULLs. So we increment in three places:
-> 
-> if map_map[] has invalid entry, increment, continue
-> if usemap_map[] has invalid entry, increment, continue
-> at the end of the loop, everything was valid we increment it
-> 
-> This is done so nr_consumed_maps does not get out of sync with the
-> current pnum. pnum does not equal to nr_consumed_maps, as there are
-> may be holes in pnums, but there is one-to-one correlation.
-Can this be made more clear in the code?
+Michal Hocko <mhocko@kernel.org> wrote:
+
+> On Thu 28-06-18 16:19:07, Greg Thelen wrote:
+>> Michal Hocko <mhocko@kernel.org> wrote:
+> [...]
+>> > +	if (mem_cgroup_out_of_memory(memcg, mask, order))
+>> > +		return OOM_SUCCESS;
+>> > +
+>> > +	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
+>> > +		"This looks like a misconfiguration or a kernel bug.");
+>> 
+>> I'm not sure here if the warning should here or so strongly worded.  It
+>> seems like the current task could be oom reaped with MMF_OOM_SKIP and
+>> thus mem_cgroup_out_of_memory() will return false.  So there's nothing
+>> alarming in that case.
+>
+> If the task is reaped then its charges should be released as well and
+> that means that we should get below the limit. Sure there is some room
+> for races but this should be still unlikely. Maybe I am just
+> underestimating though.
+>
+> What would you suggest instead?
+
+I suggest checking MMF_OOM_SKIP or deleting the warning.  But I don't
+feel strongly.
