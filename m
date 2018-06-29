@@ -2,96 +2,113 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A475CC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6ED6C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E96D27EA1
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7229E27EA1
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:46:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B1FE2kRg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hpktfmWN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E96D27EA1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtmGEOZ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7229E27EA1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936259AbeF2LqM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:46:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48644 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935441AbeF2LqG (ORCPT
+        id S936264AbeF2Lqz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:46:55 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41696 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936196AbeF2Lqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:46:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3325F60B10; Fri, 29 Jun 2018 11:46:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272766;
-        bh=2XDQyd8QTJJltT7F60tlItGbvSzPOTE30mW0CagQgSE=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=B1FE2kRgGrJRhPvPWVlgL2ioYhCYkPVMaC0tbPgeXWPdRtgJ8vSjgikuRT1vdYeib
-         ee/78IC/4MgUSgc58gW6SiUUqq8r9Bg7yBU+vsikXuWEUpnIb9Axrp9Y4LkdjkNnIN
-         iMZua2SNL/wPObuesbzjXAUwPEET1c4L2Xh1Y/s8=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 972D460452;
-        Fri, 29 Jun 2018 11:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272765;
-        bh=2XDQyd8QTJJltT7F60tlItGbvSzPOTE30mW0CagQgSE=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=hpktfmWN8XL7MZ2DoqLRjyJc60NB4pHnhOXk3QYWKQdfas9ImtUDSsDBiv2oF1Fz7
-         E92P8hdFlJccSV8ivLRo5M709zNf8uPFhx7yEuA0RdfXjcMQUKMfMS1pOAgXIhewF5
-         ZnVLty8m+FsEeaJIR89OeXWK6vGsfei+BiwapDfU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 972D460452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [4/4] ath9k: use timespec64 for tsf_ts
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180618151142.1214422-4-arnd@arndb.de>
-References: <20180618151142.1214422-4-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>, y2038@lists.linaro.org,
+        Fri, 29 Jun 2018 07:46:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a17-v6so3964960ljd.8;
+        Fri, 29 Jun 2018 04:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wiYC1svQLiRI/HD1hn5iiyNoxS7cgoGUQX+dWtvPeQg=;
+        b=YtmGEOZ0PqXhmGnVA96EezkgVySr6EjAS1lXjDm21klrBmcLEK02dy6X8yI/R1drTm
+         yTzJMq9BybNfiIV4DBa/Gk8HVctXr46KO7FKMnDVDOmCr4QNvcq4/KED4E3WzA5lL6jm
+         15zh+tegV3Z9VLpsCR/CLnqLLguC4UupI/WZyNItOXSFjqzQZe4AcbLJsjaqpXHnPb0F
+         7ay3KUhbJ37JnRKIbFVv2/W9z8FVdUzwI0ZQ5P0chz84q+pvGYDLnWJW4s7IjuraXW6v
+         gRB9D3ajuEw5B5DSXhKmSGp+PD9k7ZTQ7RPBVVYCnyFtCrxxe7qWz2HaLBu6YAqwy25l
+         cLTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wiYC1svQLiRI/HD1hn5iiyNoxS7cgoGUQX+dWtvPeQg=;
+        b=X8x7BBr91saH9D6l5ylC9A3EVXs1bQ3iNO4FNlZANJO84uh1/l4c9m08qJTcBVsd0D
+         RunjCBDu999GwgsNfb6ZfktHtc50+S0A/AcMIEnS963E4PHVhCkxa72vzA++yEiZbI73
+         SjEeFHyc5vyUKIJJg8Mkx7mBqfxeVpHLMeZpwW6YAGABvZSODC7spxgZM630URlmmdN+
+         xY++6Knw2nnceQ1jwQs+0DZIncJiRIz0UaK7uzhC/H7df/xoZf/SV8T0y8PsyntWk+6p
+         BwPqP+BVOPe5YMBTQ1+gp1mUOIM6seEbfSgkTRPct+oIzmuLU4aS0rbjnfPStJhbnMc4
+         R3Aw==
+X-Gm-Message-State: APt69E0GZ3zRSuyiFN1mBmqpe+BIV/xv+LD4oMDuk5w4TZIMSDGP7wAL
+        9tpjbL++jdWHmyPy7ur65GI=
+X-Google-Smtp-Source: AAOMgpdbRYfZRwJw1AHQ2Yy/GnFOZSUPVWGnhEQpzYZWKhkpyKQcxoOIG0g7E3N3xmky5yCAskKdxA==
+X-Received: by 2002:a2e:8654:: with SMTP id i20-v6mr9794014ljj.43.1530272812100;
+        Fri, 29 Jun 2018 04:46:52 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id x17-v6sm1175034ljx.13.2018.06.29.04.46.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 04:46:51 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fYrrS-0002XW-Fj; Fri, 29 Jun 2018 13:46:47 +0200
+Date:   Fri, 29 Jun 2018 13:46:46 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        alan@linux.intel.com, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
         Arnd Bergmann <arnd@arndb.de>,
-        Johannes Berg <johannes.berg@intel.com>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Wojciech Dubowik <Wojciech.Dubowik@neratec.com>,
-        Russell Hu <rhu@qti.qualcomm.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180629114606.3325F60B10@smtp.codeaurora.org>
-Date:   Fri, 29 Jun 2018 11:46:05 +0000 (UTC)
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180629114646.GU629@localhost>
+References: <20180601082259.17563-1-johan@kernel.org>
+ <20180628120103.GA28131@kroah.com>
+ <20180629094607.GC31718@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180629094607.GC31718@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> ath9k is the last remaining user of the deprecated getrawmonotonic()
-> interface. There is nothing wrong with this usage, but migrating
-> to a timespec64 based interface lets us clean up the old API.
+On Fri, Jun 29, 2018 at 11:46:07AM +0200, Pavel Machek wrote:
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> > > Finally, note that documentation (including kerneldoc) remains to be
+> > > written, but hopefully this will not hinder review given that the
+> > > current interfaces are fairly self-describing.
+> > 
+> > This all looks great.  Thanks for doing this work and adding a new
+> > subsystem for something that has been asked for for many years.
+> > 
+> > All now merged in my tree, nice job!
+> 
+> I don't think discussion was finished on this one.
+> 
+> In particular, we agreed that /dev/gnssrawX would be better device
+> name, so that we still have place where to put proper abstraction
+> layer in future.
 
-Patch applied to ath-next branch of ath.git, thanks.
+I did not agree with you on that. I said we could consider that name if
+this was to be changed at all, which I do not think is necessary for
+the reasons spelled out in this thread.
 
-fe041deba4f6 ath9k: use timespec64 for tsf_ts
-
--- 
-https://patchwork.kernel.org/patch/10471987/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Johan
