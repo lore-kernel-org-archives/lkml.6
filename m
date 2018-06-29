@@ -2,141 +2,87 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B79C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E0FC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B5025558
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:05:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F7E327EFE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:13:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hw238xHj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B5025558
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oW+QIRKf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7E327EFE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936689AbeF2OFs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:05:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:56582 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932280AbeF2OFq (ORCPT
+        id S1755549AbeF2OM4 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:12:56 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58428 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754021AbeF2OMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:05:46 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3EB8C22D3FE;
-        Fri, 29 Jun 2018 10:05:45 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id WTczEU2ZVxew; Fri, 29 Jun 2018 10:05:44 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id CEB4922D3F4;
-        Fri, 29 Jun 2018 10:05:44 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com CEB4922D3F4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530281144;
-        bh=5ByuItJs0OiOc9kbxFpQMItF7m9NGxB+wpaTyGrZVNE=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=hw238xHjjt2SHSODQK6bqFh0xgtRlHi4aDZv2cLfoSOa+9dxJaG5QB1jV+UU4ptan
-         8Pf76UmHGzvEZ3nqsmwnaX26ESmhjfws2WbSPbApPlJ/SB3lCIQSG2lfkO5f6kpMqB
-         mZMrT6oXu4J1kUMou5XTQdKvZdAVRClyS3Cega05PdAa9pYLPe2eqjftbP1H31De3N
-         rWGCxtAOOItS4DVfeRcMNLThMCL1zTU8FAzzCYyOl+2yNdRBh8PZmUMlY3hOUOwmD2
-         UCNcjlangoXVGuSGd0philnkVnCYjfL0vhq/m3WHXV3Hiq5qP+CCXWg02Gh9OXRUWi
-         E+Y6zYx2bBbsg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id ZjB5QL1XcIkA; Fri, 29 Jun 2018 10:05:44 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id B1F8922D3E1;
-        Fri, 29 Jun 2018 10:05:44 -0400 (EDT)
-Date:   Fri, 29 Jun 2018 10:05:44 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com> <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com> <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com> <9200ED2A-AE4B-4094-81C9-E92240B4840F@amacapital.net> <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
- TASK_SIZE
+        Fri, 29 Jun 2018 10:12:55 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5TE98gX135285
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 14:12:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=+Vd/ICY6MD5O6c7sqppK5s/vAwX4MUHWIKSAk2qARQk=;
+ b=oW+QIRKfsr9IzPHYE1g8nBImI53XsPcQw8NbR1r/MivStyx8cmniLtWelNCRDHDKBho4
+ Zz7/PXMc/JeuVHgSpRLOu6G4RFRFkdcF04iau4DXFDpbO506e7juTxqY6gmcOxSfxliu
+ 9k6+k+0D+AvhhvjqRbhZPOmL1cTCm31aJLXUfSJlOxlmPCXIkdaolC/FddS/o77EsyXO
+ qTelphl+qWczHKbfSR2gs3CUOWScjcpcMsRvMje0v0LiP/YAc4wfBmYUkExpKBdhkhO4
+ AeW3Z7k3gwCbFAGqW2DEOUnRsrNnu57ejxfYnhNwtixEntVrxVsfVLTVSgRqOrgRACPX 3Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2jukhspss4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 14:12:54 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5TECrJd013019
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 14:12:53 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5TECqmD023519
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 14:12:52 GMT
+Received: from mail-oi0-f47.google.com (/209.85.218.47)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 29 Jun 2018 07:12:52 -0700
+Received: by mail-oi0-f47.google.com with SMTP id n84-v6so8561956oib.9
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 07:12:52 -0700 (PDT)
+X-Gm-Message-State: APt69E0zk/8xOQ5Qt9onJpTnVTKV7/3oSy6nGFDYzIupYeHjbQtrW3bC
+        PLVD58apMeMhbi4X6NJuY9ZuY1ZQXiDuwSq8oo8=
+X-Google-Smtp-Source: AAOMgpdtsebWe+1CAgGQUrDjxjp3bNQfbzEuZ8S2fW05A/HOh6jLZJWT5cjW6PQ+T+dMQfQ52ArYMcrvdihN81TReD8=
+X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr3183421oig.221.1530281572596;
+ Fri, 29 Jun 2018 07:12:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
-Thread-Index: LCPV3Tf5U+eY2oj4yJoy1Hp5/5f7Hw==
+References: <1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com>
+In-Reply-To: <1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Fri, 29 Jun 2018 10:12:16 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZvBhfW314XcR7srQhZf-bZMyCXR+9_X4Qtro7i-don5g@mail.gmail.com>
+Message-ID: <CAGM2reZvBhfW314XcR7srQhZf-bZMyCXR+9_X4Qtro7i-don5g@mail.gmail.com>
+Subject: Re: [PATCH] mm: make DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM
+To:     rppt@linux.vnet.ibm.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8938 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=630
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806290152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 29, 2018, at 10:02 AM, Linus Torvalds torvalds@linux-foundation.org wrote:
+This is something I also wanted to see, thank you.
 
-> On Thu, Jun 28, 2018 at 6:08 PM Andy Lutomirski <luto@amacapital.net> wrote:
->> > On Jun 28, 2018, at 5:18 PM, Linus Torvalds <torvalds@linux-foundation.org>
->> > wrote:
->> >
->> >
->> > Make it do
->> >
->> >        if (rseq_cs->abort_ip != (unsigned long)rseq_cs->abort_ip)
->> >                return -EINVAL;
->> >
->> > at abort time.
->>
->> You sure?  Because, unless I remember wrong, a 32-bit user program on a 64-bit
->> kernel will actually work at least most of the time even if high bits are set.
-> 
-> Sure.
-> 
-> If you run a 32-bit binary on a 64-bit kernel,. you will have access
-> to the 0xc0000000 - 0xffffffff area that you wouldn't have had access
-> to if it ran on a 32-bit kernel.
-> 
-> But exactly *because* you have access to that area, those addresses
-> are actually valid addresses for the 32-bit case, so they shouldn't be
-> considered bad. They can't happen on a native 32-bit kerne, but a
-> 32-bit program doesn't even care. If it has user memory mapped in that
-> area, it should work.
-> 
-> And if it *doesn't* have user memory mapped in that area, then it will
-> fail when the trying to execute the (non-existent) abort sequence.
-> 
-> After all, depending on configuration, a native 32-bit kernel might
-> limit user space even more (ie some vendors had a 2G:2G split instead
-> of the traditional 3G:1G split.
-> 
-> Was that the case you were thinking of, or was it something else?
-
-What I'm worried about is setting regs->ip of a compat 32-bit task to
-addresses in the range 0x100000000-0xFFFFFFFFFFFFFFFF.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
