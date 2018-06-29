@@ -4,184 +4,337 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5C0C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C680AC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F7A627D21
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693DE27D21
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="c6/6kb3U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7A627D21
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="FsPUSl4S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693DE27D21
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936339AbeF2T0I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:26:08 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:46715 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933750AbeF2TZp (ORCPT
+        id S936513AbeF2T0N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:26:13 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:43589 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935370AbeF2TZ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:25:45 -0400
-Received: by mail-qk0-f196.google.com with SMTP id o2-v6so5533230qkc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:45 -0700 (PDT)
+        Fri, 29 Jun 2018 15:25:56 -0400
+Received: by mail-qt0-f169.google.com with SMTP id c8-v6so8819812qtp.10
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id;
-        bh=9wB4yxlqWqm6Csy9a8oQG21m5MlS1Ad1n1NoBOZ2lek=;
-        b=c6/6kb3UDglnq5U+cgwfStN/ZB2nbLTFYl/VITDRXr59X+t9ymfmypyIFsakN1pS55
-         0Oa8jh6TxyVypEbZO1BAVofqoLmEylWspthbBWYrCVsihXEk5vzymWYDinF4K1ZMavFe
-         R9MFwqaDWOdpkkCJU0glcr2vJiRSfzpX3m/xC9I5ej8wew9mDcTNvY1pf+VEEZ/3b9Gq
-         djgTqfQMJM1O76sKbwosvXIabXsMuoZrsEUamgKuwV5SJU/7L+yHHusg7rC50bBS0UDK
-         QXf/RmGb0UFIb6NwCssVTP1CVRDxzuZ1sAhwLfQ7x0aYaXiBbVLr4N+UfWyQ6rg5/cNF
-         HjzQ==
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=NHcNBLt5ikQuPglpTXQpEK1D++BE2qcXd62TWaCzit4=;
+        b=FsPUSl4SmLNQYf2LFMqsv1grq2OXdZAK7BVW8lY3qyw2JwNnKI5bzQF68pZpwwBpph
+         HJG9VutjPq9TZyQrkYs5ewSCSeZk/sDe+NXF+EcrM1E2/kr7vRqnv7QVLEoYNL/BeZ3b
+         +pGy5+ZgIImN21LfD2LeOid/XPj7GhDilBKChiAPCdfHZ+jOka7AL8VTYnFeRyStb5+V
+         wu8o/hgV72xWr8nIeZCD5N5kLkyOXcR/ROPSwdRo1GjOxMGiGKdgVXMmw4gZHEUMkM1R
+         CdDnm2uq9Ewz3yLK1VqeMpmQIeYeD1f5TBHL0hMKWVdZ6AUMakKSiPfiF5V+OZX2CYJ5
+         yCTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=9wB4yxlqWqm6Csy9a8oQG21m5MlS1Ad1n1NoBOZ2lek=;
-        b=X/glvzruGeWaLoUh/IZxP8J1L0lQC6rt8beK53zWDrw2RjCD6StKH4y/c+hvyjkXeq
-         O+3RvoHhIAx4iltrsMXlri48EnhGTFuHmZVD+Q5YXFesNP/pIkGfLn9JJO/S2QSDyYot
-         3ZEJUMUSEjCksfOJFK4fKrPEcb5aKlWobi30H+As9MNTH5Pg76rzJleZ2/W5TBxDMmdJ
-         5KcZqIPC/LbF/NsOY8GqHdZ8vlTBtMUfUPkLOnlacjTSbDpNmSnIrANOCR2rks8IMw+R
-         c3T3EYNjia4LH9B403GM/QB4J/99Hgp6osLz5wVhW8ODvRnZ/GWj7FJPeMG+kvTU+mCz
-         xYeQ==
-X-Gm-Message-State: APt69E174X5xdrVcF/P7Kbd4oSZxoAu8TGCi8v+YgMF6niLuL9AApr8R
-        k0Gmo+AUXewpc0CTomtkAXkvJQ==
-X-Google-Smtp-Source: AAOMgpcMv/4UhcPB2un+LbUPt304vJVNw1KeuxwyPlYDT5O/E1i3x8X+9czVmk3rQqma/D4039oXPw==
-X-Received: by 2002:a37:50c3:: with SMTP id e186-v6mr13832377qkb.91.1530300344953;
-        Fri, 29 Jun 2018 12:25:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=NHcNBLt5ikQuPglpTXQpEK1D++BE2qcXd62TWaCzit4=;
+        b=Ac/WbuQI1iBrNz9UWj+qdCRi6Q+0x9hHxM73+DKZyFJMBWMogg4qygAwOKWPa2t/Uk
+         pXohc1uqBlvbh1YbMkUqMwCfS50ILt0kVZQpG9Uh4zflwxmOlSPgSJbe3peFz048F0l1
+         V+DtyeksFfrlyBrntKmaoqb1jLWQyFbvmwCB3yLPU+vCiOQgMMluCV0H0e5vOFKO3JWN
+         ugcMpmjLPk3o7BE+soi3ReSBFdaKePNMZOU4V+9AC7xUx3m2730ULt0lI/Jbq67/v4ws
+         R+cMWyrpRyOE29kmz0GEIQiGXORJZFjf4OTnuNc/1xKpRgwG3BDKosqexCu0/3shmpsN
+         j1xg==
+X-Gm-Message-State: APt69E0JNWhy6EM8kmU6lMCHHHzLaMu2g4QZkORPH+ldsLdxlfPhoXCj
+        rvGOMcQz/8JvrVX4ChIIySGq1A==
+X-Google-Smtp-Source: AAOMgpe+4mQAoWijSzOil4Si1k+LhpmRE5zlO5z3C5ohSSQu6ILeJZljbEue4X29WvKk/3NdlUJKPA==
+X-Received: by 2002:ac8:2541:: with SMTP id 1-v6mr3890394qtn.248.1530300355064;
+        Fri, 29 Jun 2018 12:25:55 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id b188-v6sm6503127qkf.71.2018.06.29.12.25.44
+        by smtp.gmail.com with ESMTPSA id q13-v6sm8293955qkl.97.2018.06.29.12.25.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 12:25:44 -0700 (PDT)
+        Fri, 29 Jun 2018 12:25:54 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 00/14][V5] Introduce io.latency io controller for cgroups
-Date:   Fri, 29 Jun 2018 15:25:28 -0400
-Message-Id: <20180629192542.26649-1-josef@toxicpanda.com>
+Subject: [PATCH 07/14] memcontrol: schedule throttling if we are congested
+Date:   Fri, 29 Jun 2018 15:25:35 -0400
+Message-Id: <20180629192542.26649-8-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180629192542.26649-1-josef@toxicpanda.com>
+References: <20180629192542.26649-1-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maybe this is good this time?
+From: Tejun Heo <tj@kernel.org>
 
-v4->v5:
-- fix lockdep mess with the stat stuff I hadn't noticed until now.
-- fixed the wait loop so it would actually break properly.
-- fixed a problem where unconfigured groups weren't being throttled.
-- fixed some spelling mistakes.
+Memory allocations can induce swapping via kswapd or direct reclaim.  If
+we are having IO done for us by kswapd and don't actually go into direct
+reclaim we may never get scheduled for throttling.  So instead check to
+see if our cgroup is congested, and if so schedule the throttling.
+Before we return to user space the throttling stuff will only throttle
+if we actually required it.
 
-v3->v4:
-- deal with a child having a configuration but the parent not.
-- fix use of setup_timer, there was an API change between the kernel I
-  wrote/tested these patches on and the current kernel.
-- change the initialization location for iolatency.
-- fix some spelling mistakes in the documentation.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ include/linux/memcontrol.h | 13 +++++++++++++
+ include/linux/swap.h       | 11 ++++++++++-
+ mm/huge_memory.c           |  6 +++---
+ mm/memcontrol.c            | 13 +++++++++++++
+ mm/memory.c                | 11 ++++++-----
+ mm/shmem.c                 | 10 +++++-----
+ mm/swapfile.c              | 31 +++++++++++++++++++++++++++++++
+ 7 files changed, 81 insertions(+), 14 deletions(-)
 
-v2->v3:
-- added "skip readahead if the cgroup is congested".  During testing we would
-  see stalls on taking mmap_sem because something was doing 'ps' or some other
-  such thing and getting stuck because the throttled group was getting hit
-  particularly hard trying to do readahead.  This is a weird sort of priority
-  inversion, fixed it by skipping readahead if we're currently congested to not
-  only help the overall latency of the throttled group, but reduce the priority
-  inversion associated with higher priority tasks getting stuck trying to read
-  /proc files for tasks that are stuck.
-- added "block: use irq variant for blkcg->lock" to address a lockdep warning
-  seen during testing.
-- add a blk_cgroup_congested() helper to check for congestion in a hierarchical
-  way.
-- Fixed some assumptions related to accessing blkg out of band that resulted in
-  panics.
-- Made the throttling stuff only throttle if the group has done a decent amount
-  of IO in the last window.
-- Fix the wake up logic to reduce the thundering herd issues we saw in testing.
-- Put a limit on how much of a hole we can dig into the artificial delay stuff.
-  We were seeing in multiple back to back tests that we'd get so deep into the
-  delay count that we'd take hours to unthrottle.  This stuff was originally
-  introduced to keep us from flapping from delay to no delay if we had bursty
-  behavior from the misbehaving group, so capping this keeps that protection
-  while also keeping us from throttling forever.
-- Limit the maximum delay to 250ms from 1 second.  There was a bug in the
-  congestion checking stuff, it wasn't taking into account the hierarchy so we
-  would sometimes not throttle when we needed to, which led me to have a 1
-  second maximum.  However when that bug was fixed it turned out 1 second was
-  too much, so limit to 250ms like balance dirty pages does.
-
-v1->v2:
-- fix how we get the swap device for the page when doing the swap throttling.
-- add a bunch of comments how the throttling works.
-- move the documentation to cgroup-v2.txt
-- address the various other comments.
-
-==== Original message =====
-
-This series adds a latency based io controller for cgroups.  It is based on the
-same concept as the writeback throttling code, which is watching the overall
-total latency of IO's in a given window and then adjusting the queue depth of
-the group accordingly.  This is meant to be a workload protection controller, so
-whoever has the lowest latency target gets the preferential treatment with no
-thought to fairness or proportionality.  It is meant to be work conserving, so
-as long as nobody is missing their latency targets the disk is fair game.
-
-We have been testing this in production for several months now to get the
-behavior right and we are finally at the point that it is working well in all of
-our test cases.  With this patch we protect our main workload (the web server)
-and isolate out the system services (chef/yum/etc).  This works well in the
-normal case, smoothing out weird request per second (RPS) dips that we would see
-when one of the system services would run and compete for IO resources.  This
-also works incredibly well in the runaway task case.
-
-The runaway task usecase is where we have some task that slowly eats up all of
-the memory on the system (think a memory leak).  Previously this sort of
-workload would push the box into a swapping/oom death spiral that was only
-recovered by rebooting the box.  With this patchset and proper configuration of
-the memory.low and io.latency controllers we're able to survive this test with a
-at most 20% dip in RPS.
-
-There are a lot of extra patches in here to set everything up.  The following
-are just infrastructure that should be relatively uncontroversial
-
-[PATCH 01/13] block: add bi_blkg to the bio for cgroups
-[PATCH 02/13] block: introduce bio_issue_as_root_blkg
-[PATCH 03/13] blk-cgroup: allow controllers to output their own stats
-
-The following simply allow us to tag swap IO and assign the appropriate cgroup
-to the bio's so we can do the appropriate accounting inside the io controller
-
-[PATCH 04/13] blk: introduce REQ_SWAP
-[PATCH 05/13] swap,blkcg: issue swap io with the appropriate context
-
-This is so that we can induce delays.  The io controller mostly throttles based
-on queue depth, however for cases like REQ_SWAP/REQ_META where we cannot
-throttle without inducing a priority inversion we have a mechanism to "back
-charge" groups for this IO by inducing an artificial delay at user space return
-time.
-
-[PATCH 06/13] blkcg: add generic throttling mechanism
-[PATCH 07/13] memcontrol: schedule throttling if we are congested
-
-This is more moving things around and refactoring, Jens you may want to pay
-close attention to this to make sure I didn't break anything.
-
-[PATCH 08/13] blk-stat: export helpers for modifying blk_rq_stat
-[PATCH 09/13] blk-rq-qos: refactor out common elements of blk-wbt
-[PATCH 10/13] block: remove external dependency on wbt_flags
-[PATCH 11/13] rq-qos: introduce dio_bio callback
-
-And this is the meat of the controller and it's documentation.
-
-[PATCH 12/13] block: introduce blk-iolatency io controller
-[PATCH 13/13] Documentation: add a doc for blk-iolatency
-
-Jens, I'm sending this through your tree since it's mostly block related,
-however there are the two mm related patches, so if somebody from mm could weigh
-in on how we want to handle those that would be great.  Thanks,
-
-Josef
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index d99b71bc2c66..4d2e7f35f2dc 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -290,6 +290,9 @@ bool mem_cgroup_low(struct mem_cgroup *root, struct mem_cgroup *memcg);
+ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
+ 			  bool compound);
++int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
++			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
++			  bool compound);
+ void mem_cgroup_commit_charge(struct page *page, struct mem_cgroup *memcg,
+ 			      bool lrucare, bool compound);
+ void mem_cgroup_cancel_charge(struct page *page, struct mem_cgroup *memcg,
+@@ -745,6 +748,16 @@ static inline int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 	return 0;
+ }
+ 
++static inline int mem_cgroup_try_charge_delay(struct page *page,
++					      struct mm_struct *mm,
++					      gfp_t gfp_mask,
++					      struct mem_cgroup **memcgp,
++					      bool compound)
++{
++	*memcgp = NULL;
++	return 0;
++}
++
+ static inline void mem_cgroup_commit_charge(struct page *page,
+ 					    struct mem_cgroup *memcg,
+ 					    bool lrucare, bool compound)
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 2417d288e016..12725a4d82f0 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -629,7 +629,6 @@ static inline int mem_cgroup_swappiness(struct mem_cgroup *memcg)
+ 
+ 	return memcg->swappiness;
+ }
+-
+ #else
+ static inline int mem_cgroup_swappiness(struct mem_cgroup *mem)
+ {
+@@ -637,6 +636,16 @@ static inline int mem_cgroup_swappiness(struct mem_cgroup *mem)
+ }
+ #endif
+ 
++#if defined(CONFIG_SWAP) && defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
++extern void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
++					 gfp_t gfp_mask);
++#else
++static inline void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg,
++						int node, gfp_t gfp_mask)
++{
++}
++#endif
++
+ #ifdef CONFIG_MEMCG_SWAP
+ extern void mem_cgroup_swapout(struct page *page, swp_entry_t entry);
+ extern int mem_cgroup_try_charge_swap(struct page *page, swp_entry_t entry);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a3a1815f8e11..9812ddad9961 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -555,7 +555,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
+ 
+ 	VM_BUG_ON_PAGE(!PageCompound(page), page);
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, gfp, &memcg, true)) {
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, gfp, &memcg, true)) {
+ 		put_page(page);
+ 		count_vm_event(THP_FAULT_FALLBACK);
+ 		return VM_FAULT_FALLBACK;
+@@ -1145,7 +1145,7 @@ static int do_huge_pmd_wp_page_fallback(struct vm_fault *vmf, pmd_t orig_pmd,
+ 		pages[i] = alloc_page_vma_node(GFP_HIGHUSER_MOVABLE, vma,
+ 					       vmf->address, page_to_nid(page));
+ 		if (unlikely(!pages[i] ||
+-			     mem_cgroup_try_charge(pages[i], vma->vm_mm,
++			     mem_cgroup_try_charge_delay(pages[i], vma->vm_mm,
+ 				     GFP_KERNEL, &memcg, false))) {
+ 			if (pages[i])
+ 				put_page(pages[i]);
+@@ -1315,7 +1315,7 @@ int do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 		goto out;
+ 	}
+ 
+-	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
++	if (unlikely(mem_cgroup_try_charge_delay(new_page, vma->vm_mm,
+ 					huge_gfp, &memcg, true))) {
+ 		put_page(new_page);
+ 		split_huge_pmd(vma, vmf->pmd, vmf->address);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2bd3df3d101a..5fffd28477c7 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5458,6 +5458,19 @@ int mem_cgroup_try_charge(struct page *page, struct mm_struct *mm,
+ 	return ret;
+ }
+ 
++int mem_cgroup_try_charge_delay(struct page *page, struct mm_struct *mm,
++			  gfp_t gfp_mask, struct mem_cgroup **memcgp,
++			  bool compound)
++{
++	struct mem_cgroup *memcg;
++	int ret;
++
++	ret = mem_cgroup_try_charge(page, mm, gfp_mask, memcgp, compound);
++	memcg = *memcgp;
++	mem_cgroup_throttle_swaprate(memcg, page_to_nid(page), gfp_mask);
++	return ret;
++}
++
+ /**
+  * mem_cgroup_commit_charge - commit a page charge
+  * @page: page to charge
+diff --git a/mm/memory.c b/mm/memory.c
+index 01f5464e0fd2..d0eea6d33b18 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2494,7 +2494,7 @@ static int wp_page_copy(struct vm_fault *vmf)
+ 		cow_user_page(new_page, old_page, vmf->address, vma);
+ 	}
+ 
+-	if (mem_cgroup_try_charge(new_page, mm, GFP_KERNEL, &memcg, false))
++	if (mem_cgroup_try_charge_delay(new_page, mm, GFP_KERNEL, &memcg, false))
+ 		goto oom_free_new;
+ 
+ 	__SetPageUptodate(new_page);
+@@ -2994,8 +2994,8 @@ int do_swap_page(struct vm_fault *vmf)
+ 		goto out_page;
+ 	}
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL,
+-				&memcg, false)) {
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL,
++					&memcg, false)) {
+ 		ret = VM_FAULT_OOM;
+ 		goto out_page;
+ 	}
+@@ -3156,7 +3156,8 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	if (!page)
+ 		goto oom;
+ 
+-	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL, &memcg, false))
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL, &memcg,
++					false))
+ 		goto oom_free_page;
+ 
+ 	/*
+@@ -3652,7 +3653,7 @@ static int do_cow_fault(struct vm_fault *vmf)
+ 	if (!vmf->cow_page)
+ 		return VM_FAULT_OOM;
+ 
+-	if (mem_cgroup_try_charge(vmf->cow_page, vma->vm_mm, GFP_KERNEL,
++	if (mem_cgroup_try_charge_delay(vmf->cow_page, vma->vm_mm, GFP_KERNEL,
+ 				&vmf->memcg, false)) {
+ 		put_page(vmf->cow_page);
+ 		return VM_FAULT_OOM;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 9d6c7e595415..a96af5690864 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1219,8 +1219,8 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
+ 	 * the shmem_swaplist_mutex which might hold up shmem_writepage().
+ 	 * Charged back to the user (not to caller) when swap account is used.
+ 	 */
+-	error = mem_cgroup_try_charge(page, current->mm, GFP_KERNEL, &memcg,
+-			false);
++	error = mem_cgroup_try_charge_delay(page, current->mm, GFP_KERNEL,
++					    &memcg, false);
+ 	if (error)
+ 		goto out;
+ 	/* No radix_tree_preload: swap entry keeps a place for page in tree */
+@@ -1697,7 +1697,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 				goto failed;
+ 		}
+ 
+-		error = mem_cgroup_try_charge(page, charge_mm, gfp, &memcg,
++		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+ 				false);
+ 		if (!error) {
+ 			error = shmem_add_to_page_cache(page, mapping, index,
+@@ -1803,7 +1803,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 		if (sgp == SGP_WRITE)
+ 			__SetPageReferenced(page);
+ 
+-		error = mem_cgroup_try_charge(page, charge_mm, gfp, &memcg,
++		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+ 				PageTransHuge(page));
+ 		if (error)
+ 			goto unacct;
+@@ -2276,7 +2276,7 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	__SetPageSwapBacked(page);
+ 	__SetPageUptodate(page);
+ 
+-	ret = mem_cgroup_try_charge(page, dst_mm, gfp, &memcg, false);
++	ret = mem_cgroup_try_charge_delay(page, dst_mm, gfp, &memcg, false);
+ 	if (ret)
+ 		goto out_release;
+ 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index cc2cf04d9018..2a74c76dec1f 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3725,6 +3725,37 @@ static void free_swap_count_continuations(struct swap_info_struct *si)
+ 	}
+ }
+ 
++#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
++void mem_cgroup_throttle_swaprate(struct mem_cgroup *memcg, int node,
++				  gfp_t gfp_mask)
++{
++	struct swap_info_struct *si, *next;
++	if (!(gfp_mask & __GFP_IO) || !memcg)
++		return;
++
++	if (!blk_cgroup_congested())
++		return;
++
++	/*
++	 * We've already scheduled a throttle, avoid taking the global swap
++	 * lock.
++	 */
++	if (current->throttle_queue)
++		return;
++
++	spin_lock(&swap_avail_lock);
++	plist_for_each_entry_safe(si, next, &swap_avail_heads[node],
++				  avail_lists[node]) {
++		if (si->bdev) {
++			blkcg_schedule_throttle(bdev_get_queue(si->bdev),
++						true);
++			break;
++		}
++	}
++	spin_unlock(&swap_avail_lock);
++}
++#endif
++
+ static int __init swapfile_init(void)
+ {
+ 	int nid;
+-- 
+2.14.3
 
