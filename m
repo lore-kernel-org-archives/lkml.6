@@ -6,67 +6,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1534FC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35E2C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2C027B28
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857FA27B39
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y6Cb3Gb4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2C027B28
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JyTGrJWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857FA27B39
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754945AbeF2GU1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:20:27 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46470 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754851AbeF2GUW (ORCPT
+        id S933617AbeF2GUi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:20:38 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45596 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754883AbeF2GUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:20:22 -0400
-Received: by mail-pg0-f66.google.com with SMTP id q14-v6so3529486pgt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 23:20:22 -0700 (PDT)
+        Fri, 29 Jun 2018 02:20:25 -0400
+Received: by mail-pl0-f66.google.com with SMTP id bi1-v6so3956329plb.12
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 23:20:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7HdC+3C2V6gtOSdBSxnueYDMAQcAswZVENc9D7squtE=;
-        b=Y6Cb3Gb4VgKHPO+6QwCV45OlfZFgaw+QL/dC1wzweOv7qT+CfDUmWotTJvkUHV4PeF
-         SRJ3vU2M7gUSzZYy+Vf6XuW3Xn8Q/fTLOEg7IUsAOmhVl6XO4EqJWgAjDPHnMuGHtlre
-         cXoYhht82zk4Yzos5w8wqjBAgKfGfuMSaOykY=
+        bh=EkwPwO0lER5EARerditu2y59jlVuf9fgSDG7a5KSRuc=;
+        b=JyTGrJWG0kjcQ/TxaLHFrKvcTPh6fGRmY/j4pIYClJJhp8Nwh0xRdDT/tkod4z0JHu
+         sZ00GEMH0J/E/eBo1Afx3CR5fK4flgM8wBPWXW43eWOhuTYQ6i7FtG2iL/zZF21dIRpK
+         VWgHRdds3k1iZnv0fkYAviFjrcRsAUG0STxcM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7HdC+3C2V6gtOSdBSxnueYDMAQcAswZVENc9D7squtE=;
-        b=AwSL4rjGw2UEyYhWkEIvBE287xO7qXFhCf+aqxqnOpKuvqT/QknJbZskWYubXFafrd
-         Makkrk9l8Bv3Pe8MpPf3z93nYltCiW3K8F4Luk6DfJu4m0NksVHOuD9nv+ALe0i34XBN
-         /MS70h3AsIb6hAODh11vYEMoB8yPtUTo+raj6Hhm9W6UgXU6MkAI5Bu/h/0jvYQqZlKj
-         0PMLRX6GB3Gwm/x+8IUudIZWm9F2KkgLetR6yHsUT0yiHkqhGIG1l4v2Z/P08AV39R1Y
-         8YdsdQWSQetKZIzSuxSJKLZP9asLK0R8ZR/Y8+3PZcBlBFgPFeShjTYEPW3lVopqdYNL
-         p/mA==
-X-Gm-Message-State: APt69E2uswJWwV6L2gvX6igB7NCNTmd7vkrYQF4eK7j8+MNxngRTjQNk
-        RE8A6ocUmj9coCJGpYvFOs4HFw==
-X-Google-Smtp-Source: ADUXVKKseV63PqaEQfUfp1d6fi5VThcISY850IY5LZFj3knn+zM4gEadi50sO2I+WyPe7h91jDT7KA==
-X-Received: by 2002:a65:4841:: with SMTP id i1-v6mr11249431pgs.75.1530253222241;
-        Thu, 28 Jun 2018 23:20:22 -0700 (PDT)
+        bh=EkwPwO0lER5EARerditu2y59jlVuf9fgSDG7a5KSRuc=;
+        b=GVallkmC2SThd0vnXF2zw77p0OHSczvvjLPn5OlUm2z9NoaTscLRzl/s0dtkKTydRL
+         JK5SPp/R2PEBDaIkA8ulDfJ0g3gN7PLWjszJlPfJ5CnT/5lMCqggX/y9FedZ8qGp9Cgf
+         ntgN0AA3eE46GvriN0E59F94zBPZCISD1ptylcf4fTuyUmzrGJKnyYaBbGuEX5smrVil
+         yGGy7yoDuRnQQi4ZAdOC8iXg5rKJc7X7VmXbgKilUDm+5EtYMRN+7GBGyq2pCqAHhEEY
+         O7xbkBfkHPv41iDX6Yna8OG45TWfsbzp+oXtGT3xWuYc1F/paZ7NY4uQOe0sKv+adcw5
+         gsWQ==
+X-Gm-Message-State: APt69E1l2dptQZ2F3gECUOlH2iTq7uRevKTGmMrH8ehAD5qJAZe6ZZG/
+        Ro/A9fzJOp6VbLYR+mkS/JInAg==
+X-Google-Smtp-Source: AAOMgpdfQ2RGIlE3GuLJDYEsnlz7DAszzbLQlEvMpDi7XVVgZeOc1XD8K9S6iHK1ivAdo+bGL3QyYA==
+X-Received: by 2002:a17:902:b612:: with SMTP id b18-v6mr8759553pls.131.1530253225134;
+        Thu, 28 Jun 2018 23:20:25 -0700 (PDT)
 Received: from localhost ([122.172.117.17])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm1980230pfj.101.2018.06.28.23.20.21
+        by smtp.gmail.com with ESMTPSA id g136-v6sm143660pfb.23.2018.06.28.23.20.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 23:20:21 -0700 (PDT)
+        Thu, 28 Jun 2018 23:20:24 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rafael Wysocki <rjw@rjwysocki.net>, ulf.hansson@linaro.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] OPP: Rename and relocate of_genpd_opp_to_performance_state()
-Date:   Fri, 29 Jun 2018 11:49:39 +0530
-Message-Id: <9dddd2b291fcdf8eee7d95ca4346d9b3e4228e43.1530252803.git.viresh.kumar@linaro.org>
+Subject: [PATCH 10/10] OPP: Remove of_dev_pm_opp_find_required_opp()
+Date:   Fri, 29 Jun 2018 11:49:40 +0530
+Message-Id: <b7843b9941743f1b3462ada4b485a5f94038da09.1530252803.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
 In-Reply-To: <cover.1530252803.git.viresh.kumar@linaro.org>
 References: <cover.1530252803.git.viresh.kumar@linaro.org>
@@ -75,192 +72,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OPP core already has the performance state values for each of the
-genpd's OPPs and there is no need to call the genpd callback again to
-get the performance state for the case where the end device doesn't have
-an OPP table and has the "required-opps" property directly in its node.
-
-This commit renames of_get_required_opp_performance_state() as
-of_get_required_opp_performance_state() and moves it to the OPP core, as
-it is all about OPP stuff now.
+This isn't used anymore, remove it.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/base/power/domain.c | 48 ------------------------------------
- drivers/opp/of.c            | 49 +++++++++++++++++++++++++++++++++++++
- include/linux/pm_domain.h   |  9 -------
- include/linux/pm_opp.h      |  5 ++++
- 4 files changed, 54 insertions(+), 57 deletions(-)
+ drivers/opp/of.c       | 54 ------------------------------------------
+ include/linux/pm_opp.h |  5 ----
+ 2 files changed, 59 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 15ffac081b0e..4b6acaac6ab9 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2544,54 +2544,6 @@ unsigned int genpd_opp_to_performance_state(struct device *genpd_dev,
- }
- EXPORT_SYMBOL_GPL(genpd_opp_to_performance_state);
- 
--/**
-- * of_genpd_opp_to_performance_state- Gets performance state of device's
-- * power domain corresponding to a DT node's "required-opps" property.
-- *
-- * @dev: Device for which the performance-state needs to be found.
-- * @np: DT node where the "required-opps" property is present. This can be
-- *	the device node itself (if it doesn't have an OPP table) or a node
-- *	within the OPP table of a device (if device has an OPP table).
-- *
-- * Returns performance state corresponding to the "required-opps" property of
-- * a DT node. This calls platform specific genpd->opp_to_performance_state()
-- * callback to translate power domain OPP to performance state.
-- *
-- * Returns performance state on success and 0 on failure.
-- */
--unsigned int of_genpd_opp_to_performance_state(struct device *dev,
--					       struct device_node *np)
--{
--	struct generic_pm_domain *genpd;
--	struct dev_pm_opp *opp;
--	int state = 0;
--
--	genpd = dev_to_genpd(dev);
--	if (IS_ERR(genpd))
--		return 0;
--
--	if (unlikely(!genpd->set_performance_state))
--		return 0;
--
--	genpd_lock(genpd);
--
--	opp = of_dev_pm_opp_find_required_opp(&genpd->dev, np);
--	if (IS_ERR(opp)) {
--		dev_err(dev, "Failed to find required OPP: %ld\n",
--			PTR_ERR(opp));
--		goto unlock;
--	}
--
--	state = genpd->opp_to_performance_state(genpd, opp);
--	dev_pm_opp_put(opp);
--
--unlock:
--	genpd_unlock(genpd);
--
--	return state;
--}
--EXPORT_SYMBOL_GPL(of_genpd_opp_to_performance_state);
--
- static int __init genpd_bus_init(void)
- {
- 	return bus_register(&genpd_bus_type);
 diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index e1e4a58dd748..80fdeab4364a 100644
+index 80fdeab4364a..722b3142f4c6 100644
 --- a/drivers/opp/of.c
 +++ b/drivers/opp/of.c
-@@ -964,6 +964,55 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev,
+@@ -1013,60 +1013,6 @@ unsigned int of_get_required_opp_performance_state(struct device_node *np,
  }
- EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_sharing_cpus);
+ EXPORT_SYMBOL_GPL(of_get_required_opp_performance_state);
  
-+/**
-+ * of_get_required_opp_performance_state() - Search for required OPP and return its performance state.
-+ * @np: Node that contains the "required-opps" property.
-+ * @index: Index of the phandle to parse.
-+ *
-+ * Returns the performance state of the OPP pointed out by the "required-opps"
-+ * property at @index in @np.
-+ *
-+ * Return: Positive performance state on success, otherwise 0 on errors.
-+ */
-+unsigned int of_get_required_opp_performance_state(struct device_node *np,
-+						   int index)
-+{
-+	struct dev_pm_opp *opp;
-+	struct device_node *required_np;
-+	struct opp_table *opp_table;
-+	unsigned int pstate = 0;
-+
-+	required_np = of_parse_required_opp(np, index);
-+	if (!required_np)
-+		return -ENODEV;
-+
-+	opp_table = _get_required_opp_table(required_np);
-+	if (IS_ERR(opp_table)) {
-+		pr_err("%s: Failed to find required OPP table %pOF: %ld\n",
-+		       __func__, np, PTR_ERR(opp_table));
-+		goto put_required_np;
-+	}
-+
-+	mutex_lock(&opp_table->lock);
-+
-+	list_for_each_entry(opp, &opp_table->opp_list, node) {
-+		if (opp->np == required_np) {
-+			pstate = opp->pstate;
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&opp_table->lock);
-+
-+	dev_pm_opp_put_opp_table(opp_table);
-+
-+put_required_np:
-+	of_node_put(required_np);
-+
-+	return pstate;
-+}
-+EXPORT_SYMBOL_GPL(of_get_required_opp_performance_state);
-+
- /**
-  * of_dev_pm_opp_find_required_opp() - Search for required OPP.
-  * @dev: The device whose OPP node is referenced by the 'np' DT node.
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index b3c5f1eaf16c..685f982d56e4 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -235,8 +235,6 @@ int of_genpd_parse_idle_states(struct device_node *dn,
- 			       struct genpd_power_state **states, int *n);
- unsigned int genpd_opp_to_performance_state(struct device *genpd_dev,
- 					    struct dev_pm_opp *opp);
--unsigned int of_genpd_opp_to_performance_state(struct device *dev,
--				struct device_node *np);
- 
- int genpd_dev_pm_attach(struct device *dev);
- struct device *genpd_dev_pm_attach_by_id(struct device *dev,
-@@ -280,13 +278,6 @@ genpd_opp_to_performance_state(struct device *genpd_dev, struct dev_pm_opp *opp)
- 	return 0;
- }
- 
--static inline unsigned int
--of_genpd_opp_to_performance_state(struct device *dev,
--				  struct device_node *np)
+-/**
+- * of_dev_pm_opp_find_required_opp() - Search for required OPP.
+- * @dev: The device whose OPP node is referenced by the 'np' DT node.
+- * @np: Node that contains the "required-opps" property.
+- *
+- * Returns the OPP of the device 'dev', whose phandle is present in the "np"
+- * node. Although the "required-opps" property supports having multiple
+- * phandles, this helper routine only parses the very first phandle in the list.
+- *
+- * Return: Matching opp, else returns ERR_PTR in case of error and should be
+- * handled using IS_ERR.
+- *
+- * The callers are required to call dev_pm_opp_put() for the returned OPP after
+- * use.
+- */
+-struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev,
+-						   struct device_node *np)
 -{
--	return 0;
--}
+-	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ENODEV);
+-	struct device_node *required_np;
+-	struct opp_table *opp_table;
 -
- static inline int genpd_dev_pm_attach(struct device *dev)
- {
- 	return 0;
+-	opp_table = _find_opp_table(dev);
+-	if (IS_ERR(opp_table))
+-		return ERR_CAST(opp_table);
+-
+-	required_np = of_parse_phandle(np, "required-opps", 0);
+-	if (unlikely(!required_np)) {
+-		dev_err(dev, "Unable to parse required-opps\n");
+-		goto put_opp_table;
+-	}
+-
+-	mutex_lock(&opp_table->lock);
+-
+-	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+-		if (temp_opp->available && temp_opp->np == required_np) {
+-			opp = temp_opp;
+-
+-			/* Increment the reference count of OPP */
+-			dev_pm_opp_get(opp);
+-			break;
+-		}
+-	}
+-
+-	mutex_unlock(&opp_table->lock);
+-
+-	of_node_put(required_np);
+-put_opp_table:
+-	dev_pm_opp_put_opp_table(opp_table);
+-
+-	return opp;
+-}
+-EXPORT_SYMBOL_GPL(of_dev_pm_opp_find_required_opp);
+-
+ /**
+  * dev_pm_opp_get_of_node() - Gets the DT node corresponding to an opp
+  * @opp:	opp for which DT node has to be returned for
 diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index ffdb4a78edec..6d6b1febe068 100644
+index 6d6b1febe068..fadf6d1bdef5 100644
 --- a/include/linux/pm_opp.h
 +++ b/include/linux/pm_opp.h
-@@ -309,6 +309,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpuma
+@@ -307,7 +307,6 @@ int dev_pm_opp_of_cpumask_add_table(const struct cpumask *cpumask);
+ void dev_pm_opp_of_cpumask_remove_table(const struct cpumask *cpumask);
+ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
  struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
- struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np);
+-struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np);
  struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
-+unsigned int of_get_required_opp_performance_state(struct device_node *np, int index);
+ unsigned int of_get_required_opp_performance_state(struct device_node *np, int index);
  #else
- static inline int dev_pm_opp_of_add_table(struct device *dev)
- {
-@@ -351,6 +352,10 @@ static inline struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
- {
+@@ -344,10 +343,6 @@ static inline struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device
  	return NULL;
  }
-+static inline unsigned int of_get_required_opp_performance_state(struct device_node *np, int index)
-+{
-+	return 0;
-+}
- #endif
  
- #endif		/* __LINUX_OPP_H__ */
+-static inline struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np)
+-{
+-	return NULL;
+-}
+ static inline struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
+ {
+ 	return NULL;
 -- 
 2.18.0.rc1.242.g61856ae69a2c
 
