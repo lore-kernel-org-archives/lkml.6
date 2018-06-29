@@ -2,140 +2,92 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2F4C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C340BC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A41627FF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612FC27FF8
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9onU0GM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A41627FF8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ovXMvENE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612FC27FF8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936324AbeF2OuS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:50:18 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53430 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932254AbeF2OuQ (ORCPT
+        id S936377AbeF2Oub (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:50:31 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:36242 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932254AbeF2Oua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:50:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id b188-v6so2497717wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 07:50:16 -0700 (PDT)
+        Fri, 29 Jun 2018 10:50:30 -0400
+Received: by mail-wr0-f170.google.com with SMTP id f16-v6so9117625wrm.3;
+        Fri, 29 Jun 2018 07:50:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yPI8a3CQAq4viLCGJF+J9E7iiBtryHBE5KlWuhpyVQY=;
-        b=e9onU0GMf4R9Lfp9r6H6cK5RtppQnsW6IA0rvt4vTIVMJxE84C1F9dVwrlidR1Afx6
-         sPKe+JZuI987M2ArpYQgRsyyvxOwGCmHAK7QRc1uG+o8SQvhU+I+3wE5KjFn/2HyQey+
-         FFAs5XFMSILDdNXtzGlxz7c74WpP30AdDR3/TaovrqbSyvGo2ikkUGtE0c/h+9iCUPgS
-         A97T1gBeRa+hSnymrFRP9g4dwoeNldivBnIsZa+N+KOUq3DvepMvNXKjbbXwY49YPh/9
-         3zVWb5u7UlUWNx5inFgK5zWYWsUIhHZ30bVJCooyMlAUIsmCsAqW6fm9FHv1guM1GjBi
-         bSzQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=h8YH/3BRM4lpJRJG8KEqKb9DYNBFLEf51rUKGhQlfio=;
+        b=ovXMvENEZMAQhHvr9mvjWHo+1TzWAhqn6Elju3g/rmVk42lQXEdksceyP8tttvp9K4
+         FnswbONcvIH69jFxN44lkDapEKVKtJaoY5kT1U8ivjXdFJT1aOBhMkdeViIkf967xRgH
+         b/1YGtEJD/t7AhNXvm/Y9RCpeiDOPlAgcuXFmUTUrjn8UWOzP/iB4FfFH1OC5zkFFg9A
+         TtI84f1YAzrh3bhAP0PMcA+vlV8l7mW3BYHnjJsSPrB8WTZv9B1VNKThvgEcISPZO4WU
+         e1CGg4fnYvbHZGeBDSlZpxBJ56rPZgGsg8wEuOQv6h6dz+k81MePuV0aaFwowrZ1+YVM
+         Swwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yPI8a3CQAq4viLCGJF+J9E7iiBtryHBE5KlWuhpyVQY=;
-        b=aVuRU453WPj9aNdxKtkucOfuP3JyKmxXPIMYt8C/B4b69dYVPlnDISzKRfB3E9W+9c
-         Nd4HBuqFf/Ux8Z/kwewpxKgyKS6QzwW64uxWyr0OZnhJA1c0u0doNfGDHQbOi4wBdI0N
-         kkGJUvZ2whyIsS/NphYad2Wng54fu28VHIlj7dZKnFqDGOda7TfWZ8Pgqprc1UWorCcT
-         7y4GntMmnS1l00HTjj+3Ec5B5FmIP/csb7fLnkTVxjlFDXOZEw2ZT7WrEyGvf1f/xt+v
-         OJr4rprKoak5LzhfYJ653xl+PYsA4vMb/JMlZGkgPw4zOEj38jc/mh5jvb/LgrXuNMuO
-         exwg==
-X-Gm-Message-State: APt69E1Q+Dvilg+NIDpsHknXOMIGNxe3h29OR8BgKqPBBh5nhJZN1/XL
-        0A+2v2Q9BQEyIu/I4eWCON7Mm+C/F1tdQ5T7CAc=
-X-Google-Smtp-Source: AAOMgpc2OL4LJjux7KSbZFXKzMwRs7VhN1dI1Z9ebeoVNofdmJM24buLnvQXWRfgTAil5UykmOsYTz0b1Cmfsks6IX0=
-X-Received: by 2002:a1c:7a06:: with SMTP id v6-v6mr2046280wmc.90.1530283815650;
- Fri, 29 Jun 2018 07:50:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:8e6b:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 07:50:15
- -0700 (PDT)
-In-Reply-To: <20180629142710.2069-1-michel@daenzer.net>
-References: <20180629142710.2069-1-michel@daenzer.net>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 29 Jun 2018 10:50:15 -0400
-Message-ID: <CADnq5_NZa=-_Cs6zq=0kk-A9VKa=56Sbg+dUrgdvB5vz77SAnw@mail.gmail.com>
-Subject: Re: [PATCH] drm: Use kvzalloc for allocating blob property memory
-To:     =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=h8YH/3BRM4lpJRJG8KEqKb9DYNBFLEf51rUKGhQlfio=;
+        b=FD0BmC0xtUuKXeDHos8Zjn0xppw7g8VNRX+zZeCaYi4X0l6vMtzS4alYO1P3ay5clJ
+         2hdQXsXLOT/h1oWszmxD2j6hTUXmnyztSyPRN43peXt3npiA3MEQBQ8ZpAk8ixo2EHp8
+         dOseWD12AXZ3Y5Z3O9iWnKq8WeQGGt7rnD28E9L57nLgA6z8pI2loE9edtoxPAJxfX9b
+         kUZKD88kr1GAiM63QT5JReQ15/5APmaaGmk/IS2selOmchOPJBeE4nbFr0v+JRgcopnx
+         SzqF8QTT5zgA8Ev6qOUgM3xOgvVBsjNYRIkM7XKr7hptryqPYNCrnMpvlkfWCAdqoc3D
+         05mA==
+X-Gm-Message-State: APt69E09Q7fWF2WqwxgdWLSWHV4h0+Gk5jX0CpDE2vV1G1XcypgCl6Zi
+        YuYxd4E72eHj7saYPdMxn2CPfIQg
+X-Google-Smtp-Source: AAOMgpfytG9CeNhnwWJbv1aOrcpY1x728HPEnNSI91w/yINV2hfWbs/m1JYbEcq9i6p1islkZp83jA==
+X-Received: by 2002:adf:ec89:: with SMTP id z9-v6mr13080135wrn.160.1530283828984;
+        Fri, 29 Jun 2018 07:50:28 -0700 (PDT)
+Received: from orange.redhat.com (ip-62-245-115-235.net.upcbroadband.cz. [62.245.115.235])
+        by smtp.gmail.com with ESMTPSA id r2-v6sm2382905wmb.39.2018.06.29.07.50.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Jun 2018 07:50:28 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 4.18-rc3
+Date:   Fri, 29 Jun 2018 16:49:57 +0200
+Message-Id: <20180629144957.32584-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 10:27 AM, Michel D=C3=A4nzer <michel@daenzer.net> w=
-rote:
-> From: Michel D=C3=A4nzer <michel.daenzer@amd.com>
->
-> The property size may be controlled by userspace, can be large (I've
-> seen failure with order 4, i.e. 16 pages / 64 KB) and doesn't need to be
-> physically contiguous.
->
-> Signed-off-by: Michel D=C3=A4nzer <michel.daenzer@amd.com>
+Hi Linus,
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
-> ---
->  drivers/gpu/drm/drm_property.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_propert=
-y.c
-> index 1f8031e30f53..cdb10f885a4f 100644
-> --- a/drivers/gpu/drm/drm_property.c
-> +++ b/drivers/gpu/drm/drm_property.c
-> @@ -532,7 +532,7 @@ static void drm_property_free_blob(struct kref *kref)
->
->         drm_mode_object_unregister(blob->dev, &blob->base);
->
-> -       kfree(blob);
-> +       kvfree(blob);
->  }
->
->  /**
-> @@ -559,7 +559,7 @@ drm_property_create_blob(struct drm_device *dev, size=
-_t length,
->         if (!length || length > ULONG_MAX - sizeof(struct drm_property_bl=
-ob))
->                 return ERR_PTR(-EINVAL);
->
-> -       blob =3D kzalloc(sizeof(struct drm_property_blob)+length, GFP_KER=
-NEL);
-> +       blob =3D kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KE=
-RNEL);
->         if (!blob)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -576,7 +576,7 @@ drm_property_create_blob(struct drm_device *dev, size=
-_t length,
->         ret =3D __drm_mode_object_add(dev, &blob->base, DRM_MODE_OBJECT_B=
-LOB,
->                                     true, drm_property_free_blob);
->         if (ret) {
-> -               kfree(blob);
-> +               kvfree(blob);
->                 return ERR_PTR(-EINVAL);
->         }
->
-> --
-> 2.18.0
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-4.18-rc3
+
+for you to fetch changes up to 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3:
+
+  ceph: fix dentry leak in splice_dentry() (2018-06-26 18:42:44 +0200)
+
+----------------------------------------------------------------
+A trivial dentry leak fix from Zheng.
+
+----------------------------------------------------------------
+Yan, Zheng (1):
+      ceph: fix dentry leak in splice_dentry()
+
+ fs/ceph/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
