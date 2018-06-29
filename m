@@ -2,121 +2,130 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE109C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8FDC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9913427B33
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C77A327B46
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dOZME6Nd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9913427B33
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V932m0Q4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77A327B46
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933891AbeF2GVo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:21:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56394 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933673AbeF2GV3 (ORCPT
+        id S933943AbeF2GW1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:22:27 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44873 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754342AbeF2GUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:21:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ebZ2v2c6aypxo5GBpQA28oz8ZOr6I8YtAVamOmEXT30=; b=dOZME6NdhtgYROZohXiHRELuI
-        7K2TNXnEZAFU9c+6OhreuewXWXBUqJVjr21yDuLQptsP4hO06XjOjvvZ0BdOoosVeAsTGsZYDpW0R
-        VHHqsa1LtIueUD7slhYJFK0UMLCL+6a7o2AY5zumOMymL2VEjXTK4vHOVF5FzGXL3L4jd3pg940QI
-        ssFwo4ikthjp8OZq555l1pYnYoZpYXL9/CHvQ5i5Ki1Nolg1TW8HxEeK0QlEM1mQ2Ehfl5mu5ZHBS
-        Pl7oUQ+DqdcnWgbdGHwuo0PXLIL1YY/V6RkSE8sfd/YMN5/kmdZQqxQeHSIP2olYwBl5Fjqc7ch+w
-        p+xK1UGqw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYmmc-0004si-Mz; Fri, 29 Jun 2018 06:21:26 +0000
-Date:   Thu, 28 Jun 2018 23:21:26 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -mm -v4 08/21] mm, THP, swap: Support to read a huge swap
- cluster for swapin a THP
-Message-ID: <20180629062126.GJ7646@bombadil.infradead.org>
-References: <20180622035151.6676-1-ying.huang@intel.com>
- <20180622035151.6676-9-ying.huang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622035151.6676-9-ying.huang@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 29 Jun 2018 02:20:02 -0400
+Received: by mail-pg0-f68.google.com with SMTP id b10-v6so3534217pgq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 23:20:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=S4eygS426BABBAsQSIESeCrT2oWeYHdrfhnghVokkWA=;
+        b=V932m0Q4haBm2tcIysbJW8MMYcBwvDbEly/TZrjjyBjgxbCR/0s8FngAI1amd5iNcF
+         kaGlaSEQfikQ1kkQNKteNjVo/goaM7pF0x2yFJVDsGWz1acsHfeAVyGmnPSjfPsBxSP9
+         WgVksM6E5lXD40dnxxXwhqU4Dg76rfUALkwZw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=S4eygS426BABBAsQSIESeCrT2oWeYHdrfhnghVokkWA=;
+        b=SqCjNYkpK2wt7M2ooRZn39ML8WlIV/FSpWJAu9ooszkpbCVhkALzNuuiZxnsqp9d3V
+         BoYJp4PyKgEZLWgvobawEoUVNidWij/1KnbXn3elsYQWubtMkGzwX78UuFNZYGApxre9
+         3QOs8DFiBMQgluYiRklOnsx1gBYdSRevoB34DUAT1nszIAqgY37RKFtPiY5lnHHk2i5L
+         y/0z553fj39uYCDtn+h33U93DnxxOoN+rs3HBVialklcoga2mkAm/I0ND+Jlyxg6zaQH
+         3h6qWqzmAFucoNjgLDrUt2OoVlfQePPVIkYQOWkEu6q/jW/eHkEM2AS+Q1aw/L1TsDsS
+         rgog==
+X-Gm-Message-State: APt69E3PiKWP/99gxCitgEGpLBjNuD9y/SqwKFeyMKCXSKHqzW1BnPQ8
+        HHIpbXwfBmeUXPLsQ/THCw+SKw==
+X-Google-Smtp-Source: AAOMgpe9535S8Cd2JDRCzezBza+t9ku+jbYWNukszkUIIpgcO3LiWvvc26wLTGFauCT+OfKM8DRF2Q==
+X-Received: by 2002:a62:1f8c:: with SMTP id l12-v6mr4414317pfj.143.1530253202061;
+        Thu, 28 Jun 2018 23:20:02 -0700 (PDT)
+Received: from localhost ([122.172.117.17])
+        by smtp.gmail.com with ESMTPSA id f7-v6sm1976454pfj.101.2018.06.28.23.20.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Jun 2018 23:20:01 -0700 (PDT)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>, ulf.hansson@linaro.org,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/10] OPP: Identify and mark genpd OPP tables
+Date:   Fri, 29 Jun 2018 11:49:32 +0530
+Message-Id: <c24cb556bd674933df19bff0acc596d73e510706.1530252803.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+In-Reply-To: <cover.1530252803.git.viresh.kumar@linaro.org>
+References: <cover.1530252803.git.viresh.kumar@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 11:51:38AM +0800, Huang, Ying wrote:
-> +++ b/mm/swap_state.c
-> @@ -426,33 +447,37 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
->  		/*
->  		 * call radix_tree_preload() while we can wait.
->  		 */
-> -		err = radix_tree_maybe_preload(gfp_mask & GFP_KERNEL);
-> +		err = radix_tree_maybe_preload_order(gfp_mask & GFP_KERNEL,
-> +						     compound_order(new_page));
->  		if (err)
->  			break;
+We need to handle genpd OPP tables differently, this is already the case
+at one location and will be extended going forward. Add another field to
+the OPP table to check if the table belongs to a genpd or not.
 
-There's no more preloading in the XArray world, so this can just be dropped.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/opp/of.c  | 6 ++++--
+ drivers/opp/opp.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
->  		/*
->  		 * Swap entry may have been freed since our caller observed it.
->  		 */
-> +		err = swapcache_prepare(hentry, huge_cluster);
-> +		if (err) {
->  			radix_tree_preload_end();
-> -			break;
-> +			if (err == -EEXIST) {
-> +				/*
-> +				 * We might race against get_swap_page() and
-> +				 * stumble across a SWAP_HAS_CACHE swap_map
-> +				 * entry whose page has not been brought into
-> +				 * the swapcache yet.
-> +				 */
-> +				cond_resched();
-> +				continue;
-> +			} else if (err == -ENOTDIR) {
-> +				/* huge swap cluster is split under us */
-> +				continue;
-> +			} else		/* swp entry is obsolete ? */
-> +				break;
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 44a6b81fd228..218b8997d817 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -88,6 +88,9 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev)
+ 	of_property_read_u32(np, "voltage-tolerance",
+ 			     &opp_table->voltage_tolerance_v1);
+ 
++	if (of_find_property(np, "#power-domain-cells", NULL))
++		opp_table->is_genpd = true;
++
+ 	/* Get OPP table node */
+ 	opp_np = _opp_of_get_opp_desc_node(np, 0);
+ 	of_node_put(np);
+@@ -314,8 +317,7 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
+ 	ret = of_property_read_u64(np, "opp-hz", &rate);
+ 	if (ret < 0) {
+ 		/* "opp-hz" is optional for devices like power domains. */
+-		if (!of_find_property(dev->of_node, "#power-domain-cells",
+-				      NULL)) {
++		if (!opp_table->is_genpd) {
+ 			dev_err(dev, "%s: opp-hz not found\n", __func__);
+ 			goto free_opp;
+ 		}
+diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+index 7c540fd063b2..3cd3b7b167b5 100644
+--- a/drivers/opp/opp.h
++++ b/drivers/opp/opp.h
+@@ -138,6 +138,7 @@ enum opp_table_access {
+  * @regulators: Supply regulators
+  * @regulator_count: Number of power supply regulators
+  * @genpd_performance_state: Device's power domain support performance state.
++ * @is_genpd: Marks if the OPP table belongs to a genpd.
+  * @set_opp: Platform specific set_opp callback
+  * @set_opp_data: Data to be passed to set_opp callback
+  * @dentry:	debugfs dentry pointer of the real device directory (not links).
+@@ -174,6 +175,7 @@ struct opp_table {
+ 	struct regulator **regulators;
+ 	unsigned int regulator_count;
+ 	bool genpd_performance_state;
++	bool is_genpd;
+ 
+ 	int (*set_opp)(struct dev_pm_set_opp_data *data);
+ 	struct dev_pm_set_opp_data *set_opp_data;
+-- 
+2.18.0.rc1.242.g61856ae69a2c
 
-I'm not entirely happy about -ENOTDIR being overloaded to mean this.
-Maybe we can return a new enum rather than an errno?
-
-Also, I'm not sure that a true/false parameter is the right approach for
-"is this a huge page".  I think we'll have usecases for swap entries which
-are both larger and smaller than PMD_SIZE.
-
-I was hoping to encode the swap entry size into the entry; we only need one
-extra bit to do that (no matter the size of the entry).  I detailed the
-encoding scheme here:
-
-https://plus.google.com/117536210417097546339/posts/hvctn17WUZu
-
-(let me know if that doesn't work for you; I'm not very experienced with
-this G+ thing)
