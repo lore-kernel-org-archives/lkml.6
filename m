@@ -5,41 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B74EC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4700C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F98A27AE1
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F98A27AE1
+	by mail.kernel.org (Postfix) with ESMTP id 8AB6224A3C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB6224A3C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933512AbeF2Gh7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:37:59 -0400
-Received: from mga18.intel.com ([134.134.136.126]:31639 "EHLO mga18.intel.com"
+        id S1754226AbeF2Git (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:38:49 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55333 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932209AbeF2Gh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:37:58 -0400
+        id S1752125AbeF2Gis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 02:38:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 23:37:58 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 23:38:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="63107232"
+   d="scan'208";a="53815010"
 Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by orsmga003.jf.intel.com with ESMTP; 28 Jun 2018 23:37:44 -0700
+  by orsmga006.jf.intel.com with ESMTP; 28 Jun 2018 23:38:44 -0700
 From:   Felipe Balbi <balbi@kernel.org>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-        keescook@chromium.org, allen.lkml@gmail.com,
+To:     linux-usb-owner@vger.kernel.org
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vincent Pelletier <plr.vincent@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
-In-Reply-To: <87efh0o6f9.fsf@belgarion.home>
-References: <20180620035453.7721-1-baijiaju1990@gmail.com> <87efh0o6f9.fsf@belgarion.home>
-Date:   Fri, 29 Jun 2018 09:35:10 +0300
-Message-ID: <87y3eydrs1.fsf@linux.intel.com>
+Subject: Re: [PATCH v2] usb: gadget: add error handling for skb_realloc_headroom
+In-Reply-To: <1529410988-70261-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528778503-41615-1-git-send-email-jiazhouyang09@gmail.com> <1529410988-70261-1-git-send-email-jiazhouyang09@gmail.com>
+Date:   Fri, 29 Jun 2018 09:36:10 +0300
+Message-ID: <87vaa2drqd.fsf@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,29 +55,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-Robert Jarzmik <robert.jarzmik@free.fr> writes:
+linux-usb-owner@vger.kernel.org writes:
 
-> Jia-Ju Bai <baijiaju1990@gmail.com> writes:
+> When skb_realloc_headroom fails, the lack of error-handling code may
+> cause unexpected results.
 >
->> The driver may sleep with holding a spinlock.
->> The function call paths (from bottom to top) in Linux-4.16.7 are:
->>
->> [FUNC] msleep
->> drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
->> 		msleep in init_controller
->> drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
->> 		init_controller in r8a66597_usb_disconnect
->> drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
->> 		spin_lock in r8a66597_usb_disconnect
+> This patch adds error-handling code after calling skb_realloc_headroom.
 >
-> That should not happen...
->
-> If think the issue you have is that your usb_connect() and usb_disconnect() are
-> called from interrupt context. I think the proper fix, as what is done in most
-> udc phys, is to schedule a workqueue, see drivers/usb/phy/phy-gpio-vbus-usb.c,
-> gpio_vbus_data.vbus.
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-argh, no. No workqueues needed here. Sorry
+from linux-usb-owner@vger.kernel.org??
 
 -- 
 balbi
