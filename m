@@ -2,285 +2,211 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47F0C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 230B2C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52D522502B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GeQdH3iC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52D522502B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id D9CA32502B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:55:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CA32502B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936792AbeF2Pzi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:55:38 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44654 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753649AbeF2Pzg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:55:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5TFraaR183539
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:55:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=rimTq9lRAdZAgYCoXp7Tp6nIGfD8q0e8zdvN+MUagVg=;
- b=GeQdH3iCQY3aBJTnzngpxZkrz/SHixBdUnNf/WS89bgJzwKgpemsaw0SLP0t5jTE7Gml
- wsfz7E2aIo7qWD0NdwLqBP0kQU7YvUubg/2GWygQEHHrOtl4DOtyiGygur33Hdy7B8ZX
- u5sFy4zhhdO7fWuFqjwrlBqP8eGLSUdKDZ0zJGS3mrM8ktD1n3HXLTvaJ04hAiRqePzx
- 42Uh2odDo5cwIDxQqSGF5CDGbyxb+O+hRBpp0tjANYzAzwmVeOM/yupJ4xy/fLkG+UNA
- lYzUS6ZC5tvP7+9i1x+dIg/VChar6rbjYifsTLpeWOkkKBbj3zzSa6ZvkRV0SG/ekHTs FA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jum0af213-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:55:35 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5TFtYTk015681
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:55:35 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5TFtYYC019952
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:55:34 GMT
-Received: from mail-ot0-f179.google.com (/74.125.82.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 29 Jun 2018 08:55:34 -0700
-Received: by mail-ot0-f179.google.com with SMTP id b10-v6so8467435otl.10
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 08:55:34 -0700 (PDT)
-X-Gm-Message-State: APt69E15tFbQrB3Yn3i0kpSF3LzpAway1Qf9CKiBFzyZkTSWmzP7y0xt
-        m+ezzYL6cha3iQtUGQFvosB/NLz+Ls6z+eVk2Dc=
-X-Google-Smtp-Source: AAOMgpdhTd1NG6ZY1gJPqlBVUiS1kZdUd25xyTbQgmRW4iZy3Kgqq6HPG5GKw+7Q25hG5EAaod7nmmjMgSkLyAyxcx0=
-X-Received: by 2002:a9d:2e5b:: with SMTP id c27-v6mr18386otd.176.1530287733440;
- Fri, 29 Jun 2018 08:55:33 -0700 (PDT)
+        id S936808AbeF2Pzt convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:55:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54114 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935951AbeF2Pzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:55:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 08:55:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="241736123"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga006.fm.intel.com with ESMTP; 29 Jun 2018 08:55:07 -0700
+Received: from fmsmsx155.amr.corp.intel.com (10.18.116.71) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 29 Jun 2018 08:55:07 -0700
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ FMSMSX155.amr.corp.intel.com (10.18.116.71) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 29 Jun 2018 08:55:06 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.223]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.82]) with mapi id 14.03.0319.002;
+ Fri, 29 Jun 2018 23:55:05 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     David Hildenbrand <david@redhat.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>
+Subject: RE: [PATCH v34 0/4] Virtio-balloon: support free page reporting
+Thread-Topic: [PATCH v34 0/4] Virtio-balloon: support free page reporting
+Thread-Index: AQHUDIBXCAcukqzfc0qkpOxZ4k7fNaRzbrIAgAMxUID//7tdgIAAxSEA//+AAYCAALR78A==
+Date:   Fri, 29 Jun 2018 15:55:04 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7396C254C@shsmsx102.ccr.corp.intel.com>
+References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
+ <c4dd0a13-91fb-c0f5-b41f-54421fdacca9@redhat.com>
+ <5B35ACD5.4090800@intel.com>
+ <4840cbb7-dd3f-7540-6a7c-13427de2f0d1@redhat.com>
+ <5B36189E.5050204@intel.com>
+ <34bb25eb-97f3-8a9f-8a13-401dfcf39a2c@redhat.com>
+In-Reply-To: <34bb25eb-97f3-8a9f-8a13-401dfcf39a2c@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjcyZjk1NmQtYWJiOC00ZGE3LTlmYzYtMDU2MjExNTViOTAzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVnk0NDRuQ3pxU1k4YVI1aW5QQ3NKMDRlUGVYUFIzTnpUQ1VoTmkwZEx3Q1RVelplSVBSeTl6N0t2XC9FMVY3R00ifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20180628173010.23849-1-pasha.tatashin@oracle.com>
- <20180628173010.23849-2-pasha.tatashin@oracle.com> <20180629143527.GA23545@techadventures.net>
-In-Reply-To: <20180629143527.GA23545@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Fri, 29 Jun 2018 11:54:57 -0400
-X-Gmail-Original-Message-ID: <CAGM2reaW94eNnz20FoSnocoXFPUV1_fCbKwj6+Q5EzqCoKE8uQ@mail.gmail.com>
-Message-ID: <CAGM2reaW94eNnz20FoSnocoXFPUV1_fCbKwj6+Q5EzqCoKE8uQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] mm/sparse: add sparse_init_nid()
-To:     osalvador@techadventures.net
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8939 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806290171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 10:35 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
->
-> On Thu, Jun 28, 2018 at 01:30:09PM -0400, Pavel Tatashin wrote:
-> > sparse_init() requires to temporary allocate two large buffers:
-> > usemap_map and map_map. Baoquan He has identified that these buffers are so
-> > large that Linux is not bootable on small memory machines, such as a kdump
-> > boot.
+On Friday, June 29, 2018 7:54 PM, David Hildenbrand wrote:
+> On 29.06.2018 13:31, Wei Wang wrote:
+> > On 06/29/2018 03:46 PM, David Hildenbrand wrote:
+> >>>
+> >>> I'm afraid it can't. For example, when we have a guest booted,
+> >>> without too many memory activities. Assume the guest has 8GB free
+> >>> memory. The arch_free_page there won't be able to capture the 8GB
+> >>> free pages since there is no free() called. This results in no free pages
+> reported to host.
+> >>
+> >> So, it takes some time from when the guest boots up until the balloon
+> >> device was initialized and therefore page hinting can start. For that
+> >> period, you won't get any arch_free_page()/page hinting callbacks, correct.
+> >>
+> >> However in the hypervisor, you can theoretically track which pages
+> >> the guest actually touched ("dirty"), so you already know "which
+> >> pages were never touched while booting up until virtio-balloon was
+> >> brought to life". These, you can directly exclude from migration. No
+> >> interface required.
+> >>
+> >> The remaining problem is pages that were touched ("allocated") by the
+> >> guest during bootup but freed again, before virtio-balloon came up.
+> >> One would have to measure how many pages these usually are, I would
+> >> say it would not be that many (because recently freed pages are
+> >> likely to be used again next for allocation). However, there are some
+> >> pages not being reported.
+> >>
+> >> During the lifetime of the guest, this should not be a problem,
+> >> eventually one of these pages would get allocated/freed again, so the
+> >> problem "solves itself over time". You are looking into the special
+> >> case of migrating the VM just after it has been started. But we have
+> >> the exact same problem also for ordinary free page hinting, so we
+> >> should rather solve that problem. It is not migration specific.
+> >>
+> >> If we are looking for an alternative to "problem solves itself",
+> >> something like "if virtio-balloon comes up, it will report all free
+> >> pages step by step using free page hinting, just like we would have
+> >> from "arch_free_pages()"". This would be the same interface we are
+> >> using for free page hinting - and it could even be made configurable in the
+> guest.
+> >>
+> >> The current approach we are discussing internally for details about
+> >> Nitesh's work ("how the magic inside arch_fee_pages() will work
+> >> efficiently) would allow this as far as I can see just fine.
+> >>
+> >> There would be a tiny little window between virtio-balloon comes up
+> >> and it has reported all free pages step by step, but that can be
+> >> considered a very special corner case that I would argue is not worth
+> >> it to be optimized.
+> >>
+> >> If I am missing something important here, sorry in advance :)
+> >>
 > >
-> > Baoquan provided a fix, which reduces these sizes of these buffers, but it
-> > is much better to get rid of them entirely.
+> > Probably I didn't explain that well. Please see my re-try:
 > >
-> > Add a new way to initialize sparse memory: sparse_init_nid(), which only
-> > operates within one memory node, and thus allocates memory either in large
-> > contiguous block or allocates section by section. This eliminates the need
-> > for use of temporary buffers.
+> > That work is to monitor page allocation and free activities via
+> > arch_alloc_pages and arch_free_pages. It has per-CPU lists to record
+> > the pages that are freed to the mm free list, and the per-CPU lists
+> > dump the recorded pages to a global list when any of them is full.
+> > So its own per-CPU list will only be able to get free pages when there
+> > is an mm free() function gets called. If we have 8GB free memory on
+> > the mm free list, but no application uses them and thus no mm free()
+> > calls are made. In that case, the arch_free_pages isn't called, and no
+> > free pages added to the per-CPU list, but we have 8G free memory right
+> > on the mm free list.
+> > How would you guarantee the per-CPU lists have got all the free pages
+> > that the mm free lists have?
+> 
+> As I said, if we have some mechanism that will scan the free pages (not
+> arch_free_page() once and report hints using the same mechanism step by
+> step (not your bulk interface)), this problem is solved. And as I said, this is
+> not a migration specific problem, we have the same problem in the current
+> page hinting RFC. These pages have to be reported.
+> 
 > >
-> > For simplified bisecting and review, the new interface is going to be
-> > enabled as well as old code removed in the next patch.
+> > - I'm also worried about the overhead of maintaining so many per-CPU
+> > lists and the global list. For example, if we have applications
+> > frequently allocate and free 4KB pages, and each per-CPU list needs to
+> > implement the buddy algorithm to sort and merge neighbor pages. Today
+> > a server can have more than 100 CPUs, then there will be more than 100
+> > per-CPU lists which need to sync to a global list under a lock, I'm
+> > not sure if this would scale well.
+> 
+> The overhead in the current RFC is definitely too high. But I consider this a
+> problem to be solved before page hinting would go upstream. And we are
+> discussing right now "if we have a reasonable page hinting implementation,
+> why would we need your interface in addition".
+> 
 > >
-> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > ---
-> >  include/linux/mm.h  |  8 ++++
-> >  mm/sparse-vmemmap.c | 49 ++++++++++++++++++++++++
-> >  mm/sparse.c         | 90 +++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 147 insertions(+)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index a0fbb9ffe380..ba200808dd5f 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
-> >                                  unsigned long pnum_end,
-> >                                  unsigned long map_count,
-> >                                  int nodeid);
-> > +struct page * sparse_populate_node(unsigned long pnum_begin,
-> > +                                unsigned long pnum_end,
-> > +                                unsigned long map_count,
-> > +                                int nid);
-> > +struct page * sprase_populate_node_section(struct page *map_base,
-> > +                                unsigned long map_index,
-> > +                                unsigned long pnum,
-> > +                                int nid);
-> >
-> >  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
-> >               struct vmem_altmap *altmap);
-> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> > index e1a54ba411ec..4655503bdc66 100644
-> > --- a/mm/sparse-vmemmap.c
-> > +++ b/mm/sparse-vmemmap.c
-> > @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
-> >               vmemmap_buf_end = NULL;
-> >       }
-> >  }
-> > +
-> > +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> > +                                       unsigned long pnum_end,
-> > +                                       unsigned long map_count,
-> > +                                       int nid)
-> > +{
-> > +     unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
-> > +     unsigned long pnum, map_index = 0;
-> > +     void *vmemmap_buf_start;
-> > +
-> > +     size = ALIGN(size, PMD_SIZE) * map_count;
-> > +     vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
-> > +                                                   PMD_SIZE,
-> > +                                                   __pa(MAX_DMA_ADDRESS));
-> > +     if (vmemmap_buf_start) {
-> > +             vmemmap_buf = vmemmap_buf_start;
-> > +             vmemmap_buf_end = vmemmap_buf_start + size;
-> > +     }
-> > +
-> > +     for (pnum = pnum_begin; map_index < map_count; pnum++) {
-> > +             if (!present_section_nr(pnum))
-> > +                     continue;
-> > +             if (!sparse_mem_map_populate(pnum, nid, NULL))
-> > +                     break;
-> > +             map_index++;
-> > +             BUG_ON(pnum >= pnum_end);
-> > +     }
->
-> Besides the typos, I could not find anything wrong in the patch.
-> Only cosmetic:
->
-> Could not the loop above be converted to a for_each_present_section_nr() or would it be
-> less readable?
+> > - This seems to be a burden imposed on the core mm memory
+> > allocation/free path. The whole overhead needs to be carried during
+> > the whole system life cycle. What we actually expected is to just make
+> > one call to get the free page hints only when live migration happens.
+> 
+> You're focusing too much on the actual implementation of the page hinting
+> RFC right now. Assume for now that we would have
+> - efficient page hinting without degrading other CPUs and little
+>   overhead
+> - a mechanism that solves reporting free pages once after we started up
+>   virtio-balloon and actual free page hinting starts
+> 
+> Why would your suggestion still be applicable?
+> 
+> Your point for now is "I might not want to have page hinting enabled due to
+> the overhead, but still a live migration speedup". If that overhead actually
+> exists (we'll have to see) or there might be another reason to disable page
+> hinting, then we have to decide if that specific setup is worth it merging your
+> changes.
 
-for_each_present_section_nr is defined in sparse.c, so I decided to
-use what is used in other places in sparse-vmemmap.c
+All the above "if we have", "assume we have" don't sound like a valid argument to me.
+ 
+> I am not (and don't want to be) in the position to make any decisions here :) I
+> just want to understand if two interfaces for free pages actually make sense.
 
->
-> > +
-> > +     if (vmemmap_buf_start) {
-> > +             /* need to free left buf */
-> > +             memblock_free_early(__pa(vmemmap_buf),
-> > +                                 vmemmap_buf_end - vmemmap_buf);
-> > +             vmemmap_buf = NULL;
-> > +             vmemmap_buf_end = NULL;
-> > +     }
-> > +     return pfn_to_page(section_nr_to_pfn(pnum_begin));
-> > +}
-> > +
-> > +/*
-> > + * Return map for pnum section. sparse_populate_node() has populated memory map
-> > + * in this node, we simply do pnum to struct page conversion.
-> > + */
-> > +struct page * __init sprase_populate_node_section(struct page *map_base,
-> > +                                               unsigned long map_index,
-> > +                                               unsigned long pnum,
-> > +                                               int nid)
-> > +{
-> > +     return pfn_to_page(section_nr_to_pfn(pnum));
-> > +}
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index d18e2697a781..60eaa2a4842a 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
-> >                      __func__);
-> >       }
-> >  }
-> > +
-> > +static unsigned long section_map_size(void)
-> > +{
-> > +     return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
-> > +}
-> > +
-> > +/*
-> > + * Try to allocate all struct pages for this node, if this fails, we will
-> > + * be allocating one section at a time in sprase_populate_node_section().
-> > + */
-> > +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> > +                                       unsigned long pnum_end,
-> > +                                       unsigned long map_count,
-> > +                                       int nid)
-> > +{
-> > +     return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
-> > +                                            PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-> > +                                            BOOTMEM_ALLOC_ACCESSIBLE, nid);
-> > +}
-> > +
-> > +/*
-> > + * Return map for pnum section. map_base is not NULL if we could allocate map
-> > + * for this node together. Otherwise we allocate one section at a time.
-> > + * map_index is the index of pnum in this node counting only present sections.
-> > + */
-> > +struct page * __init sprase_populate_node_section(struct page *map_base,
-> > +                                               unsigned long map_index,
-> > +                                               unsigned long pnum,
-> > +                                               int nid)
-> > +{
-> > +     if (map_base) {
-> > +             unsigned long offset = section_map_size() * map_index;
-> > +
-> > +             return (struct page *)((char *)map_base + offset);
-> > +     }
-> > +     return sparse_mem_map_populate(pnum, nid, NULL);
-> > +}
-> >  #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
-> >
-> >  static void __init sparse_early_mem_maps_alloc_node(void *data,
-> > @@ -520,6 +557,59 @@ static void __init alloc_usemap_and_memmap(void (*alloc_func)
-> >                                               map_count, nodeid_begin);
-> >  }
-> >
-> > +/*
-> > + * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
-> > + * And number of present sections in this node is map_count.
-> > + */
-> > +void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> > +                                unsigned long pnum_end,
-> > +                                unsigned long map_count)
-> > +{
-> > +     unsigned long pnum, usemap_longs, *usemap, map_index;
-> > +     struct page *map, *map_base;
-> > +     struct mem_section *ms;
->
-> What about moving "struct mem_section" into the second for_each_present_section_nr() loop.
-> It is only being used there.
-> And we could move "struct page *map" into the first loop as well.
+I responded to Nitesh about the differences, you may want to check with him about this.
+I would suggest you to send out your patches to LKML to get a discussion with the mm folks.
 
-Thank you for the review, I will move the declarations into loops.
+Best,
+Wei
 
->
-> But the patch looks good to me anyway.
-> Maybe I am missing something, but so far:
->
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
->
-> --
-> Oscar Salvador
-> SUSE L3
->
