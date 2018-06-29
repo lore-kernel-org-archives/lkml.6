@@ -2,125 +2,209 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1D3C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E61ACC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087FC24E1D
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:49:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H8LMj7l4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087FC24E1D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 973E327815
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:52:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973E327815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934165AbeF2Htx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:49:53 -0400
-Received: from ozlabs.org ([203.11.71.1]:43289 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933688AbeF2Htw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 03:49:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41H81p4Z0vz9ryk;
-        Fri, 29 Jun 2018 17:49:50 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530258590;
-        bh=eZwnbnYkDpgnsF3ygSfGRR6cNBXqh2iXAju8mkAh9xg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=H8LMj7l4HrHOASte02kC43PPFu4JXzRGa6SwYG5Qskkhnv05rvVM2LNmQNtLfqjNg
-         WNJzdUA3S3z7AO6LTM9unCpREgpfz6pWnto7cwctsa8oDR6Ga9RjEfzmT2/ywogqYA
-         yZJsJK/FuQZOOJ8KFEastlk7xlDHscRBeQA3x1JOuHWoHWhXirWt+F6GHE5xx0MU+Y
-         jj/iwQZEJLR6w3wtjZa9/mVCSmLsd6Mjjl9GmoJOfE6SevzF87UTpenuKfK5ynTL4l
-         QRjHbo3PmgzMUgeGVraHvbk5fiZ5HVuZLYm82AZgKacC0gop55Bkd13BIyfA+AGjBV
-         x8t1QN7ddXn9g==
-Date:   Fri, 29 Jun 2018 17:49:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20180629174946.1b4f40ef@canb.auug.org.au>
+        id S934202AbeF2HwD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:52:03 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:18209 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933688AbeF2HwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 03:52:00 -0400
+X-UUID: 31ac3e772ec046f285b6f66f813d8209-20180629
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1791005129; Fri, 29 Jun 2018 15:51:49 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Fri, 29 Jun
+ 2018 15:51:47 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 29 Jun 2018 15:51:46 +0800
+Message-ID: <1530258706.28284.50.camel@mhfsdcap03>
+Subject: Re: [PATCH 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>, <youlin.pei@mediatek.com>,
+        <hongkun.cao@mediatek.com>, <sean.wang@mediatek.com>,
+        <yt.shen@mediatek.com>, <yong.wu@mediatek.com>
+Date:   Fri, 29 Jun 2018 15:51:46 +0800
+In-Reply-To: <20180628130737.GA90450@bhelgaas-glaptop.roam.corp.google.com>
+References: <1530091298-28120-1-git-send-email-honghui.zhang@mediatek.com>
+         <1530091298-28120-2-git-send-email-honghui.zhang@mediatek.com>
+         <20180628130737.GA90450@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kC6n6m0sbVYWzVTz_IMJyL+"; protocol="application/pgp-signature"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kC6n6m0sbVYWzVTz_IMJyL+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2018-06-28 at 08:07 -0500, Bjorn Helgaas wrote:
+> On Wed, Jun 27, 2018 at 05:21:35PM +0800, honghui.zhang@mediatek.com wrote:
+> > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > 
+> > Mediatek's host controller have two slots, each have it's own control
+> > registers. The host driver need to identify which slot was connected
+> > in order to access the device's configuration space. There's problem
+> > for current host driver to find out which slot was connected to for
+> > a given EP device.
+> 
+>   The Mediatek host controller has two slots, each with its own control
+>   registers.
 
-Hi Andrew,
+Thanks, I will update it in the next version.
 
-After merging the akpm tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+> 
+> > Assuming each slot have connect with one EP device as below:
+> > 
+> >                 host bridge
+> >   bus 0 --> __________|_______
+> >            |                  |
+> >            |                  |
+> >          slot 0             slot 1
+> >   bus 1 -->|        bus 2 --> |
+> >            |                  |
+> >          EP 0               EP 1
+> > 
+> > While PCI emulation, system software will scan all the PCI device
+> 
+> s/While PCI emulation/During PCI enumeration/
 
-In file included from include/linux/kernel.h:10:0,
-                 from include/linux/list.h:9,
-                 from include/linux/preempt.h:11,
-                 from include/linux/spinlock.h:51,
-                 from include/linux/seqlock.h:36,
-                 from include/linux/time.h:6,
-                 from fs/proc/inode.c:9:
-fs/proc/inode.c: In function 'proc_init_kmemcache':
-include/linux/compiler.h:339:38: error: call to '__compiletime_assert_110' =
-declared with attribute error: BUILD_BUG_ON failed: sizeof(struct proc_dir_=
-entry) >=3D SIZEOF_PDE
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:319:4: note: in definition of macro '__compiletime=
-_assert'
-    prefix ## suffix();    \
-    ^~~~~~
-include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_a=
-ssert'
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^~~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_a=
-ssert'
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_M=
-SG'
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-fs/proc/inode.c:110:2: note: in expansion of macro 'BUILD_BUG_ON'
-  BUILD_BUG_ON(sizeof(struct proc_dir_entry) >=3D SIZEOF_PDE);
-  ^~~~~~~~~~~~
+Thanks, will update this.
 
-Caused by commit
+> 
+> > starting from devfn 0. So it will get the proper port for slot0 and
+> > slot1 device when using PCI_SLOT(devfn) for match. But it will get
+> > the wrong slot for EP1: The devfn will be start from 0 when scanning
+> > EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+> > for port0's slot value. So the host driver should not using EP's devfn
+> > but the slot's devfn(the slot which EP was connected to) for match.
+> > 
+> > This patch fix the mtk_pcie_find_port's logical by using the slot's
+> > devfn for match.
+> > 
+> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek.c | 17 +++++++++++++++--
+> >  1 file changed, 15 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > index 0baabe3..9cf7ecf 100644
+> > --- a/drivers/pci/controller/pcie-mediatek.c
+> > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > @@ -337,10 +337,23 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+> >  {
+> >  	struct mtk_pcie *pcie = bus->sysdata;
+> >  	struct mtk_pcie_port *port;
+> > +	struct pci_dev *dev;
+> > +	struct pci_bus *pbus;
+> >  
+> > -	list_for_each_entry(port, &pcie->ports, list)
+> > -		if (port->slot == PCI_SLOT(devfn))
+> > +	list_for_each_entry(port, &pcie->ports, list) {
+> 
+> mvebu has the identical hardware structure but uses an array instead
+> of a list:
+> 
+>   num = of_get_available_child_count(np);
+>   pcie->ports = devm_kcalloc(dev, num, sizeof(*pcie->ports), GFP_KERNEL);
+>   for_each_available_child_of_node(np, child) {
+>     struct mvebu_pcie_port *port = &pcie->ports[i];
+>     mvebu_pcie_parse_port(pcie, port, child);
+>   }
+> 
+> It would be nice if mvebu and mtk used the same strategy so the code
+> looks the same.
 
-  527ae8759f10 ("proc: fixup PDE allocation bloat")
+Seems there's different approach existing in current host controller
+driver for this, tegra PCIe is using list too.
+I guess I can change it to using array after this problem is fixed if
+you have strong opinion here.
 
-I have reverted that commit for today.
+> 
+> > +		if (bus->number == 0 && port->slot == PCI_SLOT(devfn)) {
+> 
+> Is the root bus number fixed at 0 or is it programmable?  Many drivers
+> do something like this:
 
---=20
-Cheers,
-Stephen Rothwell
+The primary bus number is fixed at 0.(technically speaking, hardware
+will capture the very first value of primary bus number, once it's been
+captured, change the value in configuration space will not take effort. 
 
---Sig_/kC6n6m0sbVYWzVTz_IMJyL+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+But the hardware default value is 0, the hardware will not response to
+other values except 0 at the first time. And the only way to touch the
+value in it's configuration space is using primary bus number 0. So it
+could be taken as fixed at 0.)
 
------BEGIN PGP SIGNATURE-----
+> 
+>   if (bus->number == pcie->root_bus_nr)
+> 
+> to handle the case of the root bus number being programmable.
+> 
+> >  			return port;
+> > +		} else if (bus->number != 0) {
+> > +			pbus = bus;
+> > +			do {
+> > +				dev = pbus->self;
+> > +				if (port->slot == PCI_SLOT(dev->devfn))
+> > +					return port;
+> > +
+> > +				pbus = dev->bus;
+> > +			} while (dev->bus->number != 0);
+> 
+> You should not need to search up the tree of dev->bus->self.
+> 
+> mvebu_pcie_find_port() checks the root port secondary and subordinate
+> bus numbers, which should work here, too.
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls15JoACgkQAVBC80lX
-0Gy4UQf/ZmPl9OWfJxZMfy995TKmvAjaa7Qkzxy522Ov4X7v8WnKi/RA4vQJ3RAo
-T3s5KDwLRFRgWHFFVQZjv+Bc2VjQOAQzhqyWiG1YNsV/K6hY5U8T5zXhl0YQBF3t
-9gyt98yZuQ5lQA7G+Q5vM03Gz9JptuRQ162ahBZmMajqKxYRVYxbFd5hIxTCCyc2
-qzBg6HGnbSqBNPJJ8zTflaZo6UpbqHjEWjBRPrBnWhfIhKzWuKEz6ZX9PYBM79kk
-fcG2m4RVqtwpscTH65XX0I1qhUqjSuHDFZZhxg8b//IVuu5HJjK59K2VFXcVow/A
-hJHfGBlh40DHuFOiz+kr8WGh2Ypl/A==
-=rHHR
------END PGP SIGNATURE-----
+I checked mvebu's host driver, it using software bridge to abstract a
+pseudo bridge. And access to this pseudo bridge's configuration space is
+all software behavior.
 
---Sig_/kC6n6m0sbVYWzVTz_IMJyL+--
+If I following mvebu's way, I need to touch the hardware to read back
+the secondary and subordinary bus number, I think current software
+solution is more efficient.
+
+Or I could add per port parameter to store the bus_number, and update
+the value as mvebu's driver is doing. Do you think it's better than
+current solution?
+
+> > +		}
+> > +	}
+> >  
+> >  	return NULL;
+> >  }
+> > -- 
+> > 2.6.4
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
