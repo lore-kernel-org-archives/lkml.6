@@ -2,135 +2,81 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C04BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD741C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301A527DB5
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301A527DB5
+	by mail.kernel.org (Postfix) with ESMTP id 817AA23E6D
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817AA23E6D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934203AbeF2Niz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:38:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34438 "EHLO
+        id S935165AbeF2NjF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:39:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34448 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932078AbeF2Niy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933429AbeF2Niy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 29 Jun 2018 09:38:54 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCE6280D;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6EF871529;
+        Fri, 29 Jun 2018 06:38:54 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61E973F73D;
         Fri, 29 Jun 2018 06:38:53 -0700 (PDT)
-Received: from e107155-lin (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 326063F5C0;
-        Fri, 29 Jun 2018 06:38:52 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 14:38:49 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ard.biesheuvel@linaro.org, shunyong.yang@hxt-semitech.com,
-        yu.zheng@hxt-semitech.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-Subject: Re: [PATCH] arm64: acpi: reenumerate topology ids
-Message-ID: <20180629133849.GB16282@e107155-lin>
-References: <20180628145128.10057-1-drjones@redhat.com>
- <a38fb684-c023-1a96-464e-dd268f3132ea@arm.com>
- <d797ebc5-bd7b-4f72-d4fc-840ba7345a15@arm.com>
- <20180629105334.GB18043@e107155-lin>
- <20180629114227.4noje2kx3lcjbcpd@kamzik.brq.redhat.com>
+Date:   Fri, 29 Jun 2018 14:40:41 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: controller: dwc: Do not let PCIE_DW_PLAT_HOST
+ default to yes
+Message-ID: <20180629134041.GC9643@red-moon>
+References: <20180619171917.19932-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629114227.4noje2kx3lcjbcpd@kamzik.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180619171917.19932-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 01:42:27PM +0200, Andrew Jones wrote:
-> On Fri, Jun 29, 2018 at 11:53:34AM +0100, Sudeep Holla wrote:
-> > On Thu, Jun 28, 2018 at 12:12:00PM -0500, Jeremy Linton wrote:
-> > > Hi,
-> > > 
-> > > On 06/28/2018 11:30 AM, Sudeep Holla wrote:
-> > 
-> > [...]
-> > 
-> > > >I am not sure if we can ever guarantee that DT and ACPI will get the
-> > > >same ids whatever counter we use as it depends on the order presented in
-> > > >the firmware(DT or ACPI). So I am not for generating ids for core and
-> > > >threads in that way.
-> > > >
-> > > >So I would like to keep it simple and just have this counters for
-> > > >package ids as demonstrated in Shunyong's patch.
-> > >
-> > > So, currently on a non threaded system, the core id's look nice because they
-> > > are just the ACPI ids. Its the package id's that look strange, we could just
-> > > fix the package ids, but on threaded machines the threads have the nice acpi
-> > > ids, and the core ids are then funny numbers. So, I suspect that is driving
-> > > this as much as the strange package ids.
-> > >
-> > 
-> > Yes, I know that and that's what made be look at topology_get_acpi_cpu_tag
-> > For me, if the PPTT has valid ID, we should use that. Just becuase DT lacks
-> > it and uses counter doesn't mean ACPI also needs to follow that.
+On Tue, Jun 19, 2018 at 07:19:17PM +0200, Geert Uytterhoeven wrote:
+> PCIE_DW_PLAT_HOST does not have any platform dependency, so it should
+> not default to yes.
 > 
-> AFAIK, a valid ACPI UID doesn't need to be something derivable directly
-> from the hardware, so it's just as arbitrary as the CPU phandle that is
-> in the DT cpu-map, i.e. DT *does* have an analogous leaf node integer.
->
+> Fixes: 1d906b22076e12cf ("PCI: dwc: Add support for EP mode")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Rebased on top of the big PCI controller move.
+> ---
+>  drivers/pci/controller/dwc/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 
-Its platform specific, left to vendors to identify that. Are you referring
-to reg property in DT for leaf nodes ? If so, that's MPIDR and is present
-in ACPI MADT.
+Applied to pci/controller-fixes to be tentatively merged for
+-rc4, thanks.
 
-> >
-> > I am sure some vendor will put valid UID and expect that to be in the
-> > sysfs.
->
-> I can't think of any reason that would be useful, especially when the
-> UID is for a thread, which isn't even displayed by sysfs.
->
+Lorenzo
 
-You are mixing MPIDR and UID here.
-
-> > 
-> > > (and as a side, I actually like the PE has a acpi id behavior, but for
-> > > threads its being lost with this patch...)
-> > > 
-> > > Given i've seen odd package/core ids on x86s a few years ago, it never
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 16f52c626b4bd510..91b0194240a57e8f 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -58,7 +58,6 @@ config PCIE_DW_PLAT_HOST
+>  	depends on PCI && PCI_MSI_IRQ_DOMAIN
+>  	select PCIE_DW_HOST
+>  	select PCIE_DW_PLAT
+> -	default y
+>  	help
+>  	  Enables support for the PCIe controller in the Designware IP to
+>  	  work in host mode. There are two instances of PCIe controller in
+> -- 
+> 2.17.1
 > 
-> So this inspired me to grep some x86 topology code. I found
-> arch/x86/kernel/smpboot.c:topology_update_package_map(), which uses
-> a counter to set the logical package id and Documentation/x86/topology.txt
-> states
-> 
-> """
->   - cpuinfo_x86.logical_id:
-> 
->     The logical ID of the package. As we do not trust BIOSes to enumerate the
->     packages in a consistent way, we introduced the concept of logical package
->     ID so we can sanely calculate the number of maximum possible packages in
->     the system and have the packages enumerated linearly.
-> """
-> 
-> Which I see as x86 precedent for the consistency argument I made in my
-> other reply.
-> 
-
-There are lots of things arm64 doesn't replicate x86. So I don't take that
-as valid argument. It's a new feature, we can use APCI PPTT UID feature to
-be consistent. I don't see counter being in anyway consistent.
-
-Even PPTT could be generated in the firmware and the order is not consistent.
-In which case the counter values in Linux might get things wrong while using
-UID from the firmware can keep it consistent(e.g. sockets removed,..etc)
-
---
-Regards,
-Sudeep
