@@ -2,122 +2,91 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC622C6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CF3C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70ED827899
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3572325934
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:09:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r4GONVjx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70ED827899
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="r0VwmcVx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3572325934
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935830AbeF2RHp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 13:07:45 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43660 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932446AbeF2RHo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 13:07:44 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5TH40xv030249
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=pItollnNKjkcDrxUTog7rPhfMiAZpLz8QKlQzUTDN1Q=;
- b=r4GONVjxyLFmMfq6GUUeP5lQlzE03Y/gJzuCdwzrBaHycJph90TP1VfzRzoZ8Kinrf1H
- wdIFGxq0MKv8bL6+duBAzQx6p+FpSij2SmNm4QHfQykTBhiDIAc75NbxnENGzIXu09u+
- wtg1duuMrf5Za+rBJHvEWJ1ZlRUj4yCsI+I+ZP8lCBYzRLmXGJZIQjULbnXdr8jZQTy8
- UIvjujdYIIZGPE0Vz942X1uVTGZ1EFR7xoDOStrrRFEfJdk3LJZCJqRPDLUaMW6wjhvM
- IuzZ7/nayskMwVr2QL7tDI12H8BKeSQF9yBu9/HC2YYtdaw11VbUUsFc2iKUZkwb4XHi qQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jum587979-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:07:43 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5TH7dWv019551
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:07:39 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5TH7dV9018494
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:07:39 GMT
-Received: from mail-ot0-f169.google.com (/74.125.82.169)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 29 Jun 2018 10:07:38 -0700
-Received: by mail-ot0-f169.google.com with SMTP id i17-v6so10673653otl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 10:07:38 -0700 (PDT)
-X-Gm-Message-State: APt69E1uE562BXHLB3kExDcrgoiGeP83clzn443i8HhthmCapnPQnQmY
-        ClIiZZhhn+RlcykUooBY0J+DR64VvtEAOeH7uuM=
-X-Google-Smtp-Source: AAOMgpcivEWOnNNnONtDnKe7MHlZGegF6WwGURKEpSiwIqgQYIEfOkWznO7gdUTRoa0og3aU1RXr3SaOsfa8kEQ5qPY=
-X-Received: by 2002:a9d:2e0e:: with SMTP id q14-v6mr6986688otb.275.1530292058245;
- Fri, 29 Jun 2018 10:07:38 -0700 (PDT)
+        id S937126AbeF2RJb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 13:09:31 -0400
+Received: from vern.gendns.com ([206.190.152.46]:49387 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932446AbeF2RJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 13:09:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=bdeFslKVFCjYH/NuPgECQbYj/6y7/FM+uQDMwAnOdWM=; b=r0VwmcVxrukuuMkfLVF7FPOZPP
+        cxZuzReWm/MuiJ8l8BjBR5m1oJCUv50RLyMUE3FJx2E3TPBhknLxkKuSNaSG6lEpee+n9G5ThPemS
+        Ngnkuw855yyJDi1zkNI6/8H2xDebHGM/xGbeWzhTXPks8L21D1EO5qtjEkkrSb789+tHLRDo6gcf4
+        xMycDehvjDRFuHKtOJnP73nskbHuxMizRwqsRwREbkIeJe1nmoGp8WABpRi9vbTP2yu1wIYlic6mw
+        ldV/duO1L4yVmNAZfuskC3+yjQX61crz6KWYTUME1LgmhnQj8Ac1bAKNNI4xgvxe8XE+jqjLMa7dI
+        0w9eq2ew==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:39496 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fYwtf-002P9e-L8; Fri, 29 Jun 2018 13:09:23 -0400
+Subject: Re: [PATCH v4 09/18] ARM: davinci: da850-evm: remove dead MTD code
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180629094039.7543-1-brgl@bgdev.pl>
+ <20180629094039.7543-10-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <46acbc64-6d22-d361-941c-f67aa3029242@lechnology.com>
+Date:   Fri, 29 Jun 2018 12:09:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1530239363-2356-1-git-send-email-hejianet@gmail.com> <1530239363-2356-3-git-send-email-hejianet@gmail.com>
-In-Reply-To: <1530239363-2356-3-git-send-email-hejianet@gmail.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Fri, 29 Jun 2018 13:07:02 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZ3zYdrYBEGTdy+LLm_HPREyqYeUqqQnU1GCPd3k98z3Q@mail.gmail.com>
-Message-ID: <CAGM2reZ3zYdrYBEGTdy+LLm_HPREyqYeUqqQnU1GCPd3k98z3Q@mail.gmail.com>
-Subject: Re: [PATCH v9 2/6] mm: page_alloc: remain memblock_next_valid_pfn()
- on arm/arm64
-To:     hejianet@gmail.com
-Cc:     linux@armlinux.org.uk, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mel Gorman <mgorman@suse.de>, will.deacon@arm.com,
-        mark.rutland@arm.com, hpa@zytor.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Steven Sistare <steven.sistare@oracle.com>, neelx@redhat.com,
-        erosca@de.adit-jv.com, Vlastimil Babka <vbabka@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        james.morse@arm.com, ard.biesheuvel@linaro.org,
-        steve.capper@arm.com, tglx@linutronix.de, mingo@redhat.com,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        pombredanne@nexb.com, Johannes Weiner <hannes@cmpxchg.org>,
-        kemi.wang@intel.com, ptesarik@suse.com, yasu.isimatu@gmail.com,
-        aryabinin@virtuozzo.com, nborisov@suse.com,
-        Wei Yang <richard.weiyang@gmail.com>, jia.he@hxt-semitech.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8939 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=944
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806290182
+In-Reply-To: <20180629094039.7543-10-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:30 PM Jia He <hejianet@gmail.com> wrote:
->
-> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
-> where possible") optimized the loop in memmap_init_zone(). But it causes
-> possible panic bug. So Daniel Vacek reverted it later.
->
-> But as suggested by Daniel Vacek, it is fine to using memblock to skip
-> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
->
-> On arm and arm64, memblock is used by default. But generic version of
-> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
-> not always return the next valid one but skips more resulting in some
-> valid frames to be skipped (as if they were invalid). And that's why
-> kernel was eventually crashing on some !arm machines.
+On 06/29/2018 04:40 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We no longer need to register the MTD notifier to read the MAC address
+> as it's now being done in the emac address.
 
-Hi Jia,
-
-Is this a bug? Should we make other arches that support memblock to
-use memblock_is_map_memory() ? it is more expensive, but if the
-default is broken, maybe it makes sense to change?
-
-Thank you,
-Pavel
+I think you mean "it's now being done in the emac _driver_"
