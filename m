@@ -3,31 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492B2C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD182C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FCF27DBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FCF27DBA
+	by mail.kernel.org (Postfix) with ESMTP id A2D0527DBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D0527DBC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755263AbeF2LQj (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:16:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60128 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755201AbeF2LQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:16:35 -0400
+        id S965197AbeF2LQp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:16:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:60162 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755201AbeF2LQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:16:40 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12E5A1682;
-        Fri, 29 Jun 2018 04:16:35 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B95B15AD;
+        Fri, 29 Jun 2018 04:16:40 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B01643F5AF;
-        Fri, 29 Jun 2018 04:16:32 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E84103F266;
+        Fri, 29 Jun 2018 04:16:37 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
@@ -36,9 +35,9 @@ Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         julien.grall@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
         punit.agrawal@arm.com, qemu-devel@nongnu.org,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 08/20] kvm: arm/arm64: Abstract stage2 pgd table allocation
-Date:   Fri, 29 Jun 2018 12:15:28 +0100
-Message-Id: <1530270944-11351-9-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v3 10/20] kvm: arm64: Dynamic configuration of VTTBR mask
+Date:   Fri, 29 Jun 2018 12:15:30 +0100
+Message-Id: <1530270944-11351-11-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
 References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
@@ -47,69 +46,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Abstract the allocation of stage2 entry level tables for
-given VM, so that later we can choose to fall back to the
-normal page table levels (i.e, avoid entry level table
-concatenation) on arm64.
+On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
+translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
+should be 0, where 'x' is defined for a given IPA Size and the
+number of levels for a translation granule size. It is defined
+using some magical constants. This patch is a reverse engineered
+implementation to calculate the 'x' at runtime for a given ipa and
+number of page table levels. See patch for more details.
 
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
 Changes since V2:
- - New patch
+ - Part 1 of spilt from VTCR & VTTBR dynamic configuration
 ---
- arch/arm/include/asm/kvm_mmu.h   | 6 ++++++
- arch/arm64/include/asm/kvm_mmu.h | 6 ++++++
- virt/kvm/arm/mmu.c               | 2 +-
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/kvm_arm.h | 60 +++++++++++++++++++++++++++++++++++++---
+ arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++++++++-
+ 2 files changed, 80 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index f36eb20..b2da5a4 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -372,6 +372,12 @@ static inline int hyp_map_aux_data(void)
- 	return 0;
- }
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 3dffd38..c557f45 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -140,8 +140,6 @@
+  * Note that when using 4K pages, we concatenate two first level page tables
+  * together. With 16K pages, we concatenate 16 first level page tables.
+  *
+- * The magic numbers used for VTTBR_X in this patch can be found in Tables
+- * D4-23 and D4-25 in ARM DDI 0487A.b.
+  */
  
-+static inline void *stage2_alloc_pgd(struct kvm *kvm)
-+{
-+	return alloc_pages_exact(stage2_pgd_size(kvm),
-+				 GFP_KERNEL | __GFP_ZERO);
-+}
-+
- #define kvm_phys_to_vttbr(addr)		(addr)
+ #define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
+@@ -175,9 +173,63 @@
+ #endif
  
- #endif	/* !__ASSEMBLY__ */
+ #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+-#define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
++/*
++ * ARM VMSAv8-64 defines an algorithm for finding the translation table
++ * descriptors in section D4.2.8 in ARM DDI 0487B.b.
++ *
++ * The algorithm defines the expectations on the BaseAddress (for the page
++ * table) bits resolved at each level based on the page size, entry level
++ * and T0SZ. The variable "x" in the algorithm also affects the VTTBR:BADDR
++ * for stage2 page table.
++ *
++ * The value of "x" is calculated as :
++ *	x = Magic_N - T0SZ
++ *
++ * where Magic_N is an integer depending on the page size and the entry
++ * level of the page table as below:
++ *
++ *	--------------------------------------------
++ *	| Entry level		|  4K    16K   64K |
++ *	--------------------------------------------
++ *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
++ *	--------------------------------------------
++ *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
++ *	--------------------------------------------
++ *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
++ *	--------------------------------------------
++ *	| Level: 3 (1 level)	| -    | 53  | 51  |
++ *	--------------------------------------------
++ *
++ * We have a magic formula for the Magic_N below.
++ *
++ *  Magic_N(PAGE_SIZE, Entry_Level) = 64 - ((PAGE_SHIFT - 3) * Number of levels)
++ *
++ * where number of levels = (4 - Entry_Level).
++ *
++ * So, given that T0SZ = (64 - PA_SHIFT), we can compute 'x' as follows:
++ *
++ *	x = (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - PA_SHIFT)
++ *	  = PA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
++ *
++ * Here is one way to explain the Magic Formula:
++ *
++ *  x = log2(Size_of_Entry_Level_Table)
++ *
++ * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
++ * PAGE_SHIFT bits in the PTE, we have :
++ *
++ *  Bits_Entry_level = PA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_SHIFT)
++ *		     = PA_SHIFT - (PAGE_SHIFT - 3) * n - 3
++ *  where n = number of levels, and since each pointer is 8bytes, we have:
++ *
++ *  x = Bits_Entry_Level + 3
++ *    = PA_SHIFT - (PAGE_SHIFT - 3) * n
++ *
++ * The only constraint here is that, we have to find the number of page table
++ * levels for a given IPA size (which we do, see stage2_pt_levels())
++ */
++#define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
+ 
+-#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
+ #define VTTBR_VMID_SHIFT  (UL(48))
+ #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SHIFT)
+ 
 diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 5da8f52..dbaf513 100644
+index a351722..813a72a 100644
 --- a/arch/arm64/include/asm/kvm_mmu.h
 +++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -501,5 +501,11 @@ static inline int hyp_map_aux_data(void)
+@@ -146,7 +146,6 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+ #define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+ #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+ #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
+-#define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
+ 
+ static inline bool kvm_page_empty(void *ptr)
+ {
+@@ -503,6 +502,30 @@ static inline int hyp_map_aux_data(void)
  
  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
  
-+static inline void *stage2_alloc_pgd(struct kvm *kvm)
++/*
++ * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
++ * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
++ * 52bit IPS.
++ */
++static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
 +{
-+	return alloc_pages_exact(stage2_pgd_size(kvm),
-+				 GFP_KERNEL | __GFP_ZERO);
++	int x = ARM64_VTTBR_X(ipa_shift, levels);
++
++	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
 +}
 +
- #endif /* __ASSEMBLY__ */
- #endif /* __ARM64_KVM_MMU_H__ */
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 82dd571..a339e00 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -868,7 +868,7 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
- 	}
- 
- 	/* Allocate the HW PGD, making sure that each page gets its own refcount */
--	pgd = alloc_pages_exact(stage2_pgd_size(kvm), GFP_KERNEL | __GFP_ZERO);
-+	pgd = stage2_alloc_pgd(kvm);
- 	if (!pgd)
- 		return -ENOMEM;
- 
++static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
++{
++	unsigned int x = arm64_vttbr_x(ipa_shift, levels);
++
++	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
++}
++
++static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
++{
++	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
++}
++
+ static inline void *stage2_alloc_pgd(struct kvm *kvm)
+ {
+ 	return alloc_pages_exact(stage2_pgd_size(kvm),
 -- 
 2.7.4
 
