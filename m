@@ -7,133 +7,138 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23A0C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDEFC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95017208EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59E6727C1D
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:00:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vP4+AzZA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95017208EC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tswr+RH+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E6727C1D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965250AbeF2Txg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:53:36 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40492 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935467AbeF2Txe (ORCPT
+        id S1755486AbeF2UAc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:00:32 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39207 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753338AbeF2UA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:53:34 -0400
-Received: by mail-pl0-f66.google.com with SMTP id t6-v6so4936936plo.7;
-        Fri, 29 Jun 2018 12:53:34 -0700 (PDT)
+        Fri, 29 Jun 2018 16:00:29 -0400
+Received: by mail-oi0-f65.google.com with SMTP id d189-v6so782179oib.6;
+        Fri, 29 Jun 2018 13:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OX+gJoU/3f1bugbzEowr5sY8pTSFnmmAu4CwbTx7ZZA=;
-        b=vP4+AzZA/RUCH5HTkX3T0D6or2u55BSNbXtFF46bJ3B3Gr1E/LkboulP3djA9ts40d
-         BSoAPhvVFDna+LmlvhypGkDHa8alWhm15vKwss8jiZkuLSlMZdIUN1G7Wz/0+8aABVHm
-         5CiROtRMJ2J3qh5zNcmfZ5+gv1M67Xccn+EU70DM18DnczmMoGhEHNt5Zj0JmllhUD3Y
-         gpD51YxZAq0G0fDQdiBlqxISF9qV1fjH6GC0j1+tuaGAYLw7U10h0X7sz7iAN1KnrbEv
-         Wh9UouPWTRdBXoLdIs+EUnOdwG4qKB7fGojbPfa1SBoy3SW1dihm5iQwMjRKwEPcCXBd
-         sY+A==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7cYQb8eAwyMw6qlt0sH5RKGd9N0sDSpkLU1Y3AdKV9A=;
+        b=Tswr+RH+2bfEcmRoFqbriLYeasvB0g9bpysLECnFGYJxVR2ddYJmVQLUGZgSGTDim5
+         KViGApzC8vJCuliI4k/eVbZTvNt1S4ux7l/PZFeMaExBZbXBl7IMPQVR+gveF9Ib8ygT
+         a2c7Kvu9j3jpEoTfsjrW0YazIxFFCz8S0LuisSDn8sBiTAWJ4eP+f0j4ixe1mo0321L9
+         mTXTHpc49Qr5+ui1qXpZnRtYhufOGI1xn+AeKeXD7rXN4TFWLp/Gn9o2TtpHMbY8qWxG
+         ZVIQ+fJuIqmks1cdmwOanoGUoGimJpmerdk5fSwc6hrWuVX1fWhy16cj+wbg9icBnxn0
+         KirA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OX+gJoU/3f1bugbzEowr5sY8pTSFnmmAu4CwbTx7ZZA=;
-        b=nK1MwomASZ+X8Uks55yNN18Q/lSN8KOn2z8MfUp6meufiTeXfWFoJB40c9FE3Whq+g
-         yNb4I0anwiW63/rMsCKa6sivZ4UBRW90sWXUOltk4xofPgphyiSB5GHTILacudPv7lck
-         1tHpFMW/Kw3YMIjPAoaSArjhqUc0o+ijKZk2RuVvDkL9GM0Xb2sN+bs3vsx9QX6U/x90
-         QbrV+T07RYCDsBbDbuMdYsfQuAaw4T0pVzT/M2QWyQG83tW91XagGjXtJviQeDhaANqx
-         TCu3EKPHCULL0C3DZ9zdbhWD2NRyjBBzjSQ4erkQiL4u/6V2A6Por91/sHVwe3BIohUs
-         Psyg==
-X-Gm-Message-State: APt69E21kbYAABnCN7Mvm+cpMz7tOyecE0/I4BqyHu6W9j3ppDaF7BIL
-        92/Hm4cQCT9ckLJHlQMfJYt2lvTcsi2gRn8u6Y9NpZkK
-X-Google-Smtp-Source: ADUXVKI7sK1HXdC3OC1yvkMzve6adHttJCk+H/1poM1rJLSmYRIL5pGRHMLEyOcgaJMV1ztJLTo0u+ZGTXxsQm3vTVY=
-X-Received: by 2002:a17:902:14b:: with SMTP id 69-v6mr16330685plb.184.1530302013644;
- Fri, 29 Jun 2018 12:53:33 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7cYQb8eAwyMw6qlt0sH5RKGd9N0sDSpkLU1Y3AdKV9A=;
+        b=DlL4EWLq4sdf0+X0uPjPGIVj/s1OzcMpNpVyVB5D2qU2dD0UfJmxzXJnb34NYjcj7J
+         /DY08N1V2DEuwHZVTntsWQ4ObLmzVEPGhLDw7jfa90AZfzeY6SRtd3AfawE02Ks0X2Fj
+         D1OKXRZgGg7AMIBOYiPnanJy0wGNLVuCAg06amA20t9lATQrdhvx1zdwdKWXdOeHAiFU
+         W8IWOeR2gKNPcvrDPhq5chP7qxHHm4y1bs5jyGFsou03oyXKNhAz5clIxXUky7j5UjKb
+         qjZLDyal048w/E/yByDaRa8N7zT9i4bu19cSGO1FUD/W3BnLmLpiFLvckkLe2vB7zQNg
+         xcdA==
+X-Gm-Message-State: APt69E2PR2eEX4qFduK1CkDii5aVRenM7qMV7v/XbIRQaUu6uWZDp7Al
+        gWMh6shcFtkdCvS8Als8gv3raXawvEUetn8tejI=
+X-Google-Smtp-Source: AAOMgpfEfmWo8NxaEwDV0aWLpNn0pLPbNO2x1E+w0p1/klBWp2PFW9cUbnqfHUD8hetjpAGXceOEH8vasDFxC7kBSTI=
+X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr9563262oif.9.1530302428524;
+ Fri, 29 Jun 2018 13:00:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAH2r5msV1hBAGgqtMFh6P=OGPV3RKjVAER=5bg-6Y+vW5BEJwQ@mail.gmail.com>
- <20180628225857.GB1231@thunk.org> <CAN05THStuq+RLzb_oNiD2TvN6MjMMnTdCxNiHuYWHRueQ46=_A@mail.gmail.com>
- <CAH2r5mui9WLBC6ne+iqVeYDGKEMKTabHPTf57STM9_aPGfM0sA@mail.gmail.com> <20180629044440.GK19934@dastard>
-In-Reply-To: <20180629044440.GK19934@dastard>
-From:   Steve French <smfrench@gmail.com>
-Date:   Fri, 29 Jun 2018 14:53:22 -0500
-Message-ID: <CAH2r5ms3zp8s48FcPYCPJRZCR9mq=XMc=qOUG8N85jNpL1VRwA@mail.gmail.com>
-Subject: Re: config files and how to have persistent Linux kernel Driver/File
- System configuration info saved
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 13:00:27
+ -0700 (PDT)
+In-Reply-To: <1530236132-7968-1-git-send-email-Anson.Huang@nxp.com>
+References: <1530236132-7968-1-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 29 Jun 2018 17:00:27 -0300
+Message-ID: <CAOMZO5BnvwB5rUr2H0=tp9wWnePoMWyfX86CT15jxsi_PaFG0Q@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: cd_label must be last entry of mmc_gpio struct
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        evgreen@chromium.org, Shawn Lin <shawn.lin@rock-chips.com>,
+        linux-mmc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 11:44 PM Dave Chinner <david@fromorbit.com> wrote:
+Hi Anson,
+
+On Thu, Jun 28, 2018 at 10:35 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> commit bfd694d5e21c ("mmc: core: Add tunable delay
+> before detecting card after card is inserted") adds
+> "u32 cd_debounce_delay_ms" to the last of mmc_gpio
+> struct and cause "char cd_label[0]" NOT work as string
+> pointer of card detect label, when "cat /proc/interrupts",
+> the devname for card detect gpio is incorrect as below:
 >
-> On Thu, Jun 28, 2018 at 06:24:59PM -0500, Steve French wrote:
-> > On Thu, Jun 28, 2018 at 6:21 PM ronnie sahlberg
-> > <ronniesahlberg@gmail.com> wrote:
-> > >
-> > > On Fri, Jun 29, 2018 at 8:58 AM, Theodore Y. Ts'o via samba-technical
-> > > <samba-technical@lists.samba.org> wrote:
-> > > > On Thu, Jun 28, 2018 at 05:37:15PM -0500, Steve French wrote:
-> > > >> Ronnie brought up an interesting point about the problems consistently
-> > > >> configuring file systems (or any Linux module for that matter) so that
-> > > >> reboot doesn't wipe away security or performance tuning changes.
-> > > >
-> > > > In general it's considered best practice to make the file system
-> > > > auto-tune itself as much as possible, because the sad fact is that
-> > > > 99.9999% of the customers aren't going to bother to add any tuning
-> > > > parameters.  So there hasn't been a push to try to create something
-> > > > more complex, because it's generally not needed.
-> > >
-> > > True, but in these cases I think we are more looking at server or
-> > > mountpoint specific options than
-> > > actual fs tuning.
-> > >
-> > > For example nfsmount.conf can be used to say "only use NFSv4 when
-> > > accessing server abc" etc.
-> > > For the case of CIFS I could imagine that an administrator might want
-> > > to set "disable smb1 protocol globally"
-> >
-> > Or perhaps
-> >   "disable smb1 on " ... various public networks but allow it on
-> > private networks
+> 144:          0  gpio-mxc  22 Edge      =E2=96=92
+> 161:          0  gpio-mxc   7 Edge      =E2=96=92
 >
-> The way the policy is configured depends on the mechanism used to
-> configure the policy. If it's a sysctl or a mount option, then we've
-> already got everything we need. If it's something dynamic in sysfs,
-> then I think you're on your own.
+> Making "char cd_label[0]" the last entry of mmc_gpio struct,
+> the result is correct as below:
 >
-> FYI, I have been looking at making sysctl be able to work on /sys
-> rather than just /proc/sys (I have a 10 line hack to enable it) so
-> we could re-use it with custom per-mount ...
-<snip>
-> So, really, I'm probably just going roll our own sysfs config file
-> mechanism into xfs_spaceman (probably based on the new config file
-> parser we have for mkfs.xfs) and hide the mess with a nice, simple
-> xfs_admin interface for udev to call. i.e. roll our own :)
+> 144:          0  gpio-mxc  22 Edge      2198000.mmc cd
+> 161:          0  gpio-mxc   7 Edge      2190000.mmc cd
 
-Since we don't really have a registry, or equivalent (unless Samba is
-installed),
-probably will have to do something like that for other file systems too :)
-Am now thinking that we need an "smb3_admin" (or "cifs_admin") tool,
-ala Samba's "net" (especially "net  conf setparm <section> <parameter> <value>")
-because it makes it possible to configure the ultra-confusing /etc config files
-and /proc and /sys config pseudo files more sanely and less error prone.
+Please add a Fixes: tag.
 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/mmc/core/slot-gpio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+> index ef05e00..1ccf9dc 100644
+> --- a/drivers/mmc/core/slot-gpio.c
+> +++ b/drivers/mmc/core/slot-gpio.c
+> @@ -27,8 +27,8 @@ struct mmc_gpio {
+>         bool override_cd_active_level;
+>         irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
+>         char *ro_label;
+> -       char cd_label[0];
+>         u32 cd_debounce_delay_ms;
+> +       char cd_label[0];
 
+Thanks for the fix.
 
--- 
-Thanks,
+A more robust solution would be:
 
-Steve
+--- a/drivers/mmc/core/slot-gpio.c
++++ b/drivers/mmc/core/slot-gpio.c
+@@ -27,8 +27,8 @@ struct mmc_gpio {
+        bool override_cd_active_level;
+        irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
+        char *ro_label;
+-       char cd_label[0];
+        u32 cd_debounce_delay_ms;
++       char cd_label[];
+ };
+
+This way if someone tries to rearrange the struct members in the
+future, then GCC will complain with the following error:
+error: flexible array member not at end of struct
+
+Please see a158531f3c92 ("gpio: 74x164: Fix crash during .remove()")
+which provides a nice explanation for this same kind of problem.
+
+Then you can add:
+
+Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
