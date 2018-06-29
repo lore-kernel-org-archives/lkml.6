@@ -2,90 +2,91 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B67DC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6E3C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F44B27FFE
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F44B27FFE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B52528017
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B52528017
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936555AbeF2Ov1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:51:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32838 "EHLO mx1.redhat.com"
+        id S1755248AbeF2OzS (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:55:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42610 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932480AbeF2OvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:51:25 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88A0281A812E;
-        Fri, 29 Jun 2018 14:51:24 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-117-106.ams2.redhat.com [10.36.117.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F35E2026D68;
-        Fri, 29 Jun 2018 14:51:22 +0000 (UTC)
-Subject: Re: [PATCH v3 06/20] kvm: arm/arm64: Remove spurious WARN_ON
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-7-git-send-email-suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <57ac04d3-0bbf-a3a4-f9a4-140dac8fa021@redhat.com>
-Date:   Fri, 29 Jun 2018 16:51:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1751234AbeF2OzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:55:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 509D6AEB9;
+        Fri, 29 Jun 2018 14:55:15 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 16:55:13 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Peter Feiner <pfeiner@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] kvm, mm: account shadow page tables to kmemcg
+Message-ID: <20180629145513.GG5963@dhcp22.suse.cz>
+References: <20180629140224.205849-1-shakeelb@google.com>
+ <20180629143044.GF5963@dhcp22.suse.cz>
+ <efdb8e40-742e-d120-6589-96b4fdf83cb9@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-7-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:51:24 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:51:24 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efdb8e40-742e-d120-6589-96b4fdf83cb9@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
-> On a 4-level page table pgd entry can be empty, unlike a 3-level
-> page table. Remove the spurious WARN_ON() in stage_get_pud().
+On Fri 29-06-18 16:40:23, Paolo Bonzini wrote:
+> On 29/06/2018 16:30, Michal Hocko wrote:
+> > I am not familiar wtih kvm to judge but if we are going to account this
+> > memory we will probably want to let oom_badness know how much memory
+> > to account to a specific process. Is this something that we can do?
+> > We will probably need a new MM_KERNEL rss_stat stat for that purpose.
+> > 
+> > Just to make it clear. I am not opposing to this patch but considering
+> > that shadow page tables might consume a lot of memory it would be good
+> > to know who is responsible for it from the OOM perspective. Something to
+> > solve on top of this.
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Acked-by: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  virt/kvm/arm/mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The amount of memory is generally proportional to the size of the
+> virtual machine memory, which is reflected directly into RSS.  Because
+> KVM processes are usually huge, and will probably dwarf everything else
+> in the system (except firefox and chromium of course :)), the general
+> order of magnitude of the oom_badness should be okay.
+
+I think we will need MM_KERNEL longterm anyway. As I've said this is not
+a must for this patch to go. But it is better to have a fair comparision
+and kill larger processes if at all possible. It seems this should be
+the case here.
+ 
+> > I would also love to see a note how this memory is bound to the owner
+> > life time in the changelog. That would make the review much more easier.
 > 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 061e6b3..308171c 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -976,7 +976,7 @@ static pud_t *stage2_get_pud(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
->  	pud_t *pud;
->  
->  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
-> -	if (WARN_ON(stage2_pgd_none(*pgd))) {
-> +	if (stage2_pgd_none(*pgd)) {
->  		if (!cache)
->  			return NULL;
->  		pud = mmu_memory_cache_alloc(cache);
-> 
+> --verbose for people that aren't well versed in linux mm, please...
 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks
-
-Eric
+Well, if the memory accounted to the memcg hits the hard limit and there
+is no way to reclaim anything to reduce the charged memory then we have
+to kill something. Hopefully the memory hog. If that one dies it would
+be great it releases its charges along the way. My remark was just to
+explain how that would happen for this specific type of memory. Bound to
+a file, has its own tear down etc. Basically make life of reviewers
+easier to understand the lifetime of charged objects without digging
+deep into the specific subsystem.
+-- 
+Michal Hocko
+SUSE Labs
