@@ -2,134 +2,462 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B942BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989B1C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EBD32806C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBD32806C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D5B928062
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:29:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K9ur+dop";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b97oFFJK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5B928062
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965173AbeF2P3C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:29:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934092AbeF2P3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:29:00 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D2670401EF0C;
-        Fri, 29 Jun 2018 15:28:59 +0000 (UTC)
-Received: from [10.36.116.133] (ovpn-116-133.ams2.redhat.com [10.36.116.133])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E02D12026D68;
-        Fri, 29 Jun 2018 15:28:56 +0000 (UTC)
-Subject: Re: [PATCH v34 0/4] Virtio-balloon: support free page reporting
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com
-References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
- <c4dd0a13-91fb-c0f5-b41f-54421fdacca9@redhat.com>
- <20180629172216-mutt-send-email-mst@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <909d0983-bb54-25bb-03f5-7a28ded76500@redhat.com>
-Date:   Fri, 29 Jun 2018 17:28:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S936767AbeF2P3m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:29:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934092AbeF2P3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:29:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 488326081B; Fri, 29 Jun 2018 15:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530286179;
+        bh=2uWt5BRbcXFJiWX4MdrDKwOf6SVGeQ0ylrnEZuOS2Vc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=K9ur+dopONF6182ZLwxkD2nojX1kuNmilGsp4vUxuMp1EbYG3zNGwyxE0XVD50SfW
+         MkyUCF7dbizppitH+NBHOt0CqMS2zSO23t4OhSM9SZeP0k/DzJ53CjoJBrQhpdZN5i
+         OD6rVcNtCo/GmsreuYgkZKKSTnWYJFMh3g3vUnJ0=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 85C7D60452;
+        Fri, 29 Jun 2018 15:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530286178;
+        bh=2uWt5BRbcXFJiWX4MdrDKwOf6SVGeQ0ylrnEZuOS2Vc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=b97oFFJK1w7lxmqijRHbMKBQhlvKmlatxrM5AsuRk4IhgZU6vc38yuBb1BSvs5+o2
+         99kkiHoEwn07mi1b5xZOFZTUf2wmWAiluCEEcsnOh9CqtqvVie3u5ej1s368sgr/b2
+         q99BmwW7JyMQrf5amX8heMtK4DdJisDmJVnahBTI=
 MIME-Version: 1.0
-In-Reply-To: <20180629172216-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 15:28:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 15:28:59 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 29 Jun 2018 20:59:38 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v8 4/7] Bluetooth: hci_qca: Add wrapper functions for
+ setting UART speed
+In-Reply-To: <20180626190207.GN129942@google.com>
+References: <20180625134013.19684-1-bgodavar@codeaurora.org>
+ <20180625134013.19684-5-bgodavar@codeaurora.org>
+ <20180625234354.GI129942@google.com>
+ <89b1e4ce98a26d79935bf2ba9a4bc278@codeaurora.org>
+ <20180626190207.GN129942@google.com>
+Message-ID: <4368cc0e04c26560f2adeb5ab796b827@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> And looking at all the discussions and problems that already happened
->> during the development of this series, I think we should rather look
->> into how clean free page hinting might solve the same problem.
-> 
-> I'm not sure I follow the logic. We found that neat tricks
-> especially re-using the max order free page for reporting.
+Hi Matthias,
 
-Let me rephrase: history of this series showed that this is some really
-complicated stuff. I am asking if this complexity is actually necessary.
-
-No question that we had a very valuable outcome so far (that especially
-is also relevant for other projects like Nitesh's proposal - talking
-about virtio requests and locking).
-
+On 2018-06-27 00:32, Matthias Kaehlcke wrote:
+> On Tue, Jun 26, 2018 at 07:01:18AM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2018-06-26 05:13, Matthias Kaehlcke wrote:
+>> > This is a nice improvement, a few remaining questions inline.
+>> >
+>> > On Mon, Jun 25, 2018 at 07:10:10PM +0530, Balakrishna Godavarthi wrote:
+>> > > In function qca_setup, we set initial and operating speeds for
+>> > > Qualcomm
+>> > > Bluetooth SoC's. This block of code is common across different
+>> > > Qualcomm Bluetooth SoC's. Instead of duplicating the code, created
+>> > > a wrapper function to set the speeds. So that future coming SoC's
+>> > > can use these wrapper functions to set speeds.
+>> > >
+>> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> > > ---
+>> > > Changes in v8:
+>> > >     * common function to set INIT and operating speeds.
+>> > >     * moved hardware flow control to qca_set_speed().
+>> > >
+>> > > Changes in v7:
+>> > >     * initial patch
+>> > >     * created wrapper functions for init and operating speeds.
+>> > > ---
+>> > >  drivers/bluetooth/hci_qca.c | 89
+>> > > +++++++++++++++++++++++++++----------
+>> > >  1 file changed, 65 insertions(+), 24 deletions(-)
+>> > >
+>> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> > > index fe62420ef838..38b7dbe6c897 100644
+>> > > --- a/drivers/bluetooth/hci_qca.c
+>> > > +++ b/drivers/bluetooth/hci_qca.c
+>> > > @@ -119,6 +119,11 @@ struct qca_data {
+>> > >  	u64 votes_off;
+>> > >  };
+>> > >
+>> > > +enum qca_speed_type {
+>> > > +	QCA_INIT_SPEED = 1,
+>> > > +	QCA_OPER_SPEED
+>> > > +};
+>> > > +
+>> > >  struct qca_serdev {
+>> > >  	struct hci_uart	 serdev_hu;
+>> > >  	struct gpio_desc *bt_en;
+>> > > @@ -923,6 +928,60 @@ static inline void host_set_baudrate(struct
+>> > > hci_uart *hu, unsigned int speed)
+>> > >  		hci_uart_set_baudrate(hu, speed);
+>> > >  }
+>> > >
+>> > > +static unsigned int qca_get_speed(struct hci_uart *hu,
+>> > > +				  enum qca_speed_type speed_type)
+>> > > +{
+>> > > +	unsigned int speed = 0;
+>> > > +
+>> > > +	if (speed_type == QCA_INIT_SPEED) {
+>> > > +		if (hu->init_speed)
+>> > > +			speed = hu->init_speed;
+>> > > +		else if (hu->proto->init_speed)
+>> > > +			speed = hu->proto->init_speed;
+>> > > +	} else {
+>> > > +		if (hu->oper_speed)
+>> > > +			speed = hu->oper_speed;
+>> > > +		else if (hu->proto->oper_speed)
+>> > > +			speed = hu->proto->oper_speed;
+>> > > +	}
+>> > > +
+>> > > +	return speed;
+>> > > +}
+>> > > +
+>> > > +static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type
+>> > > speed_type)
+>> > > +{
+>> > > +	unsigned int speed, qca_baudrate;
+>> > > +	int ret;
+>> > > +
+>> > > +	if (speed_type == QCA_INIT_SPEED) {
+>> > > +		speed = qca_get_speed(hu, QCA_INIT_SPEED);
+>> > > +		if (speed)
+>> > > +			host_set_baudrate(hu, speed);
+>> > > +		else
+>> > > +			bt_dev_err(hu->hdev, "Init speed should be non zero");
+>> >
+>> > The check for 'speed == 0' is done in multiple places. From this
+>> > code I deduce that it is expected that both INIT and OPER speed are
+>> > set to non-zero values. What happens if either of them is zero? Is the
+>> > driver still operational?
+>> >
+>> [Bala]: yes in hci_uart_setup()(hci_serdev.c) function before calling
+>> qca_setup().
+>>         we actually set baudrate, but int  above code missed to 
+>> restrict the
+>> further call to qca_setup()
+>>        if speed =0. so we are checking the same in the qca_setup().. 
+>> i.e.
+>> qca_get_speed().
 > 
->> If it can't be solved using free page hinting, fair enough.
+> Sorry, didn't quite get you here. Yes, the driver is still operational?
 > 
-> I suspect Nitesh will need to find a way not to have mm code
-> call out to random drivers or subsystems before that code
-> is acceptable.
+> Breaking it down in multiple questions:
 > 
+> 1. Is it an error if one of the speeds isn't specified?
 > 
 
+[Bala]:  i want to break this issue for two chips.
+         for rome:  No, it is not a error if one of speeds are missing.
+                    but it is mandate to have at least one of the speeds.
+                    to current implementation we are strictly not 
+checking this case.
+                    i.e. terminate qca_setup() if both speeds missing.
+                    will do this change in this patch.
+         for wnc3990: yes it an error if any of the speeds are missing.
+                      it is mandate to have both the speeds.
+                      to current implementation we are strictly not 
+checking this case.
+                      i.e. terminate qca_setup() if any speeds missing.
+                      will integrate this in patch add support for 
+wcn3990.
 
+        "The check for 'speed == 0' is done in multiple places. From this
+        code I deduce that it is expected that both INIT and OPER speed 
+are
+        set to non-zero values. What happens if either of them is zero? 
+Is the
+        driver still operational"
+
+       still we will have speed ==0 check for BT chip ROME. pls find code 
+snippet below
+
+          thanks for catching this corner case.
+
+> If yes we should probably check this early once and return an error
+> early, instead of doing the check repeatedly
+> 
+> 2. If it is not an error, what is the driver supposed to do?
+> 
+>> > In the discussion on "[v7,8/8] Bluetooth: hci_qca: Add support for
+>> > Qualcomm Bluetooth chip wcn3990" you mentioned the possbility to move
+>> > the hci_uart_set_flow_control() calls into _set_speed(). This seemed
+>> > interesting but finally it isn't done in this series. Did you
+>> > encounter that it is not feasible/desirable for some reason?
+>> >
+>> 
+>> [Bala]: this patch is for rome where flow control is not used.
+>>         after we integrate wcn3990, flow control is hidden in the
+>> qca_set_speed()
+>>         Pls check [v8 7/7] patch.
+> 
+> Sorry, my confusion
+> 
+>> > >  static int qca_setup(struct hci_uart *hu)
+>> > >  {
+>> > >  	struct hci_dev *hdev = hu->hdev;
+>> > > @@ -937,35 +996,17 @@ static int qca_setup(struct hci_uart *hu)
+>> > >  	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+>> > >
+>> > >  	/* Setup initial baudrate */
+>> > > -	speed = 0;
+>> > > -	if (hu->init_speed)
+>> > > -		speed = hu->init_speed;
+>> > > -	else if (hu->proto->init_speed)
+>> > > -		speed = hu->proto->init_speed;
+>> > > -
+>> > > -	if (speed)
+>> > > -		host_set_baudrate(hu, speed);
+>> > > +	qca_set_speed(hu, QCA_INIT_SPEED);
+>> > >
+>> > >  	/* Setup user speed if needed */
+>> > > -	speed = 0;
+>> > > -	if (hu->oper_speed)
+>> > > -		speed = hu->oper_speed;
+>> > > -	else if (hu->proto->oper_speed)
+>> > > -		speed = hu->proto->oper_speed;
+>> > > +	ret = qca_set_speed(hu, QCA_OPER_SPEED);
+>> > > +	if (ret)
+>> > > +		return ret;
+>> > >
+>> > > -	if (speed) {
+>> > > +	speed = qca_get_speed(hu, QCA_OPER_SPEED);
+>> > > +	if (speed)
+>> > >  		qca_baudrate = qca_get_baudrate_value(speed);
+>> >
+>> > Is the check here necessary? qca_get_baudrate_value() returns
+>> > QCA_BAUDRATE_115200 for a zero speed.
+>> 
+>> this if for no zero operating speed,
+> 
+> My point is:
+> 
+> static int qca_setup(struct hci_uart *hu)
+> {
+> 	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
+> 
+> 	...
+> 
+> 	if (speed)
+> 		qca_baudrate = qca_get_baudrate_value(speed);
+> }
+> 
+> static uint8_t qca_get_baudrate_value(int speed)
+> {
+>         switch (speed) {
+> 
+> 	...
+> 
+>         default:
+>                 return QCA_BAUDRATE_115200;
+>         }
+> }
+> 
+> If qca_get_baudrate_value() is called with 'speed == 0' it returns
+> QCA_BAUDRATE_115200, which is the same value with which
+> QCA_BAUDRATE_115200 is initialized.
+> 
+> It seems the initialization and the check for 'speed == 0' could be 
+> removed.
+
+[Bala]: the above speed == 0 is highly recommended, let us assume ROME 
+chip init speed moved from 115200 to 2000000 and operating speed is 
+defined as zero.
+        then this check will help us. else if we remove speed ==0 then in 
+qca_baudrate we will end up having a different value.
+         Pls find the code snippet for better understanding.
+
+after your suggestion. code snippet along with wcn3990 integration.
+
+
+[Bala]: for rome any one of the speeds are required.
+         for wcn3990 requires both speeds.
+
+static int qca_check_speeds(struct hci_uart *hu)
+{
+         struct qca_serdev *qcadev;
+
+         qcadev = serdev_device_get_drvdata(hu->serdev);
+         if (qcadev->btsoc_type == QCA_WCN3990) {
+                 /* QCA WCN3990 requires both the speed values. */
+                 if (qca_get_speed(hu, QCA_INIT_SPEED) &&
+                     qca_get_speed(hu, QCA_OPER_SPEED))
+
+                         return 0;
+
+                 bt_dev_err(hu->hdev, "Both the speeds should be non 
+zero");
+                 return 1;
+         }
+
+         if (qca_get_speed(hu, QCA_INIT_SPEED) ||
+              qca_get_speed(hu, QCA_OPER_SPEED))
+                 return 0;
+
+         bt_dev_err(hu->hdev, "either of the speeds should be non zero");
+         return 1;
+         [Bala]: pls suggest, what could be error no if above criteria is 
+not met.
+}
+
+static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type 
+speed_type)
+{
+         struct qca_serdev *qcadev;
+         unsigned int speed, qca_baudrate;
+         int ret;
+
+         if (speed_type == QCA_INIT_SPEED) {
+                 speed = qca_get_speed(hu, QCA_INIT_SPEED);
+                 if (speed)
+                         host_set_baudrate(hu, speed);
+                 [Bala]: this speed check is required for ROME, that if 
+ROME init speed is zero.
+                 return 0;
+         }
+
+         speed = qca_get_speed(hu, QCA_OPER_SPEED);
+         if (!speed)
+                 return 0;
+         [Bala]: this speed check is required for ROME, that if ROME 
+operating speed is zero.
+
+[Bala]: this is speeds in both OPER and init speeds are required.. as we 
+move forward if any one of the speed is set.
+
+         qcadev = serdev_device_get_drvdata(hu->serdev);
+         /* Disabling hardware flow control is preferred while
+          * sending change baud rate command to SoC.
+if (qcadev->btsoc_type == QCA_WCN3990)
+                 hci_uart_set_flow_control(hu, true);
+
+         qca_baudrate = qca_get_baudrate_value(speed);
+         bt_dev_info(hu->hdev, "Set UART speed to %d", speed);
+         ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+         if (ret) {
+                 bt_dev_err(hu->hdev, "Failed to change the baudrate 
+(%d)", ret);
+                 return ret;
+         }
+
+         host_set_baudrate(hu, speed);
+         if (qcadev->btsoc_type == QCA_WCN3990)
+                 hci_uart_set_flow_control(hu, false);
+
+         return 0;
+}
+
+static int qca_setup(struct hci_uart *hu)
+{
+         struct hci_dev *hdev = hu->hdev;
+         struct qca_data *qca = hu->priv;
+         unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
+         struct qca_serdev *qcadev;
+         int ret;
+         int soc_ver = 0;
+
+         qcadev = serdev_device_get_drvdata(hu->serdev);
+
+         /* Patch downloading has to be done without IBS mode */
+         clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+
+         ret = qca_check_speeds(hu);
+         if (ret)
+                 return ret;
+
+         /* Setup initial baudrate */
+         qca_set_speed(hu, QCA_INIT_SPEED);
+         speed = qca_get_speed(hu, QCA_INIT_SPEED);
+         if (speed)
+                 qca_baudrate = qca_get_baudrate_value(speed);
+
+[Bala]: i have newly add above statement. initial speed of both ROME and 
+wcn3990 when the chip boot up is 115200.
+         in future, if we have new chip where initial  speed of chip 
+during boot up is 200000. then this will help us to get the actual 
+initial speed i.e. based upon the init speed.
+
+         if (qcadev->btsoc_type == QCA_WCN3990) {
+                                                                
+bt_dev_dbg(hdev, "setting up wcn3990");
+                 hci_uart_set_flow_control(hu, true);
+                 ret = qca_send_vendor_cmd(hdev, 
+QCA_WCN3990_POWERON_PULSE);
+                 if (ret)
+                         return ret;
+
+                 hci_uart_set_flow_control(hu, false);
+                 serdev_device_close(hu->serdev);
+                 ret = serdev_device_open(hu->serdev);
+                 if (ret) {
+                         bt_dev_err(hdev, "failed to open port");
+                         return ret;
+                 }
+
+                 msleep(100);
+                 /* Setup initial baudrate */
+                 qca_set_speed(hu, QCA_INIT_SPEED);
+                 hci_uart_set_flow_control(hu, false);
+                 ret = qca_read_soc_version(hdev, &soc_ver);
+                 if (ret < 0 || soc_ver == 0) {
+                         bt_dev_err(hdev, "Failed to get version %d", 
+ret);
+                         return ret;
+                 }
+                 bt_dev_info(hdev, "wcn3990 controller version 0x%08x", 
+soc_ver);
+         } else {
+                 bt_dev_info(hdev, "ROME setup");
+         }
+
+         /* Setup user speed if needed */
+         ret = qca_set_speed(hu, QCA_OPER_SPEED);
+         if (ret)
+                 return ret;
+
+         speed = qca_get_speed(hu, QCA_OPER_SPEED);
+         if (speed)
+                 qca_baudrate = qca_get_baudrate_value(speed);
+
+       [Bala]: the above speed == 0 is highly recommended, let us assume 
+ROME chip init speed moved from 115200 to 2000000 and operating speed is 
+defined as zero.
+        then this check will help us. else if we remove speed ==0 then in 
+qca_baudrate we will end up having a different value.
+        ….
+         }
+
+  Pls let me know, whether i have clarified your queries.
 -- 
-
-Thanks,
-
-David / dhildenb
+Regards
+Balakrishna.
