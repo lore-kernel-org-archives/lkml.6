@@ -2,120 +2,122 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915A7C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0387C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 444AA27E7E
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76E5523E23
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="y/bcBWGH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 444AA27E7E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbFQT+9s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E5523E23
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937334AbeF2Ujp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:39:45 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55102 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936349AbeF2Ujm (ORCPT
+        id S937399AbeF2UmQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:42:16 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:45911 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754453AbeF2UmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:39:42 -0400
-Received: by mail-wm0-f67.google.com with SMTP id i139-v6so3372473wmf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 13:39:41 -0700 (PDT)
+        Fri, 29 Jun 2018 16:42:14 -0400
+Received: by mail-ot0-f194.google.com with SMTP id k3-v6so11266914otl.12
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 13:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0SuGM8blz8HcsIDoH86MI1r8RbSvlEjQap/IrEM9G40=;
-        b=y/bcBWGHilUkhcag3XPrUpjIQ2FJXjMo/JXbmC/lwCvD9dCIy7Qk5BZMzRdCdFfZ8g
-         wqEsv58SDeVPYwqNmHsLKxx10CfXI5dVOPEPimd04qv4A4yOSYj5jqJtDfcO8VaZQG99
-         1GWp8bFZIhRMY0jDyoEMAspPIcJ5zTbhzcgtzoIBfsu0fvLbFwS1MRcF9F9attHs6G6b
-         1F1zbkD1DDZq7CezaU0+HMtuxzZ/R+CuWTWdLguZZMsJYNLAGayRS79kUe428idbQAxp
-         6F99IrVN+mxDHHkUo8rRp4EaDSyBrtwpblhnUfEzzaODguK1quTaL2zxVpk1welqXBXW
-         pIHg==
+        d=gmail.com; s=20161025;
+        h=sender:from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=5TJVGt/+q9iQ0OrmDP8z63hOFyc3OPIhbvop/RPCDgA=;
+        b=WbFQT+9sBQVrCwNuWZEdSaEBERPdfx4XF0OFwu0KYA8E58wqXKkvJtP2uH0mdJEIpA
+         cpODbHZy5lbzbwAaI4JTf/YZy2/X1/rXJ3EAXlr0vH7iNlhNgPhWqVhK8WpE93jqoS/Q
+         oPQaQdHREEVt1hLKWKrWuGtDKLwtc/8pYz2zcEaE0n25Zpu475AEsuWGPEfuYkITju/Y
+         Hjaf5SOY/io392T+mJsyG7PX4FVDv43vEwFBbrVP4QKPkVekQr+lP4SpxGr3u1B3tjTs
+         fyzgEMv2xU9MwY+7ZUOrX0qnxsmPZRtp8GRhOqsxeXAk4f3MwRW52x/GOzlPaxBgsKsA
+         qS1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0SuGM8blz8HcsIDoH86MI1r8RbSvlEjQap/IrEM9G40=;
-        b=ZyPrggfKPgZoZLtNUAGtd5TSdKdfKqsgGPanD3EemPDN6Zyx1vzWCzEjUW1vkmJqJm
-         WDq+CFbE8qIL5T2K18Y3zMisJUAJsuRZ63FDX+R1QfKbi8VRJiTsSXt/jsDDST4EAzoq
-         rWUfufMTz7AtRTVxdNP0uhuCMFDVGFLXDT+FVd5zUlxfEnVgEB/CPqqz2eZgSkE5CRSG
-         eJVxYZV2bv302aqHCm5TnXin/nZNZc5mUefoLnmiQzN/iSo7xPPSLHVPeGXI2mdhFu/H
-         SttdTMx2OEEKE7FxLRtGOPUa+90ui+6hc+j7GF4pKHbN5fvmfPruu6m/UZKNg4+31G19
-         vawg==
-X-Gm-Message-State: APt69E1F6uNVBCjzETod99f0pb2AHBe83qzf4lFCSdH3WDCMNiICDibf
-        mEFpNxZrSTAAN0uRqYnl/acCPu1UJcSqPdOLdy1J+A==
-X-Google-Smtp-Source: AAOMgpfaxkX2c46FLiUOIxulRO2jhNJXzYisvr8Mg0t2Co7dLI6c8YNHrbu2SsKxi6N8amQm1AWfmBmerbc8A+TygW8=
-X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr2585851wmd.144.1530304780946;
- Fri, 29 Jun 2018 13:39:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 13:39:20
- -0700 (PDT)
-In-Reply-To: <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
- <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com>
- <CA+55aFxRJWjbgLeSQ_swi3F5nF1SYgZnC-R7QsOvZdcuSaWeaw@mail.gmail.com>
- <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com>
- <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
- <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
- <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com>
- <CA+55aFz8KyVqFsVnp-6g+thz7vmm5nK_FSdRTPSks7gsNVNRdQ@mail.gmail.com> <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Fri, 29 Jun 2018 13:39:20 -0700
-Message-ID: <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        h=x-gm-message-state:sender:from:subject:to:cc:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=5TJVGt/+q9iQ0OrmDP8z63hOFyc3OPIhbvop/RPCDgA=;
+        b=Zzxa6oop4v6H+zNZSLP2yRezuHpwM6Cgv8TvIGI9jnyOyMSSnsKqWbrt53ZeeYazLr
+         rKcetVN5IjeNLZkG58VgASV+ot7hq1Xl96SzwUygI214YxlTs8oGkqf2vT8Bw/TFuxmw
+         zDtJSaiQcdaqtK85wzoWAFuobadJFLCc1ROJU8Q3KUBHi4JEGjjTmg3yoRcY/rP0t+Qe
+         vjyOGLvxCtSYOxo2EYqeIjBDuZCwfa/gsphbqW+NRpMFFEyFREvj5fXMGk0gMA+f4kQj
+         Tx4ocLp/o7ItvCSq02I7ZcHy8G7+CM0A9uwj52MHVfz64w7ZWr+jkszExORoRrvlHVdf
+         wftw==
+X-Gm-Message-State: APt69E2E0D/d0fun0v18yXNGyKEfxVrOAH/ee0YlHVp3MhEcT10D96p6
+        qifZPrcwpQO8os0XAJMeWFgmAw==
+X-Google-Smtp-Source: AAOMgpeQVIIftirPJZirjXMzUEbF2tnAVat57dfD7Qxrg/9INgD5FtiWEDpN6WnoFa9ZStPhBoQj/A==
+X-Received: by 2002:a9d:6314:: with SMTP id q20-v6mr10502970otk.12.1530304934344;
+        Fri, 29 Jun 2018 13:42:14 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-253-228.kc.res.rr.com. [24.31.253.228])
+        by smtp.gmail.com with ESMTPSA id t196-v6sm5314201oie.1.2018.06.29.13.42.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 13:42:13 -0700 (PDT)
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [Update] Regression in 4.18 - 32-bit PowerPC crashes on boot -
+ bisected to commit 1d40a5ea01d5
+To:     Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
+Message-ID: <99169786-61dd-b19c-ac81-84bcd0a67de4@lwfinger.net>
+Date:   Fri, 29 Jun 2018 15:42:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 12:48 PM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
-> There are two aspects I'm concerned about here:
->
-> 1) security: we don't want 32-bit user-space to feed a 64-bit value over 4GB
->    as abort_ip that may end up causing OOPSes on architectures that would
->    lack proper validation of those values on return to userspace.
+My PowerBook G4 Aluminum crashes on boot with 4.18-rcX kernels with a kernel BUG 
+at include/linux/page-flags.h:700! The problem was bisected to commit 
+1d40a5ea01d5 ("mm: mark pages in use for page tables"). It is not possible to 
+capture the bug with anything other than a camera. The first few lines of the 
+traceback are as follows:
 
-I'm not too worried about this.  As long as you're doing it from
-signal-delivery context (which you are AFAICT) you're fine.
+free_pgd_range+0x19c/0x30c (unreliable)
+free_pgtables_0xa0/0xb0
+exit_pmap+0xf4/0x16c
+mmput+0x64/0xf0
+do_exit+0x33c/0x89c
+oops_end+0x13c/0x144
+_exception_pkey+0x58/0x128
+ret_from_except_full+0x0/0x4
+--- interrupt: 700 at free_pgd_range+0x19c/0x30c
+     LR = free_pgd_range+0x19c/0x30c
+free_pgtables+0xa/0xb
+exit_mnap+0xf4/0x16c
+mmput+0x64/0xf0
+flush_old_exec+0x490/0x550
 
-But I re-read the code and I think I have a really straightforward
-solution.  Two choices:
+I have more information regarding this BUG. Line 700 of page-flags.h is the 
+macro PAGE_TYPE_OPS(Table, table). For further debugging, I manually expanded 
+the macro, and found that the bug line is VM_BUG_ON_PAGE(!PageTable(page), page) 
+in routine __ClearPageTable(), which is called from pgtable_page_dtor() in 
+include/linux/mm.h. I also added a printk call to PageTable() that logs 
+page->page_type. The routine was called twice. The first had page_type of 
+0xfffffbff, which would have been expected for a . The second call had 
+0xffffffff, which led to the BUG.
 
-(1) Change instruction_pointer_set() to return an error code if the
-address passed in is garbage in a way that could cause unexpected
-behavior (like >=2^32 on x86_64 if regs->cs is 32-bit).  It has very
-very few callers.
-
-(2) Add instruction_pointer_validate() to go along with
-instruction_pointer_set().
-
-That should be enough to solve the problem, right?
+Larry
