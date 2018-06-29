@@ -2,207 +2,176 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01784C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7525BC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAE227F1D
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:00:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAE227F1D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1696627F20
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:02:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xz52LIvt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1696627F20
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936460AbeF2NAB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:00:01 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:33868 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935222AbeF2NAA (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 29 Jun 2018 09:00:00 -0400
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 29 Jun 2018 14:59:54 +0200
-Date:   Fri, 29 Jun 2018 20:59:43 +0800
-From:   joeyli <jlee@suse.com>
-To:     Yu Chen <yu.c.chen@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Borislav Petkov <bp@alien8.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 2/3][RFC] PM / Hibernate: Encrypt the snapshot pages
- before submitted to the block device
-Message-ID: <20180629125943.GK3628@linux-l9pv.suse>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <5a1cc6bff40ff9a3e023392c69b881e91b16837a.1529486870.git.yu.c.chen@intel.com>
- <20180628130641.GG3628@linux-l9pv.suse>
- <20180628135017.GA6561@sandybridge-desktop>
- <20180628142856.GH3628@linux-l9pv.suse>
- <20180628145207.GA10891@sandybridge-desktop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628145207.GA10891@sandybridge-desktop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S965222AbeF2NCE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:02:04 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55717 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935222AbeF2NCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 09:02:02 -0400
+Received: by mail-wm0-f68.google.com with SMTP id v16-v6so2119991wmv.5
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 06:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=eGdPVS1hmmh8A+MBC/MKcmxcBqsPEV4vpqI/JhInOdQ=;
+        b=Xz52LIvtEadWImfaXrITpg5+zYdgE4cDFSgJzXuG6jYGlCE/iqA7hcv2bKvplD6JVh
+         EQHSuP8mgxCh//ThyeI/n0cmGgDo1yrgsSszaF56WexPCnX8olNpx2dosgg6dxzwRm1u
+         egfYTkdqYJPSzCSgBIKRRgwDWRehmcxu/r0dw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eGdPVS1hmmh8A+MBC/MKcmxcBqsPEV4vpqI/JhInOdQ=;
+        b=Wlrede1KY13ANOJc9dXLfPaIkUUsZBe8BeJjvvO/cFBU89ls6wxid/ruYWhBwInufk
+         s2uimh/+tZRaaiD84rs5tYN4ccXbSAi3H+jeJ3s7ZjPCD5y1/fHTuFaZuy9uvF7kQywa
+         0ST9bzOPBvNS+McNpzB9nc5Oz4LNcuodL7YUNO2G8QjIAsY+CQmqt/xPtDCEo/6NG8x2
+         +zXdhqK/4HxNtAVUnT1/Yy8qUxBKQsfEoXgsD5hoM1waQQW79xJgfe4j02P8ZMxm1T2D
+         UuZvI2kHPJVrSE0/LMEZYkuCftlx8lbpHS4QWRaumb7Ob2e69u+JvnqXo6RI+tQo9yBp
+         yNrQ==
+X-Gm-Message-State: APt69E3xE5M9FGWkE0LI295pHZIKpcWcBI9nmcKgNnhlss6/C7thp9+a
+        H3nUgTA97G86vzdB7Fwapz6JUf5+oY8=
+X-Google-Smtp-Source: AAOMgpeCNZx3i4HCQw5/CXkchWB0eQMZRA0QL7AJyAX/txyAqVsVdl28C11K9FlZjHkOq1NtBgUlcQ==
+X-Received: by 2002:a1c:a016:: with SMTP id j22-v6mr888972wme.1.1530277321604;
+        Fri, 29 Jun 2018 06:02:01 -0700 (PDT)
+Received: from lmecxl0911.lme.st.com ([80.215.34.152])
+        by smtp.gmail.com with ESMTPSA id q70-v6sm2218724wmd.45.2018.06.29.06.01.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 29 Jun 2018 06:02:00 -0700 (PDT)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+To:     yannick.fertre@st.com, philippe.cornu@st.com, airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH] drm: stm: implement get_scanout_position function
+Date:   Fri, 29 Jun 2018 15:01:40 +0200
+Message-Id: <20180629130140.16004-1-benjamin.gaignard@linaro.org>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:52:07PM +0800, Yu Chen wrote:
-> Hi,
-> On Thu, Jun 28, 2018 at 10:28:56PM +0800, joeyli wrote:
-> > On Thu, Jun 28, 2018 at 09:50:17PM +0800, Yu Chen wrote:
-> > > Hi,
-> > > On Thu, Jun 28, 2018 at 09:07:20PM +0800, joeyli wrote:
-> > > > Hi Chen Yu,
-> > > > 
-> > > > On Wed, Jun 20, 2018 at 05:40:32PM +0800, Chen Yu wrote:
-> > > > > Use the helper functions introduced previously to encrypt
-> > > > > the page data before they are submitted to the block device.
-> > > > > Besides, for the case of hibernation compression, the data
-> > > > > are firstly compressed and then encrypted, and vice versa
-> > > > > for the resume process.
-> > > > >
-> > > > 
-> > > > I want to suggest my solution that it direct signs/encrypts the
-> > > > memory snapshot image. This solution is already shipped with
-> > > > SLE12 a couple of years:
-> > > > 
-> > > > https://github.com/joeyli/linux-s4sign/commits/s4sign-hmac-encrypted-key-v0.2-v4.17-rc3
-> > > > 
-> > > I did not see image page encryption in above link, if I understand
-> > 
-> > PM / hibernate: Generate and verify signature for snapshot image
-> > https://github.com/joeyli/linux-s4sign/commit/bae39460393ada4c0226dd07cd5e3afcef86b71f
-> >
-> > PM / hibernate: snapshot image encryption
-> > https://github.com/joeyli/linux-s4sign/commit/6a9a0113bb221c036ebd0f6321b7191283fe4929
-> >
-> > The above patches sign and encrypt the data pages in snapshot image.
-> > It puts the signature to header.
-> >
-> It looks like your signature code can be simplyly added on top of the
-> solution we proposed here, how about we collaborating on this task?
+Hardware allow to read the position in scanout buffer so
+we can use this information to make wait of vblank more accurate.
 
-OK, I will base on your user key solution to respin my signature patches.
+Active area bounds (start, end, total height) have already been
+computed and written in ltdc registers, read them and get the
+current line position to compute vpos value.
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+---
+ drivers/gpu/drm/stm/drv.c  |  2 ++
+ drivers/gpu/drm/stm/ltdc.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/stm/ltdc.h |  5 +++++
+ 3 files changed, 52 insertions(+)
+
+diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+index 8698e08313e1..ac53383350e3 100644
+--- a/drivers/gpu/drm/stm/drv.c
++++ b/drivers/gpu/drm/stm/drv.c
+@@ -72,6 +72,8 @@ static struct drm_driver drv_driver = {
+ 	.gem_prime_vmap = drm_gem_cma_prime_vmap,
+ 	.gem_prime_vunmap = drm_gem_cma_prime_vunmap,
+ 	.gem_prime_mmap = drm_gem_cma_prime_mmap,
++	.get_scanout_position = ltdc_crtc_scanoutpos,
++	.get_vblank_timestamp = drm_calc_vbltimestamp_from_scanoutpos,
+ };
  
-> just my 2 cents, 
-> 1. The cryption code should be indepent of the snapshot code, and
->    this is why we implement it as a kernel module for that in PATCH[1/3].
+ static int drv_load(struct drm_device *ddev)
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index d997a6014d6c..05b714673042 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -148,6 +148,8 @@
+ #define IER_TERRIE	BIT(2)		/* Transfer ERRor Interrupt Enable */
+ #define IER_RRIE	BIT(3)		/* Register Reload Interrupt enable */
+ 
++#define CPSR_CYPOS	GENMASK(15, 0)	/* Current Y position */
++
+ #define ISR_LIF		BIT(0)		/* Line Interrupt Flag */
+ #define ISR_FUIF	BIT(1)		/* Fifo Underrun Interrupt Flag */
+ #define ISR_TERRIF	BIT(2)		/* Transfer ERRor Interrupt Flag */
+@@ -622,6 +624,49 @@ static void ltdc_crtc_disable_vblank(struct drm_crtc *crtc)
+ 	reg_clear(ldev->regs, LTDC_IER, IER_LIE);
+ }
+ 
++bool ltdc_crtc_scanoutpos(struct drm_device *ddev, unsigned int pipe,
++			  bool in_vblank_irq, int *vpos, int *hpos,
++			  ktime_t *stime, ktime_t *etime,
++			  const struct drm_display_mode *mode)
++{
++	struct ltdc_device *ldev = ddev->dev_private;
++	int line, vactive_start, vactive_end, vtotal;
++
++	if (stime)
++		*stime = ktime_get();
++
++	/* The active area starts after vsync + front porch and ends
++	 * at vsync + front porc + display size.
++	 * The total height also include back porch.
++	 * We have 3 possible cases to handle:
++	 * - line < vactive_start: vpos = line - vactive_start and will be
++	 * negative
++	 * - vactive_start < line < vactive_end: vpos = line - vactive_start
++	 * and will be positive
++	 * - line > vactive_end: vpos = line - vtotal - vactive_start
++	 * and will negative
++	 *
++	 * Computation for the two first cases are identical so we can
++	 * simplify the code and only test if line > vactive_end
++	 */
++	line = reg_read(ldev->regs, LTDC_CPSR) & CPSR_CYPOS;
++	vactive_start = reg_read(ldev->regs, LTDC_BPCR) & BPCR_AVBP;
++	vactive_end = reg_read(ldev->regs, LTDC_AWCR) & AWCR_AAH;
++	vtotal = reg_read(ldev->regs, LTDC_TWCR) & TWCR_TOTALH;
++
++	if (line > vactive_end)
++		*vpos = line - vtotal - vactive_start;
++	else
++		*vpos = line - vactive_start;
++
++	*hpos = 0;
++
++	if (etime)
++		*etime = ktime_get();
++
++	return true;
++}
++
+ static const struct drm_crtc_funcs ltdc_crtc_funcs = {
+ 	.destroy = drm_crtc_cleanup,
+ 	.set_config = drm_atomic_helper_set_config,
+diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
+index 1e16d6afb0d2..b8c5cc41e17a 100644
+--- a/drivers/gpu/drm/stm/ltdc.h
++++ b/drivers/gpu/drm/stm/ltdc.h
+@@ -37,6 +37,11 @@ struct ltdc_device {
+ 	struct fps_info plane_fpsi[LTDC_MAX_LAYER];
+ };
+ 
++bool ltdc_crtc_scanoutpos(struct drm_device *dev, unsigned int pipe,
++			  bool in_vblank_irq, int *vpos, int *hpos,
++			  ktime_t *stime, ktime_t *etime,
++			  const struct drm_display_mode *mode);
++
+ int ltdc_load(struct drm_device *ddev);
+ void ltdc_unload(struct drm_device *ddev);
+ 
+-- 
+2.15.0
 
-Why the cryption code must be indepent of snapshot code?
-
-> 2. There's no need to traverse the snapshot image twice, if the
->    image is large(there's requirement on servers now) we can
->    simplyly do the encryption before the disk IO, and this is
->    why PATCH[2/3] looks like this.
-
-If the encryption solution is only for block device, then the uswsusp
-interface must be locked-down when kernel is in locked mode:
-
-uswsusp: Disable when the kernel is locked down
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=lockdown-20180410&id=8732c1663d7c0305ae01ba5a1ee4d2299b7b4612
-
-I still suggest to keep the solution to direct encript the snapshot
-image for uswsusp because the snapshot can be encrypted by kernel
-before user space get it.
-
-I mean that if the uswsusp be used, then kernel direct encrypts the
-snapshot image, otherwise kernel encrypts pages before block io.
-
-On the other hand, I have a question about asynchronous block io.
-Please see below...
-
-> > > > > Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > Cc: Pavel Machek <pavel@ucw.cz>
-> > > > > Cc: Len Brown <len.brown@intel.com>
-> > > > > Cc: Borislav Petkov <bp@alien8.de>
-> > > > > Cc: "Lee, Chun-Yi" <jlee@suse.com>
-> > > > > Cc: linux-pm@vger.kernel.org
-> > > > > Cc: linux-kernel@vger.kernel.org
-> > > > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> > > > > ---
-> > > > >  kernel/power/power.h |   1 +
-> > > > >  kernel/power/swap.c  | 215 ++++++++++++++++++++++++++++++++++++++++++++++++---
-> > > > >  2 files changed, 205 insertions(+), 11 deletions(-)
-[...snip]
-> > > > >  /* kernel/power/hibernate.c */
-> > > > >  extern int swsusp_check(void);
-> > > > > diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> > > > > index c2bcf97..2b6b3d0 100644
-> > > > > --- a/kernel/power/swap.c
-> > > > > +++ b/kernel/power/swap.c
-[...snip]
-> > > > > @@ -1069,18 +1171,42 @@ static int load_image(struct swap_map_handle *handle,
-> > > > >  	if (!m)
-> > > > >  		m = 1;
-> > > > >  	nr_pages = 0;
-> > > > > +	crypto_page_idx = 0;
-> > > > > +	if (handle->crypto) {
-> > > > > +		crypt_buf = (void *)get_zeroed_page(GFP_KERNEL);
-> > > > > +		if (!crypt_buf)
-> > > > > +			return -ENOMEM;
-> > > > > +	}
-> > > > >  	start = ktime_get();
-> > > > >  	for ( ; ; ) {
-> > > > >  		ret = snapshot_write_next(snapshot);
-> > > > >  		if (ret <= 0)
-> > > > >  			break;
-> > > > > -		ret = swap_read_page(handle, data_of(*snapshot), &hb);
-> > > > > +		if (handle->crypto)
-> > > > > +			ret = swap_read_page(handle, crypt_buf, &hb);
-> > > > > +		else
-> > > > > +			ret = swap_read_page(handle, data_of(*snapshot), &hb);
-> > > > >  		if (ret)
-> > > > >  			break;
-> > > > >  		if (snapshot->sync_read)
-> > > > >  			ret = hib_wait_io(&hb);
-
-In snapshot_write_next(), the logic will clean the snapshot->sync_read
-when the buffer page doesn't equal to the original page. Which means
-that the page can be read by asynchronous block io. Otherwise, kernel
-calls hib_wait_io() to wait until the block io was done.
-
-> > > > >  		if (ret)
-> > > > >  			break;
-> > > > > +		if (handle->crypto) {
-> > > > > +			/*
-> > > > > +			 * Need a decryption for the
-> > > > > +			 * data read from the block
-> > > > > +			 * device.
-> > > > > +			 */
-> > > > > +			ret = crypto_data(crypt_buf, PAGE_SIZE,
-> > > > > +					  data_of(*snapshot),
-> > > > > +					  PAGE_SIZE,
-> > > > > +					  false,
-> > > > > +					  crypto_page_idx);
-> > > > > +			if (ret)
-> > > > > +				break;
-> > > > > +			crypto_page_idx++;
-> > > > > +		}
-
-The decryption is here in the for-loop. But maybe the page is still in
-the block io queue for waiting the batch read? The page content is not
-really read to memory when the crypto_data be run? 
-
-> > > > >  		if (!(nr_pages % m))
-> > > > >  			pr_info("Image loading progress: %3d%%\n",
-> > > > >  				nr_pages / m * 10);
-                nr_pages++;
-        }
-        err2 = hib_wait_io(&hb);
-        stop = ktime_get();
-
-When the for-loop is break, the above hib_wait_io(&hb) guarantees that
-all asynchronous block io are done. Then all pages are read to memory.
-
-I think that the decryption code must be moved after for-loop be break.
-Or there have any callback hook in the asynchronous block io that we
-can put the encryption code after the block io read the page.
-
-Thanks a lot!
-Joey Lee 
