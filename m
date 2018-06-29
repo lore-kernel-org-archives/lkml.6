@@ -3,165 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73818C6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F55C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3180D27638
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3180D27638
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AA8827655
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:33:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA8827655
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936998AbeF2Qcu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:32:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936961AbeF2Qcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:32:48 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 044DB4068040;
-        Fri, 29 Jun 2018 16:32:48 +0000 (UTC)
-Received: from redhat.com (ovpn-120-120.rdu2.redhat.com [10.10.120.120])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 603EC7C4E;
-        Fri, 29 Jun 2018 16:32:41 +0000 (UTC)
-Date:   Fri, 29 Jun 2018 19:32:41 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v34 0/4] Virtio-balloon: support free page reporting
-Message-ID: <20180629192007-mutt-send-email-mst@kernel.org>
-References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com>
- <c4dd0a13-91fb-c0f5-b41f-54421fdacca9@redhat.com>
- <20180629172216-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396C251E@shsmsx102.ccr.corp.intel.com>
+        id S937021AbeF2QdE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:33:04 -0400
+Received: from mga04.intel.com ([192.55.52.120]:54664 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935594AbeF2Qc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 12:32:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:32:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,286,1526367600"; 
+   d="scan'208";a="236653376"
+Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
+  by orsmga005.jf.intel.com with ESMTP; 29 Jun 2018 09:32:57 -0700
+Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
+ locked access feature
+To:     Thomas Gleixner <tglx@linutronix.de>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
+ <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
+ <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <c8b1cc53-0e0a-a079-fb31-b957b532a083@intel.com>
+Date:   Fri, 29 Jun 2018 09:32:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F7396C251E@shsmsx102.ccr.corp.intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 16:32:48 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 16:32:48 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 03:52:40PM +0000, Wang, Wei W wrote:
-> On Friday, June 29, 2018 10:46 PM, Michael S. Tsirkin wrote:
-> > To: David Hildenbrand <david@redhat.com>
-> > Cc: Wang, Wei W <wei.w.wang@intel.com>; virtio-dev@lists.oasis-open.org;
-> > linux-kernel@vger.kernel.org; virtualization@lists.linux-foundation.org;
-> > kvm@vger.kernel.org; linux-mm@kvack.org; mhocko@kernel.org;
-> > akpm@linux-foundation.org; torvalds@linux-foundation.org;
-> > pbonzini@redhat.com; liliang.opensource@gmail.com;
-> > yang.zhang.wz@gmail.com; quan.xu0@gmail.com; nilal@redhat.com;
-> > riel@redhat.com; peterx@redhat.com
-> > Subject: Re: [PATCH v34 0/4] Virtio-balloon: support free page reporting
-> > 
-> > On Wed, Jun 27, 2018 at 01:06:32PM +0200, David Hildenbrand wrote:
-> > > On 25.06.2018 14:05, Wei Wang wrote:
-> > > > This patch series is separated from the previous "Virtio-balloon
-> > > > Enhancement" series. The new feature,
-> > > > VIRTIO_BALLOON_F_FREE_PAGE_HINT, implemented by this series
-> > enables
-> > > > the virtio-balloon driver to report hints of guest free pages to the
-> > > > host. It can be used to accelerate live migration of VMs. Here is an
-> > introduction of this usage:
-> > > >
-> > > > Live migration needs to transfer the VM's memory from the source
-> > > > machine to the destination round by round. For the 1st round, all
-> > > > the VM's memory is transferred. From the 2nd round, only the pieces
-> > > > of memory that were written by the guest (after the 1st round) are
-> > > > transferred. One method that is popularly used by the hypervisor to
-> > > > track which part of memory is written is to write-protect all the guest
-> > memory.
-> > > >
-> > > > This feature enables the optimization by skipping the transfer of
-> > > > guest free pages during VM live migration. It is not concerned that
-> > > > the memory pages are used after they are given to the hypervisor as
-> > > > a hint of the free pages, because they will be tracked by the
-> > > > hypervisor and transferred in the subsequent round if they are used and
-> > written.
-> > > >
-> > > > * Tests
-> > > > - Test Environment
-> > > >     Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-> > > >     Guest: 8G RAM, 4 vCPU
-> > > >     Migration setup: migrate_set_speed 100G, migrate_set_downtime 2
-> > > > second
-> > > >
-> > > > - Test Results
-> > > >     - Idle Guest Live Migration Time (results are averaged over 10 runs):
-> > > >         - Optimization v.s. Legacy = 284ms vs 1757ms --> ~84% reduction
-> > > >     - Guest with Linux Compilation Workload (make bzImage -j4):
-> > > >         - Live Migration Time (average)
-> > > >           Optimization v.s. Legacy = 1402ms v.s. 2528ms --> ~44% reduction
-> > > >         - Linux Compilation Time
-> > > >           Optimization v.s. Legacy = 5min6s v.s. 5min12s
-> > > >           --> no obvious difference
-> > > >
-> > >
-> > > Being in version 34 already, this whole thing still looks and feels
-> > > like a big hack to me. It might just be me, but especially if I read
-> > > about assumptions like "QEMU will not hotplug memory during
-> > > migration". This does not feel like a clean solution.
-> > >
-> > > I am still not sure if we really need this interface, especially as
-> > > real free page hinting might be on its way.
-> > >
-> > > a) we perform free page hinting by setting all free pages
-> > > (arch_free_page()) to zero. Migration will detect zero pages and
-> > > minimize #pages to migrate. I don't think this is a good idea but
-> > > Michel suggested to do a performance evaluation and Nitesh is looking
-> > > into that right now.
-> > 
-> > Yes this test is needed I think. If we can get most of the benefit without PV
-> > interfaces, that's nice.
-> > 
-> > Wei, I think you need this as part of your performance comparison
-> > too: set page poisoning value to 0 and enable KSM, compare with your
-> > patches.
-> 
-> Do you mean live migration with zero pages?
-> I can first share the amount of memory transferred during live migration I saw,
-> Legacy is around 380MB,
-> Optimization is around 340MB.
-> This proves that most pages have already been 0 and skipped during the legacy live migration. But the legacy time is still much larger because zero page checking is costly. 
-> (It's late night here, I can get you that with my server probably tomorrow)
-> 
-> Best,
-> Wei
+On 06/29/2018 09:23 AM, Thomas Gleixner wrote:
+> And pretty please, can we either stick that stuff into cpu/intel.c or if it
+> really needs a separate file avoid that horrible test_ctl.c file name? 
 
-Sure thing.
-
-Also we might want to look at optimizing the RLE compressor for
-the common case of pages full of zeroes.
-
-Here are some ideas:
-https://rusty.ozlabs.org/?p=560
-
-Note Epiphany #2 as well as comments Paolo Bonzini and by Victor Kaplansky.
-
--- 
-MST
+Fenghua, I also asked for this earlier.  It would be really awesome if
+you could go through and double-check that you have not missed any more
+review comments before you post this again.
