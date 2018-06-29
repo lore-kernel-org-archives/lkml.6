@@ -2,237 +2,159 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE2BC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E577FC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F0D2760B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:06:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F0D2760B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C34D27CC6
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C34D27CC6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936407AbeF2TGC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:06:02 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:33046 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933159AbeF2TGA (ORCPT
+        id S936627AbeF2THm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:07:42 -0400
+Received: from mailoutvs43.siol.net ([185.57.226.234]:43723 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934996AbeF2THj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:06:00 -0400
-Received: by mail-ot0-f195.google.com with SMTP id h6-v6so11032908otj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:06:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mHqkxXYYNn2Qo2hekLTJrHe3Xgnc4LY07wqGxKOcq5Y=;
-        b=IgNfcpGjRUKWoxC9MrF68tUJk47uD+iHOitZzTi2oRVmcJEA1LDmp1LfI4a1Z7lwDP
-         uJYDv17Gyj0RdwD6e2lL9s/8D2T6Hi+/7TS48EouhL9qfl6A/ueoyJpA8TrEzLetI6OR
-         m/6Bt9Q8TCA/3TgxP9AUu8cYqXNglB1azVynHgIRYz+ulue7Ossxk9SM0PNUwxxSfOl6
-         0RY3ueNSiq5Tn5u4MEjRwU0SRt69ho1NJTYnnzbdX6H1TrQu/eL/0FnNodNvp9Qh6G+2
-         JYzclADLvB+J1BH1MTcFcLo2UD+gsBOGvyMexZo8m2oNGs30rYS4qzO8vZ7DLg8MNJdb
-         vw/Q==
-X-Gm-Message-State: APt69E0oLiaCk44cyUqO86Mv4UBXmCHH32jyZjjKm0APPyj8Q9LzeCWG
-        K3qSbZjYJOV2XPf9g+t/m38I9A==
-X-Google-Smtp-Source: AAOMgpcpCl3E6W1KnDl8TNSJMW8z76diqFvNgxKlaeqpk9oFfTqv8XD7fAoFeDoaqlpwMOHekawQxg==
-X-Received: by 2002:a9d:2a81:: with SMTP id e1-v6mr8648850otb.36.1530299160204;
-        Fri, 29 Jun 2018 12:06:00 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::f0c1])
-        by smtp.gmail.com with ESMTPSA id n20-v6sm4758504otf.35.2018.06.29.12.05.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 12:05:58 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
+        Fri, 29 Jun 2018 15:07:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id AED415229C6;
+        Fri, 29 Jun 2018 21:07:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id KRgP9pkKUU0T; Fri, 29 Jun 2018 21:07:36 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 06458522FFA;
+        Fri, 29 Jun 2018 21:07:36 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 073015229C6;
+        Fri, 29 Jun 2018 21:07:35 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: Clear the stack
-Date:   Fri, 29 Jun 2018 12:05:53 -0700
-Message-Id: <20180629190553.7282-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
+Date:   Fri, 29 Jun 2018 21:06:09 +0200
+Message-ID: <3257762.ZQzN8rrT6c@jernej-laptop>
+In-Reply-To: <20180628182543.yyja6hiry7rx7fu2@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <1812731.FQOhD8MfmX@jernej-laptop> <20180628182543.yyja6hiry7rx7fu2@flea>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implementation of stackleak based heavily on the x86 version
+Dne četrtek, 28. junij 2018 ob 20:25:43 CEST je Maxime Ripard napisal(a):
+> On Thu, Jun 28, 2018 at 06:48:50AM +0200, Jernej Škrabec wrote:
+> > Dne četrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai napisal(a):
+> > > On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
+> > > <jernej.skrabec@siol.net>
+> > 
+> > wrote:
+> > > > Current "old" method to find engine worked pretty well for DE2.
+> > > > However,
+> > > > it doesn't work when TCON TOP is between  mixer (engine) and TCON.
+> > > > TCON
+> > > > TOP has multiple input ports, but current engine search algorithm
+> > > > expects only one.
+> > > > 
+> > > > This can be fixed by first looking for output port id and selecting
+> > > > matching input by subtracting 1 for the next round. This work even if
+> > > > there is only one input and output.
+> > > > 
+> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > ---
+> > > > 
+> > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
+> > > >  1 file changed, 18 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..264bcc43da11
+> > > > 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device
+> > > > *dev,
+> > > > 
+> > > >   */
+> > > >  
+> > > >  static struct sunxi_engine *
+> > > >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+> > > > 
+> > > > -                               struct device_node *node)
+> > > > +                               struct device_node *node,
+> > > > +                               u32 port_id)
+> > > > 
+> > > >  {
+> > > >  
+> > > >         struct device_node *port, *ep, *remote;
+> > > >         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
+> > > > 
+> > > > +       u32 reg = 0;
+> > > > 
+> > > > -       port = of_graph_get_port_by_id(node, 0);
+> > > > +       port = of_graph_get_port_by_id(node, port_id);
+> > > > 
+> > > >         if (!port)
+> > > >         
+> > > >                 return ERR_PTR(-EINVAL);
+> > > > 
+> > > > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv
+> > > > *drv,
+> > > > 
+> > > >                 if (remote == engine->node)
+> > > >                 
+> > > >                         goto out_put_remote;
+> > > > 
+> > > > +       /*
+> > > > +        * According to device tree binding input ports have even id
+> > > > +        * number and output ports have odd id. Since component with
+> > > > +        * more than one input and one output (TCON TOP) exits,
+> > > > correct
+> > > > +        * remote input id has to be calculated by subtracting 1 from
+> > > > +        * remote output id. If this for some reason can't be done, 0
+> > > > +        * is used as input port id.
+> > > > +        */
+> > > 
+> > > You need to call
+> > > 
+> > >     of_node_put(port);
+> > > 
+> > > to drop the reference to the original port.
+> > 
+> > Thanks for noticing it. I guess I should send fix patch, since patches
+> > from
+> > drm-misc-next can't be dropped.
+> 
+> Yeah, please send additional patches for all the issues pointed out by
+> Chen-Yu.
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-Changes since last time:
-- Minor name change in entry.S
-- Converted to use the generic interfaces so there's minimal additions.
-- Added the fast syscall path.
-- Addition of on_thread_stack and current_top_of_stack
-- Disable stackleak on hyp per suggestion
-- Added a define for check_alloca. I'm still not sure about keeping it
-  since the x86 version got reworked?
+Of course. I hope this can be resolved till the end of the next week. After 
+that, I will be away from PC for 2 weeks. Feel free to drop DT patches if you 
+think that it will come too close to merge window.
 
-I've mostly kept this as one patch with a minimal commit text. I can
-split it up and elaborate more before final merging.
----
- arch/arm64/Kconfig                    |  1 +
- arch/arm64/include/asm/processor.h    |  9 +++++++++
- arch/arm64/kernel/entry.S             |  7 +++++++
- arch/arm64/kernel/process.c           | 16 ++++++++++++++++
- arch/arm64/kvm/hyp/Makefile           |  3 ++-
- drivers/firmware/efi/libstub/Makefile |  3 ++-
- include/linux/stackleak.h             |  1 +
- scripts/Makefile.gcc-plugins          |  5 ++++-
- 8 files changed, 42 insertions(+), 3 deletions(-)
+Best regards,
+Jernej
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..b0221db95dc9 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -92,6 +92,7 @@ config ARM64
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 767598932549..73914fd7e142 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -248,5 +248,14 @@ void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
- #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
- #define SVE_GET_VL()	sve_get_current_vl()
- 
-+/*
-+ * For stackleak
-+ *
-+ * These need to be macros because otherwise we get stuck in a nightmare
-+ * of header definitions for the use of task_stack_page.
-+ */
-+#define current_top_of_stack()	(task_stack_page(current) + THREAD_SIZE)
-+#define on_thread_stack()	(on_task_stack(current, current_stack_pointer))
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index ec2ee720e33e..31c9da7d401e 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
- 
- 	.text
- 
-+	.macro	stackleak_erase
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	bl	stackleak_erase_kstack
-+#endif
-+	.endm
- /*
-  * Exception vectors.
-  */
-@@ -880,6 +885,7 @@ ret_fast_syscall:
- 	and	x2, x1, #_TIF_WORK_MASK
- 	cbnz	x2, work_pending
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ret_fast_syscall_trace:
- 	enable_daif
-@@ -906,6 +912,7 @@ ret_to_user:
- 	cbnz	x2, work_pending
- finish_ret_to_user:
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ENDPROC(ret_to_user)
- 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index f08a2ed9db0d..9f0f135f8b66 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -493,3 +493,19 @@ void arch_setup_new_exec(void)
- {
- 	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
- }
-+
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+#define MIN_STACK_LEFT	256
-+
-+void __used stackleak_check_alloca(unsigned long size)
-+{
-+	unsigned long sp, stack_left;
-+
-+	sp = current_stack_pointer;
-+
-+	stack_left = sp & (THREAD_SIZE - 1);
-+	BUG_ON(stack_left < MIN_STACK_LEFT ||
-+		size >= stack_left - MIN_STACK_LEFT);
-+}
-+EXPORT_SYMBOL(stackleak_check_alloca);
-+#endif
-diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-index 4313f7475333..2fabc2dc1966 100644
---- a/arch/arm64/kvm/hyp/Makefile
-+++ b/arch/arm64/kvm/hyp/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for Kernel-based Virtual Machine module, HYP part
- #
- 
--ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-+		$(DISABLE_STACKLEAK_PLUGIN)
- 
- KVM=../../../../virt/kvm
- 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index a34e9290a699..25dd2a14560d 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 				   -D__NO_FORTIFY \
- 				   $(call cc-option,-ffreestanding) \
--				   $(call cc-option,-fno-stack-protector)
-+				   $(call cc-option,-fno-stack-protector) \
-+				   $(DISABLE_STACKLEAK_PLUGIN)
- 
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
-diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
-index e2da99b3a191..00d62b302efb 100644
---- a/include/linux/stackleak.h
-+++ b/include/linux/stackleak.h
-@@ -5,6 +5,7 @@
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
- 
-+#include <asm/stacktrace.h>
- /*
-  * Check that the poison value points to the unused hole in the
-  * virtual memory map for your platform.
-diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-index a535742a1c06..972ce4ca7f6a 100644
---- a/scripts/Makefile.gcc-plugins
-+++ b/scripts/Makefile.gcc-plugins
-@@ -37,11 +37,14 @@ ifdef CONFIG_GCC_PLUGINS
- 
-   gcc-plugin-$(CONFIG_GCC_PLUGIN_STACKLEAK)	+= stackleak_plugin.so
-   gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK)	+= -DSTACKLEAK_PLUGIN -fplugin-arg-stackleak_plugin-track-min-size=$(CONFIG_STACKLEAK_TRACK_MIN_SIZE)
-+  ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+    DISABLE_STACKLEAK_PLUGIN		+= -fplugin-arg-stackleak_plugin-disable
-+  endif
- 
-   GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
- 
-   export PLUGINCC GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
--  export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN
-+  export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN DISABLE_STACKLEAK_PLUGIN
- 
-   ifneq ($(PLUGINCC),)
-     # SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
--- 
-2.17.1
+
 
