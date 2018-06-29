@@ -2,116 +2,166 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD99DC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E38C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6639127C48
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37A4027C48
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GMPW7D5O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6639127C48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oEyo+95I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A4027C48
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936784AbeF2SwQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:52:16 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41913 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933642AbeF2SwO (ORCPT
+        id S936817AbeF2Sw6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:52:58 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41333 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933159AbeF2Swx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:52:14 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w8-v6so4875677ply.8
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 11:52:14 -0700 (PDT)
+        Fri, 29 Jun 2018 14:52:53 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a11-v6so4612681pff.8;
+        Fri, 29 Jun 2018 11:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=aaqiWv1/qM0jeo9g5G5zoYmz4WxV8FEaeF/KEXgwrnM=;
-        b=GMPW7D5Orlz5hOw7cItD8WFSlSjiRuz16vQr8C8tGuXaHftEqKCLK62/3oQVzTNiBX
-         LMRuZqBVTTG4OfORdMgwRhCc0Skjc2/DkMAGB8nsNR3QleZinrxqM0JyvbP7PmLGheWM
-         QQVnTratLAMxwCfMq/BAla3CWTBesiAZorYXA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IxigthHu1AM8Vx5XTX0i+P8p5MyB1vffC7g7ly8qY0Q=;
+        b=oEyo+95IdXe7egYTsC+WrW1RZsKXbh5a6Zns48je0t1rOosbWId24gAUKxSS/ppcVo
+         u5M0btKML70N7TCcgTm5RzFbJ2f5ePO6D87lXWB0QhInvNJK/a6BO3t1GDwjizSdybQS
+         p46Okt5KD/wgwaSkU56anelHM0IekobooAEAmSmpgMzfELOJ/aK2w52sXUg0bCwuCe3F
+         Kz6k8P61EpPZhRd4xDKQE8jHVoW/gyKhCavtli4hQ1C2v+O+OZ/pwVmIDCA5A1Ob8Etf
+         Wm1eTGikBsaQrWDSrEvYd0LBsBpE6LcWUa9t8zhrmrhZK+ML2fA/kN1p6IUvxljkmOB1
+         eKBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=aaqiWv1/qM0jeo9g5G5zoYmz4WxV8FEaeF/KEXgwrnM=;
-        b=BFjtG2fpl0Xv4YEDSNLj7Mp9F9iAHE4NKoGncWP7EzbvbauVrXOIG+piH6OtFGlLUr
-         9IyfKU0Fn9OK/oTB0YQxB9NcPDBIA5xpGqiakGVS5n+57pMxkvI9uasTCUeXQZMah9ds
-         UAPCZ1eeIdjsOCm1mECpOihIVE+zz3xbViM7aiZpzfdsZUpqFXpq9vrT3+26gSSkwr7t
-         +7fpw78FCLcmn0ejychgLfIowqVfZdiKRBebg2VimBXsL8B+VTyOj+ipATkfQ3U8cQSe
-         i4JiuMnsY2QTUEP/rn/xTz30LgXkS9LcDvEp8S5K7qz1AZi3cgcmARWX7+aqgMrIhG8Q
-         gmMA==
-X-Gm-Message-State: APt69E1yQ1onZJLcxa16DSdIrNpdl91IJz3/10YfWkyENkbyEGBeHPi3
-        YHL/nIdsqVL4J4J1fjTC+lOZjg==
-X-Google-Smtp-Source: ADUXVKLstvMIpXPul2FnflAqX9KGyqaRk9hJ1wCY2a60uof/V62V1LGGpj8kwuUcjOXGRpiQrccjcQ==
-X-Received: by 2002:a17:902:46e:: with SMTP id 101-v6mr16310439ple.39.1530298334511;
-        Fri, 29 Jun 2018 11:52:14 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id g75-v6sm17617027pfg.145.2018.06.29.11.52.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 11:52:13 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 11:52:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IxigthHu1AM8Vx5XTX0i+P8p5MyB1vffC7g7ly8qY0Q=;
+        b=nT1rpqjbOjTpP275F1LWAaOflZsm5n5YbATOPKKmQGHKSRZ1ynxJAe5RgzQRmKKYrE
+         LACPsaponsloZ2XM6gT3xPOPPt/CsEQJ494BGkhpooEOmqNftcx8LJTmryJ0HSTUy3Ol
+         PCgn0alT+IldarngWBwqHLLywbZcyU1Ezz4WKpA7vc2Rb1rarsLhE5DkLMwxEwlebkc4
+         5Fm3hme7z5/cXt3fJapIbf6a7cBJ+/Elnuc9M+XNiOk2gtATQV+4m+N2q8et8Fk4Kd/T
+         S0RlmKdGL/QwFECKWEqAwdZQGbw4X1nlhrZwQuNIoogPfv0ecBKsyKSVu0v1CBHtAcUh
+         dPaw==
+X-Gm-Message-State: APt69E147nJcEDL4xmnHFz89HtErX9jxITl/5HPrrpeWtwaWCRZmVAl0
+        1MLesEQcqCZVdumaTE0LhpltFw==
+X-Google-Smtp-Source: AAOMgpeHhE1muDtnVQZDOE/a650kCBsntKbbZyWbMBOYZAG8RTEFNa6xhXs4+v8/aQKhoiDeKIwPqg==
+X-Received: by 2002:a62:9b57:: with SMTP id r84-v6mr15474728pfd.6.1530298372822;
+        Fri, 29 Jun 2018 11:52:52 -0700 (PDT)
+Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
+        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.52.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 29 Jun 2018 11:52:52 -0700 (PDT)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] bus: imx-weim: Remove VLA usage
-Message-ID: <20180629185212.GA37517@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: [PATCH v5 08/17] media: imx: csi: Register a subdev notifier
+Date:   Fri, 29 Jun 2018 11:49:52 -0700
+Message-Id: <1530298220-5097-9-git-send-email-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
+References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-switches to using a maximum size and adds a sanity check.
+Parse neighbor remote devices on the CSI port, and add them to a subdev
+notifier, by calling v4l2_async_notifier_parse_fwnode_endpoints_by_port()
+using the CSI's port id. And register the subdev notifier for the CSI.
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/bus/imx-weim.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Changes since v4:
+- none
+Changes since v3:
+- v4l2_async_register_fwnode_subdev() no longer supports parsing
+  port sub-devices, so call
+  v4l2_async_notifier_parse_fwnode_endpoints_by_port() directly.
+---
+ drivers/staging/media/imx/imx-media-csi.c | 55 ++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-index 3d56ebcda720..6a94aa6a22c2 100644
---- a/drivers/bus/imx-weim.c
-+++ b/drivers/bus/imx-weim.c
-@@ -45,6 +45,8 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
- 	.cs_stride	= 0x18,
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index 06af76d..d5cc4e9 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -1740,6 +1740,59 @@ static const struct v4l2_subdev_internal_ops csi_internal_ops = {
+ 	.unregistered = csi_unregistered,
  };
  
-+#define MAX_CS_REGS_COUNT	6
++static int imx_csi_parse_endpoint(struct device *dev,
++				  struct v4l2_fwnode_endpoint *vep,
++				  struct v4l2_async_subdev *asd)
++{
++	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
++}
 +
- static const struct of_device_id weim_id_table[] = {
- 	/* i.MX1/21 */
- 	{ .compatible = "fsl,imx1-weim", .data = &imx1_weim_devtype, },
-@@ -112,9 +114,12 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
- static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
- 				    const struct imx_weim_devtype *devtype)
++static int imx_csi_async_register(struct csi_priv *priv)
++{
++	struct v4l2_async_notifier *notifier;
++	struct fwnode_handle *fwnode;
++	unsigned int port;
++	int ret;
++
++	notifier = kzalloc(sizeof(*notifier), GFP_KERNEL);
++	if (!notifier)
++		return -ENOMEM;
++
++	fwnode = dev_fwnode(priv->dev);
++
++	/* get this CSI's port id */
++	ret = fwnode_property_read_u32(fwnode, "reg", &port);
++	if (ret < 0)
++		goto out_free;
++
++	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
++		priv->dev->parent, notifier, sizeof(struct v4l2_async_subdev),
++		port, imx_csi_parse_endpoint);
++	if (ret < 0)
++		goto out_cleanup;
++
++	ret = v4l2_async_subdev_notifier_register(&priv->sd, notifier);
++	if (ret < 0)
++		goto out_cleanup;
++
++	ret = v4l2_async_register_subdev(&priv->sd);
++	if (ret < 0)
++		goto out_unregister;
++
++	priv->sd.subdev_notifier = notifier;
++
++	return 0;
++
++out_unregister:
++	v4l2_async_notifier_unregister(notifier);
++out_cleanup:
++	v4l2_async_notifier_cleanup(notifier);
++out_free:
++	kfree(notifier);
++
++	return ret;
++}
++
+ static int imx_csi_probe(struct platform_device *pdev)
  {
--	u32 cs_idx, value[devtype->cs_regs_count];
-+	u32 cs_idx, value[MAX_CS_REGS_COUNT];
- 	int i, ret;
+ 	struct ipu_client_platformdata *pdata;
+@@ -1809,7 +1862,7 @@ static int imx_csi_probe(struct platform_device *pdev)
+ 			goto free;
+ 	}
  
-+	if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
-+		return -EINVAL;
-+
- 	/* get the CS index from this child node's "reg" property. */
- 	ret = of_property_read_u32(np, "reg", &cs_idx);
+-	ret = v4l2_async_register_subdev(&priv->sd);
++	ret = imx_csi_async_register(priv);
  	if (ret)
+ 		goto free;
+ 
 -- 
-2.17.1
+2.7.4
 
-
--- 
-Kees Cook
-Pixel Security
