@@ -3,24 +3,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFFBC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D6BC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395B527B7A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395B527B7A
+	by mail.kernel.org (Postfix) with ESMTP id 6E0B127B7A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E0B127B7A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753829AbeF2HWV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:22:21 -0400
+        id S932821AbeF2HWT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:22:19 -0400
 Received: from mga17.intel.com ([192.55.52.151]:16511 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753614AbeF2HWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752934AbeF2HWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 29 Jun 2018 03:22:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +27,9 @@ Received: from fmsmga005.fm.intel.com ([10.253.24.32])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 00:22:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="241289998"
+   d="scan'208";a="241289996"
 Received: from shawn-bm6650-bm6350.itwn.intel.com ([10.5.253.27])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2018 00:22:08 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2018 00:22:04 -0700
 From:   alanx.chiang@intel.com
 To:     linux-i2c@vger.kernel.org
 Cc:     andy.yeh@intel.com, sakari.ailus@linux.intel.com,
@@ -40,9 +39,9 @@ Cc:     andy.yeh@intel.com, sakari.ailus@linux.intel.com,
         robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
         gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Alan Chiang <alanx.chiang@intel.com>
-Subject: [PATCH v4 2/2] eeprom: at24: Add support for address-width property
-Date:   Fri, 29 Jun 2018 15:21:55 +0800
-Message-Id: <1530256915-25034-3-git-send-email-alanx.chiang@intel.com>
+Subject: [PATCH v4 1/2] dt-bindings: at24: Add address-width property
+Date:   Fri, 29 Jun 2018 15:21:54 +0800
+Message-Id: <1530256915-25034-2-git-send-email-alanx.chiang@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530256915-25034-1-git-send-email-alanx.chiang@intel.com>
 References: <1530256915-25034-1-git-send-email-alanx.chiang@intel.com>
@@ -53,53 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alan Chiang <alanx.chiang@intel.com>
 
-Provide a flexible way to determine the addressing bits of eeprom.
-Pass the addressing bits to driver through address-width property.
+The AT24 series chips use 8-bit address by default. If some
+chips would like to support more than 8 bits, the at24 driver
+should be added the compatible field for specfic chips.
+
+Provide a flexible way to determine the addressing bits through
+address-width in this patch.
 
 Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
 Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 ---
-since v1
--- Add a warn message for 8-bit addressing.
-since v2
--- Modify the warning message for clear.
--- Move the clearing bit operation outside of a statement.
-since v3
--- Merge the warning message into one line.
+since v1:
+-- Remove the address-width field in the example.
+since v2:
+-- Remove redundant space.
+since v3:
+-- Add Acked-by.
 
 ---
- drivers/misc/eeprom/at24.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 0c125f2..7ea640b 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -478,6 +478,23 @@ static void at24_properties_to_pdata(struct device *dev,
- 	if (device_property_present(dev, "no-read-rollover"))
- 		chip->flags |= AT24_FLAG_NO_RDROL;
+diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+index 61d833a..aededdb 100644
+--- a/Documentation/devicetree/bindings/eeprom/at24.txt
++++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+@@ -72,6 +72,8 @@ Optional properties:
  
-+	err = device_property_read_u32(dev, "address-width", &val);
-+	if (!err) {
-+		switch (val) {
-+		case 8:
-+			if (chip->flags & AT24_FLAG_ADDR16)
-+				dev_warn(dev, "Override address width to be 8, while default is 16\n");
-+			chip->flags &= ~AT24_FLAG_ADDR16;
-+			break;
-+		case 16:
-+			chip->flags |= AT24_FLAG_ADDR16;
-+			break;
-+		default:
-+			dev_warn(dev, "Bad \"address-width\" property: %u\n",
-+				 val);
-+		}
-+	}
+   - wp-gpios: GPIO to which the write-protect pin of the chip is connected.
+ 
++  - address-width: number of address bits (one of 8, 16).
 +
- 	err = device_property_read_u32(dev, "size", &val);
- 	if (!err)
- 		chip->byte_len = val;
+ Example:
+ 
+ eeprom@52 {
 -- 
 2.7.4
 
