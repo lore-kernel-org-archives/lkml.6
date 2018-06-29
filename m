@@ -2,292 +2,108 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE02C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB61C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 257BA27BC0
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:12:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257BA27BC0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 72D6A27BC2
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:13:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MQN0n0cY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D6A27BC2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934736AbeF2IMp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:12:45 -0400
-Received: from mx.socionext.com ([202.248.49.38]:42402 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934557AbeF2ILl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:11:41 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 29 Jun 2018 17:11:40 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 5964A60034;
-        Fri, 29 Jun 2018 17:11:40 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 29 Jun 2018 17:11:40 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id BB8CF1A120B;
-        Fri, 29 Jun 2018 17:11:39 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 2/2] reset: uniphier: add USB3 controller reset control
-Date:   Fri, 29 Jun 2018 17:11:31 +0900
-Message-Id: <1530259891-18822-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530259891-18822-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1530259891-18822-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S934785AbeF2INV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:13:21 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35044 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934739AbeF2INR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:13:17 -0400
+Received: by mail-pg0-f67.google.com with SMTP id i7-v6so3659312pgp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 01:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=OzgGn+Q4isfRNiycbtBKaigAmf6rTndiL1fQJSnnjt4=;
+        b=MQN0n0cYBJrBiAfwmygEa8LMaowCTm8fdnpUdHO4d/aVjKxAHCFy06vKj37KPtmnJY
+         FUnhMmVB5Bop7IWhhUF6QVTdQkZkpMxBAl8kFJgyGIU5uRTHsiQzVLqsGnzpOGQV7YW0
+         H+k0it/rvZgOi+GmWfv7sKx6cfsw27/3BT0mw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OzgGn+Q4isfRNiycbtBKaigAmf6rTndiL1fQJSnnjt4=;
+        b=MBL1tHyjEuyC8IR8ccyoV2nk7g9amvYsLUSohCgTlUyvIJKxeEP1bJVZTY3o5lkKY3
+         cF1nQ9aAK9pQfFArIILCcoACnKkyXPAglNpOyaLAqpeJFX1NvWt2Ml8dgO2JEyZmuJjl
+         lttInIM+uYNhg9eTdAOMqhLJ+deqKuBnpYFVkzmL7TC4l7R8g3DiAavRrG4rGV9KsAQS
+         k1rqJqQR9urORSLS6Wv9Wr4/aT0zDlXoQYkWT47RUCGQL/wPTN5CGVi7Mg9r+Pt+eMel
+         g7CKzP61oqSHoza5KnwCDw5GY9my6ioaXxhmmhGawp6HiG7IGx8rhANmc3ml05sUCimn
+         4JeA==
+X-Gm-Message-State: APt69E1QbLAdi184m/eieR/3Tj87CH3STr/BX7t+BqtUjsrpxWr2MeMg
+        FEYZSD0mmxxuNIV9p/b0AD1BxQ==
+X-Google-Smtp-Source: AAOMgpcR8iip0WWnl+/LDgt9DfNzfBKeUGJC7WriRxuY96KCzwXSD1uEgYVQy9AWjWfE6lCTezmLdg==
+X-Received: by 2002:a62:fe19:: with SMTP id z25-v6mr13190972pfh.167.1530259996608;
+        Fri, 29 Jun 2018 01:13:16 -0700 (PDT)
+Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:3987:9bf6:3352:7574])
+        by smtp.gmail.com with ESMTPSA id h13-v6sm12994488pgp.13.2018.06.29.01.13.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 29 Jun 2018 01:13:15 -0700 (PDT)
+From:   Louis Collard <louiscollard@chromium.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: [PATCH v2] tpm: Allow tpm_tis drivers to set hwrng quality.
+Date:   Fri, 29 Jun 2018 16:12:58 +0800
+Message-Id: <20180629081258.155228-1-louiscollard@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reset lines for USB3 controller implemented in UniPhier SoCs.
+Adds plumbing required for drivers based on tpm_tis to set hwrng quality.
 
-This reuses only the reset operations in reset-simple, because
-the reset-simple doesn't handle any SoC-dependent clocks and resets.
-This reset lines is included in the USB3 glue layer, and it's necessary
-to enable clocks and deassert resets of the layer before using this
-reset lines.
-
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
 ---
- drivers/reset/Kconfig               |  10 ++
- drivers/reset/Makefile              |   1 +
- drivers/reset/reset-uniphier-usb3.c | 183 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 194 insertions(+)
- create mode 100644 drivers/reset/reset-uniphier-usb3.c
+Changes since v1:
+- based on (hopefully!) correct git tree
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index c0b292b..851c9c3 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -138,6 +138,16 @@ config RESET_UNIPHIER
- 	  Say Y if you want to control reset signals provided by System Control
- 	  block, Media I/O block, Peripheral Block.
+ drivers/char/tpm/tpm_tis_core.c | 2 ++
+ drivers/char/tpm/tpm_tis_core.h | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8b46aaa9e049..d2345d9fd7b5 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -875,6 +875,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	chip->acpi_dev_handle = acpi_dev_handle;
+ #endif
  
-+config RESET_UNIPHIER_USB3
-+	tristate "USB3 reset driver for UniPhier SoCs"
-+	depends on (ARCH_UNIPHIER || COMPILE_TEST) && OF
-+	default ARCH_UNIPHIER
-+	select RESET_SIMPLE
-+	help
-+	  Support for USB3 reset controllers on UniPhier SoCs.
-+	  Say Y if you want to control reset signals provided by
-+	  USB3 controller block.
++	chip->hwrng.quality = priv->rng_quality;
 +
- config RESET_ZYNQ
- 	bool "ZYNQ Reset Driver" if COMPILE_TEST
- 	default ARCH_ZYNQ
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index c1261dc..2638ac4 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -20,5 +20,6 @@ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
- obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
-+obj-$(CONFIG_RESET_UNIPHIER_USB3) += reset-uniphier-usb3.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+ 	/* Maximum timeouts */
+ 	chip->timeout_a = msecs_to_jiffies(TIS_TIMEOUT_A_MAX);
+ 	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index f6e1dbe212a7..f48125f1e6e0 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -99,6 +99,7 @@ struct tpm_tis_data {
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
+ 	const struct tpm_tis_phy_ops *phy_ops;
++	unsigned short rng_quality;
+ };
  
-diff --git a/drivers/reset/reset-uniphier-usb3.c b/drivers/reset/reset-uniphier-usb3.c
-new file mode 100644
-index 0000000..397e6c9
---- /dev/null
-+++ b/drivers/reset/reset-uniphier-usb3.c
-@@ -0,0 +1,183 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * reset-uniphier-usb3.c - USB3 reset driver for UniPhier
-+ * Copyright 2018 Socionext Inc.
-+ * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#include "reset-simple.h"
-+
-+#define MAX_CLKS	2
-+#define MAX_RSTS	2
-+
-+struct uniphier_usb3_reset_soc_data {
-+	const char *clock_names[MAX_CLKS];
-+	const char *reset_names[MAX_RSTS];
-+};
-+
-+struct uniphier_usb3_reset_priv {
-+	int nclks;
-+	struct clk *clk[MAX_CLKS];
-+	int nrsts;
-+	struct reset_control *rst[MAX_RSTS];
-+	const struct uniphier_usb3_reset_soc_data *data;
-+};
-+
-+static int uniphier_usb3_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_usb3_reset_priv *priv;
-+	struct reset_simple_data *rst_data;
-+	struct resource *res;
-+	resource_size_t size;
-+	const char *name;
-+	int i, ret, nc, nr;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->data = of_device_get_match_data(dev);
-+	if (WARN_ON(!priv->data))
-+		return -EINVAL;
-+
-+	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
-+	if (!rst_data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	size = resource_size(res);
-+	rst_data->membase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(rst_data->membase))
-+		return PTR_ERR(rst_data->membase);
-+
-+	for (i = 0; i < MAX_CLKS; i++) {
-+		name = priv->data->clock_names[i];
-+		if (!name)
-+			break;
-+		priv->clk[i] = devm_clk_get(dev, name);
-+		if (IS_ERR(priv->clk[i]))
-+			return PTR_ERR(priv->clk[i]);
-+		priv->nclks++;
-+	}
-+
-+	for (i = 0; i < MAX_RSTS; i++) {
-+		name = priv->data->reset_names[i];
-+		if (!name)
-+			break;
-+		priv->rst[i] = devm_reset_control_get_shared(dev, name);
-+		if (IS_ERR(priv->rst[i]))
-+			return PTR_ERR(priv->rst[i]);
-+		priv->nrsts++;
-+	}
-+
-+	for (nc = 0; nc < priv->nclks; nc++) {
-+		ret = clk_prepare_enable(priv->clk[nc]);
-+		if (ret)
-+			goto out_clk_disable;
-+	}
-+
-+	for (nr = 0; nr < priv->nrsts; nr++) {
-+		ret = reset_control_deassert(priv->rst[nr]);
-+		if (ret)
-+			goto out_rst_assert;
-+	}
-+
-+	spin_lock_init(&rst_data->lock);
-+	rst_data->rcdev.owner = THIS_MODULE;
-+	rst_data->rcdev.nr_resets = size * BITS_PER_BYTE;
-+	rst_data->rcdev.ops = &reset_simple_ops;
-+	rst_data->rcdev.of_node = dev->of_node;
-+	rst_data->active_low = true;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	ret = devm_reset_controller_register(dev, &rst_data->rcdev);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	return 0;
-+
-+out_rst_assert:
-+	while (nr--)
-+		reset_control_assert(priv->rst[nr]);
-+out_clk_disable:
-+	while (nc--)
-+		clk_disable_unprepare(priv->clk[nc]);
-+
-+	return ret;
-+}
-+
-+static int uniphier_usb3_reset_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_usb3_reset_priv *priv = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < priv->nrsts; i++)
-+		reset_control_assert(priv->rst[i]);
-+	for (i = 0; i < priv->nclks; i++)
-+		clk_disable_unprepare(priv->clk[i]);
-+
-+	return 0;
-+}
-+
-+static const struct uniphier_usb3_reset_soc_data uniphier_pro4_data = {
-+	.clock_names = { "gio", "link", },
-+	.reset_names = { "gio", "link", },
-+};
-+
-+static const struct uniphier_usb3_reset_soc_data uniphier_pxs2_data = {
-+	.clock_names = { "link", },
-+	.reset_names = { "link", },
-+};
-+
-+static const struct uniphier_usb3_reset_soc_data uniphier_ld20_data = {
-+	.clock_names = { "link", },
-+	.reset_names = { "link", },
-+};
-+
-+static const struct uniphier_usb3_reset_soc_data uniphier_pxs3_data = {
-+	.clock_names = { "link", },
-+	.reset_names = { "link", },
-+};
-+
-+static const struct of_device_id uniphier_usb3_reset_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-pro4-usb3-reset",
-+		.data = &uniphier_pro4_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs2-usb3-reset",
-+		.data = &uniphier_pxs2_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-usb3-reset",
-+		.data = &uniphier_ld20_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs3-usb3-reset",
-+		.data = &uniphier_pxs3_data,
-+	},
-+	{ /* Sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_usb3_reset_match);
-+
-+static struct platform_driver uniphier_usb3_reset_driver = {
-+	.probe = uniphier_usb3_reset_probe,
-+	.remove = uniphier_usb3_reset_remove,
-+	.driver = {
-+		.name = "uniphier-usb3-reset",
-+		.of_match_table = uniphier_usb3_reset_match,
-+	},
-+};
-+module_platform_driver(uniphier_usb3_reset_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier USB3 Reset Driver");
-+MODULE_LICENSE("GPL");
+ struct tpm_tis_phy_ops {
 -- 
-2.7.4
+2.13.5
 
