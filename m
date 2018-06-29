@@ -2,99 +2,215 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB085C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD37EC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6271727C29
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A1BF2761F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fG5Z7+4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6271727C29
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGznIgvO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1BF2761F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936606AbeF2Ss4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:48:56 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35619 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934305AbeF2Ssx (ORCPT
+        id S936607AbeF2Sue (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:50:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46947 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751757AbeF2Suc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:48:53 -0400
-Received: by mail-pg0-f67.google.com with SMTP id i7-v6so4361747pgp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 11:48:53 -0700 (PDT)
+        Fri, 29 Jun 2018 14:50:32 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 30-v6so4859514pld.13;
+        Fri, 29 Jun 2018 11:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B2Bi6Kc1QYq40IqUU3e8QlrpOWsIuoa8e/TYwjoVXlQ=;
-        b=fG5Z7+4F27+Sa0/SlfXLz++8lycxG0MK0NojgXb5njPeNJ9gx2RClygR13EA7GahAg
-         Bl5QBPsOgfjRuBHxSNJx4FSW13RCN+MUJ1KLvJcQb0GPZDPz1gmYMjCs+q9udml+K0K7
-         VmzO6YJTlSXekaURZlJdBB7PFejHAeu76vOKY=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+9GEaWjteuxF7tJ1y+LTDDA6cZ/9EUrUTXOCa4Eze0o=;
+        b=AGznIgvOh7Li5c4fQJLLzcDytu/osWz4T2wouYouDLescHJd8RlnZ3llSU4WVwl8sl
+         PqPEH/pZL+OZwfsA/LvBnsVfusweahZuCQP36X5YD6EGt8Fzl5q6tJ1UdSkYE0wzl4Gu
+         J/pzMwn20+G6kyOZay15H80ujhs9IxNXbZnmgkAsOiEZ8S1mXXMbvks/kD3l6AJDG4Hs
+         7KNyrVyOBZQlR2vy3BCj3rjopHR/m81QnCNDfaeXamSXdlIv/vSLwhXNlItLn6B+i9sg
+         zgR2lAjIdpm5yPQvRvfyqwS9A4voSScqvlwirELbhW2EEtAwvH/HdKYo6FnsytTcklu0
+         syXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B2Bi6Kc1QYq40IqUU3e8QlrpOWsIuoa8e/TYwjoVXlQ=;
-        b=mmL4HnJwKGlTMEa+72sBJN3zAlVbP9XkoIEF5YmxROmxo2KvLZlbmmneDn3Nrk6adn
-         aHNWvfx6eAIWr8ur9UueT5hQOflhKxdv2S6R5DKB9dHTL9i4XqgPq5oUP1cjNlzwqtlr
-         N3w1yfikBfrqnbLaTIyKh0EeMF2uzA1a3WhfLNwtaha5NF2HZV6J1TOQniVB2E2fWJCH
-         td/hGen70CoLZUoGruPN5lQYKOvQx9dJKtMlB70qX3/9fJ5B2iTf54nIENSkfEIC4CIl
-         ko5ekxPRdR30KRm7M+T7pX6RqJDsFV8IJf64WD91BjxanG4OeUXtL6r5pFPcXVVDMRGe
-         Bu4Q==
-X-Gm-Message-State: APt69E3QBK7/BMr7L30x2xEpQ3gJE+BOIzD40jPXyVE6NHTT0bTpP6bF
-        DUCL7xhSOxAUBPNoZn3fAX2Afg==
-X-Google-Smtp-Source: AAOMgpdlNJZH4EdgHNYD/X7n9k2Zs9FzvExJPPBFzS25oLgQpveMrW9p54mbzKmVEVB4WEQtWOja9A==
-X-Received: by 2002:a62:5247:: with SMTP id g68-v6mr15700994pfb.149.1530298133184;
-        Fri, 29 Jun 2018 11:48:53 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
-        by smtp.gmail.com with ESMTPSA id f12-v6sm2799581pgt.57.2018.06.29.11.48.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 11:48:51 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 11:48:48 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] cfg80211: use IDA to allocate wiphy indeces
-Message-ID: <20180629184847.GA251207@ban.mtv.corp.google.com>
-References: <20180621012945.185705-1-briannorris@chromium.org>
- <1530258140.3481.4.camel@sipsolutions.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530258140.3481.4.camel@sipsolutions.net>
-User-Agent: Mutt/1.10+33 (2f90ec28cf74) (2018-06-21)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+9GEaWjteuxF7tJ1y+LTDDA6cZ/9EUrUTXOCa4Eze0o=;
+        b=Co95HEgHOa+i5NSUttxyZLAr2aSQd9EzM7LWH7cjfSk3Kzw/XHsf11DeTnn1v1r1xD
+         HTm7Lz96Hw2UwkDvDmmxW8qGTeZoNF6QQSmFXhdbApXLbp3uSdUnonbs+jX9/gll0tKi
+         CAae3dpd4eJEBgR+fa/vTXtj/H8ZRLL/gSM5+Fk+FPFqurDhw3w0jy4azckp7OjAhPda
+         sjCpnvUcbj2iFRswpPgcqp/v1gLGnmYd+YKFeGG9lJ8GsnTjd4Kyp664ol7tXijjKHgi
+         NWNVvvAcGv+KbG0JpxCUnh7T/AZ7KOHtG/jsIg82ZVVDFQCRXKYNMzGggCrW8HqPs9zS
+         pcWA==
+X-Gm-Message-State: APt69E3p/OFSJZwtmIk+FOQWuTASPgPjCZWVivioNx8U0VIoZXfy64hf
+        5Y80KBJjDWBIycb/27pEyI1KkQ==
+X-Google-Smtp-Source: ADUXVKJ6Op72fS9tkXP4g71dwxPI4mscgRuf7ULDl6T2nrJrxMBje6yezuzYmCB5Cf17PTf/L6sKIw==
+X-Received: by 2002:a17:902:4381:: with SMTP id j1-v6mr16103013pld.104.1530298231952;
+        Fri, 29 Jun 2018 11:50:31 -0700 (PDT)
+Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
+        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.50.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 29 Jun 2018 11:50:31 -0700 (PDT)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/17] media: imx: Switch to subdev notifiers
+Date:   Fri, 29 Jun 2018 11:49:44 -0700
+Message-Id: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johannes,
+This patchset converts the imx-media driver and its dependent
+subdevs to use subdev notifiers.
 
-On Fri, Jun 29, 2018 at 09:42:20AM +0200, Johannes Berg wrote:
-> On Wed, 2018-06-20 at 18:29 -0700, Brian Norris wrote:
-> > It's annoying to see the phy index increase arbitrarily, just because a
-> > device got removed and re-probed (e.g., during a device reset, or due to
-> > probe testing). We can use the in-kernel index allocator for this,
-> > instead of just an increasing counter.
-> 
-> I can understand that it's somewhat annoying to people, but it was
-> actually done on purpose to avoid userspace talking to the wrong device.
+There are a couple shortcomings in v4l2-core that prevented
+subdev notifiers from working correctly in imx-media:
 
-Hmm, interesting. I'm not dead-set on this patch, so if there are good
-reasons to reject it, I won't fret.
+1. v4l2_async_notifier_fwnode_parse_endpoint() treats a fwnode
+   endpoint that is not connected to a remote device as an error.
+   But in the case of the video-mux subdev, this is not an error,
+   it is OK if some of the mux inputs have no connection. Also,
+   Documentation/devicetree/bindings/media/video-interfaces.txt explicitly
+   states that the 'remote-endpoint' property is optional. So the first
+   patch is a small modification to ignore empty endpoints in
+   v4l2_async_notifier_fwnode_parse_endpoint() and allow
+   __v4l2_async_notifier_parse_fwnode_endpoints() to continue to
+   parse the remaining port endpoints of the device.
 
-> Imagine you have some userspace process running that has remembered the
-> wiphy index to use it to talk to nl80211, and now underneath the device
-> goes away and reappears. This process should understand that situation,
-> and handle it accordingly, rather than being blind to the reset.
+2. In the imx-media graph, multiple subdevs will encounter the same
+   upstream subdev (such as the imx6-mipi-csi2 receiver), and so
+   v4l2_async_notifier_parse_fwnode_endpoints() will add imx6-mipi-csi2
+   multiple times. This is treated as an error by
+   v4l2_async_notifier_register() later.
 
-How is this different from the wlan (netdev) device naming? We allow
-'wlan0' to leave and return under the same name. Isn't the right answer
-that user space should be listening for udev and/or netlink events?
+   To get around this problem, add an v4l2_async_notifier_add_subdev()
+   which first verifies the provided asd does not already exist in the
+   given notifier asd list or in other registered notifiers. If the asd
+   exists, the function returns -EEXIST and it's up to the caller to
+   decide if that is an error (in imx-media case it is never an error).
 
-Brian
+   Patches 2-5 deal with adding that support.
+
+3. Patch 6 adds v4l2_async_register_fwnode_subdev(), which is a
+   convenience function for parsing a subdev's fwnode port endpoints
+   for connected remote subdevs, registering a subdev notifier, and
+   then registering the sub-device itself.
+
+4. Patches 7-14 update the subdev drivers to register a subdev notifier
+   with endpoint parsing, and the changes to imx-media to support that.
+
+5. Finally, the last 3 patches endeavor to completely remove support for
+   the notifier->subdevs[] array in platform drivers and v4l2 core. All
+   platform drivers are modified to make use of
+   v4l2_async_notifier_add_subdev() and its related convenience functions
+   to add asd's to the notifier @asd_list, and any allocation or reference
+   to the notifier->subdevs[] array removed. After that large patch,
+   notifier->subdevs[] array is stripped from v4l2-async and v4l2-subdev
+   docs are updated to reflect the new method of adding asd's to notifiers.
+
+
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+
+Patches 07-14 (video-mux and the imx patches) are
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+Patches 01-14 are
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+on i.MX6 with Toshiba TC358743 connected via MIPI CSI-2.
+
+History:
+v5:
+- see point 5 above.
+
+v4:
+- small non-functional code cleanup in video-mux.c.
+- strip TODO for comparing custom asd's for equivalence.
+- add three more convenience functions: v4l2_async_notifier_add_fwnode_subdev,
+  v4l2_async_notifier_add_i2c_subdev, v4l2_async_notifier_add_devname_subdev.
+- strip support in v4l2_async_register_fwnode_subdev for sub-devices
+  that register from port nodes.
+
+v3:
+- code optimization in asd_equal(), and remove unneeded braces,
+  suggested by Sakari Ailus.
+- add a NULL asd pointer check to v4l2_async_notifier_asd_valid().
+- fix an error-out path in v4l2_async_register_fwnode_subdev() that
+  forgot to put device.
+
+v2:
+- don't pass an empty endpoint to the parse_endpoint callback, 
+  v4l2_async_notifier_fwnode_parse_endpoint() now just ignores them
+  and returns success.
+- Fix a couple compile warnings and errors seen in i386 and sh archs.
+
+
+Steve Longerbeam (17):
+  media: v4l2-fwnode: ignore endpoints that have no remote port parent
+  media: v4l2: async: Allow searching for asd of any type
+  media: v4l2: async: Add v4l2_async_notifier_add_subdev
+  media: v4l2: async: Add convenience functions to allocate and add
+    asd's
+  media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev
+  media: v4l2-fwnode: Add a convenience function for registering subdevs
+    with notifiers
+  media: platform: video-mux: Register a subdev notifier
+  media: imx: csi: Register a subdev notifier
+  media: imx: mipi csi-2: Register a subdev notifier
+  media: staging/imx: of: Remove recursive graph walk
+  media: staging/imx: Loop through all registered subdevs for media
+    links
+  media: staging/imx: Rename root notifier
+  media: staging/imx: Switch to v4l2_async_notifier_add_*_subdev
+  media: staging/imx: TODO: Remove one assumption about OF graph parsing
+  media: platform: Switch to v4l2_async_notifier_add_subdev
+  media: v4l2: async: Remove notifier subdevs array
+  [media] v4l2-subdev.rst: Update doc regarding subdev descriptors
+
+ Documentation/media/kapi/v4l2-subdev.rst          |  28 ++-
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c          |  10 +-
+ drivers/media/platform/am437x/am437x-vpfe.c       |  80 ++++---
+ drivers/media/platform/atmel/atmel-isc.c          |  13 +-
+ drivers/media/platform/atmel/atmel-isi.c          |  15 +-
+ drivers/media/platform/cadence/cdns-csi2rx.c      |  26 +-
+ drivers/media/platform/davinci/vpif_capture.c     |  47 ++--
+ drivers/media/platform/davinci/vpif_display.c     |  23 +-
+ drivers/media/platform/exynos4-is/media-dev.c     |  30 ++-
+ drivers/media/platform/exynos4-is/media-dev.h     |   1 -
+ drivers/media/platform/pxa_camera.c               |  23 +-
+ drivers/media/platform/qcom/camss-8x16/camss.c    |  74 +++---
+ drivers/media/platform/qcom/camss-8x16/camss.h    |   2 +-
+ drivers/media/platform/rcar-vin/rcar-csi2.c       |  20 +-
+ drivers/media/platform/rcar_drif.c                |  18 +-
+ drivers/media/platform/renesas-ceu.c              |  51 ++--
+ drivers/media/platform/soc_camera/soc_camera.c    |  31 ++-
+ drivers/media/platform/stm32/stm32-dcmi.c         |  22 +-
+ drivers/media/platform/ti-vpe/cal.c               |  34 ++-
+ drivers/media/platform/video-mux.c                |  36 ++-
+ drivers/media/platform/xilinx/xilinx-vipp.c       | 154 ++++++------
+ drivers/media/platform/xilinx/xilinx-vipp.h       |   4 -
+ drivers/media/v4l2-core/v4l2-async.c              | 276 +++++++++++++++++-----
+ drivers/media/v4l2-core/v4l2-fwnode.c             | 194 +++++++--------
+ drivers/staging/media/imx/TODO                    |  29 +--
+ drivers/staging/media/imx/imx-media-csi.c         |  55 ++++-
+ drivers/staging/media/imx/imx-media-dev.c         | 143 +++--------
+ drivers/staging/media/imx/imx-media-internal-sd.c |   5 +-
+ drivers/staging/media/imx/imx-media-of.c          | 106 +--------
+ drivers/staging/media/imx/imx-media.h             |   6 +-
+ drivers/staging/media/imx/imx6-mipi-csi2.c        |  31 ++-
+ include/media/v4l2-async.h                        |  90 ++++++-
+ include/media/v4l2-fwnode.h                       |  58 ++++-
+ 33 files changed, 966 insertions(+), 769 deletions(-)
+
+-- 
+2.7.4
+
