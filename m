@@ -3,119 +3,235 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC816C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF9DC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFCCF22AE2
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:05:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFCCF22AE2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EAA8C22B53
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:05:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAA8C22B53
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932730AbeF2RFS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 13:05:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:16500 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752225AbeF2RFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 13:05:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 10:05:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,286,1526367600"; 
-   d="scan'208";a="236661157"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga005.jf.intel.com with ESMTP; 29 Jun 2018 10:05:16 -0700
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-References: <20180629142918.26601-1-riel@surriel.com>
- <20180629142918.26601-5-riel@surriel.com>
-Cc:     x86@kernel.org, luto@kernel.org, mingo@kernel.org,
-        kernel-team@fb.com, tglx@linutronix.de, efault@gmx.de,
-        songliubraving@fb.com, hpa@zytor.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <667c6fd5-2ab9-d3ca-0791-3d270de98204@linux.intel.com>
-Date:   Fri, 29 Jun 2018 10:05:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933239AbeF2RFn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 13:05:43 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:47904 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932734AbeF2RFk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 13:05:40 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41HNM63r44z1rCrm;
+        Fri, 29 Jun 2018 19:05:38 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41HNM62yk1z1rZLy;
+        Fri, 29 Jun 2018 19:05:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id sAI5GbPzL5cc; Fri, 29 Jun 2018 19:05:37 +0200 (CEST)
+X-Auth-Info: 0VhmMV0pzVf+kRFuY8xVP6LwySPcY0N6/tsOEIavUNw=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 29 Jun 2018 19:05:36 +0200 (CEST)
+Date:   Fri, 29 Jun 2018 19:05:29 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] display: panel: Add KOE tx14d24vm1bpa display
+ support (320x240)
+Message-ID: <20180629190529.0f59db98@jawa>
+In-Reply-To: <20180622105605.3018453c@jawa>
+References: <20180412143715.6828-1-lukma@denx.de>
+        <20180529150528.22136-1-lukma@denx.de>
+        <20180622105605.3018453c@jawa>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180629142918.26601-5-riel@surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WjbNHFWHz_V7yvL8.ar5wrr"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 07:29 AM, Rik van Riel wrote:
-> +		/*
-> +		 * If the CPU is not in lazy TLB mode, we are just switching
-> +		 * from one thread in a process to another thread in the same
-> +		 * process. No TLB flush required.
-> +		 */
-> +		if (!was_lazy)
-> +			return;
-> +
-> +		/*
-> +		 * Read the tlb_gen to check whether a flush is needed.
-> +		 * If the TLB is up to date, just use it.
-> +		 * The barrier synchronizes with the tlb_gen increment in
-> +		 * the TLB shootdown code.
-> +		 */
-> +		smp_mb();
-> +		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
-> +		if (this_cpu_read(cpu_tlbstate.ctxs[prev_asid].tlb_gen) ==
-> +				next_tlb_gen)
-> +			return;
+--Sig_/WjbNHFWHz_V7yvL8.ar5wrr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Nit: it might be nice to have this hunk in a helper like
-cpu_tlbstate_needs_flush(next) to keep this nice and readable.
+Hi Thierry,
 
+> Hi Thierry,
+>=20
+> > This commit adds support for KOE's 5.7" display.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> > Changes for v2:
+> > - Add Reviewed-by tag =20
+>=20
+> Could you apply this patch to your tree?
+
+If I may gentle ping on this patch..... It is quite mature now... :-)
+
+Best regards,
+=C5=81ukasz
+
+>=20
+> Thanks in advance,
+> =C5=81ukasz
+>=20
+> >=20
+> > ---
+> >  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
+> > ++++++++++++++++++++++
+> > drivers/gpu/drm/panel/panel-simple.c               | 26
+> > ++++++++++++++ 2 files changed, 68 insertions(+) create mode 100644
+> > Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> > b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> > new file mode 100644 index 000000000000..be7ac666807b --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> > @@ -0,0 +1,42 @@ +Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x
+> > 240) TFT LCD panel +
+> > +Required properties:
+> > +- compatible: should be "koe,tx14d24vm1bpa"
+> > +- backlight: phandle of the backlight device attached to the panel
+> > +- power-supply: single regulator to provide the supply voltage
+> > +
+> > +Required nodes:
+> > +- port: Parallel port mapping to connect this display
+> > +
+> > +This panel needs single power supply voltage. Its backlight is
+> > conntrolled +via PWM signal.
+> > +
+> > +Example:
+> > +--------
+> > +
+> > +Example device-tree definition when connected to iMX53 based board
+> > +
+> > +	lcd_panel: lcd-panel {
+> > +		compatible =3D "koe,tx14d24vm1bpa";
+> > +		backlight =3D <&backlight_lcd>;
+> > +		power-supply =3D <&reg_3v3>;
+> > +
+> > +		port {
+> > +			lcd_panel_in: endpoint {
+> > +				remote-endpoint =3D
+> > <&lcd_display_out>;
+> > +			};
+> > +		};
+> > +	};
+> > +
+> > +Then one needs to extend the dispX node:
+> > +
+> > +	lcd_display: disp1 {
+> > +
+> > +		port@1 {
+> > +			reg =3D <1>;
+> > +
+> > +			lcd_display_out: endpoint {
+> > +				remote-endpoint =3D <&lcd_panel_in>;
+> > +			};
+> > +		};
+> > +	};
+> > diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> > b/drivers/gpu/drm/panel/panel-simple.c index
+> > d9984bdb5bb5..103b43ce7dee 100644 ---
+> > a/drivers/gpu/drm/panel/panel-simple.c +++
+> > b/drivers/gpu/drm/panel/panel-simple.c @@ -1268,6 +1268,29 @@ static
+> > const struct panel_desc innolux_zj070na_01p =3D { },
+> >  };
+> > =20
+> > +static const struct display_timing koe_tx14d24vm1bpa_timing =3D {
+> > +	.pixelclock =3D { 5580000, 5850000, 6200000 },
+> > +	.hactive =3D { 320, 320, 320 },
+> > +	.hfront_porch =3D { 30, 30, 30 },
+> > +	.hback_porch =3D { 30, 30, 30 },
+> > +	.hsync_len =3D { 1, 5, 17 },
+> > +	.vactive =3D { 240, 240, 240 },
+> > +	.vfront_porch =3D { 6, 6, 6 },
+> > +	.vback_porch =3D { 5, 5, 5 },
+> > +	.vsync_len =3D { 1, 2, 11 },
+> > +	.flags =3D DISPLAY_FLAGS_DE_HIGH,
+> > +};
+> > +
+> > +static const struct panel_desc koe_tx14d24vm1bpa =3D {
+> > +	.timings =3D &koe_tx14d24vm1bpa_timing,
+> > +	.num_timings =3D 1,
+> > +	.bpc =3D 6,
+> > +	.size =3D {
+> > +		.width =3D 115,
+> > +		.height =3D 86,
+> > +	},
+> > +};
+> > +
+> >  static const struct display_timing koe_tx31d200vm0baa_timing =3D {
+> >  	.pixelclock =3D { 39600000, 43200000, 48000000 },
+> >  	.hactive =3D { 1280, 1280, 1280 },
+> > @@ -2204,6 +2227,9 @@ static const struct of_device_id
+> > platform_of_match[] =3D { .compatible =3D "innolux,zj070na-01p",
+> >  		.data =3D &innolux_zj070na_01p,
+> >  	}, {
+> > +		.compatible =3D "koe,tx14d24vm1bpa",
+> > +		.data =3D &koe_tx14d24vm1bpa,
+> > +	}, {
+> >  		.compatible =3D "koe,tx31d200vm0baa",
+> >  		.data =3D &koe_tx31d200vm0baa,
+> >  	}, { =20
+>=20
+>=20
+>=20
+>=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> --
+>=20
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/WjbNHFWHz_V7yvL8.ar5wrr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAls2ZtkACgkQAR8vZIA0
+zr2+Egf+O2amWyNW4PwDXGQX6ds0oJIizprDZzdcaPOXds0OYXnPjV3+ct2k56+3
+TbBrOtqLxz0qVnjDZbTtRkOIiYJEzxc6T78T5i5Ie9aTxY/HV1qdv8TgemhTNZME
+WCviELoIP714Ptde6J7pkzqIo7NYrlNi1FHCxzlqalrpHto5d0hHOLpXL7IQONPW
+/dB9uEQNU97ZQdORde+bzOZ3ty3bcrxx7uniocOTSllfwUx7D0H2K4nv8t3MKyCy
+cjaA0GZ5LzaYLL2rV88grz4WfJzPFYh/hSd8MoDGzqDAfx9ML6AAd2BFttilzDhs
+hvgkfWN457q5/Dy3pGA10M2lkTRxJw==
+=OzNa
+-----END PGP SIGNATURE-----
+
+--Sig_/WjbNHFWHz_V7yvL8.ar5wrr--
