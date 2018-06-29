@@ -2,212 +2,107 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66056C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C28C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 183DB24B89
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183DB24B89
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 354C22802F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SuDLjSD7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TX8KX6OD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354C22802F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935068AbeF2VTF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 17:19:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59664 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936395AbeF2VLj (ORCPT
+        id S936235AbeF2VTn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 17:19:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52052 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932708AbeF2VTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 17:11:39 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TL9KZa055630
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:38 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwry87q15-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:38 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Fri, 29 Jun 2018 17:11:37 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 29 Jun 2018 17:11:34 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TLBWQ565142990
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 29 Jun 2018 21:11:32 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6691D124054;
-        Fri, 29 Jun 2018 18:13:01 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DDD7124052;
-        Fri, 29 Jun 2018 18:13:00 -0400 (EDT)
-Received: from localhost.localdomain (unknown [9.85.157.42])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Fri, 29 Jun 2018 18:13:00 -0400 (EDT)
-From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v6 02/21] s390/zcrypt: Review inline assembler constraints.
-Date:   Fri, 29 Jun 2018 17:11:04 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062921-0040-0000-0000-000004474D3F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009278; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01054189; UDB=6.00540581; IPR=6.00832111;
- MB=3.00021933; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-29 21:11:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062921-0041-0000-0000-0000084D66C3
-Message-Id: <1530306683-7270-3-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=927 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806290224
+        Fri, 29 Jun 2018 17:19:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 27BA460452; Fri, 29 Jun 2018 21:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530307179;
+        bh=YMjL9Fg/cw9cvnuXQGBGm2QzHTsC1Qt/iJGYMGYk8qM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SuDLjSD76MF7rSlnus4LxKGDHBoHAet226CRRQ3rOHX8FQztL5G5gywwTHY8g6sqF
+         uvnsLsNLswpRoCRd0/Y+I5ZEjbvb6qp2Li9KLeQf2oxsxagxn4rzDjUNczXKnz/uvI
+         pHqxrrriVgOtZ15RI5qFEtrDaiC2yPERQfnNk2Rc=
+Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C67EE606DD;
+        Fri, 29 Jun 2018 21:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530307178;
+        bh=YMjL9Fg/cw9cvnuXQGBGm2QzHTsC1Qt/iJGYMGYk8qM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TX8KX6ODpS6tInGRoNTfbomo2tu9hpTNB4Ucspx9yF7UgsegaoAU9oCEohqCV4RYw
+         fOv4ecm+ODldUdIZYxgi/4920CXCPTD+u9QRk8ZPZoZwU6BpnZDBuT05i+crJGwHWq
+         R72HOXt8b7JgT6rFvmHmsohgsjFG0+BToNqlw+yk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C67EE606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Fri, 29 Jun 2018 15:19:35 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>, Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
+Message-ID: <20180629211935.GG24526@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180629184818.GA37439@beast>
+ <CAK8P3a3Q9e59uqeZSLw6wqtNZYLe8LVgCO9RQGJB4D0F+3MLdg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3Q9e59uqeZSLw6wqtNZYLe8LVgCO9RQGJB4D0F+3MLdg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harald Freudenberger <freude@de.ibm.com>
+On Fri, Jun 29, 2018 at 10:47:31PM +0200, Arnd Bergmann wrote:
+> On Fri, Jun 29, 2018 at 8:48 PM, Kees Cook <keescook@chromium.org> wrote:
+> > In the quest to remove all stack VLA usage from the kernel[1], this
+> > switches to using a kasprintf()ed buffer. Return paths are updated
+> > to free the allocation.
+> >
+> > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> >
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  7 +++++--
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 28 +++++++++++++++++--------
+> >  2 files changed, 24 insertions(+), 11 deletions(-)
+> 
+> This seems fine, though using a fixed-length string is probably just
+> as well here,
+> given that the 'fwname' variable is always set to the constant string
+> "a530_zap.mdt"
+> at the moment, which is not very long.
 
-Reviewed and adapted the register use and asm constraints
-of the C inline assembler functions in accordance to the
-the AP instructions specifications.
+We could make it fixed but since this code is only called once this
+feels safer.
 
-Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
----
- drivers/s390/crypto/ap_asm.h |   40 +++++++++++++++++++++++-----------------
- 1 files changed, 23 insertions(+), 17 deletions(-)
+Jordan
 
-diff --git a/drivers/s390/crypto/ap_asm.h b/drivers/s390/crypto/ap_asm.h
-index b22d30a..e22ee12 100644
---- a/drivers/s390/crypto/ap_asm.h
-+++ b/drivers/s390/crypto/ap_asm.h
-@@ -20,14 +20,16 @@ static inline int ap_instructions_available(void)
- {
- 	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
- 	register unsigned long reg1 asm ("1") = -ENODEV;
--	register unsigned long reg2 asm ("2") = 0UL;
-+	register unsigned long reg2 asm ("2");
- 
- 	asm volatile(
- 		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
--		"0: la    %1,0\n"
-+		"0: la    %0,0\n"
- 		"1:\n"
- 		EX_TABLE(0b, 1b)
--		: "+d" (reg0), "+d" (reg1), "+d" (reg2) : : "cc");
-+		: "+d" (reg1), "=d" (reg2)
-+		: "d" (reg0)
-+		: "cc");
- 	return reg1;
- }
- 
-@@ -42,10 +44,12 @@ static inline struct ap_queue_status ap_tapq(ap_qid_t qid, unsigned long *info)
- {
- 	register unsigned long reg0 asm ("0") = qid;
- 	register struct ap_queue_status reg1 asm ("1");
--	register unsigned long reg2 asm ("2") = 0UL;
-+	register unsigned long reg2 asm ("2");
- 
- 	asm volatile(".long 0xb2af0000"		/* PQAP(TAPQ) */
--		     : "+d" (reg0), "=d" (reg1), "+d" (reg2) : : "cc");
-+		     : "=d" (reg1), "=d" (reg2)
-+		     : "d" (reg0)
-+		     : "cc");
- 	if (info)
- 		*info = reg2;
- 	return reg1;
-@@ -59,13 +63,14 @@ static inline struct ap_queue_status ap_tapq(ap_qid_t qid, unsigned long *info)
-  */
- static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
- {
--	register unsigned long reg0 asm ("0") = qid | 0x01000000UL;
-+	register unsigned long reg0 asm ("0") = qid | (1UL << 24);
- 	register struct ap_queue_status reg1 asm ("1");
--	register unsigned long reg2 asm ("2") = 0UL;
- 
- 	asm volatile(
- 		".long 0xb2af0000"		/* PQAP(RAPQ) */
--		: "+d" (reg0), "=d" (reg1), "+d" (reg2) : : "cc");
-+		: "=d" (reg1)
-+		: "d" (reg0)
-+		: "cc");
- 	return reg1;
- }
- 
-@@ -107,8 +112,8 @@ static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
- 
- 	asm volatile(
- 		".long 0xb2af0000"		/* PQAP(AQIC) */
--		: "+d" (reg0), "+d" (reg1_in), "=d" (reg1_out), "+d" (reg2)
--		:
-+		: "=d" (reg1_out)
-+		: "d" (reg0), "d" (reg1_in), "d" (reg2)
- 		: "cc");
- 	return reg1_out;
- }
-@@ -120,17 +125,17 @@ static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
-  */
- static inline int ap_qci(void *config)
- {
--	register unsigned long reg0 asm ("0") = 0x04000000UL;
-+	register unsigned long reg0 asm ("0") = 4UL << 24;
- 	register unsigned long reg1 asm ("1") = -EINVAL;
- 	register void *reg2 asm ("2") = (void *) config;
- 
- 	asm volatile(
- 		".long 0xb2af0000\n"		/* PQAP(QCI) */
--		"0: la    %1,0\n"
-+		"0: la    %0,0\n"
- 		"1:\n"
- 		EX_TABLE(0b, 1b)
--		: "+d" (reg0), "+d" (reg1), "+d" (reg2)
--		:
-+		: "+d" (reg1)
-+		: "d" (reg0), "d" (reg2)
- 		: "cc", "memory");
- 
- 	return reg1;
-@@ -169,12 +174,13 @@ static inline struct ap_queue_status ap_qact(ap_qid_t qid, int ifbit,
- 		| ((ifbit & 0x01) << 22);
- 	register unsigned long reg1_in asm ("1") = apinfo->val;
- 	register struct ap_queue_status reg1_out asm ("1");
--	register unsigned long reg2 asm ("2") = 0;
-+	register unsigned long reg2 asm ("2");
- 
- 	asm volatile(
- 		".long 0xb2af0000"		/* PQAP(QACT) */
--		: "+d" (reg0), "+d" (reg1_in), "=d" (reg1_out), "+d" (reg2)
--		: : "cc");
-+		: "+d" (reg1_in), "=d" (reg1_out), "=d" (reg2)
-+		: "d" (reg0)
-+		: "cc");
- 	apinfo->val = reg2;
- 	return reg1_out;
- }
 -- 
-1.7.1
-
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
