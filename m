@@ -3,59 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE0CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B709BC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCF8E250A9
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 709BC250A9
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="b3Oxpr4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF8E250A9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="h3B/oeX6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709BC250A9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936135AbeF2QHQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:07:16 -0400
-Received: from mail.efficios.com ([167.114.142.138]:34608 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933911AbeF2QHO (ORCPT
+        id S966850AbeF2QIA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:08:00 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39633 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936139AbeF2QH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:07:14 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6947B22EF00;
-        Fri, 29 Jun 2018 12:07:13 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Oedmk33_GCpB; Fri, 29 Jun 2018 12:07:12 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id D5E7A22EEFA;
-        Fri, 29 Jun 2018 12:07:12 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D5E7A22EEFA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530288432;
-        bh=M5i8WOF6+1fMnSeFc30wcMiksgX+5/LYFYoUAY6C/fo=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=b3Oxpr4FxOCh03nuKUMk4boZJlvW4sld76/tVGnJGPqueuIkajKvut2wFYed/lpzD
-         0OTPLD9BJFIffEINJfu6g78aD4qui2rQ8UQVdPJeMZF6oePAHRkwkTTIClso5m/FNO
-         Y2VqAVoJAhQ+adRJ5Ej/aBpVQyC6WyXV8rKRM2YZkEOW5m+e11zk+mvDIAe9lnawkn
-         4UFLOJ8kKkAE67NXTZBgpwOyzwXaZfknahEmKSJPdldLLnJbBV9bnfNbZC5bFUOTua
-         uPRiJ3UeCB2f7OgrriJT1e8kxrcETFIQJwVwzqnTnMMQz69uTRpXK/2+2cbGacGlh/
-         GHHnwbb+qSVDg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id W_4PiZ2fArJj; Fri, 29 Jun 2018 12:07:12 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id B9CF922EEE8;
-        Fri, 29 Jun 2018 12:07:12 -0400 (EDT)
-Date:   Fri, 29 Jun 2018 12:07:12 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+        Fri, 29 Jun 2018 12:07:57 -0400
+Received: by mail-io0-f193.google.com with SMTP id e13-v6so8907369iof.6
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 09:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XI5UkdckCnG7xTh4owxw7x8a8ud/+R2SLmnuFHICi6E=;
+        b=h3B/oeX6VgUALb6aSXySncgpi0OdIURgIQkNUEei7IW6P06Z65JUq6minPNZiqxg7r
+         oJiSqVWhbJTIScrzhapCAtfCJDFu1iFiL7mEJwlrUw/7qu+ZAYDXfhCAiW9mwxMNdh/D
+         rK1cf0JLCMqPmE417o6EGyN2mK2ezJ2WNxkBUgNf3OlwDiL5F4bm9h7pD6ce8BbW3Od7
+         4s3hWrYbT6XIF4KYuxruAEja1cwm0IOmzGdcVMgy1QdCsBdEvXLl6KJdPz7WA4x+ykQM
+         hAMg+qo1CVs8x6lBni+L96VFQHzXkmTN3S/4MH5hNIjrVGvH+TOhTsCp9+7RlqpxuTbv
+         pDAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XI5UkdckCnG7xTh4owxw7x8a8ud/+R2SLmnuFHICi6E=;
+        b=ObpAjdMU1IqfLZCb2TzpYdWB46QUVXy2gvT+DVvkRNczdo2j0Gmva4it5yF9qgavNp
+         2CE+v0VYP7Ruih6MAXcGTWlTO1OEjbcnRe+TNVH8B80CbYWAyZVFUyMucTyxzXPnmhfy
+         xTIHZHsOpKPRsUc8tOdjehSm4U+MuR7CGUQKbXhUl1KV9/oZJwXL0/K9yr6dJmS76FXE
+         AJbNJqEFDEd/jhnWRZDCDN5L0M1Ez/1SBikx/jCBjXLIDP+0nuXi9Un+bPInYQw+2SIS
+         O7RSAx+0wlGES6wVmZjiIQjPIHvOXXBoCN6fk7KYe9Qm2NGUXLM70eXfraeQd+Aq0vJS
+         oqcA==
+X-Gm-Message-State: APt69E1bCHqFpnqFu+dgEv3DNeDKHV5/D1Xrza8SegG3UfKQ60IGsSK/
+        7WXsxsQiAmlq8wOKRlzucPQEZYWE0RvPQoiaOYm33A==
+X-Google-Smtp-Source: AAOMgpffbCIM96S5vlLQ0TD0xmtpnqTYzUO336RUu383ukKmSySxmIuMxRCXNZzZ29A8I8pB8X5tdjy1+uT23x+ZP3c=
+X-Received: by 2002:a6b:abc6:: with SMTP id u189-v6mr13063570ioe.30.1530288476622;
+ Fri, 29 Jun 2018 09:07:56 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 09:07:36
+ -0700 (PDT)
+In-Reply-To: <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
+ <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
+ <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
+ <9200ED2A-AE4B-4094-81C9-E92240B4840F@amacapital.net> <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com>
+ <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com>
+ <CA+55aFxRJWjbgLeSQ_swi3F5nF1SYgZnC-R7QsOvZdcuSaWeaw@mail.gmail.com>
+ <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com> <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 29 Jun 2018 09:07:36 -0700
+Message-ID: <CALCETrW_Uj22bpFD09_ESXi-6Xs2v=YRq+rPeExRa+Uqqte8Aw@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-api <linux-api@vger.kernel.org>,
@@ -74,80 +90,80 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>
-Message-ID: <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <9200ED2A-AE4B-4094-81C9-E92240B4840F@amacapital.net> <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com> <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com> <CA+55aFxRJWjbgLeSQ_swi3F5nF1SYgZnC-R7QsOvZdcuSaWeaw@mail.gmail.com> <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com> <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com> <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
- TASK_SIZE
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
-Thread-Index: WiucE5TyA/5qz+mgdMTb6RCJOC0x2Q==
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 29, 2018, at 11:54 AM, Linus Torvalds torvalds@linux-foundation.org wrote:
-
-> On Fri, Jun 29, 2018 at 8:27 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Fri, Jun 29, 2018 at 8:27 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>
+> On Fri, Jun 29, 2018, 08:03 Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
 >>
->> You simply can't have it both ways.
-> 
-> Put another way.
-> 
-> This is ok in the native path:
-> 
->        if ((unsigned long) rseq_cs->abort_ip != rseq_cs->abort_ip)
->                return -EINVAL;
-> 
-> because it's checking that the value fits in the native register size
-> (and it also ends up being a no-op if the native size is the same size
-> as abort_ip).
-> 
-> And this is very much ok in a compat syscall:
-> 
->        if (rseq_cs->abort_ip & ~(unsigned long)-1u)
->                return -EINVAL;
-> 
-> because it's checking that the pointer doesn't have (invalid in
-> compat) high bits set.
-> 
-> But it is NOT OK to say "the rseq system call doesn't have any compat
-> syscall, but we'll do that compat check in the native case, because we
-> worry about compat issues".
-> 
-> See what I'm saying? Either you worry about compat issues (and have a
-> compat syscall), or you don't.
-> 
-> The whole "let's not do a compat syscall, but then check compat issues
-> at run-time in the native system call because compat processes will
-> use it" is braindamage.
+>>
+>> Considering those inconsistencies between architectures (either
+>> the task gets killed, or the top bits are silently cleared), I'm
+>> very much tempted to be restrictive in the inputs accepted by
+>> rseq, and not rely on architectures as providing consistent
+>> validation of the return IP.
+>>
+>> Thoughts ?
+>
+>
+> Then you need to make it a compat system call, since clearly you and Andy
+> want the 32-bit case to do something different from the 64-bit case.
 
-This code is not invoked from syscalls, but rather on return from
-interrupt/trap after a preemption.
+I personally would like the compat and non-compat cases to do exactly
+the same thing.  If abort_ip is the address (as a u64) of a valid
+executable instruction and an abort happens, then that instruction
+should get executed.  If abort_ip does not point to user-executable
+memory, then the process should get a signal.
 
-So a compat system call does not solve it. Unless we grab the "compat"
-state on rseq registration, save it in a rseq_compat flag within the
-task struct, and then use it on return from interrupt/trap/syscall.
-Otherwise we need to figure out whether we are dealing with a compat
-task when interrupt and trap context return to userspace. We had
-is_compat_task() for that before, but now it has vanished from x86.
-We could use user_64bit_mode(struct pt_regs *) on x86, but it does not
-exist on other architectures.
+The problem isn't with rseq per se -- it's with the daft way that the
+x86 return-to-userspace instructions work.  If I apply this patch:
 
-One possibility is to introduce a new API that calls user_64bit_mode()
-on x86, and is_compat_task() on other archs.
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 3b2490b81918..26e4ba44e87b 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -346,6 +346,8 @@ __visible void do_int80_syscall_32(struct pt_regs *regs)
+ {
+        enter_from_user_mode();
+        local_irq_enable();
++       if (!user_64bit_mode(regs))
++               regs->ip |= (1UL << 32);
+        do_syscall_32_irqs_on(regs);
+ }
 
-Thanks,
+the kernel *still works*.  But this unconditionally uses the IRET
+path, and I don't even want to speculate as to what the hell happens
+if we exit using SYSRETL, or LRET, or SYSEXITL, or if Intel or AMD
+ever gives us a new mode that gets rid of the espfix shite.  IOW, I
+don't think that the x86 entry code should make a promise that it will
+continue ignoring the high bits of regs->ip when
+!user_64bit_mode(regs) on a 64-bit kernel.
 
-Mathieu
+The problem with rseq as it stands is that this oddity gets
+accidentally exposed all the way to userspace.  If we're not careful,
+it'll be possible for a slightly buggy user program to goof up the
+code that generates the data structure that supplies abort_ip such
+that the high bits are garbage (0xcccccccc due to padding, for
+example), and the kernel will do exactly what the user code requested,
+and we'll get regs->ip = 0xcccccccc00000000 | (the actual intended
+abort_ip), and we'll pass that crap value all the way to IRET, and
+IRET will truncate it back down to the correct value.  And then some
+CPU will add new behavior or we'll invoke SYSRETL or whatever on some
+weird CPU, and the program will crash.  And we'll be sad.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+I suppose we could handle this in the entry code by coming up with a
+way to reject out-of-bounds regs->ip for 32-bit tasks, but that's
+going to be a bit messy and will slow down normal code that doesn't
+use rseq.
+
+Other than rseq, I don't think that there's any real issue.  The only
+ways to get regs->ip >= 2^32 in a 32-bit task involve ptrace or manual
+fiddling with signal contexts, and I don't expect to ever have any
+real software depend on precisely what happens.
