@@ -3,46 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDB1C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A807C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AB927DAF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:32:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62AB927DAF
+	by mail.kernel.org (Postfix) with ESMTP id C223927DB5
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C223927DB5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937221AbeF2TcM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:32:12 -0400
-Received: from mga05.intel.com ([192.55.52.43]:7747 "EHLO mga05.intel.com"
+        id S937235AbeF2Tcm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:32:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17992 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937093AbeF2TbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:31:16 -0400
+        id S937085AbeF2TbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 15:31:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 12:31:15 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 12:31:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
-   d="scan'208";a="51552420"
+   d="scan'208";a="241786818"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Jun 2018 12:31:13 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 29 Jun 2018 12:31:13 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D68D373D; Fri, 29 Jun 2018 22:31:13 +0300 (EEST)
+        id E1B1D75E; Fri, 29 Jun 2018 22:31:13 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
         linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Bin Gao <bin.gao@intel.com>
-Subject: [PATCH v1 5/6] x86/platform/intel-mid: Remove custom TSC calibration
-Date:   Fri, 29 Jun 2018 22:31:12 +0300
-Message-Id: <20180629193113.84425-6-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 6/6] x86/platform/intel-mid: Remove per platform code
+Date:   Fri, 29 Jun 2018 22:31:13 +0300
+Message-Id: <20180629193113.84425-7-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
 References: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
@@ -51,240 +50,225 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the commit
+After custom TSC calibration gone, there is no more reason to have
+custom platform code for each of Intel MID.
 
-  7da7c1561366 ("x86, tsc: Add static (MSR) TSC calibration on Intel Atom SoCs")
+Thus, remove it for good.
 
-introduced a common way for all Intel MID chips to get their TSC frequency
-via MSRs, there is no need to keep a duplication in each of Intel MID
-platform code.
-
-Thus, remove the custom calibration code for good.
-
-Note, there is slight difference in how we get frequency for (reserved?)
-values in MSRs, i.e. legacy code enforces some defaults while new code
-just uses 0 in that cases.
-
-Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Bin Gao <bin.gao@intel.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/x86/include/asm/intel-mid.h        | 14 -----
- arch/x86/kernel/tsc_msr.c               |  5 ++
- arch/x86/platform/intel-mid/intel-mid.c |  6 --
- arch/x86/platform/intel-mid/mfld.c      | 36 ------------
- arch/x86/platform/intel-mid/mrfld.c     | 74 -------------------------
- 5 files changed, 5 insertions(+), 130 deletions(-)
+ arch/x86/include/asm/intel-mid.h              | 29 ----------------
+ arch/x86/platform/intel-mid/Makefile          |  2 +-
+ arch/x86/platform/intel-mid/intel-mid.c       | 17 +---------
+ .../platform/intel-mid/intel_mid_weak_decls.h | 18 ----------
+ arch/x86/platform/intel-mid/mfld.c            | 34 -------------------
+ arch/x86/platform/intel-mid/mrfld.c           | 31 -----------------
+ 6 files changed, 2 insertions(+), 129 deletions(-)
+ delete mode 100644 arch/x86/platform/intel-mid/intel_mid_weak_decls.h
+ delete mode 100644 arch/x86/platform/intel-mid/mfld.c
+ delete mode 100644 arch/x86/platform/intel-mid/mrfld.c
 
 diff --git a/arch/x86/include/asm/intel-mid.h b/arch/x86/include/asm/intel-mid.h
-index fe04491130ae..376eb8ada62d 100644
+index 376eb8ada62d..52f815a80539 100644
 --- a/arch/x86/include/asm/intel-mid.h
 +++ b/arch/x86/include/asm/intel-mid.h
-@@ -136,20 +136,6 @@ enum intel_mid_timer_options {
+@@ -80,35 +80,6 @@ enum intel_mid_cpu_type {
  
- extern enum intel_mid_timer_options intel_mid_timer_options;
+ extern enum intel_mid_cpu_type __intel_mid_cpu_chip;
  
--/*
-- * Penwell uses spread spectrum clock, so the freq number is not exactly
-- * the same as reported by MSR based on SDM.
+-/**
+- * struct intel_mid_ops - Interface between intel-mid & sub archs
+- * @arch_setup: arch_setup function to re-initialize platform
+- *		structures (x86_init, x86_platform_init)
+- *
+- * This structure can be extended if any new interface is required
+- * between intel-mid & its sub arch files.
 - */
--#define FSB_FREQ_83SKU			83200
--#define FSB_FREQ_100SKU			99840
--#define FSB_FREQ_133SKU			133000
+-struct intel_mid_ops {
+-	void (*arch_setup)(void);
+-};
 -
--#define FSB_FREQ_167SKU			167000
--#define FSB_FREQ_200SKU			200000
--#define FSB_FREQ_267SKU			267000
--#define FSB_FREQ_333SKU			333000
--#define FSB_FREQ_400SKU			400000
+-/* Helper API's for INTEL_MID_OPS_INIT */
+-#define DECLARE_INTEL_MID_OPS_INIT(cpuname, cpuid)				\
+-	[cpuid] = get_##cpuname##_ops
 -
- /* Bus Select SoC Fuse value */
- #define BSEL_SOC_FUSE_MASK		0x7
- /* FSB 133MHz */
-diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
-index f0951c2e9f28..27ef714d886c 100644
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -29,6 +29,11 @@ struct freq_desc {
- 	u32 freqs[MAX_NUM_FREQS];
- };
+-/* Maximum number of CPU ops */
+-#define MAX_CPU_OPS(a)			(sizeof(a)/sizeof(void *))
+-
+-/*
+- * For every new cpu addition, a weak get_<cpuname>_ops() function needs be
+- * declared in arch/x86/platform/intel_mid/intel_mid_weak_decls.h.
+- */
+-#define INTEL_MID_OPS_INIT {							\
+-	DECLARE_INTEL_MID_OPS_INIT(penwell, INTEL_MID_CPU_CHIP_PENWELL),	\
+-	DECLARE_INTEL_MID_OPS_INIT(cloverview, INTEL_MID_CPU_CHIP_CLOVERVIEW),	\
+-	DECLARE_INTEL_MID_OPS_INIT(tangier, INTEL_MID_CPU_CHIP_TANGIER)		\
+-};
+-
+ #ifdef CONFIG_X86_INTEL_MID
  
-+/*
-+ * Penwell and Clovertrail use spread spectrum clock,
-+ * so the freq number is not exactly the same as reported
-+ * by MSR based on SDM.
-+ */
- static const struct freq_desc freq_desc_pnw = {
- 	0, { 0, 0, 0, 0, 0, 99840, 0, 83200 }
- };
+ static inline enum intel_mid_cpu_type intel_mid_identify_cpu(void)
+diff --git a/arch/x86/platform/intel-mid/Makefile b/arch/x86/platform/intel-mid/Makefile
+index fa021dfab088..5cf886c867c2 100644
+--- a/arch/x86/platform/intel-mid/Makefile
++++ b/arch/x86/platform/intel-mid/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_X86_INTEL_MID) += intel-mid.o intel_mid_vrtc.o mfld.o mrfld.o pwr.o
++obj-$(CONFIG_X86_INTEL_MID) += intel-mid.o intel_mid_vrtc.o pwr.o
+ 
+ # SFI specific code
+ ifdef CONFIG_X86_INTEL_MID
 diff --git a/arch/x86/platform/intel-mid/intel-mid.c b/arch/x86/platform/intel-mid/intel-mid.c
-index 2ebdf31d9996..aac15a4018d5 100644
+index aac15a4018d5..56f66eafb94f 100644
 --- a/arch/x86/platform/intel-mid/intel-mid.c
 +++ b/arch/x86/platform/intel-mid/intel-mid.c
-@@ -82,11 +82,6 @@ static void intel_mid_reboot(void)
- 	intel_scu_ipc_simple_command(IPCMSG_COLD_RESET, 0);
- }
+@@ -36,8 +36,6 @@
+ #include <asm/apb_timer.h>
+ #include <asm/reboot.h>
  
--static unsigned long __init intel_mid_calibrate_tsc(void)
--{
--	return 0;
--}
+-#include "intel_mid_weak_decls.h"
 -
- static void __init intel_mid_setup_bp_timer(void)
- {
- 	apbt_time_init();
-@@ -191,7 +186,6 @@ void __init x86_intel_mid_early_setup(void)
+ /*
+  * the clockevent devices on Moorestown/Medfield can be APBT or LAPIC clock,
+  * cmdline option x86_intel_mid_timer can be used to override the configuration
+@@ -61,10 +59,6 @@
  
- 	x86_cpuinit.setup_percpu_clockev = apbt_setup_secondary_clock;
+ enum intel_mid_timer_options intel_mid_timer_options;
  
--	x86_platform.calibrate_tsc = intel_mid_calibrate_tsc;
- 	x86_platform.get_nmi_reason = intel_mid_get_nmi_reason;
+-/* intel_mid_ops to store sub arch ops */
+-static struct intel_mid_ops *intel_mid_ops;
+-/* getter function for sub arch ops*/
+-static void *(*get_intel_mid_ops[])(void) = INTEL_MID_OPS_INIT;
+ enum intel_mid_cpu_type __intel_mid_cpu_chip;
+ EXPORT_SYMBOL_GPL(__intel_mid_cpu_chip);
  
- 	x86_init.pci.arch_init = intel_mid_pci_init;
-diff --git a/arch/x86/platform/intel-mid/mfld.c b/arch/x86/platform/intel-mid/mfld.c
-index e42978d4deaf..e66b51f5c206 100644
---- a/arch/x86/platform/intel-mid/mfld.c
-+++ b/arch/x86/platform/intel-mid/mfld.c
-@@ -11,48 +11,12 @@
+@@ -128,6 +122,7 @@ static void intel_mid_arch_setup(void)
+ 	case 0x3C:
+ 	case 0x4A:
+ 		__intel_mid_cpu_chip = INTEL_MID_CPU_CHIP_TANGIER;
++		x86_platform.legacy.rtc = 1;
+ 		break;
+ 	case 0x27:
+ 	default:
+@@ -135,17 +130,7 @@ static void intel_mid_arch_setup(void)
+ 		break;
+ 	}
  
- #include <linux/init.h>
- 
--#include <asm/apic.h>
- #include <asm/intel-mid.h>
--#include <asm/intel_mid_vrtc.h>
- 
- #include "intel_mid_weak_decls.h"
- 
--static unsigned long __init mfld_calibrate_tsc(void)
--{
--	unsigned long fast_calibrate;
--	u32 lo, hi, ratio, fsb;
--
--	rdmsr(MSR_IA32_PERF_STATUS, lo, hi);
--	pr_debug("IA32 perf status is 0x%x, 0x%0x\n", lo, hi);
--	ratio = (hi >> 8) & 0x1f;
--	pr_debug("ratio is %d\n", ratio);
--	if (!ratio) {
--		pr_err("read a zero ratio, should be incorrect!\n");
--		pr_err("force tsc ratio to 16 ...\n");
--		ratio = 16;
--	}
--	rdmsr(MSR_FSB_FREQ, lo, hi);
--	if ((lo & 0x7) == 0x7)
--		fsb = FSB_FREQ_83SKU;
--	else
--		fsb = FSB_FREQ_100SKU;
--	fast_calibrate = ratio * fsb;
--	pr_debug("read penwell tsc %lu khz\n", fast_calibrate);
--	lapic_timer_frequency = fsb * 1000 / HZ;
--
--	/*
--	 * TSC on Intel Atom SoCs is reliable and of known frequency.
--	 * See tsc_msr.c for details.
--	 */
--	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
--	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
--
--	return fast_calibrate;
--}
--
- static void __init penwell_arch_setup(void)
- {
--	x86_platform.calibrate_tsc = mfld_calibrate_tsc;
- }
- 
- static struct intel_mid_ops penwell_ops = {
-diff --git a/arch/x86/platform/intel-mid/mrfld.c b/arch/x86/platform/intel-mid/mrfld.c
-index ae7bdeb0e507..c5538ec2d62d 100644
---- a/arch/x86/platform/intel-mid/mrfld.c
-+++ b/arch/x86/platform/intel-mid/mrfld.c
-@@ -11,86 +11,12 @@
- 
- #include <linux/init.h>
- 
--#include <asm/apic.h>
- #include <asm/intel-mid.h>
- 
- #include "intel_mid_weak_decls.h"
- 
--static unsigned long __init tangier_calibrate_tsc(void)
--{
--	unsigned long fast_calibrate;
--	u32 lo, hi, ratio, fsb, bus_freq;
--
--	/* *********************** */
--	/* Compute TSC:Ratio * FSB */
--	/* *********************** */
--
--	/* Compute Ratio */
--	rdmsr(MSR_PLATFORM_INFO, lo, hi);
--	pr_debug("IA32 PLATFORM_INFO is 0x%x : %x\n", hi, lo);
--
--	ratio = (lo >> 8) & 0xFF;
--	pr_debug("ratio is %d\n", ratio);
--	if (!ratio) {
--		pr_err("Read a zero ratio, force tsc ratio to 4 ...\n");
--		ratio = 4;
--	}
--
--	/* Compute FSB */
--	rdmsr(MSR_FSB_FREQ, lo, hi);
--	pr_debug("Actual FSB frequency detected by SOC 0x%x : %x\n",
--			hi, lo);
--
--	bus_freq = lo & 0x7;
--	pr_debug("bus_freq = 0x%x\n", bus_freq);
--
--	if (bus_freq == 0)
--		fsb = FSB_FREQ_100SKU;
--	else if (bus_freq == 1)
--		fsb = FSB_FREQ_100SKU;
--	else if (bus_freq == 2)
--		fsb = FSB_FREQ_133SKU;
--	else if (bus_freq == 3)
--		fsb = FSB_FREQ_167SKU;
--	else if (bus_freq == 4)
--		fsb = FSB_FREQ_83SKU;
--	else if (bus_freq == 5)
--		fsb = FSB_FREQ_400SKU;
--	else if (bus_freq == 6)
--		fsb = FSB_FREQ_267SKU;
--	else if (bus_freq == 7)
--		fsb = FSB_FREQ_333SKU;
+-	if (__intel_mid_cpu_chip < MAX_CPU_OPS(get_intel_mid_ops))
+-		intel_mid_ops = get_intel_mid_ops[__intel_mid_cpu_chip]();
 -	else {
--		BUG();
--		pr_err("Invalid bus_freq! Setting to minimal value!\n");
--		fsb = FSB_FREQ_100SKU;
+-		intel_mid_ops = get_intel_mid_ops[INTEL_MID_CPU_CHIP_PENWELL]();
+-		pr_info("ARCH: Unknown SoC, assuming Penwell!\n");
 -	}
 -
--	/* TSC = FSB Freq * Resolved HFM Ratio */
--	fast_calibrate = ratio * fsb;
--	pr_debug("calculate tangier tsc %lu KHz\n", fast_calibrate);
+ out:
+-	if (intel_mid_ops->arch_setup)
+-		intel_mid_ops->arch_setup();
 -
--	/* ************************************ */
--	/* Calculate Local APIC Timer Frequency */
--	/* ************************************ */
--	lapic_timer_frequency = (fsb * 1000) / HZ;
+ 	/*
+ 	 * Intel MID platforms are using explicitly defined regulators.
+ 	 *
+diff --git a/arch/x86/platform/intel-mid/intel_mid_weak_decls.h b/arch/x86/platform/intel-mid/intel_mid_weak_decls.h
+deleted file mode 100644
+index 3c1c3866d82b..000000000000
+--- a/arch/x86/platform/intel-mid/intel_mid_weak_decls.h
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/*
+- * intel_mid_weak_decls.h: Weak declarations of intel-mid.c
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
 -
--	pr_debug("Setting lapic_timer_frequency = %d\n",
--			lapic_timer_frequency);
 -
--	/*
--	 * TSC on Intel Atom SoCs is reliable and of known frequency.
--	 * See tsc_msr.c for details.
--	 */
--	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
--	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
+-/* For every CPU addition a new get_<cpuname>_ops interface needs
+- * to be added.
+- */
+-extern void *get_penwell_ops(void);
+-extern void *get_cloverview_ops(void);
+-extern void *get_tangier_ops(void);
+diff --git a/arch/x86/platform/intel-mid/mfld.c b/arch/x86/platform/intel-mid/mfld.c
+deleted file mode 100644
+index e66b51f5c206..000000000000
+--- a/arch/x86/platform/intel-mid/mfld.c
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/*
+- * mfld.c: Intel Medfield platform setup code
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
 -
--	return fast_calibrate;
+-#include <linux/init.h>
+-
+-#include <asm/intel-mid.h>
+-
+-#include "intel_mid_weak_decls.h"
+-
+-static void __init penwell_arch_setup(void)
+-{
 -}
 -
- static void __init tangier_arch_setup(void)
- {
--	x86_platform.calibrate_tsc = tangier_calibrate_tsc;
- 	x86_platform.legacy.rtc = 1;
- }
- 
+-static struct intel_mid_ops penwell_ops = {
+-	.arch_setup = penwell_arch_setup,
+-};
+-
+-void *get_penwell_ops(void)
+-{
+-	return &penwell_ops;
+-}
+-
+-void *get_cloverview_ops(void)
+-{
+-	return &penwell_ops;
+-}
+diff --git a/arch/x86/platform/intel-mid/mrfld.c b/arch/x86/platform/intel-mid/mrfld.c
+deleted file mode 100644
+index c5538ec2d62d..000000000000
+--- a/arch/x86/platform/intel-mid/mrfld.c
++++ /dev/null
+@@ -1,31 +0,0 @@
+-/*
+- * Intel Merrifield platform specific setup code
+- *
+- * (C) Copyright 2013 Intel Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- */
+-
+-#include <linux/init.h>
+-
+-#include <asm/intel-mid.h>
+-
+-#include "intel_mid_weak_decls.h"
+-
+-static void __init tangier_arch_setup(void)
+-{
+-	x86_platform.legacy.rtc = 1;
+-}
+-
+-/* tangier arch ops */
+-static struct intel_mid_ops tangier_ops = {
+-	.arch_setup = tangier_arch_setup,
+-};
+-
+-void *get_tangier_ops(void)
+-{
+-	return &tangier_ops;
+-}
 -- 
 2.18.0
 
