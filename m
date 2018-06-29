@@ -2,54 +2,48 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4316BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC53C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0171624088
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:43:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0171624088
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0171825603
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0171825603
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeF2Gnn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:43:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:12144 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753160AbeF2Gnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:43:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 23:43:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="53161596"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by orsmga008.jf.intel.com with ESMTP; 28 Jun 2018 23:43:37 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Robert Baldyga <r.baldyga@samsung.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] Fix issues in UAC2 gadget driver
-In-Reply-To: <20180628113930.GA8176@vmlxhi-102.adit-jv.com>
-References: <20180621152252.8313-1-erosca@de.adit-jv.com> <20180628113930.GA8176@vmlxhi-102.adit-jv.com>
-Date:   Fri, 29 Jun 2018 09:41:03 +0300
-Message-ID: <87sh56dri8.fsf@linux.intel.com>
+        id S934020AbeF2Gsv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:48:51 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:25009 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbeF2Gsu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 02:48:50 -0400
+Received: from belgarion ([90.55.203.186])
+        by mwinf5d06 with ME
+        id 4Won1y00941oiFu03Won1o; Fri, 29 Jun 2018 08:48:49 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Fri, 29 Jun 2018 08:48:49 +0200
+X-ME-IP: 90.55.203.186
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>, gregkh@linuxfoundation.org,
+        nicolas.ferre@microchip.com, keescook@chromium.org,
+        allen.lkml@gmail.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
+References: <20180620035453.7721-1-baijiaju1990@gmail.com>
+        <87efh0o6f9.fsf@belgarion.home> <87y3eydrs1.fsf@linux.intel.com>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Fri, 29 Jun 2018 08:48:46 +0200
+In-Reply-To: <87y3eydrs1.fsf@linux.intel.com> (Felipe Balbi's message of "Fri,
+        29 Jun 2018 09:35:10 +0300")
+Message-ID: <87efgqkrzl.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,17 +51,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Felipe Balbi <balbi@kernel.org> writes:
 
-Hi,
-
-Eugeniu Rosca <erosca@de.adit-jv.com> writes:
-
-> Hi Felipe,
+> Hi,
 >
-> Friendly reminder. May I have some feedback on the shared USB fixes?
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+>
+>> Jia-Ju Bai <baijiaju1990@gmail.com> writes:
+>>
+>>> The driver may sleep with holding a spinlock.
+>>> The function call paths (from bottom to top) in Linux-4.16.7 are:
+>>>
+>>> [FUNC] msleep
+>>> drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
+>>> 		msleep in init_controller
+>>> drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
+>>> 		init_controller in r8a66597_usb_disconnect
+>>> drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
+>>> 		spin_lock in r8a66597_usb_disconnect
+>>
+>> That should not happen...
+>>
+>> If think the issue you have is that your usb_connect() and usb_disconnect() are
+>> called from interrupt context. I think the proper fix, as what is done in most
+>> udc phys, is to schedule a workqueue, see drivers/usb/phy/phy-gpio-vbus-usb.c,
+>> gpio_vbus_data.vbus.
+>
+> argh, no. No workqueues needed here. Sorry
+Technically why ?
 
-all except for patch 6 is in my queue for current -rc. Patch 6 will go
-during merge window.
+And as bonus question, why is it better to have mdelay() calls in the driver ?
+
+Cheers.
 
 -- 
-balbi
+Robert
