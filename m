@@ -2,93 +2,63 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B49EC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91BFF24240
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BFF24240
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C1B5C27B79
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B5C27B79
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933502AbeF2Hau (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:30:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57836 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753259AbeF2Has (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 03:30:48 -0400
-Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fYnrD-0002HP-VV; Fri, 29 Jun 2018 09:30:16 +0200
-Date:   Fri, 29 Jun 2018 09:30:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
-        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
-        Prarit Bhargava <prarit@redhat.com>, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        boris.ostrovsky@oracle.com, pbonzini@redhat.com
-Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
-In-Reply-To: <CAGM2read-NcUjssuUPHaf=qhdidT8f7cRNOs_GjdPnuOVvi-Lw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806290925340.1578@nanos.tec.linutronix.de>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
- <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de> <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
- <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de> <CAGM2read-NcUjssuUPHaf=qhdidT8f7cRNOs_GjdPnuOVvi-Lw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1753974AbeF2Hbw (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:31:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47464 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751594AbeF2Hbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 03:31:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D409CAE61;
+        Fri, 29 Jun 2018 07:31:49 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 09:31:46 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Cannon Matthews <cannonmatthews@google.com>
+Cc:     mike.kravetz@oracle.com, akpm@linux-foundation.org,
+        nyc@holomorphy.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andres Lagar-Cavilla <andreslc@google.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Greg Thelen <gthelen@google.com>
+Subject: Re: [PATCH] mm: hugetlb: yield when prepping struct pages
+Message-ID: <20180629073146.GB13860@dhcp22.suse.cz>
+References: <20180627214447.260804-1-cannonmatthews@google.com>
+ <20180628112139.GC32348@dhcp22.suse.cz>
+ <CAJfu=Uc8zkN1fc73_UtiREW061xakrnMNP27oV5i3AreP1XS+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfu=Uc8zkN1fc73_UtiREW061xakrnMNP27oV5i3AreP1XS+w@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 28 Jun 2018, Pavel Tatashin wrote:
-> On Thu, Jun 28, 2018 at 11:23 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> Hi Thomas,
+On Thu 28-06-18 15:16:46, Cannon Matthews wrote:
+> Thanks for the quick turnaround.
 > 
-> In addition to above, we have xen hvm:
-> 
-> setup_arch()
->     ...
->     init_hypervisor_platform();
->         x86_init.hyper.init_platform();
->             xen_hvm_guest_init()
->                 xen_hvm_init_time_ops();
+> Good to know about the how the 2M code path differs, I have been
+> trying to trace through some of this and it's easy to get lost between
+> which applies to which size.
 
-Duh. Missed that completely.
-
->     ...
->     tsc_early_delay_calibrate();
->         tsc_khz = x86_platform.calibrate_tsc(); == xen_tsc_khz()
->     ...
-> 
-> Which works early.
-> 
-> So, what should we do with xen, which seems to be the only platform
-> that would provide different tsc frequency early and late, because of
-> different calibration method?
-
-Fix it? I have no idea why XEN has two variants of the scheme and I neither
-have a clue why the KVM clock stuff is late.
-
-Thanks,
-
-	tglx
-
+Yeah, GB hugetlb pages implementation has been hacked into the existing
+hugetlb code in a quite ugly way. We have done some cleanups since then
+but there is still a lot of room for improvements.
+-- 
+Michal Hocko
+SUSE Labs
