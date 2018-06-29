@@ -2,165 +2,594 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B067C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8592C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED24827C13
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:42:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rX09VMYk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED24827C13
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 7363124E52
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:45:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7363124E52
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965918AbeF2Il7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:41:59 -0400
-Received: from mail-eopbgr40048.outbound.protection.outlook.com ([40.107.4.48]:28282
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965487AbeF2Il5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:41:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J0Rk5Xw9JtzWv6DggZItCEU8YmpOxL2viju+sK8ONx8=;
- b=rX09VMYkyZoHWtiP6H9QNb0vPT4DwftTkVn5OnsKFrNBFxeEAPSCExr4lVvFi+PzyNlcw9f6EXO1moWMDlj7byTw/U8DyDZnm/aH7Hm2szRNgvQ7hfbSGgpg9GX6YaFbD5ICo21iEe9n/ssvUqHwLCwrNjKe+uzPhwKFO5D9AZw=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB532.eurprd04.prod.outlook.com (10.242.113.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.20; Fri, 29 Jun 2018 08:41:52 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.025; Fri, 29 Jun 2018
- 08:41:52 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: dts: imx6: correct anatop regulators range
-Thread-Topic: [PATCH] ARM: dts: imx6: correct anatop regulators range
-Thread-Index: AQHUD38AdyuDZR4W10i/tnVGAfQSq6R245iAgAAATiCAAAZCAIAAAL7g
-Date:   Fri, 29 Jun 2018 08:41:52 +0000
-Message-ID: <AM3PR04MB1315000269912D2423AC63D9F54E0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1530258861-11666-1-git-send-email-Anson.Huang@nxp.com>
-         <1530260109.22468.60.camel@pengutronix.de>
-         <AM3PR04MB13157A4948E36BAE60A8DC49F54E0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <1530261518.22468.62.camel@pengutronix.de>
-In-Reply-To: <1530261518.22468.62.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB532;7:LGHQwSYbx2m8oUiKm9LmZ5/tCQP35wHunoJ3j8Di7Bt+W/vSVgdzvB1Abi8t/jdOEADiuGuMnReC9zZ8c7B0KZXMzxbqljuLhArc7mdKkkarJOWEym8V5Vu5YQvkjzYixKUAUw9mg0cgLXmpZjNGTXlRyLhbsjy7FTHA6OG92oNalM2ukaJ/3/vE5Ui1Y9xiB2UYNcN3qMWHimy8FpUvYKEF0rfRN6UolTVaMHLm4GbftMr/bIX/P2Ujj4Yciqru
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 83bf5bc1-0000-4fbb-6c48-08d5dd9c298f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB532;
-x-ms-traffictypediagnostic: AM3PR04MB532:
-x-microsoft-antispam-prvs: <AM3PR04MB5327F4034CA9E754B198B71F54E0@AM3PR04MB532.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB532;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB532;
-x-forefront-prvs: 0718908305
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(136003)(346002)(376002)(13464003)(189003)(199004)(14454004)(3846002)(6116002)(53936002)(478600001)(99286004)(5660300001)(110136005)(66066001)(8676002)(81166006)(86362001)(81156014)(2201001)(7736002)(256004)(93886005)(305945005)(9686003)(74316002)(5024004)(11346002)(6246003)(446003)(53546011)(6506007)(106356001)(68736007)(33656002)(2501003)(5250100002)(4326008)(102836004)(486006)(186003)(476003)(8936002)(26005)(44832011)(2906002)(97736004)(229853002)(55016002)(6436002)(7696005)(105586002)(76176011)(25786009)(316002)(2900100001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB532;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: mGIDSElpK+SP6oG3T6fFCyfl8C6xWAQDrmxVGNdP0F1QtWk7I/5shu1qf09km2iBRZs64Ex8Zr5sM0LKU7mcUM2LhdvWrcK3muCVuzO9x3yIk8wygA/FL3h+zCFGEjYky8+O7hHDwEjfT9oqHHxONkU2Q5Gd5wIfQIdk4COkv2bRGL+0/5tJ9ify1MB08HytRSiw0qkaSVLLJNQhoZb2PmolSA7oVYBTYIXB6BRREE9Q+34Jd8JAZ49fiaAs0wvfO68jqjp/hQfjkb5ORbLC0Z8Q13FJIG9JQBg5l8GA3Kz1WJRQzCTPT8r7uTbhdsIsTx1qGnJJTP7aO5YSpfNzopC5DUUiJ3kpek3NgUPbOaY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S966008AbeF2IpR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:45:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40040 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965835AbeF2IpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:45:12 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fYp1j-0005qZ-Dz; Fri, 29 Jun 2018 08:45:11 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] spelling.txt: add more spellings to spelling.txt
+Date:   Fri, 29 Jun 2018 09:45:11 +0100
+Message-Id: <20180629084511.29221-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83bf5bc1-0000-4fbb-6c48-08d5dd9c298f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2018 08:41:52.3424
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB532
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEx1Y2FzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRvOmwuc3RhY2hAcGVu
-Z3V0cm9uaXguZGVdDQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyOSwgMjAxOCA0OjM5IFBNDQo+IFRv
-OiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IHNoYXduZ3VvQGtlcm5lbC5vcmc7
-DQo+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgRmFiaW8g
-RXN0ZXZhbQ0KPiA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3JnOyBt
-YXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZw0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVj
-dDogUmU6IFtQQVRDSF0gQVJNOiBkdHM6IGlteDY6IGNvcnJlY3QgYW5hdG9wIHJlZ3VsYXRvcnMg
-cmFuZ2UNCj4gDQo+IEFtIEZyZWl0YWcsIGRlbiAyOS4wNi4yMDE4LCAwODoyNyArMDAwMCBzY2hy
-aWViIEFuc29uIEh1YW5nOg0KPiA+IEhpLCBMdWNhcw0KPiA+DQo+ID4gQW5zb24gSHVhbmcNCj4g
-PiBCZXN0IFJlZ2FyZHMhDQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
-LS0NCj4gPiA+ID4gPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRvOmwuc3RhY2hAcGVuZ3V0cm9u
-aXguZGVdDQo+ID4gPiBTZW50OiBGcmlkYXksIEp1bmUgMjksIDIwMTggNDoxNSBQTQ0KPiA+ID4g
-PiA+ID4gPiBUbzogQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBzaGF3bmd1b0Br
-ZXJuZWwub3JnOw0KPiA+ID4gPiA+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5n
-dXRyb25peC5kZTsgRmFiaW8gRXN0ZXZhbQ0KPiA+ID4gPiA+ID4gPiA+ID4gPGZhYmlvLmVzdGV2
-YW1AbnhwLmNvbT47IHJvYmgrZHRAa2VybmVsLm9yZzsNCj4gPiA+ID4gPiA+ID4gPiA+IG1hcmsu
-cnV0bGFuZEBhcm0uY29tOw0KPiA+ID4gPiA+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsNCj4gPiA+ID4gPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4gPiBDYzogZGwtbGludXgtaW14IDxs
-aW51eC1pbXhAbnhwLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEFSTTogZHRzOiBp
-bXg2OiBjb3JyZWN0IGFuYXRvcCByZWd1bGF0b3JzIHJhbmdlDQo+ID4gPg0KPiA+ID4gQW0gRnJl
-aXRhZywgZGVuIDI5LjA2LjIwMTgsIDE1OjU0ICswODAwIHNjaHJpZWIgQW5zb24gSHVhbmc6DQo+
-ID4gPiA+IENvcnJlY3Qgc29tZSBpLk1YNiBTb0NzIGFuYXRvcCByZWd1bGF0b3JzIHJhbmdlIGFj
-Y29yZGluZyB0bw0KPiA+ID4gPiByZWZlcmVuY2UgbWFudWFsLg0KPiA+ID4gPg0KPiA+ID4gPiBT
-aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPiA+DQo+
-ID4gPiBOQUNLLg0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgd3JvbmcuIFdoaWxlIHRoZSByZWd1bGF0
-b3Igc3VwcG9ydHMgdGhpcyByYW5nZSwgdGhlIFNvQw0KPiA+ID4gZG9lc24ndC7CoFRoZSBjdXJy
-ZW50IHNldHRpbmdzIGFyZSBkZXJpdmVkIGZyb20gdGhlIGFsbG93ZWQgb3BlcmF0aW5nDQo+ID4g
-PiByYW5nZXMgb2YgdGhlIFNvQyAoYXQgbGVhc3QgZm9yIHRoZSBNWDZRREwpLCB3aGljaCBpcyBp
-biBhY2NvcmRhbmNlDQo+ID4gPiB3aXRoIGhvdyByZWd1bGF0b3IgY29uc3RyYWludHMgaW4gRFQg
-YXJlIG1lYW50IHRvIGJlIHVzZWQuDQo+ID4NCj4gPg0KPiA+IFVuZGVyc3RhbmQgdGhhdCBub3Jt
-YWxseSB0aGVzZSByZWd1bGF0b3JzJyB2b2x0YWdlIGFyZSBOT1QgYWRqdXN0ZWQsDQo+ID4gd2Ug
-anVzdCB1c2UgdGhlIGRlZmF1bHQgdmFsdWUsIGxldCdzIGp1c3QgY2FsbCB0aGUgb3BlcmF0aW5n
-IHJhbmdlIG9mDQo+ID4gdGhlIFNvQyAiU29DIHJhbmdlIiwgbXkgaW50ZW50aW9uIGlzIHRvIG1h
-a2UgYWxsIGkuTVg2J3MgYW5hdG9wDQo+ID4gcmVndWxhdG9yIHNldHRpbmdzIGFsaWduZWQgc2lu
-Y2UgdGhleSBhcmUgaW4gc2FtZSBzZXJpZXMsIEkgc2F3IHNvbWUNCj4gPiBpLk1YNiBTb0NzIHVz
-ZSBzYW1lIFNvQyByYW5nZSBhcyBhbmF0b3AgbGRvIHJhbmdlLCBidXQgc29tZSBhcmUgTk9ULA0K
-PiA+IGxpa2UgaW14NnFkbC9pbXg2c3gvaW14NnNsIHVzZSBkaWZmZXJlbnQgU29DIHJhbmdlIHRo
-YW4gYW5hdG9wIGxkbw0KPiA+IHJhbmdlLCBidXQgaW14NnVsL3VsbC9zbGwgdXNlIHNhbWUgcmVn
-dWxhdG9yIHJhbmdlIGFzIGFuYXRvcCBsZG8sIGFuZA0KPiA+IHJlZ3VsYXRvciAxcDEvMnA1LzNw
-MCBhbHNvIGhhdmUgZGlmZmVyZW50IHNldHRpbmdzLCBzb21lIGFyZSB1c2UgU29DIHJhbmdlDQo+
-IGFuZCBzb21lIGFyZSBqdXN0IHNhbWUgYXMgYW5hdG9wIGxkbyByYW5nZS4uLi50aGlzIGxvb2tz
-IHJlYWxseSBjb25mdXNlZC4NCj4gPg0KPiA+IFNvLCBkbyB5b3UgdGhpbmsgd2UgY2FuIGFkanVz
-dCB0aGUgaW14NnVsL3VsbC9zbGwncyByZWd1bGF0b3IgcmFuZ2UgdG8NCj4gPiBiZSBTb0MgcmFu
-Z2UgcmF0aGVyIHRoYW4gYW5hdG9wIGxkbyByYW5nZT8gQW5kIGhvdyB0byBkZWZpbmUgdGhlIFNv
-Qw0KPiA+IHJhbmdlPyBMaWtlIHRoZSAxcDEgbGRvIHJhbmdlLCBob3cgZG8gd2Uga25vdyB3aGlj
-aCByYW5nZSBpcyBmaW5lPyBBcyBJIHNhdw0KPiBpdCBpcyAxdiB+IDEuMnYgb24gaW14NnFkbCwg
-YnV0IDAuOHYgfiAxLjM3NXYgb24gaW14NnNsPw0KPiANCj4gSWYgeW91IHdhbnQgdG8gYWxpZ24g
-dGhvc2Ugdm9sdGFnZXMgdG8gc29tZXRoaW5nIHRoZW4gaXQncyBkZWZpbml0ZWx5IHRoZSBTb0MN
-Cj4gcmFuZ2UgeW91IHdhbnQgdG8gdXNlLiBUaGlzIGlzIGhvdyB0aGUgY29uc3RyYWludHMgYXJl
-IHNwZWNpZmllZCBpbiB0aGUgRFQNCj4gYmluZGluZywgYXMgYmVpbmcgdGhlIGFsbG93ZWQgdm9s
-dGFnZSByYW5nZSB0aGF0IHdvbid0IGRhbWFnZSBhbnkgb2YgdGhlDQo+IGF0dGFjaGVkIGNvbnN1
-bWVycy4NCj4gDQo+IFBsZWFzZSBhbGlnbiB0aGUgY29uc3RyYWludHMgdG8gdGhlIG9wZXJhdGlu
-ZyByYW5nZXMsIGFzIHNwZWNpZmllZCBpbiB0aGUNCj4gZGF0YXNoZWV0LiBGb3IgZXhhbXBsZSBh
-biBleGNlcnB0IGZyb20gdGhlIGkuTVg2U0wgZGF0YXNoZWV0Og0KPiANCj4gIjQuMy4yLjEgUmVn
-dWxhdG9ycyBmb3IgQW5hbG9nIE1vZHVsZXMNCj4gICBMRE9fMVAxDQo+ICAgIFsuLi5dIFR5cGlj
-YWwgUHJvZ3JhbW1pbmcgT3BlcmF0aW5nIFJhbmdlIGlzIDEuMCBWIHRvIDEuMiBWIHdpdGggdGhl
-DQo+IG5vbWluYWwgZGVmYXVsdCBzZXR0aW5nIGFzIDEuMSBWIg0KPiANCj4gU28gdGhlIHJhbmdl
-IGZvciAxcDEgTERPIG9uIGkuTVg2U0wgc2hvdWxkIGJlIDEuMFYgdG8gMS4yViwgd2hpY2ggaXMg
-dGhlIHNhbWUNCj4gYXMgaS5NWDZRREwuDQoNCk9LLCB0aGFua3MsIEkgd2lsbCBjaGVjayBhbGwg
-dGhlIGRhdGFzaGVldCBhbmQgcmV3b3JrIGEgcGF0Y2guDQoNCkFuc29uLg0KDQo+IA0KPiBSZWdh
-cmRzLA0KPiBMdWNhcw0K
+From: Colin Ian King <colin.king@canonical.com>
+
+Here are some of the more common spelling mistakes and typos that I've
+found while fixing up spelling mistakes in the kernel over the past 6
+months.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ scripts/spelling.txt | 88 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
+
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 9a058cff49d4..a81e97d908fc 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -10,6 +10,8 @@
+ abandonning||abandoning
+ abigious||ambiguous
+ abitrate||arbitrate
++abord||abort
++aboslute||absolute
+ abov||above
+ abreviated||abbreviated
+ absense||absence
+@@ -25,6 +27,7 @@ accessable||accessible
+ accesss||access
+ accidentaly||accidentally
+ accidentually||accidentally
++acclerated||accelerated
+ accoding||according
+ accomodate||accommodate
+ accomodates||accommodates
+@@ -58,12 +61,15 @@ addres||address
+ adddress||address
+ addreses||addresses
+ addresss||address
++addrress||address
+ aditional||additional
+ aditionally||additionally
+ aditionaly||additionally
+ adminstrative||administrative
+ adress||address
+ adresses||addresses
++adrresses||addresses
++advertisment||advertisement
+ adviced||advised
+ afecting||affecting
+ againt||against
+@@ -100,6 +106,7 @@ alue||value
+ ambigious||ambiguous
+ amoung||among
+ amout||amount
++amplifer||amplifier
+ an union||a union
+ an user||a user
+ an userspace||a userspace
+@@ -145,11 +152,15 @@ assistent||assistant
+ assocation||association
+ associcated||associated
+ assotiated||associated
++asssert||assert
+ assum||assume
+ assumtpion||assumption
+ asuming||assuming
+ asycronous||asynchronous
+ asynchnous||asynchronous
++asynchromous||asynchronous
++asymetric||asymmetric
++asymmeric||asymmetric
+ atomatically||automatically
+ atomicly||atomically
+ atempt||attempt
+@@ -172,6 +183,7 @@ avaible||available
+ availabe||available
+ availabled||available
+ availablity||availability
++availaible||available
+ availale||available
+ availavility||availability
+ availble||available
+@@ -206,8 +218,11 @@ borad||board
+ boundry||boundary
+ brievely||briefly
+ broadcat||broadcast
++bufufer||buffer
+ cacluated||calculated
++caculate||calculate
+ caculation||calculation
++cadidate||candidate
+ calender||calendar
+ calescing||coalescing
+ calle||called
+@@ -221,12 +236,14 @@ capabilty||capability
+ capabitilies||capabilities
+ capatibilities||capabilities
+ capapbilities||capabilities
++caputure||capture
+ carefuly||carefully
+ cariage||carriage
+ catagory||category
+ cehck||check
+ challange||challenge
+ challanges||challenges
++chache||cache
+ chanell||channel
+ changable||changeable
+ chanined||chained
+@@ -240,6 +257,7 @@ charaters||characters
+ charcter||character
+ chcek||check
+ chck||check
++checksumed||checksummed
+ checksuming||checksumming
+ childern||children
+ childs||children
+@@ -292,8 +310,10 @@ comunication||communication
+ conbination||combination
+ conditionaly||conditionally
+ conected||connected
++conector||connector
+ connecetd||connected
+ configuartion||configuration
++configuation||configuration
+ configuratoin||configuration
+ configuraton||configuration
+ configuretion||configuration
+@@ -315,6 +335,7 @@ continous||continuous
+ continously||continuously
+ continueing||continuing
+ contraints||constraints
++contruct||construct
+ contol||control
+ contoller||controller
+ controled||controlled
+@@ -343,6 +364,7 @@ dafault||default
+ deafult||default
+ deamon||daemon
+ decompres||decompress
++decsribed||described
+ decription||description
+ dectected||detected
+ defailt||default
+@@ -379,6 +401,7 @@ desctiptor||descriptor
+ desriptor||descriptor
+ desriptors||descriptors
+ destionation||destination
++destoried||destroyed
+ destory||destroy
+ destoryed||destroyed
+ destorys||destroys
+@@ -404,18 +427,25 @@ diffrentiate||differentiate
+ difinition||definition
+ dimesions||dimensions
+ diplay||display
++directon||direction
+ direectly||directly
++diregard||disregard
+ disassocation||disassociation
+ disapear||disappear
+ disapeared||disappeared
+ disappared||disappeared
++disbale||disable
++disbaled||disabled
+ disble||disable
+ disbled||disabled
+ disconnet||disconnect
+ discontinous||discontinuous
++disharge||discharge
+ dispertion||dispersion
+ dissapears||disappears
+ distiction||distinction
++divisable||divisible
++divsiors||divisors
+ docuentation||documentation
+ documantation||documentation
+ documentaion||documentation
+@@ -427,6 +457,7 @@ downlad||download
+ downlads||downloads
+ druing||during
+ dynmaic||dynamic
++eanable||enable
+ easilly||easily
+ ecspecially||especially
+ edditable||editable
+@@ -484,9 +515,12 @@ exprimental||experimental
+ extened||extended
+ extensability||extensibility
+ extention||extension
++extenstion||extension
+ extracter||extractor
++faield||failed
+ falied||failed
+ faild||failed
++failer||failure
+ faill||fail
+ failied||failed
+ faillure||failure
+@@ -520,6 +554,7 @@ forseeable||foreseeable
+ forse||force
+ fortan||fortran
+ forwardig||forwarding
++frambuffer||framebuffer
+ framming||framing
+ framwork||framework
+ frequncy||frequency
+@@ -527,6 +562,7 @@ frome||from
+ fucntion||function
+ fuction||function
+ fuctions||functions
++funcation||function
+ funcion||function
+ functionallity||functionality
+ functionaly||functionally
+@@ -540,6 +576,7 @@ futrue||future
+ gaurenteed||guaranteed
+ generiously||generously
+ genereate||generate
++genereted||generated
+ genric||generic
+ globel||global
+ grabing||grabbing
+@@ -553,6 +590,7 @@ guarentee||guarantee
+ halfs||halves
+ hander||handler
+ handfull||handful
++hanlde||handle
+ hanled||handled
+ happend||happened
+ harware||hardware
+@@ -561,6 +599,7 @@ helpfull||helpful
+ hybernate||hibernate
+ hierachy||hierarchy
+ hierarchie||hierarchy
++homogenous||homogeneous
+ howver||however
+ hsould||should
+ hypervior||hypervisor
+@@ -568,6 +607,8 @@ hypter||hyper
+ identidier||identifier
+ iligal||illegal
+ illigal||illegal
++illgal||illegal
++iomaped||iomapped
+ imblance||imbalance
+ immeadiately||immediately
+ immedaite||immediate
+@@ -618,10 +659,12 @@ initation||initiation
+ initators||initiators
+ initialiazation||initialization
+ initializiation||initialization
++initialze||initialize
+ initialzed||initialized
+ initilization||initialization
+ initilize||initialize
+ inofficial||unofficial
++inrerface||interface
+ insititute||institute
+ instal||install
+ instanciated||instantiated
+@@ -657,6 +700,7 @@ intregral||integral
+ intrrupt||interrupt
+ intterrupt||interrupt
+ intuative||intuitive
++inavlid||invalid
+ invaid||invalid
+ invald||invalid
+ invalde||invalid
+@@ -683,6 +727,7 @@ langauge||language
+ langugage||language
+ lauch||launch
+ layed||laid
++legnth||length
+ leightweight||lightweight
+ lengh||length
+ lenght||length
+@@ -696,6 +741,7 @@ licenceing||licencing
+ loggging||logging
+ loggin||login
+ logile||logfile
++loobpack||loopback
+ loosing||losing
+ losted||lost
+ machinary||machinery
+@@ -703,6 +749,7 @@ maintainance||maintenance
+ maintainence||maintenance
+ maintan||maintain
+ makeing||making
++mailformed||malformed
+ malplaced||misplaced
+ malplace||misplace
+ managable||manageable
+@@ -710,6 +757,7 @@ managment||management
+ mangement||management
+ manoeuvering||maneuvering
+ mappping||mapping
++matchs||matches
+ mathimatical||mathematical
+ mathimatic||mathematic
+ mathimatics||mathematics
+@@ -725,6 +773,7 @@ messsage||message
+ messsages||messages
+ micropone||microphone
+ microprocesspr||microprocessor
++migrateable||migratable
+ milliseonds||milliseconds
+ minium||minimum
+ minimam||minimum
+@@ -741,6 +790,7 @@ missmatch||mismatch
+ miximum||maximum
+ mmnemonic||mnemonic
+ mnay||many
++modfiy||modify
+ modulues||modules
+ momery||memory
+ memomry||memory
+@@ -777,6 +827,7 @@ notifed||notified
+ numebr||number
+ numner||number
+ obtaion||obtain
++obusing||abusing
+ occassionally||occasionally
+ occationally||occasionally
+ occurance||occurrence
+@@ -787,6 +838,7 @@ occure||occurred
+ occured||occurred
+ occuring||occurring
+ offet||offset
++offloded||offloaded
+ omited||omitted
+ omiting||omitting
+ omitt||omit
+@@ -829,6 +881,7 @@ parametes||parameters
+ parametised||parametrised
+ paramter||parameter
+ paramters||parameters
++parmaters||paramaters
+ particuarly||particularly
+ particularily||particularly
+ partiton||partition
+@@ -837,6 +890,7 @@ passin||passing
+ pathes||paths
+ pecularities||peculiarities
+ peformance||performance
++peforming||performing
+ peice||piece
+ pendantic||pedantic
+ peprocessor||preprocessor
+@@ -846,6 +900,7 @@ peroid||period
+ persistance||persistence
+ persistant||persistent
+ plalform||platform
++platfoem||platform
+ platfrom||platform
+ plattform||platform
+ pleaes||please
+@@ -858,6 +913,7 @@ posible||possible
+ positon||position
+ possibilites||possibilities
+ powerfull||powerful
++preamle||preamble
+ preample||preamble
+ preapre||prepare
+ preceeded||preceded
+@@ -870,6 +926,7 @@ prefered||preferred
+ prefferably||preferably
+ premption||preemption
+ prepaired||prepared
++preperation||preparation
+ pressre||pressure
+ primative||primitive
+ princliple||principle
+@@ -935,6 +992,7 @@ recommanded||recommended
+ recyle||recycle
+ redircet||redirect
+ redirectrion||redirection
++redundacy||redundancy
+ reename||rename
+ refcounf||refcount
+ refence||reference
+@@ -945,6 +1003,7 @@ refernces||references
+ refernnce||reference
+ refrence||reference
+ registerd||registered
++registeration||registration
+ registeresd||registered
+ registerred||registered
+ registes||registers
+@@ -973,7 +1032,9 @@ requirment||requirement
+ requred||required
+ requried||required
+ requst||request
++reregisteration||reregistration
+ reseting||resetting
++reseverd||reserved
+ resizeable||resizable
+ resouce||resource
+ resouces||resources
+@@ -982,6 +1043,7 @@ responce||response
+ ressizes||resizes
+ ressource||resource
+ ressources||resources
++restesting||retesting
+ retransmited||retransmitted
+ retreived||retrieved
+ retreive||retrieve
+@@ -1006,6 +1068,7 @@ sacrifying||sacrificing
+ safly||safely
+ safty||safety
+ savable||saveable
++scaleing||scaling
+ scaned||scanned
+ scaning||scanning
+ scarch||search
+@@ -1014,6 +1077,8 @@ searchs||searches
+ secquence||sequence
+ secund||second
+ segement||segment
++semaphone||semaphore
++senario||scenario
+ senarios||scenarios
+ sentivite||sensitive
+ separatly||separately
+@@ -1025,9 +1090,13 @@ seperate||separate
+ seperatly||separately
+ seperator||separator
+ sepperate||separate
++seqeunce||sequence
++seqeuncer||sequencer
++seqeuencer||sequencer
+ sequece||sequence
+ sequencial||sequential
+ serveral||several
++servive||service
+ setts||sets
+ settting||setting
+ shotdown||shutdown
+@@ -1073,6 +1142,7 @@ standartization||standardization
+ standart||standard
+ staticly||statically
+ stoped||stopped
++stoping||stopping
+ stoppped||stopped
+ straming||streaming
+ struc||struct
+@@ -1085,6 +1155,7 @@ subdirectoires||subdirectories
+ suble||subtle
+ substract||subtract
+ submition||submission
++suceed||succeed
+ succesfully||successfully
+ succesful||successful
+ successed||succeeded
+@@ -1108,6 +1179,7 @@ surpressed||suppressed
+ surpresses||suppresses
+ susbsystem||subsystem
+ suspeneded||suspended
++suspsend||suspend
+ suspicously||suspiciously
+ swaping||swapping
+ switchs||switches
+@@ -1122,6 +1194,7 @@ swtich||switch
+ symetric||symmetric
+ synax||syntax
+ synchonized||synchronized
++synchronuously||synchronously
+ syncronize||synchronize
+ syncronized||synchronized
+ syncronizing||synchronizing
+@@ -1130,11 +1203,14 @@ syste||system
+ sytem||system
+ sythesis||synthesis
+ taht||that
++tansmit||transmit
+ targetted||targeted
+ targetting||targeting
++taskelt||tasklet
+ teh||the
+ temorary||temporary
+ temproarily||temporarily
++thead||thread
+ therfore||therefore
+ thier||their
+ threds||threads
+@@ -1143,11 +1219,14 @@ thresold||threshold
+ throught||through
+ troughput||throughput
+ thses||these
++tiggers||triggers
+ tiggered||triggered
+ tipically||typically
++timeing||timing
+ timout||timeout
+ tmis||this
+ torerable||tolerable
++traking||tracking
+ tramsmitted||transmitted
+ tramsmit||transmit
+ tranasction||transaction
+@@ -1162,6 +1241,7 @@ transormed||transformed
+ trasfer||transfer
+ trasmission||transmission
+ treshold||threshold
++trigerred||triggered
+ trigerring||triggering
+ trun||turn
+ tunning||tuning
+@@ -1169,6 +1249,8 @@ ture||true
+ tyep||type
+ udpate||update
+ uesd||used
++uknown||unknown
++usupported||unsupported
+ uncommited||uncommitted
+ unconditionaly||unconditionally
+ underun||underrun
+@@ -1181,11 +1263,14 @@ unexpeted||unexpected
+ unexpexted||unexpected
+ unfortunatelly||unfortunately
+ unifiy||unify
++uniterrupted||uninterrupted
+ unintialized||uninitialized
+ unkmown||unknown
+ unknonw||unknown
+ unknow||unknown
+ unkown||unknown
++unamed||unnamed
++uneeded||unneeded
+ unneded||unneeded
+ unneccecary||unnecessary
+ unneccesary||unnecessary
+@@ -1210,6 +1295,7 @@ usefull||useful
+ usege||usage
+ usera||users
+ usualy||usually
++usupported||unsupported
+ utilites||utilities
+ utillities||utilities
+ utilties||utilities
+@@ -1233,7 +1319,9 @@ virtaul||virtual
+ virtiual||virtual
+ visiters||visitors
+ vitual||virtual
++vunerable||vulnerable
+ wakeus||wakeups
++wathdog||watchdog
+ wating||waiting
+ wiat||wait
+ wether||whether
+-- 
+2.17.1
+
