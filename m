@@ -2,122 +2,99 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4867DC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAFEC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0B227CCD
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B0B227CCD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id E9A2227CD2
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:48:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BH+EaSPy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9A2227CD2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933939AbeF2Jrn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 05:47:43 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:49418 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753471AbeF2Jrj (ORCPT
+        id S934299AbeF2JsI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 05:48:08 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43572 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933945AbeF2JsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:47:39 -0400
-X-UUID: 9a9ae6b1f4834a9eabb3e1b78ce32924-20180629
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 350955493; Fri, 29 Jun 2018 17:47:33 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Fri, 29 Jun
- 2018 17:47:31 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 29 Jun 2018 17:47:26 +0800
-Message-ID: <1530265646.6245.6.camel@mtkswgap22>
-Subject: Re: [PATCH v4 6/7] Bluetooth: mediatek: Add protocol support for
- MediaTek serial devices
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Johan Hovold <johan@kernel.org>
-CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Johan Hedberg" <johan.hedberg@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-bluetooth@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Date:   Fri, 29 Jun 2018 17:47:26 +0800
-In-Reply-To: <20180628051941.GF629@localhost>
-References: <cover.1530004712.git.sean.wang@mediatek.com>
-         <48215a1276c36af7ad581c3d83759fe9f55e3c4b.1530004712.git.sean.wang@mediatek.com>
-         <CAHp75VehTeyyzR4bPKK3hFDTVqZnhdNy5vcBFJCSH_Zrx+QrKA@mail.gmail.com>
-         <CAHp75VedHLw52J_ymh3iYf2w=r8d+Kqg=fJZmBGnaCrEbNEPdQ@mail.gmail.com>
-         <1530155173.29697.48.camel@mtkswgap22> <20180628051941.GF629@localhost>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 29 Jun 2018 05:48:05 -0400
+Received: by mail-pg0-f65.google.com with SMTP id a14-v6so3759074pgw.10
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 02:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7zOQslA5AQgWfJ0KtTksxyDxkYFmWSxv2CTtgvNWZXw=;
+        b=BH+EaSPyhzEKBpSw+If3FwMS6AaLW7Wzlx/jhDAaMwZbZg0tzSUCfHEP+QE5cFqbo+
+         Sz7rYoEED/JE+kfpxX9K4XPep657zuH4AKUJPQjjFvN+yEJLBqUrYSWVaZaFmMvFVU+k
+         naINx8xszuKBYHOpDAJfZUAgbjETqj4Md5tN4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7zOQslA5AQgWfJ0KtTksxyDxkYFmWSxv2CTtgvNWZXw=;
+        b=W+8YOXxuUctLzY/5gpW2BIdFta8PPFSirPVtttvOl1+K4UhpSYpRfCFVZfV/2A0/k5
+         bM9mVUkae85iQnlIUDVDnwzFmzKryeS+3+bMrkx0jg3pcjCt86ztmTwf11xe0S+D/lVI
+         bScS59wrBSDyp9QgcWDIvV6j7G8BHmne/iG2BZ4QeaygOh+lNjxU9g7MYmdVzct/cIRL
+         Y2T+Vn4K6wPAi8R3FQS0c5uF9RurCIesrSEvMSva7KWFQuSYd5IUHvF7ZSF8g7kXnJUt
+         nnCUao8Ya8a3uvuaCypAg2n6BQ7XIEDNRy1HvfLFFZKIveQLRsioBBsEYULEu/fmrQrz
+         n1yQ==
+X-Gm-Message-State: APt69E2hbmWMb45vMXOio+NaFJW+xO1Qt+OBK9ymQWZqNlNxY3FzIHIU
+        cIqGHWo2YOEA9g7EZff+CgH70A==
+X-Google-Smtp-Source: AAOMgpe7ln6QcfsrL6kzn51e5a54yQ7b9EdcG4CegvUca+QWFFM8EMx77xpEVy2ZTN0dp+epqu8cUA==
+X-Received: by 2002:a65:5b45:: with SMTP id y5-v6mr11159618pgr.63.1530265685304;
+        Fri, 29 Jun 2018 02:48:05 -0700 (PDT)
+Received: from localhost ([122.172.117.17])
+        by smtp.gmail.com with ESMTPSA id k12-v6sm13334206pff.31.2018.06.29.02.48.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 02:48:04 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 15:18:03 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     ulf.hansson@linaro.org, Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
+        Pavel Machek <pavel@ucw.cz>, Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] OPP: Support multiple power-domains per device
+Message-ID: <20180629094803.nsk57skh6wu72oxa@vireshk-i7>
+References: <cover.1530252803.git.viresh.kumar@linaro.org>
+ <2322281.e0L7xCS2Qb@aspire.rjw.lan>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2322281.e0L7xCS2Qb@aspire.rjw.lan>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-28 at 07:19 +0200, Johan Hovold wrote:
-> On Thu, Jun 28, 2018 at 11:06:13AM +0800, Sean Wang wrote:
-> > On Wed, 2018-06-27 at 20:04 +0300, Andy Shevchenko wrote:
-> > > On Wed, Jun 27, 2018 at 7:59 PM, Andy Shevchenko
-> > > <andy.shevchenko@gmail.com> wrote:
-> > > > On Wed, Jun 27, 2018 at 8:43 AM,  <sean.wang@mediatek.com> wrote:
-> > > >> From: Sean Wang <sean.wang@mediatek.com>
+On 29-06-18, 11:06, Rafael J. Wysocki wrote:
+> On Friday, June 29, 2018 8:19:30 AM CEST Viresh Kumar wrote:
+> > Hi,
+> > 
+> > This series improves the OPP core (and a bit of genpd core as well) to
+> > support multiple phandles in the "required-opps" property, which are
+> > only used for multiple power-domains per device for now.
+> > 
+> > We still don't propagate the changes to master domains for the
+> > sub-domains, but this patchset is an important stepping stone for that
+> > to happen.
+> > 
+> > Tested on Hikey960 after faking some power domains for CPUs.
 > 
-> > > >> +#include <net/bluetooth/bluetooth.h>
-> > > >> +#include <net/bluetooth/hci_core.h>
-> > > 
-> > > >> +       /* Enable the power domain and clock the device requires. */
-> > > >> +       pm_runtime_enable(dev);
-> > > >> +       err = pm_runtime_get_sync(dev);
-> > > >> +       if (err < 0)
-> > > >> +               goto err_pm2;
-> 
-> > > >> +err_pm1:
-> > > >> +       pm_runtime_put_sync(dev);
-> > > >> +err_pm2:
-> > > >> +       pm_runtime_disable(dev);
-> 
-> Please name error labels after what they do, not using numbers (see
-> CodingStyle). Here you could use err_disable_rpm instead of err_pm2, for
-> example.
-> 
-> Also, if you really want to undo pm_runtime_get_sync() failing above,
-> you still need a pm_runtime_put_noidle() to balance the usage count.
-> 
+> I'm assuming that this work will go in via OPP.
 
-I'll give a reasonable naming for these labels and add a
-pm_runtime_put_noidle() in the path undoing failing
-pm_runtime_get_sync().
+Yes.
 
-> > > >> +struct mtk_stp_hdr {
-> > > >> +       __u8 prefix;
-> > > >> +       __u8 dlen1:4;
-> > > >> +       __u8 type:4;
-> > > 
-> > > >> +       __u8 dlen2:8;
-> > > >> +       __u8 cs;
-> > > >> +} __packed;
-> 
-> Perhaps too much context have been lost here, but unless you're sharing
-> this struct with user space, you should be using u8 (without __) above
-> (and elsewhere).
-> 
-
-These struct don't be shard with user space so I will turn __u8 into u8.
-
-Thanks so much for all suggestions. 
-
-> Johan
-
-
+-- 
+viresh
