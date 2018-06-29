@@ -2,121 +2,272 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1886FC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8A8C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2AEC27DA7
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:07:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2AEC27DA7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B253B27DAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:07:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="e4TlQEi7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B253B27DAA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935476AbeF2LHR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:07:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:59842 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932119AbeF2LHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:07:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2432F18A;
-        Fri, 29 Jun 2018 04:07:15 -0700 (PDT)
-Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72CA03F266;
-        Fri, 29 Jun 2018 04:07:09 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 12:07:06 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Alexander Potapenko <glider@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Christoph Lameter <cl@linux.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-sparse@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-ID: <20180629110706.37aqq6x4vhnblkb6@armageddon.cambridge.arm.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <20180628105057.GA26019@e103592.cambridge.arm.com>
- <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S935675AbeF2LHu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:07:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59556 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932119AbeF2LHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:07:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=pCQds1gzHyDikUIgCwAJkFuwnPlu7opIC44Ko3OfTzc=; b=e4TlQEi7kUv8
+        RwuIoIPH5OsYk8SLX80Nr2sGPbZFVpp28WQmYhCVcbT25pcFmQ3F7BHUnNyelqkmS6HG4BAe2guzH
+        XfBMXXNb8NRf91JRQqW4xsozm+7GbIxZVf0gTxlr6vqU5kSgxKM+UEB18APqascCz3FgtaDydj/U8
+        sitpQ=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fYrFT-0007lP-N4; Fri, 29 Jun 2018 11:07:31 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fYrFT-0002gi-9G; Fri, 29 Jun 2018 12:07:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Daniel Mack <daniel@zonque.org>, Mark Brown <broonie@kernel.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        alsa-devel@alsa-project.org, netdev@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-media@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: pxa: remove the dmaengine compat need" to the asoc tree
+In-Reply-To:  <20180524070703.11901-9-robert.jarzmik@free.fr>
+Message-Id: <E1fYrFT-0002gi-9G@debutante>
+Date:   Fri, 29 Jun 2018 12:07:31 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 08:56:41PM +0200, Andrey Konovalov wrote:
-> On Thu, Jun 28, 2018 at 12:51 PM, Dave Martin <Dave.Martin@arm.com> wrote:
-> > On Tue, Jun 26, 2018 at 03:15:10PM +0200, Andrey Konovalov wrote:
-> >> 1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
-> >>    tags in the top byte of each kernel pointer.
-> >
-> > [...]
-> >
-> > This is a change from the current situation, so the kernel may be
-> > making implicit assumptions about the top byte of kernel addresses.
-> >
-> > Randomising the top bits may cause things like address conversions and
-> > pointer arithmetic to break.
-> >
-> > For example, (q - p) will not produce the expected result if q and p
-> > have different tags.
-> 
-> If q and p have different tags, that means they come from different
-> allocations. I don't think it would make sense to calculate pointer
-> difference in this case.
+The patch
 
-Well, there is a lot of pointer comparison in the kernel which means
-pointer difference. Take is_vmalloc_addr() for example, even if your
-patchset does not cover (IIUC) vmalloc() at the moment, this function
-may be called with slab addresses. Presumably they would all fail the
-check with a non-0xff tag but it's something needs understood. If you
-later add support for vmalloc(), this test would fail (as would the
-rb tree search in find_vmap_area(). Kmemleak would probably break as
-well as it makes heavy use of rb tree.
+   ASoC: pxa: remove the dmaengine compat need
 
-Basically you need to be very clear about kernel pointer usage (with an
-associated tag or type) vs address range it refers to and in most cases
-converted to an unsigned long. See the other discussion on sparse, it
-could potentially be useful if we can detect the places where a pointer
-is converted to ulong and maybe hide such conversion behind a macro with
-the arm64 implementation also clearing the tag.
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8f54061d001ad2da24dba89fc48adbbf4c85222b Mon Sep 17 00:00:00 2001
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Date: Thu, 28 Jun 2018 22:08:37 +0200
+Subject: [PATCH] ASoC: pxa: remove the dmaengine compat need
+
+As the pxa architecture switched towards the dmaengine slave map, the
+old compatibility mechanism to acquire the dma requestor line number and
+priority are not needed anymore.
+
+This patch simplifies the dma resource acquisition, using the more
+generic function dma_request_slave_channel().
+
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/arm/pxa2xx-ac97.c     | 14 ++------------
+ sound/arm/pxa2xx-pcm-lib.c  |  6 +++---
+ sound/soc/pxa/pxa2xx-ac97.c | 32 +++++---------------------------
+ sound/soc/pxa/pxa2xx-i2s.c  |  6 ++----
+ 4 files changed, 12 insertions(+), 46 deletions(-)
+
+diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
+index 4bc244c40f80..236a63cdaf9f 100644
+--- a/sound/arm/pxa2xx-ac97.c
++++ b/sound/arm/pxa2xx-ac97.c
+@@ -63,28 +63,18 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
+ 	.reset	= pxa2xx_ac97_legacy_reset,
+ };
+ 
+-static struct pxad_param pxa2xx_ac97_pcm_out_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 12,
+-};
+-
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_out = {
+ 	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "pcm_pcm_stereo_out",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_ac97_pcm_out_req,
+-};
+-
+-static struct pxad_param pxa2xx_ac97_pcm_in_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 11,
+ };
+ 
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_in = {
+ 	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "pcm_pcm_stereo_in",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_ac97_pcm_in_req,
+ };
+ 
+ static struct snd_pcm *pxa2xx_ac97_pcm;
+diff --git a/sound/arm/pxa2xx-pcm-lib.c b/sound/arm/pxa2xx-pcm-lib.c
+index e8da3b8ee721..dcbe7ecc1835 100644
+--- a/sound/arm/pxa2xx-pcm-lib.c
++++ b/sound/arm/pxa2xx-pcm-lib.c
+@@ -125,9 +125,9 @@ int __pxa2xx_pcm_open(struct snd_pcm_substream *substream)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return snd_dmaengine_pcm_open_request_chan(substream,
+-					pxad_filter_fn,
+-					dma_params->filter_data);
++	return snd_dmaengine_pcm_open(
++		substream, dma_request_slave_channel(rtd->cpu_dai->dev,
++						     dma_params->chan_name));
+ }
+ EXPORT_SYMBOL(__pxa2xx_pcm_open);
+ 
+diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+index 5738a0abcd6a..c52b33802bf2 100644
+--- a/sound/soc/pxa/pxa2xx-ac97.c
++++ b/sound/soc/pxa/pxa2xx-ac97.c
+@@ -68,61 +68,39 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
+ 	.reset	= pxa2xx_ac97_cold_reset,
+ };
+ 
+-static struct pxad_param pxa2xx_ac97_pcm_stereo_in_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 11,
+-};
+-
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_in = {
+ 	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "pcm_pcm_stereo_in",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_ac97_pcm_stereo_in_req,
+-};
+-
+-static struct pxad_param pxa2xx_ac97_pcm_stereo_out_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 12,
+ };
+ 
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_out = {
+ 	.addr		= __PREG(PCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "pcm_pcm_stereo_out",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_ac97_pcm_stereo_out_req,
+ };
+ 
+-static struct pxad_param pxa2xx_ac97_pcm_aux_mono_out_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 10,
+-};
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_out = {
+ 	.addr		= __PREG(MODR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
++	.chan_name	= "pcm_aux_mono_out",
+ 	.maxburst	= 16,
+-	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_out_req,
+ };
+ 
+-static struct pxad_param pxa2xx_ac97_pcm_aux_mono_in_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 9,
+-};
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_in = {
+ 	.addr		= __PREG(MODR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
++	.chan_name	= "pcm_aux_mono_in",
+ 	.maxburst	= 16,
+-	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_in_req,
+ };
+ 
+-static struct pxad_param pxa2xx_ac97_pcm_aux_mic_mono_req = {
+-	.prio = PXAD_PRIO_LOWEST,
+-	.drcmr = 8,
+-};
+ static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_mic_mono_in = {
+ 	.addr		= __PREG(MCDR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
++	.chan_name	= "pcm_aux_mic_mono",
+ 	.maxburst	= 16,
+-	.filter_data	= &pxa2xx_ac97_pcm_aux_mic_mono_req,
+ };
+ 
+ static int pxa2xx_ac97_hifi_startup(struct snd_pcm_substream *substream,
+diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
+index 3fb60baf6eab..e7184de0de04 100644
+--- a/sound/soc/pxa/pxa2xx-i2s.c
++++ b/sound/soc/pxa/pxa2xx-i2s.c
+@@ -82,20 +82,18 @@ static struct pxa_i2s_port pxa_i2s;
+ static struct clk *clk_i2s;
+ static int clk_ena = 0;
+ 
+-static unsigned long pxa2xx_i2s_pcm_stereo_out_req = 3;
+ static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_out = {
+ 	.addr		= __PREG(SADR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "tx",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_i2s_pcm_stereo_out_req,
+ };
+ 
+-static unsigned long pxa2xx_i2s_pcm_stereo_in_req = 2;
+ static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_in = {
+ 	.addr		= __PREG(SADR),
+ 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
++	.chan_name	= "rx",
+ 	.maxburst	= 32,
+-	.filter_data	= &pxa2xx_i2s_pcm_stereo_in_req,
+ };
+ 
+ static int pxa2xx_i2s_startup(struct snd_pcm_substream *substream,
 -- 
-Catalin
+2.18.0.rc2
+
