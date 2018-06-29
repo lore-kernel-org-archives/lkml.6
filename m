@@ -2,158 +2,291 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 708D8C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CCCC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F13127471
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F13127471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C87727473
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:24:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C87727473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964776AbeF2IYA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:24:00 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42993 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934876AbeF2IX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:23:56 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u202-v6so6184829lff.9;
-        Fri, 29 Jun 2018 01:23:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=KZuPDxz/x1YS2l5jj2pJKP/Fx/IlT6bLBzVqIHNEMMw=;
-        b=OyvuWH3JNBtB54IhCYc37xKYzhda1tR16fXOo0ZBO3Uo6q44/s/BkaDHV96t4mS3yy
-         JLBq46k8Iy3t7XW/Cf1JJKzYEHdQ13s3n5ynluZhhL4vvg3PQIe3CKKSNVZKsVSXiZtD
-         gxn5uC49CkZgHRL9jAMN+48/61uOW15Q6UsixsgaaI/agIYKYt3zdcTQoYDikkkb6+xB
-         GiBo2J9NxSTRFU7uuqNl3RKvnk8z+5IzXCarlqN/eOBSK6nLMtJjZoIftj7kYKDZtt3b
-         No7S9aVuw4NBYDFDamdiHPXgET19x0MU4R1vVS9usCtXIL2nCr76q4STnzRm7N/MPHtk
-         OpYw==
-X-Gm-Message-State: APt69E1qCVKtyR4oxY9a/rIRFndoFrnSYrnBFHqSxSvl4dsfFDwRPye0
-        gO1OJ0yYTF8tRW270AsrAKg=
-X-Google-Smtp-Source: AAOMgpeHmrNToRtRKBW03rH6lOl7tbpaj6PUjwP0bWTQXEuM71XtihL3xVXu/fY8Cyo7WBHD4bxY/w==
-X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr8939248lfl.78.1530260635016;
-        Fri, 29 Jun 2018 01:23:55 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id y11-v6sm1443559lji.6.2018.06.29.01.23.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 01:23:54 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 11:23:42 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v8 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <a7904544d51270f4d2230ceb1a336b57a06652c1.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+        id S964817AbeF2IYM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:24:12 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55528 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934876AbeF2IYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:24:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 01:24:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="68296855"
+Received: from jnikula-mobl2.fi.intel.com (HELO localhost) ([10.237.72.62])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Jun 2018 01:23:58 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: [PATCH] drm/i915: Mark expected switch fall-throughs
+In-Reply-To: <20180628223541.GA17665@embeddedor.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180628223541.GA17665@embeddedor.com>
+Date:   Fri, 29 Jun 2018 11:23:46 +0300
+Message-ID: <87efgqrofh.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+On Thu, 28 Jun 2018, "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+>
+> Addresses-Coverity-ID: 141432
+> Addresses-Coverity-ID: 141433
+> Addresses-Coverity-ID: 141434
+> Addresses-Coverity-ID: 141435
+> Addresses-Coverity-ID: 141436
+> Addresses-Coverity-ID: 1357360
+> Addresses-Coverity-ID: 1357403
+> Addresses-Coverity-ID: 1357433
+> Addresses-Coverity-ID: 1392622
+> Addresses-Coverity-ID: 1415273
+> Addresses-Coverity-ID: 1435752
+> Addresses-Coverity-ID: 1441500
+> Addresses-Coverity-ID: 1454596
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..67f2616288d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,67 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missng
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	/* PMIC node */
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			/* ... */
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
+I'll let others chime in before merging.
+
+BR,
+Jani.
+
+
+> ---
+>  drivers/gpu/drm/i915/i915_gem.c         | 1 +
+>  drivers/gpu/drm/i915/i915_gem_stolen.c  | 1 +
+>  drivers/gpu/drm/i915/intel_cdclk.c      | 5 +++++
+>  drivers/gpu/drm/i915/intel_ddi.c        | 1 +
+>  drivers/gpu/drm/i915/intel_display.c    | 2 ++
+>  drivers/gpu/drm/i915/intel_dpll_mgr.c   | 3 +++
+>  drivers/gpu/drm/i915/intel_drv.h        | 1 +
+>  drivers/gpu/drm/i915/intel_engine_cs.c  | 1 +
+>  drivers/gpu/drm/i915/intel_runtime_pm.c | 1 +
+>  drivers/gpu/drm/i915/intel_sdvo.c       | 6 ++++++
+>  10 files changed, 22 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+> index 4cb720b..ed7bb24 100644
+> --- a/drivers/gpu/drm/i915/i915_gem.c
+> +++ b/drivers/gpu/drm/i915/i915_gem.c
+> @@ -2114,6 +2114,7 @@ vm_fault_t i915_gem_fault(struct vm_fault *vmf)
+>  		 */
+>  		if (!i915_terminally_wedged(&dev_priv->gpu_error))
+>  			return VM_FAULT_SIGBUS;
+> +		/* else: fall through */
+>  	case -EAGAIN:
+>  		/*
+>  		 * EAGAIN means the gpu is hung and we'll wait for the error
+> diff --git a/drivers/gpu/drm/i915/i915_gem_stolen.c b/drivers/gpu/drm/i915/i915_gem_stolen.c
+> index 79a34729..055f868 100644
+> --- a/drivers/gpu/drm/i915/i915_gem_stolen.c
+> +++ b/drivers/gpu/drm/i915/i915_gem_stolen.c
+> @@ -254,6 +254,7 @@ static void vlv_get_stolen_reserved(struct drm_i915_private *dev_priv,
+>  	switch (reg_val & GEN7_STOLEN_RESERVED_SIZE_MASK) {
+>  	default:
+>  		MISSING_CASE(reg_val & GEN7_STOLEN_RESERVED_SIZE_MASK);
+> +		/* fall through */
+>  	case GEN7_STOLEN_RESERVED_1M:
+>  		*size = 1024 * 1024;
+>  		break;
+> diff --git a/drivers/gpu/drm/i915/intel_cdclk.c b/drivers/gpu/drm/i915/intel_cdclk.c
+> index bf9433d..29075c7 100644
+> --- a/drivers/gpu/drm/i915/intel_cdclk.c
+> +++ b/drivers/gpu/drm/i915/intel_cdclk.c
+> @@ -316,6 +316,7 @@ static void pnv_get_cdclk(struct drm_i915_private *dev_priv,
+>  		break;
+>  	default:
+>  		DRM_ERROR("Unknown pnv display core clock 0x%04x\n", gcfgc);
+> +		/* fall through */
+>  	case GC_DISPLAY_CLOCK_133_MHZ_PNV:
+>  		cdclk_state->cdclk = 133333;
+>  		break;
+> @@ -1797,6 +1798,7 @@ static int icl_calc_cdclk(int min_cdclk, unsigned int ref)
+>  	switch (ref) {
+>  	default:
+>  		MISSING_CASE(ref);
+> +		/* fall through */
+>  	case 24000:
+>  		ranges = ranges_24;
+>  		break;
+> @@ -1824,6 +1826,7 @@ static int icl_calc_cdclk_pll_vco(struct drm_i915_private *dev_priv, int cdclk)
+>  	switch (cdclk) {
+>  	default:
+>  		MISSING_CASE(cdclk);
+> +		/* fall through */
+>  	case 307200:
+>  	case 556800:
+>  	case 652800:
+> @@ -1896,6 +1899,7 @@ static u8 icl_calc_voltage_level(int cdclk)
+>  		return 1;
+>  	default:
+>  		MISSING_CASE(cdclk);
+> +		/* fall through */
+>  	case 652800:
+>  	case 648000:
+>  		return 2;
+> @@ -1913,6 +1917,7 @@ static void icl_get_cdclk(struct drm_i915_private *dev_priv,
+>  	switch (val & ICL_DSSM_CDCLK_PLL_REFCLK_MASK) {
+>  	default:
+>  		MISSING_CASE(val);
+> +		/* fall through */
+>  	case ICL_DSSM_CDCLK_PLL_REFCLK_24MHz:
+>  		cdclk_state->ref = 24000;
+>  		break;
+> diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
+> index 0319825..c74b01a 100644
+> --- a/drivers/gpu/drm/i915/intel_ddi.c
+> +++ b/drivers/gpu/drm/i915/intel_ddi.c
+> @@ -1069,6 +1069,7 @@ static uint32_t icl_pll_to_ddi_pll_sel(struct intel_encoder *encoder,
+>  	switch (id) {
+>  	default:
+>  		MISSING_CASE(id);
+> +		/* fall through */
+>  	case DPLL_ID_ICL_DPLL0:
+>  	case DPLL_ID_ICL_DPLL1:
+>  		return DDI_CLK_SEL_NONE;
+> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+> index eaa0663..d3f2cf6 100644
+> --- a/drivers/gpu/drm/i915/intel_display.c
+> +++ b/drivers/gpu/drm/i915/intel_display.c
+> @@ -9359,6 +9359,7 @@ static bool hsw_get_transcoder_state(struct intel_crtc *crtc,
+>  		switch (tmp & TRANS_DDI_EDP_INPUT_MASK) {
+>  		default:
+>  			WARN(1, "unknown pipe linked to edp transcoder\n");
+> +			/* fall through */
+>  		case TRANS_DDI_EDP_INPUT_A_ONOFF:
+>  		case TRANS_DDI_EDP_INPUT_A_ON:
+>  			trans_edp_pipe = PIPE_A;
+> @@ -11023,6 +11024,7 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
+>  		case INTEL_OUTPUT_DDI:
+>  			if (WARN_ON(!HAS_DDI(to_i915(dev))))
+>  				break;
+> +			/* else: fall through */
+>  		case INTEL_OUTPUT_DP:
+>  		case INTEL_OUTPUT_HDMI:
+>  		case INTEL_OUTPUT_EDP:
+> diff --git a/drivers/gpu/drm/i915/intel_dpll_mgr.c b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> index 5734236..058696b 100644
+> --- a/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> +++ b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+> @@ -2566,6 +2566,7 @@ int icl_calc_dp_combo_pll_link(struct drm_i915_private *dev_priv,
+>  	switch (index) {
+>  	default:
+>  		MISSING_CASE(index);
+> +		/* fall through */
+>  	case 0:
+>  		link_clock = 540000;
+>  		break;
+> @@ -2639,6 +2640,7 @@ static bool icl_mg_pll_find_divisors(int clock_khz, bool is_dp, bool use_ssc,
+>  			switch (div1) {
+>  			default:
+>  				MISSING_CASE(div1);
+> +				/* fall through */
+>  			case 2:
+>  				hsdiv = 0;
+>  				break;
+> @@ -2903,6 +2905,7 @@ static i915_reg_t icl_pll_id_to_enable_reg(enum intel_dpll_id id)
+>  	switch (id) {
+>  	default:
+>  		MISSING_CASE(id);
+> +		/* fall through */
+>  	case DPLL_ID_ICL_DPLL0:
+>  	case DPLL_ID_ICL_DPLL1:
+>  		return CNL_DPLL_ENABLE(id);
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index a6ff260..3cb6e87 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -1254,6 +1254,7 @@ enc_to_dig_port(struct drm_encoder *encoder)
+>  	switch (intel_encoder->type) {
+>  	case INTEL_OUTPUT_DDI:
+>  		WARN_ON(!HAS_DDI(to_i915(encoder->dev)));
+> +		/* fall through */
+>  	case INTEL_OUTPUT_DP:
+>  	case INTEL_OUTPUT_EDP:
+>  	case INTEL_OUTPUT_HDMI:
+> diff --git a/drivers/gpu/drm/i915/intel_engine_cs.c b/drivers/gpu/drm/i915/intel_engine_cs.c
+> index d3264bd..d2ed44d 100644
+> --- a/drivers/gpu/drm/i915/intel_engine_cs.c
+> +++ b/drivers/gpu/drm/i915/intel_engine_cs.c
+> @@ -230,6 +230,7 @@ __intel_engine_context_size(struct drm_i915_private *dev_priv, u8 class)
+>  		break;
+>  	default:
+>  		MISSING_CASE(class);
+> +		/* fall through */
+>  	case VIDEO_DECODE_CLASS:
+>  	case VIDEO_ENHANCEMENT_CLASS:
+>  	case COPY_ENGINE_CLASS:
+> diff --git a/drivers/gpu/drm/i915/intel_runtime_pm.c b/drivers/gpu/drm/i915/intel_runtime_pm.c
+> index d81b2cf..6b5aa3b 100644
+> --- a/drivers/gpu/drm/i915/intel_runtime_pm.c
+> +++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
+> @@ -3212,6 +3212,7 @@ static void cnl_set_procmon_ref_values(struct drm_i915_private *dev_priv,
+>  	switch (val & (PROCESS_INFO_MASK | VOLTAGE_INFO_MASK)) {
+>  	default:
+>  		MISSING_CASE(val);
+> +		/* fall through */
+>  	case VOLTAGE_INFO_0_85V | PROCESS_INFO_DOT_0:
+>  		procmon = &cnl_procmon_values[PROCMON_0_85V_DOT_0];
+>  		break;
+> diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
+> index e6a64b3..a7f4a56 100644
+> --- a/drivers/gpu/drm/i915/intel_sdvo.c
+> +++ b/drivers/gpu/drm/i915/intel_sdvo.c
+> @@ -1340,6 +1340,7 @@ static void intel_sdvo_pre_enable(struct intel_encoder *intel_encoder,
+>  	switch (crtc_state->pixel_multiplier) {
+>  	default:
+>  		WARN(1, "unknown pixel multiplier specified\n");
+> +		/* fall through */
+>  	case 1: rate = SDVO_CLOCK_RATE_MULT_1X; break;
+>  	case 2: rate = SDVO_CLOCK_RATE_MULT_2X; break;
+>  	case 4: rate = SDVO_CLOCK_RATE_MULT_4X; break;
+> @@ -2316,14 +2317,19 @@ intel_sdvo_guess_ddc_bus(struct intel_sdvo *sdvo)
+>  	switch (sdvo->controlled_output) {
+>  	case SDVO_OUTPUT_LVDS1:
+>  		mask |= SDVO_OUTPUT_LVDS1;
+> +		/* fall through */
+>  	case SDVO_OUTPUT_LVDS0:
+>  		mask |= SDVO_OUTPUT_LVDS0;
+> +		/* fall through */
+>  	case SDVO_OUTPUT_TMDS1:
+>  		mask |= SDVO_OUTPUT_TMDS1;
+> +		/* fall through */
+>  	case SDVO_OUTPUT_TMDS0:
+>  		mask |= SDVO_OUTPUT_TMDS0;
+> +		/* fall through */
+>  	case SDVO_OUTPUT_RGB1:
+>  		mask |= SDVO_OUTPUT_RGB1;
+> +		/* fall through */
+>  	case SDVO_OUTPUT_RGB0:
+>  		mask |= SDVO_OUTPUT_RGB0;
+>  		break;
+
 -- 
-2.14.3
-
+Jani Nikula, Intel Open Source Graphics Center
