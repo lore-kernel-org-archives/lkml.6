@@ -3,77 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F09C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C23C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BBB2802A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BBB2802A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id EC2EE2802A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2EE2802A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936368AbeF2PCW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:02:22 -0400
-Received: from smtprelay0197.hostedemail.com ([216.40.44.197]:48191 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755552AbeF2PCR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:02:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id EB29218036BC7;
-        Fri, 29 Jun 2018 15:02:14 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: earth88_4db0e986eb055
-X-Filterd-Recvd-Size: 1552
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 29 Jun 2018 15:02:13 +0000 (UTC)
-Message-ID: <dd97033978ee266b236487668061db7025d39c15.camel@perches.com>
-Subject: Re: [PATCH] spelling.txt: add more spellings to spelling.txt
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 29 Jun 2018 08:02:12 -0700
-In-Reply-To: <20180629084511.29221-1-colin.king@canonical.com>
-References: <20180629084511.29221-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S936442AbeF2PC3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:02:29 -0400
+Received: from ms.lwn.net ([45.79.88.28]:33054 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936375AbeF2PC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:02:26 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 76E1CC36;
+        Fri, 29 Jun 2018 15:02:25 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 09:02:24 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] doc: dev-tools: kselftest.rst: update contributing
+ new tests
+Message-ID: <20180629090224.772ee423@lwn.net>
+In-Reply-To: <20180629125201.24025-1-anders.roxell@linaro.org>
+References: <20180629100248.11560-1-anders.roxell@linaro.org>
+        <20180629125201.24025-1-anders.roxell@linaro.org>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-29 at 09:45 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, 29 Jun 2018 14:52:01 +0200
+Anders Roxell <anders.roxell@linaro.org> wrote:
+
+> Add a description that kernel config options should be added into a
+> config file that is placed next to the newly added test.
 > 
-> Here are some of the more common spelling mistakes and typos that I've
-> found while fixing up spelling mistakes in the kernel over the past 6
-> months.
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Super, thanks.  One correction:
+Applied, thanks.
 
-> diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-[]
-> @@ -829,6 +881,7 @@ parametes||parameters
->  parametised||parametrised
->  paramter||parameter
->  paramters||parameters
-> +parmaters||paramaters
-
-Misspelled correction correction
-
-parameters
-
-> @@ -1143,11 +1219,14 @@ thresold||threshold
->  throught||through
->  troughput||throughput
->  thses||these
-> +tiggers||triggers
-
-Milne might object
+jon
