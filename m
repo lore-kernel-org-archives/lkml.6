@@ -2,101 +2,108 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B501CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0F8C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588DE24F71
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C98624F8D
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WEtP/bK4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 588DE24F71
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cWAh4Eln"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C98624F8D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936644AbeF2PpB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:45:01 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33425 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932658AbeF2PpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:45:00 -0400
-Received: by mail-lf0-f65.google.com with SMTP id u14-v6so2089861lfu.0
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 08:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ukUiJ2rUXwVX3Go8FDMuJHjQu61MHyNVrpg0bCo8+rI=;
-        b=WEtP/bK4mtcKospOlYG8NJA8I6B8FEb1LQEt0TVTsA1HXtFH8gRxx3zy7ARPIQpny5
-         CJ3BV7JQfMyehNie2aJ2M+CPoVkfAbcHABUCZ5wuMF6l/ymnruC6FUTU2ykd6vzRyx6e
-         CLs5a6H7c9+pjlVHAcYxAV2khU9ItmirTBQMI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ukUiJ2rUXwVX3Go8FDMuJHjQu61MHyNVrpg0bCo8+rI=;
-        b=g4bnC8Gs9AO5xE0PQUAgC0MVU26li/lSaJNOBVWpP9YwMZFPGxI9Etskh6Q5oem+f5
-         H7u0qAxRj8/sh3/dIp/yzjOJj5G9O28WJ+/1xEhSawIHigE/jx2T8kdq5/F1SRz+4sos
-         hPp6Ra8dWP6Ze29y1m5uwDyvHPL91ctFXxrWo6nV1ay59lKzol/KF8jkDRkB0/bmds2I
-         RoIm13XbdZlee7lMDe/p6A2HwkZIZWgYD1D2nnkxn+Fi3NraO0PVLwiFdXTGoqPKVdvi
-         ITIVnoEI5bDxtLqlunb6Mn7ivuAKjuKNNZkERGZEE4zxc9Tuo6IYBcNSnxg4LadBq/IL
-         R2UA==
-X-Gm-Message-State: APt69E3Ys+IRoBwQVDaCZy45IlBKYAHq6zkzuafpE3uBM+7HJ6AyAo76
-        8kJQfUV/8gp1byfVgYb9cUAbAw==
-X-Google-Smtp-Source: AAOMgpc4xaZQ6WViy7h6IKa808G2CYnGa3AlgcOAYNqnCoNBLkTnvuHxUUmTgmM0j0kOMrILp+J0/Q==
-X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr9668535lfe.4.1530287098651;
-        Fri, 29 Jun 2018 08:44:58 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id n79-v6sm1592348lfi.51.2018.06.29.08.44.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 08:44:58 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        id S966623AbeF2PpH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:45:07 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47412 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932658AbeF2PpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:45:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=uHHhXoVCo1e55ybzhcJfcxHdXqESXbPa7DpzDV5aqqQ=;
+        b=cWAh4ElnB1b2jXwHhycYNwLvv8dWNTj4VCLEF4/e9NechmAPJTFGJ4pIWsPL8nPsm+HUra5C14MyH0P7J0riCZRKdKQQn+PyLnFaASt6zB6wQ22SXT4cHlA7uTDGFV/ysuQMia5Ml4fZilAhUbgvStqH+crYi4BB+Cp1QOTd4zU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fYva2-0006Tg-Hn; Fri, 29 Jun 2018 17:45:02 +0200
+Date:   Fri, 29 Jun 2018 17:45:02 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     f.fainelli@gmail.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: llc-slice: Add missing MODULE_LICENSE()
-Date:   Fri, 29 Jun 2018 17:44:47 +0200
-Message-Id: <20180629154447.2272-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: [PATCH net-next v2 1/2] net: phy: DP83TC811: Add INT_STAT3
+Message-ID: <20180629154502.GG11285@lunn.ch>
+References: <20180629153546.24107-1-dmurphy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180629153546.24107-1-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing MODULE_LICENSE().
-According to the SPDX-License-Identifier, the license is GPL v2.
+On Fri, Jun 29, 2018 at 10:35:45AM -0500, Dan Murphy wrote:
+> Add INT_STAT3 interrupt setting and clearing
+> support.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v2 - Removed bug fix removal of writing INT_STAT1 twice when disabling interrupts
+> 
+>  drivers/net/phy/dp83tc811.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
+> index 49ac678eb2dc..f8653f5d8789 100644
+> --- a/drivers/net/phy/dp83tc811.c
+> +++ b/drivers/net/phy/dp83tc811.c
+> @@ -21,6 +21,7 @@
+>  #define MII_DP83811_SGMII_CTRL	0x09
+>  #define MII_DP83811_INT_STAT1	0x12
+>  #define MII_DP83811_INT_STAT2	0x13
+> +#define MII_DP83811_INT_STAT3	0x18
+>  #define MII_DP83811_RESET_CTRL	0x1f
+>  
+>  #define DP83811_HW_RESET	BIT(15)
+> @@ -44,6 +45,11 @@
+>  #define DP83811_OVERVOLTAGE_INT_EN	BIT(6)
+>  #define DP83811_UNDERVOLTAGE_INT_EN	BIT(7)
+>  
+> +/* INT_STAT3 bits */
+> +#define DP83811_LPS_INT_EN	BIT(0)
+> +#define DP83811_NO_FRAME_INT_EN	BIT(3)
+> +#define DP83811_POR_DONE_INT_EN	BIT(4)
+> +
+>  #define MII_DP83811_RXSOP1	0x04a5
+>  #define MII_DP83811_RXSOP2	0x04a6
+>  #define MII_DP83811_RXSOP3	0x04a7
+> @@ -81,6 +87,10 @@ static int dp83811_ack_interrupt(struct phy_device *phydev)
+>  	if (err < 0)
+>  		return err;
+>  
+> +	err = phy_read(phydev, MII_DP83811_INT_STAT3);
+> +	if (err < 0)
+> +		return err;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -216,6 +226,18 @@ static int dp83811_config_intr(struct phy_device *phydev)
+>  				DP83811_UNDERVOLTAGE_INT_EN);
+>  
+>  		err = phy_write(phydev, MII_DP83811_INT_STAT2, misr_status);
 
-Fixes the following warning:
-WARNING: modpost: missing MODULE_LICENSE() in drivers/soc/qcom/llcc-slice.o
+Hi Dan
 
-Fixes: c5c7385f89bf ("drivers: soc: Add LLCC driver")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/soc/qcom/llcc-slice.c | 3 +++
- 1 file changed, 3 insertions(+)
+Isn't this going to fail to apply because net-next says STAT1 here?
 
-diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
-index fcaad1a4b41d..54063a31132f 100644
---- a/drivers/soc/qcom/llcc-slice.c
-+++ b/drivers/soc/qcom/llcc-slice.c
-@@ -9,6 +9,7 @@
- #include <linux/device.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-+#include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/regmap.h>
-@@ -333,3 +334,5 @@ int qcom_llcc_probe(struct platform_device *pdev,
- 	return qcom_llcc_cfg_program(pdev);
- }
- EXPORT_SYMBOL_GPL(qcom_llcc_probe);
-+
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+That is why i said you need to wait for David to merge net into
+net-next. Then you can submit these patches, and not have conflicts.
 
+	  Andrew
