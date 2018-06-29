@@ -2,101 +2,145 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A552C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3777EC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC8A24B05
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:26:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC8A24B05
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EA7E127F48
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:27:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7E127F48
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeF2N0m (ORCPT
+        id S1754930AbeF2N1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:26:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51602 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753471AbeF2N0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:26:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6DC53ADDA;
-        Fri, 29 Jun 2018 13:26:39 +0000 (UTC)
-Date:   Fri, 29 Jun 2018 15:26:38 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
- killer.
-Message-ID: <20180629132638.GD5963@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1806201528490.16984@chino.kir.corp.google.com>
- <20180621073142.GA10465@dhcp22.suse.cz>
- <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
- <20180626170345.GA3593@linux.vnet.ibm.com>
- <20180627072207.GB32348@dhcp22.suse.cz>
- <20180627143125.GW3593@linux.vnet.ibm.com>
- <20180628113942.GD32348@dhcp22.suse.cz>
- <20180628213105.GP3593@linux.vnet.ibm.com>
- <20180629090419.GD13860@dhcp22.suse.cz>
- <20180629125218.GX3593@linux.vnet.ibm.com>
+        Fri, 29 Jun 2018 09:27:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34224 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753287AbeF2N1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 09:27:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71B0E80D;
+        Fri, 29 Jun 2018 06:27:31 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DB893F318;
+        Fri, 29 Jun 2018 06:27:30 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 14:27:25 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com
+Subject: Re: [PATCH v3 4/7] arm_pmu: Tidy up clear_event_idx call backs
+Message-ID: <20180629132724.ztcfelcnb2dt2u35@lakrids.cambridge.arm.com>
+References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
+ <1529403342-17899-5-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629125218.GX3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1529403342-17899-5-git-send-email-suzuki.poulose@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 29-06-18 05:52:18, Paul E. McKenney wrote:
-> On Fri, Jun 29, 2018 at 11:04:19AM +0200, Michal Hocko wrote:
-> > On Thu 28-06-18 14:31:05, Paul E. McKenney wrote:
-> > > On Thu, Jun 28, 2018 at 01:39:42PM +0200, Michal Hocko wrote:
-[...]
-> > > > Well, I am not really sure what is the objective of the oom notifier to
-> > > > point you to the right direction. IIUC you just want to kick callbacks
-> > > > to be handled sooner under a heavy memory pressure, right? How is that
-> > > > achieved? Kick a worker?
-> > > 
-> > > That is achieved by enqueuing a non-lazy callback on each CPU's callback
-> > > list, but only for those CPUs having non-empty lists.  This causes
-> > > CPUs with lists containing only lazy callbacks to be more aggressive,
-> > > in particular, it prevents such CPUs from hanging out idle for seconds
-> > > at a time while they have callbacks on their lists.
-> > > 
-> > > The enqueuing happens via an IPI to the CPU in question.
-> > 
-> > I am afraid this is too low level for my to understand what is going on
-> > here. What are lazy callbacks and why do they need any specific action
-> > when we are getting close to OOM? I mean, I do understand that we might
-> > have many callers of call_rcu and free memory lazily. But there is quite
-> > a long way before we start the reclaim until we reach the OOM killer path.
-> > So why don't those callbacks get called during that time period? How are
-> > their triggered when we are not hitting the OOM path? They surely cannot
-> > sit there for ever, right? Can we trigger them sooner? Maybe the
-> > shrinker is not the best fit but we have a retry feedback loop in the page
-> > allocator, maybe we can kick this processing from there.
+On Tue, Jun 19, 2018 at 11:15:39AM +0100, Suzuki K Poulose wrote:
+> The armpmu uses get_event_idx callback to allocate an event
+> counter for a given event, which marks the selected counter
+> as "used". Now, when we delete the counter, the arm_pmu goes
+> ahead and clears the "used" bit and then invokes the "clear_event_idx"
+> call back, which kind of splits the job between the core code
+> and the backend. Tidy this up by relying on the clear_event_idx
+> to do the book keeping, if available. Otherwise, let the core
+> driver do the default "clear" bit operation. This will be useful
+> for adding the chained event support, where we leave the event
+> idx maintenance to the backend.
 > 
-> The effect of RCU's current OOM code is to speed up callback invocation
-> by at most a few seconds (assuming no stalled CPUs, in which case
-> it is not possible to speed up callback invocation).
+> Also, when an event is removed from the PMU, reset the hw.idx
+> to indicate that a counter is not allocated for this event,
+> to help the backends do better checks. This will be also used
+> for the chain counter support.
 > 
-> Given that, I should just remove RCU's OOM code entirely?
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Yeah, it seems so. I do not see how this would really help much. If we
-really need some way to kick callbacks then we should do so much earlier
-in the reclaim process - e.g. when we start struggling to reclaim any
-memory.
+TBH, I think it might be better to make clear_event_idx() mandatory,
+such that each backend provides both clear / set, next to each other in
+the code.
 
-I am curious. Has the notifier been motivated by a real world use case
-or it was "nice thing to do"?
--- 
-Michal Hocko
-SUSE Labs
+It's a bit more code, but it would restore orthogonality to the API.
+
+Mark.
+
+> ---
+> Changes since v2:
+>  - Reset the event counter after an event is removed.
+> ---
+>  arch/arm/kernel/perf_event_v7.c |  2 ++
+>  drivers/perf/arm_pmu.c          | 17 +++++++++++++----
+>  2 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
+> index fd7ce01..765d265 100644
+> --- a/arch/arm/kernel/perf_event_v7.c
+> +++ b/arch/arm/kernel/perf_event_v7.c
+> @@ -1637,6 +1637,7 @@ static void krait_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+>  	bool venum_event = EVENT_VENUM(hwc->config_base);
+>  	bool krait_event = EVENT_CPU(hwc->config_base);
+>  
+> +	clear_bit(hwc->idx, cpuc->used_mask);
+>  	if (venum_event || krait_event) {
+>  		bit = krait_event_to_bit(event, region, group);
+>  		clear_bit(bit, cpuc->used_mask);
+> @@ -1966,6 +1967,7 @@ static void scorpion_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+>  	bool venum_event = EVENT_VENUM(hwc->config_base);
+>  	bool scorpion_event = EVENT_CPU(hwc->config_base);
+>  
+> +	clear_bit(hwc->idx, cpuc->used_mask);
+>  	if (venum_event || scorpion_event) {
+>  		bit = scorpion_event_to_bit(event, region, group);
+>  		clear_bit(bit, cpuc->used_mask);
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index e3766a8..6e10e8c 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -227,6 +227,16 @@ static void armpmu_start(struct perf_event *event, int flags)
+>  	armpmu->enable(event);
+>  }
+>  
+> +static void armpmu_clear_event_idx(struct arm_pmu *armpmu,
+> +				   struct pmu_hw_events *hw_events,
+> +				   struct perf_event *event)
+> +{
+> +	if (armpmu->clear_event_idx)
+> +		armpmu->clear_event_idx(hw_events, event);
+> +	else
+> +		clear_bit(event->hw.idx, hw_events->used_mask);
+> +}
+> +
+>  static void
+>  armpmu_del(struct perf_event *event, int flags)
+>  {
+> @@ -237,11 +247,10 @@ armpmu_del(struct perf_event *event, int flags)
+>  
+>  	armpmu_stop(event, PERF_EF_UPDATE);
+>  	hw_events->events[idx] = NULL;
+> -	clear_bit(idx, hw_events->used_mask);
+> -	if (armpmu->clear_event_idx)
+> -		armpmu->clear_event_idx(hw_events, event);
+> -
+> +	armpmu_clear_event_idx(armpmu, hw_events, event);
+>  	perf_event_update_userpage(event);
+> +	/* Clear the allocated counter */
+> +	hwc->idx = -1;
+>  }
+>  
+>  static int
+> -- 
+> 2.7.4
+> 
