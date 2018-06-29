@@ -2,931 +2,165 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF1CC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B067C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53EF127C0F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:41:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EF127C0F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id ED24827C13
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:42:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rX09VMYk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED24827C13
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965823AbeF2IlD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:41:03 -0400
-Received: from mx.socionext.com ([202.248.49.38]:43016 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965322AbeF2IjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:39:04 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 29 Jun 2018 17:39:02 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 74BB61800FC;
-        Fri, 29 Jun 2018 17:39:02 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 29 Jun 2018 17:39:02 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id C20DC1A120B;
-        Fri, 29 Jun 2018 17:39:01 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
-Date:   Fri, 29 Jun 2018 17:38:59 +0900
-Message-Id: <1530261541-23104-3-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530261541-23104-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1530261541-23104-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S965918AbeF2Il7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:41:59 -0400
+Received: from mail-eopbgr40048.outbound.protection.outlook.com ([40.107.4.48]:28282
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965487AbeF2Il5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:41:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J0Rk5Xw9JtzWv6DggZItCEU8YmpOxL2viju+sK8ONx8=;
+ b=rX09VMYkyZoHWtiP6H9QNb0vPT4DwftTkVn5OnsKFrNBFxeEAPSCExr4lVvFi+PzyNlcw9f6EXO1moWMDlj7byTw/U8DyDZnm/aH7Hm2szRNgvQ7hfbSGgpg9GX6YaFbD5ICo21iEe9n/ssvUqHwLCwrNjKe+uzPhwKFO5D9AZw=
+Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
+ AM3PR04MB532.eurprd04.prod.outlook.com (10.242.113.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.20; Fri, 29 Jun 2018 08:41:52 +0000
+Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
+ ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
+ ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.025; Fri, 29 Jun 2018
+ 08:41:52 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] ARM: dts: imx6: correct anatop regulators range
+Thread-Topic: [PATCH] ARM: dts: imx6: correct anatop regulators range
+Thread-Index: AQHUD38AdyuDZR4W10i/tnVGAfQSq6R245iAgAAATiCAAAZCAIAAAL7g
+Date:   Fri, 29 Jun 2018 08:41:52 +0000
+Message-ID: <AM3PR04MB1315000269912D2423AC63D9F54E0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1530258861-11666-1-git-send-email-Anson.Huang@nxp.com>
+         <1530260109.22468.60.camel@pengutronix.de>
+         <AM3PR04MB13157A4948E36BAE60A8DC49F54E0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <1530261518.22468.62.camel@pengutronix.de>
+In-Reply-To: <1530261518.22468.62.camel@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB532;7:LGHQwSYbx2m8oUiKm9LmZ5/tCQP35wHunoJ3j8Di7Bt+W/vSVgdzvB1Abi8t/jdOEADiuGuMnReC9zZ8c7B0KZXMzxbqljuLhArc7mdKkkarJOWEym8V5Vu5YQvkjzYixKUAUw9mg0cgLXmpZjNGTXlRyLhbsjy7FTHA6OG92oNalM2ukaJ/3/vE5Ui1Y9xiB2UYNcN3qMWHimy8FpUvYKEF0rfRN6UolTVaMHLm4GbftMr/bIX/P2Ujj4Yciqru
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 83bf5bc1-0000-4fbb-6c48-08d5dd9c298f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB532;
+x-ms-traffictypediagnostic: AM3PR04MB532:
+x-microsoft-antispam-prvs: <AM3PR04MB5327F4034CA9E754B198B71F54E0@AM3PR04MB532.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB532;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB532;
+x-forefront-prvs: 0718908305
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(136003)(346002)(376002)(13464003)(189003)(199004)(14454004)(3846002)(6116002)(53936002)(478600001)(99286004)(5660300001)(110136005)(66066001)(8676002)(81166006)(86362001)(81156014)(2201001)(7736002)(256004)(93886005)(305945005)(9686003)(74316002)(5024004)(11346002)(6246003)(446003)(53546011)(6506007)(106356001)(68736007)(33656002)(2501003)(5250100002)(4326008)(102836004)(486006)(186003)(476003)(8936002)(26005)(44832011)(2906002)(97736004)(229853002)(55016002)(6436002)(7696005)(105586002)(76176011)(25786009)(316002)(2900100001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB532;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: mGIDSElpK+SP6oG3T6fFCyfl8C6xWAQDrmxVGNdP0F1QtWk7I/5shu1qf09km2iBRZs64Ex8Zr5sM0LKU7mcUM2LhdvWrcK3muCVuzO9x3yIk8wygA/FL3h+zCFGEjYky8+O7hHDwEjfT9oqHHxONkU2Q5Gd5wIfQIdk4COkv2bRGL+0/5tJ9ify1MB08HytRSiw0qkaSVLLJNQhoZb2PmolSA7oVYBTYIXB6BRREE9Q+34Jd8JAZ49fiaAs0wvfO68jqjp/hQfjkb5ORbLC0Z8Q13FJIG9JQBg5l8GA3Kz1WJRQzCTPT8r7uTbhdsIsTx1qGnJJTP7aO5YSpfNzopC5DUUiJ3kpek3NgUPbOaY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83bf5bc1-0000-4fbb-6c48-08d5dd9c298f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2018 08:41:52.3424
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB532
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for PHY interface built into USB3 controller
-implemented in UniPhier SoCs.
-This driver supports High-Speed PHY and Super-Speed PHY.
-
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
----
- drivers/phy/Kconfig                         |   1 +
- drivers/phy/Makefile                        |   1 +
- drivers/phy/socionext/Kconfig               |  12 +
- drivers/phy/socionext/Makefile              |   6 +
- drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
- drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
- 6 files changed, 811 insertions(+)
- create mode 100644 drivers/phy/socionext/Kconfig
- create mode 100644 drivers/phy/socionext/Makefile
- create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
- create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
-
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 5c8d452..b752589 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -53,6 +53,7 @@ source "drivers/phy/ralink/Kconfig"
- source "drivers/phy/renesas/Kconfig"
- source "drivers/phy/rockchip/Kconfig"
- source "drivers/phy/samsung/Kconfig"
-+source "drivers/phy/socionext/Kconfig"
- source "drivers/phy/st/Kconfig"
- source "drivers/phy/tegra/Kconfig"
- source "drivers/phy/ti/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index 84e3bd9..5539cde 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -21,5 +21,6 @@ obj-y					+= broadcom/	\
- 					   qualcomm/	\
- 					   ralink/	\
- 					   samsung/	\
-+					   socionext/	\
- 					   st/		\
- 					   ti/
-diff --git a/drivers/phy/socionext/Kconfig b/drivers/phy/socionext/Kconfig
-new file mode 100644
-index 0000000..4a172fc
---- /dev/null
-+++ b/drivers/phy/socionext/Kconfig
-@@ -0,0 +1,12 @@
-+#
-+# PHY drivers for Socionext platforms.
-+#
-+
-+config PHY_UNIPHIER_USB3
-+	tristate "UniPhier USB3 PHY driver"
-+	depends on ARCH_UNIPHIER || COMPILE_TEST
-+	depends on OF && HAS_IOMEM
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support USB PHY implemented in USB3 controller
-+	  on UniPhier SoCs. This controller supports USB3.0 and lower speed.
-diff --git a/drivers/phy/socionext/Makefile b/drivers/phy/socionext/Makefile
-new file mode 100644
-index 0000000..dfa5cec
---- /dev/null
-+++ b/drivers/phy/socionext/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-identifier: GPL-2.0
-+#
-+# Makefile for the phy drivers.
-+#
-+
-+obj-$(CONFIG_PHY_UNIPHIER_USB3)	+= phy-uniphier-usb3hs.o phy-uniphier-usb3ss.o
-diff --git a/drivers/phy/socionext/phy-uniphier-usb3hs.c b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-new file mode 100644
-index 0000000..cea8983
---- /dev/null
-+++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-@@ -0,0 +1,422 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
-+ * Copyright 2015-2018 Socionext Inc.
-+ * Author:
-+ *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ * Contributors:
-+ *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-+ *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+#include <linux/slab.h>
-+
-+#define HSPHY_CFG0		0x0
-+#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
-+#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
-+#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
-+#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
-+#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
-+#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
-+				 | HSPHY_CFG0_SEL_T_MASK \
-+				 | HSPHY_CFG0_RTERM_MASK)
-+
-+#define HSPHY_CFG1		0x4
-+#define HSPHY_CFG1_DAT_EN	BIT(29)
-+#define HSPHY_CFG1_ADR_EN	BIT(28)
-+#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
-+#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
-+
-+#define MAX_CLKS	3
-+#define MAX_RSTS	2
-+#define MAX_PHY_PARAMS	1
-+
-+struct uniphier_u3hsphy_param {
-+	u32 addr;
-+	u32 mask;
-+	u32 val;
-+};
-+
-+struct uniphier_u3hsphy_trim_param {
-+	unsigned int rterm;
-+	unsigned int sel_t;
-+	unsigned int hs_i;
-+};
-+
-+#define trim_param_is_valid(p)	((p)->rterm || (p)->sel_t || (p)->hs_i)
-+
-+struct uniphier_u3hsphy_priv {
-+	struct device *dev;
-+	void __iomem *base;
-+	int nclks;
-+	struct clk *clk[MAX_CLKS], *clk_phy, *clk_phy_ext;
-+	int nrsts;
-+	struct reset_control *rst[MAX_RSTS], *rst_phy;
-+	const struct uniphier_u3hsphy_soc_data *data;
-+};
-+
-+struct uniphier_u3hsphy_soc_data {
-+	const char *clock_names[MAX_CLKS];
-+	const char *reset_names[MAX_RSTS];
-+	int nparams;
-+	const struct uniphier_u3hsphy_param param[MAX_PHY_PARAMS];
-+	u32 config0;
-+	u32 config1;
-+	void (*trim_func)(struct uniphier_u3hsphy_priv *priv, u32 *pconfig,
-+			  struct uniphier_u3hsphy_trim_param *pt);
-+};
-+
-+static void uniphier_u3hsphy_trim_ld20(struct uniphier_u3hsphy_priv *priv,
-+				       u32 *pconfig,
-+				       struct uniphier_u3hsphy_trim_param *pt)
-+{
-+	*pconfig &= ~HSPHY_CFG0_RTERM_MASK;
-+	*pconfig |= FIELD_PREP(HSPHY_CFG0_RTERM_MASK, pt->rterm);
-+
-+	*pconfig &= ~HSPHY_CFG0_SEL_T_MASK;
-+	*pconfig |= FIELD_PREP(HSPHY_CFG0_SEL_T_MASK, pt->sel_t);
-+
-+	*pconfig &= ~HSPHY_CFG0_HS_I_MASK;
-+	*pconfig |= FIELD_PREP(HSPHY_CFG0_HS_I_MASK,  pt->hs_i);
-+}
-+
-+static int uniphier_u3hsphy_get_nvparam(struct uniphier_u3hsphy_priv *priv,
-+					const char *name, unsigned int *val)
-+{
-+	struct nvmem_cell *cell;
-+	u8 *buf;
-+
-+	cell = devm_nvmem_cell_get(priv->dev, name);
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	buf = nvmem_cell_read(cell, NULL);
-+	if (IS_ERR(buf))
-+		return PTR_ERR(buf);
-+
-+	*val = *buf;
-+
-+	kfree(buf);
-+
-+	return 0;
-+}
-+
-+static int uniphier_u3hsphy_get_nvparams(struct uniphier_u3hsphy_priv *priv,
-+					 struct uniphier_u3hsphy_trim_param *pt)
-+{
-+	int ret;
-+
-+	ret = uniphier_u3hsphy_get_nvparam(priv, "rterm", &pt->rterm);
-+	if (ret)
-+		return ret;
-+
-+	ret = uniphier_u3hsphy_get_nvparam(priv, "sel_t", &pt->sel_t);
-+	if (ret)
-+		return ret;
-+
-+	ret = uniphier_u3hsphy_get_nvparam(priv, "hs_i", &pt->hs_i);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int uniphier_u3hsphy_update_config(struct uniphier_u3hsphy_priv *priv,
-+					  u32 *pconfig)
-+{
-+	struct uniphier_u3hsphy_trim_param trim;
-+	int ret, trimmed = 0;
-+
-+	if (priv->data->trim_func) {
-+		ret = uniphier_u3hsphy_get_nvparams(priv, &trim);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+
-+		/*
-+		 * call trim_func only when trimming parameters that aren't
-+		 * all-zero can be acquired. All-zero parameters mean nothing
-+		 * has been written to nvmem.
-+		 */
-+		if (!ret && trim_param_is_valid(&trim)) {
-+			priv->data->trim_func(priv, pconfig, &trim);
-+			trimmed = 1;
-+		} else {
-+			dev_dbg(priv->dev, "can't get parameter from nvmem\n");
-+		}
-+	}
-+
-+	/* use default parameters without trimming values */
-+	if (!trimmed) {
-+		*pconfig &= ~HSPHY_CFG0_HSDISC_MASK;
-+		*pconfig |= FIELD_PREP(HSPHY_CFG0_HSDISC_MASK, 3);
-+	}
-+
-+	return 0;
-+}
-+
-+static void uniphier_u3hsphy_set_param(struct uniphier_u3hsphy_priv *priv,
-+				       const struct uniphier_u3hsphy_param *p)
-+{
-+	u32 val;
-+
-+	val = readl(priv->base + HSPHY_CFG1);
-+	val &= ~HSPHY_CFG1_ADR_MASK;
-+	val |= FIELD_PREP(HSPHY_CFG1_ADR_MASK, p->addr) | HSPHY_CFG1_ADR_EN;
-+	writel(val, priv->base + HSPHY_CFG1);
-+
-+	val = readl(priv->base + HSPHY_CFG1);
-+	val &= ~HSPHY_CFG1_ADR_EN;
-+	writel(val, priv->base + HSPHY_CFG1);
-+
-+	val = readl(priv->base + HSPHY_CFG1);
-+	val &= ~FIELD_PREP(HSPHY_CFG1_DAT_MASK, p->mask);
-+	val |=  FIELD_PREP(HSPHY_CFG1_DAT_MASK, p->val) | HSPHY_CFG1_DAT_EN;
-+	writel(val, priv->base + HSPHY_CFG1);
-+
-+	val = readl(priv->base + HSPHY_CFG1);
-+	val &= ~HSPHY_CFG1_DAT_EN;
-+	writel(val, priv->base + HSPHY_CFG1);
-+}
-+
-+static int uniphier_u3hsphy_init(struct phy *phy)
-+{
-+	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-+	u32 config0, config1;
-+	int i, ret;
-+
-+	ret = clk_prepare_enable(priv->clk_phy_ext);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(priv->clk_phy);
-+	if (ret)
-+		goto out_clk_ext_disable;
-+
-+	ret = reset_control_deassert(priv->rst_phy);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	if (!priv->data->config0 && !priv->data->config1)
-+		return 0;
-+
-+	config0 = priv->data->config0;
-+	config1 = priv->data->config1;
-+
-+	ret = uniphier_u3hsphy_update_config(priv, &config0);
-+	if (ret)
-+		goto out_rst_assert;
-+
-+	writel(config0, priv->base + HSPHY_CFG0);
-+	writel(config1, priv->base + HSPHY_CFG1);
-+
-+	for (i = 0; i < priv->data->nparams; i++)
-+		uniphier_u3hsphy_set_param(priv, &priv->data->param[i]);
-+
-+	return 0;
-+
-+out_rst_assert:
-+	reset_control_assert(priv->rst_phy);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk_phy);
-+out_clk_ext_disable:
-+	clk_disable_unprepare(priv->clk_phy_ext);
-+
-+	return ret;
-+}
-+
-+static int uniphier_u3hsphy_exit(struct phy *phy)
-+{
-+	struct uniphier_u3hsphy_priv *priv = phy_get_drvdata(phy);
-+
-+	reset_control_assert(priv->rst_phy);
-+	clk_disable_unprepare(priv->clk_phy);
-+	clk_disable_unprepare(priv->clk_phy_ext);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops uniphier_u3hsphy_ops = {
-+	.init           = uniphier_u3hsphy_init,
-+	.exit           = uniphier_u3hsphy_exit,
-+	.owner          = THIS_MODULE,
-+};
-+
-+static int uniphier_u3hsphy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_u3hsphy_priv *priv;
-+	struct phy_provider *phy_provider;
-+	struct resource *res;
-+	struct phy *phy;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	const char *name;
-+	int i, ret, nc, nr;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	priv->data = of_device_get_match_data(dev);
-+	if (WARN_ON(!priv->data ||
-+		    priv->data->nparams > MAX_PHY_PARAMS))
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	for (i = 0; i < MAX_CLKS; i++) {
-+		name = priv->data->clock_names[i];
-+		if (!name)
-+			break;
-+		clk = devm_clk_get(dev, name);
-+		/* "phy-ext" is optional */
-+		if (!strcmp(name, "phy-ext")) {
-+			if (PTR_ERR(clk) == -ENOENT)
-+				clk = NULL;
-+			priv->clk_phy_ext = clk;
-+		} else if (!strcmp(name, "phy")) {
-+			priv->clk_phy = clk;
-+		} else {
-+			priv->clk[priv->nclks++] = clk;
-+		}
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+	}
-+
-+	for (i = 0; i < MAX_RSTS; i++) {
-+		name = priv->data->reset_names[i];
-+		if (!name)
-+			break;
-+		rst = devm_reset_control_get_shared(dev, name);
-+		if (IS_ERR(rst))
-+			return PTR_ERR(rst);
-+
-+		if (!strcmp(name, "phy"))
-+			priv->rst_phy = rst;
-+		else
-+			priv->rst[priv->nrsts++] = rst;
-+	}
-+
-+	phy = devm_phy_create(dev, dev->of_node, &uniphier_u3hsphy_ops);
-+	if (IS_ERR(phy))
-+		return PTR_ERR(phy);
-+
-+	for (nc = 0; nc < priv->nclks; nc++) {
-+		ret = clk_prepare_enable(priv->clk[nc]);
-+		if (ret)
-+			goto out_clk_disable;
-+	}
-+
-+	for (nr = 0; nr < priv->nrsts; nr++) {
-+		ret = reset_control_deassert(priv->rst[nr]);
-+		if (ret)
-+			goto out_rst_assert;
-+	}
-+
-+	platform_set_drvdata(pdev, priv);
-+	phy_set_drvdata(phy, priv);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider)) {
-+		ret = PTR_ERR(phy_provider);
-+		goto out_rst_assert;
-+	}
-+
-+	return 0;
-+
-+out_rst_assert:
-+	while (nr--)
-+		reset_control_assert(priv->rst[nr]);
-+out_clk_disable:
-+	while (nc--)
-+		clk_disable_unprepare(priv->clk[nc]);
-+
-+	return ret;
-+}
-+
-+static int uniphier_u3hsphy_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_u3hsphy_priv *priv = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < priv->nrsts; i++)
-+		reset_control_assert(priv->rst[i]);
-+	for (i = 0; i < priv->nclks; i++)
-+		clk_disable_unprepare(priv->clk[i]);
-+
-+	return 0;
-+}
-+
-+static const struct uniphier_u3hsphy_soc_data uniphier_pxs2_data = {
-+	.clock_names = { "link", "phy", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 0,
-+};
-+
-+static const struct uniphier_u3hsphy_soc_data uniphier_ld20_data = {
-+	.clock_names = { "link", "phy", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 1,
-+	.param = {
-+		{ 10, 0x60, 0x60 },
-+	},
-+	.trim_func = uniphier_u3hsphy_trim_ld20,
-+	.config0 = 0x92316680,
-+	.config1 = 0x00000106,
-+};
-+
-+static const struct uniphier_u3hsphy_soc_data uniphier_pxs3_data = {
-+	.clock_names = { "link", "phy", "phy-ext", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 0,
-+	.trim_func = uniphier_u3hsphy_trim_ld20,
-+	.config0 = 0x92316680,
-+	.config1 = 0x00000106,
-+};
-+
-+static const struct of_device_id uniphier_u3hsphy_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-pxs2-usb3-hsphy",
-+		.data = &uniphier_pxs2_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-usb3-hsphy",
-+		.data = &uniphier_ld20_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs3-usb3-hsphy",
-+		.data = &uniphier_pxs3_data,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_u3hsphy_match);
-+
-+static struct platform_driver uniphier_u3hsphy_driver = {
-+	.probe = uniphier_u3hsphy_probe,
-+	.remove = uniphier_u3hsphy_remove,
-+	.driver	= {
-+		.name = "uniphier-usb3-hsphy",
-+		.of_match_table	= uniphier_u3hsphy_match,
-+	},
-+};
-+
-+module_platform_driver(uniphier_u3hsphy_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier HS-PHY driver for USB3 controller");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/phy/socionext/phy-uniphier-usb3ss.c b/drivers/phy/socionext/phy-uniphier-usb3ss.c
-new file mode 100644
-index 0000000..6c2fc36
---- /dev/null
-+++ b/drivers/phy/socionext/phy-uniphier-usb3ss.c
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * phy-uniphier-usb3ss.c - SS-PHY driver for Socionext UniPhier USB3 controller
-+ * Copyright 2015-2018 Socionext Inc.
-+ * Author:
-+ *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-+ * Contributors:
-+ *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-+ *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset.h>
-+
-+#define SSPHY_TESTI		0x0
-+#define SSPHY_TESTO		0x4
-+#define TESTI_DAT_MASK		GENMASK(13, 6)
-+#define TESTI_ADR_MASK		GENMASK(5, 1)
-+#define TESTI_WR_EN		BIT(0)
-+
-+#define MAX_CLKS	3
-+#define MAX_RSTS	2
-+#define MAX_PHY_PARAMS	7
-+
-+struct uniphier_u3ssphy_param {
-+	u32 addr;
-+	u32 mask;
-+	u32 val;
-+};
-+
-+struct uniphier_u3ssphy_priv {
-+	struct device *dev;
-+	void __iomem *base;
-+	int nclks;
-+	struct clk *clk[MAX_CLKS], *clk_phy, *clk_phy_ext;
-+	int nrsts;
-+	struct reset_control *rst[MAX_RSTS], *rst_phy;
-+	const struct uniphier_u3ssphy_soc_data *data;
-+};
-+
-+struct uniphier_u3ssphy_soc_data {
-+	const char *clock_names[MAX_CLKS];
-+	const char *reset_names[MAX_RSTS];
-+	int nparams;
-+	const struct uniphier_u3ssphy_param param[MAX_PHY_PARAMS];
-+	bool is_legacy;
-+};
-+
-+static void uniphier_u3ssphy_testio_write(struct uniphier_u3ssphy_priv *priv,
-+					  u32 data)
-+{
-+	/* need to read TESTO twice after accessing TESTI */
-+	writel(data, priv->base + SSPHY_TESTI);
-+	readl(priv->base + SSPHY_TESTI);
-+	readl(priv->base + SSPHY_TESTI);
-+}
-+
-+static void uniphier_u3ssphy_set_param(struct uniphier_u3ssphy_priv *priv,
-+				       const struct uniphier_u3ssphy_param *p)
-+{
-+	u32 val, val_prev;
-+
-+	/* read previous data */
-+	val  = FIELD_PREP(TESTI_DAT_MASK, 1);
-+	val |= FIELD_PREP(TESTI_ADR_MASK, p->addr);
-+	uniphier_u3ssphy_testio_write(priv, val);
-+	val_prev = readl(priv->base + SSPHY_TESTO);
-+
-+	/* update value */
-+	val  = FIELD_PREP(TESTI_DAT_MASK,
-+			  (val_prev & ~p->mask) | (p->val & p->mask));
-+	val |= FIELD_PREP(TESTI_ADR_MASK, p->addr);
-+	uniphier_u3ssphy_testio_write(priv, val);
-+	uniphier_u3ssphy_testio_write(priv, val | TESTI_WR_EN);
-+	uniphier_u3ssphy_testio_write(priv, val);
-+
-+	/* read current data as dummy */
-+	val  = FIELD_PREP(TESTI_DAT_MASK, 1);
-+	val |= FIELD_PREP(TESTI_ADR_MASK, p->addr);
-+	uniphier_u3ssphy_testio_write(priv, val);
-+	readl(priv->base + SSPHY_TESTO);
-+}
-+
-+static void
-+uniphier_u3ssphy_legacy_testio_write(struct uniphier_u3ssphy_priv *priv,
-+				     u32 data)
-+{
-+	int i;
-+
-+	/* need to read TESTO 10 times after accessing TESTI */
-+	writel(data, priv->base + SSPHY_TESTI);
-+	for (i = 0; i < 10; i++)
-+		readl(priv->base + SSPHY_TESTO);
-+}
-+
-+static void
-+uniphier_u3ssphy_legacy_set_param(struct uniphier_u3ssphy_priv *priv,
-+				  const struct uniphier_u3ssphy_param *p)
-+{
-+	u32 val;
-+
-+	val  = FIELD_PREP(TESTI_DAT_MASK, p->val & p->mask);
-+	val |= FIELD_PREP(TESTI_ADR_MASK, p->addr);
-+	uniphier_u3ssphy_legacy_testio_write(priv, val);
-+	uniphier_u3ssphy_legacy_testio_write(priv, val | TESTI_WR_EN);
-+	uniphier_u3ssphy_legacy_testio_write(priv, val);
-+}
-+
-+static int uniphier_u3ssphy_init(struct phy *phy)
-+{
-+	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-+	int i, ret;
-+
-+	ret = clk_prepare_enable(priv->clk_phy_ext);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(priv->clk_phy);
-+	if (ret)
-+		goto out_clk_ext_disable;
-+
-+	ret = reset_control_deassert(priv->rst_phy);
-+	if (ret)
-+		goto out_clk_disable;
-+
-+	for (i = 0; i < priv->data->nparams; i++)
-+		if (priv->data->is_legacy)
-+			uniphier_u3ssphy_legacy_set_param(priv,
-+							&priv->data->param[i]);
-+		else
-+			uniphier_u3ssphy_set_param(priv,
-+						   &priv->data->param[i]);
-+
-+	return 0;
-+
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk_phy);
-+out_clk_ext_disable:
-+	clk_disable_unprepare(priv->clk_phy_ext);
-+
-+	return ret;
-+}
-+
-+static int uniphier_u3ssphy_exit(struct phy *phy)
-+{
-+	struct uniphier_u3ssphy_priv *priv = phy_get_drvdata(phy);
-+
-+	reset_control_assert(priv->rst_phy);
-+	clk_disable_unprepare(priv->clk_phy);
-+	clk_disable_unprepare(priv->clk_phy_ext);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops uniphier_u3ssphy_ops = {
-+	.init           = uniphier_u3ssphy_init,
-+	.exit           = uniphier_u3ssphy_exit,
-+	.owner          = THIS_MODULE,
-+};
-+
-+static int uniphier_u3ssphy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct uniphier_u3ssphy_priv *priv;
-+	struct phy_provider *phy_provider;
-+	struct resource *res;
-+	struct phy *phy;
-+	struct clk *clk;
-+	struct reset_control *rst;
-+	const char *name;
-+	int i, ret, nc, nr;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	priv->data = of_device_get_match_data(dev);
-+	if (WARN_ON(!priv->data ||
-+		    priv->data->nparams > MAX_PHY_PARAMS))
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	priv->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	for (i = 0; i < MAX_CLKS; i++) {
-+		name = priv->data->clock_names[i];
-+		if (!name)
-+			break;
-+		clk = devm_clk_get(dev, name);
-+		/* "phy-ext" is optional */
-+		if (!strcmp(name, "phy-ext")) {
-+			if (PTR_ERR(clk) == -ENOENT)
-+				clk = NULL;
-+			priv->clk_phy_ext = clk;
-+		} else if (!strcmp(name, "phy")) {
-+			priv->clk_phy = clk;
-+		} else {
-+			priv->clk[priv->nclks++] = clk;
-+		}
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+	}
-+
-+	for (i = 0; i < MAX_RSTS; i++) {
-+		name = priv->data->reset_names[i];
-+		if (!name)
-+			break;
-+		rst = devm_reset_control_get_shared(dev, name);
-+		if (IS_ERR(rst))
-+			return PTR_ERR(rst);
-+
-+		if (!strcmp(name, "phy"))
-+			priv->rst_phy = rst;
-+		else
-+			priv->rst[priv->nrsts++] = rst;
-+	}
-+
-+	phy = devm_phy_create(dev, dev->of_node, &uniphier_u3ssphy_ops);
-+	if (IS_ERR(phy))
-+		return PTR_ERR(phy);
-+
-+	for (nc = 0; nc < priv->nclks; nc++) {
-+		ret = clk_prepare_enable(priv->clk[nc]);
-+		if (ret)
-+			goto out_clk_disable;
-+	}
-+
-+	for (nr = 0; nr < priv->nrsts; nr++) {
-+		ret = reset_control_deassert(priv->rst[nr]);
-+		if (ret)
-+			goto out_rst_assert;
-+	}
-+
-+	platform_set_drvdata(pdev, priv);
-+	phy_set_drvdata(phy, priv);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider)) {
-+		ret = PTR_ERR(phy_provider);
-+		goto out_rst_assert;
-+	}
-+
-+	return 0;
-+
-+out_rst_assert:
-+	while (nr--)
-+		reset_control_assert(priv->rst[nr]);
-+out_clk_disable:
-+	while (nc--)
-+		clk_disable_unprepare(priv->clk[nc]);
-+
-+	return ret;
-+}
-+
-+static int uniphier_u3ssphy_remove(struct platform_device *pdev)
-+{
-+	struct uniphier_u3ssphy_priv *priv = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < priv->nrsts; i++)
-+		reset_control_assert(priv->rst[i]);
-+	for (i = 0; i < priv->nclks; i++)
-+		clk_disable_unprepare(priv->clk[i]);
-+
-+	return 0;
-+}
-+
-+static const struct uniphier_u3ssphy_soc_data uniphier_pro4_data = {
-+	.clock_names = { "gio", "link", },
-+	.reset_names = { "gio", "link", },
-+	.nparams = 7,
-+	.param = {
-+		{  0, 0x0f, 0x04 },
-+		{  3, 0x0f, 0x08 },
-+		{  5, 0x0f, 0x08 },
-+		{  6, 0x0f, 0x07 },
-+		{  7, 0x0f, 0x02 },
-+		{ 28, 0x0f, 0x0a },
-+		{ 30, 0x0f, 0x09 },
-+	},
-+	.is_legacy = true,
-+};
-+
-+static const struct uniphier_u3ssphy_soc_data uniphier_pxs2_data = {
-+	.clock_names = { "link", "phy", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 7,
-+	.param = {
-+		{  7, 0x0f, 0x0a },
-+		{  8, 0x0f, 0x03 },
-+		{  9, 0x0f, 0x05 },
-+		{ 11, 0x0f, 0x09 },
-+		{ 13, 0x60, 0x40 },
-+		{ 27, 0x07, 0x07 },
-+		{ 28, 0x03, 0x01 },
-+	},
-+	.is_legacy = false,
-+};
-+
-+static const struct uniphier_u3ssphy_soc_data uniphier_ld20_data = {
-+	.clock_names = { "link", "phy", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 3,
-+	.param = {
-+		{  7, 0x0f, 0x06 },
-+		{ 13, 0xff, 0xcc },
-+		{ 26, 0xf0, 0x50 },
-+	},
-+	.is_legacy = false,
-+};
-+
-+static const struct uniphier_u3ssphy_soc_data uniphier_pxs3_data = {
-+	.clock_names = { "link", "phy", "phy-ext", },
-+	.reset_names = { "link", "phy", },
-+	.nparams = 3,
-+	.param = {
-+		{  7, 0x0f, 0x06 },
-+		{ 13, 0xff, 0xcc },
-+		{ 26, 0xf0, 0x50 },
-+	},
-+	.is_legacy = false,
-+};
-+
-+static const struct of_device_id uniphier_u3ssphy_match[] = {
-+	{
-+		.compatible = "socionext,uniphier-pro4-usb3-ssphy",
-+		.data = &uniphier_pro4_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs2-usb3-ssphy",
-+		.data = &uniphier_pxs2_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-ld20-usb3-ssphy",
-+		.data = &uniphier_ld20_data,
-+	},
-+	{
-+		.compatible = "socionext,uniphier-pxs3-usb3-ssphy",
-+		.data = &uniphier_pxs3_data,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, uniphier_u3ssphy_match);
-+
-+static struct platform_driver uniphier_u3ssphy_driver = {
-+	.probe = uniphier_u3ssphy_probe,
-+	.remove = uniphier_u3ssphy_remove,
-+	.driver	= {
-+		.name = "uniphier-usb3-ssphy",
-+		.of_match_table	= uniphier_u3ssphy_match,
-+	},
-+};
-+
-+module_platform_driver(uniphier_u3ssphy_driver);
-+
-+MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
-+MODULE_DESCRIPTION("UniPhier SS-PHY driver for USB3 controller");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
+SGksIEx1Y2FzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRvOmwuc3RhY2hAcGVu
+Z3V0cm9uaXguZGVdDQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyOSwgMjAxOCA0OjM5IFBNDQo+IFRv
+OiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IHNoYXduZ3VvQGtlcm5lbC5vcmc7
+DQo+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgRmFiaW8g
+RXN0ZXZhbQ0KPiA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3JnOyBt
+YXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZw0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSF0gQVJNOiBkdHM6IGlteDY6IGNvcnJlY3QgYW5hdG9wIHJlZ3VsYXRvcnMg
+cmFuZ2UNCj4gDQo+IEFtIEZyZWl0YWcsIGRlbiAyOS4wNi4yMDE4LCAwODoyNyArMDAwMCBzY2hy
+aWViIEFuc29uIEh1YW5nOg0KPiA+IEhpLCBMdWNhcw0KPiA+DQo+ID4gQW5zb24gSHVhbmcNCj4g
+PiBCZXN0IFJlZ2FyZHMhDQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gPiA+ID4gPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRvOmwuc3RhY2hAcGVuZ3V0cm9u
+aXguZGVdDQo+ID4gPiBTZW50OiBGcmlkYXksIEp1bmUgMjksIDIwMTggNDoxNSBQTQ0KPiA+ID4g
+PiA+ID4gPiBUbzogQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBzaGF3bmd1b0Br
+ZXJuZWwub3JnOw0KPiA+ID4gPiA+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5n
+dXRyb25peC5kZTsgRmFiaW8gRXN0ZXZhbQ0KPiA+ID4gPiA+ID4gPiA+ID4gPGZhYmlvLmVzdGV2
+YW1AbnhwLmNvbT47IHJvYmgrZHRAa2VybmVsLm9yZzsNCj4gPiA+ID4gPiA+ID4gPiA+IG1hcmsu
+cnV0bGFuZEBhcm0uY29tOw0KPiA+ID4gPiA+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZzsNCj4gPiA+ID4gPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4gPiBDYzogZGwtbGludXgtaW14IDxs
+aW51eC1pbXhAbnhwLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEFSTTogZHRzOiBp
+bXg2OiBjb3JyZWN0IGFuYXRvcCByZWd1bGF0b3JzIHJhbmdlDQo+ID4gPg0KPiA+ID4gQW0gRnJl
+aXRhZywgZGVuIDI5LjA2LjIwMTgsIDE1OjU0ICswODAwIHNjaHJpZWIgQW5zb24gSHVhbmc6DQo+
+ID4gPiA+IENvcnJlY3Qgc29tZSBpLk1YNiBTb0NzIGFuYXRvcCByZWd1bGF0b3JzIHJhbmdlIGFj
+Y29yZGluZyB0bw0KPiA+ID4gPiByZWZlcmVuY2UgbWFudWFsLg0KPiA+ID4gPg0KPiA+ID4gPiBT
+aWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gPiA+DQo+
+ID4gPiBOQUNLLg0KPiA+ID4NCj4gPiA+IFRoaXMgaXMgd3JvbmcuIFdoaWxlIHRoZSByZWd1bGF0
+b3Igc3VwcG9ydHMgdGhpcyByYW5nZSwgdGhlIFNvQw0KPiA+ID4gZG9lc24ndC7CoFRoZSBjdXJy
+ZW50IHNldHRpbmdzIGFyZSBkZXJpdmVkIGZyb20gdGhlIGFsbG93ZWQgb3BlcmF0aW5nDQo+ID4g
+PiByYW5nZXMgb2YgdGhlIFNvQyAoYXQgbGVhc3QgZm9yIHRoZSBNWDZRREwpLCB3aGljaCBpcyBp
+biBhY2NvcmRhbmNlDQo+ID4gPiB3aXRoIGhvdyByZWd1bGF0b3IgY29uc3RyYWludHMgaW4gRFQg
+YXJlIG1lYW50IHRvIGJlIHVzZWQuDQo+ID4NCj4gPg0KPiA+IFVuZGVyc3RhbmQgdGhhdCBub3Jt
+YWxseSB0aGVzZSByZWd1bGF0b3JzJyB2b2x0YWdlIGFyZSBOT1QgYWRqdXN0ZWQsDQo+ID4gd2Ug
+anVzdCB1c2UgdGhlIGRlZmF1bHQgdmFsdWUsIGxldCdzIGp1c3QgY2FsbCB0aGUgb3BlcmF0aW5n
+IHJhbmdlIG9mDQo+ID4gdGhlIFNvQyAiU29DIHJhbmdlIiwgbXkgaW50ZW50aW9uIGlzIHRvIG1h
+a2UgYWxsIGkuTVg2J3MgYW5hdG9wDQo+ID4gcmVndWxhdG9yIHNldHRpbmdzIGFsaWduZWQgc2lu
+Y2UgdGhleSBhcmUgaW4gc2FtZSBzZXJpZXMsIEkgc2F3IHNvbWUNCj4gPiBpLk1YNiBTb0NzIHVz
+ZSBzYW1lIFNvQyByYW5nZSBhcyBhbmF0b3AgbGRvIHJhbmdlLCBidXQgc29tZSBhcmUgTk9ULA0K
+PiA+IGxpa2UgaW14NnFkbC9pbXg2c3gvaW14NnNsIHVzZSBkaWZmZXJlbnQgU29DIHJhbmdlIHRo
+YW4gYW5hdG9wIGxkbw0KPiA+IHJhbmdlLCBidXQgaW14NnVsL3VsbC9zbGwgdXNlIHNhbWUgcmVn
+dWxhdG9yIHJhbmdlIGFzIGFuYXRvcCBsZG8sIGFuZA0KPiA+IHJlZ3VsYXRvciAxcDEvMnA1LzNw
+MCBhbHNvIGhhdmUgZGlmZmVyZW50IHNldHRpbmdzLCBzb21lIGFyZSB1c2UgU29DIHJhbmdlDQo+
+IGFuZCBzb21lIGFyZSBqdXN0IHNhbWUgYXMgYW5hdG9wIGxkbyByYW5nZS4uLi50aGlzIGxvb2tz
+IHJlYWxseSBjb25mdXNlZC4NCj4gPg0KPiA+IFNvLCBkbyB5b3UgdGhpbmsgd2UgY2FuIGFkanVz
+dCB0aGUgaW14NnVsL3VsbC9zbGwncyByZWd1bGF0b3IgcmFuZ2UgdG8NCj4gPiBiZSBTb0MgcmFu
+Z2UgcmF0aGVyIHRoYW4gYW5hdG9wIGxkbyByYW5nZT8gQW5kIGhvdyB0byBkZWZpbmUgdGhlIFNv
+Qw0KPiA+IHJhbmdlPyBMaWtlIHRoZSAxcDEgbGRvIHJhbmdlLCBob3cgZG8gd2Uga25vdyB3aGlj
+aCByYW5nZSBpcyBmaW5lPyBBcyBJIHNhdw0KPiBpdCBpcyAxdiB+IDEuMnYgb24gaW14NnFkbCwg
+YnV0IDAuOHYgfiAxLjM3NXYgb24gaW14NnNsPw0KPiANCj4gSWYgeW91IHdhbnQgdG8gYWxpZ24g
+dGhvc2Ugdm9sdGFnZXMgdG8gc29tZXRoaW5nIHRoZW4gaXQncyBkZWZpbml0ZWx5IHRoZSBTb0MN
+Cj4gcmFuZ2UgeW91IHdhbnQgdG8gdXNlLiBUaGlzIGlzIGhvdyB0aGUgY29uc3RyYWludHMgYXJl
+IHNwZWNpZmllZCBpbiB0aGUgRFQNCj4gYmluZGluZywgYXMgYmVpbmcgdGhlIGFsbG93ZWQgdm9s
+dGFnZSByYW5nZSB0aGF0IHdvbid0IGRhbWFnZSBhbnkgb2YgdGhlDQo+IGF0dGFjaGVkIGNvbnN1
+bWVycy4NCj4gDQo+IFBsZWFzZSBhbGlnbiB0aGUgY29uc3RyYWludHMgdG8gdGhlIG9wZXJhdGlu
+ZyByYW5nZXMsIGFzIHNwZWNpZmllZCBpbiB0aGUNCj4gZGF0YXNoZWV0LiBGb3IgZXhhbXBsZSBh
+biBleGNlcnB0IGZyb20gdGhlIGkuTVg2U0wgZGF0YXNoZWV0Og0KPiANCj4gIjQuMy4yLjEgUmVn
+dWxhdG9ycyBmb3IgQW5hbG9nIE1vZHVsZXMNCj4gICBMRE9fMVAxDQo+ICAgIFsuLi5dIFR5cGlj
+YWwgUHJvZ3JhbW1pbmcgT3BlcmF0aW5nIFJhbmdlIGlzIDEuMCBWIHRvIDEuMiBWIHdpdGggdGhl
+DQo+IG5vbWluYWwgZGVmYXVsdCBzZXR0aW5nIGFzIDEuMSBWIg0KPiANCj4gU28gdGhlIHJhbmdl
+IGZvciAxcDEgTERPIG9uIGkuTVg2U0wgc2hvdWxkIGJlIDEuMFYgdG8gMS4yViwgd2hpY2ggaXMg
+dGhlIHNhbWUNCj4gYXMgaS5NWDZRREwuDQoNCk9LLCB0aGFua3MsIEkgd2lsbCBjaGVjayBhbGwg
+dGhlIGRhdGFzaGVldCBhbmQgcmV3b3JrIGEgcGF0Y2guDQoNCkFuc29uLg0KDQo+IA0KPiBSZWdh
+cmRzLA0KPiBMdWNhcw0K
