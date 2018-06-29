@@ -2,96 +2,114 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FC1C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53E8C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036FA27D90
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036FA27D90
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id A321E27D9F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A321E27D9F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935023AbeF2LFD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:05:03 -0400
-Received: from smtp08.smtpout.orange.fr ([80.12.242.130]:50551 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934510AbeF2LFB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:05:01 -0400
-Received: from belgarion ([90.55.203.186])
-        by mwinf5d15 with ME
-        id 4b4y1y00941oiFu03b4y1t; Fri, 29 Jun 2018 13:05:00 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Fri, 29 Jun 2018 13:05:00 +0200
-X-ME-IP: 90.55.203.186
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com, keescook@chromium.org,
-        allen.lkml@gmail.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
-References: <20180620035453.7721-1-baijiaju1990@gmail.com>
-        <87efh0o6f9.fsf@belgarion.home> <87y3eydrs1.fsf@linux.intel.com>
-        <87efgqkrzl.fsf@belgarion.home> <87k1qhevpd.fsf@linux.intel.com>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Fri, 29 Jun 2018 13:04:58 +0200
-In-Reply-To: <87k1qhevpd.fsf@linux.intel.com> (Felipe Balbi's message of "Fri,
-        29 Jun 2018 13:25:02 +0300")
-Message-ID: <87a7rdlup1.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        id S1755135AbeF2LGf (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:06:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:59778 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751114AbeF2LGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:06:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7324B18A;
+        Fri, 29 Jun 2018 04:06:32 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 424F53F266;
+        Fri, 29 Jun 2018 04:06:32 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A267F1AE540D; Fri, 29 Jun 2018 12:07:10 +0100 (BST)
+Date:   Fri, 29 Jun 2018 12:07:10 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Dave Martin <Dave.Martin@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
+ sanitizer
+Message-ID: <20180629110709.GA17859@arm.com>
+References: <cover.1530018818.git.andreyknvl@google.com>
+ <20180628105057.GA26019@e103592.cambridge.arm.com>
+ <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Felipe Balbi <balbi@kernel.org> writes:
+On Thu, Jun 28, 2018 at 08:56:41PM +0200, Andrey Konovalov wrote:
+> On Thu, Jun 28, 2018 at 12:51 PM, Dave Martin <Dave.Martin@arm.com> wrote:
+> > On Tue, Jun 26, 2018 at 03:15:10PM +0200, Andrey Konovalov wrote:
+> >> 1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
+> >>    tags in the top byte of each kernel pointer.
+> >
+> > [...]
+> >
+> > This is a change from the current situation, so the kernel may be
+> > making implicit assumptions about the top byte of kernel addresses.
+> >
+> > Randomising the top bits may cause things like address conversions and
+> > pointer arithmetic to break.
+> >
+> > For example, (q - p) will not produce the expected result if q and p
+> > have different tags.
+> 
+> If q and p have different tags, that means they come from different
+> allocations. I don't think it would make sense to calculate pointer
+> difference in this case.
 
-> Hi,
->
-> Robert Jarzmik <robert.jarzmik@free.fr> writes:
->>>>> The driver may sleep with holding a spinlock.
->>>>> The function call paths (from bottom to top) in Linux-4.16.7 are:
->>>>>
->>>>> [FUNC] msleep
->>>>> drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
->>>>> 		msleep in init_controller
->>>>> drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
->>>>> 		init_controller in r8a66597_usb_disconnect
->>>>> drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
->>>>> 		spin_lock in r8a66597_usb_disconnect
->>>>
->>>> That should not happen...
->>>>
->>>> If think the issue you have is that your usb_connect() and usb_disconnect() are
->>>> called from interrupt context. I think the proper fix, as what is done in most
->>>> udc phys, is to schedule a workqueue, see drivers/usb/phy/phy-gpio-vbus-usb.c,
->>>> gpio_vbus_data.vbus.
->>>
->>> argh, no. No workqueues needed here. Sorry
->> Technically why ?
->
-> well, strictly technically there's nothing wrong. But it opens a can of
-> worms. We've seen time and time again drivers growing into
-> unmaintainable mess because of workqueues being fired in several places.
-I see.
+It might not seen sensible, but we could still be relying on this in the
+kernel and so this change would introduce a regression. I think we need
+a way to identify such pointer usage before these patches can seriously be
+considered for mainline inclusion. For example use of '>' and '<' to
+compare pointers in an rbtree could be affected by the introduction of
+tags.
 
->>
->> And as bonus question, why is it better to have mdelay() calls in the driver ?
->
-> As a bugfix, it's the smallest fix possible, right? Ideally, we wouldn't
-> need either of them. Perhaps there's a bit which can be polled instead?
-Ideally yes. Do you remember if a "threaded interrupt" might use msleep() ? I
-seem to remember that they can, so won't that be another alternative ?
-
-Cheers.
-
--- 
-Robert
+Will
