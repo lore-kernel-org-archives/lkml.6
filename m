@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBD3C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587CCC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1436427C49
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 088AC27C57
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejhfNfyO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1436427C49
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d51FoqXk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088AC27C57
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965982AbeF2SxN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:53:13 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37121 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933159AbeF2SxI (ORCPT
+        id S966383AbeF2SxT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:53:19 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34834 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966019AbeF2SxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:53:08 -0400
-Received: by mail-pg0-f66.google.com with SMTP id n15-v6so1128093pgv.4;
-        Fri, 29 Jun 2018 11:53:08 -0700 (PDT)
+        Fri, 29 Jun 2018 14:53:14 -0400
+Received: by mail-pg0-f68.google.com with SMTP id i7-v6so4365801pgp.2;
+        Fri, 29 Jun 2018 11:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZpjQvMjInO59qUhw/rpU7CB0iK/MmgvhHGXRrtBPxXk=;
-        b=ejhfNfyO3pOjHaigKBNTDH2Ocd7w2l9HjVbHKriJy4ueh8VpzevItxZ0MoDQzfxu1w
-         KlhYinpHeOvskOrmJuQCcN7XN5GC9drnBT8cEAV+QXTuhlezZvhLJsby5CiaAFoox0Nh
-         rm5WALEwPO+/OySCWbc7g0SHP1oEmMpiElkR+DCuFWAbZzKMrc3li/d4OukYt6zyRSsv
-         5ts+I+YPpMnGe2ZWIum30Tpp8MGFvJebjm3tfGBXwswOXzfRtoBTpsHock6iVwaDYgVh
-         HJIsMScgtM8tGiE/EHo9euxLsVI6t0thF85Gz57+Wu/WXT0MSziygZWhSRCZupQf/sue
-         2ELg==
+        bh=CuIGhED2jdXBFC7K2MpWJj6A3G9cB5PC67WgszzYEdI=;
+        b=d51FoqXkKZAS1c+rwJsYgKX0GtnbOO/Y7zsLbpdSDPdYuRJngZAkguXbt9GPCJ8/+l
+         +3BKQhObBIAIvQvaMcpk7sR6gZ4FquDnZdzNZLZRo8RC01+tmNdjQwWWjs1URo6fhO/m
+         DfoJMkW82wjW9FQKwDbspV+YAFyXVqbbxv8x4p2PGbKCZmNCSdmaeF+JdPP+0ZUmyXqu
+         c9avMuzraCj9d55XW+VxTYc0wSyt/3d5yWJTlx3UQcgIZrXcxhFagKwnV5QtQoH/3S39
+         MNPw4sY65zlflQjLrydLvKQsQWQQceiThDbaAky9/YuUZ8Oz5FtU7cIEO+NtJPZgtgCv
+         6uJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZpjQvMjInO59qUhw/rpU7CB0iK/MmgvhHGXRrtBPxXk=;
-        b=XkUXWMr7IsJyjeNzuiyUYXJOgzwPTijDSMSsr+uRFNgGJhhSrijdcQN7mjHR4/Yc+H
-         8hCTCxzt8a3DEipixZEroUvnKeVXvDpqXD6s1eSkRrgvnvWjeMTG8J6K2sbud80gOjDx
-         cj1jasJjFV3p8YcBXqwG3xFYUncCgX3PX1C+w5LM1KOM3/hTewbncPIPg2Lr+HmXXKwU
-         5guOP9bJ2uLKfYtSVEuKohamEvlP4CAIrBVcd10RSfGcQBL00b7G07W1hjaFMegLJCgf
-         4Vs57CMeCnaAkT41Ui78aflMnNnvj+q18QwUkHwtZPn8qMNwctzcBbwtxUCsW0UbWrvW
-         XSww==
-X-Gm-Message-State: APt69E0D6JeqCO6pW0GBSGkrhjqcB4EvBNqQSChsZeizRJvRflaaPe8c
-        jt7nJEZmoyfpKxtd51oXNHfxfw==
-X-Google-Smtp-Source: AAOMgpdFPQWWvv8jFZdaOQefy2UVakJa8+uEFXY76X4xSYkOHBx/TN8yPkD1O4+xJYzGOHKGPuzCVg==
-X-Received: by 2002:a62:e813:: with SMTP id c19-v6mr2707475pfi.124.1530298387921;
-        Fri, 29 Jun 2018 11:53:07 -0700 (PDT)
+        bh=CuIGhED2jdXBFC7K2MpWJj6A3G9cB5PC67WgszzYEdI=;
+        b=srDvMEHPe06wYkxaCpTZeNQ9Zy9DDCst8dVfgoNcAvS5M+oQaEtlAQTEAxi8AqqGlj
+         JzRFuXgu8Ae2dr1aw+imggyxO7yh9JmryeDp7pkt+v67iLk3PlLe9B5D80MF/IlYM1Ux
+         9AP+mdLacC5OS1MPO+SRYuP9+0PpS/f/r2Vee18+nWuWebEQqC0OmtCV0lpeIROXNt73
+         UMG2Xm8IqveQBeTl+zGvfeNlhNe19E1HKsui6HJXVs3DIqOEy/7k88EwJ3u7F8UAgbvh
+         2nrscJIBFV1F4K4uMqIoRS3jjIGXTK3r1jfHuXu5F0C/i44NoTNvtHC1NPybutn3PYjp
+         0Gcw==
+X-Gm-Message-State: APt69E0lmpii6e+tOgTWYPKNTDOHXh06xPc7QvordOZ6MWdTxilvJnAO
+        XA8T2kKwWZCtxDHF5kPTyuPngw==
+X-Google-Smtp-Source: ADUXVKJ6tGRyqA1eYCIy+uAF1Ovc3jlqHb7MKRKrpgpTaTVCTIcxakhVzZQnIuREnuoLgdrLn8dhXQ==
+X-Received: by 2002:a63:7454:: with SMTP id e20-v6mr13925327pgn.410.1530298393119;
+        Fri, 29 Jun 2018 11:53:13 -0700 (PDT)
 Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.53.06
+        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.53.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 11:53:07 -0700 (PDT)
+        Fri, 29 Jun 2018 11:53:12 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 12/17] media: staging/imx: Rename root notifier
-Date:   Fri, 29 Jun 2018 11:49:56 -0700
-Message-Id: <1530298220-5097-13-git-send-email-steve_longerbeam@mentor.com>
+Subject: [PATCH v5 13/17] media: staging/imx: Switch to v4l2_async_notifier_add_*_subdev
+Date:   Fri, 29 Jun 2018 11:49:57 -0700
+Message-Id: <1530298220-5097-14-git-send-email-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
 References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
@@ -73,83 +73,259 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the imx-media root async notifier from "subdev_notifier" to
-simply "notifier", so as not to confuse it with true subdev notifiers.
-No functional changes.
+Switch to v4l2_async_notifier_add_*_subdev() when adding async subdevs
+to the imx-media root notifier. This removes the need to check for
+an already added asd, since v4l2_async_notifier_add_*_subdev() does this
+check. Also no need to allocate a subdevs array when registering the
+root notifier, or keeping an internal master asd_list, since this is
+moved to the notifier's asd_list.
 
 Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/staging/media/imx/imx-media-dev.c | 14 +++++++-------
- drivers/staging/media/imx/imx-media.h     |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/staging/media/imx/imx-media-dev.c         | 119 ++++++----------------
+ drivers/staging/media/imx/imx-media-internal-sd.c |   5 +-
+ drivers/staging/media/imx/imx-media.h             |   4 +-
+ 3 files changed, 34 insertions(+), 94 deletions(-)
 
 diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-index ae87c81..982e455 100644
+index 982e455..ab524e1 100644
 --- a/drivers/staging/media/imx/imx-media-dev.c
 +++ b/drivers/staging/media/imx/imx-media-dev.c
-@@ -29,7 +29,7 @@
- 
- static inline struct imx_media_dev *notifier2dev(struct v4l2_async_notifier *n)
- {
--	return container_of(n, struct imx_media_dev, subdev_notifier);
-+	return container_of(n, struct imx_media_dev, notifier);
+@@ -33,43 +33,10 @@ static inline struct imx_media_dev *notifier2dev(struct v4l2_async_notifier *n)
  }
  
  /*
-@@ -113,7 +113,7 @@ int imx_media_add_async_subdev(struct imx_media_dev *imxmd,
+- * Find an asd by fwnode or device name. This is called during
+- * driver load to form the async subdev list and bind them.
+- */
+-static struct v4l2_async_subdev *
+-find_async_subdev(struct imx_media_dev *imxmd,
+-		  struct fwnode_handle *fwnode,
+-		  const char *devname)
+-{
+-	struct imx_media_async_subdev *imxasd;
+-	struct v4l2_async_subdev *asd;
+-
+-	list_for_each_entry(imxasd, &imxmd->asd_list, list) {
+-		asd = &imxasd->asd;
+-		switch (asd->match_type) {
+-		case V4L2_ASYNC_MATCH_FWNODE:
+-			if (fwnode && asd->match.fwnode == fwnode)
+-				return asd;
+-			break;
+-		case V4L2_ASYNC_MATCH_DEVNAME:
+-			if (devname && !strcmp(asd->match.device_name,
+-					       devname))
+-				return asd;
+-			break;
+-		default:
+-			break;
+-		}
+-	}
+-
+-	return NULL;
+-}
+-
+-
+-/*
+- * Adds a subdev to the async subdev list. If fwnode is non-NULL, adds
+- * the async as a V4L2_ASYNC_MATCH_FWNODE match type, otherwise as
+- * a V4L2_ASYNC_MATCH_DEVNAME match type using the dev_name of the
+- * given platform_device. This is called during driver load when
++ * Adds a subdev to the root notifier's async subdev list. If fwnode is
++ * non-NULL, adds the async as a V4L2_ASYNC_MATCH_FWNODE match type,
++ * otherwise as a V4L2_ASYNC_MATCH_DEVNAME match type using the dev_name
++ * of the given platform_device. This is called during driver load when
+  * forming the async subdev list.
+  */
+ int imx_media_add_async_subdev(struct imx_media_dev *imxmd,
+@@ -80,47 +47,34 @@ int imx_media_add_async_subdev(struct imx_media_dev *imxmd,
+ 	struct imx_media_async_subdev *imxasd;
+ 	struct v4l2_async_subdev *asd;
+ 	const char *devname = NULL;
+-	int ret = 0;
+-
+-	mutex_lock(&imxmd->mutex);
++	int ret;
  
- 	list_add_tail(&imxasd->list, &imxmd->asd_list);
+-	if (pdev)
++	if (fwnode) {
++		asd = v4l2_async_notifier_add_fwnode_subdev(
++			&imxmd->notifier, fwnode, sizeof(*imxasd));
++	} else {
+ 		devname = dev_name(&pdev->dev);
+-
+-	/* return -EEXIST if this asd already added */
+-	if (find_async_subdev(imxmd, fwnode, devname)) {
+-		dev_dbg(imxmd->md.dev, "%s: already added %s\n",
+-			__func__, np ? np->name : devname);
+-		ret = -EEXIST;
+-		goto out;
+-	}
+-
+-	imxasd = devm_kzalloc(imxmd->md.dev, sizeof(*imxasd), GFP_KERNEL);
+-	if (!imxasd) {
+-		ret = -ENOMEM;
+-		goto out;
++		asd = v4l2_async_notifier_add_devname_subdev(
++			&imxmd->notifier, devname, sizeof(*imxasd));
+ 	}
+-	asd = &imxasd->asd;
  
--	imxmd->subdev_notifier.num_subdevs++;
-+	imxmd->notifier.num_subdevs++;
+-	if (fwnode) {
+-		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
+-		asd->match.fwnode = fwnode;
+-	} else {
+-		asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
+-		asd->match.device_name = devname;
+-		imxasd->pdev = pdev;
++	if (IS_ERR(asd)) {
++		ret = PTR_ERR(asd);
++		if (ret == -EEXIST)
++			dev_dbg(imxmd->md.dev, "%s: already added %s\n",
++				__func__, np ? np->name : devname);
++		return ret;
+ 	}
+ 
+-	list_add_tail(&imxasd->list, &imxmd->asd_list);
++	imxasd = to_imx_media_asd(asd);
+ 
+-	imxmd->notifier.num_subdevs++;
++	if (devname)
++		imxasd->pdev = pdev;
  
  	dev_dbg(imxmd->md.dev, "%s: added %s, match type %s\n",
  		__func__, np ? np->name : devname, np ? "FWNODE" : "DEVNAME");
-@@ -532,7 +532,7 @@ static int imx_media_probe(struct platform_device *pdev)
- 		goto unreg_dev;
- 	}
  
--	num_subdevs = imxmd->subdev_notifier.num_subdevs;
-+	num_subdevs = imxmd->notifier.num_subdevs;
+-out:
+-	mutex_unlock(&imxmd->mutex);
+-	return ret;
++	return 0;
+ }
  
- 	/* no subdevs? just bail */
- 	if (num_subdevs == 0) {
-@@ -552,10 +552,10 @@ static int imx_media_probe(struct platform_device *pdev)
- 		subdevs[i++] = &imxasd->asd;
+ /*
+@@ -483,10 +437,8 @@ static int imx_media_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = dev->of_node;
+-	struct imx_media_async_subdev *imxasd;
+-	struct v4l2_async_subdev **subdevs;
+ 	struct imx_media_dev *imxmd;
+-	int num_subdevs, i, ret;
++	int ret;
  
- 	/* prepare the async subdev notifier and register it */
--	imxmd->subdev_notifier.subdevs = subdevs;
--	imxmd->subdev_notifier.ops = &imx_media_subdev_ops;
-+	imxmd->notifier.subdevs = subdevs;
-+	imxmd->notifier.ops = &imx_media_subdev_ops;
- 	ret = v4l2_async_notifier_register(&imxmd->v4l2_dev,
--					   &imxmd->subdev_notifier);
-+					   &imxmd->notifier);
+ 	imxmd = devm_kzalloc(dev, sizeof(*imxmd), GFP_KERNEL);
+ 	if (!imxmd)
+@@ -515,44 +467,29 @@ static int imx_media_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(imxmd->v4l2_dev.dev, imxmd);
+ 
+-	INIT_LIST_HEAD(&imxmd->asd_list);
+ 	INIT_LIST_HEAD(&imxmd->vdev_list);
+ 
+ 	ret = imx_media_add_of_subdevs(imxmd, node);
  	if (ret) {
  		v4l2_err(&imxmd->v4l2_dev,
- 			 "v4l2_async_notifier_register failed with %d\n", ret);
-@@ -580,7 +580,7 @@ static int imx_media_remove(struct platform_device *pdev)
+ 			 "add_of_subdevs failed with %d\n", ret);
+-		goto unreg_dev;
++		goto notifier_cleanup;
+ 	}
  
- 	v4l2_info(&imxmd->v4l2_dev, "Removing imx-media\n");
+ 	ret = imx_media_add_internal_subdevs(imxmd);
+ 	if (ret) {
+ 		v4l2_err(&imxmd->v4l2_dev,
+ 			 "add_internal_subdevs failed with %d\n", ret);
+-		goto unreg_dev;
++		goto notifier_cleanup;
+ 	}
  
--	v4l2_async_notifier_unregister(&imxmd->subdev_notifier);
-+	v4l2_async_notifier_unregister(&imxmd->notifier);
+-	num_subdevs = imxmd->notifier.num_subdevs;
+-
+ 	/* no subdevs? just bail */
+-	if (num_subdevs == 0) {
++	if (imxmd->notifier.num_subdevs == 0) {
+ 		ret = -ENODEV;
+-		goto unreg_dev;
++		goto notifier_cleanup;
+ 	}
+ 
+-	subdevs = devm_kcalloc(imxmd->md.dev, num_subdevs, sizeof(*subdevs),
+-			       GFP_KERNEL);
+-	if (!subdevs) {
+-		ret = -ENOMEM;
+-		goto unreg_dev;
+-	}
+-
+-	i = 0;
+-	list_for_each_entry(imxasd, &imxmd->asd_list, list)
+-		subdevs[i++] = &imxasd->asd;
+-
+ 	/* prepare the async subdev notifier and register it */
+-	imxmd->notifier.subdevs = subdevs;
+ 	imxmd->notifier.ops = &imx_media_subdev_ops;
+ 	ret = v4l2_async_notifier_register(&imxmd->v4l2_dev,
+ 					   &imxmd->notifier);
+@@ -566,7 +503,8 @@ static int imx_media_probe(struct platform_device *pdev)
+ 
+ del_int:
  	imx_media_remove_internal_subdevs(imxmd);
+-unreg_dev:
++notifier_cleanup:
++	v4l2_async_notifier_cleanup(&imxmd->notifier);
+ 	v4l2_device_unregister(&imxmd->v4l2_dev);
+ cleanup:
+ 	media_device_cleanup(&imxmd->md);
+@@ -582,6 +520,7 @@ static int imx_media_remove(struct platform_device *pdev)
+ 
+ 	v4l2_async_notifier_unregister(&imxmd->notifier);
+ 	imx_media_remove_internal_subdevs(imxmd);
++	v4l2_async_notifier_cleanup(&imxmd->notifier);
  	v4l2_device_unregister(&imxmd->v4l2_dev);
  	media_device_unregister(&imxmd->md);
+ 	media_device_cleanup(&imxmd->md);
+diff --git a/drivers/staging/media/imx/imx-media-internal-sd.c b/drivers/staging/media/imx/imx-media-internal-sd.c
+index daf66c2..0fdc45d 100644
+--- a/drivers/staging/media/imx/imx-media-internal-sd.c
++++ b/drivers/staging/media/imx/imx-media-internal-sd.c
+@@ -350,8 +350,11 @@ int imx_media_add_internal_subdevs(struct imx_media_dev *imxmd)
+ void imx_media_remove_internal_subdevs(struct imx_media_dev *imxmd)
+ {
+ 	struct imx_media_async_subdev *imxasd;
++	struct v4l2_async_subdev *asd;
++
++	list_for_each_entry(asd, &imxmd->notifier.asd_list, asd_list) {
++		imxasd = to_imx_media_asd(asd);
+ 
+-	list_for_each_entry(imxasd, &imxmd->asd_list, list) {
+ 		if (!imxasd->pdev)
+ 			continue;
+ 
 diff --git a/drivers/staging/media/imx/imx-media.h b/drivers/staging/media/imx/imx-media.h
-index e945e0e..7edb18a 100644
+index 7edb18a..44532cd 100644
 --- a/drivers/staging/media/imx/imx-media.h
 +++ b/drivers/staging/media/imx/imx-media.h
-@@ -148,7 +148,7 @@ struct imx_media_dev {
- 
- 	/* for async subdev registration */
- 	struct list_head asd_list;
--	struct v4l2_async_notifier subdev_notifier;
-+	struct v4l2_async_notifier notifier;
+@@ -117,12 +117,11 @@ struct imx_media_internal_sd_platformdata {
+ 	int ipu_id;
  };
  
- enum codespace_sel {
+-
+ struct imx_media_async_subdev {
++	/* the base asd - must be first in this struct */
+ 	struct v4l2_async_subdev asd;
+ 	/* the platform device of IPU-internal subdevs */
+ 	struct platform_device *pdev;
+-	struct list_head list;
+ };
+ 
+ static inline struct imx_media_async_subdev *
+@@ -147,7 +146,6 @@ struct imx_media_dev {
+ 	struct ipu_soc *ipu[2];
+ 
+ 	/* for async subdev registration */
+-	struct list_head asd_list;
+ 	struct v4l2_async_notifier notifier;
+ };
+ 
 -- 
 2.7.4
 
