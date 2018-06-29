@@ -2,111 +2,503 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B9EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43387C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F53124F23
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:01:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NdA7pbAO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F53124F23
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E597527D3D
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E597527D3D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936634AbeF2OBV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:01:21 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55840 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932529AbeF2OBU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:01:20 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5TE0E2Z060597;
-        Fri, 29 Jun 2018 09:00:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530280814;
-        bh=ECJ0d8jC+eo2FyA5TgCFykCzOSx/Xq+fFPmT3wy+DEY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NdA7pbAO8jvnc7k0ocSjEAZw/gU5xX+ETBSRivxYSVYtjLpk71JyhAAJIFQtTxiiB
-         FEeSVFVMqHwkr5mNVXVNVNZRY3K4efL6mA+F8AsTlbgC63hVZA1kcl0docO3Rgz8Vd
-         FgQDg0XUtmQuKmfd72GjfUJ3QwcefwlrenepPoNs=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5TE0Exk022577;
-        Fri, 29 Jun 2018 09:00:14 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 29
- Jun 2018 09:00:14 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 29 Jun 2018 09:00:14 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5TE0B00011365;
-        Fri, 29 Jun 2018 09:00:12 -0500
-Subject: Re: [PATCH 2/2] ARM: davinci_all_defconfig: Enable Bluetooth
-To:     David Lechner <david@lechnology.com>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     Kevin Hilman <khilman@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180531202549.11255-1-david@lechnology.com>
- <20180531202549.11255-3-david@lechnology.com>
- <5d45fabc-cc25-fbdf-859c-c29111b42eb2@ti.com>
- <0525829c-3070-6aee-39cf-1154dcbb1e75@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <b4c41d75-d253-c92e-8d3e-d9b83f0337f9@ti.com>
-Date:   Fri, 29 Jun 2018 19:30:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966358AbeF2OBf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:01:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34810 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932529AbeF2OBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:01:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBFE480D;
+        Fri, 29 Jun 2018 07:01:33 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAF6B3F5C0;
+        Fri, 29 Jun 2018 07:01:32 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 15:01:30 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com
+Subject: Re: [PATCH v3 7/7] arm64: perf: Add support for chaining event
+ counters
+Message-ID: <20180629140129.i4oh4oov3jaecnt5@lakrids.cambridge.arm.com>
+References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
+ <1529403342-17899-8-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <0525829c-3070-6aee-39cf-1154dcbb1e75@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529403342-17899-8-git-send-email-suzuki.poulose@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 27 June 2018 10:43 PM, David Lechner wrote:
-> On 06/27/2018 06:11 AM, Sekhar Nori wrote:
->> On Friday 01 June 2018 01:55 AM, David Lechner wrote:
->>> This enables Bluetooth modules in davinic_all_defconfig needed for LEGO
->>
->> davinci_all_defconfig
->>
->>> MINDSTORMS EV3.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>> ---
->>>   arch/arm/configs/davinci_all_defconfig | 9 +++++++++
->>>   1 file changed, 9 insertions(+)
->>
->>> +CONFIG_SERIAL_DEV_BUS=y
->>
->> Any reason to build this into the kernel?
->>
+On Tue, Jun 19, 2018 at 11:15:42AM +0100, Suzuki K Poulose wrote:
+> Add support for 64bit event by using chained event counters
+> and 64bit cycle counters.
 > 
-> Yes:
+> PMUv3 allows chaining a pair of adjacent 32-bit counters, effectively
+> forming a 64-bit counter. The low/even counter is programmed to count
+> the event of interest, and the high/odd counter is programmed to count
+> the CHAIN event, taken when the low/even counter overflows.
 > 
+> For CPU cycles, when 64bit mode is requested, the cycle counter
+> is used in 64bit mode. If the cycle counter is not available,
+> falls back to chaining.
 > 
-> config SERIAL_DEV_CTRL_TTYPORT
->     bool "Serial device TTY port controller"
->     help
->       Say Y here if you want to use the Serial device bus with common TTY
->       drivers (e.g. serial drivers).
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes sinec v2:
+>  - Drop special allocation algorithm for chain indices
+>  - Since we access the counters when the PMU is stopped,
+>    get rid of the unncessary barriers.
+>  - Ensure a counter is allocated when checking for chained event
+> ---
+>  arch/arm64/kernel/perf_event.c | 184 ++++++++++++++++++++++++++++++++++++-----
+>  drivers/perf/arm_pmu.c         |  13 ++-
+>  2 files changed, 169 insertions(+), 28 deletions(-)
 > 
->       If unsure, say Y.
->     depends on TTY
->     depends on SERIAL_DEV_BUS != m
+> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+> index eebc635..a03def7 100644
+> --- a/arch/arm64/kernel/perf_event.c
+> +++ b/arch/arm64/kernel/perf_event.c
+> @@ -446,9 +446,16 @@ static struct attribute_group armv8_pmuv3_events_attr_group = {
+>  };
+>  
+>  PMU_FORMAT_ATTR(event, "config:0-15");
+> +PMU_FORMAT_ATTR(bits64, "config1:0");
 
-Patch applied to v4.19/defconfig. I added a note about this to commit
-text in case I wonder again at a later time.
+I'm not too keen on the "bits64" name here -- it's a little unusual.
+Perhaps "long"?
+
+> +
+> +static inline bool armv8pmu_event_is_64bit(struct perf_event *event)
+> +{
+> +	return event->attr.config1 & 0x1;
+> +}
+>  
+>  static struct attribute *armv8_pmuv3_format_attrs[] = {
+>  	&format_attr_event.attr,
+> +	&format_attr_bits64.attr,
+>  	NULL,
+>  };
+>  
+> @@ -466,6 +473,20 @@ static struct attribute_group armv8_pmuv3_format_attr_group = {
+>  	(ARMV8_IDX_CYCLE_COUNTER + cpu_pmu->num_events - 1)
+>  
+>  /*
+> + * Use chained counter for a 64bit event, if we could not allocate
+> + * the 64bit cycle counter. This must be called after a counter
+> + * was allocated.
+> + */
+> +static inline bool armv8pmu_event_is_chained(struct perf_event *event)
+> +{
+> +	int idx = event->hw.idx;
+> +
+> +	return !WARN_ON(idx < 0) &&
+> +	       armv8pmu_event_is_64bit(event) &&
+> +	       (event->hw.idx != ARMV8_IDX_CYCLE_COUNTER);
+> +}
+
+It took me a moment to parse this. Perhaps:
+
+	/*
+	 * The dedicated cycle counter doesn't requrie chaining, but
+	 * when this is already in use, we must chain two programmable
+	 * counters to form a 64-bit cycle counter.
+	 */
+
+> +
+> +/*
+>   * ARMv8 low level PMU access
+>   */
+>  
+> @@ -516,12 +537,28 @@ static inline u32 armv8pmu_read_evcntr(int idx)
+>  	return read_sysreg(pmxevcntr_el0);
+>  }
+>  
+> +static inline u64 armv8pmu_read_hw_counter(struct perf_event *event)
+> +{
+> +	int idx = event->hw.idx;
+> +	u64 val = 0;
+> +
+> +	val = armv8pmu_read_evcntr(idx);
+> +	/*
+> +	 * We always read the counter with the PMU turned off.
+> +	 * So we don't need special care for reading chained
+> +	 * counters.
+> +	 */
+
+I think this comment can go.
+
+> +	if (armv8pmu_event_is_chained(event))
+> +		val = (val << 32) | armv8pmu_read_evcntr(idx - 1);
+> +	return val;
+> +}
+> +
+>  static inline u64 armv8pmu_read_counter(struct perf_event *event)
+>  {
+>  	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	int idx = hwc->idx;
+> -	u32 value = 0;
+> +	u64 value = 0;
+>  
+>  	if (!armv8pmu_counter_valid(cpu_pmu, idx))
+>  		pr_err("CPU%u reading wrong counter %d\n",
+> @@ -529,7 +566,7 @@ static inline u64 armv8pmu_read_counter(struct perf_event *event)
+>  	else if (idx == ARMV8_IDX_CYCLE_COUNTER)
+>  		value = read_sysreg(pmccntr_el0);
+>  	else
+> -		value = armv8pmu_read_evcntr(idx);
+> +		value = armv8pmu_read_hw_counter(event);
+>  
+>  	return value;
+>  }
+> @@ -540,6 +577,19 @@ static inline void armv8pmu_write_evcntr(int idx, u32 value)
+>  	write_sysreg(value, pmxevcntr_el0);
+>  }
+>  
+> +static inline void armv8pmu_write_hw_counter(struct perf_event *event,
+> +					     u64 value)
+> +{
+> +	int idx = event->hw.idx;
+> +
+> +	if (armv8pmu_event_is_chained(event)) {
+> +		armv8pmu_write_evcntr(idx, upper_32_bits(value));
+> +		armv8pmu_write_evcntr(idx - 1, lower_32_bits(value));
+> +	} else {
+> +		armv8pmu_write_evcntr(idx, value);
+> +	}
+> +}
+> +
+>  static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+>  {
+>  	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+> @@ -551,14 +601,15 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+>  			smp_processor_id(), idx);
+>  	else if (idx == ARMV8_IDX_CYCLE_COUNTER) {
+>  		/*
+> -		 * Set the upper 32bits as this is a 64bit counter but we only
+> +		 * Set the upper 32bits as this is a 64bit counter, if we only
+>  		 * count using the lower 32bits and we want an interrupt when
+>  		 * it overflows.
+>  		 */
+
+Let's reword this as:
+
+		/*
+		 * The cycles counter is really a 64-bit counter.
+		 * When treating it as a 32-bit counter, we only count
+		 * the lower 32 bits, and set the upper 32-bits so that
+		 * we get an interrupt upon 32-bit overflow.
+		 */
+
+> -		value |= 0xffffffff00000000ULL;
+> +		if (!armv8pmu_event_is_64bit(event))
+> +			value |= 0xffffffff00000000ULL;
+>  		write_sysreg(value, pmccntr_el0);
+>  	} else
+> -		armv8pmu_write_evcntr(idx, value);
+> +		armv8pmu_write_hw_counter(event, value);
+>  }
+>  
+>  static inline void armv8pmu_write_evtype(int idx, u32 val)
+> @@ -568,6 +619,27 @@ static inline void armv8pmu_write_evtype(int idx, u32 val)
+>  	write_sysreg(val, pmxevtyper_el0);
+>  }
+>  
+> +static inline void armv8pmu_write_event_type(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx = hwc->idx;
+> +
+> +	/*
+> +	 * For chained events, the low counter is programmed to count
+> +	 * the event of interest and the high counter is programmed
+> +	 * with CHAIN event code with filters set to count at all ELs.
+> +	 */
+> +	if (armv8pmu_event_is_chained(event)) {
+> +		u32 chain_evt = ARMV8_PMUV3_PERFCTR_CHAIN |
+> +				ARMV8_PMU_INCLUDE_EL2;
+> +
+> +		armv8pmu_write_evtype(idx - 1, hwc->config_base);
+> +		armv8pmu_write_evtype(idx, chain_evt);
+> +	} else {
+> +		armv8pmu_write_evtype(idx, hwc->config_base);
+> +	}
+> +}
+> +
+>  static inline int armv8pmu_enable_counter(int idx)
+>  {
+>  	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
+> @@ -575,6 +647,16 @@ static inline int armv8pmu_enable_counter(int idx)
+>  	return idx;
+>  }
+>  
+> +static inline void armv8pmu_enable_event_counter(struct perf_event *event)
+> +{
+> +	int idx = event->hw.idx;
+> +
+> +	armv8pmu_enable_counter(idx);
+> +	if (armv8pmu_event_is_chained(event))
+> +		armv8pmu_enable_counter(idx - 1);
+> +	isb();
+> +}
+> +
+>  static inline int armv8pmu_disable_counter(int idx)
+>  {
+>  	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
+> @@ -582,6 +664,16 @@ static inline int armv8pmu_disable_counter(int idx)
+>  	return idx;
+>  }
+>  
+> +static inline void armv8pmu_disable_event_counter(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx = hwc->idx;
+> +
+> +	if (armv8pmu_event_is_chained(event))
+> +		armv8pmu_disable_counter(idx - 1);
+> +	armv8pmu_disable_counter(idx);
+> +}
+> +
+>  static inline int armv8pmu_enable_intens(int idx)
+>  {
+>  	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
+> @@ -589,6 +681,12 @@ static inline int armv8pmu_enable_intens(int idx)
+>  	return idx;
+>  }
+>  
+> +static inline int armv8pmu_enable_event_irq(struct perf_event *event)
+> +{
+> +	/* For chained events, enable the interrupt for only the high counter */
+> +	return armv8pmu_enable_intens(event->hw.idx);
+> +}
+
+I think the comment can go -- we don't have something corresponding in
+the disable path.
+
+> +
+>  static inline int armv8pmu_disable_intens(int idx)
+>  {
+>  	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
+> @@ -601,6 +699,11 @@ static inline int armv8pmu_disable_intens(int idx)
+>  	return idx;
+>  }
+>  
+> +static inline int armv8pmu_disable_event_irq(struct perf_event *event)
+> +{
+> +	return armv8pmu_disable_intens(event->hw.idx);
+> +}
+> +
+>  static inline u32 armv8pmu_getreset_flags(void)
+>  {
+>  	u32 value;
+> @@ -618,10 +721,8 @@ static inline u32 armv8pmu_getreset_flags(void)
+>  static void armv8pmu_enable_event(struct perf_event *event)
+>  {
+>  	unsigned long flags;
+> -	struct hw_perf_event *hwc = &event->hw;
+>  	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+>  	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
+> -	int idx = hwc->idx;
+>  
+>  	/*
+>  	 * Enable counter and interrupt, and set the counter to count
+> @@ -632,22 +733,22 @@ static void armv8pmu_enable_event(struct perf_event *event)
+>  	/*
+>  	 * Disable counter
+>  	 */
+> -	armv8pmu_disable_counter(idx);
+> +	armv8pmu_disable_event_counter(event);
+>  
+>  	/*
+>  	 * Set event (if destined for PMNx counters).
+>  	 */
+> -	armv8pmu_write_evtype(idx, hwc->config_base);
+> +	armv8pmu_write_event_type(event);
+>  
+>  	/*
+>  	 * Enable interrupt for this counter
+>  	 */
+> -	armv8pmu_enable_intens(idx);
+> +	armv8pmu_enable_event_irq(event);
+>  
+>  	/*
+>  	 * Enable counter
+>  	 */
+> -	armv8pmu_enable_counter(idx);
+> +	armv8pmu_enable_event_counter(event);
+>  
+>  	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+>  }
+> @@ -655,10 +756,8 @@ static void armv8pmu_enable_event(struct perf_event *event)
+>  static void armv8pmu_disable_event(struct perf_event *event)
+>  {
+>  	unsigned long flags;
+> -	struct hw_perf_event *hwc = &event->hw;
+>  	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
+>  	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
+> -	int idx = hwc->idx;
+>  
+>  	/*
+>  	 * Disable counter and interrupt
+> @@ -668,12 +767,12 @@ static void armv8pmu_disable_event(struct perf_event *event)
+>  	/*
+>  	 * Disable counter
+>  	 */
+> -	armv8pmu_disable_counter(idx);
+> +	armv8pmu_disable_event_counter(event);
+>  
+>  	/*
+>  	 * Disable interrupt for this counter
+>  	 */
+> -	armv8pmu_disable_intens(idx);
+> +	armv8pmu_disable_event_irq(event);
+>  
+>  	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+>  }
+> @@ -767,6 +866,37 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int armv8pmu_get_single_idx(struct pmu_hw_events *cpuc,
+> +				    struct arm_pmu *cpu_pmu)
+> +{
+> +	int idx;
+> +
+> +	for (idx = ARMV8_IDX_COUNTER0; idx < cpu_pmu->num_events; idx++)
+> +		if (!test_and_set_bit(idx, cpuc->used_mask))
+> +			return idx;
+
+Please add braces to the for loop, given the loop body covers multiple
+lines.
+
+> +	return -EAGAIN;
+> +}
+> +
+> +static int armv8pmu_get_chain_idx(struct pmu_hw_events *cpuc,
+> +				   struct arm_pmu *cpu_pmu)
+> +{
+> +	int idx;
+> +
+> +	/*
+> +	 * Chaining requires two consecutive event counters, where
+> +	 * the lower idx must be even.
+> +	 */
+> +	for (idx = ARMV8_IDX_COUNTER0 + 1; idx < cpu_pmu->num_events; idx += 2)
+> +		if (!test_and_set_bit(idx, cpuc->used_mask)) {
+> +			/* Check if the preceding even counter is available */
+> +			if (!test_and_set_bit(idx - 1, cpuc->used_mask))
+> +				return idx;
+> +			/* Release the Odd counter */
+> +			clear_bit(idx, cpuc->used_mask);
+> +		}
+
+Please add braces to the for loop, given the loop body covers multiple
+lines.
+
+> +	return -EAGAIN;
+> +}
+> +
+>  static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  				  struct perf_event *event)
+>  {
+> @@ -784,13 +914,21 @@ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+>  	/*
+>  	 * Otherwise use events counters
+>  	 */
+> -	for (idx = ARMV8_IDX_COUNTER0; idx < cpu_pmu->num_events; ++idx) {
+> -		if (!test_and_set_bit(idx, cpuc->used_mask))
+> -			return idx;
+> -	}
+> +	idx = armv8pmu_event_is_64bit(event) ?
+> +		armv8pmu_get_chain_idx(cpuc, cpu_pmu) :
+> +		armv8pmu_get_single_idx(cpuc, cpu_pmu);
+
+Please use an if-else rather than a ternary here. You can return
+directly in either case.
+
+>  
+> -	/* The counters are all in use. */
+> -	return -EAGAIN;
+> +	return idx;
+> +}
+> +
+> +static void armv8pmu_clear_event_idx(struct pmu_hw_events *cpuc,
+> +				     struct perf_event *event)
+> +{
+> +	int idx = event->hw.idx;
+> +
+> +	clear_bit(idx, cpuc->used_mask);
+> +	if (armv8pmu_event_is_chained(event))
+> +		clear_bit(idx - 1, cpuc->used_mask);
+>  }
+>  
+>  /*
+> @@ -865,6 +1003,9 @@ static int __armv8_pmuv3_map_event(struct perf_event *event,
+>  				       &armv8_pmuv3_perf_cache_map,
+>  				       ARMV8_PMU_EVTYPE_EVENT);
+>  
+> +	if (armv8pmu_event_is_64bit(event))
+> +		event->hw.flags |= ARMPMU_EVT_64BIT;
+> +
+>  	/* Onl expose micro/arch events supported by this PMU */
+>  	if ((hw_event_id > 0) && (hw_event_id < ARMV8_PMUV3_MAX_COMMON_EVENTS)
+>  	    && test_bit(hw_event_id, armpmu->pmceid_bitmap)) {
+> @@ -971,6 +1112,7 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->read_counter		= armv8pmu_read_counter,
+>  	cpu_pmu->write_counter		= armv8pmu_write_counter,
+>  	cpu_pmu->get_event_idx		= armv8pmu_get_event_idx,
+> +	cpu_pmu->clear_event_idx	= armv8pmu_clear_event_idx,
+>  	cpu_pmu->start			= armv8pmu_start,
+>  	cpu_pmu->stop			= armv8pmu_stop,
+>  	cpu_pmu->reset			= armv8pmu_reset,
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index 6e10e8c..a4675e4 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -674,14 +674,13 @@ static void cpu_pm_pmu_setup(struct arm_pmu *armpmu, unsigned long cmd)
+>  	int idx;
+>  
+>  	for (idx = 0; idx < armpmu->num_events; idx++) {
+> -		/*
+> -		 * If the counter is not used skip it, there is no
+> -		 * need of stopping/restarting it.
+> -		 */
+> -		if (!test_bit(idx, hw_events->used_mask))
+> -			continue;
+> -
+>  		event = hw_events->events[idx];
+> +		/*
+> +		 * If there is no event at this idx (e.g, an idx used
+> +		 * by a chained event in Arm v8 PMUv3), skip it.
+> +		 */
+> +		if (!event)
+> +			continue;
+>  
+>  		switch (cmd) {
+>  		case CPU_PM_ENTER:
+
+Please make this change an individual patch earlier in the series. It's
+a bug fix needed for krait, too.
 
 Thanks,
-Sekhar
+Mark.
