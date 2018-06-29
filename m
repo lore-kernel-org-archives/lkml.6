@@ -2,120 +2,118 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9699EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93521C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2681227E58
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2681227E58
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4AFE527E8C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:17:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILQx5rW1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFE527E8C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755588AbeF2PRD (ORCPT
+        id S1755604AbeF2PRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:17:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        Fri, 29 Jun 2018 11:17:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750892AbeF2PRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:17:02 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1750761AbeF2PRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:17:39 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B494B27E1D;
-        Fri, 29 Jun 2018 15:17:00 +0000 (UTC)
-Date:   Fri, 29 Jun 2018 11:16:58 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Matthias Reichl <hias@horus.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>,
-        Phil Elwell <phil@raspberrypi.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] Arm: mm: ftrace: Only set text back to ro after kernel
- has been marked ro
-Message-ID: <20180629111658.02bfcc11@gandalf.local.home>
-In-Reply-To: <20180629144714.hkvwqzpikweyihmo@camel2.lan>
-References: <CAGXu5jLaQozk-TuZd8o=CK2kBcj3EFqD+VQtGX-DehU=c_TAkg@mail.gmail.com>
-        <20170823150351.606ba09f@gandalf.local.home>
-        <20171205114709.f6aj6i426keq2cn5@camel2.lan>
-        <20171205131416.GW10595@n2100.armlinux.org.uk>
-        <20171205132339.behn34z6b7ci2m4j@camel2.lan>
-        <5b9b86cf-4b62-c984-fe52-a22df8fce33c@raspberrypi.org>
-        <20171205133601.GX10595@n2100.armlinux.org.uk>
-        <CAGXu5jJb0PCSuC4DuOkh5-901iVLcmmPpn1G7UBq3-r9DaeMvw@mail.gmail.com>
-        <20171205200935.GY10595@n2100.armlinux.org.uk>
-        <CAGXu5jKvVpyLs0+zP34mG=XyGSkzeKFj6WtW+tTfKv7tLKsD2g@mail.gmail.com>
-        <20180629144714.hkvwqzpikweyihmo@camel2.lan>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1C3F27E8C;
+        Fri, 29 Jun 2018 15:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530285459;
+        bh=PP0jiIMQKZk3z6o36X23OITjazyuAFSbyt+4yvU1Ass=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ILQx5rW13G7Qsz8TqONxu4g6tVBmc+9L1C3IDWliqVVFRqbobtzZX1d7MKPC7IOhE
+         QdFfiRNKKi3jEa4XRdSSQ8Ak41rmgioAb4c6UDWnfTpwB7IkKnt+Dk+AAktS7YmwcB
+         C5VGFUAQmZUNX/nCq3bLlu/urvaCyO3VMwV8unG4=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 1B87B1403D2; Fri, 29 Jun 2018 12:17:36 -0300 (-03)
+Date:   Fri, 29 Jun 2018 12:17:36 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: Re: [PATCH] perf test record+probe_libc_inet_pton: expect [unknown]
+ for ping as well
+Message-ID: <20180629151736.GA3593@kernel.org>
+References: <1530170160-4979-1-git-send-email-lizhijian@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530170160-4979-1-git-send-email-lizhijian@cn.fujitsu.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Jun 2018 16:47:14 +0200
-Matthias Reichl <hias@horus.com> wrote:
+Em Thu, Jun 28, 2018 at 03:16:00PM +0800, Li Zhijian escreveu:
+> On system which has not installed debuginfo of iputils(ping) will fail like:
+> ~/lkp/linux/tools/perf$ sudo ./perf test ping -v
 
-> On Tue, Dec 05, 2017 at 12:14:46PM -0800, Kees Cook wrote:
-> > On Tue, Dec 5, 2017 at 12:09 PM, Russell King - ARM Linux
-> > <linux@armlinux.org.uk> wrote:  
-> > > On Tue, Dec 05, 2017 at 11:35:59AM -0800, Kees Cook wrote:  
-> > >> We don't _need_ to, but they're all contiguous, so the ro_perms array
-> > >> used by set_kernel_text_*() is actually only a single entry:
-> > >>
-> > >> static struct section_perm ro_perms[] = {
-> > >>         /* Make kernel code and rodata RX (set RO). */
-> > >>         {
-> > >>                 .name   = "text/rodata RO",
-> > >>                 .start  = (unsigned long)_stext,
-> > >>                 .end    = (unsigned long)__init_begin,
-> > >> ...  
-> > >
-> > > Well, they may not be contiguous - it depends on DEBUG_ALIGN_RODATA.  
-> > 
-> > Maybe I'm picking a slightly wrong word. I guess I meant adjacent. The
-> > range _stext to __init_begin is all read-only, though there may be
-> > padding (controlled by DEBUG_ALIGN_RODATA), to allow a split for NX
-> > markings on rodata.
-> >   
-> > > Either way, we have __start_rodata_section_aligned, which is either
-> > > the start of the read-only data section, or the start of the first
-> > > section beyond __start_rodata if DEBUG_ALIGN_RODATA is not set.
-> > >
-> > > Given that __start_rodata_section_aligned will always be less than
-> > > __init_begin, is there any reason not to make the above end at
-> > > __start_rodata_section_aligned, thereby allowing more of the read-only
-> > > data (in the case of DEBUG_ALIGN_RODATA=n) or all of the read-only
-> > > data (in the case of DEBUG_ALIGN_RODATA=y) to remain write-protected?  
-> > 
-> > Sure, there's no reason not to split this into two entries. It'll
-> > require some reworking of the function calls to get it right,
-> > obviously.  
+I think that we should try to check if the required debuginfo package is
+installed and if so, expect the symbol resolution that takes place in
+that case. Other wise expect [unknown], this way we don't leave this
+test accepting almost anything in any case.
+
+- Arnaldo
+
+> 63: probe libc's inet_pton & backtrace it with ping       :
+> --- start ---
+> test child forked, pid 4207
+> ping 4224 [007] 3034121.295510: probe_libc:inet_pton: (7fedfccb2200)
+> 7fedfccb2200 __GI___inet_pton+0x0 (/lib/x86_64-linux-gnu/libc-2.23.so)
+> 7fedfcc7ad5e getaddrinfo+0xee (/lib/x86_64-linux-gnu/libc-2.23.so)
+> 55e3239a9f4d [unknown] (/bin/ping)
+> FAIL: expected backtrace entry 3
+> ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" got "55e3239a9f4d [unknown] (/bin/ping)"
+> test child finished with -1
+> ---- end ----
+> probe libc's inet_pton & backtrace it with ping: FAILED!
 > 
-> Gentle ping, arm is still oopsing when the function tracer is
-> enabled at boot time.
+> To be compatible with this system, expects [unknown] as well
 > 
-
-I take it that my patch never got applied:
-
- http://lkml.kernel.org/r/20180621124710.453ee0ae@gandalf.local.home
-
--- Steve
-
-
-> Tested on bcm2835 (RPiB+) with current mainline tree
-> (githash 90368a37fbbe) and bcm2835_defconfig.
+> Fixes: 7903a7086723 ("perf script: Show symbol offsets by default")
+> CC: Sandipan Das <sandipan@linux.vnet.ibm.com>
+> CC: Thomas Richter <tmricht@linux.ibm.com>
+> Reported-by: kernel test robot <xiaolong.ye@intel.com>
+> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+> ---
+>  tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> arm64 seems to be fine, tested on bcm2837 (RPi3) with same tree and
-> arm64 defconfig plus function tracer enabled.
-
+> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> index 2630570..ebb6549 100755
+> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> @@ -22,12 +22,12 @@ trace_libc_inet_pton_backtrace() {
+>  		eventattr='call-graph=dwarf,max-stack=4'
+>  		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+>  		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> -		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> +		expected[4]=".*(\+0x[[:xdigit:]]|\[unknown\])+[[:space:]]\(.*/bin/ping.*\)$"
+>  		;;
+>  	*)
+>  		eventattr='max-stack=3'
+>  		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
+> -		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> +		expected[3]=".*(\+0x[[:xdigit:]]|\[unknown\])+[[:space:]]\(.*/bin/ping.*\)$"
+>  		;;
+>  	esac
+>  
+> -- 
+> 2.7.4
