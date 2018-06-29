@@ -6,101 +6,166 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5847CC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60B7C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6F527FCB
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6F527FCB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id A50DA27FD8
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:44:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A50DA27FD8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935575AbeF2Olx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:41:53 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3037 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753285AbeF2Olv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:41:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b36452d0002>; Fri, 29 Jun 2018 07:41:49 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 29 Jun 2018 07:41:50 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 29 Jun 2018 07:41:50 -0700
-Received: from [10.21.132.122] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 29 Jun
- 2018 14:41:47 +0000
-Subject: Re: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to
- register
-To:     Mikko Perttunen <mperttunen@nvidia.com>, <pdeschrijver@nvidia.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <thierry.reding@gmail.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swarren@nvidia.com>,
-        <vbhadram@nvidia.com>
-References: <20180629143814.17950-1-mperttunen@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f378f345-02db-f3fd-4c95-b1a2e8ecf3f5@nvidia.com>
-Date:   Fri, 29 Jun 2018 15:41:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935212AbeF2OoQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:44:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57141 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753194AbeF2OoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:44:14 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DA2D820DD1; Fri, 29 Jun 2018 16:44:11 +0200 (CEST)
+Received: from localhost (unknown [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A3703206ED;
+        Fri, 29 Jun 2018 16:44:01 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Hua Jing <jinghua@marvell.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Ken Ma <make@marvell.com>,
+        Victor Gu <xigu@marvell.com>,
+        Neta Zur Hershkovits <neta@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Wilson Ding <dingwei@marvell.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+References: <20180619123446.694-1-gregory.clement@bootlin.com>
+        <20180619123446.694-2-gregory.clement@bootlin.com>
+Date:   Fri, 29 Jun 2018 16:44:02 +0200
+In-Reply-To: <20180619123446.694-2-gregory.clement@bootlin.com> (Gregory
+        CLEMENT's message of "Tue, 19 Jun 2018 14:34:45 +0200")
+Message-ID: <87tvpl4pql.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180629143814.17950-1-mperttunen@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+ 
+ On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
-On 29/06/18 15:38, Mikko Perttunen wrote:
-> When registering clocks, we just skip any that fail to register
-> (leaving a NULL hole in the clock table). However, our of_xlate
-> function still tries to dereference each entry while looking for
-> the clock with the requested id, causing a crash if any clocks
-> failed to register. Add a check to of_xlate to skip any NULL
-> clocks.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> respectively) to L0 frequency (1.2 Ghz) requires a significant amount
+> of time to let VDD stabilize to the appropriate voltage. This amount of
+> time is large enough that it cannot be covered by the hardware
+> countdown register. Due to this, the CPU might start operating at L0
+> before the voltage is stabilized, leading to CPU stalls.
+>
+> To work around this problem, we prevent switching directly from the
+> L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+> frequency in-between. The sequence therefore becomes:
+>
+> 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> 2. Sleep 20ms for stabling VDD voltage
+> 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+
+Do you have any comment on this fix?
+
+Gregory
+
+>
+> It is based on the work done by Ken Ma <make@marvell.com>
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 > ---
->  drivers/clk/tegra/clk-bpmp.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index a896692b74ec..01dada561c10 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
->  	unsigned int id = clkspec->args[0], i;
->  	struct tegra_bpmp *bpmp = data;
+>  drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 6860bd5a37c5..44e4e27eddad 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -35,6 +35,7 @@
+>  #define CLK_SEL		0x10
+>  #define CLK_DIS		0x14
 >  
-> -	for (i = 0; i < bpmp->num_clocks; i++)
-> -		if (bpmp->clocks[i]->id == id)
-> -			return &bpmp->clocks[i]->hw;
-> +	for (i = 0; i < bpmp->num_clocks; i++) {
-> +		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
-> +
-> +		if (!clk)
-> +			continue;
-> +
-> +		if (clk->id == id)
-> +			return &clk->hw;
-> +	}
+> +#define  ARMADA_37XX_DVFS_LOAD_1 1
+>  #define LOAD_LEVEL_NR	4
 >  
->  	return NULL;
+>  #define ARMADA_37XX_NB_L0L1	0x18
+> @@ -507,6 +508,40 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return -EINVAL;
 >  }
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers!
-Jon
+>  
+> +/*
+> + * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> + * respectively) to L0 frequency (1.2 Ghz) requires a significant
+> + * amount of time to let VDD stabilize to the appropriate
+> + * voltage. This amount of time is large enough that it cannot be
+> + * covered by the hardware countdown register. Due to this, the CPU
+> + * might start operating at L0 before the voltage is stabilized,
+> + * leading to CPU stalls.
+> + *
+> + * To work around this problem, we prevent switching directly from the
+> + * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+> + * frequency in-between. The sequence therefore becomes:
+> + * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> + * 2. Sleep 20ms for stabling VDD voltage
+> + * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+> + */
+> +static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
+> +{
+> +	unsigned int cur_level;
+> +
+> +	if (rate != 1200 * 1000 * 1000)
+> +		return;
+> +
+> +	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
+> +	cur_level &= ARMADA_37XX_NB_CPU_LOAD_MASK;
+> +	if (cur_level <= ARMADA_37XX_DVFS_LOAD_1)
+> +		return;
+> +
+> +	regmap_update_bits(base, ARMADA_37XX_NB_CPU_LOAD,
+> +			   ARMADA_37XX_NB_CPU_LOAD_MASK,
+> +			   ARMADA_37XX_DVFS_LOAD_1);
+> +	msleep(20);
+> +}
+> +
+>  static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			       unsigned long parent_rate)
+>  {
+> @@ -537,6 +572,9 @@ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			 */
+>  			reg = ARMADA_37XX_NB_CPU_LOAD;
+>  			mask = ARMADA_37XX_NB_CPU_LOAD_MASK;
+> +
+> +			clk_pm_cpu_set_rate_wa(rate, base);
+> +
+>  			regmap_update_bits(base, reg, mask, load_level);
+>  
+>  			return rate;
+> -- 
+> 2.17.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 -- 
-nvpublic
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
