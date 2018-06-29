@@ -3,109 +3,338 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B61C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993E9C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2273721A15
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2273721A15
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 397A327D56
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 397A327D56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934069AbeF2KtD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 06:49:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932389AbeF2KtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:49:02 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6D69406C78F;
-        Fri, 29 Jun 2018 10:49:01 +0000 (UTC)
-Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C50CB2026D68;
-        Fri, 29 Jun 2018 10:49:00 +0000 (UTC)
-Subject: Re: [PATCH 2/2] KVM: X86: Implement PV send IPI support
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1530265876-18136-1-git-send-email-wanpengli@tencent.com>
- <1530265876-18136-3-git-send-email-wanpengli@tencent.com>
- <878t6xewei.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7d2b34ad-2436-0cee-3e71-97ea2eb5fd49@redhat.com>
-Date:   Fri, 29 Jun 2018 12:48:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934417AbeF2KxJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 06:53:09 -0400
+Received: from mx.socionext.com ([202.248.49.38]:44775 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932890AbeF2KxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 06:53:07 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 29 Jun 2018 19:53:06 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 45B0C1800FC;
+        Fri, 29 Jun 2018 19:53:06 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 29 Jun 2018 19:53:06 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id B371C4036B;
+        Fri, 29 Jun 2018 19:53:05 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 7F1A1120141;
+        Fri, 29 Jun 2018 19:53:05 +0900 (JST)
+Date:   Fri, 29 Jun 2018 19:53:04 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH 2/2] reset: uniphier: add USB3 controller reset control
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+In-Reply-To: <1530266124.5549.3.camel@pengutronix.de>
+References: <1530259891-18822-3-git-send-email-hayashi.kunihiko@socionext.com> <1530266124.5549.3.camel@pengutronix.de>
+Message-Id: <20180629195304.DD7B.4A936039@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <878t6xewei.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 10:49:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 10:49:01 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/06/2018 12:09, Vitaly Kuznetsov wrote:
->> +KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
->> +                                   ||       || before enabling paravirtualized
->> +                                   ||       || send IPIs.
-> In case we decide to apply this as-is we'll likely need a new feature
-> for PV IPI with > 64 vCPUs (or how else would the guest know if the host
-> is capable or not?)
+Hi Philipp,
+Thank you for your comments.
+
+On Fri, 29 Jun 2018 11:55:24 +0200 <p.zabel@pengutronix.de> wrote:
+
+> Hi Kunihiko,
 > 
+> thank you for the patch. I just have a few small comments below:
+> 
+> On Fri, 2018-06-29 at 17:11 +0900, Kunihiko Hayashi wrote:
+> > Add reset lines for USB3 controller implemented in UniPhier SoCs.
+> > 
+> > This reuses only the reset operations in reset-simple, because
+> > the reset-simple doesn't handle any SoC-dependent clocks and resets.
+> > This reset lines is included in the USB3 glue layer, and it's necessary
+> > to enable clocks and deassert resets of the layer before using this
+> > reset lines.
+> > 
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > ---
+> >  drivers/reset/Kconfig               |  10 ++
+> >  drivers/reset/Makefile              |   1 +
+> >  drivers/reset/reset-uniphier-usb3.c | 183 ++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 194 insertions(+)
+> >  create mode 100644 drivers/reset/reset-uniphier-usb3.c
+> > 
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > index c0b292b..851c9c3 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -138,6 +138,16 @@ config RESET_UNIPHIER
+> >  	  Say Y if you want to control reset signals provided by System Control
+> >  	  block, Media I/O block, Peripheral Block.
+> >  
+> > +config RESET_UNIPHIER_USB3
+> > +	tristate "USB3 reset driver for UniPhier SoCs"
+> > +	depends on (ARCH_UNIPHIER || COMPILE_TEST) && OF
+> > +	default ARCH_UNIPHIER
+> > +	select RESET_SIMPLE
+> > +	help
+> > +	  Support for USB3 reset controllers on UniPhier SoCs.
+> > +	  Say Y if you want to control reset signals provided by
+> > +	  USB3 controller block.
+> > +
+> >  config RESET_ZYNQ
+> >  	bool "ZYNQ Reset Driver" if COMPILE_TEST
+> >  	default ARCH_ZYNQ
+> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> > index c1261dc..2638ac4 100644
+> > --- a/drivers/reset/Makefile
+> > +++ b/drivers/reset/Makefile
+> > @@ -20,5 +20,6 @@ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+> >  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+> >  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+> >  obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+> > +obj-$(CONFIG_RESET_UNIPHIER_USB3) += reset-uniphier-usb3.o
+> >  obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+> >  
+> > diff --git a/drivers/reset/reset-uniphier-usb3.c b/drivers/reset/reset-uniphier-usb3.c
+> > new file mode 100644
+> > index 0000000..397e6c9
+> > --- /dev/null
+> > +++ b/drivers/reset/reset-uniphier-usb3.c
+> > @@ -0,0 +1,183 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * reset-uniphier-usb3.c - USB3 reset driver for UniPhier
+> > + * Copyright 2018 Socionext Inc.
+> > + * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> > +
+> > +#include "reset-simple.h"
+> > +
+> > +#define MAX_CLKS	2
+> > +#define MAX_RSTS	2
+> > +
+> > +struct uniphier_usb3_reset_soc_data {
+> > +	const char *clock_names[MAX_CLKS];
+> > +	const char *reset_names[MAX_RSTS];
+> > +};
+> > +
+> > +struct uniphier_usb3_reset_priv {
+> 
+> I'd embed a struct reset_simple_data here ...
+> 
+> > +	int nclks;
+> > +	struct clk *clk[MAX_CLKS];
+> > +	int nrsts;
+> > +	struct reset_control *rst[MAX_RSTS];
+> > +	const struct uniphier_usb3_reset_soc_data *data;
+> > +};
+> > +
+> > +static int uniphier_usb3_reset_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct uniphier_usb3_reset_priv *priv;
+> > +	struct reset_simple_data *rst_data;
+> > +	struct resource *res;
+> > +	resource_size_t size;
+> > +	const char *name;
+> > +	int i, ret, nc, nr;
+> > +
+> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->data = of_device_get_match_data(dev);
+> > +	if (WARN_ON(!priv->data))
+> > +		return -EINVAL;
+> > +
+> > +	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
+> > +	if (!rst_data)
+> > +		return -ENOMEM;
+> 
+> ... that way there's no need for two separate allocations.
 
-Yes, it makes sense.  Perhaps we can do one of the following, or both:
+Indeed. I'll embed reset_simple_data in uniphier_usb3_reset_priv,
+and remove this.
 
-1) add an argument for a "base vCPU id", so that you can use the
-hypercall to send the IPI to CPUs 64..127, 128..191 etc.
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	size = resource_size(res);
+> > +	rst_data->membase = devm_ioremap_resource(dev, res);
+> > +	if (IS_ERR(rst_data->membase))
+> > +		return PTR_ERR(rst_data->membase);
+> > +
+> > +	for (i = 0; i < MAX_CLKS; i++) {
+> > +		name = priv->data->clock_names[i];
+> > +		if (!name)
+> > +			break;
+> > +		priv->clk[i] = devm_clk_get(dev, name);
+> > +		if (IS_ERR(priv->clk[i]))
+> > +			return PTR_ERR(priv->clk[i]);
+> > +		priv->nclks++;
+> > +	}
+> > +
+> > +	for (i = 0; i < MAX_RSTS; i++) {
+> > +		name = priv->data->reset_names[i];
+> > +		if (!name)
+> > +			break;
+> > +		priv->rst[i] = devm_reset_control_get_shared(dev, name);
+> > +		if (IS_ERR(priv->rst[i]))
+> > +			return PTR_ERR(priv->rst[i]);
+> > +		priv->nrsts++;
+> > +	}
+> > +
+> > +	for (nc = 0; nc < priv->nclks; nc++) {
+> > +		ret = clk_prepare_enable(priv->clk[nc]);
+> > +		if (ret)
+> > +			goto out_clk_disable;
+> > +	}
+> > +
+> > +	for (nr = 0; nr < priv->nrsts; nr++) {
+> > +		ret = reset_control_deassert(priv->rst[nr]);
+> > +		if (ret)
+> > +			goto out_rst_assert;
+> > +	}
+> 
+> Have you seen the clk_bulk_* APIs? Those could possibly simplify the
+> code a bit.
 
-2) have two bitmask arguments so that one hypercall handles 128 vCPUs.
+Okay. I'll try to apply it.
 
-to remove or limit the need for the more generic hypercall.
+> Unfortunately we don't have the equivalent reset bulk API.
 
-Paolo
+Yes. And although the reset array API can get multiple resets,
+it can't specify each reset with its name.
+
+> > +
+> > +	spin_lock_init(&rst_data->lock);
+> > +	rst_data->rcdev.owner = THIS_MODULE;
+> > +	rst_data->rcdev.nr_resets = size * BITS_PER_BYTE;
+> > +	rst_data->rcdev.ops = &reset_simple_ops;
+> > +	rst_data->rcdev.of_node = dev->of_node;
+> > +	rst_data->active_low = true;
+> > +
+> > +	platform_set_drvdata(pdev, priv);
+> > +
+> > +	ret = devm_reset_controller_register(dev, &rst_data->rcdev);
+> > +	if (ret)
+> > +		goto out_rst_assert;
+> > +
+> > +	return 0;
+> > +
+> > +out_rst_assert:
+> > +	while (nr--)
+> > +		reset_control_assert(priv->rst[nr]);
+> > +out_clk_disable:
+> > +	while (nc--)
+> > +		clk_disable_unprepare(priv->clk[nc]);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int uniphier_usb3_reset_remove(struct platform_device *pdev)
+> > +{
+> > +	struct uniphier_usb3_reset_priv *priv = platform_get_drvdata(pdev);
+> > +	int i;
+> > +
+> > +	for (i = 0; i < priv->nrsts; i++)
+> > +		reset_control_assert(priv->rst[i]);
+> > +	for (i = 0; i < priv->nclks; i++)
+> > +		clk_disable_unprepare(priv->clk[i]);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct uniphier_usb3_reset_soc_data uniphier_pro4_data = {
+> > +	.clock_names = { "gio", "link", },
+> > +	.reset_names = { "gio", "link", },
+> > +};
+> > +
+> > +static const struct uniphier_usb3_reset_soc_data uniphier_pxs2_data = {
+> > +	.clock_names = { "link", },
+> > +	.reset_names = { "link", },
+> > +};
+> > +
+> > +static const struct uniphier_usb3_reset_soc_data uniphier_ld20_data = {
+> > +	.clock_names = { "link", },
+> > +	.reset_names = { "link", },
+> > +};
+> > +
+> > +static const struct uniphier_usb3_reset_soc_data uniphier_pxs3_data = {
+> > +	.clock_names = { "link", },
+> > +	.reset_names = { "link", },
+> > +};
+> 
+> Could you reuse the same SoC data for pxs2, ld20 and pxs3?
+
+Sure, I'll rewrite it.
+
+Thank you,
+
+> > +static const struct of_device_id uniphier_usb3_reset_match[] = {
+> > +	{
+> > +		.compatible = "socionext,uniphier-pro4-usb3-reset",
+> > +		.data = &uniphier_pro4_data,
+> > +	},
+> > +	{
+> > +		.compatible = "socionext,uniphier-pxs2-usb3-reset",
+> > +		.data = &uniphier_pxs2_data,
+> > +	},
+> > +	{
+> > +		.compatible = "socionext,uniphier-ld20-usb3-reset",
+> > +		.data = &uniphier_ld20_data,
+> > +	},
+> > +	{
+> > +		.compatible = "socionext,uniphier-pxs3-usb3-reset",
+> > +		.data = &uniphier_pxs3_data,
+> > +	},
+> > +	{ /* Sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, uniphier_usb3_reset_match);
+> > +
+> > +static struct platform_driver uniphier_usb3_reset_driver = {
+> > +	.probe = uniphier_usb3_reset_probe,
+> > +	.remove = uniphier_usb3_reset_remove,
+> > +	.driver = {
+> > +		.name = "uniphier-usb3-reset",
+> > +		.of_match_table = uniphier_usb3_reset_match,
+> > +	},
+> > +};
+> > +module_platform_driver(uniphier_usb3_reset_driver);
+> > +
+> > +MODULE_AUTHOR("Kunihiko Hayashi <hayashi.kunihiko@socionext.com>");
+> > +MODULE_DESCRIPTION("UniPhier USB3 Reset Driver");
+> > +MODULE_LICENSE("GPL");
+> 
+> regards
+> Philipp
+
+---
+Best Regards,
+Kunihiko Hayashi
+
+
