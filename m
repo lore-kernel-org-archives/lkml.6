@@ -2,132 +2,123 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312C4C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D08AC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF16F27D8E
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDC727F73
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mvv2O5y6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dkd5af9m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF16F27D8E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="RBK3FiRD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDC727F73
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966276AbeF2NwG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:52:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38028 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966099AbeF2NwE (ORCPT
+        id S935204AbeF2Nzr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:55:47 -0400
+Received: from mail.efficios.com ([167.114.142.138]:55670 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750802AbeF2Nzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:52:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A442360AFF; Fri, 29 Jun 2018 13:52:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530280323;
-        bh=wB+ps2iQHjTOVqBt7sbo2j0LMLRQd4LJWYRG0GtbDGc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Mvv2O5y6Q8KwRytLD67my2p00X/GreXqnh6DxYVS0oftJS5dlweXSHWQFPcPWq53A
-         c8NSUAhPZnmGEcElfAkhy4ngWoDM6OXxMQMTDwJgD78QG1zr3xEut/3KlfPkb6Qnbt
-         VFSZugzXj5XQNbFmW+p09sDGSXBQsmQWGcpNRnr8=
-Received: from x230.qca.qualcomm.com (85-76-151-243-nat.elisa-mobile.fi [85.76.151.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 23DE8601EA;
-        Fri, 29 Jun 2018 13:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530280319;
-        bh=wB+ps2iQHjTOVqBt7sbo2j0LMLRQd4LJWYRG0GtbDGc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=dkd5af9m74omiKl87lLBmr9629RcGi82Awjv9u2W7ExII094MDoMCR+/0lSa0XADz
-         Kkw7XZbuzFVyg1U1pil0/svfg9golC6b015kwowxm4123DIZ0MDDL9ytCptkRRLU4k
-         VjgicEXvtHOl4N56pe9ROkBsOHbrHtlKtPB5BZYg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23DE8601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     alagusankar@silex-india.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath10k@lists.infradead.org, "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 1/3] ath10k: sdio: use same endpoint id for all packets in a bundle
-References: <20180620084222.3521-1-niklas.cassel@linaro.org>
-        <20180620084222.3521-2-niklas.cassel@linaro.org>
-        <87zhzdersm.fsf@codeaurora.org> <87vaa1erlj.fsf@codeaurora.org>
-        <20180629131141.GA26446@centauri.lan>
-Date:   Fri, 29 Jun 2018 16:51:51 +0300
-In-Reply-To: <20180629131141.GA26446@centauri.lan> (Niklas Cassel's message of
-        "Fri, 29 Jun 2018 15:11:41 +0200")
-Message-ID: <87r2kpem4o.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 29 Jun 2018 09:55:45 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 5B67C22D097;
+        Fri, 29 Jun 2018 09:55:44 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id CfE0YLhB3LtQ; Fri, 29 Jun 2018 09:55:43 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id CE70622D094;
+        Fri, 29 Jun 2018 09:55:43 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com CE70622D094
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530280543;
+        bh=E4WIywRkT6q1+sgTnr5yUnx4yaTA5nWtQ+BnOJ+uCZA=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=RBK3FiRDd6DduOJ9Vrr2hf7sn/NCPjtF+5scTuOKqeqx2K9SRegSTVDvEYlLALnPt
+         8uMAtCmowuCHDX6DyWHYqW2KpqMNh/zWJpccS/3bhNvWUglUfu98zU37qsGXrQMPC5
+         H5yfXaUifH00mNZvnYiMFQ9FDnD1Ra3C00V/MdC2zK6H+ddmioYDauZ6SpE7elgyyU
+         RK1Q4kv2Wg4KfgtWg2q5LmamT7gHlJ3LkyepuERraOMbeULjFzGzz1RiBDY3OOw7CW
+         iSL+9GwIi6PKhJyWTX6u0MecDP1Lgp8/yY+Nf3izMSZjEfQHAg49RTirFgXj46gI0h
+         ++Ndls24nOHuQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id fU8TQKLBSMrq; Fri, 29 Jun 2018 09:55:43 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id B32F522D08D;
+        Fri, 29 Jun 2018 09:55:43 -0400 (EDT)
+Date:   Fri, 29 Jun 2018 09:55:43 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <820874666.9567.1530280543568.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com> <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
+ TASK_SIZE
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
+Thread-Index: M/QysoCtxfYa/h1k7UmBXhz0Y8lILQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Niklas Cassel <niklas.cassel@linaro.org> writes:
+----- On Jun 28, 2018, at 7:29 PM, Andy Lutomirski luto@kernel.org wrote:
 
-> On Fri, Jun 29, 2018 at 02:53:44PM +0300, Kalle Valo wrote:
->> Kalle Valo <kvalo@codeaurora.org> writes:
->> 
->> > Niklas Cassel <niklas.cassel@linaro.org> writes:
->> >
->> >> All packets in a bundle should use the same endpoint id as the
->> >> first lookahead.
->> >>
->> >> This matches how things are done is ath6kl, however,
->> >> this patch can theoretically handle several bundles
->> >> in ath10k_sdio_mbox_rx_process_packets().
->> >>
->> >> Without this patch we get lots of errors about invalid endpoint id:
->> >>
->> >> ath10k_sdio mmc2:0001:1: invalid endpoint in look-ahead: 224
->> >> ath10k_sdio mmc2:0001:1: failed to get pending recv messages: -12
->> >> ath10k_sdio mmc2:0001:1: failed to process pending SDIO interrupts: -12
->> >>
->> >> Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
->> >> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
->> >
->> > You have Alagu's s-o-b first so that implies Alagu is the author. So
->> > should I add From header for Alagu and add you (Niklas) as
->> > Co-Developed-by? Or vice versa?
->
-> Hello Kalle,
->
-> It is not always obvious how the combination of git-author
-> and Co-Developed-by should be:
-> http://lkml.iu.edu/hypermail/linux/kernel/1801.2/00988.html
+> On Thu, Jun 28, 2018 at 2:22 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Thu, Jun 28, 2018 at 1:23 PM Andy Lutomirski <luto@kernel.org> wrote:
+>>>
+>>> This is okay with me for a fix outside the merge window.  Can you do a
+>>> followup for the next merge window that fixes it better, though?  In
+>>> particular, TASK_SIZE is generally garbage.  I think a better fix
+>>> would be something like adding a new arch-overridable helper like:
+>>>
+>>> static inline unsigned long current_max_user_addr(void) { return TASK_SIZE; }
+>>
+>> We already have that. It's called "user_addr_max()".
+> 
+> Nah, that one is more or less equivalent to TASK_SIZE_MAX, except that
+> it's different if set_fs() is used.
 
-Yeah, that's true.
+So which one would be right in this case ? AFAIU we want to ensure we don't
+populate regs->ip with a bogus address that would make SYSRET or other return
+to userspace instructions explode.
 
-> Alagu deserves most credit, since I have simply taken parts
-> of a very big patch and split it into smaller pieces.
-> I tried to do the right thing by having his Signed-off-by first.
->
-> Let's go with your suggestion and add a From: header with
-> Alagu's email, and a Co-Developed-by tag with my email.
-> (Note that both Signed-off-bys are still needed according to
-> submitting-patches.rst)
+Is that guaranteed by TASK_SIZE or TASK_SIZE_MAX (aliased by user_addr_max()) ?
 
-Ok.
+Thanks,
 
-> Do you want me to resend the patches with these two lines
-> added, or can you fix them up manually?
-
-No need, I did that already in the pending branch. Please check:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=6b23bd067990df1cc1e9a4c28327393a7a3ba718
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=bf83a5c572e0737e59e026c989b190b4e52d2ef4
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=218f924d80b76520a4e60eead5e89f3ebd2e86c1
+Mathieu
 
 -- 
-Kalle Valo
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
