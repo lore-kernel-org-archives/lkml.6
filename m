@@ -2,132 +2,165 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F32C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A20C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 01:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47CA327ABB
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="f1cOGhGF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47CA327ABB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 29B3227ABF
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 01:00:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B3227ABF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936422AbeF2Ayv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 20:54:51 -0400
-Received: from mail.efficios.com ([167.114.142.138]:37190 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933008AbeF2Ays (ORCPT
+        id S935711AbeF2BAY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 21:00:24 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:48558 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933008AbeF2BAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 20:54:48 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 54E2422EA2E;
-        Thu, 28 Jun 2018 20:54:47 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id mfij72EvQCZN; Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id BB54822EA2A;
-        Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BB54822EA2A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530233686;
-        bh=2aRCpAgCcd0NQt6EShYSQfT3/P6w3x8WNNZ4CVcsfh0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=f1cOGhGFYFH0Vy9HE67LPnC2F8BD/+ur/g6p6gBeBvgnaG7Rj8bS4GqZitIYJqbIc
-         X7CrfQSrG2GbNzoubptLnu7A+Wt+kiVwgs3IB5y2efiscAQ5lMBPa80BarRhTyf71+
-         3+jx7jO0erFu53b8BNkm3gkGsi+LF2aMElOCajmGdS7mqhh0Tr/NugdIsBHEswgMxl
-         cW1yZzAhJAdMu6JScaQd3RSBQxs6ppuUN0BJLReWIfogYEsJn0tpvnp4kYaao9P4pU
-         nNyHtGzA8BTSk8rgKa7Cof9hG9OO+43qt59NPmDVWB5JyXaxIWIAgEzEuxpFjBf9Ev
-         ibdsKXHTGzM8w==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id i8gpuH29ZuRj; Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 9CA5B22EA14;
-        Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
-Date:   Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Thu, 28 Jun 2018 21:00:22 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T3WA7qu_1530233966;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3WA7qu_1530233966)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 29 Jun 2018 08:59:31 +0800
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
         Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <665398433.9488.1530233686432.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com> <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com> <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
- TASK_SIZE
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+References: <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
+ <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+ <20180620071817.GJ13685@dhcp22.suse.cz>
+ <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
+ <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
+ <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
+ <20180627072432.GC32348@dhcp22.suse.cz>
+ <a52f0585-ebec-d098-2775-f55bde3519a4@linux.alibaba.com>
+ <20180628115101.GE32348@dhcp22.suse.cz>
+ <2ecdb667-f4de-673d-6a5f-ee50df505d0c@linux.alibaba.com>
+Message-ID: <b7b8ed15-183b-9afe-8e72-d2751672e24a@linux.alibaba.com>
+Date:   Thu, 28 Jun 2018 17:59:25 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
-Thread-Index: Ni+KcT6w8fHZnMfOQpG8vowZ5X/7cg==
+In-Reply-To: <2ecdb667-f4de-673d-6a5f-ee50df505d0c@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 28, 2018, at 8:18 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-> On Thu, Jun 28, 2018 at 4:30 PM Andy Lutomirski <luto@kernel.org> wrote:
+
+On 6/28/18 12:10 PM, Yang Shi wrote:
+>
+>
+> On 6/28/18 4:51 AM, Michal Hocko wrote:
+>> On Wed 27-06-18 10:23:39, Yang Shi wrote:
+>>>
+>>> On 6/27/18 12:24 AM, Michal Hocko wrote:
+>>>> On Tue 26-06-18 18:03:34, Yang Shi wrote:
+>>>>> On 6/26/18 12:43 AM, Peter Zijlstra wrote:
+>>>>>> On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
+>>>>>>> By looking this deeper, we may not be able to cover all the 
+>>>>>>> unmapping range
+>>>>>>> for VM_DEAD, for example, if the start addr is in the middle of 
+>>>>>>> a vma. We
+>>>>>>> can't set VM_DEAD to that vma since that would trigger SIGSEGV 
+>>>>>>> for still
+>>>>>>> mapped area.
+>>>>>>>
+>>>>>>> splitting can't be done with read mmap_sem held, so maybe just 
+>>>>>>> set VM_DEAD
+>>>>>>> to non-overlapped vmas. Access to overlapped vmas (first and 
+>>>>>>> last) will
+>>>>>>> still have undefined behavior.
+>>>>>> Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. 
+>>>>>> Acquire
+>>>>>> mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
+>>>>>> writing, free everything left, drop mmap_sem.
+>>>>>>
+>>>>>> ?
+>>>>>>
+>>>>>> Sure, you acquire the lock 3 times, but both write instances 
+>>>>>> should be
+>>>>>> 'short', and I suppose you can do a demote between 1 and 2 if you 
+>>>>>> care.
+>>>>> Thanks, Peter. Yes, by looking the code and trying two different 
+>>>>> approaches,
+>>>>> it looks this approach is the most straight-forward one.
+>>>> Yes, you just have to be careful about the max vma count limit.
+>>> Yes, we should just need copy what do_munmap does as below:
+>>>
+>>> if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
+>>>              return -ENOMEM;
+>>>
+>>> If the mas map count limit has been reached, it will return failure 
+>>> before
+>>> zapping mappings.
+>> Yeah, but as soon as you drop the lock and retake it, somebody might
+>> have changed the adddress space and we might get inconsistency.
 >>
->> The idea is that, if someone screws up and sticks a number like
->> 0xbaadf00d00045678 into their rseq abort_ip in a 32-bit x86 program
->> (when they actually mean 0x00045678), we want to something consistent.
-> 
-> I think the "something consistent" is perfectly fine with just "it won't work".
-> 
-> Make it do
-> 
->        if (rseq_cs->abort_ip != (unsigned long)rseq_cs->abort_ip)
->                return -EINVAL;
-> 
-> at abort time.
-> 
-> Done.
-> 
-> If it's a 32-bit kernel, the above will reject the thing, and if it's
-> a 64-bit kernel, it will be a no-op, but the abort won't work in a
-> 32-bit caller.
-> 
-> Problem solved.
+>> So I am wondering whether we really need upgrade_read (to promote read
+>> to write lock) and do the
+>>     down_write
+>>     split & set up VM_DEAD
+>>     downgrade_write
+>>     unmap
+>>     upgrade_read
+>>     zap ptes
+>>     up_write
 
-This assumes a 64-bit kernel returning to a 32-bit compat task with
-garbage it the upper 32 bits of regs->ip behaves correctly (e.g.
-kill the offending process rather than crash the kernel) on all
-architectures.
+Promoting to write lock may be a trouble. There might be other users in 
+the critical section with read lock, we have to wait them to finish.
 
-Is this something we can rely on ?
+>
+> I'm supposed address space changing just can be done by mmap, mremap, 
+> mprotect. If so, we may utilize the new VM_DEAD flag. If the VM_DEAD 
+> flag is set for the vma, just return failure since it is being unmapped.
+>
+> Does it sounds reasonable?
+
+It looks we just need care about MAP_FIXED (mmap) and MREMAP_FIXED 
+(mremap), right?
+
+How about letting them return -EBUSY or -EAGAIN to notify the 
+application? This changes the behavior a little bit, MAP_FIXED and 
+mremap may fail if they fail the race with munmap (if the mapping is 
+larger than 1GB). I'm not sure if any multi-threaded application uses 
+MAP_FIXED and MREMAP_FIXED very heavily which may run into the race 
+condition. I guess it should be rare to meet all the conditions to 
+trigger the race.
+
+The programmer should be very cautious about MAP_FIXED.MREMAP_FIXED 
+since they may corrupt its own address space as the man page noted.
+
 
 Thanks,
+Yang
 
-Mathieu
+>
+> Thanks,
+> Yang
+>
+>>
+>> looks terrible, no question about that, but we won't drop the mmap sem
+>> at any time.
+>
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
