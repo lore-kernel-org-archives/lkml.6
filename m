@@ -2,114 +2,112 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53E8C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9F2C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A321E27D9F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A321E27D9F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EDF8F27DA3
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:06:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tYpZ2xwS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF8F27DA3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755135AbeF2LGf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:06:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:59778 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751114AbeF2LGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:06:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7324B18A;
-        Fri, 29 Jun 2018 04:06:32 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 424F53F266;
-        Fri, 29 Jun 2018 04:06:32 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id A267F1AE540D; Fri, 29 Jun 2018 12:07:10 +0100 (BST)
-Date:   Fri, 29 Jun 2018 12:07:10 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S935216AbeF2LGr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:06:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57696 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932119AbeF2LGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:06:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YA+zWaeVk31F3fvj0xuP07aApHEdSLKfFbJpkp2TK/8=; b=tYpZ2xwStLp4lV965LhSIASNL
+        6iz2OODNVthFbffCL1QvgGyoVfLQg2l3eIbYgU3380u+QqUhv8vywFhWpKNEdHU31iS094bN1xQX3
+        zug+c7i11cvk9N27PgtfhED58P77onxXLWYaLbID3RIofo4hc2F/zPY0QpSPHaFdFC1mc=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fYrEg-0007kK-6O; Fri, 29 Jun 2018 11:06:42 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fYrEf-0002XL-P7; Fri, 29 Jun 2018 12:06:41 +0100
+Date:   Fri, 29 Jun 2018 12:06:41 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     David Collins <collinsd@codeaurora.org>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-ID: <20180629110709.GA17859@arm.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
- <20180628105057.GA26019@e103592.cambridge.arm.com>
- <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180629110641.GB6556@sirena.org.uk>
+References: <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
+ <CAD=FV=XVEEPgjBXxR+-46RgxLOq63Xvq-jtruoaCxccmMoKUuA@mail.gmail.com>
+ <20180626120733.GD1779@sirena.org.uk>
+ <CAD=FV=X1E8Cz=L93G-zJwhM0R=N3YuBBhkvCnLvWuxMU9KJkTw@mail.gmail.com>
+ <20180626150203.GG1779@sirena.org.uk>
+ <CAD=FV=WC_XWRk-6OELOFFWGnhRq1VeoiiveqXLSy+xqsVb22pA@mail.gmail.com>
+ <20180627150126.GC5263@sirena.org.uk>
+ <CAD=FV=WYcCVjAiMpzf4zyAByw5y-oDMnuabip1HXqa-mQFRt2w@mail.gmail.com>
+ <20180628101813.GD14040@sirena.org.uk>
+ <87cc8c77-7b39-1746-4680-cb26d602e62e@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
 Content-Disposition: inline
-In-Reply-To: <CAAeHK+w0T43+h3xqU4a-qutxd-qiEhsvk0eaZpmAn-T0hpaLZQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <87cc8c77-7b39-1746-4680-cb26d602e62e@codeaurora.org>
+X-Cookie: Thank God I'm an atheist.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 08:56:41PM +0200, Andrey Konovalov wrote:
-> On Thu, Jun 28, 2018 at 12:51 PM, Dave Martin <Dave.Martin@arm.com> wrote:
-> > On Tue, Jun 26, 2018 at 03:15:10PM +0200, Andrey Konovalov wrote:
-> >> 1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
-> >>    tags in the top byte of each kernel pointer.
-> >
-> > [...]
-> >
-> > This is a change from the current situation, so the kernel may be
-> > making implicit assumptions about the top byte of kernel addresses.
-> >
-> > Randomising the top bits may cause things like address conversions and
-> > pointer arithmetic to break.
-> >
-> > For example, (q - p) will not produce the expected result if q and p
-> > have different tags.
-> 
-> If q and p have different tags, that means they come from different
-> allocations. I don't think it would make sense to calculate pointer
-> difference in this case.
 
-It might not seen sensible, but we could still be relying on this in the
-kernel and so this change would introduce a regression. I think we need
-a way to identify such pointer usage before these patches can seriously be
-considered for mainline inclusion. For example use of '>' and '<' to
-compare pointers in an rbtree could be affected by the introduction of
-tags.
+--gatW/ieO32f1wygP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Will
+On Thu, Jun 28, 2018 at 11:04:17AM -0700, David Collins wrote:
+
+> Do you have any remaining concerns with the qcom-rpmh-regulator binding
+> and driver patches that would keep you from applying them (other than the
+> dependency patches being applied first)?
+
+To repeat I need to find the time to sit down and go through them
+properly, the problems this driver has had mean I feel I need to be
+extra careful there.
+
+--gatW/ieO32f1wygP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls2EsEACgkQJNaLcl1U
+h9Bx1Af7Bz4I6SUQg9lGj8sFvYlmI95U/RkOKKl7qwJ1vL4rDIVYxUnCKptgUZwq
+m999vmbzQx/olgopwVBpHjalHCCKSwUFUT3YLsZHOxhg6qT32C98tsWk0fc0ryXp
+TxeeeXZyGf9g1hUE5VJvxZyLPvGk/iz62cI6U2vj9zPwrc8D1m5yNrWqos18roZo
+oSF41AOVcFDlSU2AIbuelz/T4e15rxvHxygubBMzyMUGjVicYdnIfvLq+XRWOD6i
+GVg7h1+rEXX8mAFslOj0E1Y+WruwGlbcQQtF0WmEw4bzoHjhUzwlKU6Iryjwfc2F
+3OqeExM3CbmRv90iiRAz87ILL2Kotw==
+=rGtf
+-----END PGP SIGNATURE-----
+
+--gatW/ieO32f1wygP--
