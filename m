@@ -2,203 +2,174 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94E20C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934C8C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57BA627FA3
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BA627FA3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5902B27F8E
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5902B27F8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934333AbeF2O3u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:29:50 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34326 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933623AbeF2O3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:29:44 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fYuOx-0000Zu-Nx; Fri, 29 Jun 2018 10:29:31 -0400
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        efault@gmx.de, songliubraving@fb.com, hpa@zytor.com,
-        Rik van Riel <riel@surriel.com>
-Subject: [PATCH 2/7] x86,tlb: leave lazy TLB mode at page table free time
-Date:   Fri, 29 Jun 2018 10:29:13 -0400
-Message-Id: <20180629142918.26601-3-riel@surriel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180629142918.26601-1-riel@surriel.com>
-References: <20180629142918.26601-1-riel@surriel.com>
+        id S935175AbeF2Oai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:30:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:50277 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934210AbeF2Oaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:30:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 07:30:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="212186383"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga004.jf.intel.com with ESMTP; 29 Jun 2018 07:30:26 -0700
+Message-ID: <3ae524498e6833abd5bb225987de97580262c4de.camel@linux.intel.com>
+Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
+        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
+        Prarit Bhargava <prarit@redhat.com>, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Date:   Fri, 29 Jun 2018 17:30:25 +0300
+In-Reply-To: <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
+         <20180621212518.19914-10-pasha.tatashin@oracle.com>
+         <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de>
+         <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
+         <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com>
+         <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de>
+         <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de>
+         <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+         <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de>
+         <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy discovered that speculative memory accesses while in lazy
-TLB mode can crash a system, when a CPU tries to dereference a
-speculative access using memory contents that used to be valid
-page table memory, but have since been reused for something else
-and point into la-la land.
+On Thu, 2018-06-28 at 12:43 +0200, Thomas Gleixner wrote:
+> On Thu, 28 Jun 2018, Thomas Gleixner wrote:
+> > I still want to document the unholy mess of what is initialized and
+> > available when. We have 5 hypervisors and 3 different points in
+> > early boot
+> > where the calibrate_* callbacks are overwritten. The XEN PV one is
+> > actually
+> > post tsc_init_early() for whatever reason.
+> > 
+> > That's all completely obscure and any attempt of moving
+> > tsc_early_init()
+> > earlier than where it is now is just lottery.
+> > 
+> > The other issue is that double calibration, e.g. doing the PIT thing
+> > twice
+> > is just consuming boot time for no value.
+> > 
+> > All of that has been duct taped over time and we really don't want
+> > yet
+> > another thing glued to it just because we can.
 
-The latter problem can be prevented in two ways. The first is to
-always send a TLB shootdown IPI to CPUs in lazy TLB mode, while
-the second one is to only send the TLB shootdown at page table
-freeing time.
+Hmm... Good question about Intel MID, I would try to put my
+understanding here.
 
-The second should result in fewer IPIs, since operationgs like
-mprotect and madvise are very common with some workloads, but
-do not involve page table freeing. Also, on munmap, batching
-of page table freeing covers much larger ranges of virtual
-memory than the batching of unmapped user pages.
+> Boot sequence:
+> 
+>   start_kernel()
+> 
+> 	INTEL_MID:
+> 		x86_intel_mid_early_setup()
+> 	   	calibrate_tsc = intel_mid_calibrate_tsc
+> 
+> 	   	intel_mid_calibrate_tsc() { return 0; }
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Tested-by: Song Liu <songliubraving@fb.com>
----
- arch/x86/include/asm/tlbflush.h |  5 +++++
- arch/x86/mm/tlb.c               | 27 +++++++++++++++++++++++++++
- include/asm-generic/tlb.h       | 10 ++++++++++
- mm/memory.c                     | 22 ++++++++++++++--------
- 4 files changed, 56 insertions(+), 8 deletions(-)
+This sounds like a stub against very old calibration code since Intel
+MID has no PIT, HPET, PMTIMER to calibrate from.
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 6690cd3fc8b1..3aa3204b5dc0 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -554,4 +554,9 @@ extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
- 	native_flush_tlb_others(mask, info)
- #endif
- 
-+extern void tlb_flush_remove_tables(struct mm_struct *mm);
-+extern void tlb_flush_remove_tables_local(void *arg);
-+
-+#define HAVE_TLB_FLUSH_REMOVE_TABLES
-+
- #endif /* _ASM_X86_TLBFLUSH_H */
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6eb1f34c3c85..9a893673c56b 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -646,6 +646,33 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	put_cpu();
- }
- 
-+void tlb_flush_remove_tables_local(void *arg)
-+{
-+	struct mm_struct *mm = arg;
-+
-+	if (this_cpu_read(cpu_tlbstate.loaded_mm) == mm &&
-+			this_cpu_read(cpu_tlbstate.is_lazy)) {
-+		/*
-+		 * We're in lazy mode.  We need to at least flush our
-+		 * paging-structure cache to avoid speculatively reading
-+		 * garbage into our TLB.  Since switching to init_mm is barely
-+		 * slower than a minimal flush, just switch to init_mm.
-+		 */
-+		switch_mm_irqs_off(NULL, &init_mm, NULL);
-+	}
-+}
-+
-+void tlb_flush_remove_tables(struct mm_struct *mm)
-+{
-+	int cpu = get_cpu();
-+	/*
-+	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-+	 */
-+	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
-+		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-+
-+	put_cpu();
-+}
- 
- static void do_flush_tlb_all(void *info)
- {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index faddde44de8c..f0b462ddfa15 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -295,4 +295,14 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- 
- #define tlb_migrate_finish(mm) do {} while (0)
- 
-+/*
-+ * Used to flush the TLB when page tables are removed, when lazy
-+ * TLB mode may cause a CPU to retain intermediate translations
-+ * pointing to about-to-be-freed page table memory.
-+ */
-+#ifndef HAVE_TLB_FLUSH_REMOVE_TABLES
-+#define tlb_flush_remove_tables(mm) do {} while (0)
-+#define tlb_flush_remove_tables_local(mm) do {} while (0)
-+#endif
-+
- #endif /* _ASM_GENERIC__TLB_H */
-diff --git a/mm/memory.c b/mm/memory.c
-index 7206a634270b..c2e83c1d124c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -326,16 +326,20 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
- 
- #ifdef CONFIG_HAVE_RCU_TABLE_FREE
- 
--/*
-- * See the comment near struct mmu_table_batch.
-- */
--
- static void tlb_remove_table_smp_sync(void *arg)
- {
--	/* Simply deliver the interrupt */
-+	struct mm_struct *mm = arg;
-+	/*
-+	 * On most architectures this does nothing. Simply delivering the
-+	 * interrupt is enough to prevent races with software page table
-+	 * walking like that done in get_user_pages_fast.
-+	 *
-+	 * See the comment near struct mmu_table_batch.
-+	 */
-+	tlb_flush_remove_tables_local(mm);
- }
- 
--static void tlb_remove_table_one(void *table)
-+static void tlb_remove_table_one(void *table, struct mmu_gather *tlb)
- {
- 	/*
- 	 * This isn't an RCU grace period and hence the page-tables cannot be
-@@ -344,7 +348,7 @@ static void tlb_remove_table_one(void *table)
- 	 * It is however sufficient for software page-table walkers that rely on
- 	 * IRQ disabling. See the comment near struct mmu_table_batch.
- 	 */
--	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
-+	smp_call_function(tlb_remove_table_smp_sync, tlb->mm, 1);
- 	__tlb_remove_table(table);
- }
- 
-@@ -365,6 +369,8 @@ void tlb_table_flush(struct mmu_gather *tlb)
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
- 
-+	tlb_flush_remove_tables(tlb->mm);
-+
- 	if (*batch) {
- 		call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
- 		*batch = NULL;
-@@ -387,7 +393,7 @@ void tlb_remove_table(struct mmu_gather *tlb, void *table)
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
--			tlb_remove_table_one(table);
-+			tlb_remove_table_one(table, tlb);
- 			return;
- 		}
- 		(*batch)->nr = 0;
+> 
+>   setup_arch()
+> 
+> 	x86_init.oem.arch_setup();
+> 	  INTEL_MID:
+> 		intel_mid_arch_setup()
+> 
+> 		PENWELL:
+> 		   x86_platform.calibrate_tsc = mfld_calibrate_tsc;
+> 
+> 		   MSR based magic. Value would be available right away.
+> 		   
+> 		TANGIER:
+> 		   x86_platform.calibrate_tsc = tangier_calibrate_tsc;
+> 	
+> 		   Different MSR based magic. Value would be available
+> 		   right away.		
+
+This stuff is how we can read TSC frequency on those platforms.
+
+The commit 7da7c1561366 ("x86, tsc: Add static (MSR) TSC calibration on
+Intel Atom SoCs") introduced a common way for all those chips to get TSC
+frequency, while forgetting remove old code.
+
+Surprisingly, the same guy even amended legacy code in the commit
+f3a02ecebed7 ("x86/tsc: Set TSC_KNOWN_FREQ and TSC_RELIABLE flags on
+Intel Atom SoCs").
+
+
+
+> INTEL_MID	intel_mid_calibrate_tsc()	intel_mid_calibrate_
+> tsc()
+> Generic		native_calibrate_cpu()		native_ca
+> librate_cpu()
+> 
+> INTEL_MID	mfld_calibrate_tsc()		mfld_calibrate_ts
+> c()
+> PENWELL		native_calibrate_cpu()		native_ca
+> librate_cpu()
+> 
+> INTEL_MID	tangier_calibrate_tsc()		tangier_calibr
+> ate_tsc()
+> TANGIER		native_calibrate_cpu()		native_ca
+> librate_cpu()
+> 
+
+
+Taking above into consideration, I think we may just remove the legacy
+code from mfld.c and mrfld.c and see what happen.
+
+If you can tell me points to test, I can prepare patches to remove and
+test on both Medfiled and Merrifield platforms (Penwell and Tangier SoCs
+respectively).
+
+> The INTEL MID stuff is wierd and not really obvious. AFAIR those
+> systems
+> don't have PIT or such, so they need to rely on the MSR/CPUID
+> mechanisms to
+> work, but that's just working because and not for obvious reasons.
+> Andy,
+> can you shed some light on that stuff?
+
+Hope above makes sense.
+
 -- 
-2.14.4
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
