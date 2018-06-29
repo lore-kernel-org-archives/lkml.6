@@ -2,185 +2,77 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B667AC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A58C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7967327DFE
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7967327DFE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6799D27DFB
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:19:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6799D27DFB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936084AbeF2LTd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:19:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:60260 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965381AbeF2LQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:16:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9FB61993;
-        Fri, 29 Jun 2018 04:16:56 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 52CAF3F266;
-        Fri, 29 Jun 2018 04:16:54 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        marc.zyngier@arm.com, cdall@kernel.org, eric.auger@redhat.com,
-        julien.grall@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 16/20] kvm: arm64: Switch to per VM IPA limit
-Date:   Fri, 29 Jun 2018 12:15:36 +0100
-Message-Id: <1530270944-11351-17-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+        id S936107AbeF2LTj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:19:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56830 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754116AbeF2LTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:19:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1A69FADA9;
+        Fri, 29 Jun 2018 11:19:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 8E559DABB2; Fri, 29 Jun 2018 13:19:31 +0200 (CEST)
+Date:   Fri, 29 Jun 2018 13:19:31 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
+Message-ID: <20180629111931.GN2287@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nikolay Borisov <nborisov@suse.com>
+References: <20180627085936.4f9cc4f2@canb.auug.org.au>
+ <20180628161102.GJ2287@suse.cz>
+ <20180629095858.655ae88f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180629095858.655ae88f@canb.auug.org.au>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can manage the stage2 page table per VM, switch the
-configuration details to per VM instance. We keep track of the
-IPA bits, number of page table levels and the VTCR bits (which
-depends on the IPA and the number of levels). While at it, remove
-unused pgd_lock field from kvm_arch for arm64.
+On Fri, Jun 29, 2018 at 09:58:58AM +1000, Stephen Rothwell wrote:
+> Hi David,
+> 
+> On Thu, 28 Jun 2018 18:11:03 +0200 David Sterba <dsterba@suse.cz> wrote:
+> >
+> > On Wed, Jun 27, 2018 at 08:59:36AM +1000, Stephen Rothwell wrote:
+> > > After merging the btrfs-kdave tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > > 
+> > > fs/btrfs/print-tree.c: In function 'print_extent_item':
+> > > fs/btrfs/print-tree.c:56:3: error: implicit declaration of function 'btrfs_print_v0_err'; did you mean 'btrfs_print_tree'? [-Werror=implicit-function-declaration]
+> > >    btrfs_print_v0_err(eb->fs_info);
+> > >    ^~~~~~~~~~~~~~~~~~
+> > >    btrfs_print_tree  
+> > 
+> > Should be fixed in today's branch.
+> 
+> Sorry, still broken.  I fetched your tree only about 5 minutes ago.
 
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/kvm_host.h       | 14 ++++++++++++--
- arch/arm64/include/asm/kvm_hyp.h        |  3 +--
- arch/arm64/include/asm/kvm_mmu.h        | 20 ++++++++++++++++++--
- arch/arm64/include/asm/stage2_pgtable.h |  1 -
- virt/kvm/arm/mmu.c                      |  4 ++++
- 5 files changed, 35 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 328f472..9a15860 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -61,13 +61,23 @@ struct kvm_arch {
- 	u64    vmid_gen;
- 	u32    vmid;
- 
--	/* 1-level 2nd stage table and lock */
--	spinlock_t pgd_lock;
-+	/* stage-2 page table */
- 	pgd_t *pgd;
- 
- 	/* VTTBR value associated with above pgd and vmid */
- 	u64    vttbr;
- 
-+	/* Private bits of VTCR_EL2 for this VM */
-+	u64    vtcr_private;
-+	/* Size of the PA size for this guest */
-+	u8     phys_shift;
-+	/*
-+	 * Number of levels in page table. We could always calculate
-+	 * it from phys_shift above. We cache it for faster switches
-+	 * in stage2 page table helpers.
-+	 */
-+	u8     s2_levels;
-+
- 	/* The last vcpu id that ran on each physical CPU */
- 	int __percpu *last_vcpu_ran;
- 
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index 3e8052d1..699f678 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -166,8 +166,7 @@ static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
- 	u64 vtcr = read_sysreg(vtcr_el2);
- 
- 	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
--	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
--		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
-+	vtcr |= kvm->arch.vtcr_private;
- 	write_sysreg(vtcr, vtcr_el2);
- 	write_sysreg(kvm->arch.vttbr, vttbr_el2);
- }
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index f3fb05a3..a291cdc 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -143,9 +143,10 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
-  */
- #define KVM_PHYS_SHIFT	(40)
- 
--#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
-+#define kvm_phys_shift(kvm)		(kvm->arch.phys_shift)
- #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
- #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
-+#define kvm_stage2_levels(kvm)		(kvm->arch.s2_levels)
- 
- static inline bool kvm_page_empty(void *ptr)
- {
-@@ -528,6 +529,18 @@ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
- 
- static inline void *stage2_alloc_pgd(struct kvm *kvm)
- {
-+	u32 ipa, lvls;
-+
-+	/*
-+	 * Stage2 page table can support concatenation of (upto 16) tables
-+	 * at the entry level, thereby reducing the number of levels.
-+	 */
-+	ipa = kvm_phys_shift(kvm);
-+	lvls = stage2_pt_levels(ipa);
-+
-+	kvm->arch.s2_levels = lvls;
-+	kvm->arch.vtcr_private = VTCR_EL2_SL0(lvls) | TCR_T0SZ(ipa);
-+
- 	return alloc_pages_exact(stage2_pgd_size(kvm),
- 				 GFP_KERNEL | __GFP_ZERO);
- }
-@@ -537,7 +550,10 @@ static inline u32 kvm_get_ipa_limit(void)
- 	return KVM_PHYS_SHIFT;
- }
- 
--static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
-+static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift)
-+{
-+	kvm->arch.phys_shift = ipa_shift;
-+}
- 
- #endif /* __ASSEMBLY__ */
- #endif /* __ARM64_KVM_MMU_H__ */
-diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
-index ffc37cc..91d7936 100644
---- a/arch/arm64/include/asm/stage2_pgtable.h
-+++ b/arch/arm64/include/asm/stage2_pgtable.h
-@@ -65,7 +65,6 @@
- #define __s2_pgd_ptrs(pa, lvls)	(1 << ((pa) - pt_levels_pgdir_shift((lvls))))
- #define __s2_pgd_size(pa, lvls)	(__s2_pgd_ptrs((pa), (lvls)) * sizeof(pgd_t))
- 
--#define kvm_stage2_levels(kvm)		stage2_pt_levels(kvm_phys_shift(kvm))
- #define stage2_pgdir_shift(kvm)	\
- 		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
- #define stage2_pgdir_size(kvm)		(_AC(1, UL) << stage2_pgdir_shift((kvm)))
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index a339e00..d7822e1 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -867,6 +867,10 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
- 		return -EINVAL;
- 	}
- 
-+	/* Make sure we have the stage2 configured for this VM */
-+	if (WARN_ON(!kvm_phys_shift(kvm)))
-+		return -EINVAL;
-+
- 	/* Allocate the HW PGD, making sure that each page gets its own refcount */
- 	pgd = stage2_alloc_pgd(kvm);
- 	if (!pgd)
--- 
-2.7.4
-
+It was a build problem that I did not recognize in my setup
+immediatelly, the warning appears only withtout CONFIG_BTRFS_ASSERT.
+The branch has been updated, commit 1607c1cbdaa0b6b80b0d4a, sorry for
+inconvenience.
