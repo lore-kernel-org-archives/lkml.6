@@ -2,92 +2,101 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8EBC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7737DC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E35F828048
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:10:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E35F828048
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F94728027
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EhdaGlbX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F94728027
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935940AbeF2PKa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:10:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50596 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935602AbeF2PKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:10:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 08:10:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="52885362"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.88])
-  by orsmga007.jf.intel.com with ESMTP; 29 Jun 2018 08:10:11 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Azhar Shaikh <azhar.shaikh@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: require to compile as part of the kernel
-Date:   Fri, 29 Jun 2018 18:10:02 +0300
-Message-Id: <20180629151005.10899-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S936043AbeF2PKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:10:47 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42078 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752917AbeF2PJc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:09:32 -0400
+Received: by mail-wr0-f194.google.com with SMTP id p1-v6so9183173wrs.9
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 08:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=f/9dnffnAhsKKDYTxbHSfWqEtEMVyyr+CWDSPR1bs1Q=;
+        b=EhdaGlbX1SpMHMVEZ4H2JaRpRCsCiyi3BtSvmcJwwKJ4/0iHVuyxonrVWYXx9hp9S0
+         GSmwXCR6l0rQ0Q/sQQ87XOGuXuKeqgavB0M+Wk5VjinZORPVAQxtrXdPmjdQrHYJu9a+
+         hpiaXSX3Rrih+r0gHJ9kP8owrObTiwbJMmWbLh7cZJ8DSk0DNKcd8TQr6Gz/TXF+pWG1
+         ZQDPurfQgMYPx7og5mqCM6qyfntzbpUOFDTtclYjcEAsXOU58Jr7AKEE4UnEvvSztYiA
+         tLMjkYGAKpisNIGEYf6AQ4ExCnKjPh6iaJqvfoo/ak7oABKbFG5ZAgJqLuoKQR5DWpjM
+         JEWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=f/9dnffnAhsKKDYTxbHSfWqEtEMVyyr+CWDSPR1bs1Q=;
+        b=s83MnCXVssAr+xzAqAB7wXSvKGnTglQxaeLgxY+KR2lx3XJlx2S48k5B66bmkbSYQ0
+         cgFPRyFPgD3J/vbFr3X9nU3go92FrR8fWmLhMiKhL5y/yNtI4jbdyWy6+7QuMLKJh4fp
+         wOPmw/Y7yphGG8tF/ERZxW0ULijIe/JbhBHzu66XD7Plt+QWrtUcrT70Xaw2T9juW6/I
+         lxX2BTgt/3Rvm+vNlv57IcnaWmYfU9blSTLcogmrqIjtaKjaI/e0tslH63LWPnU7Gl9x
+         w/wAHJUM3VA/YvjhZKhR3Dvxm6FevWb82hyFvIeEpOojUMGhfAuSTBOG4v0FfxG4eeHG
+         3SgA==
+X-Gm-Message-State: APt69E2mKGgdLP8GW7wmyg+N0IW17XbiNBTq2ZVJBQPdV91nD48dgjeD
+        GaIXkQiiYvAoQI55jBe8i+Yj4WEO
+X-Google-Smtp-Source: AAOMgpeVZOQW6poium2s8lfdk0LKxMVOtYm3D6D76pYLIUL3kQvvNdzkrkk/tSfP0S3twh1KIdfjLQ==
+X-Received: by 2002:adf:ff49:: with SMTP id u9-v6mr3760614wrs.15.1530284971714;
+        Fri, 29 Jun 2018 08:09:31 -0700 (PDT)
+Received: from localhost.localdomain (uluru.liltaz.com. [163.172.81.188])
+        by smtp.googlemail.com with ESMTPSA id b6-v6sm11944222wro.52.2018.06.29.08.09.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Jun 2018 08:09:31 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] ASoC: es7134: remove 64kHz rate from the supported rates
+Date:   Fri, 29 Jun 2018 17:09:20 +0200
+Message-Id: <20180629150924.18197-2-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180629150924.18197-1-jbrunet@baylibre.com>
+References: <20180629150924.18197-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not allow to compile TPM core as a module. TPM defines a root of
-trust for integrity and keyring subsystems and should be always
-available and not be loaded from the user space. There is no a
-reasonable use case for a loadable module existing.
+64Khz is actually not supported by the es7134 according to the datasheet
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: 9000b59d7a12 ("ASoC: es7134: add es7134 DAC driver")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/char/tpm/Kconfig | 2 +-
- include/linux/tpm.h      | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/codecs/es7134.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index 18c81cbe4704..9728771aecbd 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -3,7 +3,7 @@
- #
- 
- menuconfig TCG_TPM
--	tristate "TPM Hardware Support"
-+	bool "TPM Hardware Support"
- 	depends on HAS_IOMEM
- 	select SECURITYFS
- 	select CRYPTO
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 4609b94142d4..cefa61b12891 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -50,8 +50,7 @@ struct tpm_class_ops {
- 	void (*clk_enable)(struct tpm_chip *chip, bool value);
- };
- 
--#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
--
-+#if defined(CONFIG_TCG_TPM)
- extern int tpm_is_tpm2(struct tpm_chip *chip);
- extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- extern int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
+diff --git a/sound/soc/codecs/es7134.c b/sound/soc/codecs/es7134.c
+index 58515bb1a303..2fbb49f5b278 100644
+--- a/sound/soc/codecs/es7134.c
++++ b/sound/soc/codecs/es7134.c
+@@ -48,7 +48,11 @@ static struct snd_soc_dai_driver es7134_dai = {
+ 		.stream_name = "Playback",
+ 		.channels_min = 2,
+ 		.channels_max = 2,
+-		.rates = SNDRV_PCM_RATE_8000_192000,
++		.rates = (SNDRV_PCM_RATE_8000_48000 |
++			  SNDRV_PCM_RATE_88200      |
++			  SNDRV_PCM_RATE_96000      |
++			  SNDRV_PCM_RATE_176400     |
++			  SNDRV_PCM_RATE_192000),
+ 		.formats = (SNDRV_PCM_FMTBIT_S16_LE  |
+ 			    SNDRV_PCM_FMTBIT_S18_3LE |
+ 			    SNDRV_PCM_FMTBIT_S20_3LE |
 -- 
-2.17.1
+2.14.4
 
