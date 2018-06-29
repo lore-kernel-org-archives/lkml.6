@@ -2,170 +2,141 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60B7C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD820C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50DA27FD8
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A50DA27FD8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 89B1F27FDC
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ag5fQuqg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B1F27FDC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935212AbeF2OoQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:44:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57141 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753194AbeF2OoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:44:14 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DA2D820DD1; Fri, 29 Jun 2018 16:44:11 +0200 (CEST)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A3703206ED;
-        Fri, 29 Jun 2018 16:44:01 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Hua Jing <jinghua@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, Ken Ma <make@marvell.com>,
-        Victor Gu <xigu@marvell.com>,
-        Neta Zur Hershkovits <neta@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Wilson Ding <dingwei@marvell.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
-References: <20180619123446.694-1-gregory.clement@bootlin.com>
-        <20180619123446.694-2-gregory.clement@bootlin.com>
-Date:   Fri, 29 Jun 2018 16:44:02 +0200
-In-Reply-To: <20180619123446.694-2-gregory.clement@bootlin.com> (Gregory
-        CLEMENT's message of "Tue, 19 Jun 2018 14:34:45 +0200")
-Message-ID: <87tvpl4pql.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S935862AbeF2OpN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:45:13 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:45939 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934656AbeF2OpL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:45:11 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id A1A8125B7B9;
+        Sat, 30 Jun 2018 00:45:08 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1530283508; bh=vYdxUDG85rQxjdovn/q9n0KtVLDvEKF9IvlP6wVuvoY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ag5fQuqgpNn9foeRRKvW9uLCTo+k3n80AcVY3U1jjmEDVWz0tB/9oyzijvW+Xm1fc
+         OXW1VoEmC3Jvi8RFHjxc9Zwn0Ufqf77i6Gwv5UNRkyOAp1RYxB54jdNy5puYQN35Lk
+         czOgaV6rlJa1eq1lCXRmtRgm3JChUmKApF479xkU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id A3618940760; Fri, 29 Jun 2018 16:45:06 +0200 (CEST)
+Date:   Fri, 29 Jun 2018 16:45:06 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michel Pollet <michel.pollet@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Message-ID: <20180629144505.xcencoba4ru6tiee@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+ <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+ <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
- 
- On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+On Thu, Jun 28, 2018 at 02:45:41PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
+> > > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> > > > This adds the Renesas R9A06G032 bare bone support.
+> > > >
+> > > > This currently only handles the SYSCTRL block note,
+> > > > generic parts (gic, architected timer) and a UART.
+> > > >
+> > > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > >
+> > > Thanks, applied with the following appended:
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 9d5eeff51b5f..4c85ac04872d 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -1969,6 +1969,7 @@ S:      Supported
+> > >  F:   arch/arm/boot/dts/emev2*
+> > >  F:   arch/arm/boot/dts/r7s*
+> > >  F:   arch/arm/boot/dts/r8a*
+> > > +F:   arch/arm/boot/dts/r9a*
+> > >  F:   arch/arm/boot/dts/sh*
+> > >  F:   arch/arm/configs/shmobile_defconfig
+> > >  F:   arch/arm/include/debug/renesas-scif.S
+> >
+> > One more update.
+> >
+> > dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
+> > current base of the renesas tree and likely base for the rest of the v4.19
+> > development cycle.
+> >
+> > Accordingly I have removed the include of that header and replaced
+> > the use of symbols it defines with numeric constants. The result is below.
+> 
+> Oh right. Thanks!
+> 
+> > Please:
+> > 1) Check that this is correct and
+> 
+> Looks good to me, except for the bogus "fixes" and "SoB" below
+> (bad squash?)
+> 
+> > From: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
+> >
+> > This adds the Renesas R9A06G032 bare bone support.
+> >
+> > This currently only handles the SYSCTRL block note,
+> > generic parts (gic, architected timer) and a UART.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > [simon: updated MAINTAINERS file
+> > [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > fixes
+>   ^^^^^
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>   ^^^^
+> 
+> Gr{oetje,eeting}s,
 
-> Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-> respectively) to L0 frequency (1.2 Ghz) requires a significant amount
-> of time to let VDD stabilize to the appropriate voltage. This amount of
-> time is large enough that it cannot be covered by the hardware
-> countdown register. Due to this, the CPU might start operating at L0
-> before the voltage is stabilized, leading to CPU stalls.
->
-> To work around this problem, we prevent switching directly from the
-> L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-> frequency in-between. The sequence therefore becomes:
->
-> 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-> 2. Sleep 20ms for stabling VDD voltage
-> 3. Then switch from L1(600MHZ) to L0(1200Mhz).
-
-Do you have any comment on this fix?
-
-Gregory
-
->
-> It is based on the work done by Ken Ma <make@marvell.com>
->
-> Cc: stable@vger.kernel.org
-> Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> ---
->  drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 6860bd5a37c5..44e4e27eddad 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -35,6 +35,7 @@
->  #define CLK_SEL		0x10
->  #define CLK_DIS		0x14
->  
-> +#define  ARMADA_37XX_DVFS_LOAD_1 1
->  #define LOAD_LEVEL_NR	4
->  
->  #define ARMADA_37XX_NB_L0L1	0x18
-> @@ -507,6 +508,40 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
->  	return -EINVAL;
->  }
->  
-> +/*
-> + * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-> + * respectively) to L0 frequency (1.2 Ghz) requires a significant
-> + * amount of time to let VDD stabilize to the appropriate
-> + * voltage. This amount of time is large enough that it cannot be
-> + * covered by the hardware countdown register. Due to this, the CPU
-> + * might start operating at L0 before the voltage is stabilized,
-> + * leading to CPU stalls.
-> + *
-> + * To work around this problem, we prevent switching directly from the
-> + * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-> + * frequency in-between. The sequence therefore becomes:
-> + * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-> + * 2. Sleep 20ms for stabling VDD voltage
-> + * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
-> + */
-> +static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
-> +{
-> +	unsigned int cur_level;
-> +
-> +	if (rate != 1200 * 1000 * 1000)
-> +		return;
-> +
-> +	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
-> +	cur_level &= ARMADA_37XX_NB_CPU_LOAD_MASK;
-> +	if (cur_level <= ARMADA_37XX_DVFS_LOAD_1)
-> +		return;
-> +
-> +	regmap_update_bits(base, ARMADA_37XX_NB_CPU_LOAD,
-> +			   ARMADA_37XX_NB_CPU_LOAD_MASK,
-> +			   ARMADA_37XX_DVFS_LOAD_1);
-> +	msleep(20);
-> +}
-> +
->  static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
->  			       unsigned long parent_rate)
->  {
-> @@ -537,6 +572,9 @@ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
->  			 */
->  			reg = ARMADA_37XX_NB_CPU_LOAD;
->  			mask = ARMADA_37XX_NB_CPU_LOAD_MASK;
-> +
-> +			clk_pm_cpu_set_rate_wa(rate, base);
-> +
->  			regmap_update_bits(base, reg, mask, load_level);
->  
->  			return rate;
-> -- 
-> 2.17.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Thanks, I'll remove that trailing garbage.
