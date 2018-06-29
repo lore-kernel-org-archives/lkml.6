@@ -2,154 +2,120 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C89DDC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A08BC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8291427B9D
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t7u0mxSm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8291427B9D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CB0DB27BA5
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0DB27BA5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933933AbeF2HrN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:47:13 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51284 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933177AbeF2HrL (ORCPT
+        id S934047AbeF2HsO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:48:14 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42735 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933177AbeF2HsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 03:47:11 -0400
-Received: by mail-wm0-f67.google.com with SMTP id w137-v6so1107999wmw.1;
-        Fri, 29 Jun 2018 00:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=eNl/pNFG1Q1EonbePgtUCGxk0dRgugSqxhAwE+Dk31Q=;
-        b=t7u0mxSmF4PcG0PLejkQTTspvSf50kqPR4UydfXBCE4TM9zNkfnhCPCKDWyHmutZbW
-         fS1J8uy9idHXENIoQddXN2X02mPi66PbMtQh5D1X2/GyKDax80IV2usMr3aCdDNMkCCO
-         YAyeUY671EhRsooIaLzx4V4cq33V1TkIX5vFTTbgits31u4n3pwcHr+fC41VvWZkwWb/
-         KIBR6oWb/Mp/0fOq8/iWtm85CT1Vm5wNIE4PxTJj6mV4zTohvYklbcFcgrWWHMiLW9tC
-         KKoSAWmjsX/KCi5nOFEd6bsSwQnwOsMHOcJBEWBiV4xg6k7w38rqbJ8jeDx3cTRT6wZu
-         MHsw==
+        Fri, 29 Jun 2018 03:48:12 -0400
+Received: by mail-ua0-f195.google.com with SMTP id x18-v6so5218021uaj.9;
+        Fri, 29 Jun 2018 00:48:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=eNl/pNFG1Q1EonbePgtUCGxk0dRgugSqxhAwE+Dk31Q=;
-        b=lAG7rg1ueo4m2cnZOya0egX1lasswf8PGdi3voH6rc5F1tJwISmIU4fDyJFdpnxWRQ
-         OitXao2ZK99qHizk4Z47riLsHR5uztZXjl/SpO4KAtCmZkSoyerPT7yan5lHa8m7Pp6m
-         2vizqYRR45ojrZ6rQn1aosMYkWXow0mpE4daCl2m3kEfbP/CO+vO0FfYAB3muZA76dN/
-         S+sU3PhQLvTcQlqa2RRpbAaEkg/iezFWuSwemQApPNPWBAIt/nDC+GRFnqx4f6h2Q+5u
-         HDElze0gVyVIBzRmDjnQzbv16eYQ80XRuW5CEnDUQHLml4rfIr2UIJF9Qv09kWnh5RaP
-         Gxog==
-X-Gm-Message-State: APt69E245gpJhBDv8iXApDKjrFeNNv8TPVCEPwo+k/tP9s68ZJYB1Qaf
-        XaUwhu1zlzr92M7fjItrEjimBcFtAOPKb5E99So=
-X-Google-Smtp-Source: AAOMgpdPrjNB+mHX6UJXMUQyu8T7EHU9nfZwpoFAIV+TRr/ocdctUZBrLvtFLBzcs65ssCpIx/32UCCcQOKJWwcfcPU=
-X-Received: by 2002:a1c:3fd1:: with SMTP id m200-v6mr962715wma.88.1530258430121;
- Fri, 29 Jun 2018 00:47:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=krLbWCIdM5jhuSyZDbaS3/9605IaCvaaa5YZcBIdXLI=;
+        b=PTRzrD0d6yyWGxAVr0yDrlWb6XQhgJ2FjRFjcC1fYSLoImC8GiNjMAtO67PEiYeLOc
+         6LFc0Wtf49MvdxtGkxVqdNdnivlqEFCWTedoHnbUvEr5/zUk3amibKBP5r2XndJsDtn3
+         OWw0zA0nxrugBP2VBlIW0QQqBaMW61GjxR0e5yinBwYqnNqK/zXkYduVIkfqG++eTwQB
+         Z/Sf/UI1DarOOjjwCGyifUjLHYzoXw7+aXcMaX4K6lgT1bnyLFOakD71RVG7VxBqm5qz
+         PqjxBZVHeMl65ik3rt7jnl26H8ZgvtJYyHAcP5D2dDf14v8kwpyifI2cY8tf7kr1BLtd
+         W70Q==
+X-Gm-Message-State: APt69E1f3r5to3PMMMTtcALtmUpmL4T6fWw67ZoMa7Ud9L/oAByLJrES
+        ckMksRkWPPIHeJk+upgorq4oSAWSWyy3AlUFoQY=
+X-Google-Smtp-Source: AAOMgpd8Lhz9W+FhuTExulRbdBfNQky17yziNKZXpP0jqV++PT27+X5w+UXzQlHSes4RnsZZj4ha5AItM6R9fINUwFM=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr8645497uae.12.1530258492057;
+ Fri, 29 Jun 2018 00:48:12 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:5c8d:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 00:46:49
- -0700 (PDT)
-Reply-To: andrea.merello@gmail.com
-In-Reply-To: <20180629072552.GY22377@vkoul-mobl>
-References: <20180625092724.22164-1-andrea.merello@gmail.com> <20180629072552.GY22377@vkoul-mobl>
-From:   Andrea Merello <andrea.merello@gmail.com>
-Date:   Fri, 29 Jun 2018 09:46:49 +0200
-Message-ID: <CAN8YU5Owh2Sb+-mOR0nVFkdZpD=dRd2jCin5MCdnsNLPo5zwwg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dmaengine: xilinx_dma: in axidma slave_sg and
- dma_cylic mode align split descriptors
-To:     Vinod <vkoul@kernel.org>
-Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
-        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+References: <20180628134227.GA1719@arbeit> <20180628185630.GA6095@amd>
+ <20180628202955.GA1534@imap.1und1.de> <20180628204516.GA29146@amd>
+ <20180629064147.GA3219@arbeit> <20180629071724.GA10079@amd>
+ <CAMuHMdXaPz3ckT1cPZed4e=iwk3nb75UBGC66hm+b+xRDNNnNg@mail.gmail.com> <20180629072912.GB10079@amd>
+In-Reply-To: <20180629072912.GB10079@amd>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 29 Jun 2018 09:48:00 +0200
+Message-ID: <CAMuHMdW1NX=BwJE0eauRLkRj1se4iRNGdxHXeajNQ-dKDhnPKw@mail.gmail.com>
+Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Andreas Klinger <ak@it-klinger.de>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Willy Tarreau <w@1wt.eu>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-leds@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 9:25 AM, Vinod <vkoul@kernel.org> wrote:
-> On 25-06-18, 11:27, Andrea Merello wrote:
->> Whenever a single or cyclic transaction is prepared, the driver
->> could eventually split it over several SG descriptors in order
->> to deal with the HW maximum transfer length.
->>
->> This could end up in DMA operations starting from a misaligned
->> address. This seems fatal for the HW if DRE is not enabled.
->>
->> This patch eventually adjusts the transfer size in order to make sure
->> all operations start from an aligned address.
->>
->> Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
->> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
->> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
->> ---
->> Changes in v2:
->>         - don't introduce copy_mask field, rather rely on already-esistent
->>           copy_align field. Suggested by Radhey Shyam Pandey
->>         - reword title
->> Changes in v3:
->>       - fix bug introduced in v2: wrong copy size when DRE is enabled
->>         use implementation suggested by Radhey Shyam Pandey
->> ---
->>  drivers/dma/xilinx/xilinx_dma.c | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
->> index 27b523530c4a..113d9bf1b6a1 100644
->> --- a/drivers/dma/xilinx/xilinx_dma.c
->> +++ b/drivers/dma/xilinx/xilinx_dma.c
->> @@ -1793,6 +1793,16 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
->>                        */
->>                       copy = min_t(size_t, sg_dma_len(sg) - sg_used,
->>                                    XILINX_DMA_MAX_TRANS_LEN);
->> +
->> +                     if ((copy + sg_used < sg_dma_len(sg)) &&
->> +                         chan->xdev->common.copy_align) {
->> +                             /*
->> +                              * If this is not the last descriptor, make sure
->> +                              * the next one will be properly aligned
->> +                              */
->> +                             copy = rounddown(copy,
->> +                                     (1 << chan->xdev->common.copy_align));
->> +                     }
->>                       hw = &segment->hw;
->>
->>                       /* Fill in the descriptor */
->> @@ -1898,6 +1908,16 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
->>                        */
->>                       copy = min_t(size_t, period_len - sg_used,
->>                                    XILINX_DMA_MAX_TRANS_LEN);
->> +
->> +                     if ((copy + sg_used < period_len) &&
->> +                         chan->xdev->common.copy_align) {
->> +                             /*
->> +                              * If this is not the last descriptor, make sure
->> +                              * the next one will be properly aligned
->> +                              */
->> +                             copy = rounddown(copy,
->> +                                     (1 << chan->xdev->common.copy_align));
->> +                     }
+Hi Pavel.
+
+On Fri, Jun 29, 2018 at 9:29 AM Pavel Machek <pavel@ucw.cz> wrote:
+> On Fri 2018-06-29 09:21:24, Geert Uytterhoeven wrote:
+> > On Fri, Jun 29, 2018 at 9:17 AM Pavel Machek <pavel@ucw.cz> wrote:
+> > > > > Yeah, well... I don't think decoding sentences in morse code is going
+> > > > > to be much fun.
+> > > > >
+> > > > > And we don't really want encoder in kernel. Just do encoding in
+> > > > > userspace, and use pattern trigger to display it.
+> > > > >
+> > > > > For many uses, morse code is "too geeky", and other patterns will be
+> > > > > used.
+> > > > >
+> > > > > Like " X    " for error 1, " X X     " for error 2, " .xX .xX " for
+> > > > > charging, " .xXx. " for everything okay...
+> > > > >
+> > > >
+> > > > The hardware i'm using is not able to adjust brightness. It can just switch the
+> > > > LED on or off. That's it.
+> > > >
+> > > > If anybody is interested i can submit a version 2 of the morse trigger with the
+> > > > improvements suggested by Greg and Geert. Please let me know.
+> > >
+> > > I'd prefer more general pattern trigger.
+> >
+> > There are two parts here:
+> >   1. The general pattern trigger (which is not yet upstream),
+> >   2. A way to supply a string, convert it into morse code, and feed it to
+> >      the LED subsystem.
+> >
+> > Given 1 is not yet upstream, I think Andreas solution is fine.
+> > Once 1 is upstream, 2 can be modified to feed into 1, if available.
 >
-> same code pasted twice, can we have a routine for this... perhaps more
-> code can be made common too
+> There's no reason 2. should be in kernel ("mechanism, not policy").
+>
+> Given 1. is not really more complicated than the morse
+> trigger... please just help with pattern trigger if you want this to
+> happen.
 
-Yes, I see.. Indeed there was duplicated code before this series and
-it is still there after it.
+Ah, you want to do the conversion to morse code in userspace?
+Yes, that makes sense.
 
-I can see if we can have a routine as you suggested at least for the
-code portions touched by this patch. Do you eventually want this extra
-change to be done in the same patch 1/5 or do you want a separate
-patch i.e. 2/6 or 6/6 ?
+Gr{oetje,eeting}s,
 
-> --
-> ~Vinod
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
