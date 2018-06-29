@@ -2,135 +2,200 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DB7C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FA0C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79E1527EC5
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:29:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79E1527EC5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 67B7A24B00
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B7A24B00
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936585AbeF2N3o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:29:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34276 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935010AbeF2N3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:29:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F3C480D;
-        Fri, 29 Jun 2018 06:29:42 -0700 (PDT)
-Received: from e107155-lin (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8A133F318;
-        Fri, 29 Jun 2018 06:29:40 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 14:29:34 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jeremy.linton@arm.com, ard.biesheuvel@linaro.org,
-        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-Subject: Re: [PATCH] arm64: acpi: reenumerate topology ids
-Message-ID: <20180629132934.GA16282@e107155-lin>
-References: <20180628145128.10057-1-drjones@redhat.com>
- <a38fb684-c023-1a96-464e-dd268f3132ea@arm.com>
- <20180628173243.obydzakh2stfs26w@kamzik.brq.redhat.com>
- <20180629102927.GA18043@e107155-lin>
- <20180629112354.hefdl2pe72frl6x3@kamzik.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180629112354.hefdl2pe72frl6x3@kamzik.brq.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S933016AbeF2NfV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:35:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751901AbeF2NfT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 09:35:19 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TDY32j086489
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 09:35:19 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwms2k59f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 09:35:19 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 29 Jun 2018 14:35:17 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 29 Jun 2018 14:35:14 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TDZDFE29163696
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 29 Jun 2018 13:35:13 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 78B3011C058;
+        Fri, 29 Jun 2018 14:35:01 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB64611C04A;
+        Fri, 29 Jun 2018 14:34:59 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.81])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 29 Jun 2018 14:34:59 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 29 Jun 2018 16:35:10 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH] mm: make DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM
+Date:   Fri, 29 Jun 2018 16:35:08 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18062913-0016-0000-0000-000001E19467
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062913-0017-0000-0000-00003235DFB4
+Message-Id: <1530279308-24988-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806290146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 01:23:54PM +0200, Andrew Jones wrote:
-> On Fri, Jun 29, 2018 at 11:29:27AM +0100, Sudeep Holla wrote:
-> > On Thu, Jun 28, 2018 at 07:32:43PM +0200, Andrew Jones wrote:
-> > > On Thu, Jun 28, 2018 at 05:30:51PM +0100, Sudeep Holla wrote:
-> > > > I am not sure if we can ever guarantee that DT and ACPI will get the
-> > > > same ids whatever counter we use as it depends on the order presented in
-> > > > the firmware(DT or ACPI). So I am not for generating ids for core and
-> > > > threads in that way.
-> > >
-> > > I don't believe we have to guarantee that the exact (package,core,thread)
-> > > triplet describing a PE with DT matches ACPI. We just need to guarantee
-> > > that each triplet we select properly puts a PE in the same group as its
-> > > peers. So, as long as we keep the grouping described by DT or ACPI, then
-> > > the (package,core,thread) IDs assigned are pretty arbitrary.
-> > >
-> > 
-> > If that's the requirement, we already do that. The IDs are just too
-> > arbitrary :)
-> 
-> Right. The patch doesn't fix anything, it just makes the IDs less weird
-> looking to humans, and brings some consistency to IDs across systems
-> and hardware descriptions.
->
+The deferred memory initialization relies on section definitions, e.g
+PAGES_PER_SECTION, that are only available when CONFIG_SPARSEMEM=y on most
+architectures.
 
-I agree, but don't think counter like this will be harmless. It can create
-some other inconsistency in some other way.
+Initially DEFERRED_STRUCT_PAGE_INIT depended on explicit
+ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT configuration option, but since the
+commit 2e3ca40f03bb13709df4 ("mm: relax deferred struct page requirements")
+this requirement was relaxed and now it is possible to enable
+DEFERRED_STRUCT_PAGE_INIT on architectures that support DISCONTINGMEM and
+NO_BOOTMEM which causes build failures.
 
-> > 
-> > > I could change the commit message to state we can generate IDs *like*
-> > > DT does (i.e. with counters), even if they may not result in identical
-> > > triplet to PE mappings.
-> > >
-> > 
-> > Why we need to make it *like DT* ?
-> 
-> Because the DT parser considers human readers, which, IMHO, is nicer.
-> 
-> The consistency remapping to counters brings shouldn't be overlooked. If
-> both ACPI and DT present the CPUs in the same order (i.e.  cpu0 is mpidr0,
-> cpu1 is mpidr1, ...) using their respective descriptions, then this patch
-> will ensure topology IDs are the same. 
+For instance, setting SMP=y and DEFERRED_STRUCT_PAGE_INIT=y on arc causes
+the following build failure:
 
-Yes, it's all fine in theory. But firmware is the one presenting it and
-ACPI PPTT has UID for a reason and I want that to be the single source
-for these IDs.
+  CC      mm/page_alloc.o
+mm/page_alloc.c: In function 'update_defer_init':
+mm/page_alloc.c:321:14: error: 'PAGES_PER_SECTION'
+undeclared (first use in this function); did you mean 'USEC_PER_SEC'?
+      (pfn & (PAGES_PER_SECTION - 1)) == 0) {
+              ^~~~~~~~~~~~~~~~~
+              USEC_PER_SEC
+mm/page_alloc.c:321:14: note: each undeclared
+identifier is reported only once for each function it appears in
+In file included from include/linux/cache.h:5:0,
+                 from include/linux/printk.h:9,
+                 from include/linux/kernel.h:14,
+                 from
+include/asm-generic/bug.h:18,
+                 from
+arch/arc/include/asm/bug.h:32,
+                 from include/linux/bug.h:5,
+                 from include/linux/mmdebug.h:5,
+                 from include/linux/mm.h:9,
+                 from mm/page_alloc.c:18:
+mm/page_alloc.c: In function 'deferred_grow_zone':
+mm/page_alloc.c:1624:52: error:
+'PAGES_PER_SECTION' undeclared (first use in this function); did you mean
+'USEC_PER_SEC'?
+  unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+                                                    ^
+include/uapi/linux/kernel.h:11:47: note: in
+definition of macro '__ALIGN_KERNEL_MASK'
+ #define __ALIGN_KERNEL_MASK(x, mask) (((x) + (mask)) & ~(mask))
+                                               ^~~~
+include/linux/kernel.h:58:22: note: in expansion
+of macro '__ALIGN_KERNEL'
+ #define ALIGN(x, a)  __ALIGN_KERNEL((x), (a))
+                      ^~~~~~~~~~~~~~
+mm/page_alloc.c:1624:34: note: in expansion of
+macro 'ALIGN'
+  unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+                                  ^~~~~
+In file included from
+include/asm-generic/bug.h:18:0,
+                 from
+arch/arc/include/asm/bug.h:32,
+                 from include/linux/bug.h:5,
+                 from include/linux/mmdebug.h:5,
+                 from include/linux/mm.h:9,
+                 from mm/page_alloc.c:18:
+mm/page_alloc.c: In function
+'free_area_init_node':
+mm/page_alloc.c:6379:50: error:
+'PAGES_PER_SECTION' undeclared (first use in this function); did you mean
+'USEC_PER_SEC'?
+  pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+                                                  ^
+include/linux/kernel.h:812:22: note: in definition
+of macro '__typecheck'
+   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+                      ^
+include/linux/kernel.h:836:24: note: in expansion
+of macro '__safe_cmp'
+  __builtin_choose_expr(__safe_cmp(x, y), \
+                        ^~~~~~~~~~
+include/linux/kernel.h:904:27: note: in expansion
+of macro '__careful_cmp'
+ #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
+                           ^~~~~~~~~~~~~
+mm/page_alloc.c:6379:29: note: in expansion of
+macro 'min_t'
+  pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+                             ^~~~~
+include/linux/kernel.h:836:2: error: first
+argument to '__builtin_choose_expr' not a constant
+  __builtin_choose_expr(__safe_cmp(x, y), \
+  ^
+include/linux/kernel.h:904:27: note: in expansion
+of macro '__careful_cmp'
+ #define min_t(type, x, y) __careful_cmp((type)(x), (type)(y), <)
+                           ^~~~~~~~~~~~~
+mm/page_alloc.c:6379:29: note: in expansion of
+macro 'min_t'
+  pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+                             ^~~~~
+scripts/Makefile.build:317: recipe for target
+'mm/page_alloc.o' failed
 
-> Also, when going from machine to
-> machine, it's nice to expect package/core/thread-id to be within
-> the same range and to vary by a set difference (1), rather than have
-> IDs that increment by 20 on one system and by 160 on another,
-> depending on how the ACPI table nodes are laid out.
->
+Let's make the DEFERRED_STRUCT_PAGE_INIT explicitly depend on SPARSEMEM as
+the systems that support DISCONTIGMEM do not seem to have that huge
+amounts of memory that would make DEFERRED_STRUCT_PAGE_INIT relevant.
 
-If it matters a lot, vendors must use UID for consistency. Since OS doesn't
-use those IDs for any particular reason, OS must not care.
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ mm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > 
-> > > >
-> > > > So I would like to keep it simple and just have this counters for
-> > > > package ids as demonstrated in Shunyong's patch.
-> > > >
-> > >
-> > > If we don't also handle cores when there are threads, then the cores
-> > > will also end up having weird IDs.
-> > >
-> > 
-> > Yes, but if PPTT says it has valid ID, I would prefer that over DT like
-> > generated.
-> 
-> Valid *ACPI* ID, which just means it's a guaranteed unique ACPI UID,
-> which isn't likely going to be anything useful to a user.
-> 
+diff --git a/mm/Kconfig b/mm/Kconfig
+index ce95491..94af022 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -635,7 +635,7 @@ config DEFERRED_STRUCT_PAGE_INIT
+ 	bool "Defer initialisation of struct pages to kthreads"
+ 	default n
+ 	depends on NO_BOOTMEM
+-	depends on !FLATMEM
++	depends on SPARSEMEM
+ 	depends on !NEED_PER_CPU_KM
+ 	help
+ 	  Ordinarily all struct pages are initialised during early boot in a
+-- 
+2.7.4
 
-How is that different from OS generated one from user's perspective ?
-Vendors might assign sockets UID and he may help them to replace one.
-Having some generated counter based id is not helpful.
-
-So if someone needs to have valid IDs there, better to pass it via PPTT.
-OS will otherwise put any value(current offset is good choice)
-
---
-Regards,
-Sudeep
