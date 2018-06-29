@@ -2,69 +2,91 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B9CC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9655C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B90324CB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:18:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9iG27Wr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B90324CB4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 778CE24D04
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:20:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778CE24D04
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937200AbeF2RSu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 13:18:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
+        id S937219AbeF2RUm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 13:20:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:37480 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935093AbeF2RSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 13:18:49 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B36B924417;
-        Fri, 29 Jun 2018 17:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530292728;
-        bh=ljQcZzQo5Cv3M6pSQgdoM5lip3Z/nIvHtIIRoGh+CZo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Y9iG27WrtAZON3dfQUn2DXQ9dL4w+oQObiYixwtI3PnzWXJ7lcASzbKaDHfoogvgK
-         eIVqziw54m8u6rErJlGAy4LqUuF2WoRtSgZbbNPND1rLpn20B4YE5HPaxb6c4/gay/
-         epPZpmyeFpIFTbix5IzPBKPGDS4S4kvy7GlqaxGc=
-Content-Type: text/plain; charset="utf-8"
+        id S937202AbeF2RUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 13:20:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE77418A;
+        Fri, 29 Jun 2018 10:20:40 -0700 (PDT)
+Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB6B43F5AD;
+        Fri, 29 Jun 2018 10:20:39 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 18:20:37 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 fixes for 4.18-rc3
+Message-ID: <20180629172035.mmkauxlu7taulubu@armageddon.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <153029272800.143105.1065337298977850107@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
- __of_clk_get()
-Date:   Fri, 29 Jun 2018 10:18:48 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
-> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
-> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
-> counting number of phandles in a property").
-> =
+Hi Linus,
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Please pull the arm64 fixes below. Thanks.
 
-Applied to clk-next
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+
+for you to fetch changes up to 24fe1b0efad4fcdd32ce46cffeab297f22581707:
+
+  arm64: Remove unnecessary ISBs from set_{pte,pmd,pud} (2018-06-27 18:26:20 +0100)
+
+----------------------------------------------------------------
+arm64 fixes:
+
+- The alternatives patching code uses flush_icache_range() which itself
+  uses alternatives. Change the code to use an unpatched variant of
+  cache maintenance
+
+- Remove unnecessary ISBs from set_{pte,pmd,pud}
+
+- perf: xgene_pmu: Fix IOB SLOW PMU parser error
+
+----------------------------------------------------------------
+Catalin Marinas (1):
+      Merge branch 'perf/fixes' of git://git.kernel.org/.../will/linux
+
+Hoan Tran (1):
+      drivers/perf: xgene_pmu: Fix IOB SLOW PMU parser error
+
+Will Deacon (2):
+      arm64: Avoid flush_icache_range() in alternatives patching code
+      arm64: Remove unnecessary ISBs from set_{pte,pmd,pud}
+
+ arch/arm64/include/asm/alternative.h |  7 ++++-
+ arch/arm64/include/asm/pgtable.h     |  6 +----
+ arch/arm64/kernel/alternative.c      | 51 +++++++++++++++++++++++++++++++-----
+ arch/arm64/kernel/module.c           |  5 ++--
+ drivers/perf/xgene_pmu.c             |  2 +-
+ 5 files changed, 54 insertions(+), 17 deletions(-)
+
+-- 
+Catalin
