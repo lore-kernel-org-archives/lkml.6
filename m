@@ -3,27 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D91C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA1CC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A201D27D83
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A201D27D83
+	by mail.kernel.org (Postfix) with ESMTP id 7F9F227D87
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9F227D87
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933614AbeF2K5R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 06:57:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49154 "EHLO huawei.com"
+        id S1754020AbeF2Kyj (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 06:54:39 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59877 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753166AbeF2Kyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:54:40 -0400
+        id S1750761AbeF2Kyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 06:54:38 -0400
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B574E3CE6654;
-        Fri, 29 Jun 2018 18:54:34 +0800 (CST)
+        by Forcepoint Email with ESMTP id EF7C6EBE85CF0;
+        Fri, 29 Jun 2018 18:54:13 +0800 (CST)
 Received: from linux-ioko.site (10.71.200.31) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
  14.3.382.0; Fri, 29 Jun 2018 18:51:23 +0800
@@ -32,9 +33,9 @@ To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <lipeng321@huawei.com>
-Subject: [PATCH net-next 06/10] net: hns3: remove a redundant hclge_cmd_csq_done
-Date:   Fri, 29 Jun 2018 19:23:01 +0800
-Message-ID: <1530271385-49668-7-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 04/10] net: hns3: simplify hclge_cmd_csq_clean
+Date:   Fri, 29 Jun 2018 19:22:59 +0800
+Message-ID: <1530271385-49668-5-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1530271385-49668-1-git-send-email-lipeng321@huawei.com>
 References: <1530271385-49668-1-git-send-email-lipeng321@huawei.com>
@@ -49,52 +50,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huazhong Tan <tanhuazhong@huawei.com>
 
-Set complete in the first hclge_cmd_csq_done of hclge_cmd_send,
-and check if complete later, unnecessary to do hclge_cmd_csq_done
-again.
+csq is used as a ring buffer, the value of the desc will be replaced
+in next use. This patch removes the unnecessary memset, and just
+updates the next_to_clean.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c  | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index 28556a9..facfff6 100644
+index 054a913..0839e84 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -241,15 +241,18 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- 	 */
- 	if (HCLGE_SEND_SYNC(le16_to_cpu(desc->flag))) {
- 		do {
--			if (hclge_cmd_csq_done(hw))
-+			if (hclge_cmd_csq_done(hw)) {
-+				complete = true;
- 				break;
-+			}
- 			udelay(1);
- 			timeout++;
- 		} while (timeout < hw->cmq.tx_timeout);
+@@ -151,31 +151,20 @@ static int hclge_cmd_csq_clean(struct hclge_hw *hw)
+ {
+ 	struct hclge_dev *hdev = container_of(hw, struct hclge_dev, hw);
+ 	struct hclge_cmq_ring *csq = &hw->cmq.csq;
+-	u16 ntc = csq->next_to_clean;
+-	struct hclge_desc *desc;
+-	int clean = 0;
+ 	u32 head;
++	int clean;
+ 
+-	desc = &csq->desc[ntc];
+ 	head = hclge_read_dev(hw, HCLGE_NIC_CSQ_HEAD_REG);
+ 	rmb(); /* Make sure head is ready before touch any data */
+ 
+ 	if (!is_valid_csq_clean_head(csq, head)) {
+-		dev_warn(&hdev->pdev->dev, "wrong head (%d, %d-%d)\n", head,
+-			   csq->next_to_use, csq->next_to_clean);
++		dev_warn(&hdev->pdev->dev, "wrong cmd head (%d, %d-%d)\n", head,
++			 csq->next_to_use, csq->next_to_clean);
+ 		return 0;
  	}
  
--	if (hclge_cmd_csq_done(hw)) {
--		complete = true;
-+	if (!complete) {
-+		retval = -EAGAIN;
-+	} else {
- 		handle = 0;
- 		while (handle < num) {
- 			/* Get the result of hardware write back */
-@@ -272,9 +275,6 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
- 		}
- 	}
- 
--	if (!complete)
--		retval = -EAGAIN;
+-	while (head != ntc) {
+-		memset(desc, 0, sizeof(*desc));
+-		ntc++;
+-		if (ntc == csq->desc_num)
+-			ntc = 0;
+-		desc = &csq->desc[ntc];
+-		clean++;
+-	}
+-	csq->next_to_clean = ntc;
 -
- 	/* Clean the command send queue */
- 	handle = hclge_cmd_csq_clean(hw);
- 	if (handle != num) {
++	clean = (head - csq->next_to_clean + csq->desc_num) % csq->desc_num;
++	csq->next_to_clean = head;
+ 	return clean;
+ }
+ 
 -- 
 1.9.1
 
