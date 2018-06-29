@@ -3,108 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC01C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6731C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E3C28058
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:26:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E3C28058
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 73E8A28055
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E8A28055
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936719AbeF2P0B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:26:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935115AbeF2PZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:25:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3360440201C7;
-        Fri, 29 Jun 2018 15:25:59 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 562E02026D68;
-        Fri, 29 Jun 2018 15:25:57 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Roman Kagan <rkagan@virtuozzo.com>
-Cc:     kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] KVM: x86: hyperv: introduce vp_index_to_vcpu_idx mapping
-References: <20180628135313.17468-1-vkuznets@redhat.com>
-        <20180628135313.17468-3-vkuznets@redhat.com>
-        <20180629101134.GA15656@rkaganb.sw.ru>
-        <87y3exdh2o.fsf@vitty.brq.redhat.com>
-        <20180629111227.GB15656@rkaganb.sw.ru>
-        <87tvplddrr.fsf@vitty.brq.redhat.com>
-        <20180629125216.GC15656@rkaganb.sw.ru>
-        <87h8lld9hl.fsf@vitty.brq.redhat.com>
-        <20180629143212.GD15656@rkaganb.sw.ru>
-Date:   Fri, 29 Jun 2018 17:25:56 +0200
-In-Reply-To: <20180629143212.GD15656@rkaganb.sw.ru> (Roman Kagan's message of
-        "Fri, 29 Jun 2018 17:32:13 +0300")
-Message-ID: <878t6xd37f.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S936733AbeF2P0R convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:26:17 -0400
+Received: from smtp-out4.electric.net ([192.162.216.182]:63001 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936716AbeF2P0Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:26:16 -0400
+Received: from 1fYvHT-0006Zw-Ua by out4b.electric.net with emc1-ok (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fYvHk-0007mZ-WB; Fri, 29 Jun 2018 08:26:08 -0700
+Received: by emcmailer; Fri, 29 Jun 2018 08:26:08 -0700
+Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
+        by out4b.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fYvHT-0006Zw-Ua; Fri, 29 Jun 2018 08:25:51 -0700
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 29 Jun 2018 16:27:30 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 29 Jun 2018 16:27:30 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Catalin Marinas' <catalin.marinas@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+CC:     Mark Rutland <Mark.Rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "Linux Memory Management List" <linux-mm@kvack.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Ramana Radhakrishnan" <ramana.radhakrishnan@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, nd <nd@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: RE: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+Thread-Topic: [PATCH v4 0/7] arm64: untag user pointers passed to the kernel
+Thread-Index: AQHUDu9rbN4071fNIk6NG/U94gtPMqR3XI1A
+Date:   Fri, 29 Jun 2018 15:27:30 +0000
+Message-ID: <a53c13e0cff941aa85f023b0f29346af@AcuMS.aculab.com>
+References: <cover.1529507994.git.andreyknvl@google.com>
+ <CAAeHK+zqtyGzd_CZ7qKZKU-uZjZ1Pkmod5h8zzbN0xCV26nSfg@mail.gmail.com>
+ <20180626172900.ufclp2pfrhwkxjco@armageddon.cambridge.arm.com>
+ <CAAeHK+yqWKTdTG+ymZ2-5XKiDANV+fmUjnQkRy-5tpgphuLJRA@mail.gmail.com>
+ <0cef1643-a523-98e7-95e2-9ec595137642@arm.com>
+ <20180627171757.amucnh5znld45cpc@armageddon.cambridge.arm.com>
+ <20180628061758.j6bytsaj5jk4aocg@ltop.local>
+ <20180628102741.vk6vphfinlj3lvhv@armageddon.cambridge.arm.com>
+ <20180628104610.czsnq4w3lfhxrn53@ltop.local>
+ <20180628144858.2fu7kq56cxhp2kpg@armageddon.cambridge.arm.com>
+In-Reply-To: <20180628144858.2fu7kq56cxhp2kpg@armageddon.cambridge.arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 29 Jun 2018 15:25:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 29 Jun 2018 15:25:59 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (s)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Kagan <rkagan@virtuozzo.com> writes:
+From: Catalin Marinas
+> Sent: 28 June 2018 15:49
+...
+> >
+> > Mmmm yes.
+> > I tend to favor a sort of opposite approach. When we have an address
+> > that must not be dereferenced as-such (and sometimes when the address
+> > can be from both __user & __kernel space) I prefer to use a ulong
+> > which will force the use of the required operation before being
+> > able to do any sort of dereferencing and this won't need horrible
+> > casts with __force (it, of course, all depends on the full context).
+> 
+> I agree. That's what the kernel uses in functions like get_user_pages()
+> which take ulong as an argument. Similarly mmap() and friends don't
+> expect the pointer to be dereferenced, hence the ulong argument. The
+> interesting part that the man page (and the C library header
+> declaration) shows such address argument as void *. We could add a
+> syscall wrapper in the arch code, only that it doesn't feel consistent
+> with the "rule" that ulong addresses are not actually tagged pointers.
 
-> On Fri, Jun 29, 2018 at 03:10:14PM +0200, Vitaly Kuznetsov wrote:
->> Roman Kagan <rkagan@virtuozzo.com> writes:
->> 
->> > On Fri, Jun 29, 2018 at 01:37:44PM +0200, Vitaly Kuznetsov wrote:
->> >> The problem we're trying to solve here is: with PV TLB flush and IPI we
->> >> need to walk through the supplied list of VP_INDEXes and get VCPU
->> >> ids. Usually they match. But in case they don't [...]
->> >
->> > Why wouldn't they *in practice*?  Only if the userspace wanted to be
->> > funny and assigned VP_INDEXes randomly?  I'm not sure we need to
->> > optimize for this case.
->> 
->> Can someone please remind me why we allow userspace to change it in the
->> first place?
->
-> I can ;)
->
-> We used not to, and reported KVM's vcpu index as the VP_INDEX.  However,
-> later we realized that VP_INDEX needed to be persistent across
-> migrations and otherwise also known to userspace.  Relying on the kernel
-> to always initialize its indices in the same order was unacceptable, and
-> we came up with no better way of synchronizing VP_INDEX between the
-> userspace and the kernel than to let the former to set it explicitly.
->
-> However, this is basically a future-proofing feature; in practice, both
-> QEMU and KVM initialize their indices in the same order.
+For most modern calling conventions it would make sense to put 'user'
+addresses (and physical ones from that matter) into a structure.
+That way you get much stronger typing from C itself.
 
+The patch would, of course, be huge!
 
-Thanks!
+	David
 
-But in the theoretical case when these indices start to differ after
-migration, users will notice a slowdown which will be hard to explain,
-right? Does it justify the need for vp_idx_to_vcpu_idx?
-
-In any case I sent v3 with vp_idx_to_vcpu_idx dropped for now, hope
-Radim is OK with us de-coupling these discussions.
-
--- 
-  Vitaly
