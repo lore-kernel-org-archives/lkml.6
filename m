@@ -2,221 +2,100 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC6FC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7BEC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D27528036
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:20:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626E824310
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:22:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="okJ6+OpN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="okJ6+OpN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D27528036
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u1e0qlYn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626E824310
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936676AbeF2VUx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 17:20:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52894 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933987AbeF2VUv (ORCPT
+        id S1754965AbeF2VW1 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 17:22:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41216 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753186AbeF2VWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 17:20:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D658260AFF; Fri, 29 Jun 2018 21:20:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530307250;
-        bh=6v7KonVOkD4GAIjp4WiYiyhL9f8yIcu7Aw9UGbPtLSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=okJ6+OpNEIMPRnJz3OllyqL4FI2uZCfeFXHKur7wF018jdzEAhpUfuKYHdIXrovKP
-         kRiUoUHm1jWO3/jeaiAaUUfS40sRuuB3UPmV+iEwPbw70mHDIVXzIj6H5Qq9nWMAhO
-         Kk4M6NZBPlCXoo0k8Ec09GTUoRHYZKuig47sGQpE=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3B3F606FC;
-        Fri, 29 Jun 2018 21:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530307250;
-        bh=6v7KonVOkD4GAIjp4WiYiyhL9f8yIcu7Aw9UGbPtLSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=okJ6+OpNEIMPRnJz3OllyqL4FI2uZCfeFXHKur7wF018jdzEAhpUfuKYHdIXrovKP
-         kRiUoUHm1jWO3/jeaiAaUUfS40sRuuB3UPmV+iEwPbw70mHDIVXzIj6H5Qq9nWMAhO
-         Kk4M6NZBPlCXoo0k8Ec09GTUoRHYZKuig47sGQpE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3B3F606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Fri, 29 Jun 2018 15:20:47 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
-Message-ID: <20180629212047.GH24526@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Kees Cook <keescook@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180629184818.GA37439@beast>
+        Fri, 29 Jun 2018 17:22:25 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a17-v6so5220584ljd.8;
+        Fri, 29 Jun 2018 14:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=quEOIa+z1Bjzkp3S45bn0pwVggHcTTyBEYvpTOCJv70=;
+        b=u1e0qlYnXfbnUeYXL157XwhlSEM1H6zE+gXJvYe/p9HxdMt4XAsgvwvzK+NevbULyv
+         EsQ9DAgOqDbOtudFVa/ZRnThRiEsS58nQaB7V6MpPlOTp4NC6qjnH6hLkqKke9vSXJO3
+         JqJa/XWSZnxhwNuuTj0+thCg6U8Z05pQcqL1kWhEuT04U8r0FtlfNrSp9HkUfgafoiBd
+         +E4dvQOA1MdyByDFH2sj+3pz71G1LYuOQWls3OtDFnXV5bdNvL50iOBk41n0NkEEXt8l
+         iDGMeSjtJoSSLjGnU8Ha+ogq/DQBl4laXiCz7ncksxWZ7lW6p9CXgZ5yuy0IiHM1EF3y
+         1NYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=quEOIa+z1Bjzkp3S45bn0pwVggHcTTyBEYvpTOCJv70=;
+        b=jrkceG6IpckaVmLgbGy+a+yd6QPkSyzEX9AdnI52QhJfYD2UYqclpl4tL/kwjjEEVE
+         ljy7ydfS5DvvANrsRCyyaFCw4iNKBmysoEQYk4KfN0OozZgDRS+itrC/Ckrq+dwsrKx8
+         Eurupz1rYUI9HNMBg8o00u7pMxnks6L/7aQNwt7LEK0pThS4wbKzZQI92t4k9q0PEJLG
+         AKPXNH5vtoTDIiEInBdvQ0AmwzeUK6fC1nKAcIqT83RyjdMkXny0w4G8xT9hoToO1pWy
+         oDEPstRhcOcqmSonbrO3lAHwSOYMH7G6Val/6n5BySmJEpB9GJ1P+9b1zeQb0R2kFcET
+         OHrw==
+X-Gm-Message-State: APt69E0/aFSbo45ok2VKHB6Ca/k/FA+SCPuGN0wtoVyk8PcqFE8+JyOF
+        IqZAV5EE8f7xYw3rZ2pGRp7MjfcwGZxzarkrquU=
+X-Google-Smtp-Source: ADUXVKJimaED7iWsq/W/FowmLgJLF9g8JtYA359JUQpD8h1PxTVevV1/brf6mT0vu30IMySRHseYRGDZDA3wyymJpEE=
+X-Received: by 2002:a2e:9a95:: with SMTP id p21-v6mr11013435lji.60.1530307343615;
+ Fri, 29 Jun 2018 14:22:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180629184818.GA37439@beast>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 14:22:22
+ -0700 (PDT)
+In-Reply-To: <20180629185107.GA37488@beast>
+References: <20180629185107.GA37488@beast>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 29 Jun 2018 23:22:22 +0200
+X-Google-Sender-Auth: IjQFIQRDYyYQcIu0icoXXc4l9a8
+Message-ID: <CAK8P3a30Q1ezvCWfudUY=z1q3NHdrkbwRsmSDso4s7TifQAmNQ@mail.gmail.com>
+Subject: Re: [PATCH] dma: ste_dma40: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 11:48:18AM -0700, Kees Cook wrote:
+On Fri, Jun 29, 2018 at 8:51 PM, Kees Cook <keescook@chromium.org> wrote:
 > In the quest to remove all stack VLA usage from the kernel[1], this
-> switches to using a kasprintf()ed buffer. Return paths are updated
-> to free the allocation.
-> 
+> switches to using a pre-allocated scratch register space, set up with
+> all other other allocations.
+>
 > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-
-Thanks for doing this.
-
-Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
-
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: dmaengine@vger.kernel.org
 > Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  7 +++++--
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 28 +++++++++++++++++--------
->  2 files changed, 24 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> index d39400e5bc42..f5f76f8151f9 100644
-> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> @@ -11,6 +11,7 @@
->   *
->   */
->  
-> +#include <linux/kernel.h>
->  #include <linux/types.h>
->  #include <linux/cpumask.h>
->  #include <linux/qcom_scm.h>
-> @@ -19,6 +20,7 @@
->  #include <linux/soc/qcom/mdt_loader.h>
->  #include <linux/pm_opp.h>
->  #include <linux/nvmem-consumer.h>
-> +#include <linux/slab.h>
->  #include "msm_gem.h"
->  #include "msm_mmu.h"
->  #include "a5xx_gpu.h"
-> @@ -91,12 +93,13 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname)
->  		ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
->  				mem_region, mem_phys, mem_size, NULL);
->  	} else {
-> -		char newname[strlen("qcom/") + strlen(fwname) + 1];
-> +		char *newname;
->  
-> -		sprintf(newname, "qcom/%s", fwname);
-> +		newname = kasprintf(GFP_KERNEL, "qcom/%s", fwname);
->  
->  		ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
->  				mem_region, mem_phys, mem_size, NULL);
-> +		kfree(newname);
->  	}
->  	if (ret)
->  		goto out;
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index bcbf9f2a29f9..bfaafdfc7eb2 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -17,7 +17,9 @@
->   * this program.  If not, see <http://www.gnu.org/licenses/>.
->   */
->  
-> +#include <linux/kernel.h>
->  #include <linux/pm_opp.h>
-> +#include <linux/slab.h>
->  #include "adreno_gpu.h"
->  #include "msm_gem.h"
->  #include "msm_mmu.h"
-> @@ -70,10 +72,12 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
->  {
->  	struct drm_device *drm = adreno_gpu->base.dev;
->  	const struct firmware *fw = NULL;
-> -	char newname[strlen("qcom/") + strlen(fwname) + 1];
-> +	char *newname;
->  	int ret;
->  
-> -	sprintf(newname, "qcom/%s", fwname);
-> +	newname = kasprintf(GFP_KERNEL, "qcom/%s", fwname);
-> +	if (!newname)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	/*
->  	 * Try first to load from qcom/$fwfile using a direct load (to avoid
-> @@ -87,11 +91,12 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
->  			dev_info(drm->dev, "loaded %s from new location\n",
->  				newname);
->  			adreno_gpu->fwloc = FW_LOCATION_NEW;
-> -			return fw;
-> +			goto out;
->  		} else if (adreno_gpu->fwloc != FW_LOCATION_UNKNOWN) {
->  			dev_err(drm->dev, "failed to load %s: %d\n",
->  				newname, ret);
-> -			return ERR_PTR(ret);
-> +			fw = ERR_PTR(ret);
-> +			goto out;
->  		}
->  	}
->  
-> @@ -106,11 +111,12 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
->  			dev_info(drm->dev, "loaded %s from legacy location\n",
->  				newname);
->  			adreno_gpu->fwloc = FW_LOCATION_LEGACY;
-> -			return fw;
-> +			goto out;
->  		} else if (adreno_gpu->fwloc != FW_LOCATION_UNKNOWN) {
->  			dev_err(drm->dev, "failed to load %s: %d\n",
->  				fwname, ret);
-> -			return ERR_PTR(ret);
-> +			fw = ERR_PTR(ret);
-> +			goto out;
->  		}
->  	}
->  
-> @@ -126,16 +132,20 @@ adreno_request_fw(struct adreno_gpu *adreno_gpu, const char *fwname)
->  			dev_info(drm->dev, "loaded %s with helper\n",
->  				newname);
->  			adreno_gpu->fwloc = FW_LOCATION_HELPER;
-> -			return fw;
-> +			goto out;
->  		} else if (adreno_gpu->fwloc != FW_LOCATION_UNKNOWN) {
->  			dev_err(drm->dev, "failed to load %s: %d\n",
->  				newname, ret);
-> -			return ERR_PTR(ret);
-> +			fw = ERR_PTR(ret);
-> +			goto out;
->  		}
->  	}
->  
->  	dev_err(drm->dev, "failed to load %s\n", fwname);
-> -	return ERR_PTR(-ENOENT);
-> +	fw = ERR_PTR(-ENOENT);
-> +out:
-> +	kfree(newname);
-> +	return fw;
->  }
->  
->  static int adreno_load_fw(struct adreno_gpu *adreno_gpu)
-> -- 
-> 2.17.1
-> 
-> 
-> -- 
-> Kees Cook
-> Pixel Security
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I looked too long at this one, in short:
+
+- Your change looks correct to me
+- It could be done better in many ways, all of which would
+  involve cleaning up some of the existing code in the process
+- Nobody uses this driver in practice, as the hardware platform
+  was a dead end
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
