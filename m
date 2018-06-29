@@ -2,132 +2,77 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC92C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B74EC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC35627B51
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:37:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NtwdPgA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC35627B51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F98A27AE1
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:38:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F98A27AE1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeF2GhH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:37:07 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:34310 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeF2GhF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:37:05 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5T6b2QL012173;
-        Fri, 29 Jun 2018 01:37:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530254222;
-        bh=Lx5kMToTv3aKHbCBePuPH0/zG8gXaCYKl+e9NRGmS5Y=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=NtwdPgA5hpoPvslQjaLD5hXgBZY76gR4XHW10TXqGFDR5LGyg4TDqR8l0CcSzkY8I
-         39En4/kvu0Io7NuIDxX5tY60749qQy3QhJBIEpRj/J1bBRQFOrEfkveO5qFu8Q2CCW
-         I//fwT4ze9/wNX/IBISONqy9kgJKSV4eYo4pazA0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5T6b2vY005486;
-        Fri, 29 Jun 2018 01:37:02 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 29
- Jun 2018 01:37:02 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 29 Jun 2018 01:37:02 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5T6b0Nx026998;
-        Fri, 29 Jun 2018 01:37:00 -0500
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: Add binding doc for Stingray
- PCIe PHY
-To:     Ray Jui <ray.jui@broadcom.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1529540316-21706-1-git-send-email-ray.jui@broadcom.com>
- <1529540316-21706-2-git-send-email-ray.jui@broadcom.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <bcm-kernel-feedback-list@broadcom.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <424c21ea-e751-16e8-71b0-d05537b9e0b3@ti.com>
-Date:   Fri, 29 Jun 2018 12:06:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S933512AbeF2Gh7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:37:59 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31639 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932209AbeF2Gh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 02:37:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jun 2018 23:37:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="63107232"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by orsmga003.jf.intel.com with ESMTP; 28 Jun 2018 23:37:44 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
+        keescook@chromium.org, allen.lkml@gmail.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
+In-Reply-To: <87efh0o6f9.fsf@belgarion.home>
+References: <20180620035453.7721-1-baijiaju1990@gmail.com> <87efh0o6f9.fsf@belgarion.home>
+Date:   Fri, 29 Jun 2018 09:35:10 +0300
+Message-ID: <87y3eydrs1.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1529540316-21706-2-git-send-email-ray.jui@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Rob and device tree list
 
-On Thursday 21 June 2018 05:48 AM, Ray Jui wrote:
-> Add binding document for Stingray PCIe PHYs for both PAXB and PAXC based
-> root complex
-> 
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->  .../devicetree/bindings/phy/brcm,sr-pcie-phy.txt   | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
-> new file mode 100644
-> index 0000000..c2eede6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/brcm,sr-pcie-phy.txt
-> @@ -0,0 +1,39 @@
-> +Broadcom Stingray PCIe PHY
-> +
-> +Required properties:
-> +- compatible: must be "brcm,sr-pcie-phy"
-> +- brcm,sr-cdru: phandle to the CDRU syscon node
-> +- brcm,sr-mhb: phandle to the MHB syscon node
-> +- #phy-cells: Must be 1, denotes the PHY index
-> +
-> +For PAXB based root complex, one can have a configuration of up to 8 PHYs
-> +PHY index goes from 0 to 7
-> +
-> +For the internal PAXC based root complex, PHY index is always 8
-> +
-> +Example:
-> +	mhb: syscon@60401000 {
-> +		compatible = "brcm,sr-mhb", "syscon";
-> +		reg = <0 0x60401000 0 0x38c>;
-> +	};
-> +
-> +	cdru: syscon@6641d000 {
-> +		compatible = "brcm,sr-cdru", "syscon";
-> +		reg = <0 0x6641d000 0 0x400>;
-> +	};
-> +
-> +	pcie_phy: phy {
-> +		compatible = "brcm,sr-pcie-phy";
-> +		brcm,sr-cdru = <&cdru>;
-> +		brcm,sr-mhb = <&mhb>;
-> +		#phy-cells = <1>;
-> +	};
-> +
-> +	/* users of the PCIe PHY */
-> +
-> +	pcie0: pcie@48000000 {
-> +		...
-> +		...
-> +		phys = <&pcie_phy 0>;
-> +		phy-names = "pcie-phy";
-> +	};
-> 
+Hi,
+
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
+
+> Jia-Ju Bai <baijiaju1990@gmail.com> writes:
+>
+>> The driver may sleep with holding a spinlock.
+>> The function call paths (from bottom to top) in Linux-4.16.7 are:
+>>
+>> [FUNC] msleep
+>> drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
+>> 		msleep in init_controller
+>> drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
+>> 		init_controller in r8a66597_usb_disconnect
+>> drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
+>> 		spin_lock in r8a66597_usb_disconnect
+>
+> That should not happen...
+>
+> If think the issue you have is that your usb_connect() and usb_disconnect() are
+> called from interrupt context. I think the proper fix, as what is done in most
+> udc phys, is to schedule a workqueue, see drivers/usb/phy/phy-gpio-vbus-usb.c,
+> gpio_vbus_data.vbus.
+
+argh, no. No workqueues needed here. Sorry
+
+-- 
+balbi
