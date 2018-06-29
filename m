@@ -5,109 +5,77 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F55C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF8CC6778B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA8827655
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:33:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA8827655
+	by mail.kernel.org (Postfix) with ESMTP id 025282524E
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025282524E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937021AbeF2QdE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:33:04 -0400
-Received: from mga04.intel.com ([192.55.52.120]:54664 "EHLO mga04.intel.com"
+        id S967026AbeF2Qd7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:33:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:10183 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935594AbeF2Qc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:32:58 -0400
+        id S967002AbeF2Qd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 12:33:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:32:58 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:33:57 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,286,1526367600"; 
-   d="scan'208";a="236653376"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga005.jf.intel.com with ESMTP; 29 Jun 2018 09:32:57 -0700
-Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
- locked access feature
-To:     Thomas Gleixner <tglx@linutronix.de>
-References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
- <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
- <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
+   d="scan'208";a="241400989"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2018 09:33:55 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.236]) by
+ ORSMSX107.amr.corp.intel.com ([169.254.1.167]) with mapi id 14.03.0319.002;
+ Fri, 29 Jun 2018 09:33:55 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     "Hansen, Dave" <dave.hansen@intel.com>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
         Alan Cox <alan@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <c8b1cc53-0e0a-a079-fb31-b957b532a083@intel.com>
-Date:   Fri, 29 Jun 2018 09:32:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
+Subject: RE: [PATCH v2 3/4] x86/split_lock: Handle #AC exception for split
+ lock
+Thread-Topic: [PATCH v2 3/4] x86/split_lock: Handle #AC exception for split
+ lock
+Thread-Index: AQHUD7ZVOfJcmIggnkquFQaZQyzL7KR34oGA//+LEfA=
+Date:   Fri, 29 Jun 2018 16:33:54 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D348C9A@ORSMSX110.amr.corp.intel.com>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-4-git-send-email-fenghua.yu@intel.com>
+ <f528ef21-0e6f-3c76-5fac-bd88279facc0@intel.com>
+In-Reply-To: <f528ef21-0e6f-3c76-5fac-bd88279facc0@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzMyZjQ5YzMtYmFkNS00NzRlLTk3MjEtNGM1ZWIzODZiOTE5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibFwvWWFYXC81bjh6TFFRQzNnUFBCXC9ORU1ya2gzQWU5cVZQK3hBM1g2OTFPbG91cTVpK0FIdzg4UTNtQ3JobVwvRWMifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 09:23 AM, Thomas Gleixner wrote:
-> And pretty please, can we either stick that stuff into cpu/intel.c or if it
-> really needs a separate file avoid that horrible test_ctl.c file name? 
-
-Fenghua, I also asked for this earlier.  It would be really awesome if
-you could go through and double-check that you have not missed any more
-review comments before you post this again.
+Pj4gKwlXQVJOX09OQ0UoMSwgIkEgc3BsaXQgbG9jayBpc3N1ZSBpcyBkZXRlY3RlZC4gUGxlYXNl
+IEZJWCBpdFxuIik7DQo+DQo+IEJ1dCwgd2FybmluZyBoZXJlIGlzIGFsc28gbm90IHN1cGVyIHVz
+ZWZ1bC4gIFNob3VsZG4ndCB3ZSBiZSBkdW1waW5nIG91dA0KPiB0aGUgaW5mbyBpbiAncmVncycg
+aW5zdGVhZCBvZiB0aGUgY3VycmVudCBjb250ZXh0PyAgV2UgZG9uJ3QgY2FyZSBhYm91dA0KPiB0
+aGUgc3RhdGUgaW4gdGhlICNBQyBoYW5kbGVyLCB3ZSBjYXJlIGFib3V0ICdyZWdzJy4NCg0KTWF5
+YmU6DQoNCglXQVJOX09OQ0UoMSwgInNwbGl0IGxvY2sgZGV0ZWN0ZWQgYXQgJXBGXG4iLCByZWdz
+W0VJUF0pOw0KDQotVG9ueQ0K
