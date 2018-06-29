@@ -3,111 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06BDC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F32C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85ACC27AB2
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47CA327ABB
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:54:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BnWSXRm/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85ACC27AB2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="f1cOGhGF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47CA327ABB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936326AbeF2Ayr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 20:54:47 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34716 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933008AbeF2Ayq (ORCPT
+        id S936422AbeF2Ayv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 20:54:51 -0400
+Received: from mail.efficios.com ([167.114.142.138]:37190 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933008AbeF2Ays (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 20:54:46 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n96-v6so5560936lfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JUplO1YDLPCIwiehlJJhVY8ZRKx4hS1xrtcVpKSstIA=;
-        b=BnWSXRm/Wpw3ww0uXoziCNCMO92RxcY/mjn/pnK34Tnna5XsRVJLXb3EteZpwHmtjC
-         R+g/HegiKrinHE6MDrIS56pDVED/+IZv1n8P48Eo51J/YxyUv80gNtZABhZmRol+YSoN
-         iKYFv055egy0KdtPaaSjf0UR1qIRW/YUqTqAcczYhEPdNVfn65r+xxxMN/tJdQtXJqVM
-         o53cjPG1rX0qXXvAZ3n4DX8s34cRDYq3FxK/kMu+iYoZ1O4+Ku9UZG+Zoj6Si0+DZbGc
-         XdECA/5kVCjSuKT/LWWD0IiaQ6EoBD6KjWWkm/2YqwLL97Wt8aOQsUM46VKPmovHa0YL
-         IRGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JUplO1YDLPCIwiehlJJhVY8ZRKx4hS1xrtcVpKSstIA=;
-        b=E7vI8VeAaQJTvY3hmCzlddQ0xtFshRaAQRH5sSixA5T3G8O+/MSqfI4uDIHEtR7t0J
-         clL0Mr3lhomW7wucJ5ff4/OCACAx5mG4CtP3H4eCd0e5hlensyDQHQ9+9HZMvznhPi4q
-         THAIt9HRpLjKHj9zpKMoUzzOTp9Kg23zi6n/I4Sb3iB7RCZMRQqHtwmoLwKyHaO1BDKY
-         OmJ20zDLwdOnsUgCVomAN0rb2mjapFcMxTI0sODEDdHZ0LWrGHXbFNcClkc3e60gteeD
-         Y+yW8l2fF4X1z113F23NdgRxsDcBLdCim4s1tNqXj6kGAlCg2rDJZ0mrY9VmQ3FNBqC3
-         POig==
-X-Gm-Message-State: APt69E2OykJNh85KSKM/t1BrCu0+EihAmeC5e9b5LMUdpCHKG8V/kWga
-        zNJg+KDMEvz3FQ6Z8wkZ94z69uzTUL6S4mba83xt
-X-Google-Smtp-Source: AAOMgpfOPtigvLqkBJ4+4kaCYXxmXqJYYC5O4oyyskLkDG8qqNGRmij0WiRmrQS5JWFwdv8xpDRPVGOYmut4ZxihqfU=
-X-Received: by 2002:a19:a892:: with SMTP id r140-v6mr8090750lfe.39.1530233684556;
- Thu, 28 Jun 2018 17:54:44 -0700 (PDT)
+        Thu, 28 Jun 2018 20:54:48 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 54E2422EA2E;
+        Thu, 28 Jun 2018 20:54:47 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id mfij72EvQCZN; Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id BB54822EA2A;
+        Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com BB54822EA2A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530233686;
+        bh=2aRCpAgCcd0NQt6EShYSQfT3/P6w3x8WNNZ4CVcsfh0=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=f1cOGhGFYFH0Vy9HE67LPnC2F8BD/+ur/g6p6gBeBvgnaG7Rj8bS4GqZitIYJqbIc
+         X7CrfQSrG2GbNzoubptLnu7A+Wt+kiVwgs3IB5y2efiscAQ5lMBPa80BarRhTyf71+
+         3+jx7jO0erFu53b8BNkm3gkGsi+LF2aMElOCajmGdS7mqhh0Tr/NugdIsBHEswgMxl
+         cW1yZzAhJAdMu6JScaQd3RSBQxs6ppuUN0BJLReWIfogYEsJn0tpvnp4kYaao9P4pU
+         nNyHtGzA8BTSk8rgKa7Cof9hG9OO+43qt59NPmDVWB5JyXaxIWIAgEzEuxpFjBf9Ev
+         ibdsKXHTGzM8w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id i8gpuH29ZuRj; Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 9CA5B22EA14;
+        Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
+Date:   Thu, 28 Jun 2018 20:54:46 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <665398433.9488.1530233686432.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <CALCETrULo_VP4XHbXcZTevWY5d-6PdHUtrDS8DEF_OaozQOaNg@mail.gmail.com> <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com> <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com> <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
+ TASK_SIZE
 MIME-Version: 1.0
-References: <20180625163425.216965-1-jannh@google.com> <9d5d0cb7-5875-0814-835b-097db650b6a1@tycho.nsa.gov>
- <CAHC9VhQ7ep3HSw8iqWBsiW0hhZ-drVtk7bW1rA1uAyUrbm3PqA@mail.gmail.com> <CAHC9VhTcncUn3CgAgG-FiXyyoNiq5DdHF1cSYJeWpu8PvRXucw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTcncUn3CgAgG-FiXyyoNiq5DdHF1cSYJeWpu8PvRXucw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 28 Jun 2018 20:54:33 -0400
-Message-ID: <CAHC9VhQxOKk21i0MBMOKr-A7nf+vSbi0_Hxfa8dTDPDdbMyUGg@mail.gmail.com>
-Subject: Re: [PATCH] selinux: move user accesses in selinuxfs out of locked regions
-To:     jannh@google.com
-Cc:     Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov,
-        security@kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
+Thread-Index: Ni+KcT6w8fHZnMfOQpG8vowZ5X/7cg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 8:38 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Jun 28, 2018 at 8:23 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Jun 26, 2018 at 8:15 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > > On 06/25/2018 12:34 PM, Jann Horn wrote:
-> > > > If a user is accessing a file in selinuxfs with a pointer to a userspace
-> > > > buffer that is backed by e.g. a userfaultfd, the userspace access can
-> > > > stall indefinitely, which can block fsi->mutex if it is held.
-> > > >
-> > > > For sel_read_policy(), remove the locking, since this method doesn't seem
-> > > > to access anything that requires locking.
-> > > >
-> > > > For sel_read_bool(), move the user access below the locked region.
-> > > >
-> > > > For sel_write_bool() and sel_commit_bools_write(), move the user access
-> > > > up above the locked region.
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > Signed-off-by: Jann Horn <jannh@google.com>
-> > >
-> > > Only question I have is wrt the Fixes line, i.e. was this an issue until userfaultfd was introduced, and if not,
-> > > do we need it to be back-ported any further than the commit which introduced it.
-> >
-> > Considering we are talking about v2.6.12 I have to wonder if anyone is
-> > bothering with backports for kernels that old.  Even the RHEL-5.x
-> > based systems are at least on v2.6.18.
-> >
-> > Regardless, I think this is fine to merge as-is; thanks everyone.
->
-> FYI, I did have to remove the "fsi" variable from sel_read_policy() to
-> keep the compiler happy.  Please double check to make sure your code
-> compiles cleanly in the future.
+----- On Jun 28, 2018, at 8:18 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-I realize I didn't specify this above ... I merged this into
-selinux/stable-4.18; I'm building a test kernel now and if everything
-looks okay I'll send it to Linus tomorrow.
+> On Thu, Jun 28, 2018 at 4:30 PM Andy Lutomirski <luto@kernel.org> wrote:
+>>
+>> The idea is that, if someone screws up and sticks a number like
+>> 0xbaadf00d00045678 into their rseq abort_ip in a 32-bit x86 program
+>> (when they actually mean 0x00045678), we want to something consistent.
+> 
+> I think the "something consistent" is perfectly fine with just "it won't work".
+> 
+> Make it do
+> 
+>        if (rseq_cs->abort_ip != (unsigned long)rseq_cs->abort_ip)
+>                return -EINVAL;
+> 
+> at abort time.
+> 
+> Done.
+> 
+> If it's a 32-bit kernel, the above will reject the thing, and if it's
+> a 64-bit kernel, it will be a no-op, but the abort won't work in a
+> 32-bit caller.
+> 
+> Problem solved.
+
+This assumes a 64-bit kernel returning to a 32-bit compat task with
+garbage it the upper 32 bits of regs->ip behaves correctly (e.g.
+kill the offending process rather than crash the kernel) on all
+architectures.
+
+Is this something we can rely on ?
+
+Thanks,
+
+Mathieu
+
 
 -- 
-paul moore
-www.paul-moore.com
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
