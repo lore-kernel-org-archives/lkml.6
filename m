@@ -2,100 +2,81 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE26C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D3EC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB4BA27EED
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB4BA27EED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8843427EF0
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:31:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8843427EF0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755444AbeF2Maj (ORCPT
+        id S1755454AbeF2Mbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 08:30:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54018 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752260AbeF2Mah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:30:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 05:30:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="70997605"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.88])
-  by orsmga002.jf.intel.com with ESMTP; 29 Jun 2018 05:30:32 -0700
-Date:   Fri, 29 Jun 2018 15:30:30 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        Struk@linux.intel.com, Tadeusz <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v8] tpm: separate cmd_ready/go_idle from runtime_pm
-Message-ID: <20180629123029.GA21735@linux.intel.com>
-References: <20180628151333.14368-1-tomas.winkler@intel.com>
- <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
+        Fri, 29 Jun 2018 08:31:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41686 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752301AbeF2Mbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 08:31:33 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 668657DAC6;
+        Fri, 29 Jun 2018 12:31:33 +0000 (UTC)
+Received: from x2.localnet (ovpn-122-27.rdu2.redhat.com [10.10.122.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5AE02142F20;
+        Fri, 29 Jun 2018 12:31:32 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     rgb@redhat.com, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        aviro@redhat.com
+Subject: Re: [RFC PATCH ghak59 V1 6/6] audit: extend config_change mark/watch/tree rule changes
+Date:   Fri, 29 Jun 2018 08:31:31 -0400
+Message-ID: <4353667.qdjHzgu0KO@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhScxWn9jP7wMdkVoQM-5i2RnMM2HJe-baHGu3D4NpJvpQ@mail.gmail.com>
+References: <cover.1529003588.git.rgb@redhat.com> <e3584154c8594cf64e9293ec6f473cdaaabe2954.1529003588.git.rgb@redhat.com> <CAHC9VhScxWn9jP7wMdkVoQM-5i2RnMM2HJe-baHGu3D4NpJvpQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53d76dcd02c69f207a2831f9ede55b867c7438b6.camel@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 29 Jun 2018 12:31:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 29 Jun 2018 12:31:33 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgrubb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 01:35:52PM +0300, Jarkko Sakkinen wrote:
-> On Thu, 2018-06-28 at 18:13 +0300, Tomas Winkler wrote:
-> > Fix tpm ptt initialization error:
-> > tpm tpm0: A TPM error (378) occurred get tpm pcr allocation.
+On Thursday, June 28, 2018 6:28:55 PM EDT Paul Moore wrote:
+> On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Give a clue as to the source of mark, watch and tree rule changes.
 > > 
-> > We cannot use go_idle cmd_ready commands via runtime_pm handles
-> > as with the introduction of localities this is no longer an optional
-> > feature, while runtime pm can be not enabled.
-> > Though cmd_ready/go_idle provides a power saving, it's also a part of
-> > TPM2 protocol and should be called explicitly.
-> > This patch exposes cmd_read/go_idle via tpm class ops and removes
-> > runtime pm support as it is not used by any driver.
-> > 
-> > When calling from nested context always use both flags:
-> > TPM_TRANSMIT_UNLOCKED and TPM_TRANSMIT_RAW. Both are needed to resolve
-> > tpm spaces and locality request recursive calls to tpm_transmit().
-> > TPM_TRANSMIT_RAW should never be used standalone as it will fail
-> > on double locking. While TPM_TRANSMIT_UNLOCKED standalone should be
-> > called from non-recursive locked contexts.
-> > 
-> > New wrappers are added tpm_cmd_ready() and tpm_go_idle() to
-> > streamline tpm_try_transmit code.
-> > 
-> > tpm_crb no longer needs own power saving functions and can drop using
-> > tpm_pm_suspend/resume.
-> > 
-> > This patch cannot be really separated from the locality fix.
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
-> > locality)
-> > 
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after granting
-> > locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > See: https://github.com/linux-audit/audit-kernel/issues/50
+> > See: https://github.com/linux-audit/audit-kernel/issues/59
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> > kernel/audit.h          |  4 ++--
+> > kernel/audit_fsnotify.c |  2 +-
+> > kernel/audit_tree.c     | 24 ++++++++++++------------
+> > kernel/audit_watch.c    |  6 ++++--
+> > kernel/auditsc.c        |  4 ++--
+> > 5 files changed, 21 insertions(+), 19 deletions(-)
 > 
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> I think having some additional context here would be helpful for
+> everyone, so I agree with this on principle.  However, I think we need
+> to get clarification from Steve that his parser is able to handle
+> these richer "op" values.
 
-Noticed that your author field is malformed (Should be "Tomas Winkler"
-instead of "Winkler, Tomas") but I'll fix that.
+Op fields are not searchable. So, they normally don't matter. But in general, 
+once they are defined, they should not change. For the record, you can 
+generally insert non-searchable fields anywhere and it doesn't matter. Only 
+the searchable fields like loginuid, uid, pid, exe, etc matter to the parser.
 
-/Jarkko
+-Steve
+
+
