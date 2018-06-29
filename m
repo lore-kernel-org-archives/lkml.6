@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E43DC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61770C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B993624454
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F291427C85
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbFatzVY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B993624454
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuFHuxnr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F291427C85
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965101AbeF2SxE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:53:04 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46780 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936729AbeF2Sw5 (ORCPT
+        id S966019AbeF2S4S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:56:18 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33353 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933750AbeF2Suy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:52:57 -0400
-Received: by mail-pf0-f195.google.com with SMTP id l123-v6so1556328pfl.13;
-        Fri, 29 Jun 2018 11:52:57 -0700 (PDT)
+        Fri, 29 Jun 2018 14:50:54 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 6-v6so4875563plb.0;
+        Fri, 29 Jun 2018 11:50:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4V8ddSLke/gsEPETJSHH2JZLxPsQODdtBbtSduvOQmk=;
-        b=YbFatzVY1lU84KzDak5jdhF7wuvKbAf9z34J+tbEOpgz6VQOhVt1mHgSVSIxOhlg0y
-         C3hy9nN1gBOXW9m+wkxyLDtahFBCWgA7IgH+Oi3gesayFqTLhUDoAOAh0bApsVvWyf6t
-         gRbYJkY/GkN5hExcXM1fxHxUaHQGdgximuIS1gDxh0pBM7hpuM1QGUQbXe/6j2EX8Qq3
-         v3C8Ep9YTQt5Zd69Lh+/FngNCqCU6+94nd1X+vrEtoGixZAabP3aMvDaPdejbQMO1/sR
-         SNmnbtsOTkBZ29FFD2X7K/YiYh3v+5FkuPOXqOSJtL+TQfyqwot9MoaP9W6jauT5/gZi
-         8xsQ==
+        bh=ZmJIhIRVz2+Mv/TNWhdgj3v4VSekIbrzKsm5fVhIAjw=;
+        b=UuFHuxnrEqjR/6S8KcB5DoTGkBCX6uUhh5prKjorlFLg+eoOB8MqC7aRW78ISpp0rZ
+         3x6ZloTPdZ1v3iNtg67SjQIZMcQ9BclMbxphugp+BcQazWYrZ7X75AD0bBlZN+2mF73g
+         yDbrSUrgKtoZDcsAlyRYICFp+Xkd48aHEEv/mtRXPjOp/+iRWdgCDaPXMfJiezoyC5bg
+         2lTI+RPM1J8IxvLozKKed2+5+OlTWlAfLbp/KLUelrkbB6dktD/0aXEj8HJ6lHOH/MmA
+         vLag3UQxnxzc5jsTR/2DytSn/dvx6kYF/wJUcJWARE2uHuMh78Y7rKPH+kfL6epvcIbA
+         U5FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4V8ddSLke/gsEPETJSHH2JZLxPsQODdtBbtSduvOQmk=;
-        b=ub5RjJSFn7Z2nwTvm+H9RrEO3hx+e2gWsI4vA7VIcKNv5zh34Y/shzv8HoTDmFyTth
-         MJB+zyM8YjzGI/+BCjz4pdik9Sh/mN7yqSu4FsrLZC5sEcLpEZBO7SuK9sOFYX3sFw56
-         coYezt2GGlaKlUwK3jVwGQoIusYiJWV7LkEpevsPzh84XlPKyDFl9ZM6kyLFjneApRgT
-         zDLMCbGmJ93+fieVnv5iWzwBFxT5K5NLHt8eCGISdewBJVb7xx09nUQcBXqgnVyah1H8
-         bUZCrzrhw1rBxjuN3rKOM8xIdugTtl25PrBi2+owB/NZ0JGBbBcxDtgp/IAbBL5nuCI8
-         qOTw==
-X-Gm-Message-State: APt69E1Ct+irrBb24RYRK18k/5i5Z7cuZwSD4B4Bea2o1zXBTGy1CDGJ
-        AZ4kXEDdLp+HfdI/rLR4zLrO+A==
-X-Google-Smtp-Source: AAOMgpdQ4vkaHjd97OCI2ecH/qg24YK3Qfv/N6FCFD4E8VT9tLNj1jwcUMrmYIBGpfQxnTf31PKGRQ==
-X-Received: by 2002:a62:a104:: with SMTP id b4-v6mr15763168pff.159.1530298376617;
-        Fri, 29 Jun 2018 11:52:56 -0700 (PDT)
+        bh=ZmJIhIRVz2+Mv/TNWhdgj3v4VSekIbrzKsm5fVhIAjw=;
+        b=ui3mP01iOK1RLcC5xhzNe5KxWaKXNwYPaFMGObGrs5nLomtwoJj0JuKr1bB1hDSEZc
+         Qpbe04d3kFR215yE0bnIeC/WTZ/7+EsdCAn71MXQk7IPXxpD61LgA6vX8VPD2a1mCYkP
+         iqhqNpDvcdxtvC6rOgSSWtVwyuzx7a9wGsTO9E2lP7fnIXNMYn9DcHe12ddL84hEGz+Q
+         ZXylsHqGCwtceRN7144ht0hqlA/NE4+UyDqd2s9f8mizCGLwTv8SxyjH/U4bX8GPD07Q
+         2dcRu1dIqaV5JD0vAwCKeL4gFTrGG1w1kgnMXT8KGdPgC36huWiyNEDqx8gqzFzPk34H
+         i0RA==
+X-Gm-Message-State: APt69E3cIkUdpfbQU2iGaBizOqSjdY/VSys8rQHlj6YOK1U0FazoKmMF
+        NZu859zPMlBbdNQEuahoJ6708A==
+X-Google-Smtp-Source: ADUXVKLptNfat8/fujNTJ1gvy06bxn10uy2J8hLXW/PIT2pyEoAy0t33wAbEhnZTzJgeNFWp4QuFAQ==
+X-Received: by 2002:a17:902:be0b:: with SMTP id r11-v6mr16593955pls.182.1530298253616;
+        Fri, 29 Jun 2018 11:50:53 -0700 (PDT)
 Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.52.55
+        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.50.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 11:52:55 -0700 (PDT)
+        Fri, 29 Jun 2018 11:50:52 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 09/17] media: imx: mipi csi-2: Register a subdev notifier
-Date:   Fri, 29 Jun 2018 11:49:53 -0700
-Message-Id: <1530298220-5097-10-git-send-email-steve_longerbeam@mentor.com>
+Subject: [PATCH v5 03/17] media: v4l2: async: Add v4l2_async_notifier_add_subdev
+Date:   Fri, 29 Jun 2018 11:49:47 -0700
+Message-Id: <1530298220-5097-4-git-send-email-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
 References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
@@ -73,90 +73,386 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse neighbor remote devices on the MIPI CSI-2 input port, add
-them to a subdev notifier, and register the subdev notifier for the
-MIPI CSI-2 receiver, by calling v4l2_async_register_fwnode_subdev().
+v4l2_async_notifier_add_subdev() adds an asd to the notifier. It checks
+that no other equivalent asd's have already been added to this notifier's
+asd list, or to other registered notifier's waiting or done lists, and
+increments num_subdevs.
 
-csi2_parse_endpoints() is modified to be the parse_endpoint callback.
+v4l2_async_notifier_add_subdev() does not make use of the notifier subdevs
+array, otherwise it would have to re-allocate the array every time the
+function was called. In place of the subdevs array, the function adds
+the newly allocated asd to a new master asd_list. The function will
+return error with a WARN() if it is ever called with the subdevs array
+allocated.
+
+In v4l2_async_notifier_has_async_subdev(), __v4l2_async_notifier_register(),
+and v4l2_async_notifier_cleanup(), maintain backward compatibility with
+the subdevs array, by alternatively operate on the subdevs array or a
+non-empty notifier->asd_list.
 
 Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/staging/media/imx/imx6-mipi-csi2.c | 31 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
+Changes since v4:
+- none
+Changes since v3:
+- init notifier lists after the sanity checks.
+Changes since v2:
+- add a NULL asd pointer check to v4l2_async_notifier_asd_valid().
+Changes since v1:
+- none
+---
+ drivers/media/v4l2-core/v4l2-async.c | 206 +++++++++++++++++++++++++++--------
+ include/media/v4l2-async.h           |  26 ++++-
+ 2 files changed, 187 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
-index ceeeb30..94eb9a1 100644
---- a/drivers/staging/media/imx/imx6-mipi-csi2.c
-+++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
-@@ -551,35 +551,34 @@ static const struct v4l2_subdev_internal_ops csi2_internal_ops = {
- 	.registered = csi2_registered,
- };
- 
--static int csi2_parse_endpoints(struct csi2_dev *csi2)
-+static int csi2_parse_endpoint(struct device *dev,
-+			       struct v4l2_fwnode_endpoint *vep,
-+			       struct v4l2_async_subdev *asd)
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index 0e7e529..48d66ae 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -363,16 +363,26 @@ static bool v4l2_async_notifier_has_async_subdev(
+ 	struct v4l2_async_notifier *notifier, struct v4l2_async_subdev *asd,
+ 	unsigned int this_index)
  {
--	struct device_node *node = csi2->dev->of_node;
--	struct device_node *epnode;
--	struct v4l2_fwnode_endpoint ep;
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct csi2_dev *csi2 = sd_to_dev(sd);
++	struct v4l2_async_subdev *asd_y;
+ 	unsigned int j;
  
--	epnode = of_graph_get_endpoint_by_regs(node, 0, -1);
--	if (!epnode) {
--		v4l2_err(&csi2->sd, "failed to get sink endpoint node\n");
-+	if (!fwnode_device_is_available(asd->match.fwnode)) {
-+		v4l2_err(&csi2->sd, "remote is not available\n");
- 		return -EINVAL;
- 	}
+ 	lockdep_assert_held(&list_lock);
  
--	v4l2_fwnode_endpoint_parse(of_fwnode_handle(epnode), &ep);
--	of_node_put(epnode);
+ 	/* Check that an asd is not being added more than once. */
+-	for (j = 0; j < this_index; j++) {
+-		struct v4l2_async_subdev *asd_y = notifier->subdevs[j];
 -
--	if (ep.bus_type != V4L2_MBUS_CSI2) {
-+	if (vep->bus_type != V4L2_MBUS_CSI2) {
- 		v4l2_err(&csi2->sd, "invalid bus type, must be MIPI CSI2\n");
- 		return -EINVAL;
+-		if (asd_equal(asd, asd_y))
+-			return true;
++	if (notifier->subdevs) {
++		for (j = 0; j < this_index; j++) {
++			asd_y = notifier->subdevs[j];
++			if (asd_equal(asd, asd_y))
++				return true;
++		}
++	} else {
++		j = 0;
++		list_for_each_entry(asd_y, &notifier->asd_list, asd_list) {
++			if (j++ >= this_index)
++				break;
++			if (asd_equal(asd, asd_y))
++				return true;
++		}
  	}
  
--	csi2->bus = ep.bus.mipi_csi2;
-+	csi2->bus = vep->bus.mipi_csi2;
- 
- 	dev_dbg(csi2->dev, "data lanes: %d\n", csi2->bus.num_data_lanes);
- 	dev_dbg(csi2->dev, "flags: 0x%08x\n", csi2->bus.flags);
-+
- 	return 0;
+ 	/* Check that an asd does not exist in other notifiers. */
+@@ -383,10 +393,46 @@ static bool v4l2_async_notifier_has_async_subdev(
+ 	return false;
  }
  
- static int csi2_probe(struct platform_device *pdev)
+-static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
++static int v4l2_async_notifier_asd_valid(struct v4l2_async_notifier *notifier,
++					 struct v4l2_async_subdev *asd,
++					 unsigned int this_index)
  {
-+	unsigned int sink_port = 0;
- 	struct csi2_dev *csi2;
- 	struct resource *res;
+ 	struct device *dev =
+ 		notifier->v4l2_dev ? notifier->v4l2_dev->dev : NULL;
++
++	if (!asd)
++		return -EINVAL;
++
++	switch (asd->match_type) {
++	case V4L2_ASYNC_MATCH_CUSTOM:
++	case V4L2_ASYNC_MATCH_DEVNAME:
++	case V4L2_ASYNC_MATCH_I2C:
++	case V4L2_ASYNC_MATCH_FWNODE:
++		if (v4l2_async_notifier_has_async_subdev(notifier, asd,
++							 this_index))
++			return -EEXIST;
++		break;
++	default:
++		dev_err(dev, "Invalid match type %u on %p\n",
++			asd->match_type, asd);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void __v4l2_async_notifier_init(struct v4l2_async_notifier *notifier)
++{
++	lockdep_assert_held(&list_lock);
++
++	INIT_LIST_HEAD(&notifier->asd_list);
++	INIT_LIST_HEAD(&notifier->waiting);
++	INIT_LIST_HEAD(&notifier->done);
++	notifier->lists_initialized = true;
++}
++
++static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
++{
+ 	struct v4l2_async_subdev *asd;
  	int ret;
-@@ -601,10 +600,6 @@ static int csi2_probe(struct platform_device *pdev)
- 	csi2->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
- 	csi2->sd.grp_id = IMX_MEDIA_GRP_ID_CSI2;
+ 	int i;
+@@ -394,34 +440,40 @@ static int __v4l2_async_notifier_register(struct v4l2_async_notifier *notifier)
+ 	if (notifier->num_subdevs > V4L2_MAX_SUBDEVS)
+ 		return -EINVAL;
  
--	ret = csi2_parse_endpoints(csi2);
--	if (ret)
--		return ret;
+-	INIT_LIST_HEAD(&notifier->waiting);
+-	INIT_LIST_HEAD(&notifier->done);
 -
- 	csi2->pllref_clk = devm_clk_get(&pdev->dev, "ref");
- 	if (IS_ERR(csi2->pllref_clk)) {
- 		v4l2_err(&csi2->sd, "failed to get pll reference clock\n");
-@@ -654,7 +649,9 @@ static int csi2_probe(struct platform_device *pdev)
+ 	mutex_lock(&list_lock);
  
- 	platform_set_drvdata(pdev, &csi2->sd);
+-	for (i = 0; i < notifier->num_subdevs; i++) {
+-		asd = notifier->subdevs[i];
++	if (!notifier->lists_initialized)
++		__v4l2_async_notifier_init(notifier);
  
--	ret = v4l2_async_register_subdev(&csi2->sd);
-+	ret = v4l2_async_register_fwnode_subdev(
-+		&csi2->sd, sizeof(struct v4l2_async_subdev),
-+		&sink_port, 1, csi2_parse_endpoint);
- 	if (ret)
- 		goto dphy_off;
+-		switch (asd->match_type) {
+-		case V4L2_ASYNC_MATCH_CUSTOM:
+-		case V4L2_ASYNC_MATCH_DEVNAME:
+-		case V4L2_ASYNC_MATCH_I2C:
+-		case V4L2_ASYNC_MATCH_FWNODE:
+-			if (v4l2_async_notifier_has_async_subdev(
+-				    notifier, asd, i)) {
+-				dev_err(dev,
+-					"asd has already been registered or in notifier's subdev list\n");
+-				ret = -EEXIST;
+-				goto err_unlock;
+-			}
+-			break;
+-		default:
+-			dev_err(dev, "Invalid match type %u on %p\n",
+-				asd->match_type, asd);
++	if (!list_empty(&notifier->asd_list)) {
++		/*
++		 * Caller must have either used v4l2_async_notifier_add_subdev
++		 * to add asd's to notifier->asd_list, or provided the
++		 * notifier->subdevs array, but not both.
++		 */
++		if (WARN_ON(notifier->subdevs)) {
+ 			ret = -EINVAL;
+ 			goto err_unlock;
+ 		}
+-		list_add_tail(&asd->list, &notifier->waiting);
++
++		i = 0;
++		list_for_each_entry(asd, &notifier->asd_list, asd_list) {
++			ret = v4l2_async_notifier_asd_valid(notifier, asd, i++);
++			if (ret)
++				goto err_unlock;
++
++			list_add_tail(&asd->list, &notifier->waiting);
++		}
++	} else if (notifier->subdevs) {
++		for (i = 0; i < notifier->num_subdevs; i++) {
++			asd = notifier->subdevs[i];
++
++			ret = v4l2_async_notifier_asd_valid(notifier, asd, i);
++			if (ret)
++				goto err_unlock;
++
++			list_add_tail(&asd->list, &notifier->waiting);
++		}
+ 	}
  
+ 	ret = v4l2_async_notifier_try_all_subdevs(notifier);
+@@ -511,36 +563,102 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier)
+ }
+ EXPORT_SYMBOL(v4l2_async_notifier_unregister);
+ 
+-void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
++static void __v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+ {
++	struct v4l2_async_subdev *asd, *tmp;
+ 	unsigned int i;
+ 
+-	if (!notifier || !notifier->max_subdevs)
++	if (!notifier)
+ 		return;
+ 
+-	for (i = 0; i < notifier->num_subdevs; i++) {
+-		struct v4l2_async_subdev *asd = notifier->subdevs[i];
++	if (notifier->subdevs) {
++		if (!notifier->max_subdevs)
++			return;
+ 
+-		switch (asd->match_type) {
+-		case V4L2_ASYNC_MATCH_FWNODE:
+-			fwnode_handle_put(asd->match.fwnode);
+-			break;
+-		default:
+-			WARN_ON_ONCE(true);
+-			break;
++		for (i = 0; i < notifier->num_subdevs; i++) {
++			asd = notifier->subdevs[i];
++
++			switch (asd->match_type) {
++			case V4L2_ASYNC_MATCH_FWNODE:
++				fwnode_handle_put(asd->match.fwnode);
++				break;
++			default:
++				break;
++			}
++
++			kfree(asd);
+ 		}
+ 
+-		kfree(asd);
++		notifier->max_subdevs = 0;
++		kvfree(notifier->subdevs);
++		notifier->subdevs = NULL;
++	} else if (notifier->lists_initialized) {
++		list_for_each_entry_safe(asd, tmp,
++					 &notifier->asd_list, asd_list) {
++			switch (asd->match_type) {
++			case V4L2_ASYNC_MATCH_FWNODE:
++				fwnode_handle_put(asd->match.fwnode);
++				break;
++			default:
++				break;
++			}
++
++			list_del(&asd->asd_list);
++			kfree(asd);
++		}
+ 	}
+ 
+-	notifier->max_subdevs = 0;
+ 	notifier->num_subdevs = 0;
++}
++
++void v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
++{
++	mutex_lock(&list_lock);
+ 
+-	kvfree(notifier->subdevs);
+-	notifier->subdevs = NULL;
++	__v4l2_async_notifier_cleanup(notifier);
++
++	mutex_unlock(&list_lock);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_async_notifier_cleanup);
+ 
++int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
++				   struct v4l2_async_subdev *asd)
++{
++	int ret;
++
++	mutex_lock(&list_lock);
++
++	if (notifier->num_subdevs >= V4L2_MAX_SUBDEVS) {
++		ret = -EINVAL;
++		goto unlock;
++	}
++
++	/*
++	 * If caller uses this function, it cannot also allocate and
++	 * place asd's in the notifier->subdevs array.
++	 */
++	if (WARN_ON(notifier->subdevs)) {
++		ret = -EINVAL;
++		goto unlock;
++	}
++
++	if (!notifier->lists_initialized)
++		__v4l2_async_notifier_init(notifier);
++
++	ret = v4l2_async_notifier_asd_valid(notifier, asd,
++					    notifier->num_subdevs);
++	if (ret)
++		goto unlock;
++
++	list_add_tail(&asd->asd_list, &notifier->asd_list);
++	notifier->num_subdevs++;
++
++unlock:
++	mutex_unlock(&list_lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_subdev);
++
+ int v4l2_async_register_subdev(struct v4l2_subdev *sd)
+ {
+ 	struct v4l2_async_notifier *subdev_notifier;
+@@ -614,7 +732,7 @@ void v4l2_async_unregister_subdev(struct v4l2_subdev *sd)
+ 	mutex_lock(&list_lock);
+ 
+ 	__v4l2_async_notifier_unregister(sd->subdev_notifier);
+-	v4l2_async_notifier_cleanup(sd->subdev_notifier);
++	__v4l2_async_notifier_cleanup(sd->subdev_notifier);
+ 	kfree(sd->subdev_notifier);
+ 	sd->subdev_notifier = NULL;
+ 
+diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+index 1592d32..6e752ef 100644
+--- a/include/media/v4l2-async.h
++++ b/include/media/v4l2-async.h
+@@ -73,6 +73,8 @@ enum v4l2_async_match_type {
+  * @match.custom.priv:
+  *		Driver-specific private struct with match parameters
+  *		to be used if %V4L2_ASYNC_MATCH_CUSTOM.
++ * @asd_list:	used to add struct v4l2_async_subdev objects to the
++ *		master notifier->asd_list
+  * @list:	used to link struct v4l2_async_subdev objects, waiting to be
+  *		probed, to a notifier->waiting list
+  *
+@@ -98,6 +100,7 @@ struct v4l2_async_subdev {
+ 
+ 	/* v4l2-async core private: not to be used by drivers */
+ 	struct list_head list;
++	struct list_head asd_list;
+ };
+ 
+ /**
+@@ -127,9 +130,11 @@ struct v4l2_async_notifier_operations {
+  * @v4l2_dev:	v4l2_device of the root notifier, NULL otherwise
+  * @sd:		sub-device that registered the notifier, NULL otherwise
+  * @parent:	parent notifier
++ * @asd_list:	master list of struct v4l2_async_subdev, replaces @subdevs
+  * @waiting:	list of struct v4l2_async_subdev, waiting for their drivers
+  * @done:	list of struct v4l2_subdev, already probed
+  * @list:	member in a global list of notifiers
++ * @lists_initialized: list_head's have been initialized
+  */
+ struct v4l2_async_notifier {
+ 	const struct v4l2_async_notifier_operations *ops;
+@@ -139,12 +144,29 @@ struct v4l2_async_notifier {
+ 	struct v4l2_device *v4l2_dev;
+ 	struct v4l2_subdev *sd;
+ 	struct v4l2_async_notifier *parent;
++	struct list_head asd_list;
+ 	struct list_head waiting;
+ 	struct list_head done;
+ 	struct list_head list;
++	bool lists_initialized;
+ };
+ 
+ /**
++ * v4l2_async_notifier_add_subdev - Add an async subdev to the
++ *				notifier's master asd_list.
++ *
++ * @notifier: pointer to &struct v4l2_async_notifier
++ * @asd: pointer to &struct v4l2_async_subdev
++ *
++ * This can be used before registering a notifier to add an
++ * asd to the notifiers master asd_list. If the caller uses
++ * this method to compose an asd list, it must never allocate
++ * or place asd's in the @subdevs array.
++ */
++int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
++				   struct v4l2_async_subdev *asd);
++
++/**
+  * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
+  *
+  * @v4l2_dev: pointer to &struct v4l2_device
+@@ -177,7 +199,9 @@ void v4l2_async_notifier_unregister(struct v4l2_async_notifier *notifier);
+  * Release memory resources related to a notifier, including the async
+  * sub-devices allocated for the purposes of the notifier but not the notifier
+  * itself. The user is responsible for calling this function to clean up the
+- * notifier after calling @v4l2_async_notifier_parse_fwnode_endpoints or
++ * notifier after calling
++ * @v4l2_async_notifier_add_subdev,
++ * @v4l2_async_notifier_parse_fwnode_endpoints or
+  * @v4l2_fwnode_reference_parse_sensor_common.
+  *
+  * There is no harm from calling v4l2_async_notifier_cleanup in other
 -- 
 2.7.4
 
