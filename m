@@ -2,313 +2,286 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B45EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 05:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A09C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 05:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C51D27A60
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 05:04:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1B6C27A62
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 05:04:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aWDKpYLa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C51D27A60
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oic+pmCF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B6C27A62
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeF2FEC (ORCPT
+        id S1753542AbeF2FEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 01:04:02 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36841 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751740AbeF2FEA (ORCPT
+        Fri, 29 Jun 2018 01:04:09 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38254 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753127AbeF2FEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 01:04:00 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so3650935pfh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 22:04:00 -0700 (PDT)
+        Fri, 29 Jun 2018 01:04:02 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c9-v6so3458345pgf.5
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 22:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=t74VJqRfQJYguZJiqO/bhZrwB44TL3f1SU93gGHRsZ4=;
-        b=aWDKpYLamf57iFwqT6n3y0K/HawUqGtHy2R3hz7cLYmXhaxNCxwghPLY1spnXIQ0Lj
-         VBPaYHAJYxyrnE2xlBVlui3c7M5rIyjLuguTOaTJTgVJoLvwOgJC4qWjJB40fw3uYs2E
-         lxRE/NAHUxWsqBtQOnYN90rtNMAu39+6e6Tc0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=roLtQJqWK2FdawDpPm09A86SUNfdDaDAMD53uxKYhck=;
+        b=Oic+pmCFHOjMgNIOKczeUElnbqethwmp+d5qOqVOa9v5oTaEqrH9MFzwAPuYAad13p
+         wpUpWTq98y5CLs3UBXf0sHHLEF5m84mrw4pMvkBgbHMvn7SHZy4ZyXIqqBj+sMbtSxZA
+         GUGQ3Qe9GEth553FTdH+8UOorq1Ckd4/UGHF4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=t74VJqRfQJYguZJiqO/bhZrwB44TL3f1SU93gGHRsZ4=;
-        b=maJpESaftneTX6Y2F67+4KqrBmODcevvQjpZR2wD0zqshAhArE24ChKWuDbEFrEReR
-         FWnr1fGelDwHV9hN5m8KYD86IyaSNF1quv0n9uLs8cdK+IZlSCHWncNz8QLJow24jxJL
-         58H94F+YXIKUxGS/n7EtkCI9rZDxBa69M3QOe27uPwvAEbLokVWBaSgTftv1zYGF4D/g
-         IPZg/2FA3KptOgl9rFspxCYaEld2gF8GyHUxzZMQJtKd2/1dTPIKa2ZpYm0WU4a/MPyU
-         HUjFgPZm1X5pd0fddQYRIn93nx3+OcVKVxSrw2/QO32BI/GEz136niEgQ1uNxW0FeaHg
-         FHaA==
-X-Gm-Message-State: APt69E2LcY9NtTUMgam8DGyKf9n629SzyetbPBt9oT9NeokVvAnadp4a
-        oj7r3bkCznMSIrm9svNGe4hU+g==
-X-Google-Smtp-Source: ADUXVKJfzk1sBrqW6YBOE33dH3UrcgtLfsVpSVHZSfaJFApqCfN8mUjg6SVLR3o8UJxFlkuLL9Skng==
-X-Received: by 2002:a65:4841:: with SMTP id i1-v6mr11077689pgs.75.1530248639697;
-        Thu, 28 Jun 2018 22:03:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=roLtQJqWK2FdawDpPm09A86SUNfdDaDAMD53uxKYhck=;
+        b=GCiOVfE/YfjtFBAZhr6GE7xg71N9rssDW7gmE5lyYWe3fA9sCS06LDJyEwW8Cg9KUG
+         uJCKfAZdZCFsU60WJTAKyw9YmsRN0V71VgPBTg0KmRBHlhoWFS8u2Ao6f4/vfyiekz25
+         Z5Gd73vyB11sSfkVgI/s/5HGGP0FSGMkIReDqEuW4MgBbSd/vXglt8KGh331Gk8JM6ab
+         0Vjh08jv38aSBRG/Z6rqdroszwkDQhuuDAcSb2ZDBGMkECBGQIpLRxM74Gv0ZIkBq31x
+         dwrnCQcSkIvZYB5O0aOkQrRu5mLg925J3aAbwjnAdKP0RLY39ftP7sp/MEpx1zDsxm8A
+         0vxw==
+X-Gm-Message-State: APt69E3c3h2c3vrK8m9WBf8l6ZUWAyfnUHFCQ0NgYeOM/8KiRB4rWN2h
+        RxZP977Mw55mpeXf+hPGPPVi6A==
+X-Google-Smtp-Source: AAOMgpfGqP4GDsK51Uv7uywkS3QQx/uqFNRpUVUNvGguKggfAQCzwM+qi06rqitZv/t49AsUWi62Aw==
+X-Received: by 2002:a65:5b08:: with SMTP id y8-v6mr2125946pgq.297.1530248641970;
+        Thu, 28 Jun 2018 22:04:01 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id z10-v6sm12752359pgo.58.2018.06.28.22.03.57
+        by smtp.gmail.com with ESMTPSA id z10-v6sm12752359pgo.58.2018.06.28.22.03.59
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 28 Jun 2018 22:03:59 -0700 (PDT)
+        Thu, 28 Jun 2018 22:04:01 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
 Cc:     bjorn.andersson@linaro.org, baolin.wang@linaro.org,
         broonie@kernel.org, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Date:   Fri, 29 Jun 2018 13:03:00 +0800
-Message-Id: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+Subject: [PATCH v3 2/2] leds: sc27xx: Add pattern_set/get/clear interfaces for LED controller
+Date:   Fri, 29 Jun 2018 13:03:01 +0800
+Message-Id: <6db0f09d1834e68b8b3947d765563093d5eeb80a.1530248085.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+In-Reply-To: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
+References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+This patch implements the 'pattern_set', 'pattern_get' and 'pattern_clear'
+interfaces to support SC27XX LED breathing mode.
 
-Some LED controllers have support for autonomously controlling
-brightness over time, according to some preprogrammed pattern or
-function.
-
-This adds a new optional operator that LED class drivers can implement
-if they support such functionality as well as a new device attribute to
-configure the pattern for a given LED.
-
-[Baolin Wang did some minor improvements.]
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
 Changes from v2:
- - Change kernel version to 4.19.
- - Force user to return error pointer if failed to issue pattern_get().
- - Use strstrip() to trim trailing newline.
- - Other optimization.
+ - No updates.
 
-Changes from v1:
- - Add some comments suggested by Pavel.
- - Change 'delta_t' can be 0.
-
-Note: I removed the pattern repeat check and will get the repeat number by adding
-one extra file named 'pattern_repeat' according to previous discussion.
+ Changes from v1:
+ - No updates.
 ---
- Documentation/ABI/testing/sysfs-class-led |   17 +++++
- drivers/leds/led-class.c                  |  119 +++++++++++++++++++++++++++++
- include/linux/leds.h                      |   19 +++++
- 3 files changed, 155 insertions(+)
+ drivers/leds/leds-sc27xx-bltc.c |  160 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 160 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 5f67f7a..e01ac55 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -61,3 +61,20 @@ Description:
- 		gpio and backlight triggers. In case of the backlight trigger,
- 		it is useful when driving a LED which is intended to indicate
- 		a device in a standby like state.
-+
-+What: /sys/class/leds/<led>/pattern
-+Date: June 2018
-+KernelVersion: 4.19
-+Description:
-+	Specify a pattern for the LED, for LED hardware that support
-+	altering the brightness as a function of time.
-+
-+	The pattern is given by a series of tuples, of brightness and
-+	duration (ms). The LED is expected to traverse the series and
-+	each brightness value for the specified duration. Duration of
-+	0 means brightness should immediately change to new value.
-+
-+	As LED hardware might have different capabilities and precision
-+	the requested pattern might be slighly adjusted by the driver
-+	and the resulting pattern of such operation should be returned
-+	when this file is read.
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3c7e348..8a685a2 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -74,6 +74,123 @@ static ssize_t max_brightness_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(max_brightness);
+diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+index 9d9b7aa..898f92d 100644
+--- a/drivers/leds/leds-sc27xx-bltc.c
++++ b/drivers/leds/leds-sc27xx-bltc.c
+@@ -6,6 +6,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/slab.h>
+ #include <uapi/linux/uleds.h>
  
-+static ssize_t pattern_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
+ /* PMIC global control register definition */
+@@ -32,8 +33,13 @@
+ #define SC27XX_DUTY_MASK	GENMASK(15, 0)
+ #define SC27XX_MOD_MASK		GENMASK(7, 0)
+ 
++#define SC27XX_CURVE_SHIFT	8
++#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
++#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
++
+ #define SC27XX_LEDS_OFFSET	0x10
+ #define SC27XX_LEDS_MAX		3
++#define SC27XX_LEDS_PATTERN_CNT	4
+ 
+ struct sc27xx_led {
+ 	char name[LED_MAX_NAME_SIZE];
+@@ -122,6 +128,157 @@ static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
+ 	return err;
+ }
+ 
++static int sc27xx_led_pattern_clear(struct led_classdev *ldev)
 +{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct led_pattern *pattern;
-+	size_t offset = 0;
-+	int count, n, i;
++	struct sc27xx_led *leds = to_sc27xx_led(ldev);
++	struct regmap *regmap = leds->priv->regmap;
++	u32 base = sc27xx_led_get_offset(leds);
++	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
++	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
++	int err;
 +
-+	if (!led_cdev->pattern_get)
-+		return -EOPNOTSUPP;
++	mutex_lock(&leds->priv->lock);
 +
-+	pattern = led_cdev->pattern_get(led_cdev, &count);
-+	if (IS_ERR(pattern))
-+		return PTR_ERR(pattern);
++	/* Reset the rise, high, fall and low time to zero. */
++	regmap_write(regmap, base + SC27XX_LEDS_CURVE0, 0);
++	regmap_write(regmap, base + SC27XX_LEDS_CURVE1, 0);
 +
-+	for (i = 0; i < count; i++) {
-+		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
-+			     pattern[i].brightness, pattern[i].delta_t);
++	err = regmap_update_bits(regmap, ctrl_base,
++			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
 +
-+		if (offset + n >= PAGE_SIZE)
-+			goto err_nospc;
++	mutex_unlock(&leds->priv->lock);
 +
-+		offset += n;
-+	}
-+
-+	buf[offset - 1] = '\n';
-+
-+	kfree(pattern);
-+	return offset;
-+
-+err_nospc:
-+	kfree(pattern);
-+	return -ENOSPC;
++	return err;
 +}
 +
-+static ssize_t pattern_store(struct device *dev,
-+			     struct device_attribute *attr,
-+			     const char *buf, size_t size)
++static int sc27xx_led_pattern_set(struct led_classdev *ldev,
++				  struct led_pattern *pattern,
++				  int len)
 +{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct led_pattern *pattern = NULL;
-+	unsigned long val;
-+	char *sbegin;
-+	char *elem;
-+	char *s;
-+	int ret, len = 0;
-+	bool odd = true;
-+
-+	sbegin = kstrndup(buf, size, GFP_KERNEL);
-+	if (!sbegin)
-+		return -ENOMEM;
++	struct sc27xx_led *leds = to_sc27xx_led(ldev);
++	u32 base = sc27xx_led_get_offset(leds);
++	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
++	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
++	struct regmap *regmap = leds->priv->regmap;
++	int err;
 +
 +	/*
-+	 * Trim trailing newline, if the remaining string is empty,
-+	 * clear the pattern.
++	 * Must contain 4 patterns to configure the rise time, high time, fall
++	 * time and low time to enable the breathing mode.
 +	 */
-+	s = strstrip(sbegin);
-+	if (!*s) {
-+		ret = led_cdev->pattern_clear(led_cdev);
++	if (len != SC27XX_LEDS_PATTERN_CNT)
++		return -EINVAL;
++
++	mutex_lock(&leds->priv->lock);
++
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
++				 SC27XX_CURVE_L_MASK, pattern[0].delta_t);
++	if (err)
 +		goto out;
-+	}
 +
-+	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
-+	if (!pattern) {
-+		ret = -ENOMEM;
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
++				 SC27XX_CURVE_L_MASK, pattern[1].delta_t);
++	if (err)
 +		goto out;
-+	}
 +
-+	/* Parse out the brightness & delta_t touples */
-+	while ((elem = strsep(&s, " ")) != NULL) {
-+		ret = kstrtoul(elem, 10, &val);
-+		if (ret)
-+			goto out;
-+
-+		if (odd) {
-+			pattern[len].brightness = val;
-+		} else {
-+			pattern[len].delta_t = val;
-+			len++;
-+		}
-+
-+		odd = !odd;
-+	}
-+
-+	/*
-+	 * Fail if we didn't find any data points or last data point was partial
-+	 */
-+	if (!len || !odd) {
-+		ret = -EINVAL;
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
++				 SC27XX_CURVE_H_MASK,
++				 pattern[2].delta_t << SC27XX_CURVE_SHIFT);
++	if (err)
 +		goto out;
-+	}
 +
-+	ret = led_cdev->pattern_set(led_cdev, pattern, len);
++
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
++				 SC27XX_CURVE_H_MASK,
++				 pattern[3].delta_t << SC27XX_CURVE_SHIFT);
++	if (err)
++		goto out;
++
++
++	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
++				 SC27XX_DUTY_MASK,
++				 (pattern[0].brightness << SC27XX_DUTY_SHIFT) |
++				 SC27XX_MOD_MASK);
++	if (err)
++		goto out;
++
++	/* Enable the LED breathing mode */
++	err = regmap_update_bits(regmap, ctrl_base,
++				 SC27XX_LED_RUN << ctrl_shift,
++				 SC27XX_LED_RUN << ctrl_shift);
 +
 +out:
-+	kfree(pattern);
-+	kfree(sbegin);
-+	return ret < 0 ? ret : size;
-+}
-+static DEVICE_ATTR_RW(pattern);
++	mutex_unlock(&leds->priv->lock);
 +
-+static umode_t led_class_attrs_mode(struct kobject *kobj,
-+				    struct attribute *attr, int index)
++	return err;
++}
++
++static struct led_pattern *sc27xx_led_pattern_get(struct led_classdev *ldev,
++						  int *len)
 +{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct sc27xx_led *leds = to_sc27xx_led(ldev);
++	u32 base = sc27xx_led_get_offset(leds);
++	struct regmap *regmap = leds->priv->regmap;
++	struct led_pattern *pattern;
++	int i, err;
++	u32 val;
 +
-+	if (attr == &dev_attr_brightness.attr)
-+		return attr->mode;
-+	if (attr == &dev_attr_max_brightness.attr)
-+		return attr->mode;
-+	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
-+		return attr->mode;
++	/*
++	 * Must allocate 4 patterns to show the rise time, high time, fall time
++	 * and low time.
++	 */
++	pattern = kcalloc(SC27XX_LEDS_PATTERN_CNT, sizeof(*pattern),
++			  GFP_KERNEL);
++	if (!pattern)
++		return ERR_PTR(-ENOMEM);
 +
-+	return 0;
++	mutex_lock(&leds->priv->lock);
++
++	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
++	if (err)
++		goto out;
++
++	pattern[0].delta_t = val & SC27XX_CURVE_L_MASK;
++
++	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
++	if (err)
++		goto out;
++
++	pattern[1].delta_t = val & SC27XX_CURVE_L_MASK;
++
++	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE0, &val);
++	if (err)
++		goto out;
++
++	pattern[2].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
++
++	err = regmap_read(regmap, base + SC27XX_LEDS_CURVE1, &val);
++	if (err)
++		goto out;
++
++	pattern[3].delta_t = (val & SC27XX_CURVE_H_MASK) >> SC27XX_CURVE_SHIFT;
++
++	err = regmap_read(regmap, base + SC27XX_LEDS_DUTY, &val);
++	if (err)
++		goto out;
++
++	mutex_unlock(&leds->priv->lock);
++
++	val = (val & SC27XX_DUTY_MASK) >> SC27XX_DUTY_SHIFT;
++	for (i = 0; i < SC27XX_LEDS_PATTERN_CNT; i++)
++		pattern[i].brightness = val;
++
++	*len = SC27XX_LEDS_PATTERN_CNT;
++
++	return pattern;
++
++out:
++	mutex_unlock(&leds->priv->lock);
++	kfree(pattern);
++
++	return ERR_PTR(err);
 +}
 +
- #ifdef CONFIG_LEDS_TRIGGERS
- static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
- static struct attribute *led_trigger_attrs[] = {
-@@ -88,11 +205,13 @@ static ssize_t max_brightness_show(struct device *dev,
- static struct attribute *led_class_attrs[] = {
- 	&dev_attr_brightness.attr,
- 	&dev_attr_max_brightness.attr,
-+	&dev_attr_pattern.attr,
- 	NULL,
- };
+ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
+ {
+ 	int i, err;
+@@ -140,6 +297,9 @@ static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
+ 		led->priv = priv;
+ 		led->ldev.name = led->name;
+ 		led->ldev.brightness_set_blocking = sc27xx_led_set;
++		led->ldev.pattern_set = sc27xx_led_pattern_set;
++		led->ldev.pattern_get = sc27xx_led_pattern_get;
++		led->ldev.pattern_clear = sc27xx_led_pattern_clear;
  
- static const struct attribute_group led_group = {
- 	.attrs = led_class_attrs,
-+	.is_visible = led_class_attrs_mode,
- };
- 
- static const struct attribute_group *led_groups[] = {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b7e8255..acdbb2f 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -22,6 +22,7 @@
- #include <linux/workqueue.h>
- 
- struct device;
-+struct led_pattern;
- /*
-  * LED Core
-  */
-@@ -88,6 +89,14 @@ struct led_classdev {
- 				     unsigned long *delay_on,
- 				     unsigned long *delay_off);
- 
-+	int (*pattern_set)(struct led_classdev *led_cdev,
-+			   struct led_pattern *pattern, int len);
-+
-+	int (*pattern_clear)(struct led_classdev *led_cdev);
-+
-+	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
-+					   int *len);
-+
- 	struct device		*dev;
- 	const struct attribute_group	**groups;
- 
-@@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
- 	struct led_classdev *led_cdev, enum led_brightness brightness) { }
- #endif
- 
-+/**
-+ * struct led_pattern - brigheness value in a pattern
-+ * @delta_t: delay until next entry, in milliseconds
-+ * @brightness: brightness at time = 0
-+ */
-+struct led_pattern {
-+	int delta_t;
-+	int brightness;
-+};
-+
- #endif		/* __LINUX_LEDS_H_INCLUDED */
+ 		err = devm_led_classdev_register(dev, &led->ldev);
+ 		if (err)
 -- 
 1.7.9.5
 
