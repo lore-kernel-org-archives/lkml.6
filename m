@@ -2,108 +2,104 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0F8C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2327AC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:46:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C98624F8D
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:45:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cWAh4Eln"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C98624F8D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id AE444275BC
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:46:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE444275BC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966623AbeF2PpH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:45:07 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47412 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932658AbeF2PpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:45:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=uHHhXoVCo1e55ybzhcJfcxHdXqESXbPa7DpzDV5aqqQ=;
-        b=cWAh4ElnB1b2jXwHhycYNwLvv8dWNTj4VCLEF4/e9NechmAPJTFGJ4pIWsPL8nPsm+HUra5C14MyH0P7J0riCZRKdKQQn+PyLnFaASt6zB6wQ22SXT4cHlA7uTDGFV/ysuQMia5Ml4fZilAhUbgvStqH+crYi4BB+Cp1QOTd4zU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fYva2-0006Tg-Hn; Fri, 29 Jun 2018 17:45:02 +0200
-Date:   Fri, 29 Jun 2018 17:45:02 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] net: phy: DP83TC811: Add INT_STAT3
-Message-ID: <20180629154502.GG11285@lunn.ch>
-References: <20180629153546.24107-1-dmurphy@ti.com>
+        id S966645AbeF2PqO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:46:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753159AbeF2PqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:46:12 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68CF6401EF0C;
+        Fri, 29 Jun 2018 15:46:12 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D0A081D081;
+        Fri, 29 Jun 2018 15:46:10 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 17:46:08 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jeremy.linton@arm.com, ard.biesheuvel@linaro.org,
+        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
+        catalin.marinas@arm.com, will.deacon@arm.com
+Subject: Re: [PATCH] arm64: acpi: reenumerate topology ids
+Message-ID: <20180629154608.nqudibf54ti6dpjc@kamzik.brq.redhat.com>
+References: <20180628145128.10057-1-drjones@redhat.com>
+ <a38fb684-c023-1a96-464e-dd268f3132ea@arm.com>
+ <20180628173243.obydzakh2stfs26w@kamzik.brq.redhat.com>
+ <20180629102927.GA18043@e107155-lin>
+ <20180629112354.hefdl2pe72frl6x3@kamzik.brq.redhat.com>
+ <20180629132934.GA16282@e107155-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629153546.24107-1-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180629132934.GA16282@e107155-lin>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 15:46:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 29 Jun 2018 15:46:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'drjones@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 10:35:45AM -0500, Dan Murphy wrote:
-> Add INT_STAT3 interrupt setting and clearing
-> support.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v2 - Removed bug fix removal of writing INT_STAT1 twice when disabling interrupts
-> 
->  drivers/net/phy/dp83tc811.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
-> 
-> diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
-> index 49ac678eb2dc..f8653f5d8789 100644
-> --- a/drivers/net/phy/dp83tc811.c
-> +++ b/drivers/net/phy/dp83tc811.c
-> @@ -21,6 +21,7 @@
->  #define MII_DP83811_SGMII_CTRL	0x09
->  #define MII_DP83811_INT_STAT1	0x12
->  #define MII_DP83811_INT_STAT2	0x13
-> +#define MII_DP83811_INT_STAT3	0x18
->  #define MII_DP83811_RESET_CTRL	0x1f
->  
->  #define DP83811_HW_RESET	BIT(15)
-> @@ -44,6 +45,11 @@
->  #define DP83811_OVERVOLTAGE_INT_EN	BIT(6)
->  #define DP83811_UNDERVOLTAGE_INT_EN	BIT(7)
->  
-> +/* INT_STAT3 bits */
-> +#define DP83811_LPS_INT_EN	BIT(0)
-> +#define DP83811_NO_FRAME_INT_EN	BIT(3)
-> +#define DP83811_POR_DONE_INT_EN	BIT(4)
-> +
->  #define MII_DP83811_RXSOP1	0x04a5
->  #define MII_DP83811_RXSOP2	0x04a6
->  #define MII_DP83811_RXSOP3	0x04a7
-> @@ -81,6 +87,10 @@ static int dp83811_ack_interrupt(struct phy_device *phydev)
->  	if (err < 0)
->  		return err;
->  
-> +	err = phy_read(phydev, MII_DP83811_INT_STAT3);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return 0;
->  }
->  
-> @@ -216,6 +226,18 @@ static int dp83811_config_intr(struct phy_device *phydev)
->  				DP83811_UNDERVOLTAGE_INT_EN);
->  
->  		err = phy_write(phydev, MII_DP83811_INT_STAT2, misr_status);
+On Fri, Jun 29, 2018 at 02:29:34PM +0100, Sudeep Holla wrote:
+> If it matters a lot, vendors must use UID for consistency. Since OS doesn't
+> use those IDs for any particular reason, OS must not care.
 
-Hi Dan
+That depends. If you look at how topology_logical_package_id() is used in
+x86 code you'll see it gets used as an index to an array in a couple
+places. If we don't remap arbitrary IDs to counters than we may miss out
+on some opportunities to avoid lists.
 
-Isn't this going to fail to apply because net-next says STAT1 here?
+Also, we're talking about what's visible to users. I think it's much more
+likely to break a user app by exposing topology IDs that have values
+greater than the linear CPU numbers (even though properly written apps
+shouldn't expect them to be strictly <=), than the opposite.
 
-That is why i said you need to wait for David to merge net into
-net-next. Then you can submit these patches, and not have conflicts.
+> 
+> > > 
+> > > > >
+> > > > > So I would like to keep it simple and just have this counters for
+> > > > > package ids as demonstrated in Shunyong's patch.
+> > > > >
+> > > >
+> > > > If we don't also handle cores when there are threads, then the cores
+> > > > will also end up having weird IDs.
+> > > >
+> > > 
+> > > Yes, but if PPTT says it has valid ID, I would prefer that over DT like
+> > > generated.
+> > 
+> > Valid *ACPI* ID, which just means it's a guaranteed unique ACPI UID,
+> > which isn't likely going to be anything useful to a user.
+> > 
+> 
+> How is that different from OS generated one from user's perspective ?
+> Vendors might assign sockets UID and he may help them to replace one.
+> Having some generated counter based id is not helpful.
 
-	  Andrew
+I agree with this. It's a good argument for maintaining a mapping of
+package-id to id-physically-printed-on-a-package somewhere. To avoid
+maintaining a mapping it could just be stored directly in
+cpu_topology[cpu].package_id, but then how can we tell the difference
+between a valid printed-on-package-id and an ACPI offset? We'd still
+have to maintain additional state to determine if it's valid or not,
+so we could just maintain a mapping instead.
+
+Thanks,
+drew
