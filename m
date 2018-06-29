@@ -2,129 +2,162 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7251C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD772C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E8E2534F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853F62534F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:25:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN1RW+of"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E8E2534F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ckQI4mAR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F62534F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965989AbeF2SYn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:24:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965535AbeF2SYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:24:41 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29F232534F;
-        Fri, 29 Jun 2018 18:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530296681;
-        bh=2fBMJ9EY2c8IBvG1oWjK6SoSr/cOV1ZzZ8PKx0W6tmM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=nN1RW+ofbeMTzEdzOOTiYDeUH19ft5nBFJ8Qfdk0OGRcqi1NgRbsMwZ4T1Azg7Z8u
-         9TpSQ+M3ZLGU6jssFdO9pxfarP16e4r5O1/qt9R9J4ThTM9HLOkM0yfy4AllRi6d5+
-         ZejXtx+/r4/buqr1N4Gl40TxLc+PR6LkRY40+yiQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Raman Banka <raman.k2@samsung.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1528105245-26623-1-git-send-email-raman.k2@samsung.com>
-Cc:     alim.akhtar@samsung.com, shaik.ameer@samsung.com,
-        m.szyprowski@samsung.com, krzk@kernel.org, s.nawrocki@samsung.com
-References: <CGME20180604095335epcas2p4131d5a7ea0c6091c3e2f17bd98847efa@epcas2p4.samsung.com>
- <1528105245-26623-1-git-send-email-raman.k2@samsung.com>
-Message-ID: <153029668040.143105.2059491089047180792@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RFC PATCH] Add more debugfs features in CCF.
-Date:   Fri, 29 Jun 2018 11:24:40 -0700
+        id S966141AbeF2SZz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:25:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59928 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbeF2SZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 14:25:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5TINfSJ095728;
+        Fri, 29 Jun 2018 18:25:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=OOpqezTYYXcP7ueIysvVv00GVS+t7Jhwq1c/IOtbkww=;
+ b=ckQI4mARGczWfpGSuaR59hwZjwpPlJiN9k9GkgRAo+Y2xlyp+P7N/sr/QBqGjFGOtYDZ
+ rMmmf1altPny2oULA4TrGAD7D5sq5Z7yt8enNVWQ52lqmEU3EUvZevRm26djZDCjaV6s
+ ZSMqijEeJYZBkKJmoUC0R6eD11vtQAkzHkx2BBhLsBDkrzrvWV65bE8+GcmdYc9Z9wjm
+ g/QPuHZPyP4Nir/T3rxHF6Ze1kM0Y3vItJ3a5jAXK+ZNN3GG5vsrFmY6N4bQsmtj5c8x
+ WyICt1SFt0Gv39+Y63mFCPoau5g99YbF5Lcx1eG0W314km7PA1a53fS8txIZjF6Cky1t 6Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2jum0afh6x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Jun 2018 18:25:48 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5TIPmBL017122
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Jun 2018 18:25:48 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5TIPlVC031722;
+        Fri, 29 Jun 2018 18:25:47 GMT
+Received: from localhost.localdomain (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 29 Jun 2018 11:25:47 -0700
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+To:     pasha.tatashin@oracle.com, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
+        jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org,
+        netdev@vger.kernel.org, gregkh@linuxfoundation.org,
+        alexander.duyck@gmail.com, tobin@apporbit.com,
+        andy.shevchenko@gmail.com
+Subject: [PATCH v6 1/3] drivers core: refactor device_shutdown
+Date:   Fri, 29 Jun 2018 14:25:39 -0400
+Message-Id: <20180629182541.6735-2-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180629182541.6735-1-pasha.tatashin@oracle.com>
+References: <20180629182541.6735-1-pasha.tatashin@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8939 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=760
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1806290195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Raman Banka (2018-06-04 02:40:45)
-> Currently there is a directory hierarchy in debugfs for visualizing the
-> clk tree structure. Each clock has a directory in debugfs which contains
-> read-only members that export information specific to that clk node:
-> clk_rate,clk_flags, clk_prepare_count, clk_enable_count &
-> clk_notifier_count.
-> =
+device_shutdown() traverses through the list of devices, and calls
+dev->{bug/driver}->shutdown() for each entry in the list.
 
-> Change the member clk_rate from read-only to read-write,
-> writing some other rate to clk_rate calls clk_core_set_rate()
-> of the corresponding clock.
-> =
+Refactor the function by keeping device_shutdown() to do the logic of
+traversing the list of devices, and device_shutdown_one() to perform the
+actual shutdown operation on one device.
 
-> Change the member clk_prepare_count from read_only to read_write,
-> writing to which calls clk_core_prepare() or clk_core_unprepare()
-> of the corresponding clock depending on the value written.
-> =
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/base/core.c | 50 +++++++++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 20 deletions(-)
 
-> Change the member clk_enable_count from read_only to read_write,
-> writing to which calls clk_core_enable() or clk_core_disable()
-> of the corresponding clock depending on the value written.
-> =
-
-> Add a new read-write member named clk_parent reading which exports
-> the name of the parent clock and writing a different name for parent
-> clock searches for that clock and calls clk_core_set_parent_nolock().
-> =
-
-> Signed-off-by: Raman Banka <raman.k2@samsung.com>
-> ---
->  drivers/clk/clk.c | 169 ++++++++++++++++++++++++++++++++++++++++++++++++=
-++++--
->  1 file changed, 164 insertions(+), 5 deletions(-)
-> =
-
-> I was working on some internal project where there was a requirement to p=
-rovide
-> debugfs entries for controlling clock operations. So I thought allowing to
-> change rate, parent, enable_count and prepare_count of clocks through deb=
-ugfs
-> may be a desirable feature. I felt debugging is much easier with these fe=
-atures
-> as one need not boot the kernel every time he/she wants to test a clock,
-> especially helpful in case of booting linux on an emulator where it takes
-> hours to finish booting. Being new to linux, I'm not sure whether it is d=
-esirable
-> or not. Hence I request for comments.
-
-Historically we've avoided allowing userspace to change clk settings,
-even in debugfs[1]. That's best left up to drivers so that drivers don't
-get confused or have trouble when they try to operate on things and
-their clk frequency changes underneath them. It also opens up a way for
-bad userspace applications to exist and start writing into debugfs to do
-userspace clk control, which is something we really want to avoid at all
-costs.
-
-I can understand on an emulator it is hard to get things right
-initially, and you may not even have drivers for certain devices that
-are using the clks, and hours to reboot takes time to fully test a clk
-driver, but then you can just make a patch like this and apply it to
-your tree and do rapid debug and development until things are sorted
-out. I've experienced this first hand and carried around a patch to do
-just this for a long time.
-
-We have discussed adding "dead" code to the kernel to support read/write
-like this underneath some #ifdef guard, like you see regmap do with
-their #ifdef REGMAP_ALLOW_WRITE_DEBUGFS code. I would be open to that
-sort of patch that I can then easily add a special define to enable the
-super dangerous mode. As long as it isn't exposed as a Kconfig we're
-pretty safe from non-developers finding it.
-
-[1] https://lists.linaro.org/pipermail/linaro-kernel/2013-August/006226.html
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index df3e1a44707a..07380aa0683b 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2802,6 +2802,35 @@ int device_move(struct device *dev, struct device *new_parent,
+ }
+ EXPORT_SYMBOL_GPL(device_move);
+ 
++/*
++ * device_shutdown_one - call ->shutdown() for the device passed as
++ * argument.
++ */
++static void device_shutdown_one(struct device *dev)
++{
++	/* Don't allow any more runtime suspends */
++	pm_runtime_get_noresume(dev);
++	pm_runtime_barrier(dev);
++
++	if (dev->class && dev->class->shutdown_pre) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown_pre\n");
++		dev->class->shutdown_pre(dev);
++	}
++	if (dev->bus && dev->bus->shutdown) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown\n");
++		dev->bus->shutdown(dev);
++	} else if (dev->driver && dev->driver->shutdown) {
++		if (initcall_debug)
++			dev_info(dev, "shutdown\n");
++		dev->driver->shutdown(dev);
++	}
++
++	/* decrement the reference counter */
++	put_device(dev);
++}
++
+ /**
+  * device_shutdown - call ->shutdown() on each device to shutdown.
+  */
+@@ -2838,30 +2867,11 @@ void device_shutdown(void)
+ 			device_lock(parent);
+ 		device_lock(dev);
+ 
+-		/* Don't allow any more runtime suspends */
+-		pm_runtime_get_noresume(dev);
+-		pm_runtime_barrier(dev);
+-
+-		if (dev->class && dev->class->shutdown_pre) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown_pre\n");
+-			dev->class->shutdown_pre(dev);
+-		}
+-		if (dev->bus && dev->bus->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->bus->shutdown(dev);
+-		} else if (dev->driver && dev->driver->shutdown) {
+-			if (initcall_debug)
+-				dev_info(dev, "shutdown\n");
+-			dev->driver->shutdown(dev);
+-		}
+-
++		device_shutdown_one(dev);
+ 		device_unlock(dev);
+ 		if (parent)
+ 			device_unlock(parent);
+ 
+-		put_device(dev);
+ 		put_device(parent);
+ 
+ 		spin_lock(&devices_kset->list_lock);
+-- 
+2.18.0
 
