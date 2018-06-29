@@ -2,305 +2,206 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8ADC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA26C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB7527CED
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB7527CED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id E966427CED
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E966427CED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754934AbeF2KpB (ORCPT
+        id S1755012AbeF2KpZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 06:45:01 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37833 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752846AbeF2KpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:45:00 -0400
-Received: by mail-wr0-f196.google.com with SMTP id k6-v6so8392303wrp.4
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 03:44:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GhZT0bbPDucOkzdGYFSqQEwygzJ1BNsYCD65Yh5DQSc=;
-        b=sH0BkSp5a4k0m2MoIqXUFJ65vfwC2wg9NIOuVqzyhejZYcQUZ4ycxKNV3w6eQJdFQy
-         slkzCx842lxNmJxRbaATya4VY2/muk9tQ1a0p+XEKqrViG5XB2SX4CJEX1mgbU48YmAI
-         LkP9gc6aaN2WJX5Kxu7JG66jAXyooNCpubMASBuYOFdEMad8m4CWsG5BJWtYjSPwK+99
-         lRR7/D9SK2wtYvIKixu+P3sCpj3ReMJoMUGY0FjEe64AMZLuaB0C8McZ5Pbz1KccCyiK
-         KQyNjgpRdoo8fvTqepYiaT5dY7XwmgP7IPeohRMY0r9F5ObjbsQkM/HuhkoSH59cEWLh
-         zguA==
-X-Gm-Message-State: APt69E2FqLXHlRuITTq/dEXTBydc6sa+3UKGQ9fifPz2bKC2PXWMPRsY
-        sISEE/q3DLpikNJh02aitgcMI5g9
-X-Google-Smtp-Source: AAOMgpdVdYpupa7eTkrJOU+GuYzUpDvoIWA2/+Uqmp5kJlroDEdrajfJ/g49PjJkZlT78s6y2nVcjQ==
-X-Received: by 2002:adf:a6b8:: with SMTP id t53-v6mr12254032wrc.45.1530269098787;
-        Fri, 29 Jun 2018 03:44:58 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id v9-v6sm4667489wrn.97.2018.06.29.03.44.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Jun 2018 03:44:57 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 2D40212395E; Fri, 29 Jun 2018 12:44:57 +0200 (CEST)
-Date:   Fri, 29 Jun 2018 12:44:57 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org
-Subject: Re: [PATCH v1 1/2] mm/sparse: add sparse_init_nid()
-Message-ID: <20180629104457.GA23043@techadventures.net>
-References: <20180628173010.23849-1-pasha.tatashin@oracle.com>
- <20180628173010.23849-2-pasha.tatashin@oracle.com>
- <20180629100413.GA21540@techadventures.net>
+        Fri, 29 Jun 2018 06:45:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752138AbeF2KpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 06:45:23 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E51541C1E;
+        Fri, 29 Jun 2018 10:45:22 +0000 (UTC)
+Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6A97E2142F20;
+        Fri, 29 Jun 2018 10:45:21 +0000 (UTC)
+Subject: Re: [PATCH 2/2] KVM: X86: Implement PV send IPI support
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <1530265876-18136-1-git-send-email-wanpengli@tencent.com>
+ <1530265876-18136-3-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <96bad133-077d-e27d-9f57-4df6399eb3b8@redhat.com>
+Date:   Fri, 29 Jun 2018 12:45:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180629100413.GA21540@techadventures.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1530265876-18136-3-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 10:45:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 10:45:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 12:04:13PM +0200, Oscar Salvador wrote:
-> On Thu, Jun 28, 2018 at 01:30:09PM -0400, Pavel Tatashin wrote:
-> > sparse_init() requires to temporary allocate two large buffers:
-> > usemap_map and map_map. Baoquan He has identified that these buffers are so
-> > large that Linux is not bootable on small memory machines, such as a kdump
-> > boot.
-> > 
-> > Baoquan provided a fix, which reduces these sizes of these buffers, but it
-> > is much better to get rid of them entirely.
-> > 
-> > Add a new way to initialize sparse memory: sparse_init_nid(), which only
-> > operates within one memory node, and thus allocates memory either in large
-> > contiguous block or allocates section by section. This eliminates the need
-> > for use of temporary buffers.
-> > 
-> > For simplified bisecting and review, the new interface is going to be
-> > enabled as well as old code removed in the next patch.
-> > 
-> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > ---
-> >  include/linux/mm.h  |  8 ++++
-> >  mm/sparse-vmemmap.c | 49 ++++++++++++++++++++++++
-> >  mm/sparse.c         | 90 +++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 147 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index a0fbb9ffe380..ba200808dd5f 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
-> >  				   unsigned long pnum_end,
-> >  				   unsigned long map_count,
-> >  				   int nodeid);
-> > +struct page * sparse_populate_node(unsigned long pnum_begin,
-> > +				   unsigned long pnum_end,
-> > +				   unsigned long map_count,
-> > +				   int nid);
-> > +struct page * sprase_populate_node_section(struct page *map_base,
-> > +				   unsigned long map_index,
-> > +				   unsigned long pnum,
-> > +				   int nid);
+On 29/06/2018 11:51, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> s/sprase/sparse ?
+> Using hypercall to send IPIs by one vmexit instead of one by one for
+> xAPIC/x2APIC physical mode and one vmexit per-cluster for x2APIC cluster 
+> mode. 
 > 
-> >  
-> >  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
-> >  		struct vmem_altmap *altmap);
-> > diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> > index e1a54ba411ec..4655503bdc66 100644
-> > --- a/mm/sparse-vmemmap.c
-> > +++ b/mm/sparse-vmemmap.c
-> > @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
-> >  		vmemmap_buf_end = NULL;
-> >  	}
-> >  }
-> > +
-> > +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> > +					  unsigned long pnum_end,
-> > +					  unsigned long map_count,
-> > +					  int nid)
-> > +{
-> > +	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
-> > +	unsigned long pnum, map_index = 0;
-> > +	void *vmemmap_buf_start;
-> > +
-> > +	size = ALIGN(size, PMD_SIZE) * map_count;
-> > +	vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
-> > +						      PMD_SIZE,
-> > +						      __pa(MAX_DMA_ADDRESS));
-> > +	if (vmemmap_buf_start) {
-> > +		vmemmap_buf = vmemmap_buf_start;
-> > +		vmemmap_buf_end = vmemmap_buf_start + size;
-> > +	}
-> > +
-> > +	for (pnum = pnum_begin; map_index < map_count; pnum++) {
-> > +		if (!present_section_nr(pnum))
-> > +			continue;
-> > +		if (!sparse_mem_map_populate(pnum, nid, NULL))
-> > +			break;
-> > +		map_index++;
-> > +		BUG_ON(pnum >= pnum_end);
-> > +	}
-> > +
-> > +	if (vmemmap_buf_start) {
-> > +		/* need to free left buf */
-> > +		memblock_free_early(__pa(vmemmap_buf),
-> > +				    vmemmap_buf_end - vmemmap_buf);
-> > +		vmemmap_buf = NULL;
-> > +		vmemmap_buf_end = NULL;
-> > +	}
-> > +	return pfn_to_page(section_nr_to_pfn(pnum_begin));
-> > +}
-> > +
-> > +/*
-> > + * Return map for pnum section. sparse_populate_node() has populated memory map
-> > + * in this node, we simply do pnum to struct page conversion.
-> > + */
-> > +struct page * __init sprase_populate_node_section(struct page *map_base,
-> > +						  unsigned long map_index,
-> > +						  unsigned long pnum,
-> > +						  int nid)
-> > +{
-> > +	return pfn_to_page(section_nr_to_pfn(pnum));
-> > +}
+> Even if enable qemu interrupt remapping and PV TLB Shootdown, I can still 
+> observe ~14% performance boost by ebizzy benchmark for 64 vCPUs VM, the 
+> total msr-induced vmexits reduce ~70%.
 > 
-> s/sprase/sparse ?
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+>  Documentation/virtual/kvm/cpuid.txt |  4 ++++
+>  arch/x86/kvm/cpuid.c                |  3 ++-
+>  arch/x86/kvm/x86.c                  | 25 +++++++++++++++++++++++++
+>  include/uapi/linux/kvm_para.h       |  1 +
+>  4 files changed, 32 insertions(+), 1 deletion(-)
 > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index d18e2697a781..60eaa2a4842a 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
-> >  		       __func__);
-> >  	}
-> >  }
-> > +
-> > +static unsigned long section_map_size(void)
-> > +{
-> > +	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
-> > +}
-> > +
-> > +/*
-> > + * Try to allocate all struct pages for this node, if this fails, we will
-> > + * be allocating one section at a time in sprase_populate_node_section().
-> > + */
-> > +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> > +					  unsigned long pnum_end,
-> > +					  unsigned long map_count,
-> > +					  int nid)
-> > +{
-> > +	return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
-> > +					       PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-> > +					       BOOTMEM_ALLOC_ACCESSIBLE, nid);
-> > +}
-> > +
-> > +/*
-> > + * Return map for pnum section. map_base is not NULL if we could allocate map
-> > + * for this node together. Otherwise we allocate one section at a time.
-> > + * map_index is the index of pnum in this node counting only present sections.
-> > + */
-> > +struct page * __init sprase_populate_node_section(struct page *map_base,
-> > +						  unsigned long map_index,
-> > +						  unsigned long pnum,
-> > +						  int nid)
-> 
-> s/sprase/sparse ?
-> 
-> > +{
-> > +	if (map_base) {
-> > +		unsigned long offset = section_map_size() * map_index;
-> > +
-> > +		return (struct page *)((char *)map_base + offset);
-> > +	}
-> > +	return sparse_mem_map_populate(pnum, nid, NULL);
-> > +}
-> >  #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
-> >  
-> >  static void __init sparse_early_mem_maps_alloc_node(void *data,
-> > @@ -520,6 +557,59 @@ static void __init alloc_usemap_and_memmap(void (*alloc_func)
-> >  						map_count, nodeid_begin);
-> >  }
-> >  
-> > +/*
-> > + * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
-> > + * And number of present sections in this node is map_count.
-> > + */
-> > +void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> > +				   unsigned long pnum_end,
-> > +				   unsigned long map_count)
-> > +{
-> > +	unsigned long pnum, usemap_longs, *usemap, map_index;
-> > +	struct page *map, *map_base;
-> > +	struct mem_section *ms;
-> > +
-> > +	usemap_longs = BITS_TO_LONGS(SECTION_BLOCKFLAGS_BITS);
-> > +	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nid),
-> > +							  usemap_size() *
-> > +							  map_count);
-> > +	if (!usemap) {
-> > +		pr_err("%s: usemap allocation failed", __func__);
-> > +		goto failed;
-> > +	}
-> > +	map_base = sparse_populate_node(pnum_begin, pnum_end,
-> > +					map_count, nid);
-> > +	map_index = 0;
-> > +	for_each_present_section_nr(pnum_begin, pnum) {
-> > +		if (pnum >= pnum_end)
-> > +			break;
-> > +
-> > +		BUG_ON(map_index == map_count);
-> > +		map = sprase_populate_node_section(map_base, map_index,
-> > +						   pnum, nid);
-> 
-> s/sprase/sparse ?
-> 
-> > +		if (!map) {
-> > +			pr_err("%s: memory map backing failed. Some memory will not be available.",
-> > +			       __func__);
-> > +			pnum_begin = pnum;
-> > +			goto failed;
-> > +		}
-> > +		check_usemap_section_nr(nid, usemap);
-> > +		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
-> > +					usemap);
-> > +		map_index++;
-> > +		usemap += usemap_longs;
-> 
-> Hi Pavel,
-> 
-> uhm, maybe I am mistaken, but should not this be:
-> 
-> usemap += usemap_size(); ?
-> 
-> usermap_size() = 32 bytes
-> while 
-> usemap_longs = 4 bytes
-> 
-> AFAIK, each section->pageblock_flags holds 4 words, each word covers 16 pageblocks.
-> So 16 * 4 = 64 pageblocks, and each pageblock is 512 pfns.
-> So 64 * 512 = 32768 (PAGES_PER_SECTION).
-> 
-> Am I wrong?
+> diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
+> index ab022dc..d72359f 100644
+> --- a/Documentation/virtual/kvm/cpuid.txt
+> +++ b/Documentation/virtual/kvm/cpuid.txt
+> @@ -62,6 +62,10 @@ KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
+>                                     ||       || can be enabled by setting bit 2
+>                                     ||       || when writing to msr 0x4b564d02
+>  ------------------------------------------------------------------------------
+> +KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
+> +                                   ||       || before enabling paravirtualized
+> +                                   ||       || send IPIs.
 
+It's not "enabling" but "using".  You also need to document the
+hypercall itself.
 
-Scratch that.
-I forgot that incrementing the pointer will add up the right bytes.
+Paolo
 
+> +------------------------------------------------------------------------------
+>  KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
+>                                     ||       || per-cpu warps are expected in
+>                                     ||       || kvmclock.
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 7e042e3..7bcfa61 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -621,7 +621,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+>  			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
+>  			     (1 << KVM_FEATURE_PV_UNHALT) |
+>  			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
+> -			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
+> +			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
+> +			     (1 << KVM_FEATURE_PV_SEND_IPI);
+>  
+>  		if (sched_info_on())
+>  			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 0046aa7..c2e6cdb 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6689,6 +6689,27 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsigned long flags, int apicid)
+>  	kvm_irq_delivery_to_apic(kvm, NULL, &lapic_irq, NULL);
+>  }
+>  
+> +static void kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap, u8 vector)
+> +{
+> +	struct kvm_apic_map *map;
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_lapic_irq lapic_irq = {0};
+> +	int i;
+> +
+> +	lapic_irq.delivery_mode = APIC_DM_FIXED;
+> +	lapic_irq.vector = vector;
+> +
+> +	rcu_read_lock();
+> +	map = rcu_dereference(kvm->arch.apic_map);
+> +
+> +	for_each_set_bit(i, &ipi_bitmap, sizeof(unsigned long)) {
+> +		vcpu = map->phys_map[i]->vcpu;
+> +		kvm_apic_set_irq(vcpu, &lapic_irq, NULL);
+> +	}
+> +
+> +	rcu_read_unlock();
+> +}
+> +
+>  void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *vcpu)
+>  {
+>  	vcpu->arch.apicv_active = false;
+> @@ -6738,6 +6759,10 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+>  		ret = kvm_pv_clock_pairing(vcpu, a0, a1);
+>  		break;
+>  #endif
+> +	case KVM_HC_SEND_IPI:
+> +		kvm_pv_send_ipi(vcpu->kvm, a0, a1);
+> +		ret = 0;
+> +		break;
+>  	default:
+>  		ret = -KVM_ENOSYS;
+>  		break;
+> diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
+> index dcf629d..7395f38 100644
+> --- a/include/uapi/linux/kvm_para.h
+> +++ b/include/uapi/linux/kvm_para.h
+> @@ -26,6 +26,7 @@
+>  #define KVM_HC_MIPS_EXIT_VM		7
+>  #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
+>  #define KVM_HC_CLOCK_PAIRING		9
+> +#define KVM_HC_SEND_IPI         	10
+>  
+>  /*
+>   * hypercalls use architecture specific
+> 
 
--- 
-Oscar Salvador
-SUSE L3
