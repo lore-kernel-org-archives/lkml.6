@@ -2,103 +2,109 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8E6C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66FBC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8C727BDF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E8C727BDF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 8E0B422451
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:36:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0B422451
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965140AbeF2Iar (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:30:47 -0400
-Received: from verein.lst.de ([213.95.11.211]:53037 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964922AbeF2Iaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:30:46 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 31D1368C4E; Fri, 29 Jun 2018 10:30:51 +0200 (CEST)
-Date:   Fri, 29 Jun 2018 10:30:51 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>, hch@lst.de
-Subject: Re: [RFC v2] ARC: allow to use IOC and non-IOC DMA devices
-        simultaneously
-Message-ID: <20180629083051.GA15740@lst.de>
-References: <20180628141452.3585-1-Eugeniy.Paltsev@synopsys.com>
+        id S965252AbeF2IgF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:36:05 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51741 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964976AbeF2IgD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:36:03 -0400
+Received: from 79.184.253.185.ipv4.supernova.orange.pl (79.184.253.185) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 1d51ef8a200d7688; Fri, 29 Jun 2018 10:36:00 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     n0000b.n000b@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: [PATCH v2] PCI / ACPI / PM: Resume bridges w/o drivers on suspend-to-RAM
+Date:   Fri, 29 Jun 2018 10:34:40 +0200
+Message-ID: <2518711.SfHWAsyaFM@aspire.rjw.lan>
+In-Reply-To: <35587465.8Nave9aG7d@aspire.rjw.lan>
+References: <35587465.8Nave9aG7d@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628141452.3585-1-Eugeniy.Paltsev@synopsys.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 05:14:52PM +0300, Eugeniy Paltsev wrote:
-> And if we get DMA buffer from ZONE_HIGHMEM memory we need to
-> do real flush/invalidate operations on that buffer, which is obviously
-> not done by "dma_direct_ops".
-> 
-> So I am not sure about "dma_direct_ops" using - probably we need to
-> create our special cache ops like "arc_ioc_ops" which will handle
-> ZONE_HIGHMEM case.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-FYI, I have a plan to merge dma_direct_ops and dma_noncoherent_ops
-and make the decision to use cache flushing run time controllable
-with a flag in struct device based on existing dynamic selection
-in e.g. arm, arm64 and mips.  It will probably take a few more merge
-windows to get there, but once it is done you should be able to take
-easy advantage of it.
+It is reported that commit c62ec4610c40 (PM / core: Fix direct_complete
+handling for devices with no callbacks) introduced a system suspend
+regression on Samsung 305V4A by allowing a PCI bridge (not a PCIe
+port) to stay in D3 over suspend-to-RAM, which is a side effect of
+setting power.direct_complete for the children of that bridge that
+have no PM callbacks.
 
-> +++ b/arch/arc/mm/dma.c
-> @@ -19,6 +19,7 @@
->  #include <linux/dma-noncoherent.h>
->  #include <asm/cache.h>
->  #include <asm/cacheflush.h>
-> +#include <linux/dma-mapping.h>
+On the majority of systems PCI bridges are not allowed to be
+runtime-suspended (the power/control sysfs attribute is set to "on"
+for them by default), but user space can change that setting and if
+it does so and a given bridge has no children with PM callbacks, the
+direct_complete optimization will be applied to it and it will stay
+in suspend over system suspend.  Apparently, that confuses the
+platform firmware on the affected machine and that may very well
+happen elsewhere, so avoid the direct_complete optimization for
+PCI bridges with no drivers (if there is a driver, it should take
+care of the PM handling) on suspend-to-RAM altogether (that should
+not matter for suspend-to-idle as platform firmware is not involved
+in it).
 
-dma-noncoherent.h already includes dma-mapping.h, so this is not
-required.
+Fixes: c62ec4610c40 (PM / core: Fix direct_complete handling for devices with no callbacks)
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199941
+Reported-by: n0000b.n000b@gmail.com
+Tested-by: n0000b.n000b@gmail.com
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-> -	if ((is_isa_arcv2() && ioc_enable) ||
-> -	    (attrs & DMA_ATTR_NON_CONSISTENT))
-> +	if (attrs & DMA_ATTR_NON_CONSISTENT)
->  		need_coh = 0;
+-> v2: Make the patch work for PCI bridges without ACPI companion objects.
 
-need_coh is only used twice, it might be cleaner to remove the
-variable and just open code the DMA_ATTR_NON_CONSISTENT check.
-And for extra points remove the need_kvaddr variable as well.
+Since that doesn't really change the idea etc, but only makes the check
+to be made earlier, I've added the Reviewed-by and Acked-by tags given to
+the previous version.  If that's not right, please let me know.
 
-Also you probably want to do the equivalent change in arch_dma_free
-as well.
+---
+ drivers/pci/pci-acpi.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> +void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-> +			const struct iommu_ops *iommu, bool coherent)
-> +{
-> +	/*
-> +	 * IOC hardware snoops all DMA traffic keeping the caches consistent
-> +	 * with memory - eliding need for any explicit cache maintenance of
-> +	 * DMA buffers - so we can use dma_direct cache ops.
-> +	 */
-> +	if (is_isa_arcv2() && ioc_enable && coherent) {
-> +		set_dma_ops(dev, &dma_direct_ops);
-> +		dev_info(dev, "use dma_direct_ops cache ops\n");
-> +	} else {
-> +		set_dma_ops(dev, &dma_noncoherent_ops);
-> +		dev_info(dev, "use dma_noncoherent_ops cache ops\n");
-> +	}
-> +}
+Index: linux-pm/drivers/pci/pci-acpi.c
+===================================================================
+--- linux-pm.orig/drivers/pci/pci-acpi.c
++++ linux-pm/drivers/pci/pci-acpi.c
+@@ -629,6 +629,15 @@ static bool acpi_pci_need_resume(struct
+ {
+ 	struct acpi_device *adev = ACPI_COMPANION(&dev->dev);
+ 
++	/*
++	 * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend
++	 * confuses the platform firmware, so avoid doing that, unless the
++	 * bridge has a driver that should take care of PM handling.
++	 */
++	if (pci_is_bridge(dev) && !dev->driver &&
++	    acpi_target_system_state() != ACPI_STATE_S0)
++		return true;
++
+ 	if (!adev || !acpi_device_power_manageable(adev))
+ 		return false;
+ 
 
-Note that due to your use of asm-generic/dma-mapping.h we already
-default to dma_noncoherent_ops if no per-device ops is set.  So we
-could skip the else branch here I think.
