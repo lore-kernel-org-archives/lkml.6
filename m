@@ -6,54 +6,58 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524B8C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D55C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166582189C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166582189C
+	by mail.kernel.org (Postfix) with ESMTP id 5C25B27F40
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 13:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C25B27F40
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936530AbeF2NSz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 09:18:55 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45118 "EHLO
+        id S936539AbeF2NTa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 09:19:30 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45132 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932776AbeF2NSt (ORCPT
+        with ESMTP id S932776AbeF2NT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 09:18:49 -0400
+        Fri, 29 Jun 2018 09:19:29 -0400
 Received: from localhost (unknown [183.108.164.149])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id F2CC6143D297B;
-        Fri, 29 Jun 2018 06:18:47 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 22:18:46 +0900 (KST)
-Message-Id: <20180629.221846.388502543290304812.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     siva.kallam@broadcom.com, prashant@broadcom.com,
-        mchan@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tg3: Mark expected switch fall-throughs
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id EF6BF143D297B;
+        Fri, 29 Jun 2018 06:19:26 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 22:19:25 +0900 (KST)
+Message-Id: <20180629.221925.1974171391493646561.davem@davemloft.net>
+To:     david.wu@rock-chips.com
+Cc:     heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        huangtao@rock-chips.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] net: ethernet: stmmac: dwmac-rk: Add GMAC support
+ for px30
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180628014524.GA26061@embeddedor.com>
-References: <20180628014524.GA26061@embeddedor.com>
+In-Reply-To: <1530149601-23337-1-git-send-email-david.wu@rock-chips.com>
+References: <1530149601-23337-1-git-send-email-david.wu@rock-chips.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 29 Jun 2018 06:18:49 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 29 Jun 2018 06:19:28 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Wed, 27 Jun 2018 20:45:24 -0500
+From: David Wu <david.wu@rock-chips.com>
+Date: Thu, 28 Jun 2018 09:33:21 +0800
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+> Add constants and callback functions for the dwmac on px30 Soc.
+> The base structure is the same, but registers and the bits in
+> them are moved slightly, and add the clk_mac_speed for selecting
+> mac speed.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
 
-Applied to net-next.
+Applied.
