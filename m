@@ -3,83 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F66EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B67DC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A2D27FFC
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A2D27FFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metux.net
+	by mail.kernel.org (Postfix) with ESMTP id 0F44B27FFE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:51:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F44B27FFE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936510AbeF2OvJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:51:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:49894 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936445AbeF2OvH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:51:07 -0400
-Received: from [192.168.1.110] ([77.190.97.101]) by mrelayeu.kundenserver.de
- (mreue003 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0M0vAh-1gQbcV3eLn-00v3i6 for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018
- 16:51:04 +0200
-To:     LKML <linux-kernel@vger.kernel.org>
-From:   Enrico Weigelt <lkml@metux.net>
-Subject: RFC: inlining device register accesses
-Organization: metux IT consult
-Message-ID: <af2d96b9-cc07-3bd0-abe2-585638096b9d@metux.net>
-Date:   Fri, 29 Jun 2018 16:51:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S936555AbeF2Ov1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:51:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32838 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932480AbeF2OvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:51:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 88A0281A812E;
+        Fri, 29 Jun 2018 14:51:24 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-117-106.ams2.redhat.com [10.36.117.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F35E2026D68;
+        Fri, 29 Jun 2018 14:51:22 +0000 (UTC)
+Subject: Re: [PATCH v3 06/20] kvm: arm/arm64: Remove spurious WARN_ON
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-7-git-send-email-suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <57ac04d3-0bbf-a3a4-f9a4-140dac8fa021@redhat.com>
+Date:   Fri, 29 Jun 2018 16:51:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1530270944-11351-7-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BPZyFo2jzWqOzsIWXmR6fD2vvUxAMmT3gzeLyuji8XVqHa+rosa
- GmtqwNKgdsfDkPhzplGcJcbl+wBdpKwCa5R5uNf0GiP57SiFYFK90uIjaVm70/pr6dfwxRE
- BWOiqicXqLZyz1K++VFO6THtShPREwPUHE02U5q8KG96YGJeyLEghytlEU9topA9p0vfaUl
- nmmFBWfdepg4EaTG+unKw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:b7slXS4BjA8=:PyJeo+yg9YcoEcPD/qfcNx
- j9Q4yNzlH05z0nTkpl7Z1Noi+hJJnFkt6MTpGMwTjbFFe3Hblruq4LBmB7IKy23FCUaJ/l5cT
- XWlr+V4Bal75Z3UlkZyZIyAEHBupmVVJQ9FBZj3vMRBMxNREa+5L/O8iLe8ZKC7hV0kgpx+PK
- vZnDjqwENIBoVtP4XCB/QchtxhxDBx6geU+dNypf4nAceBjuErQy570yf421eUKWgofXGrmMb
- v2wcpq0v7vQOE0DZbbDufP7DSSjvC3JkgUsVG3F8mVHCqO6jfj55c844L+4Bkn5RIeze2HPic
- e1zcVFi/J3V3ikGHKCq56edYTcWv5bcK57vrfjBO78Hy9RR2UWj46VyiUUwEpFEjJT+nbt0lU
- /dBYRzYGO1abFI63n5t75Pgq+Td96eCKrgYZwj4Gc81KSWWyaqQOZeKrNQwovm1ug8YtTZjuw
- KkEVaiD2/Od6gM21TY1mXCRZscPTn8uKjfa5pw8oXUxm/KSL7i9vphj4SoHWoemo8dZr1luiS
- fXaqPZEsKf/RIpfzbQ1H+166YRxUt/As4I58AjMd4edCvo8p31gt9MTsJCbPF4xDh147FQ0wi
- RC0zXJxnpbve8HvTA/UKAtevhPkHx2IuoBHCYmz9mza+43mgAzDOTVgn7Jmroo9Kso+UGl36Q
- 705wSUi7nyDpeK3heVXZCpvKhmeasO7oco61LepWP8OZEoyu5FxREvyEZAhl7R8lXQ4OiVNRQ
- iRUmOiYBbL86U9mJ
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:51:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:51:24 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
+Hi Suzuki,
 
-I've got a weird idea, that I'd like to hear your oppinion about:
+On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+> On a 4-level page table pgd entry can be empty, unlike a 3-level
+> page table. Remove the spurious WARN_ON() in stage_get_pud().
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Acked-by: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  virt/kvm/arm/mmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 061e6b3..308171c 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -976,7 +976,7 @@ static pud_t *stage2_get_pud(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
+>  	pud_t *pud;
+>  
+>  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+> -	if (WARN_ON(stage2_pgd_none(*pgd))) {
+> +	if (stage2_pgd_none(*pgd)) {
+>  		if (!cache)
+>  			return NULL;
+>  		pud = mmu_memory_cache_alloc(cache);
+> 
 
-In drivers we have lots of cases, where things like register accesses
-sometimes (on specific boards+cpus) *could* be done by direct memory
-access, while many times we need more complex operations, like talking
-to an I2C controller. Certainly, we dont wanna have lots of different
-bus-specific code pathes in the drivers - same issue as why regmap
-has been invented.
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Maybe we could declare the actual register access in a more abstract
-way (macros ? dsl ?), so under the hood different code pathes can be
-generated and picked dynamically via kprobes-alike approach. If the
-device happens to be directly cpu-accessible, ops for direct memory
-access are inserted, otherwise appropriate function calls. Or maybe
-the bpf jit somehow could be abused for that ?
+Thanks
 
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+Eric
