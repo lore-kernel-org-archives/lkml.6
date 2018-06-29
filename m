@@ -2,66 +2,61 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66166C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF2CC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1A727C97
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F77B27C9C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:43:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="p5DnHu+0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1A727C97
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="b5hkPCCr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F77B27C9C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966827AbeF2Jm3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 05:42:29 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43056 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966792AbeF2JmY (ORCPT
+        id S966685AbeF2JmN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 05:42:13 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50291 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935782AbeF2JlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:42:24 -0400
-Received: by mail-io0-f194.google.com with SMTP id i23-v6so7904997iog.10
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 02:42:24 -0700 (PDT)
+        Fri, 29 Jun 2018 05:41:04 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v25-v6so497682wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 02:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bsYQR3Gz7ELM4U5eb4yIYg4fvobGlZ+oUBx6/iddn9k=;
-        b=p5DnHu+0s2iC5mFU4E37oXwbVGor5x11kmJW5EnQ+jfrxdldFsLT1NKnkFVewbNtlq
-         w8BPw3Zan3FtsWuNEfD9LaKiWaZb749xYJ82BHJlL/Q4Lj7prJT1AVSd7MzD/IKdiQPZ
-         8GYvmNrmKDE6rpNG6KWY7tfvAP4czvPJr8uwXDK4Wm2v6wHZUNUPMJFN8JzM6MEn4MK4
-         my5Bp0Mpepzndj+I76Jj5BUoPq1jnWIVdDTDh+XM//waa+DCyaoWEbtB2n2aepyWydvP
-         LuqqEiBt/bQ93I43bBhClLufI1y0X8B+bzTH+xvMxRNzdd0SYVYt2qJa5YAMZ6mi4Nn8
-         7L5A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2R2pRkql6LoH2xOm2fmjKzzNX2yYTgI9nhj9RYkWkCs=;
+        b=b5hkPCCrceqkkr2anLWkL7IMaLOQo1wmulTPC3BCPmAL+XwxlJFNBjNlx6ZiCWcGyE
+         jXq3xzQs2CGOORAUYdoLCMEODHhgGpEjjBa1lViwWI06KGsrrbd4F/M3NhoH/EUdcHfB
+         +HtAbZxWYPXdYHx6IhL6yXGFLnYIVHyS+hkRNJjx1GiXr613e7tjeuc8WfLnBXmjgOMQ
+         316XFy6b0lgsgOACQK7yuJTHMBQW8LsxPvhC/BrcsogjabTdPg5ai/55/8/pgtfNVkPJ
+         7LB5dHF/Xx3UoqEQInVCP0snLBPHgpt+TXyIphUYTgc9VgV+xQF/3CDdNinEcmqVqfUj
+         nyig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bsYQR3Gz7ELM4U5eb4yIYg4fvobGlZ+oUBx6/iddn9k=;
-        b=ZdbsFEJsJpH4YZeHkXGExgAPddWbmga+HxM9Xw35jounyawFn81eGNnO88KlSnH/1n
-         BtS6bhOMInjpXcpHlZsaba4vzBGgeAZxYSiYiKV45K6SHaKBpai7646BOCXWUzhxE8uP
-         jwmJ+8AGl/VfFRCTo2cV5p8pgLX+2ziY/qXmCyrCHuO+85gcjCR/8QMvnd8kqrj9wPsY
-         wOU3TXOjkru3UfJm2PtXeAAskM7pAeGRT5znYxivtx4EJ9Ur9fM60EUuPN5eNDMivnV6
-         M0SV1VTFCsPceNEyT2I3/gvdWiUHohV9CkZHX4mc3YiF4yEGYKBHL0cI6YsoOtpo7e6t
-         AzEw==
-X-Gm-Message-State: APt69E3mihX7hOwMeKlqxgcCzky4/v0LlhRNZZ1KoJCg6zonc9PhtNqX
-        KIqHUy7ccl8eHqpUO2r3qClgXj2Cc2xK0hQldFRdNg==
-X-Google-Smtp-Source: AAOMgpfX4dcH1adCe90rw8XLdDg3WQRAWOPdpFyC/nQiuBlNdgidA2XG6fvDNLbfCtHE7oEbPYtmes2lFc1SDW8qJlo=
-X-Received: by 2002:a6b:6403:: with SMTP id t3-v6mr12145640iog.111.1530265343820;
- Fri, 29 Jun 2018 02:42:23 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 02:42:23
- -0700 (PDT)
-In-Reply-To: <20180628143244.4561-1-brgl@bgdev.pl>
-References: <20180628143244.4561-1-brgl@bgdev.pl>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2R2pRkql6LoH2xOm2fmjKzzNX2yYTgI9nhj9RYkWkCs=;
+        b=jPPw2hV5z2iMoxIU4oVoRgVpibF4F7xJbdTTPXSPYJt2yZOeiwzUtWMtnntKpEzorG
+         5+1lVcJbPivhHzPWpAaLqFkP4aAcugD7kbuHJPkPj9C3e9BuP0kQ92gOj3Psqxa0FuOY
+         vVPKkOa4yQUlnT3uoG2ktwtKeIDAOSt5H5XB0GFqWNEeBakd1nCXKyq8gOFH6QHbdF7i
+         QptBDo3QSIzMQ1Z3iGM/bwUVoFTxpPF1mFpbkw5S7fZgwOLyseVQQZ0No/+l/FYTppBF
+         9JdJMBvqrrSElWTlJm4EQ5Jj0UjSo9Ibybj2RamwtVJltqhovVDBMDrrzGQ5p/XMNKGb
+         aaMA==
+X-Gm-Message-State: APt69E3zOgtfgLgbh0KEPGeOpxGeFhRlQpI2bbkP0dydZ83j2wNWhruY
+        Hk4hLg5AN3VyE8U9NFzisIAPvg==
+X-Google-Smtp-Source: AAOMgpcszy9NUuG/QiXrEpOFtk40sHlkL3VNaPJ/jUx4WSkn3YOpzqbc+wkB9laMCUJIUEcaoEOOog==
+X-Received: by 2002:a1c:8803:: with SMTP id k3-v6mr1290605wmd.6.1530265263229;
+        Fri, 29 Jun 2018 02:41:03 -0700 (PDT)
+Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
+        by smtp.gmail.com with ESMTPSA id d102-v6sm1386394wma.10.2018.06.29.02.41.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 02:41:02 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 29 Jun 2018 11:42:23 +0200
-Message-ID: <CAMRc=MdPhiqqCQUm0JAANeZeqMJajdDVfHPLv=xWtO7T0cnDCw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] ARM: davinci: step towards removing at24_platform_data
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
@@ -74,95 +69,74 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v4 14/18] ARM: davinci: dm644x-evm: use device properties for at24 eeprom
+Date:   Fri, 29 Jun 2018 11:40:35 +0200
+Message-Id: <20180629094039.7543-15-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180629094039.7543-1-brgl@bgdev.pl>
+References: <20180629094039.7543-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-28 16:32 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Since I took over maintainership of the at24 driver I've been working
-> towards removing at24_platform_data in favor for device properties.
->
-> DaVinci is the only platform that's still using it - all other users
-> have already been converted.
->
-> One of the obstacles in case of DaVinci is removing the setup() callback
-> from the pdata struct, the only user of which are some davinci boards.
->
-> Most boards use the EEPROM to store the MAC address. This series adds
-> support for cell lookups to the nvmem framework, registers relevant
-> cells for all users, converts the davinci_emac driver to using them
-> and replaces at24_platform_data with device properties.
->
-> The only board that's still using this callback is now mityomapl138.
-> Unfortunately it stores more info in EEPROM than just the MAC address
-> and will require some more work. Unfortunately I don't have access
-> to this board so I can't test any actual solutions on a live hardware.
->
-> Tested on a dm365-evm board.
->
-> v1 -> v2:
-> - for backward compatiblity: fall back to using of_get_mac_address() if
->   we can't get an nvmem cell in patch 7
-> - add patch 15 which removes dead code
->
-> v2 -> v3:
-> - documented new nvmem cell lookup API
-> - renamed the nvmem cell lookup routines
-> - in order to completly remove the mac_addr from davinci's soc_info
->   added a patch that moves reading the MAC address from SPI to the emac
->   driver
-> - removed more dead code
->
-> Bartosz Golaszewski (18):
->   nvmem: add support for cell lookups
->   Documentation: nvmem: document lookup entries
->   ARM: davinci: dm365-evm: use nvmem lookup for mac address
->   ARM: davinci: dm644-evm: use nvmem lookup for mac address
->   ARM: davinci: dm646x-evm: use nvmem lookup for mac address
->   ARM: davinci: da830-evm: use nvmem lookup for mac address
->   ARM: davinci: mityomapl138: add nvmem cells lookup entries
->   net: davinci_emac: potentially get the MAC address from MTD
->   ARM: davinci: da850-evm: remove dead MTD code
->   net: davinci_emac: use nvmem to retrieve the mac address
->   ARM: davinci: mityomapl138: don't read the MAC address from machine
->     code
->   ARM: davinci: dm365-evm: use device properties for at24 eeprom
->   ARM: davinci: da830-evm: use device properties for at24 eeprom
->   ARM: davinci: dm644x-evm: use device properties for at24 eeprom
->   ARM: davinci: dm646x-evm: use device properties for at24 eeprom
->   ARM: davinci: sffsdr: fix the at24 eeprom device name
->   ARM: davinci: sffsdr: use device properties for at24 eeprom
->   ARM: davinci: remove dead code related to MAC address reading
->
->  Documentation/nvmem/nvmem.txt              | 28 ++++++++
->  arch/arm/mach-davinci/board-da830-evm.c    | 25 +++++---
->  arch/arm/mach-davinci/board-da850-evm.c    | 28 --------
->  arch/arm/mach-davinci/board-dm365-evm.c    | 25 +++++---
->  arch/arm/mach-davinci/board-dm644x-evm.c   | 24 ++++---
->  arch/arm/mach-davinci/board-dm646x-evm.c   | 25 +++++---
->  arch/arm/mach-davinci/board-mityomapl138.c | 30 ++++++---
->  arch/arm/mach-davinci/board-sffsdr.c       | 13 ++--
->  arch/arm/mach-davinci/common.c             | 15 -----
->  drivers/net/ethernet/ti/davinci_emac.c     | 50 ++++++++++++---
->  drivers/nvmem/core.c                       | 75 +++++++++++++++++++++-
->  include/linux/davinci_emac.h               |  2 -
->  include/linux/nvmem-consumer.h             |  6 ++
->  include/linux/nvmem-provider.h             | 10 +++
->  14 files changed, 253 insertions(+), 103 deletions(-)
->
-> --
-> 2.17.1
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Superseded by v4 - I noticed some more issues with the series that
-needed fixing.
+We want to work towards phasing out the at24_platform_data structure.
+There are few users and its contents can be represented using generic
+device properties. Using device properties only will allow us to
+significantly simplify the at24 configuration code.
 
-Bart
+Remove the at24_platform_data structure and replace it with an array
+of property entries. Drop the byte_len/size property, as the model name
+already implies the EEPROM's size.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-dm644x-evm.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 6d35c6e1b0bd..abfcf42da6fb 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -16,8 +16,8 @@
+ #include <linux/gpio/machine.h>
+ #include <linux/i2c.h>
+ #include <linux/platform_data/pcf857x.h>
+-#include <linux/platform_data/at24.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/property.h>
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/rawnand.h>
+ #include <linux/mtd/partitions.h>
+@@ -486,12 +486,8 @@ static struct nvmem_cell_lookup dm6446evm_mac_address_cell = {
+ 	.nvmem_name = "1-00500",
+ };
+ 
+-static struct at24_platform_data eeprom_info = {
+-	.byte_len	= (256*1024) / 8,
+-	.page_size	= 64,
+-	.flags		= AT24_FLAG_ADDR16,
+-	.setup          = davinci_get_mac_addr,
+-	.context	= (void *)0x7f00,
++static const struct property_entry eeprom_properties[] = {
++	PROPERTY_ENTRY_U32("pagesize", 64),
+ };
+ 
+ /*
+@@ -601,7 +597,7 @@ static struct i2c_board_info __initdata i2c_info[] =  {
+ 	},
+ 	{
+ 		I2C_BOARD_INFO("24c256", 0x50),
+-		.platform_data	= &eeprom_info,
++		.properties = eeprom_properties,
+ 	},
+ 	{
+ 		I2C_BOARD_INFO("tlv320aic33", 0x1b),
+-- 
+2.17.1
+
