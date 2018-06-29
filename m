@@ -2,317 +2,238 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A2BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45126C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B461927CFC
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B461927CFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id DFBE324A24
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:08:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Dwiu7D4D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFBE324A24
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754992AbeF2KEU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 06:04:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54620 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754859AbeF2KEQ (ORCPT
+        id S933849AbeF2KIs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 06:08:48 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48204 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932085AbeF2KIq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:04:16 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i139-v6so1547510wmf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 03:04:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gofLlIXDpe8sJsgxb+mu70m++yWRVQSzFcJ2eMoRXY0=;
-        b=o7OBbnmXDZoahqE67XB5+fd08yRmeCd43nWF71OOTPSdK/A6csyBJ+iGPf+a1skz6i
-         YEm5488pjnRnqwNIzH2TYUxY42U2aK/2RvrTstxYCQbj/kEKA2lsM3LeqhiFp5w1EKzx
-         dhj5Tlfcrw5YBYJzpceCm3j3zNAb4p/dcgBbRxSYSe86dGdA2dcaD7nhdbIVapZ4YOz6
-         Ccc2wJyRq2Nb52bMhLwkVXeskVHGUwhvsjRHoNThYQ5fu9FisJ2Z41a35z84RWVYETfm
-         5XC+fHQrL+apQZaIF6rFUH5BzGvlgE4/g6aEzKjXZGT8Zbcn5jy/HWjMZ0aYK/oGTeiV
-         3NUQ==
-X-Gm-Message-State: APt69E1rTeXjFVlxQuSaxcQ/91+o0O9msSWtlCk78/8SncY6uPdF9rr0
-        uIcueVDzmhGhDv5W5Jv8tV4=
-X-Google-Smtp-Source: AAOMgpdCQr1RtpjWxa0vJMIqXr+UG2VTHqMwcjBnId8D/7PQaHAlfwC/YozM6BwyM76CdW4lehFRZw==
-X-Received: by 2002:a1c:b354:: with SMTP id c81-v6mr1323758wmf.149.1530266655100;
-        Fri, 29 Jun 2018 03:04:15 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm8119837wrl.77.2018.06.29.03.04.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Jun 2018 03:04:14 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 8FDC412395B; Fri, 29 Jun 2018 12:04:13 +0200 (CEST)
-Date:   Fri, 29 Jun 2018 12:04:13 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org
-Subject: Re: [PATCH v1 1/2] mm/sparse: add sparse_init_nid()
-Message-ID: <20180629100413.GA21540@techadventures.net>
-References: <20180628173010.23849-1-pasha.tatashin@oracle.com>
- <20180628173010.23849-2-pasha.tatashin@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628173010.23849-2-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 29 Jun 2018 06:08:46 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180629100843euoutp02b489e6352098ee8522303f92a7af2a9e~8majbEW0G0358603586euoutp02b;
+        Fri, 29 Jun 2018 10:08:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180629100843euoutp02b489e6352098ee8522303f92a7af2a9e~8majbEW0G0358603586euoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530266923;
+        bh=us0GR4qqmAHfOYIZPBTwt8hbmh02q9tWbI+2LKRqWrQ=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=Dwiu7D4DgRGjllORycumMak8exFqgrtIyNa7H8y/YJk+rDdabKrYoE+WBXd//ssdf
+         D1uX1gMXMYWK0R05sPm+sTOr9Uf9hTSuMlNYxu8HOqzOHt5BXlGbfGvJkLqW2GyJlV
+         JphxrFKxoVwWP67N5j5gFaDBOD92Kin3tr8tAInk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180629100842eucas1p12b880a3a91a2ba9e284a55f9c20c3377~8maiiIRtZ2321223212eucas1p1e;
+        Fri, 29 Jun 2018 10:08:42 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 71.83.17380.A25063B5; Fri, 29
+        Jun 2018 11:08:42 +0100 (BST)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180629100842eucas1p2d1915918aae85f39ccfa577aef6baac8~8mah5UJjw1226012260eucas1p2y;
+        Fri, 29 Jun 2018 10:08:42 +0000 (GMT)
+X-AuditID: cbfec7f4-713ff700000043e4-da-5b36052a669e
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id EE.77.04178.A25063B5; Fri, 29
+        Jun 2018 11:08:42 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PB200IKQXIH5600@eusync1.samsung.com>; Fri, 29 Jun
+        2018 11:08:42 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Gustavo Padovan <gustavo@padovan.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Petr Mladek <pmladek@suse.com>, linux-fbdev@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v5 0/3] console/fbcon: Add support for deferred console
+ takeover
+Date:   Fri, 29 Jun 2018 12:08:41 +0200
+Message-id: <3340294.YySDL1Tsl7@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <1dc75ca2113d9809299fbfb60be097758003b3f2.camel@padovan.org>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduzneV0tVrNogwlNmhYLH95ltrjy9T2b
+        xc4Hu9gt3hyfzmRxou8Dq8XlXXPYLP4//spqsa/jAZPF2s+P2R04PfZ+W8DisXPWXXaPln23
+        2D3udx9n8tg5aS+Tx/t9V9k81m+5yuLxeZNcAEcUl01Kak5mWWqRvl0CV8atFVuZC/YqV2xv
+        n8/YwHhLpouRk0NCwETixPwOxi5GLg4hgRWMEj2vDjBDOJ8ZJfZvvMQEU/Vr/2FGEFtIYBmj
+        xJRNnhBFvxkl+ibNYwdJsAlYSUxsXwVWJCKgKTH11BY2EJtZYBWTxNfDdSC2sECYxOVjP8Bq
+        WARUJY79vQXWywtU377/JCuILSrgJbFlXzvQYg4OTgFPif8PyyFKBCV+TL7HAjFSXmLf/qms
+        ELaOxNlj6xgh7rzPJjHjLT9Iq4SAi8TMzz4QYWGJV8e3sEPYMhKdHQeZQM6XEJjOKPHm11IW
+        CGc9o8SaM8egHraWOHz8ItQCPolJ26YzQwzllehoE4Io8ZC4ePooOyRM9jBKHN2hMYFRZhaS
+        U2chOXUWklMXMDKvYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECEwep/8d/7KDcdefpEOM
+        AhyMSjy8J66YRAuxJpYVV+YeYpTgYFYS4U1cbxotxJuSWFmVWpQfX1Sak1p8iFGag0VJnDdO
+        oy5KSCA9sSQ1OzW1ILUIJsvEwSnVwLje4v6+1/M84mJfnH//4shcmYYHsS0nTgfmZNzZs0z/
+        RqtD6KfnbStLH0t6fdETrletOXOsgPdk2Q+ZR8JS7B8ZPhn05rWaPDl4bu87pim6bKaTDU+J
+        Tz1x5Os85W9W3lELnnU2pwadNea476tpwHvt4lGtJhWXl/sSOX+vUWLV7RJsMP467ZYSS3FG
+        oqEWc1FxIgB1cCpBGgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsVy+t/xy7parGbRBqt3cFosfHiX2eLK1/ds
+        Fjsf7GK3eHN8OpPFib4PrBaXd81hs/j/+Curxb6OB0wWaz8/Znfg9Nj7bQGLx85Zd9k9Wvbd
+        Yve4332cyWPnpL1MHu/3XWXzWL/lKovH501yARxRXDYpqTmZZalF+nYJXBm3VmxlLtirXLG9
+        fT5jA+MtmS5GTg4JAROJX/sPM4LYQgJLGCVO//LtYuQCsv8ySiw49RsswSZgJTGxfRWYLSKg
+        KTH11BY2kCJmgTVMEoeeLmMBSQgLhElcPvYDrIhFQFXi2N9b7CA2L1BD+/6TrCC2qICXxJZ9
+        7UxdjBwcnAKeEv8flkMs28coceHCaSaIekGJH5Pvgc1kFpCX2Ld/KiuErSWxfudxpgmM/LOQ
+        lM1CUjYLSdkCRuZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgeG/7djPzTsYL20MPsQowMGo
+        xMN74opJtBBrYllxZe4hRgkOZiUR3sT1ptFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEec8bVEYJ
+        CaQnlqRmp6YWpBbBZJk4OKUaGAsl2WsXLo25NFHW6sRelqa2szlFHzMeeV0MuFrEpnJhrcej
+        ZPvX8qWZvV/vmSWH1j3liGzI+1/41kedKzZN5QJ3Kc83rzePuIK09/MdzrpxJ7RrySqPyr8z
+        XPmNA2zPLXZwMTz6bMH+xU4pk0on8TqJHNR4cPR+1taXxybYLijlz3q5K2eCoxJLcUaioRZz
+        UXEiAGJ9Q1h7AgAA
+X-CMS-MailID: 20180629100842eucas1p2d1915918aae85f39ccfa577aef6baac8
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180628090357epcas5p28361ab4b3ce11c179a167548f4851983
+References: <CGME20180628090357epcas5p28361ab4b3ce11c179a167548f4851983@epcas5p2.samsung.com>
+        <2462549.rLSfW9kX99@amdc3058>
+        <1dc75ca2113d9809299fbfb60be097758003b3f2.camel@padovan.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 01:30:09PM -0400, Pavel Tatashin wrote:
-> sparse_init() requires to temporary allocate two large buffers:
-> usemap_map and map_map. Baoquan He has identified that these buffers are so
-> large that Linux is not bootable on small memory machines, such as a kdump
-> boot.
+
+Hi Gustavo,
+
+On Thursday, June 28, 2018 07:44:38 PM Gustavo Padovan wrote:
+> Hi Bartlomiej,
 > 
-> Baoquan provided a fix, which reduces these sizes of these buffers, but it
-> is much better to get rid of them entirely.
+> On Thu, 2018-06-28 at 15:50 +0200, Bartlomiej Zolnierkiewicz wrote:
+> > On Thursday, June 28, 2018 11:03:48 AM Hans de Goede wrote:
+> > > Hi All,
+> > > 
+> > > Here is v5 of my patch-set, to delay fbcon taking over the console
+> > > (and
+> > > binding to fbdev devices) until there actually is some text output
+> > > to the
+> > > console. This is intended for use with the "quiet" cmdline option,
+> > > in
+> > > combination with a bootloader which leaves the vendor's logo /
+> > > EFI bootgraphics put up by the firmware intact on the EFI
+> > > framebuffer.
+> > > 
+> > > The end goal here is a boot where the firmware shows its boot
+> > > graphics
+> > > and these stay in place for a couple of seconds until the GUI loads
+> > > and
+> > > the GUI then smoothly takes over the framebuffer without any
+> > > distruptions.
+> > > 
+> > > Bartlomiej, I believe that this patch-set is ready for merging now
+> > > and
+> > > the first patch has Petr's ack, so can we get this merged now?
+> > 
+> > Done, thanks for patches (also for reviews & acks).
+> > 
+> > > Also please create an inmutable (or topic) branch for this, so that
+> > > the
+> > > drm people can merge it into drm-tip for additional testing.
+> > 
+> > Daniel,
+> > 
+> > The following changes since commit
+> > 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
+> > 
+> >   Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   https://github.com/bzolnier/linux.git tags/ib-fbdev-drm-v4.19-
+> > deferred-console-takeover
+> > 
+> > for you to fetch changes up to
+> > 83d83bebf40132e2d55ec58af666713cc76f9764:
+> > 
+> >   console/fbcon: Add support for deferred console takeover (2018-06-
+> > 28 15:20:30 +0200)
+> > 
+> > ----------------------------------------------------------------
+> > Immutable branch between fbdev and drm for the v4.19 merge window
+> > (contains the deferred console takeover feature)
+> > 
+> > ----------------------------------------------------------------
+> > Hans de Goede (3):
+> >       printk: Export is_console_locked
+> >       fbcon: Call WARN_CONSOLE_UNLOCKED() where applicable
+> >       console/fbcon: Add support for deferred console takeover
+> > 
+> >  Documentation/fb/fbcon.txt       |  7 ++++
+> >  drivers/video/console/Kconfig    | 11 ++++++
+> >  drivers/video/console/dummycon.c | 67 ++++++++++++++++++++++++++++
+> > ----
+> >  drivers/video/fbdev/core/fbcon.c | 83
+> > ++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/console.h          |  5 +++
+> >  kernel/printk/printk.c           |  1 +
+> >  6 files changed, 166 insertions(+), 8 deletions(-)
 > 
-> Add a new way to initialize sparse memory: sparse_init_nid(), which only
-> operates within one memory node, and thus allocates memory either in large
-> contiguous block or allocates section by section. This eliminates the need
-> for use of temporary buffers.
-> 
-> For simplified bisecting and review, the new interface is going to be
-> enabled as well as old code removed in the next patch.
-> 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->  include/linux/mm.h  |  8 ++++
->  mm/sparse-vmemmap.c | 49 ++++++++++++++++++++++++
->  mm/sparse.c         | 90 +++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 147 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a0fbb9ffe380..ba200808dd5f 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
->  				   unsigned long pnum_end,
->  				   unsigned long map_count,
->  				   int nodeid);
-> +struct page * sparse_populate_node(unsigned long pnum_begin,
-> +				   unsigned long pnum_end,
-> +				   unsigned long map_count,
-> +				   int nid);
-> +struct page * sprase_populate_node_section(struct page *map_base,
-> +				   unsigned long map_index,
-> +				   unsigned long pnum,
-> +				   int nid);
+> Pulled into drm-misc-next, thanks
 
-s/sprase/sparse ?
+Please also apply fixup branch:
 
->  
->  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
->  		struct vmem_altmap *altmap);
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index e1a54ba411ec..4655503bdc66 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		vmemmap_buf_end = NULL;
->  	}
->  }
-> +
-> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> +					  unsigned long pnum_end,
-> +					  unsigned long map_count,
-> +					  int nid)
-> +{
-> +	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
-> +	unsigned long pnum, map_index = 0;
-> +	void *vmemmap_buf_start;
-> +
-> +	size = ALIGN(size, PMD_SIZE) * map_count;
-> +	vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
-> +						      PMD_SIZE,
-> +						      __pa(MAX_DMA_ADDRESS));
-> +	if (vmemmap_buf_start) {
-> +		vmemmap_buf = vmemmap_buf_start;
-> +		vmemmap_buf_end = vmemmap_buf_start + size;
-> +	}
-> +
-> +	for (pnum = pnum_begin; map_index < map_count; pnum++) {
-> +		if (!present_section_nr(pnum))
-> +			continue;
-> +		if (!sparse_mem_map_populate(pnum, nid, NULL))
-> +			break;
-> +		map_index++;
-> +		BUG_ON(pnum >= pnum_end);
-> +	}
-> +
-> +	if (vmemmap_buf_start) {
-> +		/* need to free left buf */
-> +		memblock_free_early(__pa(vmemmap_buf),
-> +				    vmemmap_buf_end - vmemmap_buf);
-> +		vmemmap_buf = NULL;
-> +		vmemmap_buf_end = NULL;
-> +	}
-> +	return pfn_to_page(section_nr_to_pfn(pnum_begin));
-> +}
-> +
-> +/*
-> + * Return map for pnum section. sparse_populate_node() has populated memory map
-> + * in this node, we simply do pnum to struct page conversion.
-> + */
-> +struct page * __init sprase_populate_node_section(struct page *map_base,
-> +						  unsigned long map_index,
-> +						  unsigned long pnum,
-> +						  int nid)
-> +{
-> +	return pfn_to_page(section_nr_to_pfn(pnum));
-> +}
+The following changes since commit 83d83bebf40132e2d55ec58af666713cc76f9764:
 
-s/sprase/sparse ?
+  console/fbcon: Add support for deferred console takeover (2018-06-28 15:20:30 +0200)
 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index d18e2697a781..60eaa2a4842a 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		       __func__);
->  	}
->  }
-> +
-> +static unsigned long section_map_size(void)
-> +{
-> +	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
-> +}
-> +
-> +/*
-> + * Try to allocate all struct pages for this node, if this fails, we will
-> + * be allocating one section at a time in sprase_populate_node_section().
-> + */
-> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> +					  unsigned long pnum_end,
-> +					  unsigned long map_count,
-> +					  int nid)
-> +{
-> +	return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
-> +					       PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-> +					       BOOTMEM_ALLOC_ACCESSIBLE, nid);
-> +}
-> +
-> +/*
-> + * Return map for pnum section. map_base is not NULL if we could allocate map
-> + * for this node together. Otherwise we allocate one section at a time.
-> + * map_index is the index of pnum in this node counting only present sections.
-> + */
-> +struct page * __init sprase_populate_node_section(struct page *map_base,
-> +						  unsigned long map_index,
-> +						  unsigned long pnum,
-> +						  int nid)
+are available in the git repository at:
 
-s/sprase/sparse ?
+  https://github.com/bzolnier/linux.git tags/ib-fbdev-drm-v4.19-deferred-console-takeover-fixup
 
-> +{
-> +	if (map_base) {
-> +		unsigned long offset = section_map_size() * map_index;
-> +
-> +		return (struct page *)((char *)map_base + offset);
-> +	}
-> +	return sparse_mem_map_populate(pnum, nid, NULL);
-> +}
->  #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
->  
->  static void __init sparse_early_mem_maps_alloc_node(void *data,
-> @@ -520,6 +557,59 @@ static void __init alloc_usemap_and_memmap(void (*alloc_func)
->  						map_count, nodeid_begin);
->  }
->  
-> +/*
-> + * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
-> + * And number of present sections in this node is map_count.
-> + */
-> +void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> +				   unsigned long pnum_end,
-> +				   unsigned long map_count)
-> +{
-> +	unsigned long pnum, usemap_longs, *usemap, map_index;
-> +	struct page *map, *map_base;
-> +	struct mem_section *ms;
-> +
-> +	usemap_longs = BITS_TO_LONGS(SECTION_BLOCKFLAGS_BITS);
-> +	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nid),
-> +							  usemap_size() *
-> +							  map_count);
-> +	if (!usemap) {
-> +		pr_err("%s: usemap allocation failed", __func__);
-> +		goto failed;
-> +	}
-> +	map_base = sparse_populate_node(pnum_begin, pnum_end,
-> +					map_count, nid);
-> +	map_index = 0;
-> +	for_each_present_section_nr(pnum_begin, pnum) {
-> +		if (pnum >= pnum_end)
-> +			break;
-> +
-> +		BUG_ON(map_index == map_count);
-> +		map = sprase_populate_node_section(map_base, map_index,
-> +						   pnum, nid);
+for you to fetch changes up to 334bb8972a131e604a741e9b284d8867190c723e:
 
-s/sprase/sparse ?
+  console: dummycon: export dummycon_[un]register_output_notifier (2018-06-29 11:46:19 +0200)
 
-> +		if (!map) {
-> +			pr_err("%s: memory map backing failed. Some memory will not be available.",
-> +			       __func__);
-> +			pnum_begin = pnum;
-> +			goto failed;
-> +		}
-> +		check_usemap_section_nr(nid, usemap);
-> +		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
-> +					usemap);
-> +		map_index++;
-> +		usemap += usemap_longs;
+----------------------------------------------------------------
+Immutable branch between fbdev and drm for the v4.19 merge window
+(contains build fixup for the deferred console takeover feature)
 
-Hi Pavel,
+----------------------------------------------------------------
+Hans de Goede (1):
+      console: dummycon: export dummycon_[un]register_output_notifier
 
-uhm, maybe I am mistaken, but should not this be:
+ drivers/video/console/dummycon.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-usemap += usemap_size(); ?
+diff --git a/drivers/video/console/dummycon.c b/drivers/video/console/dummycon.c
+index 45ad925..0254251 100644
+--- a/drivers/video/console/dummycon.c
++++ b/drivers/video/console/dummycon.c
+@@ -38,11 +38,13 @@ void dummycon_register_output_notifier(struct notifier_block *nb)
+ 	if (dummycon_putc_called)
+ 		nb->notifier_call(nb, 0, NULL);
+ }
++EXPORT_SYMBOL_GPL(dummycon_register_output_notifier);
+ 
+ void dummycon_unregister_output_notifier(struct notifier_block *nb)
+ {
+ 	raw_notifier_chain_unregister(&dummycon_output_nh, nb);
+ }
++EXPORT_SYMBOL_GPL(dummycon_unregister_output_notifier);
+ 
+ static void dummycon_putc(struct vc_data *vc, int c, int ypos, int xpos)
+ {
 
-usermap_size() = 32 bytes
-while 
-usemap_longs = 4 bytes
 
-AFAIK, each section->pageblock_flags holds 4 words, each word covers 16 pageblocks.
-So 16 * 4 = 64 pageblocks, and each pageblock is 512 pfns.
-So 64 * 512 = 32768 (PAGES_PER_SECTION).
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Am I wrong?
-
-> +	}
-> +	return;
-> +failed:
-> +	/* We failed to allocate, mark all the following pnums as not present */
-> +	for_each_present_section_nr(pnum_begin, pnum) {
-> +		if (pnum >= pnum_end)
-> +			break;
-> +		ms = __nr_to_section(pnum);
-> +		ms->section_mem_map = 0;
-> +	}
-> +}
-> +
->  /*
->   * Allocate the accumulated non-linear sections, allocate a mem_map
->   * for each and record the physical to section mapping.
-> -- 
-> 2.18.0
-> 
-
--- 
-Oscar Salvador
-SUSE L3
