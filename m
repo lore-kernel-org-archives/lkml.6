@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E7CC6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF34C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95125275BF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95125275BF
+	by mail.kernel.org (Postfix) with ESMTP id 732B427638
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 732B427638
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936976AbeF2Q3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:29:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55817 "EHLO mga18.intel.com"
+        id S967000AbeF2QbP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:31:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:14266 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934570AbeF2Q3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:29:06 -0400
+        id S936961AbeF2QbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 12:31:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:29:05 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:31:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,286,1526367600"; 
-   d="scan'208";a="236652611"
+   d="scan'208";a="236653149"
 Received: from unknown (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga005.jf.intel.com with ESMTP; 29 Jun 2018 09:29:05 -0700
-Subject: Re: [PATCH v2 3/4] x86/split_lock: Handle #AC exception for split
- lock
+  by orsmga005.jf.intel.com with ESMTP; 29 Jun 2018 09:31:13 -0700
+Subject: Re: [PATCH v2 4/4] x86/split_lock: Disable #AC for split locked
+ accesses
 To:     Fenghua Yu <fenghua.yu@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>
 References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-4-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-5-git-send-email-fenghua.yu@intel.com>
 Cc:     Ashok Raj <ashok.raj@intel.com>, Alan Cox <alan@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Rafael Wysocki <rafael.j.wysocki@intel.com>,
@@ -87,12 +87,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <f528ef21-0e6f-3c76-5fac-bd88279facc0@intel.com>
-Date:   Fri, 29 Jun 2018 09:29:03 -0700
+Message-ID: <673faf24-7069-0195-d8b8-dd50a54b2e7f@intel.com>
+Date:   Fri, 29 Jun 2018 09:31:11 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1530282807-66555-4-git-send-email-fenghua.yu@intel.com>
+In-Reply-To: <1530282807-66555-5-git-send-email-fenghua.yu@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,125 +101,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * #AC handler for split lock is called by generic #AC handler.
-> + *
-> + * On split lock in kernel, warn and disable #AC for split lock on current CPU.
-> + *
-> + * On split lock in user process, send SIGBUS in the generic #AC handler.
-> + */
+On 06/29/2018 07:33 AM, Fenghua Yu wrote:
+> +	ac_split_lock_off [X86]
+> +			Disable #AC exception for split locked accesses.
+> +			By default, this feature is enabled in kernel.
 
-Don't comment the function, comment the code, please.  The thing that
-needs to be here that is missing is what the return values mean.
+FWIW, I detest the "ac_" nomenclature this patch spreads around.  It's
+marginally passable for in-kernel use, but I'd rather see it stopped
+where it reflects out to user-visible places.  Let's give this a logical
+name, like:
 
-> +bool do_ac_split_lock(struct pt_regs *regs)
-> +{
-> +	/* Generic #AC handler will handle split lock in user. */
-> +	if (user_mode(regs))
-> +		return false;
-> +
-> +	/* Clear the split lock bit to disable the feature on local CPU. */
-> +	msr_clear_bit(MSR_TEST_CTL, MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK_SHIFT);
-> +
-> +	WARN_ONCE(1, "A split lock issue is detected. Please FIX it\n");
-
-I think folks understand that warnings need to get fixed.  They don't
-need to be urged to FIX IT IN CAPS, or asked nicely.  This can simply be:
-
-	"lock split across cacheline boundary"
-
-But, warning here is also not super useful.  Shouldn't we be dumping out
-the info in 'regs' instead of the current context?  We don't care about
-the state in the #AC handler, we care about 'regs'.
-
-
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 18de4e35a4e5..ca4ef8325dfe 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -954,6 +954,8 @@ void __init setup_arch(char **cmdline_p)
->  	parse_early_param();
->  
->  	detect_ac_split_lock();
-
-This ^ needs:
-
-	/* Do detection only on the boot cpu. */
-
-> +	/* Set up #AC for split lock at the earliest phase. */
-> +	setup_ac_split_lock();
->  
->  	if (efi_enabled(EFI_BOOT))
->  		efi_memblock_x86_reserve_range();
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index c2f7d1d2a5c3..d6b224e6284f 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -225,6 +225,9 @@ static void notrace start_secondary(void *unused)
->  #endif
->  	load_current_idt();
->  	cpu_init();
-> +
-> +	setup_ac_split_lock();
-
-and:
-
-	/* Feature detection was done on the boot cpu, only do setup */
-
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index e6db475164ed..dd309a7b46bd 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -61,6 +61,7 @@
->  #include <asm/mpx.h>
->  #include <asm/vm86.h>
->  #include <asm/umip.h>
-> +#include <asm/cpu.h>
->  
->  #ifdef CONFIG_X86_64
->  #include <asm/x86_init.h>
-> @@ -318,7 +319,36 @@ DO_ERROR(X86_TRAP_OLD_MF, SIGFPE,  "coprocessor segment overrun",coprocessor_seg
->  DO_ERROR(X86_TRAP_TS,     SIGSEGV, "invalid TSS",		invalid_TSS)
->  DO_ERROR(X86_TRAP_NP,     SIGBUS,  "segment not present",	segment_not_present)
->  DO_ERROR(X86_TRAP_SS,     SIGBUS,  "stack segment",		stack_segment)
-> -DO_ERROR(X86_TRAP_AC,     SIGBUS,  "alignment check",		alignment_check)
-> +
-> +dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code)
-> +{
-> +	unsigned int trapnr = X86_TRAP_AC;
-> +	char str[] = "alignment check";
-> +	int signr = SIGBUS;
-> +	siginfo_t info;
-> +	int ret;
-> +
-> +	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
-> +
-> +	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, signr) !=
-> +			NOTIFY_STOP) {
-
-There does not seem to be a _lot_ of consistency for whether
-notify_die() gets called before or after kernel exceptions are handled.
-Why did you choose to do it this way?
-
-Also, please unindent this block and just return if notify_die() returns
-false.
-
-> +		/* #AC exception could be handled by split lock handler. */
-> +		ret = do_ac_split_lock(regs);
-> +		if (ret) {
-> +			cond_local_irq_enable(regs);
-> +
-> +			return;
-> +		}
-> +
-> +		cond_local_irq_enable(regs);
-
-FWIW, you can consolidate the cond_local_irq_enable() calls:
-
-	ret = do_ac_split_lock(regs);
-	cond_local_irq_enable(regs);
-	if (ret)
-		return;
-
-	...
+	split_lock_detect=off
 
