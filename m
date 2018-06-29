@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44609C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B59C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07ED227DA0
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07ED227DA0
+	by mail.kernel.org (Postfix) with ESMTP id 187D427DB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187D427DB1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755215AbeF2LQZ (ORCPT
+        id S1755243AbeF2LQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:16:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:60042 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755161AbeF2LQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:16:19 -0400
+        Fri, 29 Jun 2018 07:16:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60072 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755201AbeF2LQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:16:24 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3114615AD;
-        Fri, 29 Jun 2018 04:16:19 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6651A1684;
+        Fri, 29 Jun 2018 04:16:24 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 411A03F266;
-        Fri, 29 Jun 2018 04:16:16 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0F87C3F266;
+        Fri, 29 Jun 2018 04:16:21 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
@@ -35,14 +35,10 @@ Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         marc.zyngier@arm.com, cdall@kernel.org, eric.auger@redhat.com,
         julien.grall@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
         punit.agrawal@arm.com, qemu-devel@nongnu.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: [PATCH v3 02/20] virtio: pci-legacy: Validate queue pfn
-Date:   Fri, 29 Jun 2018 12:15:22 +0100
-Message-Id: <1530270944-11351-3-git-send-email-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 04/20] kvm: arm64: Clean up VTCR_EL2 initialisation
+Date:   Fri, 29 Jun 2018 12:15:24 +0100
+Message-Id: <1530270944-11351-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
 References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
@@ -51,66 +47,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Legacy PCI over virtio uses a 32bit PFN for the queue. If the
-queue pfn is too large to fit in 32bits, which we could hit on
-arm64 systems with 52bit physical addresses (even with 64K page
-size), we simply miss out a proper link to the other side of
-the queue.
+Use the new helper for converting the parange to the physical shift.
+Also, add the missing definitions for the VTCR_EL2 register fields
+and use them instead of hard coding numbers.
 
-Add a check to validate the PFN, rather than silently breaking
-the devices.
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
-Cc: Peter Maydel <peter.maydell@linaro.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
-Changes since v2:
- - Change errno to -E2BIG
+Changes since V2
+ - Part 2 of the split from original patch.
+ - Also add missing VTCR field helpers and use them.
 ---
- drivers/virtio/virtio_pci_legacy.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/kvm_arm.h |  3 +++
+ arch/arm64/kvm/hyp/s2-setup.c    | 30 ++++++------------------------
+ 2 files changed, 9 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
-index 2780886..c0d6987a 100644
---- a/drivers/virtio/virtio_pci_legacy.c
-+++ b/drivers/virtio/virtio_pci_legacy.c
-@@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- 	struct virtqueue *vq;
- 	u16 num;
- 	int err;
-+	u64 q_pfn;
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 6dd285e..3dffd38 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -106,6 +106,7 @@
+ #define VTCR_EL2_RES1		(1 << 31)
+ #define VTCR_EL2_HD		(1 << 22)
+ #define VTCR_EL2_HA		(1 << 21)
++#define VTCR_EL2_PS_SHIFT	TCR_EL2_PS_SHIFT
+ #define VTCR_EL2_PS_MASK	TCR_EL2_PS_MASK
+ #define VTCR_EL2_TG0_MASK	TCR_TG0_MASK
+ #define VTCR_EL2_TG0_4K		TCR_TG0_4K
+@@ -126,6 +127,8 @@
+ #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
+ #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
  
- 	/* Select the queue we're interested in */
- 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
-@@ -141,9 +142,15 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- 	if (!vq)
- 		return ERR_PTR(-ENOMEM);
- 
-+	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
-+	if (q_pfn >> 32) {
-+		dev_err(&vp_dev->pci_dev->dev, "virtio-pci queue PFN too large\n");
-+		err = -E2BIG;
-+		goto out_del_vq;
-+	}
++#define VTCR_EL2_T0SZ(x)	TCR_T0SZ(x)
 +
- 	/* activate the queue */
--	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
--		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+	iowrite32(q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
+ /*
+  * We configure the Stage-2 page tables to always restrict the IPA space to be
+  * 40 bits wide (T0SZ = 24).  Systems with a PARange smaller than 40 bits are
+diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
+index 603e1ee..81094f1 100644
+--- a/arch/arm64/kvm/hyp/s2-setup.c
++++ b/arch/arm64/kvm/hyp/s2-setup.c
+@@ -19,11 +19,13 @@
+ #include <asm/kvm_arm.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_hyp.h>
++#include <asm/cpufeature.h>
  
- 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
+ u32 __hyp_text __init_stage2_translation(void)
+ {
+ 	u64 val = VTCR_EL2_FLAGS;
+ 	u64 parange;
++	u32 phys_shift;
+ 	u64 tmp;
  
-@@ -160,6 +167,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
+ 	/*
+@@ -34,30 +36,10 @@ u32 __hyp_text __init_stage2_translation(void)
+ 	parange = read_sysreg(id_aa64mmfr0_el1) & 7;
+ 	if (parange > ID_AA64MMFR0_PARANGE_MAX)
+ 		parange = ID_AA64MMFR0_PARANGE_MAX;
+-	val |= parange << 16;
++	val |= parange << VTCR_EL2_PS_SHIFT;
  
- out_deactivate:
- 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+out_del_vq:
- 	vring_del_virtqueue(vq);
- 	return ERR_PTR(err);
+ 	/* Compute the actual PARange... */
+-	switch (parange) {
+-	case 0:
+-		parange = 32;
+-		break;
+-	case 1:
+-		parange = 36;
+-		break;
+-	case 2:
+-		parange = 40;
+-		break;
+-	case 3:
+-		parange = 42;
+-		break;
+-	case 4:
+-		parange = 44;
+-		break;
+-	case 5:
+-	default:
+-		parange = 48;
+-		break;
+-	}
++	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
+ 
+ 	/*
+ 	 * ... and clamp it to 40 bits, unless we have some braindead
+@@ -65,7 +47,7 @@ u32 __hyp_text __init_stage2_translation(void)
+ 	 * return that value for the rest of the kernel to decide what
+ 	 * to do.
+ 	 */
+-	val |= 64 - (parange > 40 ? 40 : parange);
++	val |= VTCR_EL2_T0SZ(phys_shift > 40 ? 40 : phys_shift);
+ 
+ 	/*
+ 	 * Check the availability of Hardware Access Flag / Dirty Bit
+@@ -86,5 +68,5 @@ u32 __hyp_text __init_stage2_translation(void)
+ 
+ 	write_sysreg(val, vtcr_el2);
+ 
+-	return parange;
++	return phys_shift;
  }
 -- 
 2.7.4
