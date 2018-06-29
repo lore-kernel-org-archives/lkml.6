@@ -2,128 +2,177 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004ECC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A532DC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C5C427ECE
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:55:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V/2PE+cQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XEzIOVFx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C5C427ECE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 623EA27ECE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 623EA27ECE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965414AbeF2Uzr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:55:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36628 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935367AbeF2Uzq (ORCPT
+        id S965676AbeF2U51 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:57:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52744 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753354AbeF2U5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:55:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 68E3A606FC; Fri, 29 Jun 2018 20:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530305745;
-        bh=gA/kPjPELSX2SceOdc5Ath9eFmCbah6z1PbNCGTfPuU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=V/2PE+cQ1X2UlV8DkIpJ2gSsB3hcydrO1LhEOvyMMCfch0QcZxigHvCB6WktDi8Ab
-         nsbwRINhcmS7RrQRJydN9KHU4/QfzDjofpiEIwgxWI+hrtTonnhtu6s9upqIiKfZUA
-         m1C01RZ/UCB1D3Ts7/vqqN7wrxkpJrOe7xkLTA7I=
-Received: from isaacm-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: isaacm@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C2BD6031A;
-        Fri, 29 Jun 2018 20:55:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530305744;
-        bh=gA/kPjPELSX2SceOdc5Ath9eFmCbah6z1PbNCGTfPuU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=XEzIOVFx/fMOvOEmhSre5UTtV6iRDx+V4WZniS/rff2YhSdJM3a6vbiJFXEc4WpIB
-         82SIIEeybEnCvEam+GiX6zbmmt0rvnERk/W1Lvypx2CD67XjEix1NO3RyEZ8+T5tGI
-         iK65cYozyyIMbq+7mCrOg3JodaotOHj9hhaqMIHs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C2BD6031A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=isaacm@codeaurora.org
-From:   "Isaac J. Manjarres" <isaacm@codeaurora.org>
-To:     peterz@infradead.org, matt@codeblueprint.co.uk, mingo@kernel.org,
-        tglx@linutronix.de, bigeasy@linutronix.de
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        pkondeti@codeaurora.org
-Subject: [PATCH v2] stop_machine: Disable preemption when waking two stopper threads
-Date:   Fri, 29 Jun 2018 13:55:12 -0700
-Message-Id: <1530305712-16416-1-git-send-email-isaacm@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 29 Jun 2018 16:57:25 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TKs0M0033537
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 16:57:25 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwujk9af5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 16:57:25 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 29 Jun 2018 21:57:23 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 29 Jun 2018 21:57:20 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TKvJKO21561450
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 29 Jun 2018 20:57:19 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5251F4C04E;
+        Fri, 29 Jun 2018 21:57:06 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9F044C046;
+        Fri, 29 Jun 2018 21:57:05 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.81])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 29 Jun 2018 21:57:05 +0100 (BST)
+Date:   Fri, 29 Jun 2018 23:57:16 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
+ <20180629192838.GE4799@rapoport-lnx>
+ <e18f80e1-fc59-9487-95eb-7cb6cda976c5@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e18f80e1-fc59-9487-95eb-7cb6cda976c5@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18062920-0012-0000-0000-00000285176C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062920-0013-0000-0000-000020B6856E
+Message-Id: <20180629205716.GG4799@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=904 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806290221
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When cpu_stop_queue_two_works() begins to wake the stopper
-threads, it does so without preemption disabled, which leads
-to the following race condition:
+On Fri, Jun 29, 2018 at 01:28:59PM -0700, Randy Dunlap wrote:
+> On 06/29/2018 12:28 PM, Mike Rapoport wrote:
+> > Hi Randy, 
+> > 
+> > On Fri, Jun 29, 2018 at 09:34:55AM -0700, Randy Dunlap wrote:
+> >> On 06/29/2018 06:42 AM, Mike Rapoport wrote:
+> >>> Otherwise mm configuration options show up in the top level menu.
+> >>>
+> >>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> >>
+> >> Hi Mike,
+> >>
+> >> In which config tool does this matter?
+> >>
+> >> For xconfig, it seems to me that this patch hides the MM menu, whereas
+> >> before this patch, the MM menu is easy to find (although it could
+> >> use some kind of heading).
+> > 
+> > With xconfig the menu gets into the top right pane when you click on "ARC
+> > architecture configuration", similar to what one gets on x86 with
+> > "Processor type and features" or "Kernel features" on ARM.
+> > 
+> > With menuconfig it looks a bit more prominent, note that mm options are
+> > between "ARC Architecture Configuration" and "Networking support":
+> 
+> I know.  I ran all 4 of menuconfig, nconfig, xconfig, and gconfig.
+> 
+> I would prefer to see Memory Management options have its own top-level
+> menu, but that's a different patch.  Then menuconfig would look like this:
+> 
+> 
+> 
+> │ │        *** Compiler: arc-linux-gcc (GCC) 8.1.0 ***                  │ │  
+>   │ │        General setup  --->                                          │ │  
+>   │ │    [*] Enable loadable module support  --->                         │ │  
+>   │ │    [*] Enable the block layer  --->                                 │ │  
+>   │ │        ARC Architecture Configuration  --->                         │ │  
+>   │ │        Memory Management options  --->                              │ │  
+>   │ │    (11) Maximum zone order                                          │ │  
+>   │ │    [*] Networking support  --->                                     │ │  
+>   │ │        Device Drivers  --->                                         │ │  
+>   │ │        Bus Support  ---> 
+> 
+> 
+> but that "Maximum zone order" needs to be moved or taken care of somehow.
 
-The source CPU calls cpu_stop_queue_two_works(), with cpu1
-as the source CPU, and cpu2 as the destination CPU. When
-adding the stopper threads to the wake queue used in this
-function, the source CPU stopper thread is added first,
-and the destination CPU stopper thread is added last.
+I think that would be something like this:
 
-When wake_up_q() is invoked to wake the stopper threads, the
-threads are woken up in the order that they are queued in,
-so the source CPU's stopper thread is woken up first, and
-it preempts the thread running on the source CPU.
-
-The stopper thread will then execute on the source CPU,
-disable preemption, and begin executing multi_cpu_stop(),
-and wait for an ack from the destination CPU's stopper thread,
-with preemption still disabled. Since the worker thread that
-woke up the stopper thread on the source CPU is affine to the
-source CPU, and preemption is disabled on the source CPU, that
-thread will never run to dequeue the destination CPU's stopper
-thread from the wake queue, and thus, the destination CPU's
-stopper thread will never run, causing the source CPU's stopper
-thread to wait forever, and stall.
-
-Disable preemption when waking the stopper threads in
-cpu_stop_queue_two_works() to ensure that the worker thread
-that is waking up the stopper threads isn't preempted
-by the source CPU's stopper thread, and permanently
-scheduled out, leaving the remaining stopper thread asleep
-in the wake queue.
-
-Co-developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
----
- kernel/stop_machine.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index f89014a..1ff523d 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -270,7 +270,11 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
- 		goto retry;
- 	}
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index e81bcd271be7..44a20141639a 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -556,12 +556,14 @@ endmenu
  
--	wake_up_q(&wakeq);
-+	if (!err) {
-+		preempt_disable();
-+		wake_up_q(&wakeq);
-+		preempt_enable();
-+	}
+ endmenu	 # "ARC Architecture Configuration"
  
- 	return err;
- }
++menu "Memory Management"
+ source "mm/Kconfig"
+ 
+ config FORCE_MAX_ZONEORDER
+ 	int "Maximum zone order"
+ 	default "12" if ARC_HUGEPAGE_16M
+ 	default "11"
++endmenu # "Memory Management"
+ 
+ source "net/Kconfig"
+ source "drivers/Kconfig"
+ 
+> 
+> [snip]
+> 
+> > 
+> > 
+> > 
+> >>>  	default "12" if ARC_HUGEPAGE_16M
+> >>>  	default "11"
+> >>>  
+> >>> +endmenu	 # "ARC Architecture Configuration"
+> >>> +
+> >>>  source "net/Kconfig"
+> >>>  source "drivers/Kconfig"
+> 
+> 
+> thanks,
+> -- 
+> ~Randy
+> 
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sincerely yours,
+Mike.
 
