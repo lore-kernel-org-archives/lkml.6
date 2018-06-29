@@ -2,190 +2,378 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C33C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E022C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0386927BEC
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:27:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cQxcPktQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0386927BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id B8EC127BDF
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8EC127BDF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964979AbeF2I1s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:27:48 -0400
-Received: from mail-eopbgr30070.outbound.protection.outlook.com ([40.107.3.70]:56640
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S965074AbeF2I3X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:29:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57734 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964929AbeF2I1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:27:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r3xZj3mUdfB6zzO6YRCi9okpqnHGkXa5N84/MFv09H0=;
- b=cQxcPktQbp7AMR/PLI5PX7+YYNQ5NnsBWyjvAGOfeQ2N5EutS8C6hdndTbQBrA8yhCwiffU5v16UQvB+zHyEZh73TiEpxUCdGIWSdFqnNDgZyb+D/AcXwEgT+8mYhnLkDtk8zwOXn5feabPqJu+zgKhShjNehge5voWkTgFlKgw=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB1140.eurprd04.prod.outlook.com (10.163.5.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.23; Fri, 29 Jun 2018 08:27:41 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.025; Fri, 29 Jun 2018
- 08:27:41 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] ARM: dts: imx6: correct anatop regulators range
-Thread-Topic: [PATCH] ARM: dts: imx6: correct anatop regulators range
-Thread-Index: AQHUD38AdyuDZR4W10i/tnVGAfQSq6R245iAgAAATiA=
-Date:   Fri, 29 Jun 2018 08:27:41 +0000
-Message-ID: <AM3PR04MB13157A4948E36BAE60A8DC49F54E0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1530258861-11666-1-git-send-email-Anson.Huang@nxp.com>
- <1530260109.22468.60.camel@pengutronix.de>
-In-Reply-To: <1530260109.22468.60.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1140;7:w1NA0Jg/qbGZoe8YYirkm2DL3yAPso35BKTg7Ng1ezt8Nat35QVPTLRW1cdkGsdask07Y3qLEnrJMW3CwhY+6TfvaQEz1BLLCI89cE4SiLO9lyekVJBNsLTUDvz73qo/7IL4RJZeC+w2QHkaSSwR8ISZidhBmFRoPscX+RrYtwSgAp8lq8rbLKd3yINWLmjJ9mmbi3r+wmCY+tahlA+/ECIIuXObJUUfdjaA8MknOHuuvcvuLdVoy+qtgiRiX1N4
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f4840584-9941-4dc6-4d51-08d5dd9a2e3d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1140;
-x-ms-traffictypediagnostic: AM3PR04MB1140:
-x-microsoft-antispam-prvs: <AM3PR04MB1140A513DBD49DDDC9008936F54E0@AM3PR04MB1140.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1140;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1140;
-x-forefront-prvs: 0718908305
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(346002)(39860400002)(376002)(13464003)(199004)(189003)(7736002)(11346002)(81156014)(446003)(305945005)(2900100001)(6436002)(476003)(7696005)(55016002)(33656002)(9686003)(229853002)(8936002)(486006)(74316002)(8676002)(68736007)(106356001)(5660300001)(99286004)(110136005)(316002)(6116002)(3846002)(2201001)(76176011)(81166006)(53936002)(2906002)(478600001)(6246003)(102836004)(6506007)(2501003)(25786009)(97736004)(4326008)(256004)(5250100002)(105586002)(86362001)(26005)(53546011)(14454004)(44832011)(186003)(66066001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1140;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: g/hX4DKG3LP1XbVjmsfXuXHPLOyL7BYpzFPXTFcCb589g6YnaYpLDA/UoV0KrseDt3n5WnwwktpsO9TN/Ye2Hk9gpZTcPU9TyXAPm3VyfBNDOWFBnA/d3DUD5CJthVX+aGu8jGCQSaikbtqEvAcogI8OX7uzpbD7Mu0A48pTiv7xbuZz9Q4CiNP5AKYtrBVAbToT0I7Z0zVzSANzi7/6jVnaRNy+DBs3XvIxfMJ3QUfamiADfGkqzHKt7sdtZ+ePnFswPQBIqtbQw3R+yuAHkA2sT6uQoX0xl1kVt41/n4ygE2hf+aoyy7DO9q+nQDBBnri0jrYdiA9I8odOAT38XPCCg4wbh0KKvPF+db4+0i4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S964929AbeF2I3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:29:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1B820ACCD;
+        Fri, 29 Jun 2018 08:29:19 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 10:29:12 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+Message-ID: <20180629082912.GC13860@dhcp22.suse.cz>
+References: <20180622090935.GT10465@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806220845190.8072@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180622130524.GZ10465@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180625090957.GF28965@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806250941380.11092@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180625141434.GO28965@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806251037250.17405@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180625145733.GP28965@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806282150310.7845@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4840584-9941-4dc6-4d51-08d5dd9a2e3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2018 08:27:41.2053
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1806282150310.7845@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEx1Y2FzDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNhcyBTdGFjaCBbbWFpbHRvOmwuc3RhY2hAcGVu
-Z3V0cm9uaXguZGVdDQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyOSwgMjAxOCA0OjE1IFBNDQo+IFRv
-OiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IHNoYXduZ3VvQGtlcm5lbC5vcmc7
-DQo+IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgRmFiaW8g
-RXN0ZXZhbQ0KPiA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3JnOyBt
-YXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZw0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVj
-dDogUmU6IFtQQVRDSF0gQVJNOiBkdHM6IGlteDY6IGNvcnJlY3QgYW5hdG9wIHJlZ3VsYXRvcnMg
-cmFuZ2UNCj4gDQo+IEFtIEZyZWl0YWcsIGRlbiAyOS4wNi4yMDE4LCAxNTo1NCArMDgwMCBzY2hy
-aWViIEFuc29uIEh1YW5nOg0KPiA+IENvcnJlY3Qgc29tZSBpLk1YNiBTb0NzIGFuYXRvcCByZWd1
-bGF0b3JzIHJhbmdlIGFjY29yZGluZyB0byByZWZlcmVuY2UNCj4gPiBtYW51YWwuDQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gDQo+
-IE5BQ0suDQo+IA0KPiBUaGlzIGlzIHdyb25nLiBXaGlsZSB0aGUgcmVndWxhdG9yIHN1cHBvcnRz
-IHRoaXMgcmFuZ2UsIHRoZSBTb0MgZG9lc24ndC7CoFRoZQ0KPiBjdXJyZW50IHNldHRpbmdzIGFy
-ZSBkZXJpdmVkIGZyb20gdGhlIGFsbG93ZWQgb3BlcmF0aW5nIHJhbmdlcyBvZiB0aGUgU29DIChh
-dA0KPiBsZWFzdCBmb3IgdGhlIE1YNlFETCksIHdoaWNoIGlzIGluIGFjY29yZGFuY2Ugd2l0aCBo
-b3cgcmVndWxhdG9yIGNvbnN0cmFpbnRzDQo+IGluIERUIGFyZSBtZWFudCB0byBiZSB1c2VkLg0K
-IA0KVW5kZXJzdGFuZCB0aGF0IG5vcm1hbGx5IHRoZXNlIHJlZ3VsYXRvcnMnIHZvbHRhZ2UgYXJl
-IE5PVCBhZGp1c3RlZCwgd2UganVzdCB1c2UNCnRoZSBkZWZhdWx0IHZhbHVlLCBsZXQncyBqdXN0
-IGNhbGwgdGhlIG9wZXJhdGluZyByYW5nZSBvZiB0aGUgU29DICJTb0MgcmFuZ2UiLA0KbXkgaW50
-ZW50aW9uIGlzIHRvIG1ha2UgYWxsIGkuTVg2J3MgYW5hdG9wIHJlZ3VsYXRvciBzZXR0aW5ncyBh
-bGlnbmVkIHNpbmNlIHRoZXkgYXJlIGluIHNhbWUgc2VyaWVzLCANCkkgc2F3IHNvbWUgaS5NWDYg
-U29DcyB1c2Ugc2FtZSBTb0MgcmFuZ2UgYXMgYW5hdG9wIGxkbyByYW5nZSwgYnV0IHNvbWUgYXJl
-DQpOT1QsIGxpa2UgaW14NnFkbC9pbXg2c3gvaW14NnNsIHVzZSBkaWZmZXJlbnQgU29DIHJhbmdl
-IHRoYW4gYW5hdG9wIGxkbyByYW5nZSwNCmJ1dCBpbXg2dWwvdWxsL3NsbCB1c2Ugc2FtZSByZWd1
-bGF0b3IgcmFuZ2UgYXMgYW5hdG9wIGxkbywgYW5kIHJlZ3VsYXRvciAxcDEvMnA1LzNwMA0KYWxz
-byBoYXZlIGRpZmZlcmVudCBzZXR0aW5ncywgc29tZSBhcmUgdXNlIFNvQyByYW5nZSBhbmQgc29t
-ZSBhcmUganVzdCBzYW1lIGFzIGFuYXRvcA0KbGRvIHJhbmdlLi4uLnRoaXMgbG9va3MgcmVhbGx5
-IGNvbmZ1c2VkLg0KDQpTbywgZG8geW91IHRoaW5rIHdlIGNhbiBhZGp1c3QgdGhlIGlteDZ1bC91
-bGwvc2xsJ3MgcmVndWxhdG9yIHJhbmdlIHRvIGJlIFNvQyByYW5nZSByYXRoZXIgdGhhbg0KYW5h
-dG9wIGxkbyByYW5nZT8gQW5kIGhvdyB0byBkZWZpbmUgdGhlIFNvQyByYW5nZT8gTGlrZSB0aGUg
-MXAxIGxkbyByYW5nZSwgaG93IGRvDQp3ZSBrbm93IHdoaWNoIHJhbmdlIGlzIGZpbmU/IEFzIEkg
-c2F3IGl0IGlzIDF2IH4gMS4ydiBvbiBpbXg2cWRsLCBidXQgMC44diB+IDEuMzc1diBvbiBpbXg2
-c2w/DQoNClRoYW5rcy4NCg0KQW5zb24uDQoNCj4gDQo+IFJlZ2FyZHMsDQo+IEx1Y2FzDQo+IA0K
-PiA+IC0tLQ0KPiA+IMKgYXJjaC9hcm0vYm9vdC9kdHMvaW14NnFkbC5kdHNpIHwgMTIgKysrKysr
-LS0tLS0tDQo+ID4gwqBhcmNoL2FybS9ib290L2R0cy9pbXg2c2wuZHRzacKgwqB8wqDCoDQgKyst
-LQ0KPiA+IMKgYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LmR0c2nCoMKgfMKgwqA0ICsrLS0NCj4g
-PiDCoDMgZmlsZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pDQo+
-ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnFkbC5kdHNpDQo+ID4g
-Yi9hcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLmR0c2kgaW5kZXggOTExMTQxZS4uZDlmOThkZCAx
-MDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLmR0c2kNCj4gPiArKysg
-Yi9hcmNoL2FybS9ib290L2R0cy9pbXg2cWRsLmR0c2kNCj4gPiBAQCAtNjg5LDggKzY4OSw4IEBA
-DQo+ID4gPiDCoAkJCQlyZWd1bGF0b3ItMXAxIHsNCj4gPiA+IMKgCQkJCQljb21wYXRpYmxlID0g
-ImZzbCxhbmF0b3AtcmVndWxhdG9yIjsNCj4gPiA+IMKgCQkJCQlyZWd1bGF0b3ItbmFtZSA9ICJ2
-ZGQxcDEiOw0KPiA+ID4gLQkJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MTAwMDAwMD47
-DQo+ID4gPiAtCQkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMjAwMDAwPjsNCj4gPiA+
-ICsJCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDgwMDAwMD47DQo+ID4gPiArCQkJCQly
-ZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwxMzc1MDAwPjsNCj4gPiA+IMKgCQkJCQlyZWd1bGF0
-b3ItYWx3YXlzLW9uOw0KPiA+ID4gwqAJCQkJCWFuYXRvcC1yZWctb2Zmc2V0ID0gPDB4MTEwPjsN
-Cj4gPiA+IMKgCQkJCQlhbmF0b3Atdm9sLWJpdC1zaGlmdCA9IDw4PjsNCj4gPiBAQCAtNzA0LDgg
-KzcwNCw4IEBADQo+ID4gPiDCoAkJCQlyZWd1bGF0b3ItM3AwIHsNCj4gPiA+IMKgCQkJCQljb21w
-YXRpYmxlID0gImZzbCxhbmF0b3AtcmVndWxhdG9yIjsNCj4gPiA+IMKgCQkJCQlyZWd1bGF0b3It
-bmFtZSA9ICJ2ZGQzcDAiOw0KPiA+ID4gLQkJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8
-MjgwMDAwMD47DQo+ID4gPiAtCQkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzMTUwMDAw
-PjsNCj4gPiA+ICsJCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDI2MjUwMDA+Ow0KPiA+
-ID4gKwkJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MzQwMDAwMD47DQo+ID4gPiDCoAkJ
-CQkJcmVndWxhdG9yLWFsd2F5cy1vbjsNCj4gPiA+IMKgCQkJCQlhbmF0b3AtcmVnLW9mZnNldCA9
-IDwweDEyMD47DQo+ID4gPiDCoAkJCQkJYW5hdG9wLXZvbC1iaXQtc2hpZnQgPSA8OD47DQo+ID4g
-QEAgLTcxOSw4ICs3MTksOCBAQA0KPiA+ID4gwqAJCQkJcmVndWxhdG9yLTJwNSB7DQo+ID4gPiDC
-oAkJCQkJY29tcGF0aWJsZSA9ICJmc2wsYW5hdG9wLXJlZ3VsYXRvciI7DQo+ID4gPiDCoAkJCQkJ
-cmVndWxhdG9yLW5hbWUgPSAidmRkMnA1IjsNCj4gPiA+IC0JCQkJCXJlZ3VsYXRvci1taW4tbWlj
-cm92b2x0ID0gPDIyNTAwMDA+Ow0KPiA+ID4gLQkJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQg
-PSA8Mjc1MDAwMD47DQo+ID4gPiArCQkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwyMTAw
-MDAwPjsNCj4gPiA+ICsJCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDI4NzUwMDA+Ow0K
-PiA+ID4gwqAJCQkJCXJlZ3VsYXRvci1hbHdheXMtb247DQo+ID4gPiDCoAkJCQkJYW5hdG9wLXJl
-Zy1vZmZzZXQgPSA8MHgxMzA+Ow0KPiA+ID4gwqAJCQkJCWFuYXRvcC12b2wtYml0LXNoaWZ0ID0g
-PDg+Ow0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9pbXg2c2wuZHRzaQ0KPiA+
-IGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnNsLmR0c2kgaW5kZXggODFmNDgxMTYuLjNkNzkzMWIg
-MTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnNsLmR0c2kNCj4gPiArKysg
-Yi9hcmNoL2FybS9ib290L2R0cy9pbXg2c2wuZHRzaQ0KPiA+IEBAIC01MzksOCArNTM5LDggQEAN
-Cj4gPiA+IMKgCQkJCXJlZ3VsYXRvci0zcDAgew0KPiA+ID4gwqAJCQkJCWNvbXBhdGlibGUgPSAi
-ZnNsLGFuYXRvcC1yZWd1bGF0b3IiOw0KPiA+ID4gwqAJCQkJCXJlZ3VsYXRvci1uYW1lID0gInZk
-ZDNwMCI7DQo+ID4gPiAtCQkJCQlyZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwyODAwMDAwPjsN
-Cj4gPiA+IC0JCQkJCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDMxNTAwMDA+Ow0KPiA+ID4g
-KwkJCQkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8MjYyNTAwMD47DQo+ID4gPiArCQkJCQly
-ZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwzNDAwMDAwPjsNCj4gPiA+IMKgCQkJCQlyZWd1bGF0
-b3ItYWx3YXlzLW9uOw0KPiA+ID4gwqAJCQkJCWFuYXRvcC1yZWctb2Zmc2V0ID0gPDB4MTIwPjsN
-Cj4gPiA+IMKgCQkJCQlhbmF0b3Atdm9sLWJpdC1zaGlmdCA9IDw4PjsNCj4gPiBkaWZmIC0tZ2l0
-IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NnN4LmR0c2kNCj4gPiBiL2FyY2gvYXJtL2Jvb3QvZHRz
-L2lteDZzeC5kdHNpIGluZGV4IDcxMzBhYjguLmYyNmY2MTEgMTAwNjQ0DQo+ID4gLS0tIGEvYXJj
-aC9hcm0vYm9vdC9kdHMvaW14NnN4LmR0c2kNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9p
-bXg2c3guZHRzaQ0KPiA+IEBAIC02MDcsOCArNjA3LDggQEANCj4gPiA+IMKgCQkJCXJlZ3VsYXRv
-ci0zcDAgew0KPiA+ID4gwqAJCQkJCWNvbXBhdGlibGUgPSAiZnNsLGFuYXRvcC1yZWd1bGF0b3Ii
-Ow0KPiA+ID4gwqAJCQkJCXJlZ3VsYXRvci1uYW1lID0gInZkZDNwMCI7DQo+ID4gPiAtCQkJCQly
-ZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDwyODAwMDAwPjsNCj4gPiA+IC0JCQkJCXJlZ3VsYXRv
-ci1tYXgtbWljcm92b2x0ID0gPDMxNTAwMDA+Ow0KPiA+ID4gKwkJCQkJcmVndWxhdG9yLW1pbi1t
-aWNyb3ZvbHQgPSA8MjYyNTAwMD47DQo+ID4gPiArCQkJCQlyZWd1bGF0b3ItbWF4LW1pY3Jvdm9s
-dCA9IDwzNDAwMDAwPjsNCj4gPiA+IMKgCQkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOw0KPiA+ID4g
-wqAJCQkJCWFuYXRvcC1yZWctb2Zmc2V0ID0gPDB4MTIwPjsNCj4gPiA+IMKgCQkJCQlhbmF0b3At
-dm9sLWJpdC1zaGlmdCA9IDw4PjsNCg==
+On Thu 28-06-18 22:43:29, Mikulas Patocka wrote:
+> 
+> 
+> On Mon, 25 Jun 2018, Michal Hocko wrote:
+> 
+> > On Mon 25-06-18 10:42:30, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Mon, 25 Jun 2018, Michal Hocko wrote:
+> > > 
+> > > > > And the throttling in dm-bufio prevents kswapd from making forward 
+> > > > > progress, causing this situation...
+> > > > 
+> > > > Which is what we have PF_THROTTLE_LESS for. Geez, do we have to go in
+> > > > circles like that? Are you even listening?
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > And so what do you want to do to prevent block drivers from sleeping?
+> > > > 
+> > > > use the existing means we have.
+> > > > -- 
+> > > > Michal Hocko
+> > > > SUSE Labs
+> > > 
+> > > So - do you want this patch?
+> > > 
+> > > There is no behavior difference between changing the allocator (so that it 
+> > > implies PF_THROTTLE_LESS for block drivers) and chaning all the block 
+> > > drivers to explicitly set PF_THROTTLE_LESS.
+> > 
+> > As long as you can reliably detect those users. And using gfp_mask is
+> 
+> You can detect them if __GFP_IO is not set and __GFP_NORETRY is set. You 
+> can grep the kernel for __GFP_NORETRY to find all the users.
+
+It seems that arguing doesn't make much sense here. I will not repeat
+myself...
+
+> > about the worst way to achieve that because users tend to be creative
+> > when it comes to using gfp mask. PF_THROTTLE_LESS in general is a
+> > way to tell the allocator that _you_ are the one to help the reclaim by
+> > cleaning data.
+> 
+> But using PF_LESS_THROTTLE explicitly adds more lines of code than 
+> implying PF_LESS_THROTTLE in the allocator.
+
+Yes and it will also make the code more explicit about the intention and
+so it will be easier to maintain longterm.
+
+> From: Mikulas Patocka <mpatocka@redhat.com>
+> Subject: [PATCH] mm: set PF_LESS_THROTTLE when allocating memory for i/o
+> 
+> When doing __GFP_NORETRY allocation, the system may sleep in
+> wait_iff_congested if there are too many dirty pages. Unfortunatelly this
+> sleeping may slow down kswapd, preventing it from doing writeback and
+> resolving the congestion.
+
+This description is misleading at best if not outright wrong.
+		if (!sc->hibernation_mode && !current_is_kswapd() &&
+		   current_may_throttle() && pgdat_memcg_congested(pgdat, root))
+			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
+
+so this is an explict throttling of the direct reclaim.
+
+So I would use the following wording instead:
+"
+It has been noticed that congestion throttling can slow down allocations
+path that participate in the IO and thus help the memory reclaim.
+Stalling those allocation is therefore not productive. Moreover mempool
+allocator and md variants of the same already implement their own
+throttling which has a better way to be feedback driven. Stalling at the
+page allocator is therefore even counterproductive.
+
+PF_LESS_THROTTLE is a task flag denoting allocation context that is
+participating in the memory reclaim which fits into these IO paths
+model, so use the flag and make the page allocator aware they are
+special and they do not really want any dirty data throttling.
+
+<HERE GOES YOUR STORAGE CONFIGURATION AND DATA ABOUT STALLS>
+"
+
+with a more clear patch description and some data to back them up, you
+can add
+
+Acked-by: Michal Hocko <mhocko@suse.com> # mempool_alloc and bvec_alloc
+
+I cannot really comment on other md allocators though because I am not
+familiar with those. 
+
+> This patch fixes it by setting PF_LESS_THROTTLE when allocating memory for
+> block device drivers.
+> 
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> Cc: stable@vger.kernel.org
+> 
+> ---
+>  block/bio.c                   |    4 ++++
+>  drivers/md/dm-bufio.c         |   14 +++++++++++---
+>  drivers/md/dm-crypt.c         |    8 ++++++++
+>  drivers/md/dm-integrity.c     |    4 ++++
+>  drivers/md/dm-kcopyd.c        |    3 +++
+>  drivers/md/dm-verity-target.c |    4 ++++
+>  drivers/md/dm-writecache.c    |    4 ++++
+>  mm/mempool.c                  |    4 ++++
+>  8 files changed, 42 insertions(+), 3 deletions(-)
+> 
+> Index: linux-2.6/mm/mempool.c
+> ===================================================================
+> --- linux-2.6.orig/mm/mempool.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/mm/mempool.c	2018-06-29 03:47:16.270000000 +0200
+> @@ -369,6 +369,7 @@ void *mempool_alloc(mempool_t *pool, gfp
+>  	unsigned long flags;
+>  	wait_queue_entry_t wait;
+>  	gfp_t gfp_temp;
+> +	unsigned old_flags;
+>  
+>  	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+>  	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
+> @@ -381,7 +382,10 @@ void *mempool_alloc(mempool_t *pool, gfp
+>  
+>  repeat_alloc:
+>  
+> +	old_flags = current->flags & PF_LESS_THROTTLE;
+> +	current->flags |= PF_LESS_THROTTLE;
+>  	element = pool->alloc(gfp_temp, pool->pool_data);
+> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  	if (likely(element != NULL))
+>  		return element;
+>  
+> Index: linux-2.6/block/bio.c
+> ===================================================================
+> --- linux-2.6.orig/block/bio.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/block/bio.c	2018-06-29 03:47:16.270000000 +0200
+> @@ -217,6 +217,7 @@ fallback:
+>  	} else {
+>  		struct biovec_slab *bvs = bvec_slabs + *idx;
+>  		gfp_t __gfp_mask = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
+> +		unsigned old_flags;
+>  
+>  		/*
+>  		 * Make this allocation restricted and don't dump info on
+> @@ -229,7 +230,10 @@ fallback:
+>  		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
+>  		 * is set, retry with the 1-entry mempool
+>  		 */
+> +		old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+>  		bvl = kmem_cache_alloc(bvs->slab, __gfp_mask);
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  		if (unlikely(!bvl && (gfp_mask & __GFP_DIRECT_RECLAIM))) {
+>  			*idx = BVEC_POOL_MAX;
+>  			goto fallback;
+> Index: linux-2.6/drivers/md/dm-bufio.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-bufio.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-bufio.c	2018-06-29 03:47:16.270000000 +0200
+> @@ -356,6 +356,7 @@ static void __cache_size_refresh(void)
+>  static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
+>  			       unsigned char *data_mode)
+>  {
+> +	void *ptr;
+>  	if (unlikely(c->slab_cache != NULL)) {
+>  		*data_mode = DATA_MODE_SLAB;
+>  		return kmem_cache_alloc(c->slab_cache, gfp_mask);
+> @@ -363,9 +364,14 @@ static void *alloc_buffer_data(struct dm
+>  
+>  	if (c->block_size <= KMALLOC_MAX_SIZE &&
+>  	    gfp_mask & __GFP_NORETRY) {
+> +		unsigned old_flags;
+>  		*data_mode = DATA_MODE_GET_FREE_PAGES;
+> -		return (void *)__get_free_pages(gfp_mask,
+> +		old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+> +		ptr = (void *)__get_free_pages(gfp_mask,
+>  						c->sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+> +		return ptr;
+>  	}
+>  
+>  	*data_mode = DATA_MODE_VMALLOC;
+> @@ -381,8 +387,10 @@ static void *alloc_buffer_data(struct dm
+>  	 */
+>  	if (gfp_mask & __GFP_NORETRY) {
+>  		unsigned noio_flag = memalloc_noio_save();
+> -		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+> -
+> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+> +		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  		memalloc_noio_restore(noio_flag);
+>  		return ptr;
+>  	}
+> Index: linux-2.6/drivers/md/dm-integrity.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-integrity.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-integrity.c	2018-06-29 03:47:16.270000000 +0200
+> @@ -1318,6 +1318,7 @@ static void integrity_metadata(struct wo
+>  	int r;
+>  
+>  	if (ic->internal_hash) {
+> +		unsigned old_flags;
+>  		struct bvec_iter iter;
+>  		struct bio_vec bv;
+>  		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
+> @@ -1331,8 +1332,11 @@ static void integrity_metadata(struct wo
+>  		if (unlikely(ic->mode == 'R'))
+>  			goto skip_io;
+>  
+> +		old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+>  		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
+>  				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  		if (!checksums)
+>  			checksums = checksums_onstack;
+>  
+> Index: linux-2.6/drivers/md/dm-kcopyd.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.270000000 +0200
+> @@ -245,7 +245,10 @@ static int kcopyd_get_pages(struct dm_kc
+>  	*pages = NULL;
+>  
+>  	do {
+> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+>  		pl = alloc_pl(__GFP_NOWARN | __GFP_NORETRY | __GFP_KSWAPD_RECLAIM);
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  		if (unlikely(!pl)) {
+>  			/* Use reserved pages */
+>  			pl = kc->pages;
+> Index: linux-2.6/drivers/md/dm-verity-target.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.280000000 +0200
+> @@ -596,9 +596,13 @@ no_prefetch_cluster:
+>  static void verity_submit_prefetch(struct dm_verity *v, struct dm_verity_io *io)
+>  {
+>  	struct dm_verity_prefetch_work *pw;
+> +	unsigned old_flags;
+>  
+> +	old_flags = current->flags & PF_LESS_THROTTLE;
+> +	current->flags |= PF_LESS_THROTTLE;
+>  	pw = kmalloc(sizeof(struct dm_verity_prefetch_work),
+>  		GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
+> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  
+>  	if (!pw)
+>  		return;
+> Index: linux-2.6/drivers/md/dm-writecache.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-writecache.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-writecache.c	2018-06-29 03:47:16.280000000 +0200
+> @@ -1473,6 +1473,7 @@ static void __writecache_writeback_pmem(
+>  	unsigned max_pages;
+>  
+>  	while (wbl->size) {
+> +		unsigned old_flags;
+>  		wbl->size--;
+>  		e = container_of(wbl->list.prev, struct wc_entry, lru);
+>  		list_del(&e->lru);
+> @@ -1486,6 +1487,8 @@ static void __writecache_writeback_pmem(
+>  		bio_set_dev(&wb->bio, wc->dev->bdev);
+>  		wb->bio.bi_iter.bi_sector = read_original_sector(wc, e);
+>  		wb->page_offset = PAGE_SIZE;
+> +		old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+>  		if (max_pages <= WB_LIST_INLINE ||
+>  		    unlikely(!(wb->wc_list = kmalloc(max_pages * sizeof(struct wc_entry *),
+>  						     GFP_NOIO | __GFP_NORETRY |
+> @@ -1493,6 +1496,7 @@ static void __writecache_writeback_pmem(
+>  			wb->wc_list = wb->wc_list_inline;
+>  			max_pages = WB_LIST_INLINE;
+>  		}
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  
+>  		BUG_ON(!wc_add_block(wb, e, GFP_NOIO));
+>  
+> Index: linux-2.6/drivers/md/dm-crypt.c
+> ===================================================================
+> --- linux-2.6.orig/drivers/md/dm-crypt.c	2018-06-29 03:47:16.290000000 +0200
+> +++ linux-2.6/drivers/md/dm-crypt.c	2018-06-29 03:47:16.280000000 +0200
+> @@ -2181,12 +2181,16 @@ static void *crypt_page_alloc(gfp_t gfp_
+>  {
+>  	struct crypt_config *cc = pool_data;
+>  	struct page *page;
+> +	unsigned old_flags;
+>  
+>  	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
+>  	    likely(gfp_mask & __GFP_NORETRY))
+>  		return NULL;
+>  
+> +	old_flags = current->flags & PF_LESS_THROTTLE;
+> +	current->flags |= PF_LESS_THROTTLE;
+>  	page = alloc_page(gfp_mask);
+> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  	if (likely(page != NULL))
+>  		percpu_counter_add(&cc->n_allocated_pages, 1);
+>  
+> @@ -2893,7 +2897,10 @@ static int crypt_map(struct dm_target *t
+>  
+>  	if (cc->on_disk_tag_size) {
+>  		unsigned tag_len = cc->on_disk_tag_size * (bio_sectors(bio) >> cc->sector_shift);
+> +		unsigned old_flags;
+>  
+> +		old_flags = current->flags & PF_LESS_THROTTLE;
+> +		current->flags |= PF_LESS_THROTTLE;
+>  		if (unlikely(tag_len > KMALLOC_MAX_SIZE) ||
+>  		    unlikely(!(io->integrity_metadata = kmalloc(tag_len,
+>  				GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN)))) {
+> @@ -2902,6 +2909,7 @@ static int crypt_map(struct dm_target *t
+>  			io->integrity_metadata = mempool_alloc(&cc->tag_pool, GFP_NOIO);
+>  			io->integrity_metadata_from_pool = true;
+>  		}
+> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
+>  	}
+>  
+>  	if (crypt_integrity_aead(cc))
+
+-- 
+Michal Hocko
+SUSE Labs
