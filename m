@@ -2,119 +2,99 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD6DC6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BDEC6778B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC09427880
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC09427880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id DB2CA277E4
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:01:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bmGS9G/J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2CA277E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936745AbeF2Q4a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:56:30 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:35262 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbeF2Q43 (ORCPT
+        id S936751AbeF2RBX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 13:01:23 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41906 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753436AbeF2RBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:56:29 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fYwh6-0002bk-5Y; Fri, 29 Jun 2018 12:56:24 -0400
-Message-ID: <1530291383.16379.6.camel@surriel.com>
-Subject: Re: [PATCH 2/7] x86,tlb: leave lazy TLB mode at page table free time
-From:   Rik van Riel <riel@surriel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, mingo@kernel.org,
-        kernel-team@fb.com, tglx@linutronix.de, efault@gmx.de,
-        songliubraving@fb.com, hpa@zytor.com
-Date:   Fri, 29 Jun 2018 12:56:23 -0400
-In-Reply-To: <75090b06-fd6f-eeaa-4cb8-8373673c8a5d@linux.intel.com>
-References: <20180629142918.26601-1-riel@surriel.com>
-         <20180629142918.26601-3-riel@surriel.com>
-         <75090b06-fd6f-eeaa-4cb8-8373673c8a5d@linux.intel.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-+maaLCvcuMBij16/K25k"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Fri, 29 Jun 2018 13:01:21 -0400
+Received: by mail-lj1-f195.google.com with SMTP id a17-v6so4723913ljd.8
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 10:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BuRAUWq7O2zLXqV2NWRnZ70tza/xOBEVCO/2+vpJ/MI=;
+        b=bmGS9G/Jvsl2uNuDdfDhoxztt7r1nF4bNn6hQhQRevjFXLetiGEp9hkioSbLhE+c0c
+         tC3bruycUJh7qLlM4vduVQWTvHyAbSW/pRqx72SxUB5ThE+1PP+QGQnY9wIAMO/X42yj
+         B1G4KLYyzlYZmoYJ6QO/8hTOFD4GKUqgu1TPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BuRAUWq7O2zLXqV2NWRnZ70tza/xOBEVCO/2+vpJ/MI=;
+        b=QnDmV2KX6VXeEjZEYJTaUnrEtI5UwgSfUFfzo5V9WTUWPRHQljGMy+7sNWfGrt/1H2
+         tUeUsp52D2UraDeACaIMcnFL6RHK49tKJSySc9wy/HBrdU8AwsmatqlRjS8LQQOj7DiC
+         PrZ96FQCTIL5+pRUd8rCV2mWIRTBfXvaGi1fBCzuwhkTN7ntcQCkwqiX1CepFLANJCY7
+         EXbvhyd1WjGf+LAr4ac6xSuiPFm50r5Grc6UrJt+fgkU6kgCnbtavGHLWoc4bXnsiAzo
+         xgzCmATDPi0iYB3fLYDs3JP6WgQkjolaBJKO9Jik/Jm2W/BpYekLf8h8Ktxm3wiZclhM
+         xTjw==
+X-Gm-Message-State: APt69E1mbTa25ZmiVNhH/yhQpoVdm5apQs8NM3PQC3GZ1UYLkE6rwI9i
+        AlDj/fcSKWiITastdmTlkxe35g==
+X-Google-Smtp-Source: AAOMgpfal2OUXc58BYvG9PZ2qE2gsmUM2AcQ8cXyuodNP7vJy9SgvpcBGFLVC4V+zVe0kZdLwD9B+w==
+X-Received: by 2002:a2e:85d5:: with SMTP id h21-v6mr3429958ljj.103.1530291680328;
+        Fri, 29 Jun 2018 10:01:20 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id f38-v6sm1597066lji.87.2018.06.29.10.01.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Jun 2018 10:01:19 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rpmsg: smd: Add missing include of sizes.h
+Date:   Fri, 29 Jun 2018 19:01:01 +0200
+Message-Id: <20180629170101.16255-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add missing include of sizes.h.
 
---=-+maaLCvcuMBij16/K25k
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+drivers/rpmsg/qcom_smd.c: In function ‘qcom_smd_channel_open’:
+drivers/rpmsg/qcom_smd.c:809:36: error: ‘SZ_4K’ undeclared (first use in this function)
+  bb_size = min(channel->fifo_size, SZ_4K);
+                                    ^~~~~
 
-On Fri, 2018-06-29 at 09:39 -0700, Dave Hansen wrote:
-> On 06/29/2018 07:29 AM, Rik van Riel wrote:
-> > The latter problem can be prevented in two ways. The first is to
-> > always send a TLB shootdown IPI to CPUs in lazy TLB mode, while
-> > the second one is to only send the TLB shootdown at page table
-> > freeing time.
->=20
-> I've read this a few times, and I keep having to remind myself why we
-> "always send a TLB shootdown IPI to CPUs in lazy TLB mode".  It's not
-> strictly CPUs in lazy TLB mode, right?  It's just the one that are in
-> lazy TLB mode _and_ using the mm from which we are freeing page
-> tables.
->=20
-> If you revise these again, would it make sense to add a little blurb
-> like:
->=20
-> 	CPUs in lazy TLB mode are using the "wrong" page tables,
-> 	generally from a process's mm while running true kernel code
-> 	like the idle task.  This is just as problematic when freeing
-> 	page tables from that mm as a real non-lazy user of the page
-> 	tables would be.
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/rpmsg/qcom_smd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If we get to a v4, I will do that.
-
-> > The second should result in fewer IPIs, since operationgs like
-> > mprotect and madvise are very common with some workloads, but
-> > do not involve page table freeing. Also, on munmap, batching
-> > of page table freeing covers much larger ranges of virtual
-> > memory than the batching of unmapped user pages.
->=20
-> Doesn't this also result in fewer IPIs because it *removes* the
-> processor from the mm_cpumask(mm) and won't send IPIs to it any more?
-> As it stood before, we'd IPI a lazy CPU over and over, but this way
-> we
-> just do it once, switch to another mm, and never touch for this mm
-> again
-> (unless that CPU becomes non-lazy and switches to that mm again).
-
-With this patch series, we never remove a CPU from
-the mm_cpumask(mm) while in lazy TLB mode, but we=20
-also do not send TLB shootdowns too CPUs in lazy TLB
-mode, unless we are freeing page tables - when that
-happens, the CPU will remove itself from the mm_cpumask.
-
---=20
-All Rights Reversed.
---=-+maaLCvcuMBij16/K25k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAls2ZLcACgkQznnekoTE
-3oOFBQf+J3jNdDfT64L+/rk1Y9ioufhBq24m8BQ7F3xn6ZxXI4iQ+I2S8Xti70BB
-9elCkyZvr1McY9SK36g4qeFK6/FaTDeXdOEmc0phSzIiNSenQdJ+gkE3l+vX/yTS
-oiFuLoBW6DbveeQXMTEYJkpCHUUnsnRgzbXvezmE7241CCBFi6GzfmEMqhoPAcXv
-Zt+HbmBYTEH7B2BAg3IgGVtRPeGuI9K9C1eaTAoLqw9DBitkO44OUbxkdjXSaDge
-/uHdowqM0GKDViBFmaABzDsCft/cQD6cNdLQsWiRI5YpOwpv+HZW3wvJB3gKQQbV
-bZSd8Zy8gmtdzn8cfQ2e5aCHkUnbqw==
-=p9Vf
------END PGP SIGNATURE-----
-
---=-+maaLCvcuMBij16/K25k--
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 6437bbeebc91..8695cb041c31 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/sched.h>
++#include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/wait.h>
+-- 
+2.17.1
 
