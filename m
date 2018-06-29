@@ -2,232 +2,122 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CA3C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81A2C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 137072806B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:33:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84CA228071
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hs9RpLIk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Hs9RpLIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137072806B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EgGP/KiZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CA228071
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965758AbeF2Pc7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:32:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45080 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965231AbeF2Pc4 (ORCPT
+        id S966076AbeF2PgJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:36:09 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43658 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753318AbeF2PgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:32:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EDBD360B24; Fri, 29 Jun 2018 15:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530286375;
-        bh=ccH2mBfnbIzEUMg+vzmr2MhbuQLEOgjPXDUZEA1aB80=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Hs9RpLIk5hC9ttMxP1EYHFpE7njtgVPW2CsjLr4exUbaqF2DesyDZ/ugQ0+R398X9
-         3Og+yqJhdlZw8OEd7TvGznWFbnCmwmmogosE35Lx5BKEiTYwq6khG/ORyyuBX2eFK+
-         RfiXZPXUhzPO8EPlC34bpd1kfm+aJJk/tCGBhi5o=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id EC19960711;
-        Fri, 29 Jun 2018 15:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530286375;
-        bh=ccH2mBfnbIzEUMg+vzmr2MhbuQLEOgjPXDUZEA1aB80=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Hs9RpLIk5hC9ttMxP1EYHFpE7njtgVPW2CsjLr4exUbaqF2DesyDZ/ugQ0+R398X9
-         3Og+yqJhdlZw8OEd7TvGznWFbnCmwmmogosE35Lx5BKEiTYwq6khG/ORyyuBX2eFK+
-         RfiXZPXUhzPO8EPlC34bpd1kfm+aJJk/tCGBhi5o=
+        Fri, 29 Jun 2018 11:36:06 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5TFZweY026546;
+        Fri, 29 Jun 2018 10:35:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530286558;
+        bh=obJSGThw7Yq/ZleoBGB6MTxPf0hoqhCyDaXF+ZzNZmY=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=EgGP/KiZdTwQVTAN/tHcKa97OukwX+IrwjTitiZgDsVFZZe4PsBIymoR7YcHx6x/a
+         q2dYrbfQ8WJ6M+KlZBehlIsgIaoTYkxtj0pUMJj0SMXqV1S2MedVg6/53uB0KgpTMn
+         9ej2uxrcFfmmf3zROdoQHKo/imcwi0rXzBHFFWRk=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5TFZwE9021037;
+        Fri, 29 Jun 2018 10:35:58 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 29
+ Jun 2018 10:35:58 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 29 Jun 2018 10:35:58 -0500
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5TFZwhj031772;
+        Fri, 29 Jun 2018 10:35:58 -0500
+Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.149.121])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id w5TFZvx17694;
+        Fri, 29 Jun 2018 10:35:58 -0500 (CDT)
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH net-next v2 2/2] net: phy: DP83TC811: Fix SGMII enable/disable
+Date:   Fri, 29 Jun 2018 10:35:46 -0500
+Message-ID: <20180629153546.24107-2-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
+In-Reply-To: <20180629153546.24107-1-dmurphy@ti.com>
+References: <20180629153546.24107-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 29 Jun 2018 21:02:54 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, rtatiya@codeaurora.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v8 3/7] Bluetooth: btqca: Redefine qca_uart_setup() to
- generic function.
-In-Reply-To: <20180626195322.GO129942@google.com>
-References: <20180625134013.19684-1-bgodavar@codeaurora.org>
- <20180625134013.19684-4-bgodavar@codeaurora.org>
- <20180625232057.GH129942@google.com>
- <2ed980b7cd83a87dd76b05a4bca014ce@codeaurora.org>
- <20180626195322.GO129942@google.com>
-Message-ID: <aef5aa597133c47651d4e258fea41067@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+If SGMII was selected in the DT then the device should
+write the SGMII enable bit.
 
-On 2018-06-27 01:23, Matthias Kaehlcke wrote:
-> On Tue, Jun 26, 2018 at 06:53:47AM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2018-06-26 04:50, Matthias Kaehlcke wrote:
->> > On Mon, Jun 25, 2018 at 07:10:09PM +0530, Balakrishna Godavarthi wrote:
->> > > Redefinition of qca_uart_setup will help future Qualcomm Bluetooth
->> > > SoC, to use the same function instead of duplicating the function.
->> > > Added new arguments soc_type and soc_ver to the functions.
->> > >
->> > > These arguments will help to decide type of firmware files
->> > > to be loaded into Bluetooth chip.
->> > > soc_type holds the Bluetooth chip connected to APPS processor.
->> > > soc_ver holds the Bluetooth chip version.
->> > >
->> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > ---
->> > > Changes in v8:
->> > >     * updated soc_type with enum.
->> > >
->> > > Changes in v7:
->> > >     * initial patch
->> > >     * redefined qca_uart_setup function to generic.
->> > > ---
->> > >  drivers/bluetooth/btqca.c   | 23 ++++++++++++-----------
->> > >  drivers/bluetooth/btqca.h   | 13 +++++++++++--
->> > >  drivers/bluetooth/hci_qca.c |  3 ++-
->> > >  3 files changed, 25 insertions(+), 14 deletions(-)
->> > >
->> > > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
->> > > index c5cf9cab438a..3b25be1be19c 100644
->> > > --- a/drivers/bluetooth/btqca.c
->> > > +++ b/drivers/bluetooth/btqca.c
->> > > @@ -327,9 +327,9 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev,
->> > > const bdaddr_t *bdaddr)
->> > >  }
->> > >  EXPORT_SYMBOL_GPL(qca_set_bdaddr_rome);
->> > >
->> > > -int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate)
->> > > +int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
->> > > +		   enum qca_btsoc_type soc_type, u32 soc_ver)
->> > >  {
->> > > -	u32 rome_ver = 0;
->> > >  	struct rome_config config;
->> > >  	int err;
->> > >
->> > > @@ -337,19 +337,20 @@ int qca_uart_setup(struct hci_dev *hdev,
->> > > uint8_t baudrate)
->> > >
->> > >  	config.user_baud_rate = baudrate;
->> > >
->> > > -	/* Get QCA version information */
->> > > -	err = qca_read_soc_version(hdev, &rome_ver);
->> > > -	if (err < 0 || rome_ver == 0) {
->> > > -		bt_dev_err(hdev, "QCA Failed to get version %d", err);
->> > > -		return err;
->> > > +	if (!soc_ver) {
->> > > +		/* Get QCA version information */
->> > > +		err = qca_read_soc_version(hdev, &soc_ver);
->> > > +		if (err < 0 || soc_ver == 0) {
->> > > +			bt_dev_err(hdev, "QCA Failed to get version (%d)", err);
->> > > +			return err;
->> > > +		}
->> > > +		bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
->> > >  	}
->> >
->> > I thought we agreed in the discussion on "[v7,4/8] Bluetooth: btqca:
->> > Redefine qca_uart_setup() to generic function" to call
->> > qca_read_soc_version() in common code. Did I misinterpret that?
->> >
->> [Bala]: After integrating wcn3990, calling qca_read_soc_version() in
->> qca_setup()
->>         is not preferable. as we will have multiple common blocks of 
->> code in
->> qca_setup.
->>         calling function to set an operator speed is required in the 
->> both
->> the if -else blcoks
-> 
-> We can probably agree that there is no ideal solution, there is some
-> ugliness in on way or the other. IMO the conditional
-> qca_read_soc_version() in qca_uart_setup() based on the vale of
-> 'soc_ver' is far worse than a small piece of redundant code.
-> 
-> If qca_read_soc_version() was done in qca_setup() the code could look
-> something like this:
-> 
-> static int qca_setup(struct hci_uart *hu)
-> {
-> 	...
-> 	if (qcadev->btsoc_type == QCA_WCN3990) {
-> 		...
-> 		qca_read_soc_version();
-> 		ret = qca_set_speed(hu, QCA_OPER_SPEED);
->                 if (ret)
->                         return ret;
-> 	} else {
-> 		ret = qca_set_speed(hu, QCA_OPER_SPEED);
->                 if (ret)
->                         return ret;
->                 qca_read_soc_version();
-> 	}
-> 
-> 	speed = qca_get_speed(hu, QCA_OPER_SPEED);
-> 	qca_baudrate = qca_get_baudrate_value(speed);
-> 
-> 	 /* Setup patch / NVM configurations */
->         ret = qca_uart_setup(hdev, qca_baudrate, qcadev->btsoc_type, 
-> soc_ver);
-> 	...
-> }
-> 
-> Yes, 'qca_set_speed(hu, QCA_OPER_SPEED)' and the error handling is
-> redundant, but it's only 3 lines of trivial code in exchange for
-> making qca_uart_setup() more consistent and not spreading
-> the qca_read_soc_version() calls over multiple files, depending on the
-> SoC version.
-> 
-> If you are super-convinced that the split is superior leave it as is,
-> I might already be doing too much bike-shedding, and after all it
-> isn't my code.
-> 
+If SGMII is not selected in the DT then the SGMII bit
+should be disabled.
 
-[Bala]: not a problem. will update as suggested.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
->> > > diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
->> > > index 5c9851b11838..24d6667eecf1 100644
->> > > --- a/drivers/bluetooth/btqca.h
->> > > +++ b/drivers/bluetooth/btqca.h
->> > > ...
->> > > -static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t
->> > > baudrate)
->> > > +static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t
->> > > baudrate,
->> > > +				 enum qca_btsoc_type soc_type, u32 soc_ver);
->> >
->> > Remove trailing semicolon.
->> 
->> [Bala]: i didn't get you.
-> 
-> Sorry, I should have left more context:
-> 
->> static inline int qca_uart_setup(struct hci_dev *hdev, uint8_t 
->> baudrate,
->> 				 enum qca_btsoc_type soc_type, u32 soc_ver);
->> {
->> 	return -EOPNOTSUPP;
->> }
-> 
-> This is a function definition, not just a declaration. The semicolon
-> would make it a declaration and make the compiler unhappy about a
-> function body where it doesn't expect it.
+v2 - Removed erroneous defconfig addtion in the patch.
 
-[Bala]: i will update.
+ drivers/net/phy/dp83tc811.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
+diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
+index f8653f5d8789..78cad134a79e 100644
+--- a/drivers/net/phy/dp83tc811.c
++++ b/drivers/net/phy/dp83tc811.c
+@@ -284,21 +284,19 @@ static int dp83811_config_init(struct phy_device *phydev)
+ 	if (err < 0)
+ 		return err;
+ 
++	value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
+ 	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
+-		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
+-		if (!(value & DP83811_SGMII_EN)) {
+-			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+ 					(DP83811_SGMII_EN | value));
+-			if (err < 0)
+-				return err;
+-		} else {
+-			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+-					(~DP83811_SGMII_EN & value));
+-			if (err < 0)
+-				return err;
+-		}
++	} else {
++		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++				(~DP83811_SGMII_EN & value));
+ 	}
+ 
++	if (err < 0)
++
++		return err;
++
+ 	value = DP83811_WOL_MAGIC_EN | DP83811_WOL_SECURE_ON | DP83811_WOL_EN;
+ 
+ 	return phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG,
 -- 
-Regards
-Balakrishna.
+2.17.0.582.gccdcbd54c
+
