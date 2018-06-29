@@ -3,121 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0387C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0ECC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E5523E23
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82988204EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbFQT+9s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E5523E23
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQc3fgt6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82988204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937399AbeF2UmQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:42:16 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:45911 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754453AbeF2UmO (ORCPT
+        id S937420AbeF2Uni (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:43:38 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37180 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932119AbeF2Ung (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:42:14 -0400
-Received: by mail-ot0-f194.google.com with SMTP id k3-v6so11266914otl.12
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 13:42:14 -0700 (PDT)
+        Fri, 29 Jun 2018 16:43:36 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g21-v6so7697613lfb.4;
+        Fri, 29 Jun 2018 13:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=5TJVGt/+q9iQ0OrmDP8z63hOFyc3OPIhbvop/RPCDgA=;
-        b=WbFQT+9sBQVrCwNuWZEdSaEBERPdfx4XF0OFwu0KYA8E58wqXKkvJtP2uH0mdJEIpA
-         cpODbHZy5lbzbwAaI4JTf/YZy2/X1/rXJ3EAXlr0vH7iNlhNgPhWqVhK8WpE93jqoS/Q
-         oPQaQdHREEVt1hLKWKrWuGtDKLwtc/8pYz2zcEaE0n25Zpu475AEsuWGPEfuYkITju/Y
-         Hjaf5SOY/io392T+mJsyG7PX4FVDv43vEwFBbrVP4QKPkVekQr+lP4SpxGr3u1B3tjTs
-         fyzgEMv2xU9MwY+7ZUOrX0qnxsmPZRtp8GRhOqsxeXAk4f3MwRW52x/GOzlPaxBgsKsA
-         qS1A==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=deIU8Q7YXT3lVZMXyASHEU0pPu8YXogke+JaVTqTzS0=;
+        b=eQc3fgt6+3dCrUQRuIQ5hhIdvjThbmE9QSYL1rXnLxx+aGlDszEFSX99PFlowCJjcp
+         yniDuDf8iFmJylfxYpktPhayP3SdCyog7ta6PPK+r726abnNxrvDYr60DY7QyqlircoP
+         yV1CQA0CmEP8gHL+75y6l5w6OFSf+i9SAIN4vTVJvSaF2llohJWeKmys3q4U4wJt3IIh
+         tSDGREly72LqtT0V+7itwZgSKMtKfkngZKwkO4QUWkxDRRDMziOrOOggnXT5q1WemDS5
+         k3Y1iyIpvb1cB2RxpeWk1Sxo5UpShjO3tjGY04C5uODI3/OFaZyY1047YZmUd1+dmzUT
+         3kEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:subject:to:cc:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=5TJVGt/+q9iQ0OrmDP8z63hOFyc3OPIhbvop/RPCDgA=;
-        b=Zzxa6oop4v6H+zNZSLP2yRezuHpwM6Cgv8TvIGI9jnyOyMSSnsKqWbrt53ZeeYazLr
-         rKcetVN5IjeNLZkG58VgASV+ot7hq1Xl96SzwUygI214YxlTs8oGkqf2vT8Bw/TFuxmw
-         zDtJSaiQcdaqtK85wzoWAFuobadJFLCc1ROJU8Q3KUBHi4JEGjjTmg3yoRcY/rP0t+Qe
-         vjyOGLvxCtSYOxo2EYqeIjBDuZCwfa/gsphbqW+NRpMFFEyFREvj5fXMGk0gMA+f4kQj
-         Tx4ocLp/o7ItvCSq02I7ZcHy8G7+CM0A9uwj52MHVfz64w7ZWr+jkszExORoRrvlHVdf
-         wftw==
-X-Gm-Message-State: APt69E2E0D/d0fun0v18yXNGyKEfxVrOAH/ee0YlHVp3MhEcT10D96p6
-        qifZPrcwpQO8os0XAJMeWFgmAw==
-X-Google-Smtp-Source: AAOMgpeQVIIftirPJZirjXMzUEbF2tnAVat57dfD7Qxrg/9INgD5FtiWEDpN6WnoFa9ZStPhBoQj/A==
-X-Received: by 2002:a9d:6314:: with SMTP id q20-v6mr10502970otk.12.1530304934344;
-        Fri, 29 Jun 2018 13:42:14 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-253-228.kc.res.rr.com. [24.31.253.228])
-        by smtp.gmail.com with ESMTPSA id t196-v6sm5314201oie.1.2018.06.29.13.42.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Jun 2018 13:42:13 -0700 (PDT)
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [Update] Regression in 4.18 - 32-bit PowerPC crashes on boot -
- bisected to commit 1d40a5ea01d5
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-Message-ID: <99169786-61dd-b19c-ac81-84bcd0a67de4@lwfinger.net>
-Date:   Fri, 29 Jun 2018 15:42:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=deIU8Q7YXT3lVZMXyASHEU0pPu8YXogke+JaVTqTzS0=;
+        b=p5o6dlkZmbDf/GpSRO8PS9SU/iKTcUJ0ssvHoqdSzvdwZ3loPR63epzkLhB06vj2t8
+         aNnGY+UGQciisftyFFlEFRpqZJZ/g9UASFy5YYHUfrkNErq37v1dt3cD1bL63cyeMP09
+         CPMItNdF3NsS+3tx/FAfk13VLP+QbgF69z8q4MBExMUczrmdP7sjoK3zckKfY5kqz5bq
+         M0c1MQr5cH5FZC4tBYgup8xTuV8VXKKYRFPxJAQh0uEZBZPpv2RhhtC1piR6TJPtnolT
+         c7sA9XYSijV5cvXPRzrp9jwZse1paBWjCQj49b9iGulEsPwPgyJesCltdfYRz/lqQ3+p
+         C94w==
+X-Gm-Message-State: APt69E1bgyDFKSEmPT+PX+1kz4aqVFx7ufv0WDM0wYcr+uvGWafCXzDy
+        5tiBxN82+SytXOR0IRstqN6aVLvdzQ18NjeUeBk=
+X-Google-Smtp-Source: AAOMgpcpWkkf/p2UjbfWTsJXmG3k4mjiS5rxnn4lYKWGxcHDWiRkQc3JEzQk7s/H1OtZ9LW3RZdCM70sU1cAsOADJ3k=
+X-Received: by 2002:a19:c203:: with SMTP id l3-v6mr11382104lfc.55.1530305014892;
+ Fri, 29 Jun 2018 13:43:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 13:43:34
+ -0700 (PDT)
+In-Reply-To: <20180629002843.31095-5-keescook@chromium.org>
+References: <20180629002843.31095-1-keescook@chromium.org> <20180629002843.31095-5-keescook@chromium.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 29 Jun 2018 22:43:34 +0200
+X-Google-Sender-Auth: zSobpIYxLKeeJpEQTR7lia26FMA
+Message-ID: <CAK8P3a3F2y8B3a5zhYyG2KSMmSx5L3J3C_0sV-Csa0zPOzYJhA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] dm integrity: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My PowerBook G4 Aluminum crashes on boot with 4.18-rcX kernels with a kernel BUG 
-at include/linux/page-flags.h:700! The problem was bisected to commit 
-1d40a5ea01d5 ("mm: mark pages in use for page tables"). It is not possible to 
-capture the bug with anything other than a camera. The first few lines of the 
-traceback are as follows:
+On Fri, Jun 29, 2018 at 2:28 AM, Kees Cook <keescook@chromium.org> wrote:
 
-free_pgd_range+0x19c/0x30c (unreliable)
-free_pgtables_0xa0/0xb0
-exit_pmap+0xf4/0x16c
-mmput+0x64/0xf0
-do_exit+0x33c/0x89c
-oops_end+0x13c/0x144
-_exception_pkey+0x58/0x128
-ret_from_except_full+0x0/0x4
---- interrupt: 700 at free_pgd_range+0x19c/0x30c
-     LR = free_pgd_range+0x19c/0x30c
-free_pgtables+0xa/0xb
-exit_mnap+0xf4/0x16c
-mmput+0x64/0xf0
-flush_old_exec+0x490/0x550
+> diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
+> index 86438b2f10dd..85e8ce1625a2 100644
+> --- a/drivers/md/dm-integrity.c
+> +++ b/drivers/md/dm-integrity.c
+> @@ -521,7 +521,12 @@ static void section_mac(struct dm_integrity_c *ic, unsigned section, __u8 result
+>                 }
+>                 memset(result + size, 0, JOURNAL_MAC_SIZE - size);
+>         } else {
+> -               __u8 digest[size];
+> +               __u8 digest[SHASH_MAX_DIGESTSIZE];
+> +
+> +               if (WARN_ON(size > sizeof(digest))) {
+> +                       dm_integrity_io_error(ic, "digest_size", -EINVAL);
+> +                       goto err;
+> +               }
 
-I have more information regarding this BUG. Line 700 of page-flags.h is the 
-macro PAGE_TYPE_OPS(Table, table). For further debugging, I manually expanded 
-the macro, and found that the bug line is VM_BUG_ON_PAGE(!PageTable(page), page) 
-in routine __ClearPageTable(), which is called from pgtable_page_dtor() in 
-include/linux/mm.h. I also added a printk call to PageTable() that logs 
-page->page_type. The routine was called twice. The first had page_type of 
-0xfffffbff, which would have been expected for a . The second call had 
-0xffffffff, which led to the BUG.
+I'm still slightly worried that some patches like this one could make
+things worse
+and lead to an actual stack overflow. You define SHASH_MAX_DIGESTSIZE
+as '512', which is still quite a lot to put on the kernel stack. The
+function also
+uses SHASH_DESC_ON_STACK(), so now you have two copies. Then you
+could call shash_final_unaligned(), which seems to put a third copy on
+the stack,
+so replacing each one with a fixed-size buffer adds quite a bit of bloat.
 
-Larry
+Is there actually a digest that can be used in dm-integrity with more than 64
+byte output (matching JOURNAL_MAC_SIZE) here?
+
+       Arnd
