@@ -2,80 +2,106 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF8CC6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD7CC6778B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025282524E
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025282524E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 86D0F2525C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:35:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h6Ouwcwk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D0F2525C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967026AbeF2Qd7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:33:59 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10183 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967002AbeF2Qd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:33:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:33:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,286,1526367600"; 
-   d="scan'208";a="241400989"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2018 09:33:55 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.236]) by
- ORSMSX107.amr.corp.intel.com ([169.254.1.167]) with mapi id 14.03.0319.002;
- Fri, 29 Jun 2018 09:33:55 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     "Hansen, Dave" <dave.hansen@intel.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: RE: [PATCH v2 3/4] x86/split_lock: Handle #AC exception for split
- lock
-Thread-Topic: [PATCH v2 3/4] x86/split_lock: Handle #AC exception for split
- lock
-Thread-Index: AQHUD7ZVOfJcmIggnkquFQaZQyzL7KR34oGA//+LEfA=
-Date:   Fri, 29 Jun 2018 16:33:54 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D348C9A@ORSMSX110.amr.corp.intel.com>
-References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-4-git-send-email-fenghua.yu@intel.com>
- <f528ef21-0e6f-3c76-5fac-bd88279facc0@intel.com>
-In-Reply-To: <f528ef21-0e6f-3c76-5fac-bd88279facc0@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzMyZjQ5YzMtYmFkNS00NzRlLTk3MjEtNGM1ZWIzODZiOTE5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibFwvWWFYXC81bjh6TFFRQzNnUFBCXC9ORU1ya2gzQWU5cVZQK3hBM1g2OTFPbG91cTVpK0FIdzg4UTNtQ3JobVwvRWMifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S967047AbeF2QfG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:35:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36850 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967006AbeF2QfF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 12:35:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=iGRWW9k3PUdbvenVgd7xVPkPkxUjPaP3LaQ00bYXtno=; b=h6OuwcwkK1AGazEC9iELK/a3Q4
+        wVyb8rS+0e9UeFl4/hY3FNE3CB8v4dU6wRytr63mje1Se9ADqrFxtEG/eQ1cXlDTs3PMQsX3d/vbf
+        aPLwC8/8AvG6QGFOxhW9WoyQBn0BDyfikwwSEvoi8H6XUDvKlgCvnsdHaHlp79+d0z0IurZxAZZeC
+        vMSfcVdKUcifIW2FBb6pTZyqoRViy1shHHQVmcMtGb4CrxN+NWQKAfRlYMHZdEDJ8BqKPPJtUWZv5
+        N7N+k0lP847pKearVsDvpWGP3qaiiRwUU18qhwGq7tmkosG4Cy3R9LppvCKg57Rt6WIlWv3RrI9Xh
+        iY8XGZmQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fYwMP-0001WT-Fj; Fri, 29 Jun 2018 16:35:02 +0000
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
+Date:   Fri, 29 Jun 2018 09:34:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pj4gKwlXQVJOX09OQ0UoMSwgIkEgc3BsaXQgbG9jayBpc3N1ZSBpcyBkZXRlY3RlZC4gUGxlYXNl
-IEZJWCBpdFxuIik7DQo+DQo+IEJ1dCwgd2FybmluZyBoZXJlIGlzIGFsc28gbm90IHN1cGVyIHVz
-ZWZ1bC4gIFNob3VsZG4ndCB3ZSBiZSBkdW1waW5nIG91dA0KPiB0aGUgaW5mbyBpbiAncmVncycg
-aW5zdGVhZCBvZiB0aGUgY3VycmVudCBjb250ZXh0PyAgV2UgZG9uJ3QgY2FyZSBhYm91dA0KPiB0
-aGUgc3RhdGUgaW4gdGhlICNBQyBoYW5kbGVyLCB3ZSBjYXJlIGFib3V0ICdyZWdzJy4NCg0KTWF5
-YmU6DQoNCglXQVJOX09OQ0UoMSwgInNwbGl0IGxvY2sgZGV0ZWN0ZWQgYXQgJXBGXG4iLCByZWdz
-W0VJUF0pOw0KDQotVG9ueQ0K
+On 06/29/2018 06:42 AM, Mike Rapoport wrote:
+> Otherwise mm configuration options show up in the top level menu.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+
+Hi Mike,
+
+In which config tool does this matter?
+
+For xconfig, it seems to me that this patch hides the MM menu, whereas
+before this patch, the MM menu is easy to find (although it could
+use some kind of heading).
+
+
+> ---
+>  arch/arc/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index e81bcd271be7..92cf06b354a8 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -554,8 +554,6 @@ menu "Executable file formats"
+>  source "fs/Kconfig.binfmt"
+>  endmenu
+>  
+> -endmenu	 # "ARC Architecture Configuration"
+> -
+>  source "mm/Kconfig"
+>  
+>  config FORCE_MAX_ZONEORDER
+> @@ -563,6 +561,8 @@ config FORCE_MAX_ZONEORDER
+>  	default "12" if ARC_HUGEPAGE_16M
+>  	default "11"
+>  
+> +endmenu	 # "ARC Architecture Configuration"
+> +
+>  source "net/Kconfig"
+>  source "drivers/Kconfig"
+>  
+> 
+
+
+-- 
+~Randy
