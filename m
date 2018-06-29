@@ -2,267 +2,126 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5C3C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 720D1C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A416F27E48
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2146727C9F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:29:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kX13NsRR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A416F27E48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EvCOj8cS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2146727C9F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965485AbeF2U2G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:28:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937375AbeF2U1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:27:49 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5297E27E40;
-        Fri, 29 Jun 2018 20:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530304067;
-        bh=Ij5rCkkJYd2cSnw+3fi/OUPVSs6XI0ZkTJo0F//RYtw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kX13NsRRtIMNhcvlN6HV2Wf4CA/KSvpZzdUGpyeupnofGcWnz0d77jOg4Y4qhtBoN
-         VMvlACZSbHH6wKztygtrknXsjLwugytxiGJbGjvzpvzUR55ZjCZU8baAXFtWLBEERf
-         RHB41p2oIierdsayQHIaDNeHQ4qTk//S4ywDFHCk=
-Subject: [PATCH v1 2/2] PCI: Document ACPI description of PCI host bridges
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 29 Jun 2018 15:27:46 -0500
-Message-ID: <153030406630.57832.11564334393458981467.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S937387AbeF2U3E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:29:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59124 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936738AbeF2U3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 16:29:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XdqbzRM2fL4sHCREk2YqBPrG9SZT7eplLBUONwyFZgk=; b=EvCOj8cSSkftHjmQjDzWWCbco
+        pCYFBNonjrHM6lbkD76K9FpOsMRailRf0vsl/P+/g1clf2Q8vT810BMN2rO6Sq8Wcq6ZEp1jT/SHA
+        hhNsDnwr9DQKWcYK44aL7qWo2D6rRl/Jj5UHnS+G4n8O6kw4AuEYQWndYkC1kHLJpU8OTpcfJHL/1
+        UGjFTWu1JeF/zPEl53oZneako9nh/h/G+B7gMR5KraNq2Lac1welItmg9b+oql/hs5MgbPFj2sPhz
+        xD0WYIduBe7/GSaKAVIgNqs4VUORLAMDYCURUKX+ufzhEU1JdA56FpHtOQerXueYy4zWt4B1GBdBL
+        boYzOnMvA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fZ00s-0003Ji-VK; Fri, 29 Jun 2018 20:29:03 +0000
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
+ <20180629192838.GE4799@rapoport-lnx>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e18f80e1-fc59-9487-95eb-7cb6cda976c5@infradead.org>
+Date:   Fri, 29 Jun 2018 13:28:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180629192838.GE4799@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 06/29/2018 12:28 PM, Mike Rapoport wrote:
+> Hi Randy, 
+> 
+> On Fri, Jun 29, 2018 at 09:34:55AM -0700, Randy Dunlap wrote:
+>> On 06/29/2018 06:42 AM, Mike Rapoport wrote:
+>>> Otherwise mm configuration options show up in the top level menu.
+>>>
+>>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+>>
+>> Hi Mike,
+>>
+>> In which config tool does this matter?
+>>
+>> For xconfig, it seems to me that this patch hides the MM menu, whereas
+>> before this patch, the MM menu is easy to find (although it could
+>> use some kind of heading).
+> 
+> With xconfig the menu gets into the top right pane when you click on "ARC
+> architecture configuration", similar to what one gets on x86 with
+> "Processor type and features" or "Kernel features" on ARM.
+> 
+> With menuconfig it looks a bit more prominent, note that mm options are
+> between "ARC Architecture Configuration" and "Networking support":
 
-Add a writeup about how PCI host bridges should be described in ACPI
-using PNP0A03/PNP0A08 devices, PNP0C02 devices, and the MCFG table.
+I know.  I ran all 4 of menuconfig, nconfig, xconfig, and gconfig.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- Documentation/PCI/00-INDEX      |    2 
- Documentation/PCI/acpi-info.txt |  183 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 185 insertions(+)
- create mode 100644 Documentation/PCI/acpi-info.txt
+I would prefer to see Memory Management options have its own top-level
+menu, but that's a different patch.  Then menuconfig would look like this:
 
-diff --git a/Documentation/PCI/00-INDEX b/Documentation/PCI/00-INDEX
-index 0f1d1de087f1..fc6af2957e55 100644
---- a/Documentation/PCI/00-INDEX
-+++ b/Documentation/PCI/00-INDEX
-@@ -1,5 +1,7 @@
- 00-INDEX
- 	- this file
-+acpi-info.txt
-+	- info on how PCI host bridges are represented in ACPI
- MSI-HOWTO.txt
- 	- the Message Signaled Interrupts (MSI) Driver Guide HOWTO and FAQ.
- PCIEBUS-HOWTO.txt
-diff --git a/Documentation/PCI/acpi-info.txt b/Documentation/PCI/acpi-info.txt
-new file mode 100644
-index 000000000000..9b8e7b560b50
---- /dev/null
-+++ b/Documentation/PCI/acpi-info.txt
-@@ -0,0 +1,183 @@
-+	    ACPI considerations for PCI host bridges
-+
-+The general rule is that the ACPI namespace should describe everything the
-+OS might use unless there's another way for the OS to find it [1, 2].
-+
-+For example, there's no standard hardware mechanism for enumerating PCI
-+host bridges, so ACPI must describe each host bridge, the method for
-+accessing PCI config space below it, the address space windows the bridge
-+forwards to PCI, and the routing of legacy INTx interrupts.
-+
-+PCI devices *below* the host bridge generally do not need to be described
-+via ACPI because the OS can discover them via the standard PCI enumeration
-+mechanism, which uses config accesses to discover and identify the device
-+and read and size its BARs.
-+
-+ACPI resource description is done via _CRS objects of devices in the ACPI
-+namespace [2].   The _CRS is like a generalized PCI BAR: the OS can read
-+_CRS and figure out what resource is being consumed even if it doesn't have
-+a driver for the device [3].  That's important because it means an old OS
-+can work correctly even on a system with new devices unknown to the OS.
-+The new devices might not do anything, but the OS can at least make sure no
-+resources conflict with them.
-+
-+Static tables like MCFG, HPET, ECDT, etc., are *not* mechanisms for
-+reserving address space!  The static tables are for things the OS needs to
-+know early in boot, before it can parse the ACPI namespace.  If a new table
-+is defined, an old OS needs to operate correctly even though it ignores the
-+table.  _CRS allows that because it is generic and understood by the old
-+OS; a static table does not.
-+
-+If the OS is expected to manage a non-discoverable device described via
-+ACPI, that device will have a specific _HID/_CID that tells the OS what
-+driver to bind to it, and the _CRS tells the OS and the driver where the
-+device's registers are.
-+
-+PCI host bridges are PNP0A03 or PNP0A08 devices.  Their _CRS should
-+describe all the address space they consume.  This includes all the windows
-+they forward down to the PCI bus, as well as bridge registers that are not
-+forwarded to PCI.  The bridge registers include things like secondary/
-+subordinate bus registers that determine the bus range below the bridge,
-+window registers that describe the apertures, etc.  These are all
-+device-specific, non-architected things, so the only way a PNP0A03/PNP0A08
-+driver can manage them is via _PRS/_CRS/_SRS, which contain the
-+device-specific details.  The bridge registers also include ECAM space,
-+since it is consumed by the bridge.
-+
-+ACPI defines a Consumer/Producer bit to distinguish the bridge registers
-+("Consumer") from the bridge apertures ("Producer") [4, 5], but early
-+BIOSes didn't use that bit correctly.  The result is that the current ACPI
-+spec defines Consumer/Producer only for the Extended Address Space
-+descriptors; the bit should be ignored in the older QWord/DWord/Word
-+Address Space descriptors.  Consequently, OSes have to assume all
-+QWord/DWord/Word descriptors are windows.
-+
-+Prior to the addition of Extended Address Space descriptors, the failure of
-+Consumer/Producer meant there was no way to describe bridge registers in
-+the PNP0A03/PNP0A08 device itself.  The workaround was to describe the
-+bridge registers (including ECAM space) in PNP0C02 catch-all devices [6].
-+With the exception of ECAM, the bridge register space is device-specific
-+anyway, so the generic PNP0A03/PNP0A08 driver (pci_root.c) has no need to
-+know about it.  
-+
-+New architectures should be able to use "Consumer" Extended Address Space
-+descriptors in the PNP0A03 device for bridge registers, including ECAM,
-+although a strict interpretation of [6] might prohibit this.  Old x86 and
-+ia64 kernels assume all address space descriptors, including "Consumer"
-+Extended Address Space ones, are windows, so it would not be safe to
-+describe bridge registers this way on those architectures.
-+
-+PNP0C02 "motherboard" devices are basically a catch-all.  There's no
-+programming model for them other than "don't use these resources for
-+anything else."  So a PNP0C02 _CRS should claim any address space that is
-+(1) not claimed by _CRS under any other device object in the ACPI namespace
-+and (2) should not be assigned by the OS to something else.
-+
-+The PCIe spec requires the Enhanced Configuration Access Method (ECAM)
-+unless there's a standard firmware interface for config access, e.g., the
-+ia64 SAL interface [7].  A host bridge consumes ECAM memory address space
-+and converts memory accesses into PCI configuration accesses.  The spec
-+defines the ECAM address space layout and functionality; only the base of
-+the address space is device-specific.  An ACPI OS learns the base address
-+from either the static MCFG table or a _CBA method in the PNP0A03 device.
-+
-+The MCFG table must describe the ECAM space of non-hot pluggable host
-+bridges [8].  Since MCFG is a static table and can't be updated by hotplug,
-+a _CBA method in the PNP0A03 device describes the ECAM space of a
-+hot-pluggable host bridge [9].  Note that for both MCFG and _CBA, the base
-+address always corresponds to bus 0, even if the bus range below the bridge
-+(which is reported via _CRS) doesn't start at 0.
-+
-+
-+[1] ACPI 6.2, sec 6.1:
-+    For any device that is on a non-enumerable type of bus (for example, an
-+    ISA bus), OSPM enumerates the devices' identifier(s) and the ACPI
-+    system firmware must supply an _HID object ... for each device to
-+    enable OSPM to do that.
-+
-+[2] ACPI 6.2, sec 3.7:
-+    The OS enumerates motherboard devices simply by reading through the
-+    ACPI Namespace looking for devices with hardware IDs.
-+
-+    Each device enumerated by ACPI includes ACPI-defined objects in the
-+    ACPI Namespace that report the hardware resources the device could
-+    occupy [_PRS], an object that reports the resources that are currently
-+    used by the device [_CRS], and objects for configuring those resources
-+    [_SRS].  The information is used by the Plug and Play OS (OSPM) to
-+    configure the devices.
-+
-+[3] ACPI 6.2, sec 6.2:
-+    OSPM uses device configuration objects to configure hardware resources
-+    for devices enumerated via ACPI.  Device configuration objects provide
-+    information about current and possible resource requirements, the
-+    relationship between shared resources, and methods for configuring
-+    hardware resources.
-+
-+    When OSPM enumerates a device, it calls _PRS to determine the resource
-+    requirements of the device.  It may also call _CRS to find the current
-+    resource settings for the device.  Using this information, the Plug and
-+    Play system determines what resources the device should consume and
-+    sets those resources by calling the device’s _SRS control method.
-+
-+    In ACPI, devices can consume resources (for example, legacy keyboards),
-+    provide resources (for example, a proprietary PCI bridge), or do both.
-+    Unless otherwise specified, resources for a device are assumed to be
-+    taken from the nearest matching resource above the device in the device
-+    hierarchy.
-+
-+[4] ACPI 6.2, sec 6.4.3.5.1, 2, 3, 4:
-+    QWord/DWord/Word Address Space Descriptor (.1, .2, .3)
-+    General Flags: Bit [0] Ignored
-+
-+    Extended Address Space Descriptor (.4)
-+    General Flags: Bit [0] Consumer/Producer:
-+	1–This device consumes this resource
-+	0–This device produces and consumes this resource
-+
-+[5] ACPI 6.2, sec 19.6.43:
-+    ResourceUsage specifies whether the Memory range is consumed by
-+    this device (ResourceConsumer) or passed on to child devices
-+    (ResourceProducer).  If nothing is specified, then
-+    ResourceConsumer is assumed.
-+
-+[6] PCI Firmware 3.2, sec 4.1.2:
-+    If the operating system does not natively comprehend reserving the
-+    MMCFG region, the MMCFG region must be reserved by firmware.  The
-+    address range reported in the MCFG table or by _CBA method (see Section
-+    4.1.3) must be reserved by declaring a motherboard resource.  For most
-+    systems, the motherboard resource would appear at the root of the ACPI
-+    namespace (under \_SB) in a node with a _HID of EISAID (PNP0C02), and
-+    the resources in this case should not be claimed in the root PCI bus’s
-+    _CRS.  The resources can optionally be returned in Int15 E820 or
-+    EFIGetMemoryMap as reserved memory but must always be reported through
-+    ACPI as a motherboard resource.
-+
-+[7] PCI Express 4.0, sec 7.2.2:
-+    For systems that are PC-compatible, or that do not implement a
-+    processor-architecture-specific firmware interface standard that allows
-+    access to the Configuration Space, the ECAM is required as defined in
-+    this section.
-+
-+[8] PCI Firmware 3.2, sec 4.1.2:
-+    The MCFG table is an ACPI table that is used to communicate the base
-+    addresses corresponding to the non-hot removable PCI Segment Groups
-+    range within a PCI Segment Group available to the operating system at
-+    boot. This is required for the PC-compatible systems.
-+
-+    The MCFG table is only used to communicate the base addresses
-+    corresponding to the PCI Segment Groups available to the system at
-+    boot.
-+
-+[9] PCI Firmware 3.2, sec 4.1.3:
-+    The _CBA (Memory mapped Configuration Base Address) control method is
-+    an optional ACPI object that returns the 64-bit memory mapped
-+    configuration base address for the hot plug capable host bridge. The
-+    base address returned by _CBA is processor-relative address. The _CBA
-+    control method evaluates to an Integer.
-+
-+    This control method appears under a host bridge object. When the _CBA
-+    method appears under an active host bridge object, the operating system
-+    evaluates this structure to identify the memory mapped configuration
-+    base address corresponding to the PCI Segment Group for the bus number
-+    range specified in _CRS method. An ACPI name space object that contains
-+    the _CBA method must also contain a corresponding _SEG method.
 
+
+│ │        *** Compiler: arc-linux-gcc (GCC) 8.1.0 ***                  │ │  
+  │ │        General setup  --->                                          │ │  
+  │ │    [*] Enable loadable module support  --->                         │ │  
+  │ │    [*] Enable the block layer  --->                                 │ │  
+  │ │        ARC Architecture Configuration  --->                         │ │  
+  │ │        Memory Management options  --->                              │ │  
+  │ │    (11) Maximum zone order                                          │ │  
+  │ │    [*] Networking support  --->                                     │ │  
+  │ │        Device Drivers  --->                                         │ │  
+  │ │        Bus Support  ---> 
+
+
+but that "Maximum zone order" needs to be moved or taken care of somehow.
+
+
+[snip]
+
+> 
+> 
+> 
+>>>  	default "12" if ARC_HUGEPAGE_16M
+>>>  	default "11"
+>>>  
+>>> +endmenu	 # "ARC Architecture Configuration"
+>>> +
+>>>  source "net/Kconfig"
+>>>  source "drivers/Kconfig"
+
+
+thanks,
+-- 
+~Randy
