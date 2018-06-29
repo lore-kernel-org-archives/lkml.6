@@ -2,144 +2,99 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BAFC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77134C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB90216FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:46:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DB90216FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A3732455C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:47:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Op2XlFEa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3732455C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937449AbeF2UqR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:46:17 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38114 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935900AbeF2UqP (ORCPT
+        id S937457AbeF2Urf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:47:35 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42570 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932267AbeF2Ure (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:46:15 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TKiYXN086165
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 16:46:14 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwtatuwft-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 16:46:14 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Fri, 29 Jun 2018 21:46:12 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 29 Jun 2018 21:46:09 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TKk8pK17367210
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 29 Jun 2018 20:46:08 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E12D1AE053;
-        Fri, 29 Jun 2018 21:45:58 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E3475AE055;
-        Fri, 29 Jun 2018 21:45:57 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.81])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 29 Jun 2018 21:45:57 +0100 (BST)
-Date:   Fri, 29 Jun 2018 23:46:05 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-mm@kvack.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH/RFC] mm: do not drop unused pages when userfaultd is
- running
-References: <20180628123916.96106-1-borntraeger@de.ibm.com>
- <a2602470-a2b8-adc5-5057-fc8f489ab949@de.ibm.com>
+        Fri, 29 Jun 2018 16:47:34 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k20-v6so8273280ljk.9;
+        Fri, 29 Jun 2018 13:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=rdwyYOzdLbspHFBuENph95V8uA3aWgiXDzXshuhApas=;
+        b=Op2XlFEaRhSgQOBMJLjXHure7ab7y0VIFXq66wHcknW2+RJOVvgpgN1W5bK3bI/Gl4
+         6ooOMV9sQCyCFMgJxAMZyLEKd+QGimHxF7b/VKIDICOYvXXXAf3hcR4zAWxfCKcXgxGW
+         kniKgV3Q4Gp0N5Ar6QEimxxLk7nPUWm8l/lzeGQyH9+eLm2osMKUa66rHZxYhlN0xubt
+         +Z6zpGP6ZlanpTUv3XM5yhGfyyQRBUgZJl7TOr8vR4JnjtiP3X6Bt2/Gf9p6dl3inKc2
+         Fe/1T9XNposKZIav10qYlRGsuBzuAv/jahgVyKa4kcKGb6hg9fE/aVPrt9Zjj0YaqdtL
+         N0/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=rdwyYOzdLbspHFBuENph95V8uA3aWgiXDzXshuhApas=;
+        b=e1GvMvEVtm2Gu1ZdS3DIrS89CKIbrPxGMDty7TgpARN/BPPkwZ7KOsXPJtmmQEp1V/
+         oRLKn9FE2GdOfaaiglT+1fEC83sgjI8OWvDpiSfmZYTZDVCk1Iwhvl2djiRykaAYppKu
+         w/4wYtO9xxkSL0aXmD2NE9y3Aiv9j+D447fJVSsmDJKQBPPQfCAlertGHupJI/bwOxUC
+         3jALzQDjIsuSYH49pf+wThsJ6bzLmrJTVYWnj3Bbb8253nGdr4MqyCCbhteUMl4X31os
+         ufol6RcNBz9YtXUioCGohUQlAhez4Tw282KUXEaJkBCAfU0zDafFXMsYGlPEblX2tbNb
+         NrDA==
+X-Gm-Message-State: APt69E0hzA1VZoTMox4HUzbisHK3cd7DWVdOt2W3bl/K3EcxRXYNTZp8
+        H5HTHACQItJU3wOH303OWlQQMbAPmhIIxyA+rkg=
+X-Google-Smtp-Source: AAOMgpeukI8saRWUlrbbUfXPrVjLZfHUHywD2YubjNdLuq5pQ1n+VaYq+PHlcThCkOMNKx0zOXuQ3W37h66zb9BFW5A=
+X-Received: by 2002:a2e:545a:: with SMTP id y26-v6mr10844476ljd.19.1530305252022;
+ Fri, 29 Jun 2018 13:47:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2602470-a2b8-adc5-5057-fc8f489ab949@de.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18062920-0008-0000-0000-0000024E028F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062920-0009-0000-0000-000021B40295
-Message-Id: <20180629204604.GF4799@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806290219
+Received: by 2002:a2e:41cf:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 13:47:31
+ -0700 (PDT)
+In-Reply-To: <20180629184818.GA37439@beast>
+References: <20180629184818.GA37439@beast>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 29 Jun 2018 22:47:31 +0200
+X-Google-Sender-Auth: d2ub-Yq162byCvHuk60VdgRvnjc
+Message-ID: <CAK8P3a3Q9e59uqeZSLw6wqtNZYLe8LVgCO9RQGJB4D0F+3MLdg@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        freedreno@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 08:51:23AM +0200, Christian Borntraeger wrote:
-> 
-> 
-> On 06/28/2018 02:39 PM, Christian Borntraeger wrote:
-> > KVM guests on s390 can notify the host of unused pages. This can result
-> > in pte_unused callbacks to be true for KVM guest memory.
-> > 
-> > If a page is unused (checked with pte_unused) we might drop this page
-> > instead of paging it. This can have side-effects on userfaultd, when the
-> > page in question was already migrated:
-> > 
-> > The next access of that page will trigger a fault and a user fault
-> > instead of faulting in a new and empty zero page. As QEMU does not
-> > expect a userfault on an already migrated page this migration will fail.
-> > 
-> > The most straightforward solution is to ignore the pte_unused hint if a
-> > userfault context is active for this VMA.
-> > 
-> > Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > ---
-> >  mm/rmap.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 6db729dc4c50..3f3a72aa99f2 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -1481,7 +1481,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >  				set_pte_at(mm, address, pvmw.pte, pteval);
-> >  			}
-> >  
-> > -		} else if (pte_unused(pteval)) {
-> > +		} else if (pte_unused(pteval) && !vma->vm_userfaultfd_ctx.ctx) {
-> 
-> FWIW, this needs a fix for !CONFIG_USERFAULTFD.
+On Fri, Jun 29, 2018 at 8:48 PM, Kees Cook <keescook@chromium.org> wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> switches to using a kasprintf()ed buffer. Return paths are updated
+> to free the allocation.
+>
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  7 +++++--
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 28 +++++++++++++++++--------
+>  2 files changed, 24 insertions(+), 11 deletions(-)
 
-There's userfaultfd_armed() in include/linux/userfaultfd_k.h. Just
-s/!vma->vm_userfaultfd_ctx.ctx/!userfaultfd_armed(vma)
+This seems fine, though using a fixed-length string is probably just
+as well here,
+given that the 'fwname' variable is always set to the constant string
+"a530_zap.mdt"
+at the moment, which is not very long.
 
-> Still: more opinions on the patch itself? 
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-If the only use case for pte_unused() hint is guest notification for host,
-the patch seems Ok to me.
-
-> >  			/*
-> >  			 * The guest indicated that the page content is of no
-> >  			 * interest anymore. Simply discard the pte, vmscan
-> > 
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+       Arnd
