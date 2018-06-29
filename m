@@ -2,272 +2,249 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E24C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46033C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC2327C4A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:22:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC2327C4A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id F07D927C48
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07D927C48
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935517AbeF2JWD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 05:22:03 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:35030 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932765AbeF2JV5 (ORCPT
+        id S1754522AbeF2JWT (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 05:22:19 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:36603 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753319AbeF2JWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:21:57 -0400
-Received: from [109.168.11.45] (port=39774 helo=[192.168.101.172])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fYpbG-00GCdL-Ou; Fri, 29 Jun 2018 11:21:54 +0200
-Subject: Re: [PATCH v4 8/8] media: imx274: add SELECTION support for cropping
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <1528716939-17015-1-git-send-email-luca@lucaceresoli.net>
- <1528716939-17015-9-git-send-email-luca@lucaceresoli.net>
- <20180629080445.sa4rt74ptt5445y4@paasikivi.fi.intel.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <56d9376d-f257-8f37-fbc3-a9f8e564d4e8@lucaceresoli.net>
-Date:   Fri, 29 Jun 2018 11:21:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 29 Jun 2018 05:22:17 -0400
+X-UUID: 4d62aef3678449c5969505a9aff14db8-20180629
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1659892563; Fri, 29 Jun 2018 17:22:12 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 29 Jun 2018 17:22:03 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 29 Jun 2018 17:22:03 +0800
+Message-ID: <1530264123.22098.12.camel@mtksdaap41>
+Subject: Re: [PATCH v22 4/4] soc: mediatek: Add Mediatek CMDQ helper
+From:   CK Hu <ck.hu@mediatek.com>
+To:     houlong wei <houlong.wei@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
+        <Bibby.Hsieh@mediatek.com>,
+        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
+        <Yt.Shen@mediatek.com>,
+        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
+        <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
+        <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
+        <Dennis-YC.Hsieh@mediatek.com>,
+        Monica Wang =?UTF-8?Q?=28=E7=8E=8B=E5=AD=9F=E5=A9=B7=29?= 
+        <monica.wang@mediatek.com>,
+        Hs Liao =?UTF-8?Q?=28=E5=BB=96=E5=AE=8F=E7=A5=A5=29?= 
+        <Hs.Liao@mediatek.com>,
+        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
+        <ginny.chen@mediatek.com>,
+        Enzhu Wang =?UTF-8?Q?=28=E7=8E=8B=E6=81=A9=E6=9F=B1=29?= 
+        <enzhu.wang@mediatek.com>
+Date:   Fri, 29 Jun 2018 17:22:03 +0800
+In-Reply-To: <1530228739.21991.14.camel@mhfsdcap03>
+References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
+         <1530098172-31385-5-git-send-email-houlong.wei@mediatek.com>
+         <1530182516.8518.11.camel@mtksdaap41>
+         <1530228739.21991.14.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20180629080445.sa4rt74ptt5445y4@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+Hi, Houlong:
 
-thanks for the review.
+On Fri, 2018-06-29 at 07:32 +0800, houlong wei wrote:
+> On Thu, 2018-06-28 at 18:41 +0800, CK Hu wrote:
+> > Hi, Houlong:
+> > 
+> > Some inline comment.
+> > 
+> > On Wed, 2018-06-27 at 19:16 +0800, Houlong Wei wrote:
+> > > Add Mediatek CMDQ helper to create CMDQ packet and assemble GCE op code.
+> > > 
+> > > Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> > > Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> > > ---
+> > >  drivers/soc/mediatek/Kconfig           |   12 ++
+> > >  drivers/soc/mediatek/Makefile          |    1 +
+> > >  drivers/soc/mediatek/mtk-cmdq-helper.c |  258 ++++++++++++++++++++++++++++++++
+> > >  include/linux/soc/mediatek/mtk-cmdq.h  |  132 ++++++++++++++++
+> > >  4 files changed, 403 insertions(+)
+> > >  create mode 100644 drivers/soc/mediatek/mtk-cmdq-helper.c
+> > >  create mode 100644 include/linux/soc/mediatek/mtk-cmdq.h
+> > > 
+> > > diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> > > index a7d0667..17bd759 100644
+> > > --- a/drivers/soc/mediatek/Kconfig
+> > > +++ b/drivers/soc/mediatek/Kconfig
+> > > @@ -4,6 +4,18 @@
+> > >  menu "MediaTek SoC drivers"
+> > >  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> > >  
+> > 
 
-On 29/06/2018 10:04, Sakari Ailus wrote:
-> On Mon, Jun 11, 2018 at 01:35:39PM +0200, Luca Ceresoli wrote:
->> Currently this driver does not support cropping. The supported modes
->> are the following, all capturing the entire area:
->>
->>  - 3840x2160, 1:1 binning (native sensor resolution)
->>  - 1920x1080, 2:1 binning
->>  - 1280x720,  3:1 binning
->>
->> The VIDIOC_SUBDEV_S_FMT ioctl chooses among these 3 configurations the
->> one that matches the requested format.
->>
->> Add cropping support via VIDIOC_SUBDEV_S_SELECTION: with target
->> V4L2_SEL_TGT_CROP to choose the captured area, with
->> V4L2_SEL_TGT_COMPOSE to choose the output resolution.
->>
->> To maintain backward compatibility we also allow setting the compose
->> format via VIDIOC_SUBDEV_S_FMT. To obtain this, compose rect and
->> output format are computed in the common helper function
->> __imx274_change_compose(), which sets both to the same width/height
->> values.
->>
->> Cropping also calls __imx274_change_compose() whenever cropping rect
->> size changes in order to reset the compose rect (and output format
->> size) for 1:1 binning.
->>
->> Also change the names in enum imx274_mode from being resolution-based
->> to being binning-based (e.g. from IMX274_MODE_1920X1080 to
->> IMX274_MODE_BINNING_2_1). Without cropping, the two naming are
->> equivalent. With cropping, the resolution could be different,
->> e.g. using 2:1 binning mode to crop 1200x960 and output a 600x480
->> format. Using binning in the names avoids any misunderstanding.  For
->> the same reason, replace the 'size' field in struct imx274_frmfmt with
->> 'bin_ratio'.
->>
->> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
->> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>
->> ---
->> Changed v3 -> v4:
->>  - Set the binning via the SELECTION API (COMPOSE rect), but still
->>    allow using VIDIOC_SUBDEV_S_FMT for backward compatibility.
->>  - rename imx274_set_trimming -> imx274_apply_trimming for clarity
->>
->> Changed v2 -> v3:
->>  - Remove hard-coded HMAX reg setting from all modes, not only the
->>    first one. HMAX is always computed and set in s_stream now.
->>  - Reword commit log message.
->>
->> Changed v1 -> v2:
->>  - add "media: " prefix to commit message
->> ---
->>  drivers/media/i2c/imx274.c | 416 +++++++++++++++++++++++++++++++++++----------
->>  1 file changed, 326 insertions(+), 90 deletions(-)
->>
->> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
->> index 2c13961e9764..8bfc20a46b3d 100644
->> --- a/drivers/media/i2c/imx274.c
->> +++ b/drivers/media/i2c/imx274.c
->> @@ -5,6 +5,7 @@
->>   *
->>   * Leon Luo <leonl@leopardimaging.com>
->>   * Edwin Zou <edwinz@leopardimaging.com>
->> + * Luca Ceresoli <luca@lucaceresoli.net>
->>   *
->>   * This program is free software; you can redistribute it and/or modify it
->>   * under the terms and conditions of the GNU General Public License,
->> @@ -19,6 +20,7 @@
->>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->>   */
->>  
->> +#include <linux/kernel.h>
-> 
-> Alphabetical order, please.
-
-Ok.
-
->> @@ -141,9 +157,9 @@ static const struct regmap_config imx274_regmap_config = {
->>  };
->>  
->>  enum imx274_mode {
-> 
-> Is this still an appropriate name? imx274_binning?
-
-Yes, that would be coherent with the renaming of the individual fields.
-
->> -	IMX274_MODE_3840X2160,
->> -	IMX274_MODE_1920X1080,
->> -	IMX274_MODE_1280X720,
->> +	IMX274_MODE_BINNING_OFF,
->> +	IMX274_MODE_BINNING_2_1,
->> +	IMX274_MODE_BINNING_3_1,
->>  };
->>  
->>  /*
 [...]
->> @@ -559,6 +526,8 @@ struct stimx274 {
->>  	struct media_pad pad;
->>  	struct i2c_client *client;
->>  	struct imx274_ctrls ctrls;
->> +	struct v4l2_rect crop;
->> +	struct v4l2_rect compose;
->>  	struct v4l2_mbus_framefmt format;
 
-I noticed the v4l2_rect compose can be removed. In this patch I keep
-compose.width (and height) always equal to format.width (height). The
-compose width (height) can be read from format.width (height). And since
-compose.top and .left are always zero, compose carries no useful info.
-Removing .compose will get less code to keep them in sync and no risk
-for bugs that get them out of sync.
-
-Note this is an implementation detail. No changes at the API level.
-
->> @@ -864,6 +833,80 @@ static int imx274_s_ctrl(struct v4l2_ctrl *ctrl)
->>  }
->>  
->>  /**
->> + * Helper function to change binning and set both compose and format.
->> + *
->> + * We have two entry points to change binning: set_fmt and
->> + * set_selection(COMPOSE). Both have to compute the new output size
->> + * and set it in both the compose rect and the frame format size. We
->> + * also need to do the same things after setting cropping to restore
->> + * 1:1 binning.
->> + *
->> + * This function contains the common code for these three cases, it
->> + * has many arguments in order to accomodate the needs of all of them.
->> + *
->> + * Must be called with imx274->lock locked.
->> + *
->> + * @imx274 The device object
+> > > +
+> > > +static int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+> > > +{
+> > > +	int err;
+> > > +
+> > > +	if (cmdq_pkt_is_finalized(pkt))
+> > > +		return 0;
+> > > +
+> > > +	/* insert EOC and generate IRQ for each command iteration */
+> > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_EOC, 0, CMDQ_EOC_IRQ_EN);
+> > > +	if (err < 0)
+> > > +		return err;
+> > > +
+> > > +	/* JUMP to end */
+> > > +	err = cmdq_pkt_append_command(pkt, CMDQ_CODE_JUMP, 0, CMDQ_JUMP_PASS);
+> > > +	if (err < 0)
+> > > +		return err;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +int cmdq_pkt_flush_async(struct cmdq_client *client, struct cmdq_pkt *pkt,
+> > > +			 cmdq_async_flush_cb cb, void *data)
+> > > +{
+> > > +	int err;
+> > > +	struct device *dev;
+> > > +	dma_addr_t dma_addr;
+> > > +
+> > > +	err = cmdq_pkt_finalize(pkt);
+> > > +	if (err < 0)
+> > > +		return err;
+> > > +
+> > > +	dev = client->chan->mbox->dev;
+> > > +	dma_addr = dma_map_single(dev, pkt->va_base, pkt->cmd_buf_size,
+> > > +		DMA_TO_DEVICE);
+> > 
+> > You map here, but I could not find unmap, so the unmap should be done in
+> > client driver. I would prefer a symmetric map/unmap which means that
+> > both map and unmap are done in client driver. I think you put map here
+> > because you should map after finalize. 
 > 
-> Colon after the name of the argument. Same below.
+> The unmap is done before callback to client, in function
+> cmdq_task_exec_done, mtk-cmdq-mailbox.c.
 
-Ouch. Thanks.
+You put unmap in mailbox controller, and map here (here would be mailbox
+client), so this is not symmetric. If the code is asymmetric, it's easy
+to cause bug and not easy to maintain. So I would like move both
+map/unmap to client driver.
 
->> + * @cfg    The pad config we are editing for TRY requests
->> + * @which  V4L2_SUBDEV_FORMAT_ACTIVE or V4L2_SUBDEV_FORMAT_TRY from the caller
->> + * @width  Input-output parameter: set to the desired width before
->> + *         the call, contains the chosen value after returning successfully
->> + * @height Input-output parameter for height (see @width)
->> + */
->> +static int __imx274_change_compose(struct stimx274 *imx274,
->> +				   struct v4l2_subdev_pad_config *cfg,
->> +				   u32 which,
->> +				   u32 *width,
->> +				   u32 *height)
->> +{
->> +	struct device *dev = &imx274->client->dev;
->> +	const struct v4l2_rect *cur_crop;
->> +	struct v4l2_mbus_framefmt *tgt_fmt;
->> +	struct v4l2_rect *tgt_compose;
->> +	unsigned int ratio; /* Binning ratio */
->> +
->> +	dev_dbg(dev, "%s: request of  %dx%d (%s)\n",
->> +		__func__, *width, *height,
->> +		(which == V4L2_SUBDEV_FORMAT_ACTIVE) ? "ACTIVE" : "TRY");
 > 
-> If these's a need for such debug prints, I think they'd be better added to
-> the framework than individual drivers.
-
-Agreed, let's get rid of them.
-
->> +
->> +	if (which == V4L2_SUBDEV_FORMAT_TRY) {
->> +		cur_crop = &cfg->try_crop;
->> +		tgt_compose = &cfg->try_compose;
->> +		tgt_fmt = &cfg->try_fmt;
->> +	} else {
->> +		cur_crop = &imx274->crop;
->> +		tgt_compose = &imx274->compose;
->> +		tgt_fmt = &imx274->format;
->> +	}
->> +
->> +	/* Find ratio (maximize output resolution). Fallback to 1:1. */
->> +	for (ratio = 3; ratio > 1; ratio--)
->> +		if (*width <= DIV_ROUND_UP(cur_crop->width, ratio) &&
->> +		    *height <= DIV_ROUND_UP(cur_crop->height, ratio))
->> +			break;
+> > Therefore, export
+> > cmdq_pkt_finalize() to client driver and let client do finalize, so
+> > there is no finalize in flush function. This method have a benefit that
+> > if client reuse command buffer, it need not to map/unmap frequently.
 > 
-> There are flags to direct the rounding behaviour. The default is the
-> nearest:
+> If client reuse command buffer or cmdq_pkt(command queue packet), client
+> will add new commands to the cmdq_pkt, so map/unmap are necessary for
+> each cmdq_pkt flush.
+
+If the buffer size is 4K bytes, client driver could map the whole 4K at
+initialization. Before it write new command, it call
+dma_sync_single_for_cpu(), after it write new command, it call
+dma_sync_single_for_device(). And then it could flush this buffer to
+mailbox controller. So client driver just call dma sync function when it
+reuse the command buffer. dma sync function is much lightweight then dma
+map because map would search the memory area which could be mapped.
+
+Regards,
+CK
+
 > 
-> <URL:https://hverkuil.home.xs4all.nl/spec/uapi/v4l/v4l2-selection-flags.html>
+> > 
+> > Regards,
+> > CK
+> > 
+> > > +	if (dma_mapping_error(dev, dma_addr)) {
+> > > +		dev_err(client->chan->mbox->dev, "dma map failed\n");
+> > > +		return -ENOMEM;
+> > > +	}
+> > > +
+> > > +	pkt->pa_base = dma_addr;
+> > > +	pkt->cb.cb = cb;
+> > > +	pkt->cb.data = data;
+> > > +
+> > > +	mbox_send_message(client->chan, pkt);
+> > > +	/* We can send next packet immediately, so just call txdone. */
+> > > +	mbox_client_txdone(client->chan, 0);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +EXPORT_SYMBOL(cmdq_pkt_flush_async);
+> > > +
+> > > +struct cmdq_flush_completion {
+> > > +	struct completion cmplt;
+> > > +	bool err;
+> > > +};
+> > > +
+> > > +static void cmdq_pkt_flush_cb(struct cmdq_cb_data data)
+> > > +{
+> > > +	struct cmdq_flush_completion *cmplt = data.data;
+> > > +
+> > > +	cmplt->err = data.err;
+> > > +	complete(&cmplt->cmplt);
+> > > +}
+> > > +
+> > > +int cmdq_pkt_flush(struct cmdq_client *client, struct cmdq_pkt *pkt)
+> > > +{
+> > > +	struct cmdq_flush_completion cmplt;
+> > > +	int err;
+> > > +
+> > > +	init_completion(&cmplt.cmplt);
+> > > +	err = cmdq_pkt_flush_async(client, pkt, cmdq_pkt_flush_cb, &cmplt);
+> > > +	if (err < 0)
+> > > +		return err;
+> > > +	wait_for_completion(&cmplt.cmplt);
+> > > +
+> > > +	return cmplt.err ? -EFAULT : 0;
+> > > +}
+> > > +EXPORT_SYMBOL(cmdq_pkt_flush);
+> > 
+> > [...]
+> > 
+> > 
 > 
-> The smiapp driver (as the only sensor driver) supports them.
-
-Right, I will implement that.
-
->> +
->> +	*width = cur_crop->width / ratio;
->> +	*height = cur_crop->height / ratio;
->> +
->> +	if (which == V4L2_SUBDEV_FORMAT_ACTIVE)
->> +		imx274->mode = &imx274_formats[ratio - 1];
->> +
->> +	dev_dbg(dev, "%s: adjusted to %dx%d (%d:1 binning)\n",
->> +		__func__, *width, *height, ratio);
 > 
-> Could be here, for binning. %d -> %u --- it's unsigned.
-Ok, in the nxt version this will look like:
 
-    dev_dbg(dev, "%s: selected %u:1 binning\n", __func__, ratio);
 
-Bye,
--- 
-Luca
