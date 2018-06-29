@@ -6,153 +6,89 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61503C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22C1C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC30280A8
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:09:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DC30280A8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 97F0C280A0
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:11:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F0C280A0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936791AbeF2WJC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 18:09:02 -0400
-Received: from gateway20.websitewelcome.com ([192.185.49.40]:28423 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936761AbeF2WJB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 18:09:01 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id AC76E400D8206
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:08:59 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Z1ZNfDsGfaSeyZ1ZVftBl8; Fri, 29 Jun 2018 17:08:59 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=49300 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fZ1ZN-002uFN-3a; Fri, 29 Jun 2018 17:08:45 -0500
-Date:   Fri, 29 Jun 2018 17:08:44 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] HID: hiddev: fix potential Spectre v1
-Message-ID: <20180629220844.GA13823@embeddedor.com>
+        id S936887AbeF2WLC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 18:11:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28177 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936809AbeF2WLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 18:11:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 15:10:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
+   d="scan'208";a="236719395"
+Received: from ssaleem-mobl4.amr.corp.intel.com (HELO ssaleem-mobl1) ([10.122.32.166])
+  by orsmga005.jf.intel.com with SMTP; 29 Jun 2018 15:10:56 -0700
+Received: by ssaleem-mobl1 (sSMTP sendmail emulation); Fri, 29 Jun 2018 17:10:54 -0500
+Date:   Fri, 29 Jun 2018 17:10:52 -0500
+From:   Shiraz Saleem <shiraz.saleem@intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Latif, Faisal" <faisal.latif@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Orosco, Henry" <henry.orosco@intel.com>,
+        "Nikolova, Tatyana E" <tatyana.e.nikolova@intel.com>,
+        "Ismail, Mustafa" <mustafa.ismail@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH] [v2] infiniband: i40iw, nes: don't use wall time for TCP
+ sequence numbers
+Message-ID: <20180629221052.GA14152@ssaleem-MOBL4.amr.corp.intel.com>
+References: <20180627132628.915978-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fZ1ZN-002uFN-3a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:49300
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180627132628.915978-1-arnd@arndb.de>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-uref->field_index, uref->usage_index, finfo.field_index and
-cinfo.index can be indirectly controlled by user-space, hence
-leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+On Wed, Jun 27, 2018 at 07:26:05AM -0600, Arnd Bergmann wrote:
+> The nes infiniband driver uses current_kernel_time() to get a nanosecond
+> granunarity timestamp to initialize its tcp sequence counters. This is
+> one of only a few remaining users of that deprecated function, so we
+> should try to get rid of it.
+> 
+> Aside from using a deprecated API, there are several problems I see here:
+> 
+> - Using a CLOCK_REALTIME based time source makes it predictable in
+>   case the time base is synchronized.
+> - Using a coarse timestamp means it only gets updated once per jiffie,
+>   making it even more predictable in order to avoid having to access
+>   the hardware clock source
+> - The upper 2 bits are always zero because the nanoseconds are at most
+>   999999999.
+> 
+> For the Linux TCP implementation, we use secure_tcp_seq(), which appears
+> to be appropriate here as well, and solves all the above problems.
+> 
+> i40iw uses a variant of the same code, so I do that same thing there
+> for ipv4. Unlike nes, i40e also supports ipv6, which needs to call
+> secure_tcpv6_seq instead.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: use secure_tcpv6_seq for IPv6 support as suggested by Shiraz Saleem.
+> ---
 
-This issue was detected with the help of Smatch:
+Looks good.
 
-drivers/hid/usbhid/hiddev.c:473 hiddev_ioctl_usage() warn: potential
-spectre issue 'report->field' (local cap)
-drivers/hid/usbhid/hiddev.c:477 hiddev_ioctl_usage() warn: potential
-spectre issue 'field->usage' (local cap)
-drivers/hid/usbhid/hiddev.c:757 hiddev_ioctl() warn: potential spectre
-issue 'report->field' (local cap)
-drivers/hid/usbhid/hiddev.c:801 hiddev_ioctl() warn: potential spectre
-issue 'hid->collection' (local cap)
-
-Fix this by sanitizing such structure fields before using them to index
-report->field, field->usage and hid->collection
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/hid/usbhid/hiddev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/hid/usbhid/hiddev.c b/drivers/hid/usbhid/hiddev.c
-index e3ce233..23872d0 100644
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -36,6 +36,7 @@
- #include <linux/hiddev.h>
- #include <linux/compat.h>
- #include <linux/vmalloc.h>
-+#include <linux/nospec.h>
- #include "usbhid.h"
- 
- #ifdef CONFIG_USB_DYNAMIC_MINORS
-@@ -469,10 +470,14 @@ static noinline int hiddev_ioctl_usage(struct hiddev *hiddev, unsigned int cmd,
- 
- 		if (uref->field_index >= report->maxfield)
- 			goto inval;
-+		uref->field_index = array_index_nospec(uref->field_index,
-+						       report->maxfield);
- 
- 		field = report->field[uref->field_index];
- 		if (uref->usage_index >= field->maxusage)
- 			goto inval;
-+		uref->usage_index = array_index_nospec(uref->usage_index,
-+						       field->maxusage);
- 
- 		uref->usage_code = field->usage[uref->usage_index].hid;
- 
-@@ -499,6 +504,8 @@ static noinline int hiddev_ioctl_usage(struct hiddev *hiddev, unsigned int cmd,
- 
- 			if (uref->field_index >= report->maxfield)
- 				goto inval;
-+			uref->field_index = array_index_nospec(uref->field_index,
-+							       report->maxfield);
- 
- 			field = report->field[uref->field_index];
- 
-@@ -753,6 +760,8 @@ static long hiddev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 		if (finfo.field_index >= report->maxfield)
- 			break;
-+		finfo.field_index = array_index_nospec(finfo.field_index,
-+						       report->maxfield);
- 
- 		field = report->field[finfo.field_index];
- 		memset(&finfo, 0, sizeof(finfo));
-@@ -797,6 +806,8 @@ static long hiddev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 		if (cinfo.index >= hid->maxcollection)
- 			break;
-+		cinfo.index = array_index_nospec(cinfo.index,
-+						 hid->maxcollection);
- 
- 		cinfo.type = hid->collection[cinfo.index].type;
- 		cinfo.usage = hid->collection[cinfo.index].usage;
--- 
-2.7.4
-
+Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
