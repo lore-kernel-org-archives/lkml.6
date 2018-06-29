@@ -2,125 +2,93 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E59C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA02EC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3595927469
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:29:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3595927469
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 91BFF24240
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 07:30:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BFF24240
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753913AbeF2H3P (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 03:29:15 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37944 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeF2H3O (ORCPT
+        id S933502AbeF2Hau (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 03:30:50 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57836 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753259AbeF2Has (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 03:29:14 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C31BA805BB; Fri, 29 Jun 2018 09:29:12 +0200 (CEST)
-Date:   Fri, 29 Jun 2018 09:29:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andreas Klinger <ak@it-klinger.de>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Willy Tarreau <w@1wt.eu>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: ledtrig-morse: send out morse code
-Message-ID: <20180629072912.GB10079@amd>
-References: <20180628134227.GA1719@arbeit>
- <20180628185630.GA6095@amd>
- <20180628202955.GA1534@imap.1und1.de>
- <20180628204516.GA29146@amd>
- <20180629064147.GA3219@arbeit>
- <20180629071724.GA10079@amd>
- <CAMuHMdXaPz3ckT1cPZed4e=iwk3nb75UBGC66hm+b+xRDNNnNg@mail.gmail.com>
+        Fri, 29 Jun 2018 03:30:48 -0400
+Received: from hsi-kbw-5-158-153-55.hsi19.kabel-badenwuerttemberg.de ([5.158.153.55] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fYnrD-0002HP-VV; Fri, 29 Jun 2018 09:30:16 +0200
+Date:   Fri, 29 Jun 2018 09:30:10 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, "H. Peter Anvin" <hpa@zytor.com>,
+        douly.fnst@cn.fujitsu.com, Peter Zijlstra <peterz@infradead.org>,
+        Prarit Bhargava <prarit@redhat.com>, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        boris.ostrovsky@oracle.com, pbonzini@redhat.com
+Subject: Re: [PATCH v12 09/11] x86/tsc: prepare for early sched_clock
+In-Reply-To: <CAGM2read-NcUjssuUPHaf=qhdidT8f7cRNOs_GjdPnuOVvi-Lw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1806290925340.1578@nanos.tec.linutronix.de>
+References: <20180621212518.19914-1-pasha.tatashin@oracle.com> <20180621212518.19914-10-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806231815060.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806232210110.8650@nanos.tec.linutronix.de>
+ <CAGM2reYQx769omkWVweEcTMy8WNrKOiuUVo4OFWNh4zW-rc4pg@mail.gmail.com> <alpine.DEB.2.21.1806232347540.8650@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806261725510.1587@nanos.tec.linutronix.de> <CAGM2reYQ23XhQHAOO0Oo8MGvgrjpNZPZkwp+wwsU8Fb+jfANyA@mail.gmail.com>
+ <alpine.DEB.2.21.1806270947410.1587@nanos.tec.linutronix.de> <alpine.DEB.2.21.1806281159590.1778@nanos.tec.linutronix.de> <CAGM2read-NcUjssuUPHaf=qhdidT8f7cRNOs_GjdPnuOVvi-Lw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXaPz3ckT1cPZed4e=iwk3nb75UBGC66hm+b+xRDNNnNg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 28 Jun 2018, Pavel Tatashin wrote:
+> On Thu, Jun 28, 2018 at 11:23 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> Hi Thomas,
+> 
+> In addition to above, we have xen hvm:
+> 
+> setup_arch()
+>     ...
+>     init_hypervisor_platform();
+>         x86_init.hyper.init_platform();
+>             xen_hvm_guest_init()
+>                 xen_hvm_init_time_ops();
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Duh. Missed that completely.
 
-On Fri 2018-06-29 09:21:24, Geert Uytterhoeven wrote:
-> Hi Pavel,
->=20
-> On Fri, Jun 29, 2018 at 9:17 AM Pavel Machek <pavel@ucw.cz> wrote:
-> > > > Yeah, well... I don't think decoding sentences in morse code is goi=
-ng
-> > > > to be much fun.
-> > > >
-> > > > And we don't really want encoder in kernel. Just do encoding in
-> > > > userspace, and use pattern trigger to display it.
-> > > >
-> > > > For many uses, morse code is "too geeky", and other patterns will be
-> > > > used.
-> > > >
-> > > > Like " X    " for error 1, " X X     " for error 2, " .xX .xX " for
-> > > > charging, " .xXx. " for everything okay...
-> > > >
-> > >
-> > > The hardware i'm using is not able to adjust brightness. It can just =
-switch the
-> > > LED on or off. That's it.
-> > >
-> > > If anybody is interested i can submit a version 2 of the morse trigge=
-r with the
-> > > improvements suggested by Greg and Geert. Please let me know.
-> >
-> > I'd prefer more general pattern trigger.
->=20
-> There are two parts here:
->   1. The general pattern trigger (which is not yet upstream),
->   2. A way to supply a string, convert it into morse code, and feed it to
->      the LED subsystem.
->=20
-> Given 1 is not yet upstream, I think Andreas solution is fine.
-> Once 1 is upstream, 2 can be modified to feed into 1, if available.
+>     ...
+>     tsc_early_delay_calibrate();
+>         tsc_khz = x86_platform.calibrate_tsc(); == xen_tsc_khz()
+>     ...
+> 
+> Which works early.
+> 
+> So, what should we do with xen, which seems to be the only platform
+> that would provide different tsc frequency early and late, because of
+> different calibration method?
 
-There's no reason 2. should be in kernel ("mechanism, not policy").
+Fix it? I have no idea why XEN has two variants of the scheme and I neither
+have a clue why the KVM clock stuff is late.
 
-Given 1. is not really more complicated than the morse
-trigger... please just help with pattern trigger if you want this to
-happen.
+Thanks,
 
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+	tglx
 
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls138gACgkQMOfwapXb+vI9qwCgkOLyrjQtpTdr4NQ1mNsrVbnz
-+ggAn1SEUlfJuMI6urjJhj+lEAvSgRQ0
-=6+sG
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
