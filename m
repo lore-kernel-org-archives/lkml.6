@@ -3,278 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9079AC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2FFC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B2E28069
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B2E28069
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 954E828080
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:43:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954E828080
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966496AbeF2Pj0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:39:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49928 "EHLO mx1.suse.de"
+        id S966599AbeF2PnN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:43:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34766 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935693AbeF2PjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:39:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 355BCAED0;
-        Fri, 29 Jun 2018 15:39:18 +0000 (UTC)
-Subject: Re: [PATCH v2 5/7] mm: rename and change semantics of
- nr_indirectly_reclaimable_bytes
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vijayanand Jitta <vjitta@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20180618091808.4419-6-vbabka@suse.cz>
- <201806201923.mC5ZpigB%fengguang.wu@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
+        id S965334AbeF2PnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:43:11 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5EE468790F;
+        Fri, 29 Jun 2018 15:43:10 +0000 (UTC)
+Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CAE272142F20;
+        Fri, 29 Jun 2018 15:43:07 +0000 (UTC)
+Subject: Re: [PATCH v2] kvm, mm: account shadow page tables to kmemcg
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Peter Feiner <pfeiner@google.com>, stable@vger.kernel.org
+References: <20180629140224.205849-1-shakeelb@google.com>
+ <20180629143044.GF5963@dhcp22.suse.cz>
+ <efdb8e40-742e-d120-6589-96b4fdf83cb9@redhat.com>
+ <20180629145513.GG5963@dhcp22.suse.cz>
+From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <38c6a6e1-c5e0-fd7d-4baf-1f0f09be5094@suse.cz>
-Date:   Fri, 29 Jun 2018 17:37:02 +0200
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1595a887-fac8-f8ea-ecd3-4ba0783ef88b@redhat.com>
+Date:   Fri, 29 Jun 2018 17:43:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <201806201923.mC5ZpigB%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20180629145513.GG5963@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 15:43:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 15:43:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 01:23 PM, kbuild test robot wrote:
-> Hi Vlastimil,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on mmotm/master]
-> [also build test ERROR on v4.18-rc1 next-20180619]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Vlastimil-Babka/kmalloc-reclaimable-caches/20180618-172912
-> base:   git://git.cmpxchg.org/linux-mmotm.git master
-> config: x86_64-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/staging//android/ion/ion_page_pool.c: In function 'ion_page_pool_remove':
->>> drivers/staging//android/ion/ion_page_pool.c:56:40: error: 'NR_INDIRECTLY_RECLAIMABLE_BYTES' undeclared (first use in this function)
->      mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
->                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/staging//android/ion/ion_page_pool.c:56:40: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> vim +/NR_INDIRECTLY_RECLAIMABLE_BYTES +56 drivers/staging//android/ion/ion_page_pool.c
+On 29/06/2018 16:55, Michal Hocko wrote:
+>>> I would also love to see a note how this memory is bound to the owner
+>>> life time in the changelog. That would make the review much more easier.
+>> --verbose for people that aren't well versed in linux mm, please...
+> Well, if the memory accounted to the memcg hits the hard limit and there
+> is no way to reclaim anything to reduce the charged memory then we have
+> to kill something. Hopefully the memory hog. If that one dies it would
+> be great it releases its charges along the way. My remark was just to
+> explain how that would happen for this specific type of memory. Bound to
+> a file, has its own tear down etc. Basically make life of reviewers
+> easier to understand the lifetime of charged objects without digging
+> deep into the specific subsystem.
 
-Looks like I missed a hunk, updated patch below.
+Oh I see.  Yes, it's all freed when the VM file descriptor (which you
+get with a ioctl on /dev/kvm) is closed.
 
-----8<----
-From a0053c64c72d7e094252d0d7462de8569d87c543 Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Tue, 22 May 2018 16:10:10 +0200
-Subject: [PATCH v3 5/7] mm: rename and change semantics of
- nr_indirectly_reclaimable_bytes
+Thanks,
 
-The vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES was introduced by commit
-eb59254608bc ("mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES") with the goal of
-accounting objects that can be reclaimed, but cannot be allocated via a
-SLAB_RECLAIM_ACCOUNT cache. This is now possible via kmalloc() with
-__GFP_RECLAIMABLE flag, and the dcache external names user is converted.
-
-The counter is however still useful for accounting direct page allocations
-(i.e. not slab) with a shrinker, such as the ION page pool. So keep it, and:
-
-- change granularity to pages to be more like other counters; sub-page
-  allocations should be able to use kmalloc
-- rename the counter to NR_KERNEL_MISC_RECLAIMABLE
-- expose the counter again in vmstat as "nr_kernel_misc_reclaimable"; we can
-  again remove the check for not printing "hidden" counters
-
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Vijayanand Jitta <vjitta@codeaurora.org>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
----
- drivers/staging/android/ion/ion_page_pool.c |  8 ++++----
- include/linux/mmzone.h                      |  2 +-
- mm/page_alloc.c                             | 19 +++++++------------
- mm/util.c                                   |  3 +--
- mm/vmstat.c                                 |  6 +-----
- 5 files changed, 14 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
-index 9bc56eb48d2a..0d2a95957ee8 100644
---- a/drivers/staging/android/ion/ion_page_pool.c
-+++ b/drivers/staging/android/ion/ion_page_pool.c
-@@ -33,8 +33,8 @@ static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
- 		pool->low_count++;
- 	}
- 
--	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
--			    (1 << (PAGE_SHIFT + pool->order)));
-+	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
-+							1 << pool->order);
- 	mutex_unlock(&pool->mutex);
- }
- 
-@@ -53,8 +53,8 @@ static struct page *ion_page_pool_remove(struct ion_page_pool *pool, bool high)
- 	}
- 
- 	list_del(&page->lru);
--	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
--			    -(1 << (PAGE_SHIFT + pool->order)));
-+	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
-+							-(1 << pool->order));
- 	return page;
- }
- 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2dc52a..c2f6bc4c9e8a 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -180,7 +180,7 @@ enum node_stat_item {
- 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
- 	NR_DIRTIED,		/* page dirtyings since bootup */
- 	NR_WRITTEN,		/* page writings since bootup */
--	NR_INDIRECTLY_RECLAIMABLE_BYTES, /* measured in bytes */
-+	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100f1e63..8ceb45e11b97 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4704,6 +4704,7 @@ long si_mem_available(void)
- 	unsigned long pagecache;
- 	unsigned long wmark_low = 0;
- 	unsigned long pages[NR_LRU_LISTS];
-+	unsigned long reclaimable;
- 	struct zone *zone;
- 	int lru;
- 
-@@ -4729,19 +4730,13 @@ long si_mem_available(void)
- 	available += pagecache;
- 
- 	/*
--	 * Part of the reclaimable slab consists of items that are in use,
--	 * and cannot be freed. Cap this estimate at the low watermark.
-+	 * Part of the reclaimable slab and other kernel memory consists of
-+	 * items that are in use, and cannot be freed. Cap this estimate at the
-+	 * low watermark.
- 	 */
--	available += global_node_page_state(NR_SLAB_RECLAIMABLE) -
--		     min(global_node_page_state(NR_SLAB_RECLAIMABLE) / 2,
--			 wmark_low);
--
--	/*
--	 * Part of the kernel memory, which can be released under memory
--	 * pressure.
--	 */
--	available += global_node_page_state(NR_INDIRECTLY_RECLAIMABLE_BYTES) >>
--		PAGE_SHIFT;
-+	reclaimable = global_node_page_state(NR_SLAB_RECLAIMABLE) +
-+			global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
-+	available += reclaimable - min(reclaimable / 2, wmark_low);
- 
- 	if (available < 0)
- 		available = 0;
-diff --git a/mm/util.c b/mm/util.c
-index 3351659200e6..891f0654e7b5 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -675,8 +675,7 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
- 		 * Part of the kernel memory, which can be released
- 		 * under memory pressure.
- 		 */
--		free += global_node_page_state(
--			NR_INDIRECTLY_RECLAIMABLE_BYTES) >> PAGE_SHIFT;
-+		free += global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
- 
- 		/*
- 		 * Leave reserved pages. The pages are not for anonymous pages.
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 75eda9c2b260..7c677d3a61ec 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1161,7 +1161,7 @@ const char * const vmstat_text[] = {
- 	"nr_vmscan_immediate_reclaim",
- 	"nr_dirtied",
- 	"nr_written",
--	"", /* nr_indirectly_reclaimable */
-+	"nr_kernel_misc_reclaimable",
- 
- 	/* enum writeback_stat_item counters */
- 	"nr_dirty_threshold",
-@@ -1704,10 +1704,6 @@ static int vmstat_show(struct seq_file *m, void *arg)
- 	unsigned long *l = arg;
- 	unsigned long off = l - (unsigned long *)m->private;
- 
--	/* Skip hidden vmstat items. */
--	if (*vmstat_text[off] == '\0')
--		return 0;
--
- 	seq_puts(m, vmstat_text[off]);
- 	seq_put_decimal_ull(m, " ", *l);
- 	seq_putc(m, '\n');
--- 
-2.17.1
-
-
+Paolo
