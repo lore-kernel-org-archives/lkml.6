@@ -3,125 +3,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720D1C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABF5C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2146727C9F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5AA027CE8
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:35:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EvCOj8cS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2146727C9F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="g16kx5LH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AA027CE8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937387AbeF2U3E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:29:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59124 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936738AbeF2U3D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:29:03 -0400
+        id S1755403AbeF2Ufg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:35:36 -0400
+Received: from vern.gendns.com ([206.190.152.46]:58670 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753148AbeF2Ufe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 16:35:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XdqbzRM2fL4sHCREk2YqBPrG9SZT7eplLBUONwyFZgk=; b=EvCOj8cSSkftHjmQjDzWWCbco
-        pCYFBNonjrHM6lbkD76K9FpOsMRailRf0vsl/P+/g1clf2Q8vT810BMN2rO6Sq8Wcq6ZEp1jT/SHA
-        hhNsDnwr9DQKWcYK44aL7qWo2D6rRl/Jj5UHnS+G4n8O6kw4AuEYQWndYkC1kHLJpU8OTpcfJHL/1
-        UGjFTWu1JeF/zPEl53oZneako9nh/h/G+B7gMR5KraNq2Lac1welItmg9b+oql/hs5MgbPFj2sPhz
-        xD0WYIduBe7/GSaKAVIgNqs4VUORLAMDYCURUKX+ufzhEU1JdA56FpHtOQerXueYy4zWt4B1GBdBL
-        boYzOnMvA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fZ00s-0003Ji-VK; Fri, 29 Jun 2018 20:29:03 +0000
-Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
- configuration"
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
- <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
- <20180629192838.GE4799@rapoport-lnx>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e18f80e1-fc59-9487-95eb-7cb6cda976c5@infradead.org>
-Date:   Fri, 29 Jun 2018 13:28:59 -0700
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YFQEbfEYE6M51isFvAxZ9Nu90M0/JYeZL36AcfrnRUM=; b=g16kx5LHQrXJ82Wt7f7byPyz2c
+        A6bbrn8Fwr1vXXQ1029fY3cS6Y24SYKKyN0dTuuyK2BHSj9bkO1d05bPkXci5F/20aGvEUWcA1jfA
+        3WDl55bDGHm8dBkWliQ2NdYc5NFzMpHb4y5pW8T+XqKuDFOhAFMrCoUt3XwpqBNvZUoYSD0drcG+t
+        sGY6+XKNl9GOi7r/0uCb1m9JV0Yw5gvn7h6ascvt/0fTVCDQQUNS6RPPrAZcg1bDBFLbXvL2AD4F2
+        anue2ljXC+igw1biSp3NQT1XfFTn8npfXg469oyPzXDEsUrIQiKYYScPScPmGb89JnWRZWzcF3wze
+        upS+fvMg==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:43054 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fZ078-0030w0-2j; Fri, 29 Jun 2018 16:35:30 -0400
+Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
+ address from MTD
+From:   David Lechner <david@lechnology.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180629094039.7543-1-brgl@bgdev.pl>
+ <20180629094039.7543-9-brgl@bgdev.pl>
+ <e2579b81-7c66-8be6-fcad-ab7a3a5b0765@lechnology.com>
+Message-ID: <ee49a8de-0812-a619-25be-4c6d8a35cc81@lechnology.com>
+Date:   Fri, 29 Jun 2018 15:35:27 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180629192838.GE4799@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <e2579b81-7c66-8be6-fcad-ab7a3a5b0765@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 12:28 PM, Mike Rapoport wrote:
-> Hi Randy, 
-> 
-> On Fri, Jun 29, 2018 at 09:34:55AM -0700, Randy Dunlap wrote:
->> On 06/29/2018 06:42 AM, Mike Rapoport wrote:
->>> Otherwise mm configuration options show up in the top level menu.
->>>
->>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+On 06/29/2018 03:09 PM, David Lechner wrote:
+> On 06/29/2018 04:40 AM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >>
->> Hi Mike,
+>> On da850-evm board we can read the MAC address from MTD. It's currently
+>> done in the relevant board file, but we want to get rid of all the MAC
+>> reading callbacks from the board file (SPI and NAND). Move the reading
+>> of the MAC address from SPI to the emac driver's probe function.
 >>
->> In which config tool does this matter?
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>   drivers/net/ethernet/ti/davinci_emac.c | 20 ++++++++++++++++++--
+>>   1 file changed, 18 insertions(+), 2 deletions(-)
 >>
->> For xconfig, it seems to me that this patch hides the MM menu, whereas
->> before this patch, the MM menu is easy to find (although it could
->> use some kind of heading).
+>> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+>> index a1a6445b5a7e..48e6a7755811 100644
+>> --- a/drivers/net/ethernet/ti/davinci_emac.c
+>> +++ b/drivers/net/ethernet/ti/davinci_emac.c
+>> @@ -67,7 +67,7 @@
+>>   #include <linux/of_irq.h>
+>>   #include <linux/of_net.h>
+>>   #include <linux/mfd/syscon.h>
+>> -
+>> +#include <linux/mtd/mtd.h>
+>>   #include <asm/irq.h>
+>>   #include <asm/page.h>
+>> @@ -1783,7 +1783,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
+>>       struct cpdma_params dma_params;
+>>       struct clk *emac_clk;
+>>       unsigned long emac_bus_frequency;
+>> -
+>> +#ifdef CONFIG_MTD
+>> +    size_t mac_addr_len;
+>> +    struct mtd_info *mtd;
+>> +#endif /* CONFIG_MTD */
+>>       /* obtain emac clock from kernel */
+>>       emac_clk = devm_clk_get(&pdev->dev, NULL);
+>> @@ -1815,6 +1818,19 @@ static int davinci_emac_probe(struct platform_device *pdev)
+>>           goto err_free_netdev;
+>>       }
+>> +#ifdef CONFIG_MTD
 > 
-> With xconfig the menu gets into the top right pane when you click on "ARC
-> architecture configuration", similar to what one gets on x86 with
-> "Processor type and features" or "Kernel features" on ARM.
+> What about the case when MTD is compiled as a module?
 > 
-> With menuconfig it looks a bit more prominent, note that mm options are
-> between "ARC Architecture Configuration" and "Networking support":
+>> +    mtd = get_mtd_device_nm("MAC-Address");
+> 
+> What about the case when PTR_ERR(mtd) == -EPROBE_DEFER?
 
-I know.  I ran all 4 of menuconfig, nconfig, xconfig, and gconfig.
+To answer my own question: because get_mtd_device_nm() doesn't
+ever return -EPROBE_DEFER.
 
-I would prefer to see Memory Management options have its own top-level
-menu, but that's a different patch.  Then menuconfig would look like this:
-
-
-
-│ │        *** Compiler: arc-linux-gcc (GCC) 8.1.0 ***                  │ │  
-  │ │        General setup  --->                                          │ │  
-  │ │    [*] Enable loadable module support  --->                         │ │  
-  │ │    [*] Enable the block layer  --->                                 │ │  
-  │ │        ARC Architecture Configuration  --->                         │ │  
-  │ │        Memory Management options  --->                              │ │  
-  │ │    (11) Maximum zone order                                          │ │  
-  │ │    [*] Networking support  --->                                     │ │  
-  │ │        Device Drivers  --->                                         │ │  
-  │ │        Bus Support  ---> 
-
-
-but that "Maximum zone order" needs to be moved or taken care of somehow.
-
-
-[snip]
+I'm trying to make this work on LCDK, but the emac driver probes
+before any mtd device is registered, so, I just get -ENODEV even
+though I've added a partition to the device tree labeled
+"MAC-Address". You can see in the kernel messages that MTD is
+not probed until later.
 
 > 
+>> +    if (!IS_ERR(mtd)) {
+>> +        rc = mtd_read(mtd, 0, ETH_ALEN,
+>> +                  &mac_addr_len, priv->mac_addr);
+>> +        if (rc == 0)
+>> +            dev_info(&pdev->dev,
+>> +                 "Read MAC addr from SPI Flash: %pM\n",
+>> +                 priv->mac_addr);
+>> +        put_mtd_device(mtd);
+>> +    }
+>> +#endif /* CONFIG_MTD */
+>> +
+>>       /* MAC addr and PHY mask , RMII enable info from platform_data */
+>>       memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
+>>       priv->phy_id = pdata->phy_id;
+>>
 > 
-> 
->>>  	default "12" if ARC_HUGEPAGE_16M
->>>  	default "11"
->>>  
->>> +endmenu	 # "ARC Architecture Configuration"
->>> +
->>>  source "net/Kconfig"
->>>  source "drivers/Kconfig"
 
-
-thanks,
--- 
-~Randy
