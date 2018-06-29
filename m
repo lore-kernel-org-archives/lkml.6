@@ -2,66 +2,57 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB3CC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271F8C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D9A27B2A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:51:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilUMAdl4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D9A27B2A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D135227B33
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:54:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D135227B33
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966069AbeF2IvX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:51:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935243AbeF2IvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:51:20 -0400
-Received: from localhost (unknown [122.167.66.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFFC627B28;
-        Fri, 29 Jun 2018 08:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530262279;
-        bh=ETaB1uAETzjhpRJM8lQAF4aJEHxLXBIbopYk/m7lwE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ilUMAdl4xhddlAU2XgqvvVHw17mkbV9/8XdeOyWA+VzirL3zXxACwZZhcmphUSG+K
-         /l30zQCYusm4EQHVkUxSWXK3u7PFnZ/Lbdk4HQlq9LOYB1ZYUvbRh9YupjtVVICcc4
-         w4/Y6vqQ174PG6qGIKt7S6HWegYXsQG4TT/5h3LE=
-Date:   Fri, 29 Jun 2018 14:21:05 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
-        dan.j.williams@intel.com, appana.durga.rao@xilinx.com,
-        lars@metafoo.de, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S966146AbeF2Iyj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:54:39 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:57593 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966061AbeF2Iyg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:54:36 -0400
+Received: from 79.184.253.185.ipv4.supernova.orange.pl (79.184.253.185) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 710dd390a375917f; Fri, 29 Jun 2018 10:54:34 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Enable VDMA S2MM vertical flip support
-Message-ID: <20180629085105.GC22377@vkoul-mobl>
-References: <1528875288-9140-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+Subject: Re: [PATCH V2 2/2] PM / Domains: Rename opp_node to np
+Date:   Fri, 29 Jun 2018 10:53:15 +0200
+Message-ID: <7703952.a8MDHWhssn@aspire.rjw.lan>
+In-Reply-To: <20180620061928.6vlvyhakzocpakth@vireshk-i7>
+References: <3d3687c030535189885d84c57dbffb034c4461c2.1528953706.git.viresh.kumar@linaro.org> <7511c9837569aec34c56e0a40364f2f3c16563b6.1529475153.git.viresh.kumar@linaro.org> <20180620061928.6vlvyhakzocpakth@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528875288-9140-1-git-send-email-radhey.shyam.pandey@xilinx.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-06-18, 13:04, Radhey Shyam Pandey wrote:
-> The AXI VDMA core supports Vertical Flip with S2MM as the path when
-> Enable Vertical Flip (Advanced tab) is selected. This patch series add
-> DT property for vertical flip and program its state in VDMA start_transfer.
+On Wednesday, June 20, 2018 8:19:28 AM CEST Viresh Kumar wrote:
+> On 20-06-18, 11:45, Viresh Kumar wrote:
+> 
+> The subject should be "[PATCH V2 1/2] ***" instead.
+> 
+> 
 
-Applied both, thanks
+Applied along with the [1/2], thanks!
 
--- 
-~Vinod
+
