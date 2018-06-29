@@ -2,106 +2,82 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD7CC6778B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA766C6778B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D0F2525C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:35:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h6Ouwcwk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D0F2525C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9EAB025098
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAB025098
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967047AbeF2QfG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:35:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36850 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967006AbeF2QfF (ORCPT
+        id S967069AbeF2QgC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:36:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59438 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967006AbeF2QgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:35:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iGRWW9k3PUdbvenVgd7xVPkPkxUjPaP3LaQ00bYXtno=; b=h6OuwcwkK1AGazEC9iELK/a3Q4
-        wVyb8rS+0e9UeFl4/hY3FNE3CB8v4dU6wRytr63mje1Se9ADqrFxtEG/eQ1cXlDTs3PMQsX3d/vbf
-        aPLwC8/8AvG6QGFOxhW9WoyQBn0BDyfikwwSEvoi8H6XUDvKlgCvnsdHaHlp79+d0z0IurZxAZZeC
-        vMSfcVdKUcifIW2FBb6pTZyqoRViy1shHHQVmcMtGb4CrxN+NWQKAfRlYMHZdEDJ8BqKPPJtUWZv5
-        N7N+k0lP847pKearVsDvpWGP3qaiiRwUU18qhwGq7tmkosG4Cy3R9LppvCKg57Rt6WIlWv3RrI9Xh
-        iY8XGZmQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fYwMP-0001WT-Fj; Fri, 29 Jun 2018 16:35:02 +0000
-Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
- configuration"
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>
-References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
-Date:   Fri, 29 Jun 2018 09:34:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 29 Jun 2018 12:36:01 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fYwN2-0002nk-E9; Fri, 29 Jun 2018 18:35:40 +0200
+Date:   Fri, 29 Jun 2018 18:35:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 2/4] x86/split_lock: Align x86_capability to unsigned
+ long to avoid split locked access
+In-Reply-To: <ae0b8cb1-a8a9-f0ef-3c20-f4fe4b9b6f4a@intel.com>
+Message-ID: <alpine.DEB.2.21.1806291824010.1595@nanos.tec.linutronix.de>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com> <1530282807-66555-3-git-send-email-fenghua.yu@intel.com> <ae0b8cb1-a8a9-f0ef-3c20-f4fe4b9b6f4a@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 06:42 AM, Mike Rapoport wrote:
-> Otherwise mm configuration options show up in the top level menu.
+On Fri, 29 Jun 2018, Dave Hansen wrote:
+
+> On 06/29/2018 07:33 AM, Fenghua Yu wrote:
+> > --- a/arch/x86/include/asm/processor.h
+> > +++ b/arch/x86/include/asm/processor.h
+> > @@ -105,7 +105,8 @@ struct cpuinfo_x86 {
+> >  	__u32			extended_cpuid_level;
+> >  	/* Maximum supported CPUID level, -1=no CPUID: */
+> >  	int			cpuid_level;
+> > -	__u32			x86_capability[NCAPINTS + NBUGINTS];
+> > +	__u32			x86_capability[NCAPINTS + NBUGINTS]
+> > +				__aligned(sizeof(unsigned long));
+> >  	char			x86_vendor_id[16];
+> >  	char			x86_model_id[64];
+> >  	/* in KB - valid for CPUS which support this call: */
 > 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> This is begging for comments.
 
-Hi Mike,
+Right and this patch wants to be the first in the series as it fixes an
+existing issue and can be picked up independently of the rest.
 
-In which config tool does this matter?
+Plus what enforces proper alignment for the other capability related
+u32 arrays? 
 
-For xconfig, it seems to me that this patch hides the MM menu, whereas
-before this patch, the MM menu is easy to find (although it could
-use some kind of heading).
+Thanks,
 
-
-> ---
->  arch/arc/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index e81bcd271be7..92cf06b354a8 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -554,8 +554,6 @@ menu "Executable file formats"
->  source "fs/Kconfig.binfmt"
->  endmenu
->  
-> -endmenu	 # "ARC Architecture Configuration"
-> -
->  source "mm/Kconfig"
->  
->  config FORCE_MAX_ZONEORDER
-> @@ -563,6 +561,8 @@ config FORCE_MAX_ZONEORDER
->  	default "12" if ARC_HUGEPAGE_16M
->  	default "11"
->  
-> +endmenu	 # "ARC Architecture Configuration"
-> +
->  source "net/Kconfig"
->  source "drivers/Kconfig"
->  
-> 
-
-
--- 
-~Randy
+	tglx
