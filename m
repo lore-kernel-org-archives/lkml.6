@@ -2,107 +2,232 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98B8C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8DFC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7D327D9F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:15:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7D327D9F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
+	by mail.kernel.org (Postfix) with ESMTP id C8D0927D9F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D0927D9F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964984AbeF2LPj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:15:39 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:51598 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935740AbeF2LPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:15:33 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id D4DC941BD8; Fri, 29 Jun 2018 13:05:29 +0200 (CEST)
-Message-Id: <a84243a1a15d11511061eeae2f09c0ad8154d093.1530268235.git.nikolaus.voss@loewensteinmedical.de>
-In-Reply-To: <cover.1530268235.git.nikolaus.voss@loewensteinmedical.de>
-References: <cover.1530268235.git.nikolaus.voss@loewensteinmedical.de>
-From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Date:   Fri, 29 Jun 2018 10:10:10 +0200
-Subject: [PATCH 1/3] IIO: st_accel_i2c.c: Use fallback if DT/ACPI enum failed
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1753815AbeF2LQQ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:16:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59994 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964989AbeF2LQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:16:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C65CD18A;
+        Fri, 29 Jun 2018 04:16:12 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6C14F3F266;
+        Fri, 29 Jun 2018 04:16:10 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        marc.zyngier@arm.com, cdall@kernel.org, eric.auger@redhat.com,
+        julien.grall@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 00/20] arm64: Dynamic & 52bit IPA support
+Date:   Fri, 29 Jun 2018 12:15:20 +0100
+Message-Id: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the driver bails out if not explicitly referred to in
-DT or ACPI tables. This prevents fallback mechanisms from coming
-into effect, e.g. I2C device ID table match via DT or ACPI
-PRP0001 HID. However DT/ACPI enum should take precedence over
-the fallback, so evaluate that first.
 
-Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
----
- drivers/iio/accel/st_accel_i2c.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+The physical address space size for a VM (IPA size) on arm/arm64 is
+limited to a static limit of 40bits. This series adds support for
+using an IPA size specific to a VM, allowing to use a limit supported
+by the host (based on the host kernel configuration and CPU support).
+The default and the minimum size is fixed to 40bits. We also add
+support for handling 52bit IPA addresses added by Arm v8.2 extensions.
 
-diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
-index 6bdec8c451e0..e360da407027 100644
---- a/drivers/iio/accel/st_accel_i2c.c
-+++ b/drivers/iio/accel/st_accel_i2c.c
-@@ -138,8 +138,7 @@ static const struct i2c_device_id st_accel_id_table[] = {
- };
- MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
- 
--static int st_accel_i2c_probe(struct i2c_client *client,
--						const struct i2c_device_id *id)
-+static int st_accel_i2c_probe(struct i2c_client *client)
- {
- 	struct iio_dev *indio_dev;
- 	struct st_sensor_data *adata;
-@@ -156,14 +155,18 @@ static int st_accel_i2c_probe(struct i2c_client *client,
- 					 client->name, sizeof(client->name));
- 	} else if (ACPI_HANDLE(&client->dev)) {
- 		ret = st_sensors_match_acpi_device(&client->dev);
--		if ((ret < 0) || (ret >= ST_ACCEL_MAX))
--			return -ENODEV;
--
--		strlcpy(client->name, st_accel_id_table[ret].name,
-+		if ((ret >= 0) && (ret < ST_ACCEL_MAX))
-+			strlcpy(client->name, st_accel_id_table[ret].name,
- 				sizeof(client->name));
--	} else if (!id)
--		return -ENODEV;
-+	}
- 
-+	/*
-+	 * If OF and ACPI enumeration failed, there could still be platform
-+	 * information via fallback enumeration or explicit instantiation, so
-+	 * check if id table has been matched via client->name.
-+	 */
-+	if (!client->name)
-+		return -ENODEV;
- 
- 	st_sensors_i2c_configure(indio_dev, client, adata);
- 
-@@ -187,7 +190,7 @@ static struct i2c_driver st_accel_driver = {
- 		.of_match_table = of_match_ptr(st_accel_of_match),
- 		.acpi_match_table = ACPI_PTR(st_accel_acpi_match),
- 	},
--	.probe = st_accel_i2c_probe,
-+	.probe_new = st_accel_i2c_probe,
- 	.remove = st_accel_i2c_remove,
- 	.id_table = st_accel_id_table,
- };
+As mentioned above, the supported IPA size on a host could be different
+from the system's PARange indicated by the CPUs (e.g, kernel limit
+on the PA size). So we expose the limit via a new system ioctl request
+ - KVM_ARM_GET_MAX_VM_PHYS_SHIFT - on arm/arm64. This can then be
+passed on to the KVM_CREATE_VM ioctl, encoded in the "type" field.
+Bits [7-0] of the type are reserved for the IPA size. This approach
+allows simpler management of the stage2 page table and guest memory
+slots.
+
+The arm64 page table level helpers are defined based on the page
+table levels used by the host VA. So, the accessors may not work
+if the guest uses more number of levels in stage2 than the stage1
+of the host.  The previous versions (v1 & v2) of this series refactored
+the stage1 page table accessors to reuse the low-level accessors for an
+independent stage2 table. However, due to the level folding in the
+generic code, the types are redefined as well. i.e, if the PUD is
+folded, the pud_t could be defined as :
+
+ typedef struct { pgd_t pgd; } pud_t;
+
+similarly for pmd_t.  So, without stage1 independent page table entry
+types for stage2, we could be dealing with a different type for level
+ 0-2 entries. This is practically fine on arm/arm64 as the entries
+have similar format and size and we always use the appropriate
+accessors to get the raw value (i.e, pud_val/pmd_val etc). But not
+ideal for a solution upstream. So, this version caps the stage2 page
+table levels to that of the stage1. This has the following impact on
+the IPA support for various pagesize/host-va combinations :
+
+
+x-----------------------------------------------------x
+| host\ipa    | 40bit | 42bit | 44bit | 48bit | 52bit |
+-------------------------------------------------------
+| 39bit-4K    |  y    |   y   |  n    |   n   |  n/a  |
+-------------------------------------------------------
+| 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
+-------------------------------------------------------
+| 36bit-16K   |  y    |   n   |  n    |   n   |  n/a  |
+-------------------------------------------------------
+| 47bit-16K   |  y    |   y   |  y    |   y   |  n/a  |
+-------------------------------------------------------
+| 48bit-4K    |  y    |   y   |  y    |   y   |  n/a  |
+-------------------------------------------------------
+| 42bit-64K   |  y    |   y   |  y    |   n   |  n    |
+-------------------------------------------------------
+| 48bit-64K   |  y    |   y   |  y    |   y   |  y    |
+x-----------------------------------------------------x
+
+Or the following list shows what cannot be supported :
+
+ 39bit-4K host supporting IPA > 43bit (upto 48bit)
+ 36bit-16K host for IPA > 40bit (upto 48bit)
+ 42bit-64K host for IPA > 46bit (upto 52bit)
+
+which is not really bad. We can pursue the independent stage2
+page table support and lift the restriction once we get there.
+Given there is a proposal for new generic page table walker [0],
+it would make sense to make our efforts in sync with it to avoid
+diverting from a common API.
+
+52bit support is added for VGIC (including ITS emulation) and handling
+of PAR, HPFAR registers.
+
+The series applies on 4.18-rc2. A tree is available here:
+
+	 git://linux-arm.org/linux-skp.git ipa52/v3
+
+Tested with
+  - Modified kvmtool, which can only be used for (patches included in
+    the series for reference / testing):
+    * with virtio-pci upto 44bit PA (Due to 4K page size for virtio-pci
+      legacy implemented by kvmtool)
+    * Upto 48bit PA with virtio-mmio, due to 32bit PFN limitation.
+  - Hacked Qemu (boot loader support for highmem, phys-shift support)
+    * with virtio-pci GIC-v3 ITS & MSI upto 52bit on Foundation model.
+    Also see [1] for Qemu support.
+
+[0] https://lkml.org/lkml/2018/4/24/777
+[1] https://lists.gnu.org/archive/html/qemu-devel/2018-06/msg05759.html
+
+Changes since V2:
+ - Drop "refactoring of host page table helpers" and restrict the IPA size
+   to make sure stage2 doesn't use more page table levels than that of the host.
+ - Load VTCR for TLB operations on behalf of the VM (Pointed-by: James Morse)
+ - Split a couple of patches to make them easier to review.
+ - Fall back to normal (non-concatenated) entry level page table support if
+   possible.
+ - Bump the IOCTL number
+
+Changes since V1:
+ - Change the userspace API for configuring VM to encode the IPA
+   size in the VM type.  (suggested by Christoffer)
+ - Expose the IPA limit on the host via ioctl on /dev/kvm
+ - Handle 52bit addresses in PAR & HPFAR
+ - Drop patch changing the life time of stage2 PGD
+ - Rename macros for 48-to-52 bit conversion for GIC ITS BASER.
+   (suggested by Christoffer)
+ - Split virtio PFN check patches and address comments.
+
+Kristina Martsenko (1):
+  vgic: Add support for 52bit guest physical address
+
+Suzuki K Poulose (19):
+  virtio: mmio-v1: Validate queue PFN
+  virtio: pci-legacy: Validate queue pfn
+  arm64: Add a helper for PARange to physical shift conversion
+  kvm: arm64: Clean up VTCR_EL2 initialisation
+  kvm: arm/arm64: Fix stage2_flush_memslot for 4 level page table
+  kvm: arm/arm64: Remove spurious WARN_ON
+  kvm: arm/arm64: Prepare for VM specific stage2 translations
+  kvm: arm/arm64: Abstract stage2 pgd table allocation
+  kvm: arm64: Make stage2 page table layout dynamic
+  kvm: arm64: Dynamic configuration of VTTBR mask
+  kvm: arm64: Helper for computing VTCR_EL2.SL0
+  kvm: arm64: Add helper for loading the stage2 setting for a VM
+  kvm: arm64: Configure VTCR per VM
+  kvm: arm/arm64: Expose supported physical address limit for VM
+  kvm: arm/arm64: Allow tuning the physical address size for VM
+  kvm: arm64: Switch to per VM IPA limit
+  kvm: arm64: Add support for handling 52bit IPA
+  kvm: arm64: Allow IPA size supported by the system
+  kvm: arm64: Fall back to normal stage2 entry level
+
+ Documentation/virtual/kvm/api.txt             |  15 ++
+ arch/arm/include/asm/kvm_arm.h                |   3 +-
+ arch/arm/include/asm/kvm_mmu.h                |  28 +++-
+ arch/arm/include/asm/stage2_pgtable.h         |  42 ++---
+ arch/arm64/include/asm/cpufeature.h           |  13 ++
+ arch/arm64/include/asm/kvm_arm.h              | 137 ++++++++++++++---
+ arch/arm64/include/asm/kvm_asm.h              |   2 +-
+ arch/arm64/include/asm/kvm_host.h             |  19 ++-
+ arch/arm64/include/asm/kvm_hyp.h              |  16 ++
+ arch/arm64/include/asm/kvm_mmu.h              |  92 ++++++++++-
+ arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 -----
+ arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 -----
+ arch/arm64/include/asm/stage2_pgtable.h       | 213 +++++++++++++++++++-------
+ arch/arm64/kvm/guest.c                        |  42 +++++
+ arch/arm64/kvm/hyp/s2-setup.c                 |  37 +----
+ arch/arm64/kvm/hyp/switch.c                   |   4 +-
+ arch/arm64/kvm/hyp/tlb.c                      |   4 +-
+ drivers/virtio/virtio_mmio.c                  |  18 ++-
+ drivers/virtio/virtio_pci_legacy.c            |  12 +-
+ include/linux/irqchip/arm-gic-v3.h            |   5 +
+ include/uapi/linux/kvm.h                      |  16 ++
+ virt/kvm/arm/arm.c                            |  32 +++-
+ virt/kvm/arm/mmu.c                            | 124 ++++++++-------
+ virt/kvm/arm/vgic/vgic-its.c                  |  36 ++---
+ virt/kvm/arm/vgic/vgic-kvm-device.c           |   2 +-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c              |   2 -
+ 26 files changed, 663 insertions(+), 332 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
+ delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
+
+
+kvmtool patches :
+
+Suzuki K Poulose (4):
+  kvmtool: Allow backends to run checks on the KVM device fd
+  kvmtool: arm64: Add support for guest physical address size
+  kvmtool: arm64: Switch memory layout
+  kvmtool: arm: Add support for creating VM with PA size
+
+ arm/aarch32/include/kvm/kvm-arch.h        |  6 ++++--
+ arm/aarch64/include/kvm/kvm-arch.h        | 15 ++++++++++++---
+ arm/aarch64/include/kvm/kvm-config-arch.h |  5 ++++-
+ arm/include/arm-common/kvm-arch.h         | 17 +++++++++++------
+ arm/include/arm-common/kvm-config-arch.h  |  1 +
+ arm/kvm.c                                 | 24 +++++++++++++++++++++++-
+ include/kvm/kvm.h                         |  4 ++++
+ kvm.c                                     |  2 ++
+ 8 files changed, 61 insertions(+), 13 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
