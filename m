@@ -2,122 +2,144 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8037CC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7A1C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B8E220685
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E49D7214FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dR/kOAj/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8E220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Xp7BA9RP";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K4otI2X5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E49D7214FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935500AbeF2Vng (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 17:43:36 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46092 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933456AbeF2Vnd (ORCPT
+        id S1754712AbeF2Vof (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 17:44:35 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43908 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752225AbeF2Voe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 17:43:33 -0400
-Received: by mail-vk0-f68.google.com with SMTP id b14-v6so499905vke.13;
-        Fri, 29 Jun 2018 14:43:33 -0700 (PDT)
+        Fri, 29 Jun 2018 17:44:34 -0400
+Received: by mail-yw0-f195.google.com with SMTP id r19-v6so4201354ywc.10
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 14:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EUOdJhhuWtA1wWB8AkYtE0pFwG7sf1YJz09McQNBs/E=;
-        b=dR/kOAj/hiLEWde/ZcipD4FNdJSVNdxpX6zWxsaEqN1fdtAn+V/1mRX5BJTpXKhL5v
-         KnqUwJdwsfXGLpoMUXerAe4WASG0VUtwrpqRoMCOaNCr7Lol+w7xUxHkIMgRffqXtNIB
-         TEdm2WokCanMxPk3rO5k7B8Nj60wmRXB57jb3ZJUdeZlDcA7HniVeT21NvkHk0paEgW8
-         Va2af8jWiWiNERtsbKsn3W6k+Qvtl8PoYPouu+ZxgsCpz4ior9gU2sWsFr5YL19KMyaA
-         SJTy1zG3H/GdcvoKA7KTea2OhH4OvEJD/fDZxV1920oFyCA+lZR+pUnIu3h6P/bM4FTD
-         rXww==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=HjyWFoYzY+JFjzs+J9w352Rv4dVGDk3LBzHh8C832sM=;
+        b=Xp7BA9RPzHUU0R+V7R/RDxKlJQ2NDc/PPHt791I+xw+qRKAminp9aCMvR7SraxAS1J
+         nCj0mY/bQHLvBNOorXe32vILh/P5ncWSgMz1m3MODf4BJ2mygyjJwWks/7vgaCzfB5rA
+         /hwZzNr3cObrqSntuzzQ1Ra/xu4TbVo1ADO2lBc0roofLwh3M+Dyto5gUaGixFdHRnGD
+         aQcx2DRm9Jyr2nU+loDBn5cAYvBcrTNDc28JNQS1d2tFuiReRq44cpd8YFiwcTN9BmRp
+         GXGI3k+BY0VybkgXFsSwDA2y0h3kxEE7BXAVJczJO+Ydi7j6t7Tp/lJU2jlq3QDJPmtJ
+         FBjw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=HjyWFoYzY+JFjzs+J9w352Rv4dVGDk3LBzHh8C832sM=;
+        b=K4otI2X5v6Z/LGAxc0zoJIEipuh6ee061N3GGTjpvhSVx/t/KTe6ZtWlFnc18Atuoh
+         cieGJJfxWmMoHhNjZufGP7nyYc4kPTYKLYuzSBTKhndf66OuTGA06ePBWGkpUX5mApcT
+         Zi9bg4VDl7z97H70FVKn4/XcPINRpfzd/P8lg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EUOdJhhuWtA1wWB8AkYtE0pFwG7sf1YJz09McQNBs/E=;
-        b=Q8xHAxpXxg0rRFpGXrpXDY+TX6Re6kRv1jCio8OI655umJpI+EMcW0FprnStd6hVSF
-         y4P2QKWpjb1UKME3p+EPDjrwu3bAQA/fRSi5gAp2Tge05ly1yv1NrzCmqRGzTkYII62T
-         pRwtxf8yw85W/KlNqEAs3+Votb4DrRovtxRlYxsc0icpAtSlfUJNPhCg47EqjZQv7Ul8
-         zigzb2ThpnMBU95Q4Q9EAemaI8prcp1D4Cula24/bstetB598Pn8U2zlNIk9KDn6AefR
-         23sdKY2aZdS+fo+rOe+sFLtpUoHI72gBgqjYBMIGUs75Uo3aXAiXpvNvq6zA/Hk1lFfc
-         Qw5g==
-X-Gm-Message-State: APt69E2Mhy5jGnCNusdJ77XIi5+IM52c4y82+XGWnYBN/ni0cMbHYDd8
-        13eJocDNBzvUQxWE8vftLMGR8lf23WzzKqQ3NDE=
-X-Google-Smtp-Source: AAOMgpdBY8XU84Up0eYx0CzL8gFyrD+eAFDcfOuf7t3tr0sIoTMRTnEFgo0ylEFAvrP7BOGWtJY0ae/k0CVI4ptL6qc=
-X-Received: by 2002:a1f:82c7:: with SMTP id e190-v6mr9964952vkd.187.1530308612719;
- Fri, 29 Jun 2018 14:43:32 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=HjyWFoYzY+JFjzs+J9w352Rv4dVGDk3LBzHh8C832sM=;
+        b=ZlOYIYzNluuUQfJuTekgv5WY/yp50OipoOm1+xfSXDyCGyuEHkU+IEG/eGUGlEWPX0
+         JfqKsevALf58S37+oQcPVqanaHaXM0XQEmedW2PHmWuVx/L25JF+z++JgYdQNS28o59Q
+         AW2YHUy2h8prQamVq5/XtS6FlyPGGyErpsytPq0wFRFwfrVPiIqfA3Wvykk2jq4CIuhx
+         4XgTXvZFIy63Zr/ZxynrGwUCj4Eia66JK5Fs22/APFW1Dpvx/35KvCs/AB2kuaSVi6t9
+         kcm3KLANGwR+FDKOBlf0Le1FHP4mqYW+4gm+cCmXFLDK5ZooTjnV6VxgFKpkg0D04gNF
+         d3yA==
+X-Gm-Message-State: APt69E1D/JxwaU0IpZvU3H58Ev2AE/aA3vbhVXq6UB6skgch3+cDxcqI
+        wydx/kB+BRWGmmSsGI4DXygcuSuK4i290a0Dtkbm0g==
+X-Google-Smtp-Source: ADUXVKIA4/yf8a8C+A8AXw5TjDbU99cKFGLQv8PgUF/f4jJToZ0wM52LTg53nXinwky9LyVo1s80pV1ze0puEyLjF3I=
+X-Received: by 2002:a25:3445:: with SMTP id b66-v6mr8787680yba.484.1530308673461;
+ Fri, 29 Jun 2018 14:44:33 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 14:43:32
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 14:44:32
  -0700 (PDT)
-In-Reply-To: <1530214274-21139-4-git-send-email-okaya@codeaurora.org>
-References: <1530214274-21139-1-git-send-email-okaya@codeaurora.org> <1530214274-21139-4-git-send-email-okaya@codeaurora.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 30 Jun 2018 00:43:32 +0300
-Message-ID: <CAHp75VcYbeRTiggEiQnEV6DKR=F47RxNR0FZ+E-XKPpq8VNpqw@mail.gmail.com>
-Subject: Re: [PATCH V4 4/7] PCI: Unify try slot and bus reset API
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Peter Xu <peterx@redhat.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VFIO DRIVER" <kvm@vger.kernel.org>
+In-Reply-To: <CAK8P3a3zrXii=bxBm1zHWMHWgYLCQ0rpo460zmKyfsf_-nxxhQ@mail.gmail.com>
+References: <20180629185339.GA37582@beast> <CAK8P3a3zrXii=bxBm1zHWMHWgYLCQ0rpo460zmKyfsf_-nxxhQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 29 Jun 2018 14:44:32 -0700
+X-Google-Sender-Auth: iHLqFXhHDsl4O7Slqgxt3CVXzKw
+Message-ID: <CAGXu5jJz0zP_DvGqZsBjKZ_vY0=xKoUxCLVxXgUPAbcXS6aMNg@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: mpc5200: Remove VLA usage
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Anatolij Gustschin <agust@denx.de>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 10:31 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> Drivers are expected to call pci_try_reset_slot() or pci_try_reset_bus() by
-> querying if a system supports hotplug or not. A survey showed that most
-> drivers don't do this and we are leaking hotplug capability to the user.
+On Fri, Jun 29, 2018 at 2:02 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Jun 29, 2018 at 8:53 PM, Kees Cook <keescook@chromium.org> wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> switches to using a stack size large enough for the saved routine and
+>> adds a sanity check.
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >
-> Hide pci_try_slot_reset() from drivers and embed into pci_try_bus_reset().
-> Change pci_try_reset_bus() parameter from struct pci_bus to struct pci_dev.
+> This seems particularly nice, not only avoids it the dynamic stack
+> allocation, it
+> also makes sure the new 0x500 handler doesn't overflow into the 0x600
+> exception handler.
+>
+> It would help to explain how you arrived at that '256 byte' number in
+> the changelog though.
 
-> +/**
-> + * pci_try_reset_bus - Try to reset a PCI bus
-> + * @pdev: top level PCI device to reset via slot/bus
-> + *
-> + * Same as above except return -EAGAIN if the bus cannot be locked
-> + */
-> +int pci_try_reset_bus(struct pci_dev *pdev)
-> +{
-> +       bool slot = false;
-> +
-> +       if (!pci_probe_reset_slot(pdev->slot))
-> +               slot = true;
-> +
-> +       return slot ? __pci_try_reset_slot(pdev->slot) :
-> +                       __pci_try_reset_bus(pdev->bus);
+Honestly, I just counted instructions, multiplied by 8 and rounded up
+to the next nearest power of 2, and the result felt right for giving
+some level of flexibility for code growth before tripping the WARN. :P
 
-This can be as simple as
+I'm happy to adjust, of course. :)
 
-  return pci_probe_reset_slot(pdev->slot) ?
-    __pci_try_reset_bus(pdev->slot) : __pci_try_reset_slot(pdev->bus);
+-Kees
 
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-> +}
->  EXPORT_SYMBOL_GPL(pci_try_reset_bus);
+Thanks!
+
+-Kees
+
+>
+>> ---
+>>  arch/powerpc/platforms/52xx/mpc52xx_pm.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/platforms/52xx/mpc52xx_pm.c b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
+>> index 31d3515672f3..b23da85fa73c 100644
+>> --- a/arch/powerpc/platforms/52xx/mpc52xx_pm.c
+>> +++ b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
+>> @@ -117,7 +117,10 @@ int mpc52xx_pm_enter(suspend_state_t state)
+>>         u32 intr_main_mask;
+>>         void __iomem * irq_0x500 = (void __iomem *)CONFIG_KERNEL_START + 0x500;
+>>         unsigned long irq_0x500_stop = (unsigned long)irq_0x500 + mpc52xx_ds_cached_size;
+>> -       char saved_0x500[mpc52xx_ds_cached_size];
+>> +       char saved_0x500[256];
+>> +
+>> +       if (WARN_ON(mpc52xx_ds_cached_size > sizeof(saved_0x500)))
+>> +               return -ENOMEM;
+>>
+>>         /* disable all interrupts in PIC */
+>>         intr_main_mask = in_be32(&intr->main_mask);
+
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Kees Cook
+Pixel Security
