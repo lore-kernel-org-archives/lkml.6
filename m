@@ -2,149 +2,118 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B24CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98F8C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F64D214C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 745EF214DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:48:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u4z8/lxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F64D214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXZyMPTg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745EF214DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934874AbeF2MpO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 08:45:14 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53699 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934369AbeF2MpJ (ORCPT
+        id S1755521AbeF2MsN (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 08:48:13 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:41353 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753639AbeF2MsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:45:09 -0400
-Received: by mail-it0-f68.google.com with SMTP id a195-v6so2650050itd.3
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 05:45:09 -0700 (PDT)
+        Fri, 29 Jun 2018 08:48:11 -0400
+Received: by mail-yw0-f195.google.com with SMTP id j5-v6so3346741ywe.8
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 05:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2L8jTjtLtHQSNVQv6Mns8k+CBKnTFLV5Zm0q+pEDcJk=;
-        b=u4z8/lxktq9wCjgY3H5dn8NA5BV9caRBfKx96G+knkGLKML/D6nh1cnq52drQyWZYH
-         C325JKvy9dWa8SeRBMbf4+ADxVGFScValCpcgK/6b8A2iCny3UmtJvtRMBrfJHlAcHa3
-         6RNbBroGd5xeQ0kY00MxTCdFoIfe9mpUMt/XWU/VRXcBKKP0GRwpHizlCNTytOKWra7A
-         7NvTIHbVsUwu2+PHNtdRRGZRzqhq6Nu5y/V28skWFsyj+iRLdbdvi62ExkhkivPEq2H+
-         /B31R5BfKz6yjQikgHLuN2DZwRkGF+SDcU+Uk7zB6FaisCgmTrTwiTBx+RdXzhtkhEr5
-         5zjQ==
+        bh=JZhpXvXRE3/POhG15jwPdKe0GeIdj50A+HUCgpZVFI0=;
+        b=BXZyMPTg6/AmiPmPcOGsUUzxMvVb5u+6VczZhGXz8Dh4r69cho0TBsfxiaxwDGwOuN
+         TxzdtSglvyLUDhpQzzPFuGgqosm7wuCN7dtUrp+iZizHQpaDR0+6r6gmNEHyAC/1v6jj
+         sGg8CITFXJaGx5ykjkE2uwDPWY+uLTneqNxF0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2L8jTjtLtHQSNVQv6Mns8k+CBKnTFLV5Zm0q+pEDcJk=;
-        b=JTYwCxjc7lv54ClIVnoaC+IEVvyYyAVJ8oFQ/KdmODxQ3RyQo2tv4uZmUl0Gz90fpH
-         SbvlCoEExTuoeLIan3XuEvdNIyu4/yypTBLzfUw2pTMtD1UVW8rxAHcJrq7ow3EsSeBB
-         V3rUx/DUG8qrrexAy58wfAI3YKso9Asftmp1Fsj5H+nCMxYmtsgrVaNs3MjVTb9TxEBb
-         JouqD3boKceWUZXiDGElDtMtdTtt44TzJyplCbvRgHdTef40VO+caCbGNUp42RRWIcYI
-         nCwZ+ulYTFnrGOp6WMSLmS8eFApze8Ntwu/ue0cntt7mMzDSIHDJ/al9ogNtHda5QIe8
-         malg==
-X-Gm-Message-State: APt69E3tTpJovnDIvAoXc25vQLX/DoM+tGZqDb3JEmfjpdQWlOPmb6YV
-        7EV40UvHb6nESYeSKOO5pLQBTjFcNmFL4MAaHAqHKQ==
-X-Google-Smtp-Source: AAOMgpdSqolcKFiPUTmlejS51ZJyIk55fxWjRD03g3sQz8F4Rs5UQKM8Ulb1RbnjVcKdy7dz9UBECMoMjtMIbH2V8yA=
-X-Received: by 2002:a24:b046:: with SMTP id b6-v6mr1725612itj.48.1530276308783;
- Fri, 29 Jun 2018 05:45:08 -0700 (PDT)
+        bh=JZhpXvXRE3/POhG15jwPdKe0GeIdj50A+HUCgpZVFI0=;
+        b=BX+NmOOzewFcJ6nGzPdFjRrmeZ9vQLbu5N1X6GjtWqxjnb8vdi5iP15KMbSaaPw/YQ
+         XOJGX6dPKq18GJPNvLRbTuwjqB3ejSdF68+1Ds2JDFvNTggfPSF2L3/MztpJ08e3Syk+
+         4Do3ON8Wu9Ji73Nr5KzFgOeGgiI203aKHYQ159/csMUkkeBa/7dftLCOIWK7U/WkZ94z
+         uqOuMsI2HFXq0+hDqapCBU9UQ+xboat3l+ku/puHeLANGWz+McKXXqedVFSyp9sI9I2B
+         PHWTbmwRxRhaNHsyqrbgSHCgqKKRdMmecUHS3iP1ECfobrR6xYrF+QSo6a0VcDauku90
+         y54A==
+X-Gm-Message-State: APt69E2xKT6sLoKdrbw3M/NF8iLSg1C7HZx2ICAm7rz6r4LVJc1mibUu
+        HDmkcH8agF6QsMcbjaPg6kX6kwCyP1d8kf8Im/pORA==
+X-Google-Smtp-Source: AAOMgpd4PWEfycLjEIvB3I7BwwSiL9JbMr/QIz3LKBSJk2WAYaqeEg5I6I5lq2PE2qSqyfX1XXP8l41b0JyjK0jRDz4=
+X-Received: by 2002:a0d:f547:: with SMTP id e68-v6mr7118992ywf.298.1530276490550;
+ Fri, 29 Jun 2018 05:48:10 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:9082:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 05:45:08
- -0700 (PDT)
-In-Reply-To: <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
-References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
- <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com> <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Fri, 29 Jun 2018 14:45:08 +0200
-Message-ID: <CAAeHK+xsBOKghUp9XhpfXGqU=gjSYuy3G2GH14zWNEmaLPy8_w@mail.gmail.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
+References: <20180629100248.11560-1-anders.roxell@linaro.org> <53d599f2-44a1-c366-4a5c-2ca6cd19b031@kernel.org>
+In-Reply-To: <53d599f2-44a1-c366-4a5c-2ca6cd19b031@kernel.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 29 Jun 2018 14:47:59 +0200
+Message-ID: <CADYN=9L3hQCfiD2CBrx3_2pLxTaZGPTt-gAcScKqe7pTq4ZgCg@mail.gmail.com>
+Subject: Re: [PATCH] doc: dev-tools: kselftest.rst: update contributing new tests
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 9:40 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Thu, 28 Jun 2018 20:29:07 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
+On Fri, 29 Jun 2018 at 14:10, Shuah Khan <shuah@kernel.org> wrote:
 >
->> >> Slab memory usage after boot [2]:
->> >> * ~40 kb for clean kernel
->> >> * ~105 kb + 1/8th shadow ~= 118 kb for KASAN
->> >> * ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
->> >>
->> >> Network performance [3]:
->> >> * 8.33 Gbits/sec for clean kernel
->> >> * 3.17 Gbits/sec for KASAN
->> >> * 2.85 Gbits/sec for KHWASAN
->> >>
->> >> Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
->> >>
->> >> [1] Time before the ext4 driver is initialized.
->> >> [2] Measured as `cat /proc/meminfo | grep Slab`.
->> >> [3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
->> >
->> > The above doesn't actually demonstrate the whole point of the
->> > patchset: to reduce KASAN's very high memory consumption?
->>
->> You mean that memory usage numbers collected after boot don't give a
->> representative picture of actual memory consumption on real workloads?
->>
->> What kind of memory consumption testing would you like to see?
+> On 06/29/2018 04:02 AM, Anders Roxell wrote:
+> > Add a description that kernel config options should be added into a
+> > config file that is placed next to the newly added test.
+> >
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  Documentation/dev-tools/kselftest.rst | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
+> > index 3bf371a938d0..4c546a35bd58 100644
+> > --- a/Documentation/dev-tools/kselftest.rst
+> > +++ b/Documentation/dev-tools/kselftest.rst
+> > @@ -156,6 +156,9 @@ Contributing new tests (details)
+> >     installed by the distro on the system should be the primary focus to be able
+> >     to find regressions.
+> >
+> > + * If a new test needs specific kernel options, they should be enabled in
 >
-> Well, 100kb or so is a teeny amount on virtually any machine.  I'm
-> assuming the savings are (much) more significant once the machine gets
-> loaded up and doing work?
+> get rid of new
+>
+> > +   then config file in the same directory where the test is added.
+>
+> "the config" instead of "then config"
+>
+> Rephrasing this might be better:
+>
+> "If a test needs specific kernel config options enabled, add a config file in the
+> test directory to enable them.
+>
+> e.g: tools/testing/selftests/android/ion/config
 
-So with clean kernel after boot we get 40 kb memory usage. With KASAN
-it is ~120 kb, which is 200% overhead. With KHWASAN it's 50 kb, which
-is 25% overhead. This should approximately scale to any amounts of
-used slab memory. For example with 100 mb memory usage we would get
-+200 mb for KASAN and +25 mb with KHWASAN. (And KASAN also requires
-quarantine for better use-after-free detection). I can explicitly
-mention the overhead in %s in the changelog.
+I like it. sending v2 shortly.
 
-If you think it makes sense, I can also make separate measurements
-with some workload. What kind of workload should I use?
+Thank you.
+
+Cheers,
+Anders
+
+>
+> > +
+> >  Test Harness
+> >  ============
+> >
+> >
+>
