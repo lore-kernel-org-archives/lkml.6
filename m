@@ -2,144 +2,331 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8264DC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B824DC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 415FA27E6E
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415FA27E6E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 591152440A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:28:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="lBIUItAA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591152440A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935972AbeF2L1o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:27:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:2039 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753805AbeF2L1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:27:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 04:27:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
-   d="scan'208";a="241335302"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2018 04:27:39 -0700
-Message-ID: <5B36189E.5050204@intel.com>
-Date:   Fri, 29 Jun 2018 19:31:42 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1755276AbeF2L2q (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:28:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35566 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754859AbeF2L2o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:28:44 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i125-v6so7039168lji.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 04:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jnVALoiQt1nUKN2bQQshEIXbLpGrg5WeQ8sOLlCrmwI=;
+        b=lBIUItAAXmCczaTFvsdGWVPgxMToHAayOkQGvC0GZRRaxQTOgVHdRMxjogwynKKSRZ
+         dFBcaXRWbzkuqPEvez+T6OD4ws6WdZhaVbw5vy5iqHVCJB+5b54f8l4NA48jH8+Ozajt
+         9jv0QSr9NDuHw5/X9SJAHaeQwHNF6lpBxLh1kfavOdbZQet3aamREeSPVR0lINqPhoTR
+         4WPaWK39Gpm2Nfr556IFjyPPTaeGXq+ll5wG6bFGH0j2QckdaTVkBLWtKHw27+Wk/02e
+         WVS0vuoqBH+TSTjjAtUZtDxXcs6KWPoYGPSEpNu29t59xYXhG9O+nvmKdpcQ8An52do5
+         Ragg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jnVALoiQt1nUKN2bQQshEIXbLpGrg5WeQ8sOLlCrmwI=;
+        b=RH3CDlc3g6s89hKWOck0ltozU9lQ8AadPgAY7gAnW6gp/xr1geNThXIIHInkbtNSa7
+         77dXxY+Vzho11NOGvkNOZ8aItYfHQgjgheKohtj3vjAsj9r6NIUskuwU1Feusy2//OvC
+         j7mYYE0DJ8KWKSbbuY8foOfyRP9ZoNkMJQV5LNrDtA/VlVApLL4lzRU13xuBaITGNlu7
+         THSd73gr6WQFXVZTs3m8tajRp9DMaWO8M4l2hRGW0AtYKPwIZGGgzs7aidiD5/czCoPT
+         gH333sXKqPsAVPP1oDq698h0DtoYFTixWhQ62ae8UUePX3cNppFhGrc+EWesK4MCiQBB
+         v89Q==
+X-Gm-Message-State: APt69E0xGO4eoRaBBp57H7PemsW7OinQlGSHNPNFQhGy2xUMGlQslF4a
+        tqSwxouOXTvIpNQTspdEak8eBDBF
+X-Google-Smtp-Source: AAOMgpdSZ9Et/+HeiFAE6r2SOKuHosVJNRwCceXaIwDVqyzU5necVl610zI4sysUENnz+WobNSF24A==
+X-Received: by 2002:a2e:4d9d:: with SMTP id c29-v6mr8037642ljd.132.1530271722839;
+        Fri, 29 Jun 2018 04:28:42 -0700 (PDT)
+Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id q14-v6sm1665969lfh.87.2018.06.29.04.28.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 04:28:41 -0700 (PDT)
+Subject: Re: [PATCH] lightnvm: pblk: recover chunk state on 1.2 devices
+To:     javier@cnexlabs.com
+Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1530177121-24908-1-git-send-email-javier@cnexlabs.com>
+ <1530177121-24908-2-git-send-email-javier@cnexlabs.com>
+ <e42e5ab4-48c7-e822-618d-dc28c25262ed@lightnvm.io>
+ <43D7E3C4-765F-46AB-9B84-27E37FCAE016@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <19b2f125-d373-cf2b-43c7-140b3872cd64@lightnvm.io>
+Date:   Fri, 29 Jun 2018 13:28:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-To:     David Hildenbrand <david@redhat.com>,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org
-CC:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        peterx@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>
-Subject: Re: [PATCH v34 0/4] Virtio-balloon: support free page reporting
-References: <1529928312-30500-1-git-send-email-wei.w.wang@intel.com> <c4dd0a13-91fb-c0f5-b41f-54421fdacca9@redhat.com> <5B35ACD5.4090800@intel.com> <4840cbb7-dd3f-7540-6a7c-13427de2f0d1@redhat.com>
-In-Reply-To: <4840cbb7-dd3f-7540-6a7c-13427de2f0d1@redhat.com>
+In-Reply-To: <43D7E3C4-765F-46AB-9B84-27E37FCAE016@cnexlabs.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 03:46 PM, David Hildenbrand wrote:
+On 06/29/2018 01:22 PM, Javier Gonzalez wrote:
+>> On 29 Jun 2018, at 13.14, Matias Bjørling <mb@lightnvm.io> wrote:
 >>
->> I'm afraid it can't. For example, when we have a guest booted, without
->> too many memory activities. Assume the guest has 8GB free memory. The
->> arch_free_page there won't be able to capture the 8GB free pages since
->> there is no free() called. This results in no free pages reported to host.
->
-> So, it takes some time from when the guest boots up until the balloon
-> device was initialized and therefore page hinting can start. For that
-> period, you won't get any arch_free_page()/page hinting callbacks, correct.
->
-> However in the hypervisor, you can theoretically track which pages the
-> guest actually touched ("dirty"), so you already know "which pages were
-> never touched while booting up until virtio-balloon was brought to
-> life". These, you can directly exclude from migration. No interface
-> required.
->
-> The remaining problem is pages that were touched ("allocated") by the
-> guest during bootup but freed again, before virtio-balloon came up. One
-> would have to measure how many pages these usually are, I would say it
-> would not be that many (because recently freed pages are likely to be
-> used again next for allocation). However, there are some pages not being
-> reported.
->
-> During the lifetime of the guest, this should not be a problem,
-> eventually one of these pages would get allocated/freed again, so the
-> problem "solves itself over time". You are looking into the special case
-> of migrating the VM just after it has been started. But we have the
-> exact same problem also for ordinary free page hinting, so we should
-> rather solve that problem. It is not migration specific.
->
-> If we are looking for an alternative to "problem solves itself",
-> something like "if virtio-balloon comes up, it will report all free
-> pages step by step using free page hinting, just like we would have from
-> "arch_free_pages()"". This would be the same interface we are using for
-> free page hinting - and it could even be made configurable in the guest.
->
-> The current approach we are discussing internally for details about
-> Nitesh's work ("how the magic inside arch_fee_pages() will work
-> efficiently) would allow this as far as I can see just fine.
->
-> There would be a tiny little window between virtio-balloon comes up and
-> it has reported all free pages step by step, but that can be considered
-> a very special corner case that I would argue is not worth it to be
-> optimized.
->
-> If I am missing something important here, sorry in advance :)
->
+>> On 06/28/2018 11:12 AM, Javier González wrote:
+>>> The Open-Channel 1.2 spec does not define a mechanism for the host to
+>>> recover the block (chunk) state. As a consequence, a newly format device
+>>> will need to reconstruct the state. Currently, pblk assumes that blocks
+>>> are not erased, which might cause double-erases in case that the device
+>>> does not protect itself against them (which is not specified in the spec
+>>> either).
+>>
+>> It should not be specified in the spec. It is up to the device to handle
+>> double erases and not do it.
+>>
+>>> This patch, reconstructs the state based on read errors. If the first
+>>> sector of a block returns and empty page (NVM_RSP_ERR_EMPTYPAGE), then
+>>> the block s marked free, i.e., erased and ready to be used
+>>> (NVM_CHK_ST_FREE). Otherwise, the block is marked as closed
+>>> (NVM_CHK_ST_CLOSED). Note that even if a block is open and not fully
+>>> written, it has to be erased in order to be used again.
+>>
+>> Should we extend it to do the scan, and update the write pointer as
+>> well? I think this kind of feature already is baked into pblk?
+>>
+> 
+> This is already in place: we scan until empty page and take it from
+> there. This patch is only for the case in which we start a pblk instance
+> form scratch. On a device already owned by pblk, we would not have the
+> problem we are trying to solve here because we know the state.
 
-Probably I didn't explain that well. Please see my re-try:
+Agree. What I meant was that when we anyway are recovering the state, we 
+could just as well update ->wp and set to NVM_CHK_ST_OPEN and so forth 
+for the initialization phase.
 
-That work is to monitor page allocation and free activities via 
-arch_alloc_pages and arch_free_pages. It has per-CPU lists to record the 
-pages that are freed to the mm free list, and the per-CPU lists dump the 
-recorded pages to a global list when any of them is full.
-So its own per-CPU list will only be able to get free pages when there 
-is an mm free() function gets called. If we have 8GB free memory on the 
-mm free list, but no application uses them and thus no mm free() calls 
-are made. In that case, the arch_free_pages isn't called, and no free 
-pages added to the per-CPU list, but we have 8G free memory right on the 
-mm free list.
-How would you guarantee the per-CPU lists have got all the free pages 
-that the mm free lists have?
+> 
+>>> One caveat of this approach is that blocks that have been erased at a
+>>> moment in time, will always be considered as erased. However, some media
+>>> might become unstable if blocks are not erased before usage. Since pblk
+>>> would follow this principle after the state of all blocks fall under
+>>> pblk's domain, we can consider this as an initialization problem. The
+>>> trade-off would be to fall back to the old behavior and risk premature
+>>> media wearing.
+>>
+>> The above is up to the device implementation to handle. We cannot
+>> expect users to understand the intrinsics of media.
+>>
+> 
+> Of course. The point is that with this approach, erases are left a bit
+> in the air and "preventable" write errors might happen, with the previous
+> the burden was put on the device to deal with double erases. It's a
+> tradeoff that I want to make clear before the path is taken.
 
-- I'm also worried about the overhead of maintaining so many per-CPU 
-lists and the global list. For example, if we have applications 
-frequently allocate and free 4KB pages, and each per-CPU list needs to 
-implement the buddy algorithm to sort and merge neighbor pages. Today a 
-server can have more than 100 CPUs, then there will be more than 100 
-per-CPU lists which need to sync to a global list under a lock, I'm not 
-sure if this would scale well.
+Cool.
 
-- This seems to be a burden imposed on the core mm memory 
-allocation/free path. The whole overhead needs to be carried during the 
-whole system life cycle. What we actually expected is to just make one 
-call to get the free page hints only when live migration happens.
-
-Best,
-Wei
-
-
-
-
-
-
-
-
-
+> 
+>>> Signed-off-by: Javier González <javier@cnexlabs.com>
+>>> ---
+>>>   drivers/lightnvm/pblk-init.c | 138 ++++++++++++++++++++++++++++++++++++++-----
+>>>   1 file changed, 124 insertions(+), 14 deletions(-)
+>>> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+>>> index 3b8aa4a64cac..ce25f1473d8e 100644
+>>> --- a/drivers/lightnvm/pblk-init.c
+>>> +++ b/drivers/lightnvm/pblk-init.c
+>>> @@ -697,47 +697,138 @@ static void pblk_set_provision(struct pblk *pblk, long nr_free_blks)
+>>>   	atomic_set(&pblk->rl.free_user_blocks, nr_free_blks);
+>>>   }
+>>>   +static void pblk_state_complete(struct kref *ref)
+>>> +{
+>>> +	struct pblk_pad_rq *pad_rq = container_of(ref, struct pblk_pad_rq, ref);
+>>> +
+>>> +	complete(&pad_rq->wait);
+>>> +}
+>>> +
+>>> +static void pblk_end_io_state(struct nvm_rq *rqd)
+>>> +{
+>>> +	struct pblk_pad_rq *pad_rq = rqd->private;
+>>> +	struct pblk *pblk = pad_rq->pblk;
+>>> +	struct nvm_tgt_dev *dev = pblk->dev;
+>>> +	struct nvm_geo *geo = &dev->geo;
+>>> +	struct pblk_line *line;
+>>> +	struct nvm_chk_meta *chunk;
+>>> +	int pos;
+>>> +
+>>> +	line = &pblk->lines[pblk_ppa_to_line(rqd->ppa_addr)];
+>>> +	pos = pblk_ppa_to_pos(geo, rqd->ppa_addr);
+>>> +
+>>> +	chunk = &line->chks[pos];
+>>> +
+>>> +	if (rqd->error == NVM_RSP_ERR_EMPTYPAGE)
+>>> +		chunk->state = NVM_CHK_ST_FREE;
+>>> +	else
+>>> +		chunk->state = NVM_CHK_ST_CLOSED;
+>>> +
+>>> +	bio_put(rqd->bio);
+>>> +	pblk_free_rqd(pblk, rqd, PBLK_READ);
+>>> +	kref_put(&pad_rq->ref, pblk_state_complete);
+>>> +}
+>>> +
+>>> +static int pblk_check_chunk_state(struct pblk *pblk, struct nvm_chk_meta *chunk,
+>>> +				struct ppa_addr ppa, struct pblk_pad_rq *pad_rq)
+>>> +{
+>>> +	struct nvm_rq *rqd;
+>>> +	struct bio *bio;
+>>> +	int ret;
+>>> +
+>>> +	bio = bio_alloc(GFP_KERNEL, 1);
+>>> +
+>>> +	if (pblk_bio_add_pages(pblk, bio, GFP_KERNEL, 1))
+>>> +		goto fail_free_bio;
+>>> +
+>>> +	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
+>>> +
+>>> +	rqd->bio = bio;
+>>> +	rqd->opcode = NVM_OP_PREAD;
+>>> +	rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_SEQUENTIAL);
+>>> +	rqd->nr_ppas = 1;
+>>> +	rqd->ppa_addr = ppa;
+>>> +	rqd->end_io = pblk_end_io_state;
+>>> +	rqd->private = pad_rq;
+>>> +
+>>> +	kref_get(&pad_rq->ref);
+>>> +
+>>> +	ret = pblk_submit_io(pblk, rqd);
+>>> +	if (ret) {
+>>> +		pr_err("pblk: I/O submissin failed: %d\n", ret);
+>>> +		goto fail_free_rqd;
+>>> +	}
+>>> +
+>>> +	return NVM_IO_OK;
+>>> +
+>>> +fail_free_rqd:
+>>> +	pblk_free_rqd(pblk, rqd, PBLK_READ);
+>>> +	pblk_bio_free_pages(pblk, bio, 0, bio->bi_vcnt);
+>>> +fail_free_bio:
+>>> +	bio_put(bio);
+>>> +
+>>> +	return NVM_IO_ERR;
+>>> +}
+>>> +
+>>>   static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
+>>>   				   void *chunk_meta)
+>>>   {
+>>>   	struct nvm_tgt_dev *dev = pblk->dev;
+>>>   	struct nvm_geo *geo = &dev->geo;
+>>>   	struct pblk_line_meta *lm = &pblk->lm;
+>>> +	struct pblk_pad_rq *pad_rq;
+>>>   	int i, chk_per_lun, nr_bad_chks = 0;
+>>>   +	pad_rq = kmalloc(sizeof(struct pblk_pad_rq), GFP_KERNEL);
+>>> +	if (!pad_rq)
+>>> +		return -1;
+>>> +
+>>> +	pad_rq->pblk = pblk;
+>>> +	init_completion(&pad_rq->wait);
+>>> +	kref_init(&pad_rq->ref);
+>>> +
+>>>   	chk_per_lun = geo->num_chk * geo->pln_mode;
+>>>     	for (i = 0; i < lm->blk_per_line; i++) {
+>>>   		struct pblk_lun *rlun = &pblk->luns[i];
+>>>   		struct nvm_chk_meta *chunk;
+>>> -		int pos = pblk_ppa_to_pos(geo, rlun->bppa);
+>>> +		struct ppa_addr ppa = rlun->bppa;
+>>> +		int pos = pblk_ppa_to_pos(geo, ppa);
+>>>   		u8 *lun_bb_meta = chunk_meta + pos * chk_per_lun;
+>>>     		chunk = &line->chks[pos];
+>>>   -		/*
+>>> -		 * In 1.2 spec. chunk state is not persisted by the device. Thus
+>>> -		 * some of the values are reset each time pblk is instantiated,
+>>> -		 * so we have to assume that the block is closed.
+>>> -		 */
+>>> -		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
+>>> -			chunk->state =  NVM_CHK_ST_CLOSED;
+>>> -		else
+>>> -			chunk->state = NVM_CHK_ST_OFFLINE;
+>>> -
+>>>   		chunk->type = NVM_CHK_TP_W_SEQ;
+>>>   		chunk->wi = 0;
+>>>   		chunk->slba = -1;
+>>>   		chunk->cnlb = geo->clba;
+>>>   		chunk->wp = 0;
+>>>   -		if (!(chunk->state & NVM_CHK_ST_OFFLINE))
+>>> +		if (lun_bb_meta[line->id] != NVM_BLK_T_FREE) {
+>>> +			chunk->state = NVM_CHK_ST_OFFLINE;
+>>> +			set_bit(pos, line->blk_bitmap);
+>>> +			nr_bad_chks++;
+>>> +
+>>>   			continue;
+>>> +		}
+>>>   -		set_bit(pos, line->blk_bitmap);
+>>> -		nr_bad_chks++;
+>>> +		/*
+>>> +		 * In 1.2 spec. chunk state is not persisted by the device.
+>>> +		 * Recover the state based on media response.
+>>> +		 */
+>>> +		ppa.g.blk = line->id;
+>>> +		pblk_check_chunk_state(pblk, chunk, ppa, pad_rq);
+>>>   	}
+>>>   +	kref_put(&pad_rq->ref, pblk_state_complete);
+>>> +
+>>> +	if (!wait_for_completion_io_timeout(&pad_rq->wait,
+>>> +				msecs_to_jiffies(PBLK_COMMAND_TIMEOUT_MS))) {
+>>> +		pr_err("pblk: state recovery timed out\n");
+>>> +		return -1;
+>>> +	}
+>>> +
+>>> +	kfree(pad_rq);
+>>>   	return nr_bad_chks;
+>>>   }
+>>>   @@ -1036,6 +1127,23 @@ static int pblk_line_meta_init(struct pblk *pblk)
+>>>   	return 0;
+>>>   }
+>>>   +static void check_meta(struct pblk *pblk, struct pblk_line *line)
+>>> +{
+>>> +	struct nvm_tgt_dev *dev = pblk->dev;
+>>> +	struct nvm_geo *geo = &dev->geo;
+>>> +	struct pblk_line_meta *lm = &pblk->lm;
+>>> +	int i;
+>>> +
+>>> +	for (i = 0; i < lm->blk_per_line; i++) {
+>>> +		struct pblk_lun *rlun = &pblk->luns[i];
+>>> +		struct nvm_chk_meta *chunk;
+>>> +		struct ppa_addr ppa = rlun->bppa;
+>>> +		int pos = pblk_ppa_to_pos(geo, ppa);
+>>> +
+>>> +		chunk = &line->chks[pos];
+>>> +	}
+>>> +}
+>>> +
+>>>   static int pblk_lines_init(struct pblk *pblk)
+>>>   {
+>>>   	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+>>> @@ -1077,6 +1185,8 @@ static int pblk_lines_init(struct pblk *pblk)
+>>>   			goto fail_free_lines;
+>>>     		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
+>>> +
+>>> +		check_meta(pblk, line);
+>>>   	}
+>>>     	if (!nr_free_chks) {
+>>
+>> I'm okay with us doing this in pblk for now. Over time, someone may do
+>> the work move this (and other specific only-1.2/2.0 stuff) into the
+>> lightnvm subsystem. I don't think pblk should need to care about
+>> either 1.2 or 2.0.
+> 
+> That would be ideal.
+> 
+> Thanks!
+> 
 
