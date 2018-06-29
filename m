@@ -2,130 +2,134 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8FDC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9119CC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77A327B46
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 466A827B46
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 06:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V932m0Q4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77A327B46
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FcTNH540";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CDs3WXQY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466A827B46
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933943AbeF2GW1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 02:22:27 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44873 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754342AbeF2GUC (ORCPT
+        id S934083AbeF2GWh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 02:22:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44788 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933954AbeF2GW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 02:20:02 -0400
-Received: by mail-pg0-f68.google.com with SMTP id b10-v6so3534217pgq.11
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 23:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=S4eygS426BABBAsQSIESeCrT2oWeYHdrfhnghVokkWA=;
-        b=V932m0Q4haBm2tcIysbJW8MMYcBwvDbEly/TZrjjyBjgxbCR/0s8FngAI1amd5iNcF
-         kaGlaSEQfikQ1kkQNKteNjVo/goaM7pF0x2yFJVDsGWz1acsHfeAVyGmnPSjfPsBxSP9
-         WgVksM6E5lXD40dnxxXwhqU4Dg76rfUALkwZw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=S4eygS426BABBAsQSIESeCrT2oWeYHdrfhnghVokkWA=;
-        b=SqCjNYkpK2wt7M2ooRZn39ML8WlIV/FSpWJAu9ooszkpbCVhkALzNuuiZxnsqp9d3V
-         BoYJp4PyKgEZLWgvobawEoUVNidWij/1KnbXn3elsYQWubtMkGzwX78UuFNZYGApxre9
-         3QOs8DFiBMQgluYiRklOnsx1gBYdSRevoB34DUAT1nszIAqgY37RKFtPiY5lnHHk2i5L
-         y/0z553fj39uYCDtn+h33U93DnxxOoN+rs3HBVialklcoga2mkAm/I0ND+Jlyxg6zaQH
-         3h6qWqzmAFucoNjgLDrUt2OoVlfQePPVIkYQOWkEu6q/jW/eHkEM2AS+Q1aw/L1TsDsS
-         rgog==
-X-Gm-Message-State: APt69E3PiKWP/99gxCitgEGpLBjNuD9y/SqwKFeyMKCXSKHqzW1BnPQ8
-        HHIpbXwfBmeUXPLsQ/THCw+SKw==
-X-Google-Smtp-Source: AAOMgpe9535S8Cd2JDRCzezBza+t9ku+jbYWNukszkUIIpgcO3LiWvvc26wLTGFauCT+OfKM8DRF2Q==
-X-Received: by 2002:a62:1f8c:: with SMTP id l12-v6mr4414317pfj.143.1530253202061;
-        Thu, 28 Jun 2018 23:20:02 -0700 (PDT)
-Received: from localhost ([122.172.117.17])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm1976454pfj.101.2018.06.28.23.20.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 23:20:01 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>, ulf.hansson@linaro.org,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 02/10] OPP: Identify and mark genpd OPP tables
-Date:   Fri, 29 Jun 2018 11:49:32 +0530
-Message-Id: <c24cb556bd674933df19bff0acc596d73e510706.1530252803.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
-In-Reply-To: <cover.1530252803.git.viresh.kumar@linaro.org>
-References: <cover.1530252803.git.viresh.kumar@linaro.org>
+        Fri, 29 Jun 2018 02:22:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1D6BC60B1A; Fri, 29 Jun 2018 06:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530253349;
+        bh=GNkaRxFb7PCx249Mz1wDg2M2TRTyGiEB0tq8xRUjT/Q=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=FcTNH540pr+q/9KejSU91Hb4+pmSf7zg+IRVPRENlcD9uM9XaIunTa39wvNpIfz/P
+         VNfGX+yo7n22/2vqum9eC9Rgp3rrFqxORqT6NVPyK7dhbbeZQdgSpvBjelcOLEeMed
+         PHiLCUqxMUIl03z+QSWPWkLguCbTqNgJNWP7uzOg=
+Received: from x230.qca.qualcomm.com (85-76-82-35-nat.elisa-mobile.fi [85.76.82.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11454606DD;
+        Fri, 29 Jun 2018 06:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530253347;
+        bh=GNkaRxFb7PCx249Mz1wDg2M2TRTyGiEB0tq8xRUjT/Q=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=CDs3WXQY3j5P+Z2ZglHwoGTRn7haMeqeZ9OFMWk/WZZfDKPTpiTp2f7Fe2PEvBhLo
+         6JaSuoxQ9d75bFuV7SxzeZthQNG81XtxZXaRqzEq92bOJ5eGRBa8354CChlZnz3Vcu
+         QInjq7YvaQ/WcvRRt773m8/0yMWxzVkLw6E1drEc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11454606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Quan Nguyen <qnguyen@apm.com>,
+        Keyur Chudgar <kchudgar@apm.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Iyappan Subramanian <isubramanian@apm.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] net: Remove depends on HAS_DMA in case of platform dependency
+References: <20180622110843.31965-1-geert@linux-m68k.org>
+Date:   Fri, 29 Jun 2018 09:22:19 +0300
+In-Reply-To: <20180622110843.31965-1-geert@linux-m68k.org> (Geert
+        Uytterhoeven's message of "Fri, 22 Jun 2018 13:08:43 +0200")
+Message-ID: <87a7reglic.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to handle genpd OPP tables differently, this is already the case
-at one location and will be extended going forward. Add another field to
-the OPP table to check if the table belongs to a genpd or not.
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/opp/of.c  | 6 ++++--
- drivers/opp/opp.h | 2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+> In most cases this other symbol is an architecture or platform specific
+> symbol, or PCI.
+>
+> Generic symbols and drivers without platform dependencies keep their
+> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+> cannot work anyway.
+>
+> This simplifies the dependencies, and allows to improve compile-testing.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+> v4:
+>   - Rebase to v4.18-rc1 (applies to next-20180622, too),
+>
+> v3:
+>   - Rebase to v4.17-rc1,
+>   - Drop obsolete note about FSL_FMAN,
+>
+> v2:
+>   - Add Reviewed-by, Acked-by,
+>   - Drop RFC state,
+>   - Split per subsystem.
+> ---
+>  drivers/net/ethernet/amd/Kconfig                | 2 +-
+>  drivers/net/ethernet/apm/xgene-v2/Kconfig       | 1 -
+>  drivers/net/ethernet/apm/xgene/Kconfig          | 1 -
+>  drivers/net/ethernet/arc/Kconfig                | 6 ++++--
+>  drivers/net/ethernet/broadcom/Kconfig           | 2 --
+>  drivers/net/ethernet/calxeda/Kconfig            | 2 +-
+>  drivers/net/ethernet/hisilicon/Kconfig          | 2 +-
+>  drivers/net/ethernet/marvell/Kconfig            | 8 +++-----
+>  drivers/net/ethernet/mellanox/mlxsw/Kconfig     | 2 +-
+>  drivers/net/ethernet/renesas/Kconfig            | 2 --
+>  drivers/net/wireless/broadcom/brcm80211/Kconfig | 1 -
+>  drivers/net/wireless/quantenna/qtnfmac/Kconfig  | 2 +-
+>  12 files changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 44a6b81fd228..218b8997d817 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -88,6 +88,9 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev)
- 	of_property_read_u32(np, "voltage-tolerance",
- 			     &opp_table->voltage_tolerance_v1);
- 
-+	if (of_find_property(np, "#power-domain-cells", NULL))
-+		opp_table->is_genpd = true;
-+
- 	/* Get OPP table node */
- 	opp_np = _opp_of_get_opp_desc_node(np, 0);
- 	of_node_put(np);
-@@ -314,8 +317,7 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
- 	ret = of_property_read_u64(np, "opp-hz", &rate);
- 	if (ret < 0) {
- 		/* "opp-hz" is optional for devices like power domains. */
--		if (!of_find_property(dev->of_node, "#power-domain-cells",
--				      NULL)) {
-+		if (!opp_table->is_genpd) {
- 			dev_err(dev, "%s: opp-hz not found\n", __func__);
- 			goto free_opp;
- 		}
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 7c540fd063b2..3cd3b7b167b5 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -138,6 +138,7 @@ enum opp_table_access {
-  * @regulators: Supply regulators
-  * @regulator_count: Number of power supply regulators
-  * @genpd_performance_state: Device's power domain support performance state.
-+ * @is_genpd: Marks if the OPP table belongs to a genpd.
-  * @set_opp: Platform specific set_opp callback
-  * @set_opp_data: Data to be passed to set_opp callback
-  * @dentry:	debugfs dentry pointer of the real device directory (not links).
-@@ -174,6 +175,7 @@ struct opp_table {
- 	struct regulator **regulators;
- 	unsigned int regulator_count;
- 	bool genpd_performance_state;
-+	bool is_genpd;
- 
- 	int (*set_opp)(struct dev_pm_set_opp_data *data);
- 	struct dev_pm_set_opp_data *set_opp_data;
+For the wireless part:
+
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
+
 -- 
-2.18.0.rc1.242.g61856ae69a2c
-
+Kalle Valo
