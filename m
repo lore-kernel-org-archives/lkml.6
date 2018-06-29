@@ -1,105 +1,88 @@
-Return-Path: <SRS0=VxZE=JO=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD202C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E69C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8412E27A81
-	for <linux-kernel@archiver.kernel.org>; Thu, 28 Jun 2018 23:59:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ADThAW/d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8412E27A81
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 2851827A7F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:10:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2851827A7F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967487AbeF1X7Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 19:59:24 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:57367 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967460AbeF1X7T (ORCPT
+        id S967503AbeF2AKk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 20:10:40 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22429 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S966977AbeF2AKj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 19:59:19 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 305C010C0745;
-        Thu, 28 Jun 2018 16:59:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530230358; bh=wB5LVDlsvaiC+I7+qgEpinI6T53E3Fc+ibflRQIKlEc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ADThAW/dZlIHXNFioMBrrr3+RXgivvYAjTiydakOy7QwHatx/EF3EHNDlslOv884j
-         zOxDuypr2jGbC6SgDE27drFR1M8QYNworU208Epzb2hlzx+OGHdOcrTEwBYQap0F1R
-         PL4+BfiqAuRUrviXQveh3yQo/T8xQkRCEklsgyo1VaBz2ZM2hAAe+PP/cUERNDQClI
-         p4ncaUKCXSABupRV7V5X2GwrGTMqPF3W0z2MfWGSzg65tfuPN0W9ISAtZo+pXMrTqW
-         dWlo3JMjzemxFIB1J73hjxmGyKPbISjpAxRuZmbOlJsZIt7HxRWSaAjSiJDoRSObLG
-         yFk+WvgDOqx1w==
-Received: from abrodkin-7480l.internal.synopsys.com (abrodkin-7480l.internal.synopsys.com [10.9.128.133])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 14F003D3F;
-        Thu, 28 Jun 2018 16:59:18 -0700 (PDT)
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] ARC: Fix __swp_offset() implementation
-Date:   Thu, 28 Jun 2018 16:59:14 -0700
-Message-Id: <20180628235914.20706-1-abrodkin@synopsys.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 28 Jun 2018 20:10:39 -0400
+X-UUID: 538c32ceadf54d879038a322f41a56f2-20180629
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 151838566; Fri, 29 Jun 2018 08:10:34 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 29 Jun 2018 08:10:27 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 29 Jun 2018 08:10:27 +0800
+Message-ID: <1530231027.17448.46.camel@mtkswgap22>
+Subject: Re: [PATCH v3 4/5] clocksource/drivers/timer-mediatek: Convert the
+ driver to timer-of
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Fri, 29 Jun 2018 08:10:27 +0800
+In-Reply-To: <5cdfbfdf-4d6e-de18-0f20-2f3b50129b87@linaro.org>
+References: <1530182744-10731-1-git-send-email-stanley.chu@mediatek.com>
+         <1530182744-10731-5-git-send-email-stanley.chu@mediatek.com>
+         <5cdfbfdf-4d6e-de18-0f20-2f3b50129b87@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We encode offset from swapcache page in __swp_entry() this way, see [1]:
-| /* Encode swap {type,off} tuple into PTE
-|  * We reserve 13 bits for 5-bit @type, keeping bits 12-5 zero, ensuring that
-|  * PAGE_PRESENT is zero in a PTE holding swap "identifier"
-|  */
-| #define __swp_entry(type, off)	((swp_entry_t) { \
-| 					((type) & 0x1f) | ((off) << 13) })
+On Thu, 2018-06-28 at 16:03 +0200, Daniel Lezcano wrote:
+> >  
+> > -struct mtk_clock_event_device {
+> > -	void __iomem *gpt_base;
+> > -	u32 ticks_per_jiffy;
+> > -	struct clock_event_device dev;
+> > +struct mtk_timer_private {
+> > +	unsigned long ticks_per_jiffy;
+> >  };
+> 
+> This private structure is not needed. There is timer_of_clk->period
+> 
+> cf.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clocksource/timer-of.c#n144
+> 
+> 
+Hi Daniel,
 
-But decode in __swp_offset() as:
-| #define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
-which is obviously wrong, we should ">> 13" instead.
+Thanks for remind:)
+Will fix it in v4.
 
-This basically fixes swap usage on ARC finally.
+Thanks.
+Stanley Chu
 
-| # mkswap /dev/sda2
-|
-| # swapon -a -e /dev/sda2
-| Adding 500728k swap on /dev/sda2.  Priority:-2 extents:1 across:500728k
-|
-| # free
-|              total       used       free     shared    buffers     cached
-| Mem:        765104      13456     751648       4736          8       4736
-| -/+ buffers/cache:       8712     756392
-| Swap:       500728          0     500728
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arc/include/asm/pgtable.h#n375
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: stable@vger.kernel.org
----
- arch/arc/include/asm/pgtable.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arc/include/asm/pgtable.h b/arch/arc/include/asm/pgtable.h
-index 08fe33830d4b..77676e18da69 100644
---- a/arch/arc/include/asm/pgtable.h
-+++ b/arch/arc/include/asm/pgtable.h
-@@ -379,7 +379,7 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long address,
- 
- /* Decode a PTE containing swap "identifier "into constituents */
- #define __swp_type(pte_lookalike)	(((pte_lookalike).val) & 0x1f)
--#define __swp_offset(pte_lookalike)	((pte_lookalike).val << 13)
-+#define __swp_offset(pte_lookalike)	((pte_lookalike).val >> 13)
- 
- /* NOPs, to keep generic kernel happy */
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
--- 
-2.17.1
 
