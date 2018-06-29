@@ -2,86 +2,116 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB451C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B295BC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F36C24529
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:11:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F36C24529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 74F37250EE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:12:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F37250EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936845AbeF2QLg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:11:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:36644 "EHLO foss.arm.com"
+        id S936862AbeF2QMR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:12:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:53559 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934535AbeF2QLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:11:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BB0718A;
-        Fri, 29 Jun 2018 09:11:35 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CBB23F266;
-        Fri, 29 Jun 2018 09:11:33 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 11:11:30 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Hendrik =?ISO-8859-1?Q?Br=FCckner?= 
-        <brueckner@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] perf test shell: make perf inet_pton test more
- portable
-Message-Id: <20180629111130.fa4cc7d2bcd55e07a5298c1c@arm.com>
-In-Reply-To: <20180629152155.GB3593@kernel.org>
-References: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
-        <20180620134622.GM20477@kernel.org>
-        <20180620194546.364cc109430ac51c5a288739@arm.com>
-        <20180621141915.GS20477@kernel.org>
-        <20180621151800.GU20477@kernel.org>
-        <20180621153250.e29e7fbfbfe14b98341b68f0@arm.com>
-        <20180629152155.GB3593@kernel.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S936537AbeF2QMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 12:12:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 09:12:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,285,1526367600"; 
+   d="scan'208";a="51511896"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by fmsmga008.fm.intel.com with SMTP; 29 Jun 2018 09:12:05 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 29 Jun 2018 19:12:05 +0300
+Date:   Fri, 29 Jun 2018 19:12:05 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Use kvzalloc for allocating blob property memory
+Message-ID: <20180629161205.GE5565@intel.com>
+References: <20180629142710.2069-1-michel@daenzer.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180629142710.2069-1-michel@daenzer.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Jun 2018 12:21:55 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-
-> Em Thu, Jun 21, 2018 at 03:32:50PM -0500, Kim Phillips escreveu:
-> > On Thu, 21 Jun 2018 12:18:00 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > > Would be good if we had some utility that given a two files, one with
-> > > regexps, could tell if, line by line, those expressions matched, better,
-> > > one that is present in all these OSes...
-> > 
-> > I didn't find any, but given the two-file notion might be acceptable,
-> > hopefully you might find the following more readable/acceptable?:
+On Fri, Jun 29, 2018 at 04:27:10PM +0200, Michel Dänzer wrote:
+> From: Michel Dänzer <michel.daenzer@amd.com>
 > 
-> Looks better, you build the expected lines in a separate file, then read
-> both it and the output, then do the matching, cleaner. And I assume it
-> works with dash, right?
+> The property size may be controlled by userspace, can be large (I've
+> seen failure with order 4, i.e. 16 pages / 64 KB) and doesn't need to be
+> physically contiguous.
 
-Yes, of course :)
+I wonder if we should enforce some kind of reasonable limit
+on the blob size. Looks like we allow anything up to
+ULONG_MAX currently. We can't tell at createblob time how
+the thing is going to be used, so can't have any kind
+of property specific limit unfortunately.
 
-I'll re-send via a new v2 series as 1/2 wasn't git-am friendly, and
-I've uncovered another minor bashism.
+> 
+> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+> ---
+>  drivers/gpu/drm/drm_property.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_property.c b/drivers/gpu/drm/drm_property.c
+> index 1f8031e30f53..cdb10f885a4f 100644
+> --- a/drivers/gpu/drm/drm_property.c
+> +++ b/drivers/gpu/drm/drm_property.c
+> @@ -532,7 +532,7 @@ static void drm_property_free_blob(struct kref *kref)
+>  
+>  	drm_mode_object_unregister(blob->dev, &blob->base);
+>  
+> -	kfree(blob);
+> +	kvfree(blob);
+>  }
+>  
+>  /**
+> @@ -559,7 +559,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
+>  	if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	blob = kzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
+> +	blob = kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
+>  	if (!blob)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -576,7 +576,7 @@ drm_property_create_blob(struct drm_device *dev, size_t length,
+>  	ret = __drm_mode_object_add(dev, &blob->base, DRM_MODE_OBJECT_BLOB,
+>  				    true, drm_property_free_blob);
+>  	if (ret) {
+> -		kfree(blob);
+> +		kvfree(blob);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -- 
+> 2.18.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Kim
+-- 
+Ville Syrjälä
+Intel
