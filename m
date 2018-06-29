@@ -2,92 +2,169 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DB6C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB24CC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0604C27DBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0604C27DBA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7235E24D58
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:33:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7235E24D58
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937079AbeF2TbO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:31:14 -0400
-Received: from mga12.intel.com ([192.55.52.136]:39921 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936977AbeF2TbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:31:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 12:31:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,287,1526367600"; 
-   d="scan'208";a="61190898"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Jun 2018 12:31:10 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A6F15C5; Fri, 29 Jun 2018 22:31:13 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/6] x86/cpu: Introduce INTEL_CPU_FAM*() helper macros
-Date:   Fri, 29 Jun 2018 22:31:08 +0300
-Message-Id: <20180629193113.84425-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
-References: <20180629193113.84425-1-andriy.shevchenko@linux.intel.com>
+        id S937251AbeF2Tdt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:33:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58624 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936572AbeF2Tdr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 15:33:47 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TJXi9H087411
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:33:47 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwry84jy5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 15:33:46 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Fri, 29 Jun 2018 20:28:44 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 29 Jun 2018 20:28:41 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TJSe7T33292398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 29 Jun 2018 19:28:40 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0014342045;
+        Fri, 29 Jun 2018 20:28:28 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87E6C42041;
+        Fri, 29 Jun 2018 20:28:28 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.207.81])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 29 Jun 2018 20:28:28 +0100 (BST)
+Date:   Fri, 29 Jun 2018 22:28:38 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4c84ef6c-fa71-8b74-826a-d81dac8c71e7@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18062919-0020-0000-0000-000002A168C0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062919-0021-0000-0000-000020ED6E79
+Message-Id: <20180629192838.GE4799@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=838 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806290208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These macros are often used by drivers and we have already a lot of
-duplication as ICPU() macro across the drivers.
+Hi Randy, 
 
-Provide a generic x86 macro for users.
+On Fri, Jun 29, 2018 at 09:34:55AM -0700, Randy Dunlap wrote:
+> On 06/29/2018 06:42 AM, Mike Rapoport wrote:
+> > Otherwise mm configuration options show up in the top level menu.
+> > 
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> 
+> Hi Mike,
+> 
+> In which config tool does this matter?
+> 
+> For xconfig, it seems to me that this patch hides the MM menu, whereas
+> before this patch, the MM menu is easy to find (although it could
+> use some kind of heading).
 
-Note, as Ingo Molnar pointed out this has a hidden issue when a driver
-needs to preserve const qualifier. Though, it would be addressed
-separately at some point.
+With xconfig the menu gets into the top right pane when you click on "ARC
+architecture configuration", similar to what one gets on x86 with
+"Processor type and features" or "Kernel features" on ARM.
 
-[1]: https://lkml.org/lkml/2017/12/28/85
+With menuconfig it looks a bit more prominent, note that mm options are
+between "ARC Architecture Configuration" and "Networking support":
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/x86/include/asm/intel-family.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .config - Linux/arc 4.18.0-rc2 Kernel Configuration
+ ──────────────────────────────────────────────────────────────────────────────
+  ┌─────────────── Linux/arc 4.18.0-rc2 Kernel Configuration ───────────────┐
+  │  Arrow keys navigate the menu.  <Enter> selects submenus ---> (or empty │  
+  │  submenus ----).  Highlighted letters are hotkeys.  Pressing <Y>        │  
+  │  includes, <N> excludes, <M> modularizes features.  Press <Esc><Esc> to │  
+  │  exit, <?> for Help, </> for Search.  Legend: [*] built-in  [ ]         │  
+  │ ┌─────────────────────────────────────────────────────────────────────┐ │  
+  │ │        *** Compiler: arc-elf-gcc (GCC) 7.3.0 ***                    │ │  
+  │ │        General setup  --->                                          │ │  
+  │ │    [*] Enable loadable module support  --->                         │ │  
+  │ │    [*] Enable the block layer  --->                                 │ │  
+  │ │        ARC Architecture Configuration  --->                         │ │  
+  │ │    [ ] Allow for memory compaction                                  │ │  
+  │ │    [*] Enable bounce buffers                                        │ │  
+  │ │    [ ] Enable KSM for page merging                                  │ │  
+  │ │    (4096) Low address space to protect from user allocation         │ │  
+  │ │    [ ] Enable cleancache driver to cache clean pages if tmem is pres│ │  
+  │ │    [ ] Contiguous Memory Allocator                                  │ │  
+  │ │    < > Common API for compressed memory storage                     │ │  
+  │ │    < > Low (Up to 2x) density storage for compressed pages          │ │  
+  │ │    < > Memory allocator for compressed pages                        │ │  
+  │ │    [ ] Enable idle page tracking                                    │ │  
+  │ │    [ ] Collect percpu memory statistics                             │ │  
+  │ │    [ ] Enable infrastructure for get_user_pages_fast() benchmarking │ │  
+  │ │    (11) Maximum zone order                                          │ │  
+  │ │    [*] Networking support  --->                                     │ │  
+  │ │        Device Drivers  --->                                         │ │  
+  │ │        Bus Support  --->                                            │ │  
+  │ │        File systems  --->                                           │ │  
+  │ │        Kernel hacking  --->                                         │ │  
+  │ │        Security options  --->                                       │ │  
+  │ │    -*- Cryptographic API  --->                                      │ │  
+  │ │        Library routines  --->                                       │ │  
+  │ │    [ ] Device power management core functionality                   │ │  
+  │ │                                                                     │ │  
+  │ └─────────────────────────────────────────────────────────────────────┘ │  
+  ├─────────────────────────────────────────────────────────────────────────┤  
+  │        <Select>    < Exit >    < Help >    < Save >    < Load >         │  
+  └─────────────────────────────────────────────────────────────────────────┘  
+    
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index cf090e584202..7ed08a7c3398 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -76,4 +76,17 @@
- #define INTEL_FAM6_XEON_PHI_KNL		0x57 /* Knights Landing */
- #define INTEL_FAM6_XEON_PHI_KNM		0x85 /* Knights Mill */
- 
-+/* Useful macros */
-+#define INTEL_CPU_FAM_ANY(_family, _model, _driver_data)	\
-+{								\
-+	.vendor		= X86_VENDOR_INTEL,			\
-+	.family		= _family,				\
-+	.model		= _model,				\
-+	.feature	= X86_FEATURE_ANY,			\
-+	.driver_data	= (kernel_ulong_t)&_driver_data		\
-+}
-+
-+#define INTEL_CPU_FAM6(_model, _driver_data)			\
-+	INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, _driver_data)
-+
- #endif /* _ASM_X86_INTEL_FAMILY_H */
+
+
+> >  	default "12" if ARC_HUGEPAGE_16M
+> >  	default "11"
+> >  
+> > +endmenu	 # "ARC Architecture Configuration"
+> > +
+> >  source "net/Kconfig"
+> >  source "drivers/Kconfig"
+> >  
+> > 
+> 
+> 
+> -- 
+> ~Randy
+> 
+
 -- 
-2.18.0
+Sincerely yours,
+Mike.
 
