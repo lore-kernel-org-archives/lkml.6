@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34ABC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228FEC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACC2A27986
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F6527986
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S35jWs85"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC2A27986
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iE927FQL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F6527986
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030319AbeF2A3d (ORCPT
+        id S1030358AbeF2A3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 20:29:33 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37568 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936300AbeF2A25 (ORCPT
+        Thu, 28 Jun 2018 20:29:52 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34676 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934370AbeF2A24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 20:28:57 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 31-v6so3562568plc.4
+        Thu, 28 Jun 2018 20:28:56 -0400
+Received: by mail-pl0-f66.google.com with SMTP id z9-v6so3564333plo.1
         for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:28:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
-        b=S35jWs85ys3BWA/Bzji6sOJbRwrE2ZB2/rmhd6T+dKutXl+khA/4ynT9Vg13nddteO
-         Zg53ACOgdQS73jc3VMC1QbDRtsUtFShBurMEZNdZERAxkqEpl9eUwbTXbGtjnl0QZ1B9
-         912OSbBm+ggMq2Ga4/hg5gSe92yKKJsr1nh7M=
+        bh=OPrbhpf+OtJBDX2eteghpLvngwKyDU3zwKMrVHOinl0=;
+        b=iE927FQLC/dtuYydLTtjp16Fy5TCCWYrfPl2Mb/N3NlnlctG0thJWdzO9v/u7mpBDg
+         Fv1tYqWu/YbdNkwIZabAgIIDNoIsFDL7IxVBL2EJBg4qQhbtclFKBc0Ib2HrwhHbT30R
+         5u0y0+ESiMR3J60jXiHYCO2crm/bkSoudMwuQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=om28ZBbqlVOdWVGgbNqly+1dcj2BlW29w8AmBA0lHYw=;
-        b=gOReQFVD0yg0Lez/K4r19BIvkT0TImauwEPo4phXlKuhYJx+HlL1flDVetrBD4KlLV
-         sNLCqcHl7NLhos6mYlu2hB6KdyX1b7CvBAPFjwDTM+jk/1xCkKPkx4eZksdWv33uWk4A
-         SADlj4Op49CyISScyLYrYypY+1BJc1ALKUW23sdgByGOIVgBTfAS/ScvC0OjwBufbewr
-         uU/lnLgF6imtukQk18xUJejkLX1MO4hA6em1HnTnEhOS7R0ZxweSp4FvyVSxwY0T7gGS
-         wCNI44DP2KbUQd2SDmgLpds/Wu/YkxkrIOf/oPWZLGpmBJuoNG+726CvsltiG/zHF4cn
-         xHcA==
-X-Gm-Message-State: APt69E3F7udXYu2a5SRnqFSKTdfOEwWRJpgOao7Exf87PbepHNSIU0bM
-        Y+QbB50Z1t3pfU9HDPuzFfqMiQ==
-X-Google-Smtp-Source: ADUXVKL0gwgNI+L+evK3O8R1R4ieyKCSGSquTOQ7whT5wYahrzKmLh++WheQD+CFKug67jxpqR/MGw==
-X-Received: by 2002:a17:902:b683:: with SMTP id c3-v6mr12524863pls.158.1530232136608;
-        Thu, 28 Jun 2018 17:28:56 -0700 (PDT)
+        bh=OPrbhpf+OtJBDX2eteghpLvngwKyDU3zwKMrVHOinl0=;
+        b=X8O13tnLYKbtBMMFf4NgzjURO162BZSwmZI04PfaMyblaSPCzQDKdVfSphg2mudrgS
+         TEaRBfTblTfKNWNl2dDBUal1GZwZLAo+UwNAvjNKvuL1cwuImSIlMvm/X+CrK7jw+XxW
+         LvAnauETU0ep+iw/HCMHpP8Ou7De4tyBTrh6EiV5Jufuk5opiiAUWPtrTNk6z2QvSsc9
+         Kx2qOKARq/RGkdSfQhxaU/WhzlBpF/tnEctgzpx85Okw6s+T1r7vt4EUdqcqMIut4yeD
+         XmzmVKn5GmLkDVusMiphkYPphDA7uLcwtxKQ05z4s9ZWd8IUfPkX/Czm8IOFyRwVWVMY
+         BmWQ==
+X-Gm-Message-State: APt69E1dYH1BhTxzoz7oQEqfQTtDJOqsBJcJr1uSIyKV1cTIpNegN5Mo
+        OVXsfJw9Y+hMusiG5/A6abWWpg==
+X-Google-Smtp-Source: ADUXVKKv3Ac/J0bhslSL15fpr22AUtyT4hY6o3rUWEyCxI/vh7ssRBymBPxY8544qwy3yHu07d08uA==
+X-Received: by 2002:a17:902:bcc3:: with SMTP id o3-v6mr12442696pls.336.1530232135778;
+        Thu, 28 Jun 2018 17:28:55 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm10969030pfd.11.2018.06.28.17.28.51
+        by smtp.gmail.com with ESMTPSA id v13-v6sm17327904pfa.131.2018.06.28.17.28.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 28 Jun 2018 17:28:53 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/9] crypto alg: Introduce generic max blocksize and alignmask
-Date:   Thu, 28 Jun 2018 17:28:41 -0700
-Message-Id: <20180629002843.31095-8-keescook@chromium.org>
+Subject: [PATCH v3 5/9] crypto: ahash: Remove VLA usage
+Date:   Thu, 28 Jun 2018 17:28:39 -0700
+Message-Id: <20180629002843.31095-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180629002843.31095-1-keescook@chromium.org>
 References: <20180629002843.31095-1-keescook@chromium.org>
@@ -81,58 +81,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In the quest to remove all stack VLA usage from the kernel[1], this
-exposes a new general upper bound on crypto blocksize and alignmask
-(higher than for the existing cipher limits) for VLA removal,
-and introduces new checks.
-
-At present, the highest cra_alignmask in the kernel is 63. The highest
-cra_blocksize is 144 (SHA3_224_BLOCK_SIZE, 18 8-byte words). For the
-new blocksize limit, I went with 160 (20 8-byte words).
+introduces max size macros for ahash, as already done for shash, and
+adjust the crypto user to max state size.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- crypto/algapi.c         | 7 ++++++-
- include/crypto/algapi.h | 4 +++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ crypto/ahash.c        | 4 ++--
+ crypto/algif_hash.c   | 2 +-
+ include/crypto/hash.h | 3 +++
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index c0755cf4f53f..496fc51bf215 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -57,9 +57,14 @@ static int crypto_check_alg(struct crypto_alg *alg)
- 	if (alg->cra_alignmask & (alg->cra_alignmask + 1))
+diff --git a/crypto/ahash.c b/crypto/ahash.c
+index a64c143165b1..6435bdbe42fd 100644
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
+ {
+ 	struct crypto_alg *base = &alg->halg.base;
+ 
+-	if (alg->halg.digestsize > PAGE_SIZE / 8 ||
+-	    alg->halg.statesize > PAGE_SIZE / 8 ||
++	if (alg->halg.digestsize > AHASH_MAX_DIGESTSIZE ||
++	    alg->halg.statesize > AHASH_MAX_STATESIZE ||
+ 	    alg->halg.statesize == 0)
  		return -EINVAL;
  
--	if (alg->cra_blocksize > PAGE_SIZE / 8)
-+	/* General maximums for all algs. */
-+	if (alg->cra_alignmask > MAX_ALGAPI_ALIGNMASK)
- 		return -EINVAL;
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index bfcf595fd8f9..8974ee8ebead 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
+ 	struct alg_sock *ask = alg_sk(sk);
+ 	struct hash_ctx *ctx = ask->private;
+ 	struct ahash_request *req = &ctx->req;
+-	char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
++	char state[AHASH_MAX_STATESIZE];
+ 	struct sock *sk2;
+ 	struct alg_sock *ask2;
+ 	struct hash_ctx *ctx2;
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 804e87a9510e..5d79e2f0936e 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -64,6 +64,9 @@ struct ahash_request {
+ 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
+ };
  
-+	if (alg->cra_blocksize > MAX_ALGAPI_BLOCKSIZE)
-+		return -EINVAL;
++#define AHASH_MAX_DIGESTSIZE	512
++#define AHASH_MAX_STATESIZE	512
 +
-+	/* Lower maximums for specific alg types. */
- 	if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
- 			       CRYPTO_ALG_TYPE_CIPHER) {
- 		if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
-diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
-index bd5e8ccf1687..21371ac8f355 100644
---- a/include/crypto/algapi.h
-+++ b/include/crypto/algapi.h
-@@ -20,8 +20,10 @@
- /*
-  * Maximum values for blocksize and alignmask, used to allocate
-  * static buffers that are big enough for any combination of
-- * ciphers and architectures.
-+ * algs and architectures. Ciphers have a lower maximum size.
-  */
-+#define MAX_ALGAPI_BLOCKSIZE		160
-+#define MAX_ALGAPI_ALIGNMASK		63
- #define MAX_CIPHER_BLOCKSIZE		16
- #define MAX_CIPHER_ALIGNMASK		15
- 
+ #define AHASH_REQUEST_ON_STACK(name, ahash) \
+ 	char __##name##_desc[sizeof(struct ahash_request) + \
+ 		crypto_ahash_reqsize(ahash)] CRYPTO_MINALIGN_ATTR; \
 -- 
 2.17.1
 
