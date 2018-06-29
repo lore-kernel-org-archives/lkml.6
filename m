@@ -2,140 +2,840 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A205C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86342C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEEF27C71
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEEF27C71
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 0DF9E27BD1
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:36:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="cb6pXdyN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF9E27BD1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935646AbeF2JdV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 05:33:21 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54520 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935602AbeF2JdU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:33:20 -0400
-Received: from 79.184.253.185.ipv4.supernova.orange.pl (79.184.253.185) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 7f30c14fcd3324ef; Fri, 29 Jun 2018 11:33:18 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Toralf =?ISO-8859-1?Q?F=F6rster?= <toralf.foerster@gmx.de>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: small dmesg regression in kernel 4.17.3
-Date:   Fri, 29 Jun 2018 11:31:59 +0200
-Message-ID: <3440214.eqW5gfvlOh@aspire.rjw.lan>
-In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53BB35DC6@ORSMSX110.amr.corp.intel.com>
-References: <8837a9e2-e614-e2bf-ed32-6d49de4dd4ed@gmx.de> <CAHp75VcQbj7trhupZB7wUnt4QWbsqZZDa-1WvFnSD8ciMCYF6A@mail.gmail.com> <CF6A88132359CE47947DB4C6E1709ED53BB35DC6@ORSMSX110.amr.corp.intel.com>
+        id S935671AbeF2Jgv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 05:36:51 -0400
+Received: from mail-eopbgr690040.outbound.protection.outlook.com ([40.107.69.40]:2671
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933534AbeF2Jgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 05:36:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+vKsGCrq2trm8xLsvD8hIIpgXZbKXBpbpSsdIB99t6w=;
+ b=cb6pXdyNM+8Pe3WymjAzogM/PRbZskZLXhIVhZDEgNWhOGfMgdH5r+yC1R55Y3TecTuNLtLAYfz/YtZke6Y44bhWdIjI5rwI0/BoXB8IDFXvIF5n25rDT6/O9m8Ihwdmsoi7MKkQEtXKXVUSG/3H/uUEkVdXlGMt0+u3sBVks9I=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB667.namprd06.prod.outlook.com (10.141.227.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.24; Fri, 29 Jun 2018 09:36:45 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::f168:d301:338d:cdc2]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::f168:d301:338d:cdc2%5]) with mapi id 15.20.0906.025; Fri, 29 Jun 2018
+ 09:36:43 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
+        Marcin Dziegielewski <marcin.dziegielewski@intel.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        Heiner Litz <hlitz@ucsc.edu>,
+        Young Tack Tack Jin <youngtack.jin@circuitblvd.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] lightnvm: pblk: expose generic disk name on pr_* msgs
+Thread-Topic: [PATCH v2] lightnvm: pblk: expose generic disk name on pr_* msgs
+Thread-Index: AQHUDuX5AIAcX9DAS0q5o9m/mfO50KR2+5CA
+Date:   Fri, 29 Jun 2018 09:36:43 +0000
+Message-ID: <72C0D646-DD42-4DE9-877B-27A028A0C7DA@cnexlabs.com>
+References: <20180628134305.26910-1-mb@lightnvm.io>
+In-Reply-To: <20180628134305.26910-1-mb@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB667;7:BFaK8F4/QcbY8gCHOHMXnP4zbbu0KuTPiK8Vn4LvsVw3uoseK2487lCj1sTc2QIjl34MAh/zKcxwlRk27D0l2U5y3Z11sGO65DGTIgFVUoA4qydtx06SGviDmEdp7qn6cMyvRO9Jl+DYpBT3zbJsVbQRs58PYTaWOhZiR9sAJFMAqVtFCIMOaNHcWxhQaw7eSijooGQ21cJxNoedHXo+YaV8oOKdZ2D/Q8dyUxk5m27G195drVNqem9QHymj06T+
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(39830400003)(136003)(199004)(189003)(2900100001)(106356001)(6436002)(6486002)(229853002)(5250100002)(97736004)(53946003)(36756003)(25786009)(6246003)(4326008)(53936002)(5660300001)(2906002)(14454004)(7736002)(8676002)(81156014)(66066001)(81166006)(105586002)(478600001)(446003)(11346002)(486006)(2616005)(476003)(33656002)(256004)(14444005)(76176011)(186003)(305945005)(6346003)(26005)(6506007)(68736007)(99936001)(6916009)(86362001)(6512007)(82746002)(102836004)(3846002)(6116002)(8936002)(316002)(83716003)(54906003)(99286004)(41533002)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB667;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 0296f9f5-6c0f-4b15-cc01-08d5dda3d33c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600026)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB667;
+x-ms-traffictypediagnostic: CO2PR06MB667:
+x-microsoft-antispam-prvs: <CO2PR06MB6678AEA4973DA6DA7675673BA4E0@CO2PR06MB667.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(211171220733660);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB667;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB667;
+x-forefront-prvs: 0718908305
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-microsoft-antispam-message-info: dl3XbFKeQSolrnL2LX2lK+sJg822GQ+3Tr8R/mj5uahBbNsOyewx6zfPUnpNrEG9z/1gJKb8XeAFNCUeWOaHhuwJorW+4SABdfb/aL3XpNSGr7A7VLMPrkAllMijn6Kx7wW3PqRhblEAAeILYHy2eC+VXH+R+vGdn0v+61xFOkviHWSLnglwwTSYUZRAajazNe+tQ6NzFv7wRKLcmrxsxuRSwCJ5wvsiRQ1DWB2pJj40RlAHgb7dt6dIplVC1e4Mn2AnAq7z3O9x3JV+tTeadCauCnlJ4ExgGxbboHcEOrr3CJ15E35VdBRBL+sSeNOryUhaQ8zS5CaqXyoExuzqsWmeej3Ktrhh0O8IXLy4VWc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_47C56369-AE1E-4321-9126-97E349F27B62";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0296f9f5-6c0f-4b15-cc01-08d5dda3d33c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2018 09:36:43.4615
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB667
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, June 29, 2018 12:13:54 AM CEST Schmauss, Erik wrote:
-> 
-> > -----Original Message-----
-> > From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> > Sent: Wednesday, June 27, 2018 10:29 AM
-> > To: Toralf Förster <toralf.foerster@gmx.de>; Schmauss, Erik
-> > <erik.schmauss@intel.com>
-> > Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>; Linux Kernel <linux-
-> > kernel@vger.kernel.org>
-> > Subject: Re: small dmesg regression in kernel 4.17.3
-> > 
-> > +Cc: Erik
-> > 
-> > On Tue, Jun 26, 2018 at 8:57 PM, Toralf Förster <toralf.foerster@gmx.de>
-> > wrote:
-> > > The attached dmesg contains non printable chars 0x01 33 around "ACPI
-> > > BIOS Error (bug): Could not resolve" which is a new issue compared to
-> > > the dmesg of 4.17.2
-> > >
-> > > System is a stable hardened Gentoo Linux at a ThinkPad T440s.
-> > 
-> > I bet the below commit makes this.
-> > 
-> > commit 2e78935d1e27d31955ad2dad4abe6c453cf669fd
-> > Author: Erik Schmauss <erik.schmauss@intel.com>
-> > Date:   Fri Jun 1 12:06:43 2018 -0700
-> > 
-> >    ACPICA: AML parser: attempt to continue loading table after error
-> > 
-> > 
-> Hi Andy,
-> 
-> > So, it does add leading '\n' which flushes buffers followed by printing the
-> > message you see. But, I'm guessing now, kernel adds a default level since it's
-> > going to dmesg which you can see as unprintable symbols.
-> 
-> What do you mean by a default level?
-> 
-> > Personally I'm not a fan of leading '\n':s since it brings more pain than fixing
-> > something. It has special meaning (flushing buffers) and many developers forget
-> > this.
-> 
-> This leading '\n' made it in Linux kernel unintentionally. It was originally intended as a change for acpiexec and it makes the dmesg look strange. I'll send out a fix.
+--Apple-Mail=_47C56369-AE1E-4321-9126-97E349F27B62
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Which would be something like the patch below I suppose?
+> On 28 Jun 2018, at 15.43, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> The error messages in pblk does not say which pblk instance that
+> a message occurred from. Update each error message to reflect the
+> instance it belongs to, and also prefix it with pblk, so we know
+> the message comes from the pblk module.
+>=20
+> Signed-off-by: Matias Bj=C3=B8rling <mb@lightnvm.io>
+>=20
 
----
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Subject: [PATCH] ACPICA: Drop leading newlines from error messages
+This could be a good moment to make error reporting mroe consistent.
+Some times we used "could not ..." and others "failed to ...".
 
-Commit 5088814a6e93 (ACPICA: AML parser: attempt to continue loading
-table after error) unintentionally added leading newlines to error
-messages emitted by ACPICA which caused unexpected things to be
-printed to the kernel log.  Drop these newlines (which effectively
-reverts the part of commit 5088814a6e93 adding them).
+There is also an unnecessary error for a memory allocation (see
+checkpatch).
 
-Fixes: 5088814a6e93 (ACPICA: AML parser: attempt to continue loading table after error)
-Reported-by: Toralf Förster <toralf.foerster@gmx.de>
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/acpica/uterror.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+See below.
 
-Index: linux-pm/drivers/acpi/acpica/uterror.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/uterror.c
-+++ linux-pm/drivers/acpi/acpica/uterror.c
-@@ -182,19 +182,19 @@ acpi_ut_prefixed_namespace_error(const c
- 	switch (lookup_status) {
- 	case AE_ALREADY_EXISTS:
- 
--		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
-+		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
- 		message = "Failure creating";
- 		break;
- 
- 	case AE_NOT_FOUND:
- 
--		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
-+		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
- 		message = "Could not resolve";
- 		break;
- 
- 	default:
- 
--		acpi_os_printf("\n" ACPI_MSG_ERROR);
-+		acpi_os_printf(ACPI_MSG_ERROR);
- 		message = "Failure resolving";
- 		break;
- 	}
+> ---
+>=20
+> Forgot to test with NVM_PBLK_DEBUG on. Fixed up the broken code.
+> ---
+> drivers/lightnvm/pblk-core.c     | 51 +++++++++++++-------------
+> drivers/lightnvm/pblk-gc.c       | 32 ++++++++---------
+> drivers/lightnvm/pblk-init.c     | 78 =
+++++++++++++++++++++--------------------
+> drivers/lightnvm/pblk-rb.c       |  8 ++---
+> drivers/lightnvm/pblk-read.c     | 25 ++++++-------
+> drivers/lightnvm/pblk-recovery.c | 44 +++++++++++------------
+> drivers/lightnvm/pblk-sysfs.c    |  5 ++-
+> drivers/lightnvm/pblk-write.c    | 21 +++++------
+> drivers/lightnvm/pblk.h          | 29 ++++++++++-----
+> 9 files changed, 153 insertions(+), 140 deletions(-)
+>=20
+> diff --git a/drivers/lightnvm/pblk-core.c =
+b/drivers/lightnvm/pblk-core.c
+> index 66ab1036f2fb..b829460fe827 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -35,7 +35,7 @@ static void pblk_line_mark_bb(struct work_struct =
+*work)
+> 		line =3D &pblk->lines[pblk_ppa_to_line(*ppa)];
+> 		pos =3D pblk_ppa_to_pos(&dev->geo, *ppa);
+>=20
+> -		pr_err("pblk: failed to mark bb, line:%d, pos:%d\n",
+> +		pblk_err(pblk, "failed to mark bb, line:%d, pos:%d\n",
+> 				line->id, pos);
+> 	}
+>=20
+> @@ -51,12 +51,12 @@ static void pblk_mark_bb(struct pblk *pblk, struct =
+pblk_line *line,
+> 	struct ppa_addr *ppa;
+> 	int pos =3D pblk_ppa_to_pos(geo, ppa_addr);
+>=20
+> -	pr_debug("pblk: erase failed: line:%d, pos:%d\n", line->id, =
+pos);
+> +	pblk_debug(pblk, "erase failed: line:%d, pos:%d\n", line->id, =
+pos);
+> 	atomic_long_inc(&pblk->erase_failed);
+>=20
+> 	atomic_dec(&line->blk_in_line);
+> 	if (test_and_set_bit(pos, line->blk_bitmap))
+> -		pr_err("pblk: attempted to erase bb: line:%d, pos:%d\n",
+> +		pblk_err(pblk, "attempted to erase bb: line:%d, =
+pos:%d\n",
+> 							line->id, pos);
+>=20
+> 	/* Not necessary to mark bad blocks on 2.0 spec. */
+> @@ -274,7 +274,7 @@ void pblk_free_rqd(struct pblk *pblk, struct =
+nvm_rq *rqd, int type)
+> 		pool =3D &pblk->e_rq_pool;
+> 		break;
+> 	default:
+> -		pr_err("pblk: trying to free unknown rqd type\n");
+> +		pblk_err(pblk, "trying to free unknown rqd type\n");
+> 		return;
+> 	}
+>=20
+> @@ -310,7 +310,7 @@ int pblk_bio_add_pages(struct pblk *pblk, struct =
+bio *bio, gfp_t flags,
+>=20
+> 		ret =3D bio_add_pc_page(q, bio, page, =
+PBLK_EXPOSED_PAGE_SIZE, 0);
+> 		if (ret !=3D PBLK_EXPOSED_PAGE_SIZE) {
+> -			pr_err("pblk: could not add page to bio\n");
+> +			pblk_err(pblk, "could not add page to bio\n");
+> 			mempool_free(page, &pblk->page_bio_pool);
+> 			goto err;
+> 		}
+> @@ -410,7 +410,7 @@ struct list_head *pblk_line_gc_list(struct pblk =
+*pblk, struct pblk_line *line)
+> 		line->state =3D PBLK_LINESTATE_CORRUPT;
+> 		line->gc_group =3D PBLK_LINEGC_NONE;
+> 		move_list =3D  &l_mg->corrupt_list;
+> -		pr_err("pblk: corrupted vsc for line %d, vsc:%d =
+(%d/%d/%d)\n",
+> +		pblk_err(pblk, "corrupted vsc for line %d, vsc:%d =
+(%d/%d/%d)\n",
+> 						line->id, vsc,
+> 						line->sec_in_line,
+> 						lm->high_thrs, =
+lm->mid_thrs);
+> @@ -452,7 +452,7 @@ void pblk_log_read_err(struct pblk *pblk, struct =
+nvm_rq *rqd)
+> 		atomic_long_inc(&pblk->read_failed);
+> 		break;
+> 	default:
+> -		pr_err("pblk: unknown read error:%d\n", rqd->error);
+> +		pblk_err(pblk, "unknown read error:%d\n", rqd->error);
+> 	}
+> #ifdef CONFIG_NVM_PBLK_DEBUG
+> 	pblk_print_failed_rqd(pblk, rqd, rqd->error);
+> @@ -517,7 +517,7 @@ struct bio *pblk_bio_map_addr(struct pblk *pblk, =
+void *data,
+> 	for (i =3D 0; i < nr_secs; i++) {
+> 		page =3D vmalloc_to_page(kaddr);
+> 		if (!page) {
+> -			pr_err("pblk: could not map vmalloc bio\n");
+> +			pblk_err(pblk, "could not map vmalloc bio\n");
+> 			bio_put(bio);
+> 			bio =3D ERR_PTR(-ENOMEM);
+> 			goto out;
+> @@ -525,7 +525,7 @@ struct bio *pblk_bio_map_addr(struct pblk *pblk, =
+void *data,
+>=20
+> 		ret =3D bio_add_pc_page(dev->q, bio, page, PAGE_SIZE, =
+0);
+> 		if (ret !=3D PAGE_SIZE) {
+> -			pr_err("pblk: could not add page to bio\n");
+> +			pblk_err(pblk, "could not add page to bio\n");
+> 			bio_put(bio);
+> 			bio =3D ERR_PTR(-ENOMEM);
+> 			goto out;
+> @@ -711,7 +711,7 @@ static int pblk_line_submit_emeta_io(struct pblk =
+*pblk, struct pblk_line *line,
+> 			while (test_bit(pos, line->blk_bitmap)) {
+> 				paddr +=3D min;
+> 				if (pblk_boundary_paddr_checks(pblk, =
+paddr)) {
+> -					pr_err("pblk: corrupt emeta =
+line:%d\n",
+> +					pblk_err(pblk, "corrupt emeta =
+line:%d\n",
+> 								=
+line->id);
+> 					bio_put(bio);
+> 					ret =3D -EINTR;
+> @@ -723,7 +723,7 @@ static int pblk_line_submit_emeta_io(struct pblk =
+*pblk, struct pblk_line *line,
+> 			}
+>=20
+> 			if (pblk_boundary_paddr_checks(pblk, paddr + =
+min)) {
+> -				pr_err("pblk: corrupt emeta line:%d\n",
+> +				pblk_err(pblk, "corrupt emeta =
+line:%d\n",
+> 								=
+line->id);
+> 				bio_put(bio);
+> 				ret =3D -EINTR;
+> @@ -738,7 +738,7 @@ static int pblk_line_submit_emeta_io(struct pblk =
+*pblk, struct pblk_line *line,
+>=20
+> 	ret =3D pblk_submit_io_sync(pblk, &rqd);
+> 	if (ret) {
+> -		pr_err("pblk: emeta I/O submission failed: %d\n", ret);
+> +		pblk_err(pblk, "emeta I/O submission failed: %d\n", =
+ret);
+> 		bio_put(bio);
+> 		goto free_rqd_dma;
+> 	}
+> @@ -843,7 +843,7 @@ static int pblk_line_submit_smeta_io(struct pblk =
+*pblk, struct pblk_line *line,
+> 	 */
+> 	ret =3D pblk_submit_io_sync(pblk, &rqd);
+> 	if (ret) {
+> -		pr_err("pblk: smeta I/O submission failed: %d\n", ret);
+> +		pblk_err(pblk, "smeta I/O submission failed: %d\n", =
+ret);
+> 		bio_put(bio);
+> 		goto free_ppa_list;
+> 	}
+> @@ -905,7 +905,7 @@ static int pblk_blk_erase_sync(struct pblk *pblk, =
+struct ppa_addr ppa)
+> 		struct nvm_tgt_dev *dev =3D pblk->dev;
+> 		struct nvm_geo *geo =3D &dev->geo;
+>=20
+> -		pr_err("pblk: could not sync erase line:%d,blk:%d\n",
+> +		pblk_err(pblk, "could not sync erase line:%d,blk:%d\n",
+> 					pblk_ppa_to_line(ppa),
+> 					pblk_ppa_to_pos(geo, ppa));
+>=20
+> @@ -945,7 +945,7 @@ int pblk_line_erase(struct pblk *pblk, struct =
+pblk_line *line)
+>=20
+> 		ret =3D pblk_blk_erase_sync(pblk, ppa);
+> 		if (ret) {
+> -			pr_err("pblk: failed to erase line %d\n", =
+line->id);
+> +			pblk_err(pblk, "failed to erase line %d\n", =
+line->id);
+> 			return ret;
+> 		}
+> 	} while (1);
+> @@ -1012,7 +1012,7 @@ static int pblk_line_init_metadata(struct pblk =
+*pblk, struct pblk_line *line,
+> 		list_add_tail(&line->list, &l_mg->bad_list);
+> 		spin_unlock(&l_mg->free_lock);
+>=20
+> -		pr_debug("pblk: line %d is bad\n", line->id);
+> +		pblk_debug(pblk, "line %d is bad\n", line->id);
+>=20
+> 		return 0;
+> 	}
+> @@ -1122,7 +1122,7 @@ static int pblk_line_init_bb(struct pblk *pblk, =
+struct pblk_line *line,
+> 	line->cur_sec =3D off + lm->smeta_sec;
+>=20
+> 	if (init && pblk_line_submit_smeta_io(pblk, line, off, =
+PBLK_WRITE)) {
+> -		pr_debug("pblk: line smeta I/O failed. Retry\n");
+> +		pblk_debug(pblk, "line smeta I/O failed. Retry\n");
+> 		return 0;
+> 	}
+>=20
+> @@ -1154,7 +1154,7 @@ static int pblk_line_init_bb(struct pblk *pblk, =
+struct pblk_line *line,
+> 		spin_unlock(&line->lock);
+>=20
+> 		list_add_tail(&line->list, &l_mg->bad_list);
+> -		pr_err("pblk: unexpected line %d is bad\n", line->id);
+> +		pblk_err(pblk, "unexpected line %d is bad\n", line->id);
+>=20
+> 		return 0;
+> 	}
+> @@ -1299,7 +1299,7 @@ struct pblk_line *pblk_line_get(struct pblk =
+*pblk)
+>=20
+> retry:
+> 	if (list_empty(&l_mg->free_list)) {
+> -		pr_err("pblk: no free lines\n");
+> +		pblk_err(pblk, "no free lines\n");
+> 		return NULL;
+> 	}
+>=20
+> @@ -1315,7 +1315,7 @@ struct pblk_line *pblk_line_get(struct pblk =
+*pblk)
+>=20
+> 		list_add_tail(&line->list, &l_mg->bad_list);
+>=20
+> -		pr_debug("pblk: line %d is bad\n", line->id);
+> +		pblk_debug(pblk, "line %d is bad\n", line->id);
+> 		goto retry;
+> 	}
+>=20
+> @@ -1329,7 +1329,7 @@ struct pblk_line *pblk_line_get(struct pblk =
+*pblk)
+> 			list_add(&line->list, &l_mg->corrupt_list);
+> 			goto retry;
+> 		default:
+> -			pr_err("pblk: failed to prepare line %d\n", =
+line->id);
+> +			pblk_err(pblk, "failed to prepare line %d\n", =
+line->id);
+> 			list_add(&line->list, &l_mg->free_list);
+> 			l_mg->nr_free_lines++;
+> 			return NULL;
+> @@ -1477,7 +1477,7 @@ static void pblk_line_close_meta_sync(struct =
+pblk *pblk)
+>=20
+> 			ret =3D pblk_submit_meta_io(pblk, line);
+> 			if (ret) {
+> -				pr_err("pblk: sync meta line %d failed =
+(%d)\n",
+> +				pblk_err(pblk, "sync meta line %d failed =
+(%d)\n",
+> 							line->id, ret);
+> 				return;
+> 			}
+> @@ -1507,7 +1507,7 @@ void __pblk_pipeline_flush(struct pblk *pblk)
+>=20
+> 	ret =3D pblk_recov_pad(pblk);
+> 	if (ret) {
+> -		pr_err("pblk: could not close data on teardown(%d)\n", =
+ret);
+> +		pblk_err(pblk, "could not close data on teardown(%d)\n", =
+ret);
+> 		return;
+> 	}
+>=20
+> @@ -1687,7 +1687,7 @@ int pblk_blk_erase_async(struct pblk *pblk, =
+struct ppa_addr ppa)
+> 		struct nvm_tgt_dev *dev =3D pblk->dev;
+> 		struct nvm_geo *geo =3D &dev->geo;
+>=20
+> -		pr_err("pblk: could not async erase line:%d,blk:%d\n",
+> +		pblk_err(pblk, "could not async erase line:%d,blk:%d\n",
+> 					pblk_ppa_to_line(ppa),
+> 					pblk_ppa_to_pos(geo, ppa));
+> 	}
+> @@ -1866,7 +1866,8 @@ static void __pblk_down_page(struct pblk *pblk, =
+struct ppa_addr *ppa_list,
+>=20
+> 	ret =3D down_timeout(&rlun->wr_sem, msecs_to_jiffies(30000));
+> 	if (ret =3D=3D -ETIME || ret =3D=3D -EINTR)
+> -		pr_err("pblk: taking lun semaphore timed out: err %d\n", =
+-ret);
+> +		pblk_err(pblk, "taking lun semaphore timed out: err =
+%d\n",
+> +				-ret);
+> }
+>=20
+> void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, int =
+nr_ppas)
+> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+> index ec56f581397b..93e06b613b6b 100644
+> --- a/drivers/lightnvm/pblk-gc.c
+> +++ b/drivers/lightnvm/pblk-gc.c
+> @@ -90,7 +90,7 @@ static void pblk_gc_line_ws(struct work_struct =
+*work)
+>=20
+> 	gc_rq->data =3D vmalloc(gc_rq->nr_secs * geo->csecs);
+> 	if (!gc_rq->data) {
+> -		pr_err("pblk: could not GC line:%d (%d/%d)\n",
+> +		pblk_err(pblk, "could not GC line:%d (%d/%d)\n",
+> 					line->id, *line->vsc, =
+gc_rq->nr_secs);
 
+No need for this check. Maybe you can move the error to the out: tag and
+report the same as when pblk_submit_read_gc() fails.
+
+> 		goto out;
+> 	}
+> @@ -98,7 +98,7 @@ static void pblk_gc_line_ws(struct work_struct =
+*work)
+> 	/* Read from GC victim block */
+> 	ret =3D pblk_submit_read_gc(pblk, gc_rq);
+> 	if (ret) {
+> -		pr_err("pblk: failed GC read in line:%d (err:%d)\n",
+> +		pblk_err(pblk, "failed GC read in line:%d (err:%d)\n",
+> 								=
+line->id, ret);
+> 		goto out;
+> 	}
+> @@ -146,7 +146,7 @@ static __le64 *get_lba_list_from_emeta(struct pblk =
+*pblk,
+>=20
+> 	ret =3D pblk_line_read_emeta(pblk, line, emeta_buf);
+> 	if (ret) {
+> -		pr_err("pblk: line %d read emeta failed (%d)\n",
+> +		pblk_err(pblk, "line %d read emeta failed (%d)\n",
+> 				line->id, ret);
+> 		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+> 		return NULL;
+> @@ -160,7 +160,7 @@ static __le64 *get_lba_list_from_emeta(struct pblk =
+*pblk,
+>=20
+> 	ret =3D pblk_recov_check_emeta(pblk, emeta_buf);
+> 	if (ret) {
+> -		pr_err("pblk: inconsistent emeta (line %d)\n",
+> +		pblk_err(pblk, "inconsistent emeta (line %d)\n",
+> 				line->id);
+> 		pblk_mfree(emeta_buf, l_mg->emeta_alloc_type);
+> 		return NULL;
+> @@ -201,7 +201,7 @@ static void pblk_gc_line_prepare_ws(struct =
+work_struct *work)
+> 	} else {
+> 		lba_list =3D get_lba_list_from_emeta(pblk, line);
+> 		if (!lba_list) {
+> -			pr_err("pblk: could not interpret emeta (line =
+%d)\n",
+> +			pblk_err(pblk, "could not interpret emeta (line =
+%d)\n",
+> 					line->id);
+> 			goto fail_free_invalid_bitmap;
+> 		}
+> @@ -213,7 +213,7 @@ static void pblk_gc_line_prepare_ws(struct =
+work_struct *work)
+> 	spin_unlock(&line->lock);
+>=20
+> 	if (sec_left < 0) {
+> -		pr_err("pblk: corrupted GC line (%d)\n", line->id);
+> +		pblk_err(pblk, "corrupted GC line (%d)\n", line->id);
+> 		goto fail_free_lba_list;
+> 	}
+>=20
+> @@ -289,7 +289,7 @@ static void pblk_gc_line_prepare_ws(struct =
+work_struct *work)
+> 	kref_put(&line->ref, pblk_line_put);
+> 	atomic_dec(&gc->read_inflight_gc);
+>=20
+> -	pr_err("pblk: Failed to GC line %d\n", line->id);
+> +	pblk_err(pblk, "failed to GC line %d\n", line->id);
+> }
+>=20
+> static int pblk_gc_line(struct pblk *pblk, struct pblk_line *line)
+> @@ -297,7 +297,7 @@ static int pblk_gc_line(struct pblk *pblk, struct =
+pblk_line *line)
+> 	struct pblk_gc *gc =3D &pblk->gc;
+> 	struct pblk_line_ws *line_ws;
+>=20
+> -	pr_debug("pblk: line '%d' being reclaimed for GC\n", line->id);
+> +	pblk_debug(pblk, "line '%d' being reclaimed for GC\n", =
+line->id);
+>=20
+> 	line_ws =3D kmalloc(sizeof(struct pblk_line_ws), GFP_KERNEL);
+> 	if (!line_ws)
+> @@ -351,7 +351,7 @@ static int pblk_gc_read(struct pblk *pblk)
+> 	pblk_gc_kick(pblk);
+>=20
+> 	if (pblk_gc_line(pblk, line))
+> -		pr_err("pblk: failed to GC line %d\n", line->id);
+> +		pblk_err(pblk, "failed to GC line %d\n", line->id);
+>=20
+> 	return 0;
+> }
+> @@ -523,7 +523,7 @@ static int pblk_gc_reader_ts(void *data)
+> 	}
+>=20
+> #ifdef CONFIG_NVM_PBLK_DEBUG
+> -	pr_info("pblk: flushing gc pipeline, %d lines left\n",
+> +	pblk_info(pblk, "flushing gc pipeline, %d lines left\n",
+> 		atomic_read(&gc->pipeline_gc));
+> #endif
+>=20
+> @@ -540,7 +540,7 @@ static int pblk_gc_reader_ts(void *data)
+> static void pblk_gc_start(struct pblk *pblk)
+> {
+> 	pblk->gc.gc_active =3D 1;
+> -	pr_debug("pblk: gc start\n");
+> +	pblk_debug(pblk, "gc start\n");
+> }
+>=20
+> void pblk_gc_should_start(struct pblk *pblk)
+> @@ -605,14 +605,14 @@ int pblk_gc_init(struct pblk *pblk)
+>=20
+> 	gc->gc_ts =3D kthread_create(pblk_gc_ts, pblk, "pblk-gc-ts");
+> 	if (IS_ERR(gc->gc_ts)) {
+> -		pr_err("pblk: could not allocate GC main kthread\n");
+> +		pblk_err(pblk, "could not allocate GC main kthread\n");
+> 		return PTR_ERR(gc->gc_ts);
+> 	}
+>=20
+> 	gc->gc_writer_ts =3D kthread_create(pblk_gc_writer_ts, pblk,
+> 							=
+"pblk-gc-writer-ts");
+> 	if (IS_ERR(gc->gc_writer_ts)) {
+> -		pr_err("pblk: could not allocate GC writer kthread\n");
+> +		pblk_err(pblk, "could not allocate GC writer =
+kthread\n");
+> 		ret =3D PTR_ERR(gc->gc_writer_ts);
+> 		goto fail_free_main_kthread;
+> 	}
+> @@ -620,7 +620,7 @@ int pblk_gc_init(struct pblk *pblk)
+> 	gc->gc_reader_ts =3D kthread_create(pblk_gc_reader_ts, pblk,
+> 							=
+"pblk-gc-reader-ts");
+> 	if (IS_ERR(gc->gc_reader_ts)) {
+> -		pr_err("pblk: could not allocate GC reader kthread\n");
+> +		pblk_err(pblk, "could not allocate GC reader =
+kthread\n");
+> 		ret =3D PTR_ERR(gc->gc_reader_ts);
+> 		goto fail_free_writer_kthread;
+> 	}
+> @@ -641,7 +641,7 @@ int pblk_gc_init(struct pblk *pblk)
+> 	gc->gc_line_reader_wq =3D =
+alloc_workqueue("pblk-gc-line-reader-wq",
+> 			WQ_MEM_RECLAIM | WQ_UNBOUND, =
+PBLK_GC_MAX_READERS);
+> 	if (!gc->gc_line_reader_wq) {
+> -		pr_err("pblk: could not allocate GC line reader =
+workqueue\n");
+> +		pblk_err(pblk, "could not allocate GC line reader =
+workqueue\n");
+> 		ret =3D -ENOMEM;
+> 		goto fail_free_reader_kthread;
+> 	}
+> @@ -650,7 +650,7 @@ int pblk_gc_init(struct pblk *pblk)
+> 	gc->gc_reader_wq =3D alloc_workqueue("pblk-gc-line_wq",
+> 					WQ_MEM_RECLAIM | WQ_UNBOUND, 1);
+> 	if (!gc->gc_reader_wq) {
+> -		pr_err("pblk: could not allocate GC reader =
+workqueue\n");
+> +		pblk_err(pblk, "could not allocate GC reader =
+workqueue\n");
+> 		ret =3D -ENOMEM;
+> 		goto fail_free_reader_line_wq;
+> 	}
+> diff --git a/drivers/lightnvm/pblk-init.c =
+b/drivers/lightnvm/pblk-init.c
+> index aa2426403171..d87d38f063fa 100644
+> --- a/drivers/lightnvm/pblk-init.c
+> +++ b/drivers/lightnvm/pblk-init.c
+> @@ -117,13 +117,13 @@ static int pblk_l2p_recover(struct pblk *pblk, =
+bool factory_init)
+> 	} else {
+> 		line =3D pblk_recov_l2p(pblk);
+> 		if (IS_ERR(line)) {
+> -			pr_err("pblk: could not recover l2p table\n");
+> +			pblk_err(pblk, "could not recover l2p table\n");
+> 			return -EFAULT;
+> 		}
+> 	}
+>=20
+> #ifdef CONFIG_NVM_PBLK_DEBUG
+> -	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
+> +	pblk_info(pblk, "init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
+> #endif
+>=20
+> 	/* Free full lines directly as GC has not been started yet */
+> @@ -166,7 +166,7 @@ static int pblk_l2p_init(struct pblk *pblk, bool =
+factory_init)
+> static void pblk_rwb_free(struct pblk *pblk)
+> {
+> 	if (pblk_rb_tear_down_check(&pblk->rwb))
+> -		pr_err("pblk: write buffer error on tear down\n");
+> +		pblk_err(pblk, "write buffer error on tear down\n");
+>=20
+> 	pblk_rb_data_free(&pblk->rwb);
+> 	vfree(pblk_rb_entries_ref(&pblk->rwb));
+> @@ -203,7 +203,8 @@ static int pblk_rwb_init(struct pblk *pblk)
+> /* Minimum pages needed within a lun */
+> #define ADDR_POOL_SIZE 64
+>=20
+> -static int pblk_set_addrf_12(struct nvm_geo *geo, struct nvm_addrf_12 =
+*dst)
+> +static int pblk_set_addrf_12(struct pblk *pblk, struct nvm_geo *geo,
+> +			     struct nvm_addrf_12 *dst)
+> {
+> 	struct nvm_addrf_12 *src =3D (struct nvm_addrf_12 *)&geo->addrf;
+> 	int power_len;
+> @@ -211,14 +212,14 @@ static int pblk_set_addrf_12(struct nvm_geo =
+*geo, struct nvm_addrf_12 *dst)
+> 	/* Re-calculate channel and lun format to adapt to configuration =
+*/
+> 	power_len =3D get_count_order(geo->num_ch);
+> 	if (1 << power_len !=3D geo->num_ch) {
+> -		pr_err("pblk: supports only power-of-two channel =
+config.\n");
+> +		pblk_err(pblk, "supports only power-of-two channel =
+config.\n");
+> 		return -EINVAL;
+> 	}
+> 	dst->ch_len =3D power_len;
+>=20
+> 	power_len =3D get_count_order(geo->num_lun);
+> 	if (1 << power_len !=3D geo->num_lun) {
+> -		pr_err("pblk: supports only power-of-two LUN =
+config.\n");
+> +		pblk_err(pblk, "supports only power-of-two LUN =
+config.\n");
+> 		return -EINVAL;
+> 	}
+> 	dst->lun_len =3D power_len;
+> @@ -285,18 +286,19 @@ static int pblk_set_addrf(struct pblk *pblk)
+> 	case NVM_OCSSD_SPEC_12:
+> 		div_u64_rem(geo->clba, pblk->min_write_pgs, &mod);
+> 		if (mod) {
+> -			pr_err("pblk: bad configuration of =
+sectors/pages\n");
+> +			pblk_err(pblk, "bad configuration of =
+sectors/pages\n");
+> 			return -EINVAL;
+> 		}
+>=20
+> -		pblk->addrf_len =3D pblk_set_addrf_12(geo, (void =
+*)&pblk->addrf);
+> +		pblk->addrf_len =3D pblk_set_addrf_12(pblk, geo,
+> +							(void =
+*)&pblk->addrf);
+> 		break;
+> 	case NVM_OCSSD_SPEC_20:
+> 		pblk->addrf_len =3D pblk_set_addrf_20(geo, (void =
+*)&pblk->addrf,
+> -								=
+&pblk->uaddrf);
+> +							&pblk->uaddrf);
+> 		break;
+> 	default:
+> -		pr_err("pblk: OCSSD revision not supported (%d)\n",
+> +		pblk_err(pblk, "OCSSD revision not supported (%d)\n",
+> 								=
+geo->version);
+> 		return -EINVAL;
+> 	}
+> @@ -375,7 +377,7 @@ static int pblk_core_init(struct pblk *pblk)
+> 	pblk_set_sec_per_write(pblk, pblk->min_write_pgs);
+>=20
+> 	if (pblk->max_write_pgs > PBLK_MAX_REQ_ADDRS) {
+> -		pr_err("pblk: vector list too big(%u > %u)\n",
+> +		pblk_err(pblk, "vector list too big(%u > %u)\n",
+> 				pblk->max_write_pgs, =
+PBLK_MAX_REQ_ADDRS);
+> 		return -EINVAL;
+> 	}
+> @@ -608,7 +610,7 @@ static int pblk_luns_init(struct pblk *pblk)
+>=20
+> 	/* TODO: Implement unbalanced LUN support */
+> 	if (geo->num_lun < 0) {
+> -		pr_err("pblk: unbalanced LUN config.\n");
+> +		pblk_err(pblk, "unbalanced LUN config.\n");
+> 		return -EINVAL;
+> 	}
+>=20
+> @@ -1027,7 +1029,7 @@ static int pblk_line_meta_init(struct pblk =
+*pblk)
+> 					lm->emeta_sec[0], geo->clba);
+>=20
+> 	if (lm->min_blk_line > lm->blk_per_line) {
+> -		pr_err("pblk: config. not supported. Min. LUN in =
+line:%d\n",
+> +		pblk_err(pblk, "config. not supported. Min. LUN in =
+line:%d\n",
+> 							=
+lm->blk_per_line);
+> 		return -EINVAL;
+> 	}
+> @@ -1079,7 +1081,7 @@ static int pblk_lines_init(struct pblk *pblk)
+> 	}
+>=20
+> 	if (!nr_free_chks) {
+> -		pr_err("pblk: too many bad blocks prevent for sane =
+instance\n");
+> +		pblk_err(pblk, "too many bad blocks prevent for sane =
+instance\n");
+> 		return -EINTR;
+> 	}
+>=20
+> @@ -1109,7 +1111,7 @@ static int pblk_writer_init(struct pblk *pblk)
+> 		int err =3D PTR_ERR(pblk->writer_ts);
+>=20
+> 		if (err !=3D -EINTR)
+> -			pr_err("pblk: could not allocate writer kthread =
+(%d)\n",
+> +			pblk_err(pblk, "could not allocate writer =
+kthread (%d)\n",
+> 					err);
+> 		return err;
+> 	}
+> @@ -1155,7 +1157,7 @@ static void pblk_tear_down(struct pblk *pblk, =
+bool graceful)
+> 	pblk_rb_sync_l2p(&pblk->rwb);
+> 	pblk_rl_free(&pblk->rl);
+>=20
+> -	pr_debug("pblk: consistent tear down (graceful:%d)\n", =
+graceful);
+> +	pblk_debug(pblk, "consistent tear down (graceful:%d)\n", =
+graceful);
+> }
+>=20
+> static void pblk_exit(void *private, bool graceful)
+> @@ -1167,7 +1169,7 @@ static void pblk_exit(void *private, bool =
+graceful)
+> 	pblk_tear_down(pblk, graceful);
+>=20
+> #ifdef CONFIG_NVM_PBLK_DEBUG
+> -	pr_info("pblk exit: L2P CRC: %x\n", pblk_l2p_crc(pblk));
+> +	pblk_info(pblk, "exit: L2P CRC: %x\n", pblk_l2p_crc(pblk));
+> #endif
+>=20
+> 	pblk_free(pblk);
+> @@ -1190,20 +1192,6 @@ static void *pblk_init(struct nvm_tgt_dev *dev, =
+struct gendisk *tdisk,
+> 	struct pblk *pblk;
+> 	int ret;
+>=20
+> -	/* pblk supports 1.2 and 2.0 versions */
+> -	if (!(geo->version =3D=3D NVM_OCSSD_SPEC_12 ||
+> -					geo->version =3D=3D =
+NVM_OCSSD_SPEC_20)) {
+> -		pr_err("pblk: OCSSD version not supported (%u)\n",
+> -							geo->version);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (geo->version =3D=3D NVM_OCSSD_SPEC_12 && geo->dom & =
+NVM_RSP_L2P) {
+> -		pr_err("pblk: host-side L2P table not supported. =
+(%x)\n",
+> -							geo->dom);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> 	pblk =3D kzalloc(sizeof(struct pblk), GFP_KERNEL);
+> 	if (!pblk)
+> 		return ERR_PTR(-ENOMEM);
+> @@ -1213,6 +1201,19 @@ static void *pblk_init(struct nvm_tgt_dev *dev, =
+struct gendisk *tdisk,
+> 	pblk->state =3D PBLK_STATE_RUNNING;
+> 	pblk->gc.gc_enabled =3D 0;
+>=20
+> +	if (!(geo->version =3D=3D NVM_OCSSD_SPEC_12 ||
+> +					geo->version =3D=3D =
+NVM_OCSSD_SPEC_20)) {
+> +		pblk_err(pblk, "OCSSD version not supported (%u)\n",
+> +							geo->version);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (geo->version =3D=3D NVM_OCSSD_SPEC_12 && geo->dom & =
+NVM_RSP_L2P) {
+> +		pblk_err(pblk, "host-side L2P table not supported. =
+(%x)\n",
+> +							geo->dom);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+
+Why move the check down? At this point the instance is not even created,
+so you can fail directly. In any case, here you should set ret and goto
+fail to free pblk.
+
+
+
+--Apple-Mail=_47C56369-AE1E-4321-9126-97E349F27B62
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAls1/acACgkQIX4xUKFR
+nnTYmRAAv0VYav/4p6HZbfXf72+kJ+22TESObK2Hv2MADvxEawY/MsX7dWw6r+42
+JRN9v95zHaGZtSK+6eZS+nNa3O8bB/PeElX2lt+vqdO7URl59/0uqdQSMYKLE862
+PzMlBzEL9r/nOHW9HwT1gxAErY5jIQ4rd39Ursc8byrKXIy76VwdpdGtySGAxmOZ
+LDr/ZuVqF92BFK9FQ0E65XZ0vO7K/sAxGc+aYvrRu7zFGAIzErNx7mdM7MMlQwcG
+4V5PhGC0JPIO5AdKMi1R5j5ZdtaFjX1e+r4n0SMZzWjs9AkgLS95qcF4OlL46aYA
+phqO/5FNCWrusfZTrRJO49oCKE3wkIqk/YUoXaO6d8cL0eV2+tWn2SaJ2+D8UDrJ
+GL1WHQCl1+bacYb4NCBtCsGP4RAO63z1kkYYJuC6XhTBDQii6fRm4vK/XNktoeM1
+e0Bnb2C3iW7h0jQTIQQOuAyXydW4yEtFclCtaNpwrWT1Y4sy/hgcoQ67+afCYioC
+inhBrhcd8Qs/rFpYIASvHti9vGsq3lR/7H2iehtAmutsZZQJnqJUqRDg4xsga2VE
+uTgZB4NaQ9x/0a0UH9zNf4aP/ZXb3/faw88N4VrdOw1sUJ3BNIPL7+a787ey6zP/
+tMP+w2+ydruak5nJUipdA3z1lpcXwyHCHyqx8JmcFcHPdLZpMW0=
+=AF3B
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_47C56369-AE1E-4321-9126-97E349F27B62--
