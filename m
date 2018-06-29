@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F9FC6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D8AC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3CE127D56
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B3F227D58
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="Ey96Oizf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CE127D56
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="J1N/1QNP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B3F227D58
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936727AbeF2T1Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:27:25 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39340 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935904AbeF2TZ7 (ORCPT
+        id S935905AbeF2T1U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:27:20 -0400
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:46566 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935944AbeF2T0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:25:59 -0400
-Received: by mail-qk0-f193.google.com with SMTP id f3-v6so5551500qkd.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:59 -0700 (PDT)
+        Fri, 29 Jun 2018 15:26:01 -0400
+Received: by mail-qt0-f175.google.com with SMTP id h5-v6so8813366qtm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wKru50GXpawbcdIy/JAmL8ctpAjcdHrI6DqT69SaPGM=;
-        b=Ey96OizfDXCdQg4v1KNZqNhYjDfRY9sgn6zhH5DSzZWjYSq3DskGN9zfdFa8n5mFGD
-         U4DJperBg1BWduuJegPyC5SFFGcxtQCFS33d/ZIBcwBWXNa1VTxA/Hjym4GyAsNXDlpv
-         x1RNklZb5qrA9U0Ur70jc+2EHXLA68BgUyfMowxZupC9Re1EuE+09tnEUdIehSlcT2H2
-         OFfi2BFbaNfE1G9Es4kJvaPQKGsW4BPExeh40UPlv89m2xxDKAfuYOWHufRyHpkMTTI+
-         JOdCCPn25eVMCR0wELjBa95oDp8GYRRhl1eltFqB++Sd+4Zwovxky8XDeA3PMIWVlmwq
-         Y0Vg==
+        bh=4sjBaATrdVpUH2y/if0LRnwspa7VVD1JJv3hKyhv66U=;
+        b=J1N/1QNPElwibaqQxiNkJo3a8MKMRelPbcfO3dFHoAy3Q8rcZz4FXRSgMk878+cHg2
+         pVyeDedJemDSZsPNWczt9FE7uf3/Zl8Q9zPySXFc9cj80HxAzg5wLthNIs+DQGYdyVyN
+         bqcxHwJBQyKRdC4uw/xOswyzhidN7RStQgQI1NARu0hAlSIca9QeECoc0879WIxUXXhJ
+         iUbLyYi8JStsqCk3WYHIQG14ljkKaZeiOZRU6IsHdUe5ddyGmlE1n6jjHiEsSGoMm2R7
+         w63CMhPOUkKsys2P2HQ6W45tHxHjV4vzs3jTaRQoCulbQRQtTuKJRPrTHZN0xyI5n3PF
+         jZUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wKru50GXpawbcdIy/JAmL8ctpAjcdHrI6DqT69SaPGM=;
-        b=NKLzP9gukdi/YxA96em9ZH773LJF4ZMlEjmWOQqLVAreNbMSH+O9UESIQDqOx9UcOs
-         31eU1i0moO34Yf1Bw0kVVA6sGG6RoZV+ZLMKdoh1Jndth5xktEh2igWMSa56GGALB5Z6
-         i/7o54ScgWhnWk31raRIAKOs27tvtVSYa1QMgtwrTS38N3DB5RgrbSPQ35cXSWbE6NXa
-         MbVCC34aJMNLJud1wHPxjc7Tdd9j088wwExaXvlnjjM9xnTaPwzia7bDEMbZq38v3aV1
-         TSr+o7Hgl17ZUX/q8R7J48bB7ULtd3cQi106SAtAl4/5haPOlnjhI0uLiBYYPbuSHWF8
-         mr1Q==
-X-Gm-Message-State: APt69E1voWk0IvhZ9ufjIVabp3sB+EYDWsFFdV0oO8UX2rfFLPEYYSn1
-        M8e8y8hEk6UsTbe8pn8lssunRw==
-X-Google-Smtp-Source: AAOMgpcjgGoRrvZq13WOlDsw/wuRrcG5TPkyVm42P9vvBCwupojihr3HoRl+Teb3/5xew5DP6nxCrQ==
-X-Received: by 2002:a37:ba04:: with SMTP id k4-v6mr13801428qkf.78.1530300359159;
-        Fri, 29 Jun 2018 12:25:59 -0700 (PDT)
+        bh=4sjBaATrdVpUH2y/if0LRnwspa7VVD1JJv3hKyhv66U=;
+        b=LqpXMEPPK0i+8toPNHe2wtAHpMVp5+jYZDUGmdUR18LEDAA1hckEtfEH/XZGmtKCPV
+         B5Ll72JesLWus+ITlsC2OT5+eV5ple186f5ej5H6Esna1S/V84YzgInGfyFMv2BGZ2DB
+         MJRmDrgQkaUMnNRzw8UEDzGBqGZGmFhRS/toT7l5qWKBEzOBMI4XLEmLCuAKaIw99GhG
+         TXfYUpxaMUM/gyNfAhQAp2RavlmH8bFowF7/4LRFzEu2sGsF+kTtdXtYiOM20j5RiJWk
+         YhqMVePx1hFHCpowgKl+t70FujtRiZQcElcPIvEvBzuPzd5ZJS2utN1rC/XRLlL1ydoE
+         nERQ==
+X-Gm-Message-State: APt69E1fVTefMfOl7vd7F96R57yCshqhZgzzhHE3xIoaN0/5A4hxo1Ys
+        2nN6QpIr6226bEdHwGVgGUTgag==
+X-Google-Smtp-Source: AAOMgpeGCPdu8V6ntYjZxLTTl/iW8I22viDm8kO6UBueS33Bbkk4JBdJlKZQciNi9D88SoEGghvyuQ==
+X-Received: by 2002:ac8:2888:: with SMTP id i8-v6mr15011668qti.275.1530300360496;
+        Fri, 29 Jun 2018 12:26:00 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 43-v6sm6049464qtu.0.2018.06.29.12.25.58
+        by smtp.gmail.com with ESMTPSA id w46-v6sm8178441qtw.55.2018.06.29.12.25.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 12:25:58 -0700 (PDT)
+        Fri, 29 Jun 2018 12:25:59 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 10/14] block: remove external dependency on wbt_flags
-Date:   Fri, 29 Jun 2018 15:25:38 -0400
-Message-Id: <20180629192542.26649-11-josef@toxicpanda.com>
+Subject: [PATCH 11/14] rq-qos: introduce dio_bio callback
+Date:   Fri, 29 Jun 2018 15:25:39 -0400
+Message-Id: <20180629192542.26649-12-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180629192542.26649-1-josef@toxicpanda.com>
 References: <20180629192542.26649-1-josef@toxicpanda.com>
@@ -74,317 +74,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <jbacik@fb.com>
 
-We don't really need to save this stuff in the core block code, we can
-just pass the bio back into the helpers later on to derive the same
-flags and update the rq->wbt_flags appropriately.
+wbt cares only about request completion time, but controllers may need
+information that is on the bio itself, so add a done_bio callback for
+rq-qos so things like blk-iolatency can use it to have the bio when it
+completes.
 
 Signed-off-by: Josef Bacik <jbacik@fb.com>
 ---
- block/blk-core.c   |  9 ++++-----
- block/blk-mq.c     |  9 ++++-----
- block/blk-rq-qos.c | 24 +++++++++++++++---------
- block/blk-rq-qos.h | 11 ++++++-----
- block/blk-wbt.c    | 52 +++++++++++++++++++++++++++++++++++++++-------------
- block/blk-wbt.h    |  5 -----
- 6 files changed, 68 insertions(+), 42 deletions(-)
+ block/bio.c        |  4 ++++
+ block/blk-rq-qos.c | 10 ++++++++++
+ block/blk-rq-qos.h |  2 ++
+ 3 files changed, 16 insertions(+)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 07594fb34c0f..af67fa68f635 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -42,7 +42,7 @@
+diff --git a/block/bio.c b/block/bio.c
+index c77fe1b4caa8..99809b73a400 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -32,6 +32,7 @@
+ 
+ #include <trace/events/block.h>
  #include "blk.h"
- #include "blk-mq.h"
- #include "blk-mq-sched.h"
--#include "blk-wbt.h"
 +#include "blk-rq-qos.h"
  
- #ifdef CONFIG_DEBUG_FS
- struct dentry *blk_debugfs_root;
-@@ -1994,7 +1994,6 @@ static blk_qc_t blk_queue_bio(struct request_queue *q, struct bio *bio)
- 	int where = ELEVATOR_INSERT_SORT;
- 	struct request *req, *free;
- 	unsigned int request_count = 0;
--	unsigned int wb_acct;
+ /*
+  * Test patch to inline a certain number of bi_io_vec's inside the bio
+@@ -1781,6 +1782,9 @@ void bio_endio(struct bio *bio)
+ 	if (WARN_ONCE(bio->bi_next, "driver left bi_next not NULL"))
+ 		bio->bi_next = NULL;
  
++	if (bio->bi_disk)
++		rq_qos_done_bio(bio->bi_disk->queue, bio);
++
  	/*
- 	 * low level driver can indicate that it wants pages above a
-@@ -2052,7 +2051,7 @@ static blk_qc_t blk_queue_bio(struct request_queue *q, struct bio *bio)
- 	}
- 
- get_rq:
--	wb_acct = rq_qos_throttle(q, bio, q->queue_lock);
-+	rq_qos_throttle(q, bio, q->queue_lock);
- 
- 	/*
- 	 * Grab a free request. This is might sleep but can not fail.
-@@ -2062,7 +2061,7 @@ static blk_qc_t blk_queue_bio(struct request_queue *q, struct bio *bio)
- 	req = get_request(q, bio->bi_opf, bio, 0, GFP_NOIO);
- 	if (IS_ERR(req)) {
- 		blk_queue_exit(q);
--		rq_qos_cleanup(q, wb_acct);
-+		rq_qos_cleanup(q, bio);
- 		if (PTR_ERR(req) == -ENOMEM)
- 			bio->bi_status = BLK_STS_RESOURCE;
- 		else
-@@ -2071,7 +2070,7 @@ static blk_qc_t blk_queue_bio(struct request_queue *q, struct bio *bio)
- 		goto out_unlock;
- 	}
- 
--	wbt_track(req, wb_acct);
-+	rq_qos_track(q, req, bio);
- 
- 	/*
- 	 * After dropping the lock and possibly sleeping here, our request
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 5308396ee22a..7c55c9d35492 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -34,8 +34,8 @@
- #include "blk-mq-debugfs.h"
- #include "blk-mq-tag.h"
- #include "blk-stat.h"
--#include "blk-wbt.h"
- #include "blk-mq-sched.h"
-+#include "blk-rq-qos.h"
- 
- static bool blk_mq_poll(struct request_queue *q, blk_qc_t cookie);
- static void blk_mq_poll_stats_start(struct request_queue *q);
-@@ -1852,7 +1852,6 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 	struct blk_plug *plug;
- 	struct request *same_queue_rq = NULL;
- 	blk_qc_t cookie;
--	unsigned int wb_acct;
- 
- 	blk_queue_bounce(q, &bio);
- 
-@@ -1868,19 +1867,19 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 	if (blk_mq_sched_bio_merge(q, bio))
- 		return BLK_QC_T_NONE;
- 
--	wb_acct = rq_qos_throttle(q, bio, NULL);
-+	rq_qos_throttle(q, bio, NULL);
- 
- 	trace_block_getrq(q, bio, bio->bi_opf);
- 
- 	rq = blk_mq_get_request(q, bio, bio->bi_opf, &data);
- 	if (unlikely(!rq)) {
--		rq_qos_cleanup(q, wb_acct);
-+		rq_qos_cleanup(q, bio);
- 		if (bio->bi_opf & REQ_NOWAIT)
- 			bio_wouldblock_error(bio);
- 		return BLK_QC_T_NONE;
- 	}
- 
--	wbt_track(rq, wb_acct);
-+	rq_qos_track(q, rq, bio);
- 
- 	cookie = request_to_qc_t(data.hctx, rq);
- 
+ 	 * Need to have a real endio function for chained bios, otherwise
+ 	 * various corner cases will break (like stacking block devices that
 diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index d2f2af8aa10c..b7b02e04f64f 100644
+index b7b02e04f64f..5134b24482f6 100644
 --- a/block/blk-rq-qos.c
 +++ b/block/blk-rq-qos.c
-@@ -1,7 +1,5 @@
- #include "blk-rq-qos.h"
- 
--#include "blk-wbt.h"
--
- /*
-  * Increment 'v', if 'v' is below 'below'. Returns true if we succeeded,
-  * false if 'v' + 1 would be bigger than 'below'.
-@@ -29,13 +27,13 @@ bool rq_wait_inc_below(struct rq_wait *rq_wait, int limit)
- 	return atomic_inc_below(&rq_wait->inflight, limit);
- }
- 
--void rq_qos_cleanup(struct request_queue *q, enum wbt_flags wb_acct)
-+void rq_qos_cleanup(struct request_queue *q, struct bio *bio)
- {
- 	struct rq_qos *rqos;
- 
- 	for (rqos = q->rq_qos; rqos; rqos = rqos->next) {
- 		if (rqos->ops->cleanup)
--			rqos->ops->cleanup(rqos, wb_acct);
-+			rqos->ops->cleanup(rqos, bio);
+@@ -88,6 +88,16 @@ void rq_qos_track(struct request_queue *q, struct request *rq, struct bio *bio)
  	}
  }
  
-@@ -69,17 +67,25 @@ void rq_qos_requeue(struct request_queue *q, struct request *rq)
- 	}
- }
- 
--enum wbt_flags rq_qos_throttle(struct request_queue *q, struct bio *bio,
--			       spinlock_t *lock)
-+void rq_qos_throttle(struct request_queue *q, struct bio *bio,
-+		     spinlock_t *lock)
- {
- 	struct rq_qos *rqos;
--	enum wbt_flags flags = 0;
- 
- 	for(rqos = q->rq_qos; rqos; rqos = rqos->next) {
- 		if (rqos->ops->throttle)
--			flags |= rqos->ops->throttle(rqos, bio, lock);
-+			rqos->ops->throttle(rqos, bio, lock);
-+	}
-+}
-+
-+void rq_qos_track(struct request_queue *q, struct request *rq, struct bio *bio)
++void rq_qos_done_bio(struct request_queue *q, struct bio *bio)
 +{
 +	struct rq_qos *rqos;
 +
 +	for(rqos = q->rq_qos; rqos; rqos = rqos->next) {
-+		if (rqos->ops->track)
-+			rqos->ops->track(rqos, rq, bio);
- 	}
--	return flags;
- }
- 
++		if (rqos->ops->done_bio)
++			rqos->ops->done_bio(rqos, bio);
++	}
++}
++
  /*
+  * Return true, if we can't increase the depth further by scaling
+  */
 diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index f9a39bd6ece3..a6d13b8ce0dc 100644
+index a6d13b8ce0dc..d5e2f68fe41e 100644
 --- a/block/blk-rq-qos.h
 +++ b/block/blk-rq-qos.h
-@@ -25,12 +25,12 @@ struct rq_qos {
- };
- 
- struct rq_qos_ops {
--	enum wbt_flags (*throttle)(struct rq_qos *, struct bio *,
--				   spinlock_t *);
-+	void (*throttle)(struct rq_qos *, struct bio *, spinlock_t *);
-+	void (*track)(struct rq_qos *, struct request *, struct bio *);
+@@ -30,6 +30,7 @@ struct rq_qos_ops {
  	void (*issue)(struct rq_qos *, struct request *);
  	void (*requeue)(struct rq_qos *, struct request *);
  	void (*done)(struct rq_qos *, struct request *);
--	void (*cleanup)(struct rq_qos *, enum wbt_flags);
-+	void (*cleanup)(struct rq_qos *, struct bio *);
++	void (*done_bio)(struct rq_qos *, struct bio *);
+ 	void (*cleanup)(struct rq_qos *, struct bio *);
  	void (*exit)(struct rq_qos *);
  };
- 
-@@ -97,10 +97,11 @@ void rq_depth_scale_up(struct rq_depth *rqd);
- void rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle);
- bool rq_depth_calc_max_depth(struct rq_depth *rqd);
- 
--void rq_qos_cleanup(struct request_queue *, enum wbt_flags);
-+void rq_qos_cleanup(struct request_queue *, struct bio *);
+@@ -101,6 +102,7 @@ void rq_qos_cleanup(struct request_queue *, struct bio *);
  void rq_qos_done(struct request_queue *, struct request *);
  void rq_qos_issue(struct request_queue *, struct request *);
  void rq_qos_requeue(struct request_queue *, struct request *);
--enum wbt_flags rq_qos_throttle(struct request_queue *, struct bio *, spinlock_t *);
-+void rq_qos_throttle(struct request_queue *, struct bio *, spinlock_t *);
-+void rq_qos_track(struct request_queue *q, struct request *, struct bio *);
++void rq_qos_done_bio(struct request_queue *q, struct bio *bio);
+ void rq_qos_throttle(struct request_queue *, struct bio *, spinlock_t *);
+ void rq_qos_track(struct request_queue *q, struct request *, struct bio *);
  void rq_qos_exit(struct request_queue *);
- #endif
-diff --git a/block/blk-wbt.c b/block/blk-wbt.c
-index 6fe20fb823e4..461a9af11efe 100644
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -549,41 +549,66 @@ static inline bool wbt_should_throttle(struct rq_wb *rwb, struct bio *bio)
- 	}
- }
- 
-+static enum wbt_flags bio_to_wbt_flags(struct rq_wb *rwb, struct bio *bio)
-+{
-+	enum wbt_flags flags = 0;
-+
-+	if (bio_op(bio) == REQ_OP_READ) {
-+		flags = WBT_READ;
-+	} else if (wbt_should_throttle(rwb, bio)) {
-+		if (current_is_kswapd())
-+			flags |= WBT_KSWAPD;
-+		if (bio_op(bio) == REQ_OP_DISCARD)
-+			flags |= WBT_DISCARD;
-+		flags |= WBT_TRACKED;
-+	}
-+	return flags;
-+}
-+
-+static void wbt_cleanup(struct rq_qos *rqos, struct bio *bio)
-+{
-+	struct rq_wb *rwb = RQWB(rqos);
-+	enum wbt_flags flags = bio_to_wbt_flags(rwb, bio);
-+	__wbt_done(rqos, flags);
-+}
-+
- /*
-  * Returns true if the IO request should be accounted, false if not.
-  * May sleep, if we have exceeded the writeback limits. Caller can pass
-  * in an irq held spinlock, if it holds one when calling this function.
-  * If we do sleep, we'll release and re-grab it.
-  */
--static enum wbt_flags wbt_wait(struct rq_qos *rqos, struct bio *bio,
--			       spinlock_t *lock)
-+static void wbt_wait(struct rq_qos *rqos, struct bio *bio, spinlock_t *lock)
- {
- 	struct rq_wb *rwb = RQWB(rqos);
--	enum wbt_flags ret = 0;
-+	enum wbt_flags flags;
- 
- 	if (!rwb_enabled(rwb))
--		return 0;
-+		return;
- 
--	if (bio_op(bio) == REQ_OP_READ)
--		ret = WBT_READ;
-+	flags = bio_to_wbt_flags(rwb, bio);
- 
- 	if (!wbt_should_throttle(rwb, bio)) {
--		if (ret & WBT_READ)
-+		if (flags & WBT_READ)
- 			wb_timestamp(rwb, &rwb->last_issue);
--		return ret;
-+		return;
- 	}
- 
- 	if (current_is_kswapd())
--		ret |= WBT_KSWAPD;
-+		flags |= WBT_KSWAPD;
- 	if (bio_op(bio) == REQ_OP_DISCARD)
--		ret |= WBT_DISCARD;
-+		flags |= WBT_DISCARD;
- 
--	__wbt_wait(rwb, ret, bio->bi_opf, lock);
-+	__wbt_wait(rwb, flags, bio->bi_opf, lock);
- 
- 	if (!blk_stat_is_active(rwb->cb))
- 		rwb_arm_timer(rwb);
-+}
- 
--	return ret | WBT_TRACKED;
-+static void wbt_track(struct rq_qos *rqos, struct request *rq, struct bio *bio)
-+{
-+	struct rq_wb *rwb = RQWB(rqos);
-+	rq->wbt_flags |= bio_to_wbt_flags(rwb, bio);
- }
- 
- void wbt_issue(struct rq_qos *rqos, struct request *rq)
-@@ -707,9 +732,10 @@ EXPORT_SYMBOL_GPL(wbt_disable_default);
- static struct rq_qos_ops wbt_rqos_ops = {
- 	.throttle = wbt_wait,
- 	.issue = wbt_issue,
-+	.track = wbt_track,
- 	.requeue = wbt_requeue,
- 	.done = wbt_done,
--	.cleanup = __wbt_done,
-+	.cleanup = wbt_cleanup,
- 	.exit = wbt_exit,
- };
- 
-diff --git a/block/blk-wbt.h b/block/blk-wbt.h
-index 53b20a58c0a2..f47218d5b3b2 100644
---- a/block/blk-wbt.h
-+++ b/block/blk-wbt.h
-@@ -87,11 +87,6 @@ static inline unsigned int wbt_inflight(struct rq_wb *rwb)
- 
- #ifdef CONFIG_BLK_WBT
- 
--static inline void wbt_track(struct request *rq, enum wbt_flags flags)
--{
--	rq->wbt_flags |= flags;
--}
--
- int wbt_init(struct request_queue *);
- void wbt_update_limits(struct request_queue *);
- void wbt_disable_default(struct request_queue *);
 -- 
 2.14.3
 
