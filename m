@@ -2,92 +2,115 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C340BC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF30CC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612FC27FF8
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ovXMvENE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612FC27FF8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AE9BC27FFA
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9BC27FFA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936377AbeF2Oub (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:50:31 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:36242 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932254AbeF2Oua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:50:30 -0400
-Received: by mail-wr0-f170.google.com with SMTP id f16-v6so9117625wrm.3;
-        Fri, 29 Jun 2018 07:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=h8YH/3BRM4lpJRJG8KEqKb9DYNBFLEf51rUKGhQlfio=;
-        b=ovXMvENEZMAQhHvr9mvjWHo+1TzWAhqn6Elju3g/rmVk42lQXEdksceyP8tttvp9K4
-         FnswbONcvIH69jFxN44lkDapEKVKtJaoY5kT1U8ivjXdFJT1aOBhMkdeViIkf967xRgH
-         b/1YGtEJD/t7AhNXvm/Y9RCpeiDOPlAgcuXFmUTUrjn8UWOzP/iB4FfFH1OC5zkFFg9A
-         TtI84f1YAzrh3bhAP0PMcA+vlV8l7mW3BYHnjJsSPrB8WTZv9B1VNKThvgEcISPZO4WU
-         e1CGg4fnYvbHZGeBDSlZpxBJ56rPZgGsg8wEuOQv6h6dz+k81MePuV0aaFwowrZ1+YVM
-         Swwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=h8YH/3BRM4lpJRJG8KEqKb9DYNBFLEf51rUKGhQlfio=;
-        b=FD0BmC0xtUuKXeDHos8Zjn0xppw7g8VNRX+zZeCaYi4X0l6vMtzS4alYO1P3ay5clJ
-         2hdQXsXLOT/h1oWszmxD2j6hTUXmnyztSyPRN43peXt3npiA3MEQBQ8ZpAk8ixo2EHp8
-         dOseWD12AXZ3Y5Z3O9iWnKq8WeQGGt7rnD28E9L57nLgA6z8pI2loE9edtoxPAJxfX9b
-         kUZKD88kr1GAiM63QT5JReQ15/5APmaaGmk/IS2selOmchOPJBeE4nbFr0v+JRgcopnx
-         SzqF8QTT5zgA8Ev6qOUgM3xOgvVBsjNYRIkM7XKr7hptryqPYNCrnMpvlkfWCAdqoc3D
-         05mA==
-X-Gm-Message-State: APt69E09Q7fWF2WqwxgdWLSWHV4h0+Gk5jX0CpDE2vV1G1XcypgCl6Zi
-        YuYxd4E72eHj7saYPdMxn2CPfIQg
-X-Google-Smtp-Source: AAOMgpfytG9CeNhnwWJbv1aOrcpY1x728HPEnNSI91w/yINV2hfWbs/m1JYbEcq9i6p1islkZp83jA==
-X-Received: by 2002:adf:ec89:: with SMTP id z9-v6mr13080135wrn.160.1530283828984;
-        Fri, 29 Jun 2018 07:50:28 -0700 (PDT)
-Received: from orange.redhat.com (ip-62-245-115-235.net.upcbroadband.cz. [62.245.115.235])
-        by smtp.gmail.com with ESMTPSA id r2-v6sm2382905wmb.39.2018.06.29.07.50.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 07:50:28 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fix for 4.18-rc3
-Date:   Fri, 29 Jun 2018 16:49:57 +0200
-Message-Id: <20180629144957.32584-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        id S936410AbeF2Oum (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:50:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32816 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932254AbeF2Ouk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:50:40 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1832F81A8B7E;
+        Fri, 29 Jun 2018 14:50:40 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-117-106.ams2.redhat.com [10.36.117.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 982982026D68;
+        Fri, 29 Jun 2018 14:50:37 +0000 (UTC)
+From:   Auger Eric <eric.auger@redhat.com>
+Subject: Re: [PATCH v3 03/20] arm64: Add a helper for PARange to physical
+ shift conversion
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-4-git-send-email-suzuki.poulose@arm.com>
+Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
+        kvmarm@lists.cs.columbia.edu
+Message-ID: <163cca54-3e0d-750d-a203-c97b2e3f2f29@redhat.com>
+Date:   Fri, 29 Jun 2018 16:50:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <1530270944-11351-4-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:50:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 29 Jun 2018 14:50:40 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Suzuki,
 
-The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
+On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+> On arm64, ID_AA64MMFR0_EL1.PARange encodes the maximum Physical
+> Address range supported by the CPU. Add a helper to decode this
+> to actual physical shift. If we hit an unallocated value, return
+> the maximum range supported by the kernel.
+> This is will be used by the KVM to set the VTCR_EL2.T0SZ, as it
+s/is// and s/the KVM/KVM
+> is about to move its place. Having this helper keeps the code
+> movement cleaner.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since V2:
+>  - Split the patch
+>  - Limit the physical shift only for values unrecognized.
+> ---
+>  arch/arm64/include/asm/cpufeature.h | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index 1717ba1..855cf0e 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -530,6 +530,19 @@ void arm64_set_ssbd_mitigation(bool state);
+>  static inline void arm64_set_ssbd_mitigation(bool state) {}
+>  #endif
+>  
+> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+> +{
+> +	switch (parange) {
+> +	case 0: return 32;
+> +	case 1: return 36;
+> +	case 2: return 40;
+> +	case 3: return 42;
+> +	case 4: return 44;
+> +	case 5: return 48;
+> +	case 6: return 52;
+> +	default: return CONFIG_ARM64_PA_BITS;
+> +	}
+> +}
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif
+>
 
-  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-are available in the Git repository at:
+Thanks
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-4.18-rc3
+Eric
 
-for you to fetch changes up to 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3:
-
-  ceph: fix dentry leak in splice_dentry() (2018-06-26 18:42:44 +0200)
-
-----------------------------------------------------------------
-A trivial dentry leak fix from Zheng.
-
-----------------------------------------------------------------
-Yan, Zheng (1):
-      ceph: fix dentry leak in splice_dentry()
-
- fs/ceph/inode.c | 1 +
- 1 file changed, 1 insertion(+)
