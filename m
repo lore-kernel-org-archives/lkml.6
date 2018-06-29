@@ -2,65 +2,116 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D38C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74A4C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6AD280B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:26:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6AD280B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 8B7C927F4F
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 22:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7C927F4F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936810AbeF2W0K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 18:26:10 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:34639 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936603AbeF2W0J (ORCPT
+        id S936511AbeF2Wkj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 18:40:39 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:58951 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932511AbeF2Wki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 18:26:09 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id CC5C3100DA1A2;
-        Sat, 30 Jun 2018 00:26:06 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 726671F8BA; Sat, 30 Jun 2018 00:26:06 +0200 (CEST)
-Date:   Sat, 30 Jun 2018 00:26:06 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Fri, 29 Jun 2018 18:40:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0T3dXmHm_1530312021;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3dXmHm_1530312021)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 30 Jun 2018 06:40:29 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI: Document patch submission hints
-Message-ID: <20180629222606.GA4317@wunner.de>
-References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153030405971.57832.12860154795039493576.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Subject: [RFC v3 PATCH 0/5] mm: zap pages with read mmap_sem in munmap for large mapping
+Date:   Sat, 30 Jun 2018 06:39:40 +0800
+Message-Id: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153030405971.57832.12860154795039493576.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 03:27:39PM -0500, Bjorn Helgaas wrote:
-> +  - Wrap changelogs to fit in 80 columns when shown by "git show", which
-> +    adds 4 spaces.  I use "textwidth=75" in vim.
 
-I guess the ideal width is subjective, I usually wrap at 72 chars because
-then you've got 4 blanks on either side when viewed with "git log", which
-I find neater than maxing out the horizontal width.
+Background:
+Recently, when we ran some vm scalability tests on machines with large memory,
+we ran into a couple of mmap_sem scalability issues when unmapping large memory
+space, please refer to https://lkml.org/lkml/2017/12/14/733 and
+https://lkml.org/lkml/2018/2/20/576.
 
-In some cases I deliberately wrap at less than 72 chars or allow 73 chars
-if it avoids vastly unequal widths in a paragraph.  Often when I later
-doublecheck what you've committed, I find that you've rewrapped everything
-to 75 chars and the result doesn't look as neat as I wanted it to be.
-Not a big deal, but thought I'd mention it now that you're codifying this
-"rule" somewhat more formally.
 
-Lukas
+History:
+Then akpm suggested to unmap large mapping section by section and drop mmap_sem
+at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
+
+V1 patch series was submitted to the mailing list per Andrew’s suggestion
+(see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
+and suggestions.
+
+Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hock
+suggested (also in the v1 patches review) to try "two phases" approach. Zapping
+pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
+discussion detail, see https://lwn.net/Articles/753269/)
+
+
+Changelog:
+v2 —> v3:
+* Refactor do_munmap code to extract the common part per Peter's sugestion
+* Introduced VM_DEAD flag per Michal's suggestion. Just handled VM_DEAD in 
+  x86's page fault handler for the time being. Other architectures will be covered
+  once the patch series is reviewed
+* Now lookup vma (find and split) and set VM_DEAD flag with write mmap_sem, then
+  zap mapping with read mmap_sem, then clean up pgtables and vmas with write
+  mmap_sem per Peter's suggestion
+
+v1 —> v2:
+* Re-implemented the code per the discussion on LSFMM summit
+
+ 
+Regression and performance data:
+Test is run on a machine with 32 cores of E5-2680 @ 2.70GHz and 384GB memory
+
+Regression test with full LTP and trinity (munmap) with setting thresh to 4K in
+the code (just for regression test only) so that the new code can be covered
+better and trinity (munmap) test manipulates 4K mapping.
+
+No regression issue is reported and the system survives under trinity (munmap)
+test for 4 hours until I abort the test.
+
+Throughput of page faults (#/s) with the below stress-ng test:
+stress-ng --mmap 0 --mmap-bytes 80G --mmap-file --metrics --perf
+--timeout 600s
+        pristine         patched          delta
+       89.41K/sec       97.29K/sec        +8.8%
+
+The result is not very stable, and depends on timing. So, this is just for reference.
+
+
+Yang Shi (5):
+      uprobes: make vma_has_uprobes non-static
+      mm: introduce VM_DEAD flag
+      mm: refactor do_munmap() to extract the common part
+      mm: mmap: zap pages with read mmap_sem for large mapping
+      x86: check VM_DEAD flag in page fault
+
+ arch/x86/mm/fault.c     |   4 ++
+ include/linux/mm.h      |   6 +++
+ include/linux/uprobes.h |   7 +++
+ kernel/events/uprobes.c |   2 +-
+ mm/mmap.c               | 243 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------
+ 5 files changed, 224 insertions(+), 38 deletions(-)
+
