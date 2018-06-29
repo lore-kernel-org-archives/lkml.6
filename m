@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D37C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBD3C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28C0227C49
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1436427C49
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cubpj6iJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28C0227C49
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejhfNfyO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1436427C49
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936846AbeF2SxI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:53:08 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33643 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933159AbeF2SxB (ORCPT
+        id S965982AbeF2SxN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:53:13 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37121 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933159AbeF2SxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:53:01 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b17-v6so4617663pfi.0;
-        Fri, 29 Jun 2018 11:53:00 -0700 (PDT)
+        Fri, 29 Jun 2018 14:53:08 -0400
+Received: by mail-pg0-f66.google.com with SMTP id n15-v6so1128093pgv.4;
+        Fri, 29 Jun 2018 11:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V7rvTuqNA94DrffJJmk/435Bqkq35Kd9IVvvcWlCh3Y=;
-        b=cubpj6iJOrdy9xUcSnEIIBIoGGvK2V6huEj2YY0/SPZuBhj3BWXRv09bNd7EAd+DfH
-         Qi25mAThUjhyZAfrUkLTKC7iqOG8THM1pJjWsbuKSeI9jKlqkI5Z6QcvcTIzdxVjnBbK
-         kVNMIQxAl0McKudEHt/69A9mekkL/WniTPUoYZ8By9V2nXy7BrObjUVv9yjhr0cvsEtx
-         QKPaIzqBFWgGMIlLTeRxmbgL7LKIUkjUhgkP182SN437OXiHI7ZSbWah6O5ABU9KzJPN
-         92kBNA8m8X6QA+wGrLpkyf8v4ZHuTK72EFAi97MXN1joXRhOKY4OOq4jbfb1Ic0eXzjR
-         nq3A==
+        bh=ZpjQvMjInO59qUhw/rpU7CB0iK/MmgvhHGXRrtBPxXk=;
+        b=ejhfNfyO3pOjHaigKBNTDH2Ocd7w2l9HjVbHKriJy4ueh8VpzevItxZ0MoDQzfxu1w
+         KlhYinpHeOvskOrmJuQCcN7XN5GC9drnBT8cEAV+QXTuhlezZvhLJsby5CiaAFoox0Nh
+         rm5WALEwPO+/OySCWbc7g0SHP1oEmMpiElkR+DCuFWAbZzKMrc3li/d4OukYt6zyRSsv
+         5ts+I+YPpMnGe2ZWIum30Tpp8MGFvJebjm3tfGBXwswOXzfRtoBTpsHock6iVwaDYgVh
+         HJIsMScgtM8tGiE/EHo9euxLsVI6t0thF85Gz57+Wu/WXT0MSziygZWhSRCZupQf/sue
+         2ELg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=V7rvTuqNA94DrffJJmk/435Bqkq35Kd9IVvvcWlCh3Y=;
-        b=aRVihzyIUjVVGL23NyAcT3IZSxlWotFEQEO2yEieqL60lGxLCCMzKaOrL24CDjrc6O
-         cicorxcCEENveoLfuGHjHoa9oVSq9k9nRgwgrEtGYSBhj1fJ1is/1nxX+SMPuS9rbmbR
-         NOvsDH1yjSe2bIPcNBpF75k6SUN82Jdzcu0BBWZDRlJKHw9xK3KECHD9IXBHTlbnhEjP
-         WdrAknSQ/nywIxvrfqTVle9BpR7E7odLAu+DiVTBihBHREPKHNbrLzzQvj1P8NeCe4ix
-         f4fCqfynHUFSfLprR6j44Gfg9DSFLR1Fmnx8SRIuDIndiCTBjR0xDhYvcM8bWjk/sr4r
-         NdnA==
-X-Gm-Message-State: APt69E1b6RPo2RcRJhwAC9tK+tMxifscxiAyMabQFoGP+iAZNOQ0T1Vx
-        LzJidLCPA0/gcm6mVktsHMtK8A==
-X-Google-Smtp-Source: ADUXVKL+36oRw1q8h1knkSnmQWB/B97iRqSitUEa/qQf3ir3HqZheB/a5vjFTNDv3P+LlbKkK/weGA==
-X-Received: by 2002:a63:7b4d:: with SMTP id k13-v6mr13593865pgn.64.1530298380291;
-        Fri, 29 Jun 2018 11:53:00 -0700 (PDT)
+        bh=ZpjQvMjInO59qUhw/rpU7CB0iK/MmgvhHGXRrtBPxXk=;
+        b=XkUXWMr7IsJyjeNzuiyUYXJOgzwPTijDSMSsr+uRFNgGJhhSrijdcQN7mjHR4/Yc+H
+         8hCTCxzt8a3DEipixZEroUvnKeVXvDpqXD6s1eSkRrgvnvWjeMTG8J6K2sbud80gOjDx
+         cj1jasJjFV3p8YcBXqwG3xFYUncCgX3PX1C+w5LM1KOM3/hTewbncPIPg2Lr+HmXXKwU
+         5guOP9bJ2uLKfYtSVEuKohamEvlP4CAIrBVcd10RSfGcQBL00b7G07W1hjaFMegLJCgf
+         4Vs57CMeCnaAkT41Ui78aflMnNnvj+q18QwUkHwtZPn8qMNwctzcBbwtxUCsW0UbWrvW
+         XSww==
+X-Gm-Message-State: APt69E0D6JeqCO6pW0GBSGkrhjqcB4EvBNqQSChsZeizRJvRflaaPe8c
+        jt7nJEZmoyfpKxtd51oXNHfxfw==
+X-Google-Smtp-Source: AAOMgpdFPQWWvv8jFZdaOQefy2UVakJa8+uEFXY76X4xSYkOHBx/TN8yPkD1O4+xJYzGOHKGPuzCVg==
+X-Received: by 2002:a62:e813:: with SMTP id c19-v6mr2707475pfi.124.1530298387921;
+        Fri, 29 Jun 2018 11:53:07 -0700 (PDT)
 Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.52.58
+        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.53.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 11:52:59 -0700 (PDT)
+        Fri, 29 Jun 2018 11:53:07 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 10/17] media: staging/imx: of: Remove recursive graph walk
-Date:   Fri, 29 Jun 2018 11:49:54 -0700
-Message-Id: <1530298220-5097-11-git-send-email-steve_longerbeam@mentor.com>
+Subject: [PATCH v5 12/17] media: staging/imx: Rename root notifier
+Date:   Fri, 29 Jun 2018 11:49:56 -0700
+Message-Id: <1530298220-5097-13-git-send-email-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
 References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
@@ -73,157 +73,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After moving to subdev notifiers, it's no longer necessary to recursively
-walk the OF graph, because the subdev notifiers will discover and add
-devices from the graph for us.
-
-So the recursive of_parse_subdev() function is gone, replaced with
-of_add_csi() which adds only the CSI port fwnodes to the imx-media
-root notifier.
+Rename the imx-media root async notifier from "subdev_notifier" to
+simply "notifier", so as not to confuse it with true subdev notifiers.
+No functional changes.
 
 Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/staging/media/imx/imx-media-of.c | 106 +++----------------------------
- 1 file changed, 8 insertions(+), 98 deletions(-)
+ drivers/staging/media/imx/imx-media-dev.c | 14 +++++++-------
+ drivers/staging/media/imx/imx-media.h     |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-of.c b/drivers/staging/media/imx/imx-media-of.c
-index acde372..1c91754 100644
---- a/drivers/staging/media/imx/imx-media-of.c
-+++ b/drivers/staging/media/imx/imx-media-of.c
-@@ -20,74 +20,19 @@
- #include <video/imx-ipu-v3.h>
- #include "imx-media.h"
+diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
+index ae87c81..982e455 100644
+--- a/drivers/staging/media/imx/imx-media-dev.c
++++ b/drivers/staging/media/imx/imx-media-dev.c
+@@ -29,7 +29,7 @@
  
--static int of_get_port_count(const struct device_node *np)
-+static int of_add_csi(struct imx_media_dev *imxmd, struct device_node *csi_np)
+ static inline struct imx_media_dev *notifier2dev(struct v4l2_async_notifier *n)
  {
--	struct device_node *ports, *child;
--	int num = 0;
--
--	/* check if this node has a ports subnode */
--	ports = of_get_child_by_name(np, "ports");
--	if (ports)
--		np = ports;
--
--	for_each_child_of_node(np, child)
--		if (of_node_cmp(child->name, "port") == 0)
--			num++;
--
--	of_node_put(ports);
--	return num;
--}
--
--/*
-- * find the remote device node given local endpoint node
-- */
--static bool of_get_remote(struct device_node *epnode,
--			  struct device_node **remote_node)
--{
--	struct device_node *rp, *rpp;
--	struct device_node *remote;
--	bool is_csi_port;
--
--	rp = of_graph_get_remote_port(epnode);
--	rpp = of_graph_get_remote_port_parent(epnode);
--
--	if (of_device_is_compatible(rpp, "fsl,imx6q-ipu")) {
--		/* the remote is one of the CSI ports */
--		remote = rp;
--		of_node_put(rpp);
--		is_csi_port = true;
--	} else {
--		remote = rpp;
--		of_node_put(rp);
--		is_csi_port = false;
--	}
--
--	if (!of_device_is_available(remote)) {
--		of_node_put(remote);
--		*remote_node = NULL;
--	} else {
--		*remote_node = remote;
--	}
--
--	return is_csi_port;
--}
--
--static int
--of_parse_subdev(struct imx_media_dev *imxmd, struct device_node *sd_np,
--		bool is_csi_port)
--{
--	int i, num_ports, ret;
-+	int ret;
- 
--	if (!of_device_is_available(sd_np)) {
-+	if (!of_device_is_available(csi_np)) {
- 		dev_dbg(imxmd->md.dev, "%s: %s not enabled\n", __func__,
--			sd_np->name);
-+			csi_np->name);
- 		/* unavailable is not an error */
- 		return 0;
- 	}
- 
--	/* register this subdev with async notifier */
--	ret = imx_media_add_async_subdev(imxmd, of_fwnode_handle(sd_np),
--					 NULL);
-+	/* add CSI fwnode to async notifier */
-+	ret = imx_media_add_async_subdev(imxmd, of_fwnode_handle(csi_np), NULL);
- 	if (ret) {
- 		if (ret == -EEXIST) {
- 			/* already added, everything is fine */
-@@ -98,42 +43,7 @@ of_parse_subdev(struct imx_media_dev *imxmd, struct device_node *sd_np,
- 		return ret;
- 	}
- 
--	/*
--	 * the ipu-csi has one sink port. The source pads are not
--	 * represented in the device tree by port nodes, but are
--	 * described by the internal pads and links later.
--	 */
--	num_ports = is_csi_port ? 1 : of_get_port_count(sd_np);
--
--	for (i = 0; i < num_ports; i++) {
--		struct device_node *epnode = NULL, *port, *remote_np;
--
--		port = is_csi_port ? sd_np : of_graph_get_port_by_id(sd_np, i);
--		if (!port)
--			continue;
--
--		for_each_child_of_node(port, epnode) {
--			bool remote_is_csi;
--
--			remote_is_csi = of_get_remote(epnode, &remote_np);
--			if (!remote_np)
--				continue;
--
--			ret = of_parse_subdev(imxmd, remote_np, remote_is_csi);
--			of_node_put(remote_np);
--			if (ret)
--				break;
--		}
--
--		if (port != sd_np)
--			of_node_put(port);
--		if (ret) {
--			of_node_put(epnode);
--			break;
--		}
--	}
--
--	return ret;
-+	return 0;
+-	return container_of(n, struct imx_media_dev, subdev_notifier);
++	return container_of(n, struct imx_media_dev, notifier);
  }
  
- int imx_media_add_of_subdevs(struct imx_media_dev *imxmd,
-@@ -147,7 +57,7 @@ int imx_media_add_of_subdevs(struct imx_media_dev *imxmd,
- 		if (!csi_np)
- 			break;
+ /*
+@@ -113,7 +113,7 @@ int imx_media_add_async_subdev(struct imx_media_dev *imxmd,
  
--		ret = of_parse_subdev(imxmd, csi_np, true);
-+		ret = of_add_csi(imxmd, csi_np);
- 		of_node_put(csi_np);
- 		if (ret)
- 			return ret;
+ 	list_add_tail(&imxasd->list, &imxmd->asd_list);
+ 
+-	imxmd->subdev_notifier.num_subdevs++;
++	imxmd->notifier.num_subdevs++;
+ 
+ 	dev_dbg(imxmd->md.dev, "%s: added %s, match type %s\n",
+ 		__func__, np ? np->name : devname, np ? "FWNODE" : "DEVNAME");
+@@ -532,7 +532,7 @@ static int imx_media_probe(struct platform_device *pdev)
+ 		goto unreg_dev;
+ 	}
+ 
+-	num_subdevs = imxmd->subdev_notifier.num_subdevs;
++	num_subdevs = imxmd->notifier.num_subdevs;
+ 
+ 	/* no subdevs? just bail */
+ 	if (num_subdevs == 0) {
+@@ -552,10 +552,10 @@ static int imx_media_probe(struct platform_device *pdev)
+ 		subdevs[i++] = &imxasd->asd;
+ 
+ 	/* prepare the async subdev notifier and register it */
+-	imxmd->subdev_notifier.subdevs = subdevs;
+-	imxmd->subdev_notifier.ops = &imx_media_subdev_ops;
++	imxmd->notifier.subdevs = subdevs;
++	imxmd->notifier.ops = &imx_media_subdev_ops;
+ 	ret = v4l2_async_notifier_register(&imxmd->v4l2_dev,
+-					   &imxmd->subdev_notifier);
++					   &imxmd->notifier);
+ 	if (ret) {
+ 		v4l2_err(&imxmd->v4l2_dev,
+ 			 "v4l2_async_notifier_register failed with %d\n", ret);
+@@ -580,7 +580,7 @@ static int imx_media_remove(struct platform_device *pdev)
+ 
+ 	v4l2_info(&imxmd->v4l2_dev, "Removing imx-media\n");
+ 
+-	v4l2_async_notifier_unregister(&imxmd->subdev_notifier);
++	v4l2_async_notifier_unregister(&imxmd->notifier);
+ 	imx_media_remove_internal_subdevs(imxmd);
+ 	v4l2_device_unregister(&imxmd->v4l2_dev);
+ 	media_device_unregister(&imxmd->md);
+diff --git a/drivers/staging/media/imx/imx-media.h b/drivers/staging/media/imx/imx-media.h
+index e945e0e..7edb18a 100644
+--- a/drivers/staging/media/imx/imx-media.h
++++ b/drivers/staging/media/imx/imx-media.h
+@@ -148,7 +148,7 @@ struct imx_media_dev {
+ 
+ 	/* for async subdev registration */
+ 	struct list_head asd_list;
+-	struct v4l2_async_notifier subdev_notifier;
++	struct v4l2_async_notifier notifier;
+ };
+ 
+ enum codespace_sel {
 -- 
 2.7.4
 
