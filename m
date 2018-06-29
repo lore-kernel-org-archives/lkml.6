@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17465C43145
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DA3C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD8EF27986
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A6727986
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZACXIEqz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8EF27986
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YKGDFhFt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A6727986
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030379AbeF2A3y (ORCPT
+        id S1030395AbeF2Aa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 20:29:54 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41229 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935951AbeF2A2z (ORCPT
+        Thu, 28 Jun 2018 20:30:29 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44720 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935851AbeF2A2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 20:28:55 -0400
-Received: by mail-pg0-f68.google.com with SMTP id l65-v6so3178497pgl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:28:55 -0700 (PDT)
+        Thu, 28 Jun 2018 20:28:53 -0400
+Received: by mail-pf0-f193.google.com with SMTP id j3-v6so3355674pfh.11
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8YjMcInXJrnMY6NIy0rzHFpjLepbrpMxKQdqxE6spGc=;
-        b=ZACXIEqzUy/qd1XXayCIX39szLzUHtIUUrUSzsEmKCXEC7vKVRlzYERBjpnuFYD8f/
-         hOZ7W3JhqLeyyg1iOS3L0PXQF9Hce1e0iwT3Kpar7HHE0YqBfk6ytACKlRU/FMrD8rWA
-         5C+jlgS/D1KjmPC116e8dT1SQzqRGzsBziAR0=
+        bh=JBfo1fF2PqSm7e4PfP+/dVxXoai8pEOtQGF0NnToX8o=;
+        b=YKGDFhFtacjeAovU5Uk0Oqx1NcPS9G3M4QG6MT9MJZ81Kfrqd2VEVw3+i+JNfuaNqy
+         T0vrXko/VSVhVWhiuXOqofnq8ceG2iHGVZlCCv0CIKzeKHdmzwJeHEtf3crvGViOmRq3
+         RVzZ4FQxSpFWe9iBaMUGl1J7KCHWj2Jkbw0zs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8YjMcInXJrnMY6NIy0rzHFpjLepbrpMxKQdqxE6spGc=;
-        b=lM7Xuiq23lhBqJ5443dVH7pyrjb7fp0MWjopUDnQywi1QrGzqwqURS3X5F9FrqJcYU
-         T0TVQeiz9GcY/IznYB6ycu0chV147iVnosuwa8erOm/OppjUVc1gEwCXpfGq/a1Jf6VX
-         tAkfF9AyDl+WJ32EOIEqBM7UE7dy9wpXhXdeDXxDe2HkeDhpSlGdUGVnSxQ6Wj0zOTEE
-         K1YJauncC2p00D6cSV+Qd2HtZUpe+E716/4DQBjHQcbFWNwGx6lpAijp94WzRCRJIOvS
-         DTVaEmAS93Niu2fWx64/gbyA/EmaTZDFErHZfb2ZoXceM78rSkxlUMlIjzam0r4HrXWz
-         Sulw==
-X-Gm-Message-State: APt69E39MFHDSJysICI/cdlliVHDGtJJwUsxz5YRc/jU10afytLE8EXW
-        o/BETrJnyCEH6/Qsb+0VYltdxQ==
-X-Google-Smtp-Source: AAOMgpfIlakhyiLXVaIFY8i7TNkl/x4ruDsl4VsPDdERUm9ygm4atD2SZxplz0XFo6uxQczHNIbT0w==
-X-Received: by 2002:a62:6502:: with SMTP id z2-v6mr12170203pfb.76.1530232134899;
-        Thu, 28 Jun 2018 17:28:54 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id g25-v6sm2464862pge.52.2018.06.28.17.28.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        bh=JBfo1fF2PqSm7e4PfP+/dVxXoai8pEOtQGF0NnToX8o=;
+        b=kT2+jbG3+Nerk65lQPHCMlFozwgIb0V/KesojpSs14ePF8qxi35H/sXXAu2awmUpIf
+         rX3csCmx2lts+oPn/X+n+rayNpp/biszI+YKWgYLzd1VogKZ1DGwSRwU6rC27K5nrOWS
+         mlOudKPnodpMyM+RQUb/85Ljo/6hb/0JBtMamwkKG0L772Qun+0a9cy5BbDVY2xP3Smf
+         1OhE15S9+VG6y4xuEYrAyxc9tAAThhxzQIyRIvMoS7XlAoPCj8WtYoPX/SNFqP9fiySY
+         KZo0fHNH54C0uNR7QnqTDBJ7+TZEmis+zTbdgm8WqlrUeO4s+sT9mT7JpncBIFFaZmhG
+         ynLA==
+X-Gm-Message-State: APt69E3ThAmCUcul5TScooMsUIFWwvAkknWuqZpoTAsZNaNubJbM38Dk
+        uLL7B3vgI9iaJRcc+iVB7ABx2Q==
+X-Google-Smtp-Source: ADUXVKLRNsCySqCqdXH+hYqh4aHDl3N0b/RtDwC6U4Ge74pLGInCT16JJPoaJP+g893whEIGyNNcuQ==
+X-Received: by 2002:a63:384c:: with SMTP id h12-v6mr10576887pgn.230.1530232133416;
         Thu, 28 Jun 2018 17:28:53 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm16125302pfm.24.2018.06.28.17.28.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Jun 2018 17:28:48 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/9] dm verity fec: Remove VLA usage
-Date:   Thu, 28 Jun 2018 17:28:40 -0700
-Message-Id: <20180629002843.31095-7-keescook@chromium.org>
+Subject: [PATCH v3 1/9] crypto: xcbc: Remove VLA usage
+Date:   Thu, 28 Jun 2018 17:28:35 -0700
+Message-Id: <20180629002843.31095-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180629002843.31095-1-keescook@chromium.org>
 References: <20180629002843.31095-1-keescook@chromium.org>
@@ -80,38 +80,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-uses the newly defined max digest size macro. Also adds a sanity-check
-at use-time.
+In the quest to remove all stack VLA usage from the kernel[1], this uses
+the maximum blocksize and adds a sanity check. For xcbc, the blocksize
+must always be 16, so use that, since it's already being enforced during
+instantiation.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/md/dm-verity-fec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ crypto/xcbc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-verity-fec.c b/drivers/md/dm-verity-fec.c
-index 684af08d0747..fe5cfd1a5fa5 100644
---- a/drivers/md/dm-verity-fec.c
-+++ b/drivers/md/dm-verity-fec.c
-@@ -212,12 +212,15 @@ static int fec_read_bufs(struct dm_verity *v, struct dm_verity_io *io,
- 	struct dm_verity_fec_io *fio = fec_io(io);
- 	u64 block, ileaved;
- 	u8 *bbuf, *rs_block;
--	u8 want_digest[v->digest_size];
-+	u8 want_digest[AHASH_MAX_DIGESTSIZE];
- 	unsigned n, k;
+diff --git a/crypto/xcbc.c b/crypto/xcbc.c
+index 25c75af50d3f..7aa03beed795 100644
+--- a/crypto/xcbc.c
++++ b/crypto/xcbc.c
+@@ -57,6 +57,8 @@ struct xcbc_desc_ctx {
+ 	u8 ctx[];
+ };
  
- 	if (neras)
- 		*neras = 0;
- 
-+	if (WARN_ON(v->digest_size > sizeof(want_digest)))
-+		return -EINVAL;
++#define XCBC_BLOCKSIZE	16
 +
- 	/*
- 	 * read each of the rsn data blocks that are part of the RS block, and
- 	 * interleave contents to available bufs
+ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+ 				     const u8 *inkey, unsigned int keylen)
+ {
+@@ -65,7 +67,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+ 	int bs = crypto_shash_blocksize(parent);
+ 	u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
+ 	int err = 0;
+-	u8 key1[bs];
++	u8 key1[XCBC_BLOCKSIZE];
++
++	if (WARN_ON(bs > sizeof(key1)))
++		return -EINVAL;
+ 
+ 	if ((err = crypto_cipher_setkey(ctx->child, inkey, keylen)))
+ 		return err;
+@@ -212,7 +217,7 @@ static int xcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 		return PTR_ERR(alg);
+ 
+ 	switch(alg->cra_blocksize) {
+-	case 16:
++	case XCBC_BLOCKSIZE:
+ 		break;
+ 	default:
+ 		goto out_put_alg;
 -- 
 2.17.1
 
