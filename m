@@ -2,100 +2,121 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF9FC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BAEC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6140F27E8C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6140F27E8C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
+	by mail.kernel.org (Postfix) with ESMTP id F1F2327E8C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F2327E8C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936063AbeF2Lei (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:34:38 -0400
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:51066 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934003AbeF2Leg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:34:36 -0400
-Received: from cpe-2606-a000-111b-40b7-640c-26a-4e16-9225.dyn6.twc.com ([2606:a000:111b:40b7:640c:26a:4e16:9225] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1fYrfY-0005kf-8I; Fri, 29 Jun 2018 07:34:33 -0400
-Date:   Fri, 29 Jun 2018 07:33:55 -0400
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Adit Ranadive <aditr@vmware.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        pv-drivers <pv-drivers@vmware.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vmw_pvrdma: Release netdev when vmxnet3 module is removed
-Message-ID: <20180629113355.GB16153@hmswarspite.think-freely.org>
-References: <20180628135938.19625-1-nhorman@tuxdriver.com>
- <20180628185946.GC379@ziepe.ca>
- <20180628194526.GA14168@hmswarspite.think-freely.org>
- <20180628203709.GD379@ziepe.ca>
- <74E5B871-3D33-4C75-8FD4-C5D5BE2182AD@vmware.com>
+        id S936116AbeF2Lew (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:34:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60000 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934003AbeF2Leu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:34:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DA223AF51;
+        Fri, 29 Jun 2018 11:34:48 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 13:34:47 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180629113447.GA5963@dhcp22.suse.cz>
+References: <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+ <20180620071817.GJ13685@dhcp22.suse.cz>
+ <263935d9-d07c-ab3e-9e42-89f73f57be1e@linux.alibaba.com>
+ <20180626074344.GZ2458@hirez.programming.kicks-ass.net>
+ <e54e298d-ef86-19a7-6f6b-07776f9a43e2@linux.alibaba.com>
+ <20180627072432.GC32348@dhcp22.suse.cz>
+ <a52f0585-ebec-d098-2775-f55bde3519a4@linux.alibaba.com>
+ <20180628115101.GE32348@dhcp22.suse.cz>
+ <2ecdb667-f4de-673d-6a5f-ee50df505d0c@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <74E5B871-3D33-4C75-8FD4-C5D5BE2182AD@vmware.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ecdb667-f4de-673d-6a5f-ee50df505d0c@linux.alibaba.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 09:15:46PM +0000, Adit Ranadive wrote:
-> On 6/28/18, 1:37 PM, "Jason Gunthorpe" <jgg@ziepe.ca> wrote:
-> > On Thu, Jun 28, 2018 at 03:45:26PM -0400, Neil Horman wrote:
-> > > On Thu, Jun 28, 2018 at 12:59:46PM -0600, Jason Gunthorpe wrote:
-> > > > On Thu, Jun 28, 2018 at 09:59:38AM -0400, Neil Horman wrote:
-> > > > > On repeated module load/unload cycles, its possible for the pvrmda
-> > > > > driver to encounter this crash:
-> <snip>
-> > > > > @@ -962,6 +982,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
-> > > > >  	}
-> > > > >  
-> > > > >  	dev->netdev = pci_get_drvdata(pdev_net);
-> > > > > +	dev_hold(dev->netdev);
+On Thu 28-06-18 12:10:10, Yang Shi wrote:
 > 
-> That doesn't seem right. If the vmxnet3 driver isn't loaded at all or failed
-> to create a netdev, you would be requesting a hold on a NULL netdev. What if
-> you moved this to after the if(!dev->netdev) check?
 > 
-You're correct, I was thinking that there was a null check in dev_hold, but
-there isn't, it needs to be moved after the the !dev->netdev, and released in
-the error path.
-
-> > > > >  	pci_dev_put(pdev_net);
-> > > > >  	if (!dev->netdev) {
-> > > > >  		dev_err(&pdev->dev, "failed to get vmxnet3 device\n");
-> > > > 
-> > > > I see a lot of new dev_hold's here, where are the matching
-> > > > dev_puts()?
-> > > > 
-> > I'm not sure I'd call 2 alot, but sure, there is a new dev_hold in the
-> > pvrdma_pci_probe routine, to hold a reference to the netdev that is looked up
-> > there.  It is balanced by the NETDEV_UNREGISTER case in
-> > pvrdma_netdevice_event_handle.  The UNREGISTER clause is also balancing the
-> > NETDEV_REGISTER case of the hanlder that looks up the matching netdev should a
-> > new device be registered.  Note that we will only hold a single device at a
-> > time, because a given pvrdma device only recongnizes a single vmxnet3 device
-> > (the one on function 0 of its own bus/device tuple).
+> On 6/28/18 4:51 AM, Michal Hocko wrote:
+> > On Wed 27-06-18 10:23:39, Yang Shi wrote:
+> > > 
+> > > On 6/27/18 12:24 AM, Michal Hocko wrote:
+> > > > On Tue 26-06-18 18:03:34, Yang Shi wrote:
+> > > > > On 6/26/18 12:43 AM, Peter Zijlstra wrote:
+> > > > > > On Mon, Jun 25, 2018 at 05:06:23PM -0700, Yang Shi wrote:
+> > > > > > > By looking this deeper, we may not be able to cover all the unmapping range
+> > > > > > > for VM_DEAD, for example, if the start addr is in the middle of a vma. We
+> > > > > > > can't set VM_DEAD to that vma since that would trigger SIGSEGV for still
+> > > > > > > mapped area.
+> > > > > > > 
+> > > > > > > splitting can't be done with read mmap_sem held, so maybe just set VM_DEAD
+> > > > > > > to non-overlapped vmas. Access to overlapped vmas (first and last) will
+> > > > > > > still have undefined behavior.
+> > > > > > Acquire mmap_sem for writing, split, mark VM_DEAD, drop mmap_sem. Acquire
+> > > > > > mmap_sem for reading, madv_free drop mmap_sem. Acquire mmap_sem for
+> > > > > > writing, free everything left, drop mmap_sem.
+> > > > > > 
+> > > > > > ?
+> > > > > > 
+> > > > > > Sure, you acquire the lock 3 times, but both write instances should be
+> > > > > > 'short', and I suppose you can do a demote between 1 and 2 if you care.
+> > > > > Thanks, Peter. Yes, by looking the code and trying two different approaches,
+> > > > > it looks this approach is the most straight-forward one.
+> > > > Yes, you just have to be careful about the max vma count limit.
+> > > Yes, we should just need copy what do_munmap does as below:
+> > > 
+> > > if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
+> > >              return -ENOMEM;
+> > > 
+> > > If the mas map count limit has been reached, it will return failure before
+> > > zapping mappings.
+> > Yeah, but as soon as you drop the lock and retake it, somebody might
+> > have changed the adddress space and we might get inconsistency.
 > > 
-> > I don't see how the dev_hold in pvrdma_pci_probe is undone during
-> > error unwind (eg goto err_free_cq_ring)
-> > 
-> > And I don't see how it is put when pvrdma_pci_remove() is called.
+> > So I am wondering whether we really need upgrade_read (to promote read
+> > to write lock) and do the
+> > 	down_write
+> > 	split & set up VM_DEAD
+> > 	downgrade_write
+> > 	unmap
+> > 	upgrade_read
+> > 	zap ptes
+> > 	up_write
 > 
-> That's right. These seem missing as well. 
-> 
-yup
+> I'm supposed address space changing just can be done by mmap, mremap,
+> mprotect. If so, we may utilize the new VM_DEAD flag. If the VM_DEAD flag is
+> set for the vma, just return failure since it is being unmapped.
 
+I am sorry I do not follow. How does VM_DEAD flag helps for a completely
+unrelated vmas? Or maybe it would be better to post the code to see what
+you mean exactly.
+-- 
+Michal Hocko
+SUSE Labs
