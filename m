@@ -2,151 +2,126 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607E8C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95F0C6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1796C27C40
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D7AF279F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 20:16:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="VMLlxlJ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1796C27C40
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Z0uccomj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7AF279F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935326AbeF2UJn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 16:09:43 -0400
-Received: from vern.gendns.com ([206.190.152.46]:57886 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932925AbeF2UJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 16:09:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=y2SUyEJVRjh04xZtjr2XSGglxrg9+DSKDc7BQex3wS8=; b=VMLlxlJ6YxaIFecVQ0xL1FY4xp
-        krQyCO15Cj0nFSIxZtyk4guBFvgirMo7OncJQrDLUd2u0DdpxJOcZ30O0GhaJar/Z06L9dFFPxvYJ
-        JvmdRxsLSomXM/8iNTZ9cYZIZurdylqpkCNnUXxV7pO3L5F0Fz0/FHm0vIt5u82TNdgaxHY7b9WH+
-        GaFZ857Qcqe1yxJerW7kyJSdoIQFLoi2NEb+o6+Ch7Exwq12VW19OFiMFDnAEKHUnsYc/yXh1cSxj
-        s2XyNcfY+K231c6QVVD4chTLlJqYucmdSz4Rlj4ozJFGo9eUUqQHtfSWizpCpAl1VOmf6aMNGNrJo
-        T5pAH1Ig==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:42618 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fYzi4-002wLz-MZ; Fri, 29 Jun 2018 16:09:36 -0400
-Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
- address from MTD
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180629094039.7543-1-brgl@bgdev.pl>
- <20180629094039.7543-9-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <e2579b81-7c66-8be6-fcad-ab7a3a5b0765@lechnology.com>
-Date:   Fri, 29 Jun 2018 15:09:34 -0500
+        id S937324AbeF2UQw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 16:16:52 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:55607 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936809AbeF2UQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 16:16:50 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 3758324E0A2E;
+        Fri, 29 Jun 2018 13:16:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1530303410; bh=1RqGwf0D7NLlTrsKB3jolq6IFlWAyyz0kjD1SxrQI4M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=Z0uccomjjjsCU0OedgVg/BxifIBX/EZjtujneCiNuaieO72aO6WmFuxC6hR9lfRCf
+         EPZOnLlS3lEVNByE9WMX8ZTQnxg5O0MK8R58uqM1Kw4hUKTMuMcUBC8+QSQrHMwhYs
+         Vn207U8i7bLcswHCvqvotai41UcEx5pL+/6wcZLYwq0YUw8qRvS8q5psvSOrOQi0Ey
+         zqPqYcNKQOsJT6bOMXOjkHVHuwqIhuetXK7uMFAw8bIn7fR3cb25UHoyOj97hH26lb
+         XGPmhmQG50dFrJm2HWfe+mauEBDJHSipMvwPHBVgchOUInmyezJkxHwEFTO88dFDqf
+         5fe9Pn4OdNG4w==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 1961E5532;
+        Fri, 29 Jun 2018 13:16:50 -0700 (PDT)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 29 Jun 2018 13:16:49 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Sat, 30 Jun 2018 01:46:47 +0530
+Received: from [10.10.161.98] (10.10.161.98) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Sat, 30 Jun 2018 01:46:46 +0530
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        arcml <linux-snps-arc@lists.infradead.org>
+CC:     lkml <linux-kernel@vger.kernel.org>
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ i91ThhqBJlyU6MVUa6vZNv8E
+Message-ID: <b8d42627-8117-cdec-1f07-1885e7364075@synopsys.com>
+Date:   Fri, 29 Jun 2018 13:16:42 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180629094039.7543-9-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Language: en-US
+X-Originating-IP: [10.10.161.98]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 04:40 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> On da850-evm board we can read the MAC address from MTD. It's currently
-> done in the relevant board file, but we want to get rid of all the MAC
-> reading callbacks from the board file (SPI and NAND). Move the reading
-> of the MAC address from SPI to the emac driver's probe function.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/net/ethernet/ti/davinci_emac.c | 20 ++++++++++++++++++--
->   1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-> index a1a6445b5a7e..48e6a7755811 100644
-> --- a/drivers/net/ethernet/ti/davinci_emac.c
-> +++ b/drivers/net/ethernet/ti/davinci_emac.c
-> @@ -67,7 +67,7 @@
->   #include <linux/of_irq.h>
->   #include <linux/of_net.h>
->   #include <linux/mfd/syscon.h>
-> -
-> +#include <linux/mtd/mtd.h>
->   #include <asm/irq.h>
->   #include <asm/page.h>
->   
-> @@ -1783,7 +1783,10 @@ static int davinci_emac_probe(struct platform_device *pdev)
->   	struct cpdma_params dma_params;
->   	struct clk *emac_clk;
->   	unsigned long emac_bus_frequency;
-> -
-> +#ifdef CONFIG_MTD
-> +	size_t mac_addr_len;
-> +	struct mtd_info *mtd;
-> +#endif /* CONFIG_MTD */
->   
->   	/* obtain emac clock from kernel */
->   	emac_clk = devm_clk_get(&pdev->dev, NULL);
-> @@ -1815,6 +1818,19 @@ static int davinci_emac_probe(struct platform_device *pdev)
->   		goto err_free_netdev;
->   	}
->   
-> +#ifdef CONFIG_MTD
+On 06/29/2018 06:42 AM, Mike Rapoport wrote:
+> Otherwise mm configuration options show up in the top level menu.
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+>
 
-What about the case when MTD is compiled as a module?
 
-> +	mtd = get_mtd_device_nm("MAC-Address");
+LGTM ! Added to for-curr
 
-What about the case when PTR_ERR(mtd) == -EPROBE_DEFER?
-
-> +	if (!IS_ERR(mtd)) {
-> +		rc = mtd_read(mtd, 0, ETH_ALEN,
-> +			      &mac_addr_len, priv->mac_addr);
-> +		if (rc == 0)
-> +			dev_info(&pdev->dev,
-> +				 "Read MAC addr from SPI Flash: %pM\n",
-> +				 priv->mac_addr);
-> +		put_mtd_device(mtd);
-> +	}
-> +#endif /* CONFIG_MTD */
-> +
->   	/* MAC addr and PHY mask , RMII enable info from platform_data */
->   	memcpy(priv->mac_addr, pdata->mac_addr, ETH_ALEN);
->   	priv->phy_id = pdata->phy_id;
-> 
-
+Thx,
+-Vineet
