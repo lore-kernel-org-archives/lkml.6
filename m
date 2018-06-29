@@ -5,291 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F46BC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11F8C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D9424806
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D9424806
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4927927F19
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 12:58:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4927927F19
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936420AbeF2Mxr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 08:53:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935272AbeF2Mxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 08:53:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 298C687A4B;
-        Fri, 29 Jun 2018 12:53:45 +0000 (UTC)
-Received: from localhost (unknown [10.36.118.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD59D2156880;
-        Fri, 29 Jun 2018 12:53:44 +0000 (UTC)
-From:   Niels de Vos <ndevos@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Marcin Sulikowski <marcin.k.sulikowski@gmail.com>,
-        Niels de Vos <ndevos@redhat.com>
-Subject: [PATCH v3] fuse: add support for copy_file_range()
-Date:   Fri, 29 Jun 2018 14:53:41 +0200
-Message-Id: <20180629125341.30466-1-ndevos@redhat.com>
-In-Reply-To: <20180629121630.GS2345@ndevos-x270>
-References: <20180629121630.GS2345@ndevos-x270>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 12:53:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 12:53:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ndevos@redhat.com' RCPT:''
+        id S936432AbeF2M6d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 08:58:33 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44716 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934758AbeF2M6b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 08:58:31 -0400
+Received: from localhost (unknown [183.108.164.149])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E7A92142404B0;
+        Fri, 29 Jun 2018 05:58:28 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 21:57:05 +0900 (KST)
+Message-Id: <20180629.215705.881234148380578564.davem@davemloft.net>
+To:     shakeelb@google.com
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, gthelen@google.com, guro@fb.com,
+        edumazet@google.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v2] net, mm: account sock objects to kmemcg
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180627221642.247448-1-shakeelb@google.com>
+References: <20180627221642.247448-1-shakeelb@google.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 29 Jun 2018 05:58:31 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several FUSE filesystems that can implement server-side copy
-or other efficient copy/duplication/clone methods. The copy_file_range()
-syscall is the standard interface that users have access to while not
-depending on external libraries that bypass FUSE.
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 27 Jun 2018 15:16:42 -0700
 
-Signed-off-by: Niels de Vos <ndevos@redhat.com>
+> Currently the kernel accounts the memory for network traffic through
+> mem_cgroup_[un]charge_skmem() interface. However the memory accounted
+> only includes the truesize of sk_buff which does not include the size of
+> sock objects. In our production environment, with opt-out kmem
+> accounting, the sock kmem caches (TCP[v6], UDP[v6], RAW[v6], UNIX) are
+> among the top most charged kmem caches and consume a significant amount
+> of memory which can not be left as system overhead. So, this patch
+> converts the kmem caches of all sock objects to SLAB_ACCOUNT.
+> 
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Suggested-by: Eric Dumazet <edumazet@google.com>
+> ---
+> Changelog since v1:
+> - Instead of specific sock kmem_caches, convert all sock kmem_caches to
+>   use SLAB_ACCOUNT.
 
----
-v2: return ssize_t instead of long
-v3: add nodeid_out to fuse_copy_file_range_in for libfuse expectations
----
- fs/fuse/file.c            |  66 +++++++++++++++++++++++
- fs/fuse/fuse_i.h          |   3 ++
- include/uapi/linux/fuse.h | 107 ++++++++++++++++++++++----------------
- 3 files changed, 132 insertions(+), 44 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 67648ccbdd43..864939a1215d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3009,6 +3009,71 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 	return err;
- }
- 
-+static ssize_t fuse_copy_file_range(struct file *file_in, loff_t pos_in,
-+				    struct file *file_out, loff_t pos_out,
-+				    size_t len, unsigned int flags)
-+{
-+	struct fuse_file *ff_in = file_in->private_data;
-+	struct fuse_file *ff_out = file_out->private_data;
-+	struct inode *inode_out = file_inode(file_out);
-+	struct fuse_inode *fi_out = get_fuse_inode(inode_out);
-+	struct fuse_conn *fc = ff_in->fc;
-+	FUSE_ARGS(args);
-+	struct fuse_copy_file_range_in inarg = {
-+		.fh_in = ff_in->fh,
-+		.off_in = pos_in,
-+		.nodeid_out = ff_out->nodeid,
-+		.fh_out = ff_out->fh,
-+		.off_out = pos_out,
-+		.len = len,
-+		.flags = flags
-+	};
-+	struct fuse_copy_file_range_out outarg;
-+	ssize_t err;
-+
-+	if (fc->no_copy_file_range)
-+		return -EOPNOTSUPP;
-+
-+	inode_lock(inode_out);
-+	set_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
-+
-+	args.in.h.opcode = FUSE_COPY_FILE_RANGE;
-+	args.in.h.nodeid = ff_in->nodeid;
-+	args.in.numargs = 1;
-+	args.in.args[0].size = sizeof(inarg);
-+	args.in.args[0].value = &inarg;
-+	args.out.numargs = 1;
-+	args.out.args[0].size = sizeof(outarg);
-+	args.out.args[0].value = &outarg;
-+	err = fuse_simple_request(fc, &args);
-+	if (err == -ENOSYS) {
-+		fc->no_copy_file_range = 1;
-+		err = -EOPNOTSUPP;
-+	}
-+	if (err)
-+		goto out;
-+
-+	/* we might have extended the file */
-+	if (outarg.size > 0) {
-+		/* Size of inode_out may not have changed in case of
-+		 * overwrites, oh well. */
-+		bool changed = fuse_write_update_size(inode_out,
-+						      pos_out + outarg.size);
-+
-+		if (changed && fc->writeback_cache)
-+			file_update_time(file_out);
-+	}
-+
-+	fuse_invalidate_attr(inode_out);
-+
-+	err = outarg.size;
-+out:
-+	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi_out->state);
-+	inode_unlock(inode_out);
-+
-+	return err;
-+}
-+
- static const struct file_operations fuse_file_operations = {
- 	.llseek		= fuse_file_llseek,
- 	.read_iter	= fuse_file_read_iter,
-@@ -3025,6 +3090,7 @@ static const struct file_operations fuse_file_operations = {
- 	.compat_ioctl	= fuse_file_compat_ioctl,
- 	.poll		= fuse_file_poll,
- 	.fallocate	= fuse_file_fallocate,
-+	.copy_file_range = fuse_copy_file_range,
- };
- 
- static const struct file_operations fuse_direct_io_file_operations = {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 5256ad333b05..ea848bb7d9e2 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -637,6 +637,9 @@ struct fuse_conn {
- 	/** Allow other than the mounter user to access the filesystem ? */
- 	unsigned allow_other:1;
- 
-+	/** Does the filesystem support copy_file_range? */
-+	unsigned no_copy_file_range:1;
-+
- 	/** The number of requests waiting for completion */
- 	atomic_t num_waiting;
- 
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 92fa24c24c92..84aa810e04c8 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -116,6 +116,9 @@
-  *
-  *  7.27
-  *  - add FUSE_ABORT_ERROR
-+ *
-+ *  7.28
-+ *  - add FUSE_COPY_FILE_RANGE
-  */
- 
- #ifndef _LINUX_FUSE_H
-@@ -337,50 +340,51 @@ struct fuse_file_lock {
- #define FUSE_POLL_SCHEDULE_NOTIFY (1 << 0)
- 
- enum fuse_opcode {
--	FUSE_LOOKUP	   = 1,
--	FUSE_FORGET	   = 2,  /* no reply */
--	FUSE_GETATTR	   = 3,
--	FUSE_SETATTR	   = 4,
--	FUSE_READLINK	   = 5,
--	FUSE_SYMLINK	   = 6,
--	FUSE_MKNOD	   = 8,
--	FUSE_MKDIR	   = 9,
--	FUSE_UNLINK	   = 10,
--	FUSE_RMDIR	   = 11,
--	FUSE_RENAME	   = 12,
--	FUSE_LINK	   = 13,
--	FUSE_OPEN	   = 14,
--	FUSE_READ	   = 15,
--	FUSE_WRITE	   = 16,
--	FUSE_STATFS	   = 17,
--	FUSE_RELEASE       = 18,
--	FUSE_FSYNC         = 20,
--	FUSE_SETXATTR      = 21,
--	FUSE_GETXATTR      = 22,
--	FUSE_LISTXATTR     = 23,
--	FUSE_REMOVEXATTR   = 24,
--	FUSE_FLUSH         = 25,
--	FUSE_INIT          = 26,
--	FUSE_OPENDIR       = 27,
--	FUSE_READDIR       = 28,
--	FUSE_RELEASEDIR    = 29,
--	FUSE_FSYNCDIR      = 30,
--	FUSE_GETLK         = 31,
--	FUSE_SETLK         = 32,
--	FUSE_SETLKW        = 33,
--	FUSE_ACCESS        = 34,
--	FUSE_CREATE        = 35,
--	FUSE_INTERRUPT     = 36,
--	FUSE_BMAP          = 37,
--	FUSE_DESTROY       = 38,
--	FUSE_IOCTL         = 39,
--	FUSE_POLL          = 40,
--	FUSE_NOTIFY_REPLY  = 41,
--	FUSE_BATCH_FORGET  = 42,
--	FUSE_FALLOCATE     = 43,
--	FUSE_READDIRPLUS   = 44,
--	FUSE_RENAME2       = 45,
--	FUSE_LSEEK         = 46,
-+	FUSE_LOOKUP	     = 1,
-+	FUSE_FORGET	     = 2,  /* no reply */
-+	FUSE_GETATTR	     = 3,
-+	FUSE_SETATTR	     = 4,
-+	FUSE_READLINK	     = 5,
-+	FUSE_SYMLINK	     = 6,
-+	FUSE_MKNOD	     = 8,
-+	FUSE_MKDIR	     = 9,
-+	FUSE_UNLINK	     = 10,
-+	FUSE_RMDIR	     = 11,
-+	FUSE_RENAME	     = 12,
-+	FUSE_LINK	     = 13,
-+	FUSE_OPEN	     = 14,
-+	FUSE_READ	     = 15,
-+	FUSE_WRITE	     = 16,
-+	FUSE_STATFS	     = 17,
-+	FUSE_RELEASE         = 18,
-+	FUSE_FSYNC           = 20,
-+	FUSE_SETXATTR        = 21,
-+	FUSE_GETXATTR        = 22,
-+	FUSE_LISTXATTR       = 23,
-+	FUSE_REMOVEXATTR     = 24,
-+	FUSE_FLUSH           = 25,
-+	FUSE_INIT            = 26,
-+	FUSE_OPENDIR         = 27,
-+	FUSE_READDIR         = 28,
-+	FUSE_RELEASEDIR      = 29,
-+	FUSE_FSYNCDIR        = 30,
-+	FUSE_GETLK           = 31,
-+	FUSE_SETLK           = 32,
-+	FUSE_SETLKW          = 33,
-+	FUSE_ACCESS          = 34,
-+	FUSE_CREATE          = 35,
-+	FUSE_INTERRUPT       = 36,
-+	FUSE_BMAP            = 37,
-+	FUSE_DESTROY         = 38,
-+	FUSE_IOCTL           = 39,
-+	FUSE_POLL            = 40,
-+	FUSE_NOTIFY_REPLY    = 41,
-+	FUSE_BATCH_FORGET    = 42,
-+	FUSE_FALLOCATE       = 43,
-+	FUSE_READDIRPLUS     = 44,
-+	FUSE_RENAME2         = 45,
-+	FUSE_LSEEK           = 46,
-+	FUSE_COPY_FILE_RANGE = 47,
- 
- 	/* CUSE specific operations */
- 	CUSE_INIT          = 4096,
-@@ -792,4 +796,19 @@ struct fuse_lseek_out {
- 	uint64_t	offset;
- };
- 
-+struct fuse_copy_file_range_in {
-+	uint64_t	fh_in;
-+	uint64_t	off_in;
-+	uint64_t	nodeid_out;
-+	uint64_t	fh_out;
-+	uint64_t	off_out;
-+	uint64_t	len;
-+	uint32_t	flags;
-+};
-+
-+struct fuse_copy_file_range_out {
-+	uint32_t	size;
-+	uint32_t	padding;
-+};
-+
- #endif /* _LINUX_FUSE_H */
--- 
-2.17.1
-
+Applied, thank you.
