@@ -2,129 +2,172 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615DAC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D551AC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17D442502B
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CBC12502B
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 15:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CLsa1vGc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17D442502B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsapTnSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBC12502B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755095AbeF2PyS (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 11:54:18 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:40438 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751433AbeF2PyQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 11:54:16 -0400
-Received: by mail-it0-f68.google.com with SMTP id 188-v6so3501301ita.5;
-        Fri, 29 Jun 2018 08:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GGwnDXlLbeRmIec1NSGl+vqHliYHgpn/3YZHQja5QPc=;
-        b=CLsa1vGcPtp85OZzzd+cSEf1FQQA8EeI3oTA8lfVzMXO2Z0jSuJf8PPfEnWHKokd4s
-         vtRdxX20pqkAR5JyAfTvUwVs7czhdzLQAVhjfcenAHpYpGuwSU49VFcLKy74xngfnOQb
-         5dBVAVpvSppze+wexxJh5CPUMdDe/agWjoDx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GGwnDXlLbeRmIec1NSGl+vqHliYHgpn/3YZHQja5QPc=;
-        b=Are0tnoEWCnDkVWxAX4IaQ3Hz9AyrSukaVHbNBEgmG8MlcjcofzI2ZN5BkFHHBCQXv
-         eo0rN64Oud/6pizVxA3emU8x24IHAsER/OPt2NPi2Vm0dqLMz8D7wB157Qbb9776pJIi
-         u8jvgA0euveu5fxnbvAtWxH7iZnGuZQIhtWjALVfmWYdFG3Rrpvo6lUNzI1xqk+qUzdY
-         YxzQTpN9OD7DZLMlTKGkJ7wghxEOkkPya9Jc2lI+K0zrBBPcTyM2Dxytaw8wK5uEAMve
-         whd0PPLe43UzUZWbQWFovELL3i+WYjzC22Xxkoh84RBrjJVQ7JKtuugEWEuzFtj6lPzT
-         fXVg==
-X-Gm-Message-State: APt69E2UJBhismFxCC9UbLPg/fVI2ul1GTyfrguNsehGSKgeo+R1vGTl
-        QrFK9i7UdiLfDHtSU2UByly+2/1iqUwSPOSKYXY=
-X-Google-Smtp-Source: AAOMgpfP7Mw7BhnGXCJLFmsn54ypsc990Hby4DFD4NhIkvRnqsHbtztYJj51Umit3iA0T4wMdINyk1hQx3v+gxwFVDw=
-X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr12517409jas.72.1530287655988;
- Fri, 29 Jun 2018 08:54:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
- <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
- <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
- <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
- <9200ED2A-AE4B-4094-81C9-E92240B4840F@amacapital.net> <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com>
- <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com>
- <CA+55aFxRJWjbgLeSQ_swi3F5nF1SYgZnC-R7QsOvZdcuSaWeaw@mail.gmail.com>
- <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com> <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
-In-Reply-To: <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 29 Jun 2018 08:54:05 -0700
-Message-ID: <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S936789AbeF2PyX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 11:54:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755116AbeF2PyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 11:54:20 -0400
+Received: from linux-5o07.suse.de (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBC6325023;
+        Fri, 29 Jun 2018 15:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530287659;
+        bh=Ql+5uzdwMGeDz6KzfclC+dxpLTeO8rIGh8w9fWQDKj0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HsapTnSx4gTxJnPSg02RL0vXcx6w2a2sJNROkkFHwYeyG+NYmUXLxjV1l2lpLycXY
+         1cgFnSpumDOJ5v6yKg2eE7feA9MBb1p9ugqzYs+gBPHrxrGh9HJz4WXqyL+gOUQbP4
+         7CJ7IZuH+yK+v9fdZ0MxWSl5fZH8aIXS0l7SO0Xc=
+From:   Jessica Yu <jeyu@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>, Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH] modsign: log module name in the event of an error
+Date:   Fri, 29 Jun 2018 17:53:29 +0200
+Message-Id: <20180629155329.2076-1-jeyu@kernel.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 8:27 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> You simply can't have it both ways.
+Now that we have the load_info struct all initialized (including
+info->name, which contains the name of the module) before
+module_sig_check(), make the load_info struct and hence module name
+available to mod_verify_sig() so that we can log the module name in the
+event of an error.
 
-Put another way.
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+---
+ kernel/module-internal.h | 26 +++++++++++++++++++++++++-
+ kernel/module.c          | 22 +---------------------
+ kernel/module_signing.c  |  9 ++++++---
+ 3 files changed, 32 insertions(+), 25 deletions(-)
 
-This is ok in the native path:
+diff --git a/kernel/module-internal.h b/kernel/module-internal.h
+index 915e123a430f..ddeb1241455c 100644
+--- a/kernel/module-internal.h
++++ b/kernel/module-internal.h
+@@ -9,4 +9,28 @@
+  * 2 of the Licence, or (at your option) any later version.
+  */
+ 
+-extern int mod_verify_sig(const void *mod, unsigned long *_modlen);
++#include <linux/elf.h>
++#include <asm/module.h>
++
++struct load_info {
++	const char *name;
++	/* pointer to module in temporary copy, freed at end of load_module() */
++	struct module *mod;
++	Elf_Ehdr *hdr;
++	unsigned long len;
++	Elf_Shdr *sechdrs;
++	char *secstrings, *strtab;
++	unsigned long symoffs, stroffs;
++	struct _ddebug *debug;
++	unsigned int num_debug;
++	bool sig_ok;
++#ifdef CONFIG_KALLSYMS
++	unsigned long mod_kallsyms_init_off;
++#endif
++	struct {
++		unsigned int sym, str, mod, vers, info, pcpu;
++	} index;
++};
++
++extern int mod_verify_sig(const void *mod, struct load_info *info,
++			  unsigned long *_modlen);
+diff --git a/kernel/module.c b/kernel/module.c
+index ba45a84e4287..8bdd7e255274 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -307,26 +307,6 @@ int unregister_module_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL(unregister_module_notifier);
+ 
+-struct load_info {
+-	const char *name;
+-	/* pointer to module in temporary copy, freed at end of load_module() */
+-	struct module *mod;
+-	Elf_Ehdr *hdr;
+-	unsigned long len;
+-	Elf_Shdr *sechdrs;
+-	char *secstrings, *strtab;
+-	unsigned long symoffs, stroffs;
+-	struct _ddebug *debug;
+-	unsigned int num_debug;
+-	bool sig_ok;
+-#ifdef CONFIG_KALLSYMS
+-	unsigned long mod_kallsyms_init_off;
+-#endif
+-	struct {
+-		unsigned int sym, str, mod, vers, info, pcpu;
+-	} index;
+-};
+-
+ /*
+  * We require a truly strong try_module_get(): 0 means success.
+  * Otherwise an error is returned due to ongoing or failed
+@@ -2778,7 +2758,7 @@ static int module_sig_check(struct load_info *info, int flags)
+ 	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
+ 		/* We truncate the module to discard the signature */
+ 		info->len -= markerlen;
+-		err = mod_verify_sig(mod, &info->len);
++		err = mod_verify_sig(mod, info, &info->len);
+ 	}
+ 
+ 	if (!err) {
+diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+index 937c844bee4a..caeea810242d 100644
+--- a/kernel/module_signing.c
++++ b/kernel/module_signing.c
+@@ -45,7 +45,8 @@ struct module_signature {
+ /*
+  * Verify the signature on a module.
+  */
+-int mod_verify_sig(const void *mod, unsigned long *_modlen)
++int mod_verify_sig(const void *mod, struct load_info *info,
++		   unsigned long *_modlen)
+ {
+ 	struct module_signature ms;
+ 	size_t modlen = *_modlen, sig_len;
+@@ -65,7 +66,8 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 	*_modlen = modlen;
+ 
+ 	if (ms.id_type != PKEY_ID_PKCS7) {
+-		pr_err("Module is not signed with expected PKCS#7 message\n");
++		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
++		       info->name);
+ 		return -ENOPKG;
+ 	}
+ 
+@@ -76,7 +78,8 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 	    ms.__pad[0] != 0 ||
+ 	    ms.__pad[1] != 0 ||
+ 	    ms.__pad[2] != 0) {
+-		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
++		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
++		       info->name);
+ 		return -EBADMSG;
+ 	}
+ 
+-- 
+2.16.4
 
-        if ((unsigned long) rseq_cs->abort_ip != rseq_cs->abort_ip)
-                return -EINVAL;
-
-because it's checking that the value fits in the native register size
-(and it also ends up being a no-op if the native size is the same size
-as abort_ip).
-
-And this is very much ok in a compat syscall:
-
-        if (rseq_cs->abort_ip & ~(unsigned long)-1u)
-                return -EINVAL;
-
-because it's checking that the pointer doesn't have (invalid in
-compat) high bits set.
-
-But it is NOT OK to say "the rseq system call doesn't have any compat
-syscall, but we'll do that compat check in the native case, because we
-worry about compat issues".
-
-See what I'm saying? Either you worry about compat issues (and have a
-compat syscall), or you don't.
-
-The whole "let's not do a compat syscall, but then check compat issues
-at run-time in the native system call because compat processes will
-use it" is braindamage.
-
-                   Linus
