@@ -2,61 +2,61 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2F8C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1476AC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A658727C72
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1C227C72
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 09:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0kpUEV03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A658727C72
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="IPzhrL/W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1C227C72
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754788AbeF2Jkw (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 05:40:52 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45982 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933615AbeF2Jkr (ORCPT
+        id S935732AbeF2Jk6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 05:40:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:56286 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754722AbeF2Jkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 05:40:47 -0400
-Received: by mail-wr0-f196.google.com with SMTP id u7-v6so8202095wrn.12
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 02:40:46 -0700 (PDT)
+        Fri, 29 Jun 2018 05:40:52 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so1476545wmv.5
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 02:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g7UpIifBzzlHofhCVWyJaw6cfbiRR9ZhvkhoeVpGg5M=;
-        b=0kpUEV03j1mvInFsLtalEfZMaWcGsUNYAnFPBd2wl1QyRfU1T7V0Mla0oSSs5bT9zL
-         j25nhqT7ZLBhx3US3Q5RhpqbWxvVthWyc/zwhrvlMSzAZVaI5VRESDNml0VXUII/lrQm
-         f4nVXFJcuVzbDtx6GbcGdzbzYr7szzd4/wFszze1ibYOnrIYM1beFAXfGc43c/rr4Atn
-         4B1R16gtjVjNiYr3oEnj73dr7amaEosgnlAtSqxq5U1lJvMO8JIaywZ7c4biMlZdqxsx
-         eBcQI6WLv4nepN51hhIIonGxFJtGNbT0L83ivbYqKkjAAKiJCl+RdXDWGxjFWRp+lkV7
-         caLA==
+        bh=UGz2gYHTeu1D++Ca38OeE+7ttdk0CFVrhyKKlCaVXXs=;
+        b=IPzhrL/Wfl5EHcc2OjGi/1xooGj0EAxTifM32A3NSCR/y6LSMrO03YbiChhNBBt/Wp
+         jijHgGa15QFHeDK0V5+ZyPp00D7V4aWXd4S8C86DfZADwkpnGbMPM2ThQK4v60Mj8jJs
+         g/Y+/H4gm86pfaQcXOXyTQgKUqqGrxiDoU8qk41Wk8jrq+cmPtyNT5KrbpETQprE6oDC
+         tfR3sQFkgG2D2YmyWx55QeoViUxzjJyaQYMrPp7gMp4WnMsBlAHRc3vZbusg5RzK76Xx
+         vu3nR3+Py4jqg/h8yP0kr9H1NGDtBvyjLbwqlwITc8a9HoknKRg5pZOtpkOA3jeJRTFR
+         64oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=g7UpIifBzzlHofhCVWyJaw6cfbiRR9ZhvkhoeVpGg5M=;
-        b=B2wnyQHX6jKKQTDZ2xDyh4E6Cmltwvgnq+yc9rhZjqZAUlMZ1a0chEZx8vP41Qw4Ra
-         PrtLJwbA0zpm4zPzpxr+XruP/W5fj1+KWCugKjmNNcoo9ZdLwr7FEBbbINKWNUiYHBJN
-         9NSKTJsx3uR2B+pRj9npaxNGHLExK6deaZSiG1YB99vnwqDIvpv2Mrdp5s1PDH/ngkJn
-         YQPgJWBO71wztfLszNAv6RuyeDLeALB5hVlyB/QmX86EGpf2dqXTzSCglsqYfQZWS6xQ
-         ezghZxVD6lti4pyCtCkd89tZ3LwactA5BOl4//9fu0bxVRQnndoygw8B5Ppi5Jv59f71
-         rdZQ==
-X-Gm-Message-State: APt69E2NLQkstSJmQtlAs9ZgC9ASR8m/ayil9SEiMDqUF7cKvDBjceZD
-        zrCW0orr1X0kHRAntaZB+WCxtw==
-X-Google-Smtp-Source: AAOMgpcZKV8OR13dLTBEB8kRKij9oPYm6SUlDyIfl7hmR2Nomfp94V2fOrnn9K55Klm10Y77Oyy92g==
-X-Received: by 2002:adf:f482:: with SMTP id l2-v6mr8685670wro.259.1530265246041;
-        Fri, 29 Jun 2018 02:40:46 -0700 (PDT)
+        bh=UGz2gYHTeu1D++Ca38OeE+7ttdk0CFVrhyKKlCaVXXs=;
+        b=Q2QbGlky7dF+33oldiVA4g62rhOJ23TGYnK75E4pYNvS36gwN44wSz1DgZC+KmKEiY
+         lZkOc8WvNuIsmaK2P/qquKt/wk7DS24caX2HBKnqTJpwSjGd3K23HmtZsZg/pK3saoBc
+         KZWlhMqWAUzJWcsWGX/bcmI52HWapc6JTr3vncBNf9D/WMHy6vLp/KB4gHOuwpY/pLXh
+         ej3VsQsJSdK09QiHjlCfQVDUaNAxnVE2kS5LprCTQK68zUXUyRDvjZj0Ymw9+WFdOtJ1
+         ahJskfleRl5bVZRq6uhMJyXvR+U4cqs2bhNZmw0jYLpQPqMVU0XQZW3KU8hpTkEVOXQu
+         N3Ag==
+X-Gm-Message-State: APt69E1oqACHNk44pk+WO863tnTxHfXV0Hr+X6dhI35FBjPVLr9bvsrc
+        MI3jhFQrqcQUjGV24noCTprGXQ==
+X-Google-Smtp-Source: AAOMgpeDUO0C0K+/mlCkuVpSDtEsyHJVWrL69tI3d2CsBvuERqwQaYuDKywNtlI2L1Ikh+KJdNSf4g==
+X-Received: by 2002:a1c:8312:: with SMTP id f18-v6mr1253255wmd.127.1530265250476;
+        Fri, 29 Jun 2018 02:40:50 -0700 (PDT)
 Received: from brgl-bgdev.lan (LFbn-NIC-1-55-10.w2-15.abo.wanadoo.fr. [2.15.147.10])
-        by smtp.gmail.com with ESMTPSA id d102-v6sm1386394wma.10.2018.06.29.02.40.44
+        by smtp.gmail.com with ESMTPSA id d102-v6sm1386394wma.10.2018.06.29.02.40.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Jun 2018 02:40:45 -0700 (PDT)
+        Fri, 29 Jun 2018 02:40:49 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -73,9 +73,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 02/18] Documentation: nvmem: document lookup entries
-Date:   Fri, 29 Jun 2018 11:40:23 +0200
-Message-Id: <20180629094039.7543-3-brgl@bgdev.pl>
+Subject: [PATCH v4 05/18] ARM: davinci: dm646x-evm: use nvmem lookup for mac address
+Date:   Fri, 29 Jun 2018 11:40:26 +0200
+Message-Id: <20180629094039.7543-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180629094039.7543-1-brgl@bgdev.pl>
 References: <20180629094039.7543-1-brgl@bgdev.pl>
@@ -86,52 +86,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Describe the usage of nvmem cell lookup tables.
+We now support nvmem lookups for machine code. Add a lookup for
+mac-address.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- Documentation/nvmem/nvmem.txt | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm/mach-davinci/board-dm646x-evm.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/nvmem/nvmem.txt b/Documentation/nvmem/nvmem.txt
-index 8d8d8f58f96f..9d5e3ca2b4f3 100644
---- a/Documentation/nvmem/nvmem.txt
-+++ b/Documentation/nvmem/nvmem.txt
-@@ -58,6 +58,34 @@ static int qfprom_probe(struct platform_device *pdev)
- It is mandatory that the NVMEM provider has a regmap associated with its
- struct device. Failure to do would return error code from nvmem_register().
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 584064fdabf5..5a9de47bc8a2 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -37,6 +37,7 @@
+ #include <linux/platform_data/i2c-davinci.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/nvmem-provider.h>
  
-+Additionally it is possible to create nvmem cell lookup entries and register
-+them with the nvmem framework from machine code as shown in the example below:
-+
-+static struct nvmem_cell_lookup foobar_lookup = {
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -310,6 +311,15 @@ static struct pcf857x_platform_data pcf_data = {
+  *  - ... newer boards may have more
+  */
+ 
++static struct nvmem_cell_lookup dm646x_evm_mac_address_cell = {
 +	.info = {
 +		.name = "mac-address",
-+		.offset = 0xd000,
-+		.bytes = ERH_ALEN,
++		.offset = 0x7f00,
++		.bytes = ETH_ALEN,
 +	},
-+	.nvmem_name = "foobar",
++	.nvmem_name = "1-00500",
 +};
 +
-+static void foobar_register(void)
-+{
-+	...
-+	nvmem_add_lookup_table(&foobar_lookup, 1);
-+	...
-+}
-+
-+A lookup entry table can be later removed if needed:
-+
-+static void foobar_fini(void)
-+{
-+	...
-+	nvmem_del_lookup_table(&foobar_lookup, 1);
-+	...
-+}
-+
- NVMEM Consumers
- +++++++++++++++
+ static struct at24_platform_data eeprom_info = {
+ 	.byte_len       = (256*1024) / 8,
+ 	.page_size      = 64,
+@@ -802,6 +812,8 @@ static __init void evm_init(void)
+ 		davinci_init_ide();
  
+ 	soc_info->emac_pdata->phy_id = DM646X_EVM_PHY_ID;
++
++	nvmem_add_lookup_table(&dm646x_evm_mac_address_cell, 1);
+ }
+ 
+ MACHINE_START(DAVINCI_DM6467_EVM, "DaVinci DM646x EVM")
 -- 
 2.17.1
 
