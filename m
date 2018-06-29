@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB723C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 02:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD2DC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 02:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91AF827AF2
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 02:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A92927AF3
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 02:31:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLD1uaCn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91AF827AF2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9w8Uoas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A92927AF3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936544AbeF2Cav (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 22:30:51 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35485 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933679AbeF2Cat (ORCPT
+        id S1030520AbeF2CbC (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 28 Jun 2018 22:31:02 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35547 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933679AbeF2Ca7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 22:30:49 -0400
-Received: by mail-qt0-f193.google.com with SMTP id z6-v6so6654041qti.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 19:30:48 -0700 (PDT)
+        Thu, 28 Jun 2018 22:30:59 -0400
+Received: by mail-qk0-f194.google.com with SMTP id u21-v6so4187454qku.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 19:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KLZcLD+HkQuv1Dms0jlXw2m73ukkpfbtFF2qHvkCt0w=;
-        b=jLD1uaCnW2yi/0nTUGve3btvmgoEsJvpgd7cocgIDa7q7nc5b3sM2LWRfSkvSt8ZQN
-         n/tnQLeh1oTUjUstwaoexrZNdwkgUQmpGHtt1UkE+kYx7crIGg+4u8/ZJLEwGRt+fism
-         m5Ke20TwBgxd82Bi65dFeY9U8226mlTWQ5Gwlfxxz8cTizdo5IaEwtuGn5DNXIbZMFxB
-         B5V+S76Jm80tYrGbxsgMxtQVSC451dIJwQRjzVr6liEzvqycI/YPf+WjZxQ07c4iHAUb
-         OkfLrZqCjD5JeWsmN/EpRN+sCYBpDJ9tvhimHGpDms8phHW4YYmgaerkA2Uo2b1hcIHX
-         mVtg==
+        bh=djDu+PIa1upI/bAjFRM2i263LjHkgnzhYw9JJWjbmtY=;
+        b=k9w8Uoas56o/7k1a6DbvlCedX3G0Nf50HUQpQwtKHxqTFO3HXjEVRKSiwKhGpA3pTo
+         0HJylj0h00QYT8cdQffYKC+1hdjPILfFYkvysBet1CefgKoD7RBvWczxEmF4hpjnLPMp
+         l0jVQzOG3XGn9sCN2It8XP0gVWG1CL3sgOug4BQgELk1/4CZLW4wkZ4rw+Rd9nBGeXlm
+         zEQ9ATXJt+3HRwGMlBScdCzBLdeEZZdCkHC7gxs7ZtTyxu6DTW5NL7hHlmIGmK0Q1R3J
+         uWPtt0pX/2f68HDbOvtRcTgbZEG22fOet7kCeqrmGcBzTVI+Ekwty2cq2X3cCdEDX2EW
+         sPYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KLZcLD+HkQuv1Dms0jlXw2m73ukkpfbtFF2qHvkCt0w=;
-        b=I1Lfs18Urw5Fgk6nSzu64MhbitvZH0P8QY5GeQXI3BK0pnpX39Mf6hV2wI5owLmq7O
-         bv8Seuap4dMOS1EZKvUsUqdxUb4BMOAodjzyXQO8HfeXyCHMdbXWjmPX/Z4PD5xdOaKU
-         o+9WbPDMq/OWSOE652GptSTSo4VxPyEKrQEDXEn5GMZJnL8YjFE9kFS+cCbGUwPsYgrI
-         AW2tM0AntlTDFvTql/+ajNRWI0upwCJjTBG4J9plI6xLwCuQoOVd5sjcLtTMPig11Ivh
-         d0Y5DtR+4MmcuGf0s/1fG7yePWbJ9gpUi0OHjiczBjG2iIeEnQfSfpx9lb+7VHoa3mYs
-         GDQg==
-X-Gm-Message-State: APt69E0JD/fMzQIcOAvOucpVCI6J1a3d+RWF0be/kVgKNlbeOncrv2FO
-        /Pf2yLRLibJgboWrs41iQv4=
-X-Google-Smtp-Source: AAOMgpeQz4N+gOPnSzkC/neKDGvGOoE2lHAAjhcPRr1fNU2STUx8yTthJS9cFX3y5WYhcegenwaRMQ==
-X-Received: by 2002:a0c:be88:: with SMTP id n8-v6mr11429432qvi.78.1530239448543;
-        Thu, 28 Jun 2018 19:30:48 -0700 (PDT)
+        bh=djDu+PIa1upI/bAjFRM2i263LjHkgnzhYw9JJWjbmtY=;
+        b=r5CiHdcdzNhLJ6OKzLMT9wHhqa21V9dxBQ9Z6kTrTN6TJvZAiilOL7IWpCEXVFMv6f
+         sfDgpMvIVgUhYaKkvZWbENhu/rDAQpGRVITrt7aaxucEZGCUKHksBvKDW8ay0N0zC2NN
+         WjLsRMS9opwsdwDs3YQR9Ia/Hi/1UL2MaLRrKj3RbTFJHKUo4dn7oPZqAz4EQdqUJWl6
+         01F1cTQOI1hGce8P5Ks9iscQJWCheWdTPHvKpELvwWtrkHY+xs6jCfCQcYimVGBf79Q8
+         0x/f6QvgAQc5+APiiVthhe774i1gWXghDe/7nJ7Q8ecQKBvLQqxGoo65yQzJQrIRWqFG
+         mqIg==
+X-Gm-Message-State: APt69E0v8qTphuMnMLUC9XA0FtddMkOl8bGzDNtkqzMUp/ZrrsdvWICy
+        c8zC6yFtJ39idFx+WAVvtSQ=
+X-Google-Smtp-Source: AAOMgpfiutho23lmYXN4eaiiYCChQWv1fAMYnDZiD/V16f8Gxbjiwq9ag4dMv7HuyBuB3cZiy8V8cQ==
+X-Received: by 2002:a37:13e6:: with SMTP id 99-v6mr11106848qkt.252.1530239459275;
+        Thu, 28 Jun 2018 19:30:59 -0700 (PDT)
 Received: from ct7host.localdomain ([38.106.11.25])
-        by smtp.gmail.com with ESMTPSA id y25-v6sm6390186qtc.48.2018.06.28.19.30.38
+        by smtp.gmail.com with ESMTPSA id y25-v6sm6390186qtc.48.2018.06.28.19.30.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Jun 2018 19:30:47 -0700 (PDT)
+        Thu, 28 Jun 2018 19:30:58 -0700 (PDT)
 From:   Jia He <hejianet@gmail.com>
 To:     Russell King <linux@armlinux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -89,9 +90,9 @@ Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
         Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com,
         Jia He <hejianet@gmail.com>, Jia He <jia.he@hxt-semitech.com>
-Subject: [PATCH v9 4/6] mm/memblock: introduce memblock_search_pfn_regions()
-Date:   Fri, 29 Jun 2018 10:29:21 +0800
-Message-Id: <1530239363-2356-5-git-send-email-hejianet@gmail.com>
+Subject: [PATCH v9 5/6] arm: arm64: introduce pfn_valid_region()
+Date:   Fri, 29 Jun 2018 10:29:22 +0800
+Message-Id: <1530239363-2356-6-git-send-email-hejianet@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
 References: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
@@ -100,47 +101,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helper is to find the memory region index of input pfn.
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") optimized the loop in memmap_init_zone(). But there is
+still some room for improvement. E.g. in early_pfn_valid(), we can record
+the last returned memblock region. If current pfn and last pfn are in the
+same memory region, we needn't do the unnecessary binary searches because
+memblock_is_nomap is the same result for whole memory region.
 
 Signed-off-by: Jia He <jia.he@hxt-semitech.com>
 ---
- include/linux/memblock.h | 2 ++
- mm/memblock.c            | 9 +++++++++
- 2 files changed, 11 insertions(+)
+ include/linux/early_pfn.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index ca59883..b0f0307 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -203,6 +203,8 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
- 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
- #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
- 
-+int memblock_search_pfn_regions(unsigned long pfn);
-+
- /**
-  * for_each_free_mem_range - iterate through free memblock areas
-  * @i: u64 used as loop variable
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 611a970..3a4d251 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1625,6 +1625,15 @@ static int __init_memblock memblock_search(struct memblock_type *type, phys_addr
- 	return -1;
+diff --git a/include/linux/early_pfn.h b/include/linux/early_pfn.h
+index f9e40c3..9609391 100644
+--- a/include/linux/early_pfn.h
++++ b/include/linux/early_pfn.h
+@@ -51,5 +51,29 @@ ulong __init_memblock memblock_next_valid_pfn(ulong pfn)
+ 	return PHYS_PFN(regions[early_region_idx].base);
  }
- 
-+/* search memblock with the input pfn, return the region idx */
-+int __init_memblock memblock_search_pfn_regions(unsigned long pfn)
+ EXPORT_SYMBOL(memblock_next_valid_pfn);
++
++int pfn_valid_region(ulong pfn)
 +{
++	ulong start_pfn, end_pfn;
 +	struct memblock_type *type = &memblock.memory;
-+	int mid = memblock_search(type, PFN_PHYS(pfn));
++	struct memblock_region *regions = type->regions;
 +
-+	return mid;
++	if (early_region_idx != -1) {
++		start_pfn = PFN_DOWN(regions[early_region_idx].base);
++		end_pfn = PFN_DOWN(regions[early_region_idx].base +
++					regions[early_region_idx].size);
++
++		if (pfn >= start_pfn && pfn < end_pfn)
++			return !memblock_is_nomap(
++					&regions[early_region_idx]);
++	}
++
++	early_region_idx = memblock_search_pfn_regions(pfn);
++	if (early_region_idx == -1)
++		return false;
++
++	return !memblock_is_nomap(&regions[early_region_idx]);
 +}
-+
- bool __init memblock_is_reserved(phys_addr_t addr)
- {
- 	return memblock_search(&memblock.reserved, addr) != -1;
++EXPORT_SYMBOL(pfn_valid_region);
+ #endif /*CONFIG_HAVE_MEMBLOCK_PFN_VALID*/
+ #endif /*__EARLY_PFN_H*/
 -- 
 1.8.3.1
 
