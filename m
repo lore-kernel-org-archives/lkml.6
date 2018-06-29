@@ -3,127 +3,250 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DE1C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264E2C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADD027F3D
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ADD027F3D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D822F27F91
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 14:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D822F27F91
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935011AbeF2O36 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 10:29:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:35126 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933566AbeF2O34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 10:29:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD74780D;
-        Fri, 29 Jun 2018 07:29:55 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3E983F5C0;
-        Fri, 29 Jun 2018 07:29:54 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 15:29:52 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com
-Subject: Re: [PATCH v3 4/7] arm_pmu: Tidy up clear_event_idx call backs
-Message-ID: <20180629142951.lzuzvw6oisrnjjgn@lakrids.cambridge.arm.com>
-References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
- <1529403342-17899-5-git-send-email-suzuki.poulose@arm.com>
- <20180629134049.b6sppasr7j32h37g@lakrids.cambridge.arm.com>
- <109b2082-f4ae-9095-7d6f-9daf78b38144@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <109b2082-f4ae-9095-7d6f-9daf78b38144@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S934693AbeF2O3v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 10:29:51 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:34340 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933624AbeF2O3o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 10:29:44 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fYuOx-0000Zu-QT; Fri, 29 Jun 2018 10:29:31 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
+        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
+        efault@gmx.de, songliubraving@fb.com, hpa@zytor.com,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+Date:   Fri, 29 Jun 2018 10:29:15 -0400
+Message-Id: <20180629142918.26601-5-riel@surriel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180629142918.26601-1-riel@surriel.com>
+References: <20180629142918.26601-1-riel@surriel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 03:18:23PM +0100, Suzuki K Poulose wrote:
-> 
-> Hi Mark,
-> 
-> On 29/06/18 14:40, Mark Rutland wrote:
-> > On Tue, Jun 19, 2018 at 11:15:39AM +0100, Suzuki K Poulose wrote:
-> > > The armpmu uses get_event_idx callback to allocate an event
-> > > counter for a given event, which marks the selected counter
-> > > as "used". Now, when we delete the counter, the arm_pmu goes
-> > > ahead and clears the "used" bit and then invokes the "clear_event_idx"
-> > > call back, which kind of splits the job between the core code
-> > > and the backend. Tidy this up by relying on the clear_event_idx
-> > > to do the book keeping, if available. Otherwise, let the core
-> > > driver do the default "clear" bit operation. This will be useful
-> > > for adding the chained event support, where we leave the event
-> > > idx maintenance to the backend.
-> > > 
-> > > Also, when an event is removed from the PMU, reset the hw.idx
-> > > to indicate that a counter is not allocated for this event,
-> > > to help the backends do better checks. This will be also used
-> > > for the chain counter support.
-> > > 
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > ---
-> > > Changes since v2:
-> > >   - Reset the event counter after an event is removed.
-> > > ---
-> > >   arch/arm/kernel/perf_event_v7.c |  2 ++
-> > >   drivers/perf/arm_pmu.c          | 17 +++++++++++++----
-> > >   2 files changed, 15 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
-> > > index fd7ce01..765d265 100644
-> > > --- a/arch/arm/kernel/perf_event_v7.c
-> > > +++ b/arch/arm/kernel/perf_event_v7.c
-> > > @@ -1637,6 +1637,7 @@ static void krait_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
-> > >   	bool venum_event = EVENT_VENUM(hwc->config_base);
-> > >   	bool krait_event = EVENT_CPU(hwc->config_base);
-> > > +	clear_bit(hwc->idx, cpuc->used_mask);
-> > >   	if (venum_event || krait_event) {
-> > >   		bit = krait_event_to_bit(event, region, group);
-> > >   		clear_bit(bit, cpuc->used_mask);
-> > > @@ -1966,6 +1967,7 @@ static void scorpion_pmu_clear_event_idx(struct pmu_hw_events *cpuc,
-> > >   	bool venum_event = EVENT_VENUM(hwc->config_base);
-> > >   	bool scorpion_event = EVENT_CPU(hwc->config_base);
-> > > +	clear_bit(hwc->idx, cpuc->used_mask);
-> > >   	if (venum_event || scorpion_event) {
-> > >   		bit = scorpion_event_to_bit(event, region, group);
-> > >   		clear_bit(bit, cpuc->used_mask);
-> > 
-> > As an aside, I think there's an existing problem with krait and
-> > cpu_pm_pmu_setup(), and we'll end up with the same issue when chained
-> > counters use multiple counters for one event.
-> > 
-> > The krait code sets multiple bits in the PMU's pmu_hw_events::used_mask,
-> > but only one of these will have a corresponding (non-NULL) entry in
-> > pmu_hw_events::events[].
-> 
-> The Krait pmu allocates the "krait" specific event bit beyond the armpmu->num_events.
-> See krait_event_to_bit(). And we don't go beyond armpmu->num_events for the "events"
-> check. So we should be safe. And it passes on the idx within the num_events back
-> to armpmu. So whatever krait pmu does is invisible to the generic driver.
+Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
+when all it really needs to do is reload %CR3 at the next context switch,
+assuming no page table pages got freed.
 
-Ah; I had missed that, sorry for the noise.
+Memory ordering is used to prevent race conditions between switch_mm_irqs_off,
+which checks whether .tlb_gen changed, and the TLB invalidation code, which
+increments .tlb_gen whenever page table entries get invalidated.
 
-> > I guess the best thing to do would be to avoid the test_bit(), and just
-> > skip an idx if hw_events->events[idx] is NULL.
-> > 
-> > Would you mind spinning a patch to that effect?
-> 
-> Eitherway, I could split that change to a new one.
+The atomic increment in inc_mm_tlb_gen is its own barrier; the context
+switch code adds an explicit barrier between reading tlbstate.is_lazy and
+next->context.tlb_gen.
 
-No need -- sorry for the noise.
+Unlike the 2016 version of this patch, CPUs with cpu_tlbstate.is_lazy set
+are not removed from the mm_cpumask(mm), since that would prevent the TLB
+flush IPIs at page table free time from being sent to all the CPUs
+that need them.
 
-Thanks,
-Mark.
+This patch reduces total CPU use in the system by about 1-2% for a
+memcache workload on two socket systems, and by about 1% for a heavily
+multi-process netperf between two systems.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Tested-by: Song Liu <songliubraving@fb.com>
+---
+ arch/x86/include/asm/uv/uv.h  |  6 ++--
+ arch/x86/mm/tlb.c             | 82 ++++++++++++++++++++++++++++++++++++-------
+ arch/x86/platform/uv/tlb_uv.c |  2 +-
+ 3 files changed, 73 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/include/asm/uv/uv.h b/arch/x86/include/asm/uv/uv.h
+index a80c0673798f..d801afb5fe90 100644
+--- a/arch/x86/include/asm/uv/uv.h
++++ b/arch/x86/include/asm/uv/uv.h
+@@ -17,7 +17,7 @@ extern int is_uv_hubless(void);
+ extern void uv_cpu_init(void);
+ extern void uv_nmi_init(void);
+ extern void uv_system_init(void);
+-extern const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
++extern struct cpumask *uv_flush_tlb_others(struct cpumask *cpumask,
+ 						 const struct flush_tlb_info *info);
+ 
+ #else	/* X86_UV */
+@@ -27,8 +27,8 @@ static inline int is_uv_system(void)	{ return 0; }
+ static inline int is_uv_hubless(void)	{ return 0; }
+ static inline void uv_cpu_init(void)	{ }
+ static inline void uv_system_init(void)	{ }
+-static inline const struct cpumask *
+-uv_flush_tlb_others(const struct cpumask *cpumask,
++static inline struct cpumask *
++uv_flush_tlb_others(struct cpumask *cpumask,
+ 		    const struct flush_tlb_info *info)
+ { return cpumask; }
+ 
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 4b73fe835c95..e59214ec52b1 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/gfp.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -185,6 +186,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ {
+ 	struct mm_struct *real_prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++	bool was_lazy = this_cpu_read(cpu_tlbstate.is_lazy);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
+ 	bool need_flush;
+@@ -242,17 +244,40 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			   next->context.ctx_id);
+ 
+ 		/*
+-		 * We don't currently support having a real mm loaded without
+-		 * our cpu set in mm_cpumask().  We have all the bookkeeping
+-		 * in place to figure out whether we would need to flush
+-		 * if our cpu were cleared in mm_cpumask(), but we don't
+-		 * currently use it.
++		 * Even in lazy TLB mode, the CPU should stay set in the
++		 * mm_cpumask. The TLB shootdown code can figure out from
++		 * from cpu_tlbstate.is_lazy whether or not to send an IPI.
+ 		 */
+ 		if (WARN_ON_ONCE(real_prev != &init_mm &&
+ 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
+ 			cpumask_set_cpu(cpu, mm_cpumask(next));
+ 
+-		return;
++		/*
++		 * If the CPU is not in lazy TLB mode, we are just switching
++		 * from one thread in a process to another thread in the same
++		 * process. No TLB flush required.
++		 */
++		if (!was_lazy)
++			return;
++
++		/*
++		 * Read the tlb_gen to check whether a flush is needed.
++		 * If the TLB is up to date, just use it.
++		 * The barrier synchronizes with the tlb_gen increment in
++		 * the TLB shootdown code.
++		 */
++		smp_mb();
++		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
++		if (this_cpu_read(cpu_tlbstate.ctxs[prev_asid].tlb_gen) ==
++				next_tlb_gen)
++			return;
++
++		/*
++		 * TLB contents went out of date while we were in lazy
++		 * mode. Fall through to the TLB switching code below.
++		 */
++		new_asid = prev_asid;
++		need_flush = true;
+ 	} else {
+ 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
+ 
+@@ -454,6 +479,9 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 		 * paging-structure cache to avoid speculatively reading
+ 		 * garbage into our TLB.  Since switching to init_mm is barely
+ 		 * slower than a minimal flush, just switch to init_mm.
++		 *
++		 * This should be rare, with native_flush_tlb_others skipping
++		 * IPIs to lazy TLB mode CPUs.
+ 		 */
+ 		switch_mm_irqs_off(NULL, &init_mm, NULL);
+ 		return;
+@@ -560,6 +588,22 @@ static void flush_tlb_func_remote(void *info)
+ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 			     const struct flush_tlb_info *info)
+ {
++	cpumask_t *mask = (struct cpumask *)cpumask;
++	cpumask_var_t varmask;
++	bool can_lazy_flush = false;
++	unsigned int cpu;
++
++	/*
++	 * A temporary cpumask allows the kernel to skip sending IPIs
++	 * to CPUs in lazy TLB state, without also removing them from
++	 * mm_cpumask(mm).
++	 */
++	if (alloc_cpumask_var(&varmask, GFP_ATOMIC)) {
++		cpumask_copy(varmask, cpumask);
++		mask = varmask;
++		can_lazy_flush = true;
++	}
++
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+ 	if (info->end == TLB_FLUSH_ALL)
+ 		trace_tlb_flush(TLB_REMOTE_SEND_IPI, TLB_FLUSH_ALL);
+@@ -583,17 +627,29 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 		 * that UV should be updated so that smp_call_function_many(),
+ 		 * etc, are optimal on UV.
+ 		 */
+-		unsigned int cpu;
+-
+ 		cpu = smp_processor_id();
+-		cpumask = uv_flush_tlb_others(cpumask, info);
+-		if (cpumask)
+-			smp_call_function_many(cpumask, flush_tlb_func_remote,
++		mask = uv_flush_tlb_others(mask, info);
++		if (mask)
++			smp_call_function_many(mask, flush_tlb_func_remote,
+ 					       (void *)info, 1);
+-		return;
++		goto out;
+ 	}
+-	smp_call_function_many(cpumask, flush_tlb_func_remote,
++
++	/*
++	 * There is no need to send IPIs to CPUs in lazy TLB mode. They
++	 * can simply flush the TLB at the next context switch.
++	 */
++	if (can_lazy_flush) {
++		for_each_cpu(cpu, mask) {
++			if (per_cpu(cpu_tlbstate.is_lazy, cpu))
++				cpumask_clear_cpu(cpu, mask);
++		}
++	}
++
++	smp_call_function_many(mask, flush_tlb_func_remote,
+ 			       (void *)info, 1);
++ out:
++	free_cpumask_var(varmask);
+ }
+ 
+ /*
+diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
+index ca446da48fd2..84a4c6679da6 100644
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -1102,7 +1102,7 @@ static int set_distrib_bits(struct cpumask *flush_mask, struct bau_control *bcp,
+  * Returns pointer to cpumask if some remote flushing remains to be
+  * done.  The returned pointer is valid till preemption is re-enabled.
+  */
+-const struct cpumask *uv_flush_tlb_others(const struct cpumask *cpumask,
++struct cpumask *uv_flush_tlb_others(struct cpumask *cpumask,
+ 					  const struct flush_tlb_info *info)
+ {
+ 	unsigned int cpu = smp_processor_id();
+-- 
+2.14.4
+
