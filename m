@@ -2,97 +2,192 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FFBC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B27C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A11927E93
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hkNNCVf+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jHt6m8So"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A11927E93
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 0880427EA7
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0880427EA7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755286AbeF2Lti (ORCPT
+        id S1755293AbeF2Lwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:49:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50258 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752804AbeF2Ltg (ORCPT
+        Fri, 29 Jun 2018 07:52:55 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:51247 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752804AbeF2Lwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:49:36 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 03E1760452; Fri, 29 Jun 2018 11:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272976;
-        bh=wHxPL3a4FP58u77ECjDCnCSXdXNR2hT7kjrsoYaurZk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=hkNNCVf+oy1igYN6yxo33S3Je2QvMpTB9OlTCeghdpthGevDqafSESwbfY6eio7c8
-         P8OhCAVzLHth0awOoqjOFr7tYUfPL3KCHxiBESN6YoXDKiIoFbusZ8t5tTSbYeuyaf
-         P6zMctA1EPurw0+CVkPGPiLON25n8SUTdcaMngE4=
-Received: from x230.qca.qualcomm.com (85-76-151-243-nat.elisa-mobile.fi [85.76.151.243])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BBDB460452;
-        Fri, 29 Jun 2018 11:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272974;
-        bh=wHxPL3a4FP58u77ECjDCnCSXdXNR2hT7kjrsoYaurZk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=jHt6m8SotEw2/uAkYIx/ZpXyisLXrVG5bY0Xc2Wb/HG70DpyTOslAmJ064Lmi/EA8
-         RjABSjIwQfKjo/KUj87jovg/OCGWOr4ymtk9iSMiI2rLofS1caxhstcY/yPudQgrCe
-         e5WOw/LQpUsWiH9y5zwuUWni7aAsuEst1oA2Xw+A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BBDB460452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        alagusankar@silex-india.com, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ath10k@lists.infradead.org
-Subject: Re: [PATCH 1/3] ath10k: sdio: use same endpoint id for all packets in a bundle
-References: <20180620084222.3521-1-niklas.cassel@linaro.org>
-        <20180620084222.3521-2-niklas.cassel@linaro.org>
-Date:   Fri, 29 Jun 2018 14:49:29 +0300
-In-Reply-To: <20180620084222.3521-2-niklas.cassel@linaro.org> (Niklas Cassel's
-        message of "Wed, 20 Jun 2018 10:42:20 +0200")
-Message-ID: <87zhzdersm.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 29 Jun 2018 07:52:54 -0400
+Received: from cpe-2606-a000-111b-40b7-640c-26a-4e16-9225.dyn6.twc.com ([2606:a000:111b:40b7:640c:26a:4e16:9225] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1fYrxH-0005tU-AL; Fri, 29 Jun 2018 07:52:52 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     linux-rdma@vger.kernel.org
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        VMware PV-Drivers <pv-drivers@vmware.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] vmw_pvrdma: Release netdev when vmxnet3 module is removed
+Date:   Fri, 29 Jun 2018 07:52:06 -0400
+Message-Id: <20180629115206.18787-1-nhorman@tuxdriver.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180628135938.19625-1-nhorman@tuxdriver.com>
+References: <20180628135938.19625-1-nhorman@tuxdriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Niklas Cassel <niklas.cassel@linaro.org> writes:
+On repeated module load/unload cycles, its possible for the pvrmda
+driver to encounter this crash:
 
-> All packets in a bundle should use the same endpoint id as the
-> first lookahead.
->
-> This matches how things are done is ath6kl, however,
-> this patch can theoretically handle several bundles
-> in ath10k_sdio_mbox_rx_process_packets().
->
-> Without this patch we get lots of errors about invalid endpoint id:
->
-> ath10k_sdio mmc2:0001:1: invalid endpoint in look-ahead: 224
-> ath10k_sdio mmc2:0001:1: failed to get pending recv messages: -12
-> ath10k_sdio mmc2:0001:1: failed to process pending SDIO interrupts: -12
->
-> Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+...
+297.032448] RIP: 0010:[<ffffffff839e4620>]  [<ffffffff839e4620>] netdev_walk_all_upper_dev_rcu+0x50/0xb0
+[  297.034078] RSP: 0018:ffff95087780bd08  EFLAGS: 00010286
+[  297.034986] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff95087a0c0000
+[  297.036196] RDX: ffff95087a0c0000 RSI: ffffffff839e44e0 RDI: ffff950835d0c000
+[  297.037421] RBP: ffff95087780bd40 R08: ffff95087a0e0ea0 R09: abddacd03f8e0ea0
+[  297.038636] R10: abddacd03f8e0ea0 R11: ffffef5901e9dbc0 R12: ffff95087a0c0000
+[  297.039854] R13: ffffffff839e44e0 R14: ffff95087a0c0000 R15: ffff950835d0c828
+[  297.041071] FS:  0000000000000000(0000) GS:ffff95087fc00000(0000) knlGS:0000000000000000
+[  297.042443] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  297.043429] CR2: ffffffffffffffe8 CR3: 000000007a652000 CR4: 00000000003607f0
+[  297.044674] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  297.045893] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  297.047109] Call Trace:
+[  297.047545]  [<ffffffff839e4698>] netdev_has_upper_dev_all_rcu+0x18/0x20
+[  297.048691]  [<ffffffffc05d31af>] is_eth_port_of_netdev+0x2f/0xa0 [ib_core]
+[  297.049886]  [<ffffffffc05d3180>] ? is_eth_active_slave_of_bonding_rcu+0x70/0x70 [ib_core]
+...
 
-You have Alagu's s-o-b first so that implies Alagu is the author. So
-should I add From header for Alagu and add you (Niklas) as
-Co-Developed-by? Or vice versa?
+This occurs because vmw_pvrdma on probe stores a pointer to the netdev
+that exists on function 0 of the same bus/device/slot (which represents
+the vmxnet3 ethernet driver).  However, it never removes this pointer if
+the vmxnet3 module is removed, leading to crashes resulting from use
+after free dereferencing incidents like the one above.
 
+The fix is pretty straightforward.  vmw_pvrdma should listen for
+NETDEV_REGISTER and NETDEV_UNREGISTER events in its event listener code
+block, and update the stored netdev pointer accordingly.  This solution
+has been tested by myself and the reporter with successful results.
+This fix also allows the pvrdma driver to find its underlying ethernet
+device in the event that vmxnet3 is loaded after pvrdma, which it was
+not able to do before.
+
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Reported-by: ruquin@redhat.com
+CC: Adit Ranadive <aditr@vmware.com>
+CC: VMware PV-Drivers <pv-drivers@vmware.com>
+CC: Doug Ledford <dledford@redhat.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>
+CC: linux-kernel@vger.kernel.org
+
+---
+Change notes
+
+v2)
+ * Move dev_hold in pvrda_pci_probe to below null check (aditr)
+ * Add dev_puts to probe error path and pvrda_pci_remove (jgg)
+ * Cleaned up some checkpatch warnings (nhorman)
+---
+ .../infiniband/hw/vmw_pvrdma/pvrdma_main.c    | 39 ++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+index 0be33a81bbe6..970d24d887c2 100644
+--- a/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
++++ b/drivers/infiniband/hw/vmw_pvrdma/pvrdma_main.c
+@@ -699,8 +699,12 @@ static int pvrdma_del_gid(const struct ib_gid_attr *attr, void **context)
+ }
+ 
+ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
++					  struct net_device *ndev,
+ 					  unsigned long event)
+ {
++	struct pci_dev *pdev_net;
++	unsigned int slot;
++
+ 	switch (event) {
+ 	case NETDEV_REBOOT:
+ 	case NETDEV_DOWN:
+@@ -718,6 +722,24 @@ static void pvrdma_netdevice_event_handle(struct pvrdma_dev *dev,
+ 		else
+ 			pvrdma_dispatch_event(dev, 1, IB_EVENT_PORT_ACTIVE);
+ 		break;
++	case NETDEV_UNREGISTER:
++		dev_put(dev->netdev);
++		dev->netdev = NULL;
++		break;
++	case NETDEV_REGISTER:
++		/* vmxnet3 will have same bus, slot. But func will be 0 */
++		slot = PCI_SLOT(dev->pdev->devfn);
++		pdev_net = pci_get_slot(dev->pdev->bus,
++					PCI_DEVFN(slot, 0));
++		if ((dev->netdev == NULL) &&
++		    (pci_get_drvdata(pdev_net) == ndev)) {
++			/* this is our netdev */
++			dev->netdev = ndev;
++			dev_hold(ndev);
++		}
++		pci_dev_put(pdev_net);
++		break;
++
+ 	default:
+ 		dev_dbg(&dev->pdev->dev, "ignore netdevice event %ld on %s\n",
+ 			event, dev->ib_dev.name);
+@@ -734,8 +756,11 @@ static void pvrdma_netdevice_event_work(struct work_struct *work)
+ 
+ 	mutex_lock(&pvrdma_device_list_lock);
+ 	list_for_each_entry(dev, &pvrdma_device_list, device_link) {
+-		if (dev->netdev == netdev_work->event_netdev) {
+-			pvrdma_netdevice_event_handle(dev, netdev_work->event);
++		if ((netdev_work->event == NETDEV_REGISTER) ||
++		    (dev->netdev == netdev_work->event_netdev)) {
++			pvrdma_netdevice_event_handle(dev,
++						      netdev_work->event_netdev,
++						      netdev_work->event);
+ 			break;
+ 		}
+ 	}
+@@ -968,6 +993,7 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
+ 		ret = -ENODEV;
+ 		goto err_free_cq_ring;
+ 	}
++	dev_hold(dev->netdev);
+ 
+ 	dev_info(&pdev->dev, "paired device to %s\n", dev->netdev->name);
+ 
+@@ -1040,6 +1066,10 @@ static int pvrdma_pci_probe(struct pci_dev *pdev,
+ 	pvrdma_free_irq(dev);
+ 	pci_free_irq_vectors(pdev);
+ err_free_cq_ring:
++	if (dev->netdev) {
++		dev_put(dev->netdev);
++		dev->netdev = NULL;
++	}
+ 	pvrdma_page_dir_cleanup(dev, &dev->cq_pdir);
+ err_free_async_ring:
+ 	pvrdma_page_dir_cleanup(dev, &dev->async_pdir);
+@@ -1079,6 +1109,11 @@ static void pvrdma_pci_remove(struct pci_dev *pdev)
+ 
+ 	flush_workqueue(event_wq);
+ 
++	if (dev->netdev) {
++		dev_put(dev->netdev);
++		dev->netdev = NULL;
++	}
++
+ 	/* Unregister ib device */
+ 	ib_unregister_device(&dev->ib_dev);
+ 
 -- 
-Kalle Valo
+2.17.1
+
