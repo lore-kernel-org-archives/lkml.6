@@ -2,137 +2,145 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301E7C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E09C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD353217AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6B7F24454
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:55:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4QoMFX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD353217AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Jd7r2+BP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B7F24454
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936879AbeF2Sye (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:54:34 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46092 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966101AbeF2SxR (ORCPT
+        id S965475AbeF2SxG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:53:06 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33641 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935265AbeF2Sw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:53:17 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 30-v6so4862388pld.13;
-        Fri, 29 Jun 2018 11:53:17 -0700 (PDT)
+        Fri, 29 Jun 2018 14:52:57 -0400
+Received: by mail-pf0-f195.google.com with SMTP id b17-v6so4617613pfi.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 11:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uPKujOQMnvKU1077V5CGc8/sTd+S/PEORaQoe1sBY8c=;
-        b=C4QoMFX0xDkcSredExc39/VvSzuZ20FlQabxE/WDlgVBS5lnv6nHfRZbh0g53+pdg9
-         lasrUZF2u3vEEhUfm+jaduWJULU66msGEilgMy0e3shR3hke9J4GoNMO2yH+Mr+7fmiW
-         FGXwVKkVEC0GRlILVdbc9tb1dKn5F1iguTcQmmCBIOqoc35m3mfz8Z4SEGQLhUpz0mJC
-         SozTfFuc+upEiH1N6qXRsjTDonLKjRptIB38FY4BY9lX9g465Ut2gmu00Wjor0qx1Yp4
-         2ipVhLCksipRX06OriF+6n8FcsjMl0wVi//+NwGpjJXLoluHDlJ+H53ZDW/XTbf5G3Ij
-         B0yA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=HYF+SyGoIuhrWleA6Wu31rpb31Ax1tSkr+IFmINSfT8=;
+        b=Jd7r2+BPJbJunloyRpdsP2Csep72xfcFfLJcC6Sy0XdPm6SyThLQFlUCVjJ+SWNe79
+         PPD+vVR3kfSLz5RYE+lph7EKCoR944bkWBbT6w0vJScYI5S8ACfl52cHhtTChBovb09I
+         SL8DbS9kXXRu7Mq3UbzdGiB7UkbQLWPk2oxcg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uPKujOQMnvKU1077V5CGc8/sTd+S/PEORaQoe1sBY8c=;
-        b=Hb73Cr7yyaxp41Yo/a4Lea/pn0bvHJD3rYfhTuZBjsus52LiZSFXwdnLlYXf9+JyWh
-         IP2Hg5Ms/WyNext/wBikppDX/ZP6aTBnXF01L48JHKsQDCNBoU+eV4SSqLn4YbmT+I76
-         +VSRO5PHf1wI8hlVlUsj8loR18CPLe8OZJnlWDCvd5PQPIHwKT678CvCUWXZ2/ntr9xb
-         ipiHmUjCawxOUkXDdqreG0hO5GMgYTkrIJ8+9qN2hMI28JWZERKIT+OojLlxk/mzl1ll
-         Me7Jqo1CzLdQAtoQpC2AfJLRgh6A9AFtkHuwuHdM/dc2GgWsHTGcqjh4dx/3aAtB+wG/
-         nPoA==
-X-Gm-Message-State: APt69E1uo8uaRgGL9TiQxtJIDccghiKZbt3uGc0mdlPRhqdrEUSRmzj5
-        ArJBpSbQ3hGbtsVT4R01sGOLtQ==
-X-Google-Smtp-Source: ADUXVKISFRVu1C3c6Wb58nvUhdz9G9eeTYN6HzZU937GOW+CzlhGqp4ALr0PMf6x4dvfiGFylg6MnQ==
-X-Received: by 2002:a17:902:4381:: with SMTP id j1-v6mr16110249pld.104.1530298397041;
-        Fri, 29 Jun 2018 11:53:17 -0700 (PDT)
-Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.53.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 11:53:16 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 14/17] media: staging/imx: TODO: Remove one assumption about OF graph parsing
-Date:   Fri, 29 Jun 2018 11:49:58 -0700
-Message-Id: <1530298220-5097-15-git-send-email-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
-References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=HYF+SyGoIuhrWleA6Wu31rpb31Ax1tSkr+IFmINSfT8=;
+        b=bXL3lckVl6Nww4gpH/xPgA70Tb+yUY9S3MM5TiubMq5+6kttQ3Gs2Bhbt5urqKMWr2
+         hx6a628/1OHCCRl39XwvUefaUU4nVU9Str3A3Q4pwHd6dGRDiWtl6qoYmT7ne4meU6ip
+         Ebxa9+8pVu+sYKD6u5k7mXxl0jkaQWp7FgHawqGYzeEjZYNe4nHRIGp46MsJQiQmZCdf
+         FS6PFIMN/XIrJ/Wglgeqe2vR6R/goUp/TcM+qQ651Xi597qwVNQ49odGHeY4WdPC404R
+         vFSNGp+EnLq2YIK2l2r8dQ5m8PUIy/3B4MwTcq4C2NeqgJHNlMNmxsaPwqZEACeNzLBK
+         gmxQ==
+X-Gm-Message-State: APt69E3E7PdkGn+55jR2GrM7FriCmrV2vKFIt1e5WFnzWKzLL1imB2dy
+        1qlhDCbx8ybE1KLUUlRHaOlwOQ==
+X-Google-Smtp-Source: ADUXVKJyM9U7KZzRRmSYlyCWjbhxJCucioEHFeIcXgk+4Y6auKXUbpGcqn9EBZQ36acl7EKjLZoH5Q==
+X-Received: by 2002:a65:61af:: with SMTP id i15-v6mr13770689pgv.349.1530298376720;
+        Fri, 29 Jun 2018 11:52:56 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id d15-v6sm22611861pfh.92.2018.06.29.11.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Jun 2018 11:52:55 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 11:52:54 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Rob Herring <robh@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/msi: Remove VLA usage
+Message-ID: <20180629185254.GA37557@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The move to subdev notifiers fixes one assumption of OF graph parsing.
-If a subdevice has non-video related ports, the subdev driver knows not
-to follow those ports when adding remote devices to its subdev notifier.
+In the quest to remove all stack VLA usage from the kernel[1], this
+switches from an unchanging variable to a constant expression to eliminate
+the VLA generation.
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/staging/media/imx/TODO | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ arch/powerpc/sysdev/msi_bitmap.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
-index 9eb7326..aeeb154 100644
---- a/drivers/staging/media/imx/TODO
-+++ b/drivers/staging/media/imx/TODO
-@@ -17,29 +17,15 @@
-   decided whether this feature is useful enough to make it generally
-   available by exporting to v4l2-core.
+diff --git a/arch/powerpc/sysdev/msi_bitmap.c b/arch/powerpc/sysdev/msi_bitmap.c
+index 6243a7e537d0..e64a411d1a00 100644
+--- a/arch/powerpc/sysdev/msi_bitmap.c
++++ b/arch/powerpc/sysdev/msi_bitmap.c
+@@ -225,22 +225,23 @@ static void __init test_of_node(void)
+ 	struct device_node of_node;
+ 	struct property prop;
+ 	struct msi_bitmap bmp;
+-	int size = 256;
+-	DECLARE_BITMAP(expected, size);
++#define SIZE_EXPECTED 256
++	DECLARE_BITMAP(expected, SIZE_EXPECTED);
  
--- The OF graph is walked at probe time to form the list of fwnodes to
--  be passed to v4l2_async_notifier_register(), starting from the IPU
--  CSI ports. And after all async subdevices have been bound,
--  v4l2_fwnode_parse_link() is used to form the media links between
--  the entities discovered by walking the OF graph.
-+- After all async subdevices have been bound, v4l2_fwnode_parse_link()
-+  is used to form the media links between the devices discovered in
-+  the OF graph.
+ 	/* There should really be a struct device_node allocator */
+ 	memset(&of_node, 0, sizeof(of_node));
+ 	of_node_init(&of_node);
+ 	of_node.full_name = node_name;
  
-   While this approach allows support for arbitrary OF graphs, there
-   are some assumptions for this to work:
+-	WARN_ON(msi_bitmap_alloc(&bmp, size, &of_node));
++	WARN_ON(msi_bitmap_alloc(&bmp, SIZE_EXPECTED, &of_node));
  
--  1. All port parent nodes reachable in the graph from the IPU CSI
--     ports bind to V4L2 async subdevice drivers.
--
--     If a device has mixed-use ports such as video plus audio, the
--     endpoints from the audio ports are followed to devices that must
--     bind to V4L2 subdevice drivers, and not for example, to an ALSA
--     driver or a non-V4L2 media driver. If the device were bound to
--     such a driver, imx-media would never get an async completion
--     notification because the device fwnode was added to the async
--     list, but the driver does not interface with the V4L2 async
--     framework.
--
--  2. Every port reachable in the graph is treated as a media pad,
--     owned by the V4L2 subdevice that is bound to the port's parent.
-+  1. If a port owned by a device in the graph has endpoint nodes, the
-+     port is treated as a media pad.
+ 	/* No msi-available-ranges, so expect > 0 */
+ 	WARN_ON(msi_bitmap_reserve_dt_hwirqs(&bmp) <= 0);
  
-      This presents problems for devices that don't make this port = pad
-      assumption. Examples are SMIAPP compatible cameras which define only
-@@ -54,9 +40,8 @@
-      possible long-term solution is to implement a subdev API that
-      maps a port id to a media pad index.
+ 	/* Should all still be free */
+-	WARN_ON(bitmap_find_free_region(bmp.bitmap, size, get_count_order(size)));
+-	bitmap_release_region(bmp.bitmap, 0, get_count_order(size));
++	WARN_ON(bitmap_find_free_region(bmp.bitmap, SIZE_EXPECTED,
++					get_count_order(SIZE_EXPECTED)));
++	bitmap_release_region(bmp.bitmap, 0, get_count_order(SIZE_EXPECTED));
  
--  3. Every endpoint of a port reachable in the graph is treated as
--     a media link, between V4L2 subdevices that are bound to the
--     port parents of the local and remote endpoints.
-+  2. Every endpoint of a port owned by a device in the graph is treated
-+     as a media link.
+ 	/* Now create a fake msi-available-ranges property */
  
-      Which means a port must not contain mixed-use endpoints, they
-      must all refer to media links between V4L2 subdevices.
+@@ -256,8 +257,8 @@ static void __init test_of_node(void)
+ 	WARN_ON(msi_bitmap_reserve_dt_hwirqs(&bmp));
+ 
+ 	/* Check we got the expected result */
+-	WARN_ON(bitmap_parselist(expected_str, expected, size));
+-	WARN_ON(!bitmap_equal(expected, bmp.bitmap, size));
++	WARN_ON(bitmap_parselist(expected_str, expected, SIZE_EXPECTED));
++	WARN_ON(!bitmap_equal(expected, bmp.bitmap, SIZE_EXPECTED));
+ 
+ 	msi_bitmap_free(&bmp);
+ 	kfree(bmp.bitmap);
 -- 
-2.7.4
+2.17.1
 
+
+-- 
+Kees Cook
+Pixel Security
