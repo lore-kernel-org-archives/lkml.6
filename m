@@ -2,109 +2,112 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66FBC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9FAC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0B422451
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:36:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0B422451
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id B8A6222451
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:37:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yPq7mQyy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A6222451
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965252AbeF2IgF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:36:05 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51741 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964976AbeF2IgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:36:03 -0400
-Received: from 79.184.253.185.ipv4.supernova.orange.pl (79.184.253.185) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 1d51ef8a200d7688; Fri, 29 Jun 2018 10:36:00 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     n0000b.n000b@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>
-Subject: [PATCH v2] PCI / ACPI / PM: Resume bridges w/o drivers on suspend-to-RAM
-Date:   Fri, 29 Jun 2018 10:34:40 +0200
-Message-ID: <2518711.SfHWAsyaFM@aspire.rjw.lan>
-In-Reply-To: <35587465.8Nave9aG7d@aspire.rjw.lan>
-References: <35587465.8Nave9aG7d@aspire.rjw.lan>
+        id S965314AbeF2Iht (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:37:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965245AbeF2Ihq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 04:37:46 -0400
+Received: from localhost (unknown [122.167.66.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5322122451;
+        Fri, 29 Jun 2018 08:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530261466;
+        bh=lktdXRbnjeE+COp7Q8uWvwlE3wLVf0XHUYlu6i5q460=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yPq7mQyy21BjPSYXQ25HsmK5wsLrGllRCq7nRimxRbsTvUBowbwFxwI/osfelvq46
+         PR3apEffv77w4Y+9tb8geyFO7uZLaHbaZmKE5ykeRQmM3aqR14JWDvrlsK2tIW5bdt
+         nInE2TVMQqFLaS2PxSTAQ86XsWigSn/knKONNltg=
+Date:   Fri, 29 Jun 2018 14:07:32 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Timur Tabi <timur@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-crypto@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
+Message-ID: <20180629083732.GB22377@vkoul-mobl>
+References: <20180618141259.23141-1-vkoul@kernel.org>
+ <20180618141259.23141-4-vkoul@kernel.org>
+ <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
+ <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
+ <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
+ <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
+ <20180621115312.rfmbitrhqi44wu5w@gondor.apana.org.au>
+ <CAOZdJXVO-0JDvX4OdJMNCmY_BXrEenXpoWBf=Ww5uFBtXKN86A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOZdJXVO-0JDvX4OdJMNCmY_BXrEenXpoWBf=Ww5uFBtXKN86A@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 28-06-18, 17:04, Timur Tabi wrote:
+> On Thu, Jun 21, 2018 at 6:53 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > On Thu, Jun 21, 2018 at 02:27:10PM +0300, Stanimir Varbanov wrote:
+> 
+> > So does it generate one bit of output for each bit of hardware-
+> > generated entropy like /dev/random? Or does it use a hardware-
+> > generated seed to power a PRNG?
+> 
+> I have some information to answer this question, although I'm not sure
+> I can give a strict "yes/no" answer.
+> 
+> There are a couple relevant documents:
+> 
+> https://www.qualcomm.com/news/onq/2014/11/07/cryptographic-module-snapdragon-805-fips-140-2-certified
+> https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp2944.pdf
+> 
+> I also got response from a Qualcomm employee:
+> 
+> "The Qualcomm random number generator used in Snapdragon chips
+> consists of an entropy source coupled with the HASH-DRBG deterministic
+> random bit generator from NIST Special Publication 800-90A, using
+> SHA-256 as the hash function.
+> 
+> The entropy source is based on sampled ring oscillators.  Four ring
+> oscillators are used to provide high assurance of adequate entropy.
+> The entropy from the ring oscillators is conditioned using the
+> 'derivation function' specified by NIST Special Publication 800-90A.
+> The conditioned entropy is essentially perfect fully entropic data.
+> It is used both to seed and to periodically reseed the DRGB."
+> 
+> My understanding is that the PRNG is a real entropy source with some
+> logic used to normalize the values.  To quote: "No RNG uses data
+> directly from the entropy source; bits in the output are likely
+> correlated and unlikely to occur with 50% probability. The entropy
+> post-processing is designed to turn dirty data in clean data."
+> 
+> Based on the above, it seems to me that the Qualcomm PRNG qualifies as
+> a real hardware RNG and porting to algif_rng is not the correct path.
 
-It is reported that commit c62ec4610c40 (PM / core: Fix direct_complete
-handling for devices with no callbacks) introduced a system suspend
-regression on Samsung 305V4A by allowing a PCI bridge (not a PCIe
-port) to stay in D3 over suspend-to-RAM, which is a side effect of
-setting power.direct_complete for the children of that bridge that
-have no PM callbacks.
+I think Stan did bring this point earlier that PRNG is compliant to
+FIPS-140-2. So it can be used by rng clients for various purposes but
+should not be fed to dev/random as the hw_random does.
 
-On the majority of systems PCI bridges are not allowed to be
-runtime-suspended (the power/control sysfs attribute is set to "on"
-for them by default), but user space can change that setting and if
-it does so and a given bridge has no children with PM callbacks, the
-direct_complete optimization will be applied to it and it will stay
-in suspend over system suspend.  Apparently, that confuses the
-platform firmware on the affected machine and that may very well
-happen elsewhere, so avoid the direct_complete optimization for
-PCI bridges with no drivers (if there is a driver, it should take
-care of the PM handling) on suspend-to-RAM altogether (that should
-not matter for suspend-to-idle as platform firmware is not involved
-in it).
+Herbert, can you please confirm..
 
-Fixes: c62ec4610c40 (PM / core: Fix direct_complete handling for devices with no callbacks)
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199941
-Reported-by: n0000b.n000b@gmail.com
-Tested-by: n0000b.n000b@gmail.com
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
--> v2: Make the patch work for PCI bridges without ACPI companion objects.
-
-Since that doesn't really change the idea etc, but only makes the check
-to be made earlier, I've added the Reviewed-by and Acked-by tags given to
-the previous version.  If that's not right, please let me know.
-
----
- drivers/pci/pci-acpi.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
-Index: linux-pm/drivers/pci/pci-acpi.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci-acpi.c
-+++ linux-pm/drivers/pci/pci-acpi.c
-@@ -629,6 +629,15 @@ static bool acpi_pci_need_resume(struct
- {
- 	struct acpi_device *adev = ACPI_COMPANION(&dev->dev);
- 
-+	/*
-+	 * In some cases (eg. Samsung 305V4A) leaving a bridge in suspend
-+	 * confuses the platform firmware, so avoid doing that, unless the
-+	 * bridge has a driver that should take care of PM handling.
-+	 */
-+	if (pci_is_bridge(dev) && !dev->driver &&
-+	    acpi_target_system_state() != ACPI_STATE_S0)
-+		return true;
-+
- 	if (!adev || !acpi_device_power_manageable(adev))
- 		return false;
- 
-
+-- 
+~Vinod
