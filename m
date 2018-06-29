@@ -2,168 +2,136 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B709BC43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C08C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709BC250A9
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D024208CE
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 16:10:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="h3B/oeX6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709BC250A9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vBlSgj0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D024208CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966850AbeF2QIA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 12:08:00 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39633 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936139AbeF2QH5 (ORCPT
+        id S936302AbeF2QKe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 12:10:34 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50896 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752242AbeF2QKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 12:07:57 -0400
-Received: by mail-io0-f193.google.com with SMTP id e13-v6so8907369iof.6
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 09:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XI5UkdckCnG7xTh4owxw7x8a8ud/+R2SLmnuFHICi6E=;
-        b=h3B/oeX6VgUALb6aSXySncgpi0OdIURgIQkNUEei7IW6P06Z65JUq6minPNZiqxg7r
-         oJiSqVWhbJTIScrzhapCAtfCJDFu1iFiL7mEJwlrUw/7qu+ZAYDXfhCAiW9mwxMNdh/D
-         rK1cf0JLCMqPmE417o6EGyN2mK2ezJ2WNxkBUgNf3OlwDiL5F4bm9h7pD6ce8BbW3Od7
-         4s3hWrYbT6XIF4KYuxruAEja1cwm0IOmzGdcVMgy1QdCsBdEvXLl6KJdPz7WA4x+ykQM
-         hAMg+qo1CVs8x6lBni+L96VFQHzXkmTN3S/4MH5hNIjrVGvH+TOhTsCp9+7RlqpxuTbv
-         pDAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XI5UkdckCnG7xTh4owxw7x8a8ud/+R2SLmnuFHICi6E=;
-        b=ObpAjdMU1IqfLZCb2TzpYdWB46QUVXy2gvT+DVvkRNczdo2j0Gmva4it5yF9qgavNp
-         2CE+v0VYP7Ruih6MAXcGTWlTO1OEjbcnRe+TNVH8B80CbYWAyZVFUyMucTyxzXPnmhfy
-         xTIHZHsOpKPRsUc8tOdjehSm4U+MuR7CGUQKbXhUl1KV9/oZJwXL0/K9yr6dJmS76FXE
-         AJbNJqEFDEd/jhnWRZDCDN5L0M1Ez/1SBikx/jCBjXLIDP+0nuXi9Un+bPInYQw+2SIS
-         O7RSAx+0wlGES6wVmZjiIQjPIHvOXXBoCN6fk7KYe9Qm2NGUXLM70eXfraeQd+Aq0vJS
-         oqcA==
-X-Gm-Message-State: APt69E1bCHqFpnqFu+dgEv3DNeDKHV5/D1Xrza8SegG3UfKQ60IGsSK/
-        7WXsxsQiAmlq8wOKRlzucPQEZYWE0RvPQoiaOYm33A==
-X-Google-Smtp-Source: AAOMgpffbCIM96S5vlLQ0TD0xmtpnqTYzUO336RUu383ukKmSySxmIuMxRCXNZzZ29A8I8pB8X5tdjy1+uT23x+ZP3c=
-X-Received: by 2002:a6b:abc6:: with SMTP id u189-v6mr13063570ioe.30.1530288476622;
- Fri, 29 Jun 2018 09:07:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:7e92:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 09:07:36
- -0700 (PDT)
-In-Reply-To: <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
- <CA+55aFxZrv9koOGKNzpBjcpzwaKQBg9ybqcvQ9u=5d94y1F+mQ@mail.gmail.com>
- <CALCETrUrXk3wRg8SKhWf98v8jK=HwX9XLvP+Ypi+TktZoNx_Jg@mail.gmail.com>
- <CA+55aFzxCjkSbfRUeX3W_oXSJ6LMUdRVYB=DR2b3rUNkiixM1A@mail.gmail.com>
- <9200ED2A-AE4B-4094-81C9-E92240B4840F@amacapital.net> <CA+55aFzpD5xF80iiFNd+EMkJnRQdKPumM5p24Sr+LeBt8Gg=wg@mail.gmail.com>
- <1706339668.9644.1530281144560.JavaMail.zimbra@efficios.com>
- <CA+55aFxRJWjbgLeSQ_swi3F5nF1SYgZnC-R7QsOvZdcuSaWeaw@mail.gmail.com>
- <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com> <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Fri, 29 Jun 2018 09:07:36 -0700
-Message-ID: <CALCETrW_Uj22bpFD09_ESXi-6Xs2v=YRq+rPeExRa+Uqqte8Aw@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 29 Jun 2018 12:10:32 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180629161029euoutp01deadfb595af3b934dad509576e8bef26~8rWaLH65t0735407354euoutp01X;
+        Fri, 29 Jun 2018 16:10:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180629161029euoutp01deadfb595af3b934dad509576e8bef26~8rWaLH65t0735407354euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1530288629;
+        bh=TBYI9A2j/NO0+ZKjZuX4Fw2lfKtFpZWgKimdp1toPsc=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=vBlSgj0zn24TSjJAZSjUsLOkPi7Sf43KjPDNj8tnHXSGbi1iialNgFDv/xvEmtR7C
+         dFm+fWAze6bWWA2m8n826zG7bJYSojr4wpjR3SU50kuujjpAhwthu4vV7jEBZTHXRo
+         +JLRQ1xgIN6Z7I2zIwEfxCHRAJoW/LHah8vaS8no=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180629161028eucas1p2ddeed9f96b087e57fd0554b3b5d01ce6~8rWZlG5gv2713327133eucas1p2a;
+        Fri, 29 Jun 2018 16:10:28 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 59.1E.10409.4F9563B5; Fri, 29
+        Jun 2018 17:10:28 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180629161027eucas1p20846507c4f98f50d80ab58aaa1628fd1~8rWY42eCB1665116651eucas1p2L;
+        Fri, 29 Jun 2018 16:10:27 +0000 (GMT)
+X-AuditID: cbfec7f5-b45ff700000028a9-0d-5b3659f4589c
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 55.5C.04183.3F9563B5; Fri, 29
+        Jun 2018 17:10:27 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PB3006PNE9FHZ00@eusync1.samsung.com>; Fri, 29 Jun
+        2018 17:10:27 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: ti-soc-thermal: remove dead code
+Date:   Fri, 29 Jun 2018 18:10:26 +0200
+Message-id: <3318201.BAqn4C3t6k@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <10747698.EAsn0e6Ddm@amdc3058>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsWy7djP87pfIs2iDWZsErOYf+Uaq8Wp7U1M
+        Fpd3zWGzmL2kn8Xic+8RRosnD/vYHNg8ds66y+6xeM9LJo/jN7YzeXzeJBfAEsVlk5Kak1mW
+        WqRvl8CV0TP9LHvBEq6Kmd9WMDUwruboYuTkkBAwkZi16S5LFyMXh5DACkaJWysamUESQgKf
+        GSW2LDGGKbr/6DIzRNEyRom+2x3sEM5vRome3b9ZQKrYBKwkJravYgSxRQTcJGYt+QNmMwtU
+        Six5fYUJxBYWsJO49fEomM0ioCqxpHk5WA2vgKZE588tYHNEBbwktuxrB6vhFNCWmNq5gh2i
+        RlDix+R7LBAz5SX27Z/KCmHrSJw9to4R5CAJgSVsEkd2n2SEONtF4tetvWwQtrDEq+Nb2CFs
+        GYnLk7tZIBqmM0q8+bUUylnPKLHmzDEmiCpricPHL0Kt4JOYtG06MAA4gOK8Eh1tQhAlHhI7
+        Nn5nhIRXncScxjMsExhlZiE5dhaSY2chOXYBI/MqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT8
+        3E2MwOg//e/41x2M+/4kHWIU4GBU4uG9EGQWLcSaWFZcmXuIUYKDWUmENxAkxJuSWFmVWpQf
+        X1Sak1p8iFGag0VJnDdOoy5KSCA9sSQ1OzW1ILUIJsvEwSnVwCj0KUiU8VJ8Wt3F82LH4/KW
+        xNxfdd4y7vKNmMP1QYfzK2MvrGHZNGlzWt2PB8bPFsw5va6p01qMJdopfbKRqhwjc+2qC6n3
+        by1eo+xyzJbR407Kjk8bBB+m/WKu3F1s9Cs6OYlV20i//PCESyqTbnCfW25knn+p8Mlye1OL
+        3T0Va/9tMGXzva/EUpyRaKjFXFScCAAvY2ko+gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xy7qfI82iDRZ8s7CYf+Uaq8Wp7U1M
+        Fpd3zWGzmL2kn8Xic+8RRosnD/vYHNg8ds66y+6xeM9LJo/jN7YzeXzeJBfAEsVlk5Kak1mW
+        WqRvl8CV0TP9LHvBEq6Kmd9WMDUwruboYuTkkBAwkbj/6DJzFyMXh5DAEkaJNRuesEM4fxkl
+        VtyYywZSxSZgJTGxfRUjiC0i4CYxa8kfMJtZoFJi5cJGVhBbWMBO4tbHo0wgNouAqsSS5uVg
+        NbwCmhKdP7ewgNiiAl4SW/a1g9VwCmhLTO1cwQ5iCwloSSx9+5EZol5Q4sfkeywQ8+Ul9u2f
+        ygpha0ms33mcaQIj/ywkZbOQlM1CUraAkXkVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYOBu
+        O/Zzyw7GrnfBhxgFOBiVeHgvBJlFC7EmlhVX5h5ilOBgVhLhDQQJ8aYkVlalFuXHF5XmpBYf
+        YpTmYFES5z1vUBklJJCeWJKanZpakFoEk2Xi4JRqYOzInHdh2cfk8KDiupPdj3rvPv8n7bti
+        a792m25Pkm/b8dgd8zcbTQr/KHPZ54Z5p8mvmdfyLPNZ5snJuqlc3rfUtWuHQPLGoM3v6oUl
+        TzsFvPhQpWOjwGH0bbu795/YwyL5F44kmc5QMZXMZn7XcqB584JUhor6u8/PWJbGvmivOF/d
+        bXptrxJLcUaioRZzUXEiADKcDKBYAgAA
+X-CMS-MailID: 20180629161027eucas1p20846507c4f98f50d80ab58aaa1628fd1
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180629161027eucas1p20846507c4f98f50d80ab58aaa1628fd1
+References: <10747698.EAsn0e6Ddm@amdc3058>
+        <CGME20180629161027eucas1p20846507c4f98f50d80ab58aaa1628fd1@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 8:27 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
->
-> On Fri, Jun 29, 2018, 08:03 Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->>
->> Considering those inconsistencies between architectures (either
->> the task gets killed, or the top bits are silently cleared), I'm
->> very much tempted to be restrictive in the inputs accepted by
->> rseq, and not rely on architectures as providing consistent
->> validation of the return IP.
->>
->> Thoughts ?
->
->
-> Then you need to make it a compat system call, since clearly you and Andy
-> want the 32-bit case to do something different from the 64-bit case.
 
-I personally would like the compat and non-compat cases to do exactly
-the same thing.  If abort_ip is the address (as a u64) of a valid
-executable instruction and an abort happens, then that instruction
-should get executed.  If abort_ip does not point to user-executable
-memory, then the process should get a signal.
+Hi,
 
-The problem isn't with rseq per se -- it's with the daft way that the
-x86 return-to-userspace instructions work.  If I apply this patch:
+On Wednesday, May 02, 2018 03:20:35 PM Bartlomiej Zolnierkiewicz wrote:
+> Majority of this code (i.e. functions from ti-bandgap.c) has been
+> introduced in May 2013 by commit eb982001dbd8 ("thermal: introduce TI
+> SoC thermal driver"). Just remove it altogether (in case it is needed
+> it can be easily resurrected from git repo).
+> 
+> While at it fix incorrect "not used" comments.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/ti-soc-thermal/dra752-bandgap.h      |   68 ---
+>  drivers/thermal/ti-soc-thermal/dra752-thermal-data.c |   65 ---
+>  drivers/thermal/ti-soc-thermal/omap3-thermal-data.c  |    6 
+>  drivers/thermal/ti-soc-thermal/omap4-thermal-data.c  |   10 
+>  drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h    |   10 
+>  drivers/thermal/ti-soc-thermal/omap5-thermal-data.c  |   46 --
+>  drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h    |   41 --
+>  drivers/thermal/ti-soc-thermal/ti-bandgap.c          |  370 -------------------
+>  drivers/thermal/ti-soc-thermal/ti-bandgap.h          |   43 --
+>  9 files changed, 5 insertions(+), 654 deletions(-)
 
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 3b2490b81918..26e4ba44e87b 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -346,6 +346,8 @@ __visible void do_int80_syscall_32(struct pt_regs *regs)
- {
-        enter_from_user_mode();
-        local_irq_enable();
-+       if (!user_64bit_mode(regs))
-+               regs->ip |= (1UL << 32);
-        do_syscall_32_irqs_on(regs);
- }
+Gentle ping.
 
-the kernel *still works*.  But this unconditionally uses the IRET
-path, and I don't even want to speculate as to what the hell happens
-if we exit using SYSRETL, or LRET, or SYSEXITL, or if Intel or AMD
-ever gives us a new mode that gets rid of the espfix shite.  IOW, I
-don't think that the x86 entry code should make a promise that it will
-continue ignoring the high bits of regs->ip when
-!user_64bit_mode(regs) on a 64-bit kernel.
+It would be great to see this patch in v4.19.
 
-The problem with rseq as it stands is that this oddity gets
-accidentally exposed all the way to userspace.  If we're not careful,
-it'll be possible for a slightly buggy user program to goof up the
-code that generates the data structure that supplies abort_ip such
-that the high bits are garbage (0xcccccccc due to padding, for
-example), and the kernel will do exactly what the user code requested,
-and we'll get regs->ip = 0xcccccccc00000000 | (the actual intended
-abort_ip), and we'll pass that crap value all the way to IRET, and
-IRET will truncate it back down to the correct value.  And then some
-CPU will add new behavior or we'll invoke SYSRETL or whatever on some
-weird CPU, and the program will crash.  And we'll be sad.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-I suppose we could handle this in the entry code by coming up with a
-way to reject out-of-bounds regs->ip for 32-bit tasks, but that's
-going to be a bit messy and will slow down normal code that doesn't
-use rseq.
-
-Other than rseq, I don't think that there's any real issue.  The only
-ways to get regs->ip >= 2^32 in a 32-bit task involve ptrace or manual
-fiddling with signal contexts, and I don't expect to ever have any
-real software depend on precisely what happens.
