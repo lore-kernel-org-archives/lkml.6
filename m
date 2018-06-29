@@ -2,247 +2,169 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAACC6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404EAC6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6B4278BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D1A278BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 18:51:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xn2N3Pye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6B4278BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MUp9yQ1l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D1A278BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936678AbeF2SvD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 14:51:03 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43687 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933582AbeF2Su7 (ORCPT
+        id S936732AbeF2SvL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 14:51:11 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40440 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936682AbeF2SvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:50:59 -0400
-Received: by mail-pf0-f195.google.com with SMTP id y8-v6so4609178pfm.10;
-        Fri, 29 Jun 2018 11:50:59 -0700 (PDT)
+        Fri, 29 Jun 2018 14:51:04 -0400
+Received: by mail-pl0-f65.google.com with SMTP id t6-v6so4868737plo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 11:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=E8A8ccWRZX/zVWcRbc1aGy2vsB0KzUrtdhJbwoCUio4=;
-        b=Xn2N3PyeGHg4gqwhDDLsYgQEMiSeULmzCToUobQ/Yp9z5qUaQXZVOEpkZ/QZmEm9DS
-         z/UB33nAuSQiWcNDSmz9VEejmJhynatA+jyB09LHge1de91gi9FS5kbXGh1HUkxN0ABw
-         zSRc5rs45LaL9iRb7XvXpR6amISx5ZKr68yHTJLniNQF4jdbthz1s6qR3dmDy3evRtH5
-         Dljh1+ZXICku6N3icrx4rxL46SQKcn6SAjRl3lY/smeczSo6Poto6s2yXOK4NkQGLWRF
-         4GfD2wYvYHF7bdEmAr0qDmlzSOgWSbu44YzWOIt/kMnSlJk2I34vNY9K8vCRYJUXgPy9
-         Azag==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eM3YVBkgyE2jRQZKwU2L9rlhR1D8qi6jFxmVE8pLDnw=;
+        b=MUp9yQ1lCKJ1lPaPzXNSZWhKmEt4IVkltIe/1bxaMxqvtlfSHpbT3d/1w5uLxKBJ6U
+         ric7dEunW34kp2rRqFvmSwXkramcNlYBFLrIptYdbTZSDWQDbe27ZWs8XHhkcECHXX79
+         TnTHCiTBsWF9odx92EQoMyw1BYY+/S7hQYxSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=E8A8ccWRZX/zVWcRbc1aGy2vsB0KzUrtdhJbwoCUio4=;
-        b=S6GPsUEqUmL8psvO95/9PzVr1Uf6Zfap0S8E/NrEjsLe7BnVIa5QUw4yLoOPg3v8fT
-         lOcj8fevHoMDlXmPid7po8SIFhL3eMaJbwlm7PZaZvRVfqnqYY+BdcTQJPcZ7UAgYTZj
-         O88u9bXai2LOOjZw+xAQnD4A7b4VLoFR8NPuR7SwB+sFoczTVwkAjI+7nsd9Q6KBrA5q
-         rePic65TFFKy7vgfwzHVfZzUBlQ17qI6xJSgOvpYusoLsigIZyOU9P/2AhbPgQDcztBo
-         +AEUtK8IYZ+Usm2Qg2sXU+ODwgj5XsUEMJVBUFiXNQNcbLcZmUIGlxn+d5Kc4VW6+9hu
-         5NZg==
-X-Gm-Message-State: APt69E2iM2L3YF/YhbYsK2yBhURuS+5ufjrwAwuiHjQJOdrakPJC7pAA
-        g4XT4ph7HELnwqdEd/zFAviUIQ==
-X-Google-Smtp-Source: AAOMgpdzzqhsjOsb0PKEK6MG545i3mr/GjOgazV0T7wBylhgKTbE6YEPXgqAn9dlWX3GC8IflQ2i6g==
-X-Received: by 2002:a62:5247:: with SMTP id g68-v6mr15706241pfb.149.1530298258280;
-        Fri, 29 Jun 2018 11:50:58 -0700 (PDT)
-Received: from mappy.world.mentorg.com ([2602:306:cc3b:f020:7cd8:9ad7:a375:e853])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm27672308pfg.130.2018.06.29.11.50.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 11:50:57 -0700 (PDT)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 04/17] media: v4l2: async: Add convenience functions to allocate and add asd's
-Date:   Fri, 29 Jun 2018 11:49:48 -0700
-Message-Id: <1530298220-5097-5-git-send-email-steve_longerbeam@mentor.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
-References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eM3YVBkgyE2jRQZKwU2L9rlhR1D8qi6jFxmVE8pLDnw=;
+        b=fIJKxwnyEtN5rdSzZX9vXLXeoVSevcJeMIO2k+Q1CZpO0boPMXOlIOUF4hQzKRYTPE
+         XEKH2IRkZvLxTh2VTVzUA8hSpjM2vTnZGKu/ZUlYsJHt5tUTPv6gGX2uEjzca39t107v
+         E3G9+sHdIzhcImZJsU5AZilFO4lxQCNuMYQNUf1++ck+OtIkjqeZ23uKx2xksOA84J9q
+         OkNB/0ErvrPGgGVKfjXN6z/Cj4PjJJa6YmvKznqHC+3GrQnFXBrLdpc1h3ZEkNSvZw1k
+         5ib7ESfCRFlFYYH7pNysir8J2hTTVFUs+V9jchMP/OBonvZWKjb1bxlFs9ry2ZIDjXFB
+         TZ9w==
+X-Gm-Message-State: APt69E1mcSj3+puRe2CU6jD2+j2DelZnvD5PVXU0eAof75xngjg3K1Qw
+        Im/PrckybcRHq1sK9URE5VeKhA==
+X-Google-Smtp-Source: AAOMgpfx5bVzHN4YfFXtUYlf0BxbWUVYBuRTTQmIP5c6MKsCGWVaATLis+HgVaSMMH6fhneVstvbZQ==
+X-Received: by 2002:a17:902:24a5:: with SMTP id w34-v6mr3477463pla.52.1530298263799;
+        Fri, 29 Jun 2018 11:51:03 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id t192-v6sm14283170pgc.74.2018.06.29.11.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 29 Jun 2018 11:51:03 -0700 (PDT)
+Date:   Fri, 29 Jun 2018 11:51:02 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8998: Add thermal zone
+Message-ID: <20180629185102.GV129942@google.com>
+References: <20180628210915.160893-1-mka@chromium.org>
+ <20180628210915.160893-3-mka@chromium.org>
+ <CAD=FV=Wo4wc_QZYr0a2_Ge=B6T4RNJDnOyxAd8r6sT4iZJjCKg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Wo4wc_QZYr0a2_Ge=B6T4RNJDnOyxAd8r6sT4iZJjCKg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add these convenience functions, which allocate an asd of match type
-fwnode, i2c, or device-name, of size asd_struct_size, and then adds
-them to the notifier asd_list.
+On Thu, Jun 28, 2018 at 03:58:41PM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Thu, Jun 28, 2018 at 2:09 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> > Add pm8998 thermal zone based on the examples in the spmi-temp-alarm
+> > bindings.
+> >
+> > Note: devices with the pm8998 need to have a 'thermal-zones' node (which
+> > may be empty) with a label 'thermal_zones'.
+> >
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> 
+> Do you know if this patch actually does anything since you didn't
+> define a cooling-maps?  Hopefully at least the critical shuts things
+> down?
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
----
- drivers/media/v4l2-core/v4l2-async.c | 76 ++++++++++++++++++++++++++++++++++++
- include/media/v4l2-async.h           | 62 +++++++++++++++++++++++++++++
- 2 files changed, 138 insertions(+)
+I need to do some additional testing, currently waiting to get the
+heat gun back ...
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 48d66ae..17f32d9 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -659,6 +659,82 @@ int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
- }
- EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_subdev);
- 
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_fwnode_subdev(struct v4l2_async_notifier *notifier,
-+				      struct fwnode_handle *fwnode,
-+				      unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
-+	asd->match.fwnode = fwnode;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_fwnode_subdev);
-+
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_i2c_subdev(struct v4l2_async_notifier *notifier,
-+				   int adapter_id, unsigned short address,
-+				   unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_I2C;
-+	asd->match.i2c.adapter_id = adapter_id;
-+	asd->match.i2c.address = address;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_i2c_subdev);
-+
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_devname_subdev(struct v4l2_async_notifier *notifier,
-+				       const char *device_name,
-+				       unsigned int asd_struct_size)
-+{
-+	struct v4l2_async_subdev *asd;
-+	int ret;
-+
-+	asd = kzalloc(asd_struct_size, GFP_KERNEL);
-+	if (!asd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	asd->match_type = V4L2_ASYNC_MATCH_DEVNAME;
-+	asd->match.device_name = device_name;
-+
-+	ret = v4l2_async_notifier_add_subdev(notifier, asd);
-+	if (ret) {
-+		kfree(asd);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return asd;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_async_notifier_add_devname_subdev);
-+
- int v4l2_async_register_subdev(struct v4l2_subdev *sd)
- {
- 	struct v4l2_async_notifier *subdev_notifier;
-diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-index 6e752ef..5394361 100644
---- a/include/media/v4l2-async.h
-+++ b/include/media/v4l2-async.h
-@@ -167,6 +167,68 @@ int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
- 				   struct v4l2_async_subdev *asd);
- 
- /**
-+ * v4l2_async_notifier_add_fwnode_subdev - Allocate and add a fwnode async
-+ *				subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @fwnode: fwnode handle of the sub-device to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * This can be used before registering a notifier to add a
-+ * fwnode-matched asd to the notifiers master asd_list. If the caller
-+ * uses this method to compose an asd list, it must never allocate
-+ * or place asd's in the @subdevs array.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_fwnode_subdev(struct v4l2_async_notifier *notifier,
-+				      struct fwnode_handle *fwnode,
-+				      unsigned int asd_struct_size);
-+
-+/**
-+ * v4l2_async_notifier_add_i2c_subdev - Allocate and add an i2c async
-+ *				subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @adapter_id: I2C adapter ID to be matched
-+ * @address: I2C address of sub-device to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * Same as above but for I2C matched sub-devices.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_i2c_subdev(struct v4l2_async_notifier *notifier,
-+				   int adapter_id, unsigned short address,
-+				   unsigned int asd_struct_size);
-+
-+/**
-+ * v4l2_async_notifier_add_devname_subdev - Allocate and add a device-name
-+ *				async subdev to the notifier's master asd_list.
-+ *
-+ * @notifier: pointer to &struct v4l2_async_notifier
-+ * @device_name: device name string to be matched
-+ * @asd_struct_size: size of the driver's async sub-device struct, including
-+ *		     sizeof(struct v4l2_async_subdev). The &struct
-+ *		     v4l2_async_subdev shall be the first member of
-+ *		     the driver's async sub-device struct, i.e. both
-+ *		     begin at the same memory address.
-+ *
-+ * Same as above but for device-name matched sub-devices.
-+ */
-+struct v4l2_async_subdev *
-+v4l2_async_notifier_add_devname_subdev(struct v4l2_async_notifier *notifier,
-+				       const char *device_name,
-+				       unsigned int asd_struct_size);
-+
-+
-+/**
-  * v4l2_async_notifier_register - registers a subdevice asynchronous notifier
-  *
-  * @v4l2_dev: pointer to &struct v4l2_device
--- 
-2.7.4
+I would expect the critical trip point to shut the system down, though
+I'm not sure whether the HW temperature watchdog wouldn't cut power
+before that. The documentation I have access to contains some register
+descriptions, but isn't very verbose about the overall behavior and
+from the driver code that's also not really clear to me. The driver
+"disables software override of stage 2 and 3 shutdowns" which make me
+guess that a hardware shutdown kicks in at stage 2 (135°C ?). This
+would be roughly in line with a system reset I observed in an earlier
+test at a temperature > 125°C. If that's correct the trip points need
+to be revisited.
 
+Maybe David Collins who recently extended the driver to add support
+for GEN2 PMIC peripherals can provide more details.
+
+> Do you have any idea how we'll eventually want to specify a
+> cooling-maps?  Are we just going to assume we're included by an sdm845
+> device and refer to the big/little CPU phandles?
+
+No clear idea on my side at this point, but limiting CPU frequencies
+seems likely, potentially also devfreq devices.
+
+> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > index f2d39074ed74..d85ceb4f976b 100644
+> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > @@ -3,6 +3,7 @@
+> >
+> >  #include <dt-bindings/spmi/spmi.h>
+> >  #include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/thermal/thermal.h>
+> >
+> >  &spmi_bus {
+> >         pm8998_lsid0: pmic@0 {
+> > @@ -59,3 +60,30 @@
+> >                 #size-cells = <0>;
+> >         };
+> >  };
+> > +
+> > +&thermal_zones {
+> 
+> As per comments in patch #1, don't rely on a label.  Just put your
+> stuff in a top-level "thermal-zones" node.
+
+ack
+
+> > +       pm8998 {
+> > +               polling-delay-passive = <250>;
+> > +               polling-delay = <1000>;
+> > +
+> > +               thermal-sensors = <&pm8998_temp>;
+> > +
+> > +               trips {
+> > +                       passive {
+> 
+> IMO you should proactively put a label on these trips even if there's
+> no cooling device yet.  It's expected that at some point someone will
+> add a cooling device and refer to them, right?
+
+ok
