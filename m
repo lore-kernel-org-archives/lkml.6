@@ -6,64 +6,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DA4C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BEDC6778A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8E623DDF
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 136C82577A
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 19:28:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="bKNNmnMO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8E623DDF
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="IgEUcjjG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 136C82577A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936950AbeF2T2n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 15:28:43 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35487 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934665AbeF2TZu (ORCPT
+        id S936929AbeF2T2l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 15:28:41 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44568 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934805AbeF2TZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 15:25:50 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z6-v6so8839338qti.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:49 -0700 (PDT)
+        Fri, 29 Jun 2018 15:25:51 -0400
+Received: by mail-qk0-f193.google.com with SMTP id i188-v6so5550094qkc.11
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 12:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bsgWu1TKdn1eFx08H/mtF5/g/DuCTuFzEleLnBIeP18=;
-        b=bKNNmnMOOQdqG9gVduE+k1l3mWUMPXmSaZVJDv3pLGhccaPP8MhLjvFuqQoZXHSivJ
-         vlPeVas7YeIhB0hpW1zwsGtNkPEiYnWTmWgDPrnCNYRl/neGHge8Hd49yVuC0slHU4u1
-         axe2yloTa3GVzwXHo2IRWaeD8W24mkxhpNvXBR6O+S1lTdYEaE329278sgOQrBoVAglb
-         R/j7MjH3ptM/cF4XGJBnZ9LXFzbkkjVnaFlbQKYg2tmukfKLPdBYMQxx+TDanTciwZjb
-         ZP0j4hZCj1rvCCpclcN6dvbcf3qqQvhLG4+7069mulACSzSo8DXGXucj0D1+/9b94H5V
-         qqKQ==
+        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
+        b=IgEUcjjG8m/nHxptQa4T5DqguJCKB/FAHQDgPwnmvfmtuSR1cY9RL0+N/Hoj7YmRkO
+         ZjK9OjhH50K/1k2v1miUxx0mM4MS7UPaMunWhdbLXWom8TWftkkQCkuc1hkMRmzQzQWm
+         PqndHzJ2gSEmvyTiFuQhGEfA18q8E1sFxHdLNbBSOMAmSn4pRlQNyw5G7VXLuwkSv+1W
+         GIBB2BGUmnWgrE3Jbc2Zuwpk8MKr1UloWbcOlLlMWd+hH8nkR4Zy12UwWprPYWzgQSgo
+         Qv7iCiKem18njra5jjVRAFmRr6pW/gVbPJQ17cYF3DL4+uVMZox6/jxAo0HUlXJLis91
+         JYEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bsgWu1TKdn1eFx08H/mtF5/g/DuCTuFzEleLnBIeP18=;
-        b=SdEkJQyQ7YcLqhJbew91E0Dw0ulY+lLLAemft3dpt0Af31DSbfjxWRlwjBBvRQaZEY
-         JeqE2AUrXzZ8oMaq9r2K0pksrOajXRdBnqim4jykt/ffCdmI39foCFnIrLtuuYoG5t6c
-         VHhPeeVHIgSwGDjZpUEW0yAvnnnT8Yyg34eEzMwevMJPHoD03PR41JGgPk2sr8TZa6QX
-         byXD5BSXSkSxrtkI4T5YHqPAKMfnZqdD5wQt58iZEg2tiyVKuXvFwHGrrCiWvwyZOuFo
-         8vSFJVpg3d6d0tjOXNpwvQSNVzDKOooazgYgYQZkKri+FycnhNuWdJ3TmEQiSM9g1EaW
-         IvGA==
-X-Gm-Message-State: APt69E2xmquI1OxeXuxDrn2mICVQnJec2LxGONlCC7aUeKt0TyFI3+V/
-        lEz6Kavxmk152NlYSdfoYOneRg==
-X-Google-Smtp-Source: AAOMgpc/PJoqOA+brX97+sYIjJ6l5bw6SD2L8aHO0BcpjDIRbsUHpQUNcakbB9wa7WBftmUJUrosYA==
-X-Received: by 2002:ac8:367:: with SMTP id w39-v6mr15090245qtg.334.1530300349382;
-        Fri, 29 Jun 2018 12:25:49 -0700 (PDT)
+        bh=sWOwbpIrK9XPYUY4yEH5tX1tHsTGl4xJAX1+6iwXdZU=;
+        b=WNCWYLBi7ZT3JipRybtFpiV+TGsvNYsimq1uJGavcpmQATaP3k72rvsk7DnoU4yTV+
+         8mJ1Ff3QdeR32j0giP/o3o4D2QTG8EmcbM+PnjWGUtAhibTyXB9pzF+s0rhlMjfrGBF0
+         ld21kzTal4gG+beymNMGQZ1ro/WIUnzdqu9EK/pZcaKZj9c8tR6CLuU0Vj+3QJfeSR/M
+         vaKkSW1KoIK5Qq7oUFltoedCu0oq1oJqZBzon4x3EdIrsxB08yIb2jy7hR0Nd8WPbvDK
+         mcORYlZClDTt98htZ8feGTXr/L/ghXBmhkhENGBSyUaDpfPRajYA979RSQOqViQBe7/4
+         uS3Q==
+X-Gm-Message-State: APt69E3wkQWQDeapwboumArLj9RtstlTze/guNqFS48KsgAFUKsrzhvD
+        CP94mw9eu9GMVl+HZbIUDgA85rfgAxA=
+X-Google-Smtp-Source: AAOMgpcz8rHYaON0DoYuAoTIR4aMT6TXuSunTZDdVR3rRTthKPoYd3JwZaljKyAPAUAtV8sGhBlFJA==
+X-Received: by 2002:a37:b281:: with SMTP id b123-v6mr13471761qkf.377.1530300350814;
+        Fri, 29 Jun 2018 12:25:50 -0700 (PDT)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id z23-v6sm6278893qki.16.2018.06.29.12.25.48
+        by smtp.gmail.com with ESMTPSA id b188-v6sm6503276qkf.71.2018.06.29.12.25.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 12:25:48 -0700 (PDT)
+        Fri, 29 Jun 2018 12:25:50 -0700 (PDT)
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 03/14] blk-cgroup: allow controllers to output their own stats
-Date:   Fri, 29 Jun 2018 15:25:31 -0400
-Message-Id: <20180629192542.26649-4-josef@toxicpanda.com>
+Subject: [PATCH 04/14] blk: introduce REQ_SWAP
+Date:   Fri, 29 Jun 2018 15:25:32 -0400
+Message-Id: <20180629192542.26649-5-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180629192542.26649-1-josef@toxicpanda.com>
 References: <20180629192542.26649-1-josef@toxicpanda.com>
@@ -74,124 +74,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <jbacik@fb.com>
 
-blk-iolatency has a few stats that it would like to print out, and
-instead of adding a bunch of crap to the generic code just provide a
-helper so that controllers can add stuff to the stat line if they want
-to.
-
-Hide it behind a boot option since it changes the output of io.stat from
-normal, and these stats are only interesting to developers.
+Just like REQ_META, it's important to know the IO coming down is swap
+in order to guard against potential IO priority inversion issues with
+cgroups.  Add REQ_SWAP and use it for all swap IO, and add it to our
+bio_issue_as_root_blkg helper.
 
 Signed-off-by: Josef Bacik <jbacik@fb.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 ---
- block/blk-cgroup.c         | 47 +++++++++++++++++++++++++++++++++++++++++++---
- include/linux/blk-cgroup.h |  3 +++
- 2 files changed, 47 insertions(+), 3 deletions(-)
+ include/linux/blk-cgroup.h | 2 +-
+ include/linux/blk_types.h  | 3 ++-
+ mm/page_io.c               | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index eb85cb87c40f..7dc6f05cc44b 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -50,6 +50,8 @@ static struct blkcg_policy *blkcg_policy[BLKCG_MAX_POLS];
- 
- static LIST_HEAD(all_blkcgs);		/* protected by blkcg_pol_mutex */
- 
-+static bool blkcg_debug_stats = false;
-+
- static bool blkcg_policy_enabled(struct request_queue *q,
- 				 const struct blkcg_policy *pol)
- {
-@@ -954,13 +956,25 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 
- 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
- 		const char *dname;
-+		char *buf;
- 		struct blkg_rwstat rwstat;
- 		u64 rbytes, wbytes, rios, wios;
-+		size_t size = seq_get_buf(sf, &buf), off = 0;
-+		int i;
-+		bool has_stats = false;
- 
- 		dname = blkg_dev_name(blkg);
- 		if (!dname)
- 			continue;
- 
-+		/*
-+		 * Hooray string manipulation, count is the size written NOT
-+		 * INCLUDING THE \0, so size is now count+1 less than what we
-+		 * had before, but we want to start writing the next bit from
-+		 * the \0 so we only add count to buf.
-+		 */
-+		off += scnprintf(buf+off, size-off, "%s ", dname);
-+
- 		spin_lock_irq(blkg->q->queue_lock);
- 
- 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
-@@ -975,9 +989,33 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 
- 		spin_unlock_irq(blkg->q->queue_lock);
- 
--		if (rbytes || wbytes || rios || wios)
--			seq_printf(sf, "%s rbytes=%llu wbytes=%llu rios=%llu wios=%llu\n",
--				   dname, rbytes, wbytes, rios, wios);
-+		if (rbytes || wbytes || rios || wios) {
-+			has_stats = true;
-+			off += scnprintf(buf+off, size-off,
-+					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu",
-+					 rbytes, wbytes, rios, wios);
-+		}
-+
-+		if (!blkcg_debug_stats)
-+			goto next;
-+
-+		for (i = 0; i < BLKCG_MAX_POLS; i++) {
-+			struct blkcg_policy *pol = blkcg_policy[i];
-+			size_t written;
-+
-+			if (!blkg->pd[i] || !pol->pd_stat_fn)
-+				continue;
-+
-+			written = pol->pd_stat_fn(blkg->pd[i], buf+off, size-off);
-+			if (written)
-+				has_stats = true;
-+			off += written;
-+		}
-+next:
-+		if (has_stats) {
-+			off += scnprintf(buf+off, size-off, "\n");
-+			seq_commit(sf, off);
-+		}
- 	}
- 
- 	rcu_read_unlock();
-@@ -1547,3 +1585,6 @@ void blkcg_policy_unregister(struct blkcg_policy *pol)
- 	mutex_unlock(&blkcg_pol_register_mutex);
- }
- EXPORT_SYMBOL_GPL(blkcg_policy_unregister);
-+
-+module_param(blkcg_debug_stats, bool, 0644);
-+MODULE_PARM_DESC(blkcg_debug_stats, "True if you want debug stats, false if not");
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 69aa71dc0c04..b41292726c0f 100644
+index b41292726c0f..a8f9ba8f33a4 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -148,6 +148,8 @@ typedef void (blkcg_pol_online_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_offline_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_free_pd_fn)(struct blkg_policy_data *pd);
- typedef void (blkcg_pol_reset_pd_stats_fn)(struct blkg_policy_data *pd);
-+typedef size_t (blkcg_pol_stat_pd_fn)(struct blkg_policy_data *pd, char *buf,
-+				      size_t size);
+@@ -254,7 +254,7 @@ static inline struct blkcg *bio_blkcg(struct bio *bio)
+  */
+ static inline bool bio_issue_as_root_blkg(struct bio *bio)
+ {
+-	return (bio->bi_opf & REQ_META);
++	return (bio->bi_opf & (REQ_META | REQ_SWAP)) != 0;
+ }
  
- struct blkcg_policy {
- 	int				plid;
-@@ -167,6 +169,7 @@ struct blkcg_policy {
- 	blkcg_pol_offline_pd_fn		*pd_offline_fn;
- 	blkcg_pol_free_pd_fn		*pd_free_fn;
- 	blkcg_pol_reset_pd_stats_fn	*pd_reset_stats_fn;
-+	blkcg_pol_stat_pd_fn		*pd_stat_fn;
+ /**
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index ff181df8c195..4f7ba397d37d 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -327,7 +327,7 @@ enum req_flag_bits {
+ 
+ 	/* for driver use */
+ 	__REQ_DRV,
+-
++	__REQ_SWAP,		/* swapping request. */
+ 	__REQ_NR_BITS,		/* stops here */
  };
  
- extern struct blkcg blkcg_root;
+@@ -349,6 +349,7 @@ enum req_flag_bits {
+ #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
+ 
+ #define REQ_DRV			(1ULL << __REQ_DRV)
++#define REQ_SWAP		(1ULL << __REQ_SWAP)
+ 
+ #define REQ_FAILFAST_MASK \
+ 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+diff --git a/mm/page_io.c b/mm/page_io.c
+index b41cf9644585..a552cb37e220 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -338,7 +338,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
++	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
+ 	count_swpout_vm_event(page);
+ 	set_page_writeback(page);
+ 	unlock_page(page);
 -- 
 2.14.3
 
