@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B870C6778A
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66056C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD1DB24B2C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD1DB24B2C
+	by mail.kernel.org (Postfix) with ESMTP id 183DB24B89
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 21:19:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183DB24B89
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936657AbeF2VLj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 17:11:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48922 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932345AbeF2VLg (ORCPT
+        id S935068AbeF2VTF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 17:19:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59664 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936395AbeF2VLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 17:11:36 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TL9frX072903
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:35 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jws6170kg-1
+        Fri, 29 Jun 2018 17:11:39 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5TL9KZa055630
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:38 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jwry87q15-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:35 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 17:11:38 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
-        Fri, 29 Jun 2018 17:11:35 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 29 Jun 2018 17:11:37 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 29 Jun 2018 17:11:32 -0400
+        Fri, 29 Jun 2018 17:11:34 -0400
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TLBUcT7340540
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5TLBWQ565142990
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 29 Jun 2018 21:11:30 GMT
+        Fri, 29 Jun 2018 21:11:32 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A80412405A;
-        Fri, 29 Jun 2018 18:12:59 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 6691D124054;
+        Fri, 29 Jun 2018 18:13:01 -0400 (EDT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3DD02124052;
-        Fri, 29 Jun 2018 18:12:58 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 5DDD7124052;
+        Fri, 29 Jun 2018 18:13:00 -0400 (EDT)
 Received: from localhost.localdomain (unknown [9.85.157.42])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Fri, 29 Jun 2018 18:12:58 -0400 (EDT)
+        Fri, 29 Jun 2018 18:13:00 -0400 (EDT)
 From:   Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
@@ -63,26 +63,26 @@ Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
         pasic@linux.vnet.ibm.com, berrange@redhat.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         akrowiak@linux.vnet.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v6 01/21] s390/zcrypt: Add ZAPQ inline function.
-Date:   Fri, 29 Jun 2018 17:11:03 -0400
+Subject: [PATCH v6 02/21] s390/zcrypt: Review inline assembler constraints.
+Date:   Fri, 29 Jun 2018 17:11:04 -0400
 X-Mailer: git-send-email 1.7.1
 In-Reply-To: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062921-2213-0000-0000-000002C21E8F
+x-cbid: 18062921-0040-0000-0000-000004474D3F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009278; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01054189; UDB=6.00540581; IPR=6.00832111;
- MB=3.00021933; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-29 21:11:34
+ MB=3.00021933; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-29 21:11:36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062921-2214-0000-0000-00005AA78632
-Message-Id: <1530306683-7270-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+x-cbparentid: 18062921-0041-0000-0000-0000084D66C3
+Message-Id: <1530306683-7270-3-git-send-email-akrowiak@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-29_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=822 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=927 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1806290224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -91,46 +91,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Harald Freudenberger <freude@de.ibm.com>
 
-Added new inline function ap_pqap_zapq()
-which is a C inline function wrapper for
-the AP PQAP(ZAPQ) instruction.
+Reviewed and adapted the register use and asm constraints
+of the C inline assembler functions in accordance to the
+the AP instructions specifications.
 
 Signed-off-by: Harald Freudenberger <freude@de.ibm.com>
 Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
 ---
- drivers/s390/crypto/ap_asm.h |   19 +++++++++++++++++++
- 1 files changed, 19 insertions(+), 0 deletions(-)
+ drivers/s390/crypto/ap_asm.h |   40 +++++++++++++++++++++++-----------------
+ 1 files changed, 23 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/s390/crypto/ap_asm.h b/drivers/s390/crypto/ap_asm.h
-index 16b59ce..b22d30a 100644
+index b22d30a..e22ee12 100644
 --- a/drivers/s390/crypto/ap_asm.h
 +++ b/drivers/s390/crypto/ap_asm.h
-@@ -70,6 +70,25 @@ static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
+@@ -20,14 +20,16 @@ static inline int ap_instructions_available(void)
+ {
+ 	register unsigned long reg0 asm ("0") = AP_MKQID(0, 0);
+ 	register unsigned long reg1 asm ("1") = -ENODEV;
+-	register unsigned long reg2 asm ("2") = 0UL;
++	register unsigned long reg2 asm ("2");
+ 
+ 	asm volatile(
+ 		"   .long 0xb2af0000\n"		/* PQAP(TAPQ) */
+-		"0: la    %1,0\n"
++		"0: la    %0,0\n"
+ 		"1:\n"
+ 		EX_TABLE(0b, 1b)
+-		: "+d" (reg0), "+d" (reg1), "+d" (reg2) : : "cc");
++		: "+d" (reg1), "=d" (reg2)
++		: "d" (reg0)
++		: "cc");
+ 	return reg1;
  }
  
- /**
-+ * ap_pqap_zapq(): Reset and zeroize adjunct processor queue.
-+ * @qid: The AP queue number
-+ *
-+ * Returns AP queue status structure.
-+ */
-+static inline struct ap_queue_status ap_zapq(ap_qid_t qid)
-+{
-+	register unsigned long reg0 asm ("0") = qid | (2UL << 24);
-+	register struct ap_queue_status reg1 asm ("1");
-+
-+	asm volatile(
-+		".long 0xb2af0000"		/* PQAP(ZAPQ) */
+@@ -42,10 +44,12 @@ static inline struct ap_queue_status ap_tapq(ap_qid_t qid, unsigned long *info)
+ {
+ 	register unsigned long reg0 asm ("0") = qid;
+ 	register struct ap_queue_status reg1 asm ("1");
+-	register unsigned long reg2 asm ("2") = 0UL;
++	register unsigned long reg2 asm ("2");
+ 
+ 	asm volatile(".long 0xb2af0000"		/* PQAP(TAPQ) */
+-		     : "+d" (reg0), "=d" (reg1), "+d" (reg2) : : "cc");
++		     : "=d" (reg1), "=d" (reg2)
++		     : "d" (reg0)
++		     : "cc");
+ 	if (info)
+ 		*info = reg2;
+ 	return reg1;
+@@ -59,13 +63,14 @@ static inline struct ap_queue_status ap_tapq(ap_qid_t qid, unsigned long *info)
+  */
+ static inline struct ap_queue_status ap_rapq(ap_qid_t qid)
+ {
+-	register unsigned long reg0 asm ("0") = qid | 0x01000000UL;
++	register unsigned long reg0 asm ("0") = qid | (1UL << 24);
+ 	register struct ap_queue_status reg1 asm ("1");
+-	register unsigned long reg2 asm ("2") = 0UL;
+ 
+ 	asm volatile(
+ 		".long 0xb2af0000"		/* PQAP(RAPQ) */
+-		: "+d" (reg0), "=d" (reg1), "+d" (reg2) : : "cc");
 +		: "=d" (reg1)
 +		: "d" (reg0)
 +		: "cc");
-+	return reg1;
-+}
-+
-+/**
-  * ap_aqic(): Control interruption for a specific AP.
-  * @qid: The AP queue number
-  * @qirqctrl: struct ap_qirq_ctrl (64 bit value)
+ 	return reg1;
+ }
+ 
+@@ -107,8 +112,8 @@ static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
+ 
+ 	asm volatile(
+ 		".long 0xb2af0000"		/* PQAP(AQIC) */
+-		: "+d" (reg0), "+d" (reg1_in), "=d" (reg1_out), "+d" (reg2)
+-		:
++		: "=d" (reg1_out)
++		: "d" (reg0), "d" (reg1_in), "d" (reg2)
+ 		: "cc");
+ 	return reg1_out;
+ }
+@@ -120,17 +125,17 @@ static inline struct ap_queue_status ap_aqic(ap_qid_t qid,
+  */
+ static inline int ap_qci(void *config)
+ {
+-	register unsigned long reg0 asm ("0") = 0x04000000UL;
++	register unsigned long reg0 asm ("0") = 4UL << 24;
+ 	register unsigned long reg1 asm ("1") = -EINVAL;
+ 	register void *reg2 asm ("2") = (void *) config;
+ 
+ 	asm volatile(
+ 		".long 0xb2af0000\n"		/* PQAP(QCI) */
+-		"0: la    %1,0\n"
++		"0: la    %0,0\n"
+ 		"1:\n"
+ 		EX_TABLE(0b, 1b)
+-		: "+d" (reg0), "+d" (reg1), "+d" (reg2)
+-		:
++		: "+d" (reg1)
++		: "d" (reg0), "d" (reg2)
+ 		: "cc", "memory");
+ 
+ 	return reg1;
+@@ -169,12 +174,13 @@ static inline struct ap_queue_status ap_qact(ap_qid_t qid, int ifbit,
+ 		| ((ifbit & 0x01) << 22);
+ 	register unsigned long reg1_in asm ("1") = apinfo->val;
+ 	register struct ap_queue_status reg1_out asm ("1");
+-	register unsigned long reg2 asm ("2") = 0;
++	register unsigned long reg2 asm ("2");
+ 
+ 	asm volatile(
+ 		".long 0xb2af0000"		/* PQAP(QACT) */
+-		: "+d" (reg0), "+d" (reg1_in), "=d" (reg1_out), "+d" (reg2)
+-		: : "cc");
++		: "+d" (reg1_in), "=d" (reg1_out), "=d" (reg2)
++		: "d" (reg0)
++		: "cc");
+ 	apinfo->val = reg2;
+ 	return reg1_out;
+ }
 -- 
 1.7.1
 
