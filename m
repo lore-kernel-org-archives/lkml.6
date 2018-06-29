@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB61C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C3DC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72D6A27BC2
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ABAB2787D
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 08:14:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MQN0n0cY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D6A27BC2
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nuJPLZWg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABAB2787D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934785AbeF2INV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 04:13:21 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35044 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934739AbeF2INR (ORCPT
+        id S934850AbeF2IOD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 04:14:03 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37573 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934799AbeF2IN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 04:13:17 -0400
-Received: by mail-pg0-f67.google.com with SMTP id i7-v6so3659312pgp.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 01:13:16 -0700 (PDT)
+        Fri, 29 Jun 2018 04:13:59 -0400
+Received: by mail-pf0-f193.google.com with SMTP id h20-v6so1934989pfn.4
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 01:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id;
         bh=OzgGn+Q4isfRNiycbtBKaigAmf6rTndiL1fQJSnnjt4=;
-        b=MQN0n0cYBJrBiAfwmygEa8LMaowCTm8fdnpUdHO4d/aVjKxAHCFy06vKj37KPtmnJY
-         FUnhMmVB5Bop7IWhhUF6QVTdQkZkpMxBAl8kFJgyGIU5uRTHsiQzVLqsGnzpOGQV7YW0
-         H+k0it/rvZgOi+GmWfv7sKx6cfsw27/3BT0mw=
+        b=nuJPLZWgMy5x/DllJ0f9bws6EJn7EuTd+YXMnVmC2T2b4rRmf9TRFtSkb8NpDXRsEP
+         XkaJCY3S+a8UexVNdudRr5+d9iZ9SfwjTG4Lz6W9ZGHTTEjIgjTVcdNJ7aZi/n5rQr2C
+         mIkdSZ0LjMrbOepYeph1BaT0zETYWtgV5Hmqw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
         bh=OzgGn+Q4isfRNiycbtBKaigAmf6rTndiL1fQJSnnjt4=;
-        b=MBL1tHyjEuyC8IR8ccyoV2nk7g9amvYsLUSohCgTlUyvIJKxeEP1bJVZTY3o5lkKY3
-         cF1nQ9aAK9pQfFArIILCcoACnKkyXPAglNpOyaLAqpeJFX1NvWt2Ml8dgO2JEyZmuJjl
-         lttInIM+uYNhg9eTdAOMqhLJ+deqKuBnpYFVkzmL7TC4l7R8g3DiAavRrG4rGV9KsAQS
-         k1rqJqQR9urORSLS6Wv9Wr4/aT0zDlXoQYkWT47RUCGQL/wPTN5CGVi7Mg9r+Pt+eMel
-         g7CKzP61oqSHoza5KnwCDw5GY9my6ioaXxhmmhGawp6HiG7IGx8rhANmc3ml05sUCimn
-         4JeA==
-X-Gm-Message-State: APt69E1QbLAdi184m/eieR/3Tj87CH3STr/BX7t+BqtUjsrpxWr2MeMg
-        FEYZSD0mmxxuNIV9p/b0AD1BxQ==
-X-Google-Smtp-Source: AAOMgpcR8iip0WWnl+/LDgt9DfNzfBKeUGJC7WriRxuY96KCzwXSD1uEgYVQy9AWjWfE6lCTezmLdg==
-X-Received: by 2002:a62:fe19:: with SMTP id z25-v6mr13190972pfh.167.1530259996608;
-        Fri, 29 Jun 2018 01:13:16 -0700 (PDT)
+        b=AeE+5cFajPNa5fzFSjpy2u51KL2REhT8oo5xnZsTq16ud7XW5i9u9jHyQn4ox6HQpU
+         Nw5R+0XtckLOpMZMyUDZf7fNB6o0qmGK6WAULxLlihGJ0qG9SyhzZsy5qP5kcP5meerm
+         KAeJgDk6a7msal3ZYS30/F1KEtSwVLGkrcpwXcD6DmA9OQB43WN9kpvijbtMsLgFZsxp
+         SxkT0zCmN9yiZeNMR6hX5qdMs6Macs5vTNRqxo3eRvwFtWaJe2F4IxWIymisqk5THjJ7
+         ASRUWCrR+C0hf8UCDEQ+cXxI5orMglsUlvOTfW/TjZ/2Hkg8rrBaeVLJhmMo/isNM6/R
+         1voQ==
+X-Gm-Message-State: APt69E0iiBM75WNyq5MAfXuhhgJcktBrzLsfHYQTx6krrFxbcRJXV3Ol
+        YNEajy0alaWa1t/f88DyZcTFfqe3NJU=
+X-Google-Smtp-Source: ADUXVKI4IIgRqhwccVLliC3PUz0EbFQJGPdvShoSOUhiYOP7cEV17WGQdu6uP/KT0lAgeaLU7R7jmw==
+X-Received: by 2002:a63:107:: with SMTP id 7-v6mr11490038pgb.289.1530260039314;
+        Fri, 29 Jun 2018 01:13:59 -0700 (PDT)
 Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:3987:9bf6:3352:7574])
-        by smtp.gmail.com with ESMTPSA id h13-v6sm12994488pgp.13.2018.06.29.01.13.14
+        by smtp.gmail.com with ESMTPSA id p19-v6sm5494749pfd.75.2018.06.29.01.13.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 29 Jun 2018 01:13:15 -0700 (PDT)
+        Fri, 29 Jun 2018 01:13:58 -0700 (PDT)
 From:   Louis Collard <louiscollard@chromium.org>
 To:     linux-integrity@vger.kernel.org
 Cc:     Peter Huewe <peterhuewe@gmx.de>,
@@ -60,8 +60,8 @@ Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, apronin@chromium.org
 Subject: [PATCH v2] tpm: Allow tpm_tis drivers to set hwrng quality.
-Date:   Fri, 29 Jun 2018 16:12:58 +0800
-Message-Id: <20180629081258.155228-1-louiscollard@chromium.org>
+Date:   Fri, 29 Jun 2018 16:13:55 +0800
+Message-Id: <20180629081355.155317-1-louiscollard@chromium.org>
 X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
