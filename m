@@ -2,101 +2,138 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD445C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDF7C43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D2727E8E
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m2Au75rF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BtwWwDjN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D2727E8E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1ACF727E8E
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 11:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACF727E8E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936152AbeF2Lg4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 07:36:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39360 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932331AbeF2Lgy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 07:36:54 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 091EF60452; Fri, 29 Jun 2018 11:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272214;
-        bh=rxAkJVAnc7mAegan/CMD0Hn/W0Zh1egr/57GjNa7dMk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=m2Au75rFmewqxo74q/St/3RomUoWDv1+MSoLv4SsJr+jmlnDqd6DkQRB2S+P7av8m
-         YnqT7pRQ3Ks75SoB07NdEdZwW1nlA+SwPL5tkwagIrXW4RpYK60K5YxHxn5cgY5zJX
-         D7d+FzGxORpE1LEritlBHF8U+qP2MTzSEFbzsBHk=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S936174AbeF2Lht (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 07:37:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932331AbeF2Lhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 07:37:47 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9612360452;
-        Fri, 29 Jun 2018 11:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530272213;
-        bh=rxAkJVAnc7mAegan/CMD0Hn/W0Zh1egr/57GjNa7dMk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BtwWwDjNWzZp0c794CDNg3y0nbr+fPRQOWiyg3fC3l0KfkNkwfH3aIgD6snYWsztI
-         +Z8Fxwvvn+N3hGdbmPxsacsNQ7+jHfLqNBaxl+PoSAGnADYvGMK+1n5j6Cvkpiofxs
-         NNhAki1YL/dyGENH2IoSJq91Sa3Bo0YEdXZ4ONUc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9612360452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org
-Cc:     andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH RESEND 1/1] clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
-Date:   Fri, 29 Jun 2018 17:06:40 +0530
-Message-Id: <20180629113640.11888-1-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
+        by mx1.redhat.com (Postfix) with ESMTPS id 60A4BC12A0;
+        Fri, 29 Jun 2018 11:37:47 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A1582156700;
+        Fri, 29 Jun 2018 11:37:45 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Roman Kagan <rkagan@virtuozzo.com>
+Cc:     kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] KVM: x86: hyperv: introduce vp_index_to_vcpu_idx mapping
+References: <20180628135313.17468-1-vkuznets@redhat.com>
+        <20180628135313.17468-3-vkuznets@redhat.com>
+        <20180629101134.GA15656@rkaganb.sw.ru>
+        <87y3exdh2o.fsf@vitty.brq.redhat.com>
+        <20180629111227.GB15656@rkaganb.sw.ru>
+Date:   Fri, 29 Jun 2018 13:37:44 +0200
+In-Reply-To: <20180629111227.GB15656@rkaganb.sw.ru> (Roman Kagan's message of
+        "Fri, 29 Jun 2018 14:12:28 +0300")
+Message-ID: <87tvplddrr.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 11:37:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 11:37:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch (7705bb7176b9 clk: qcom: mmcc-msm8996: leave all mmagic gdscs
-and clocks always enabled") makes all mmgaic gdscs ALWAYS_ON.
-The mmagic_bimc_gdsc is also needed to be turned on to get display
-working on 8x96.
+Roman Kagan <rkagan@virtuozzo.com> writes:
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
+> On Fri, Jun 29, 2018 at 12:26:23PM +0200, Vitaly Kuznetsov wrote:
+>> Roman Kagan <rkagan@virtuozzo.com> writes:
+>> 
+>> > On Thu, Jun 28, 2018 at 03:53:10PM +0200, Vitaly Kuznetsov wrote:
+>> >> While it is easy to get VP index from vCPU index the reverse task is hard.
+>> >> Basically, to solve it we have to walk all vCPUs checking if their VP index
+>> >> matches. For hypercalls like HvFlushVirtualAddress{List,Space}* and the
+>> >> upcoming HvSendSyntheticClusterIpi* where a single CPU may be specified in
+>> >> the whole set this is obviously sub-optimal.
+>> >> 
+>> >> As VP index can be set to anything <= U32_MAX by userspace using plain
+>> >> [0..MAX_VP_INDEX] array is not a viable option. Use condensed sorted
+>> >> array with logarithmic search complexity instead. Use RCU to make read
+>> >> access as fast as possible and maintain atomicity of updates.
+>> >
+>> > Quoting TLFS 5.0C section 7.8.1:
+>> >
+>> >> Virtual processors are identified by using an index (VP index). The
+>> >> maximum number of virtual processors per partition supported by the
+>> >> current implementation of the hypervisor can be obtained through CPUID
+>> >> leaf 0x40000005. A virtual processor index must be less than the
+>> >> maximum number of virtual processors per partition.
+>> >
+>> > so this is a dense index, and VP_INDEX >= KVM_MAX_VCPUS is invalid.  I
+>> > think we're better off enforcing this in kvm_hv_set_msr and keep the
+>> > translation simple.  If the algorithm in get_vcpu_by_vpidx is not good
+>> > enough (and yes it can be made to return NULL early on vpidx >=
+>> > KVM_MAX_VCPUS instead of taking the slow path) then a simple index array
+>> > of KVM_MAX_VCPUS entries should certainly do.
+>> 
+>> Sure, we can use pre-allocated [0..KVM_MAX_VCPUS] array instead and put
+>> limits on what userspace can assign VP_INDEX to. Howver, while thinking
+>> about it I decided to go with the more complex condensed array approach
+>> because the tendency is for KVM_MAX_VCPUS to grow and we will be
+>> pre-allocating more and more memory for no particular reason (so I think
+>> even 'struct kvm_vcpu *vcpus[KVM_MAX_VCPUS]' in 'struct kvm' will need
+>> to be converted to something else eventually). 
+>
+> We're talking of kilobytes here.  I guess this is going to be the least
+> of the scalability problems.
 
- - Corrected the hash id of upstream patch in commit message.
+Yes, kilobytes but per-VM.
 
- drivers/clk/qcom/mmcc-msm8996.c | 1 +
- 1 file changed, 1 insertion(+)
+>
+>> Anyway, I'm flexible and if you think we should go this way now I'll do
+>> this in v3. We can re-think this when we later decide to raise
+>> KVM_MAX_VCPUS significantly.
+>
+> Although there's no strict requirement for that I think every sensible
+> userspace will allocate VP_INDEX linearly resulting in it being equal to
+> KVM's vcpu index.  So we've yet to see a case where get_vcpu_by_vpidx
+> doesn't take the fast path.  If it ever starts appearing in the profiles
+> we may consider optimiziing it but ATM I don't even think introducing
+> the translation array is justified.
 
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index dfc5b4e431d3..38311a67e846 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -2910,6 +2910,7 @@ static struct gdsc mmagic_bimc_gdsc = {
- 		.name = "mmagic_bimc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = ALWAYS_ON,
- };
- 
- static struct gdsc mmagic_video_gdsc = {
+It was Radim who suggested it in the first place :-)
+
+The problem we're trying to solve here is: with PV TLB flush and IPI we
+need to walk through the supplied list of VP_INDEXes and get VCPU
+ids. Usually they match. But in case they don't we'll fall back to full
+scan for every VP_INDEX in the supplied list. Now let's say we have 128
+CPUs. We'll need to perform up to 128 * 128 extra comparisons on every
+hypercall. Not good. So instead of using get_vcpu_by_vpidx() I opted for
+walking the whole VCPU list and checking if VPU's VP_INDEX is in the
+supplied set. This way we end up with 128 comparisons in the example
+above (worst case scenarion). However, we lose in simple scenarios like
+only 1 VP_INDEX was specified in the set: we'll still need to walk the
+whole list. So having the translation array (one way or another) is IMO
+justified.
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+  Vitaly
