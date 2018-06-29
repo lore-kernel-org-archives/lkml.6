@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0904C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8411C6778C
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654AF2790F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:32:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654AF2790F
+	by mail.kernel.org (Postfix) with ESMTP id 710F627919
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 17:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710F627919
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935010AbeF2Rb6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 13:31:58 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:41224 "EHLO mail.bugwerft.de"
+        id S935525AbeF2Rcs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 13:32:48 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:41186 "EHLO mail.bugwerft.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934472AbeF2Rbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 13:31:49 -0400
+        id S934191AbeF2Rbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 13:31:46 -0400
 Received: from localhost.localdomain (pD95EF0F3.dip0.t-ipconnect.de [217.94.240.243])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 5936A28C419;
-        Fri, 29 Jun 2018 17:28:33 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 359D928C415;
+        Fri, 29 Jun 2018 17:28:29 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     zbr@ioremap.net, robh+dt@kernel.org, mark.rutland@arm.com,
         szabolcs.gyurko@tlt.hu
 Cc:     sre@kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         robert.jarzmik@free.fr, Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v3 4/4] power: supply: ds2760_battery: add devicetree probing
-Date:   Fri, 29 Jun 2018 19:31:37 +0200
-Message-Id: <20180629173137.12690-5-daniel@zonque.org>
+Subject: [PATCH v3 1/4] dt-bindings: w1: document generic onewire and DS2760 bindings
+Date:   Fri, 29 Jun 2018 19:31:34 +0200
+Message-Id: <20180629173137.12690-2-daniel@zonque.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180629173137.12690-1-daniel@zonque.org>
 References: <20180629173137.12690-1-daniel@zonque.org>
@@ -41,85 +41,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a matching table for devicetree probing, and optionally set the module
-parameter variables from DT properties.
+This patch add a generic w1 bindings document that merely describes how
+slave deviceses are grouped under master nodes. It also adds a specific
+binding for the ds2760 battery monitor.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/power/supply/ds2760_battery.c | 32 ++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+ .../bindings/power/supply/maxim,ds2760.txt    | 29 +++++++++++++++++++
+ .../devicetree/bindings/w1/w1-gpio.txt        |  6 ++++
+ Documentation/devicetree/bindings/w1/w1.txt   | 18 ++++++++++++
+ 3 files changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt
+ create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
 
-diff --git a/drivers/power/supply/ds2760_battery.c b/drivers/power/supply/ds2760_battery.c
-index aa406a7c65a1..921cbcfd8c99 100644
---- a/drivers/power/supply/ds2760_battery.c
-+++ b/drivers/power/supply/ds2760_battery.c
-@@ -29,6 +29,7 @@
- #include <linux/power_supply.h>
- #include <linux/suspend.h>
- #include <linux/w1.h>
-+#include <linux/of.h>
- 
- static unsigned int cache_time = 1000;
- module_param(cache_time, uint, 0644);
-@@ -705,6 +706,27 @@ static int w1_ds2760_add_slave(struct w1_slave *sl)
- 
- 	psy_cfg.drv_data = di;
- 
-+	if (dev->of_node) {
-+		u32 tmp;
+diff --git a/Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt b/Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt
+new file mode 100644
+index 000000000000..a39d1ada48f2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/maxim,ds2760.txt
+@@ -0,0 +1,29 @@
++Devicetree bindings for Maxim DS2760
++====================================
 +
-+		psy_cfg.of_node = dev->of_node;
++The ds2760 is a w1 slave device and must hence have its sub-node in DT
++under a w1 bus master node.
 +
-+		if (!of_property_read_bool(dev->of_node, "maxim,pmod-enabled"))
-+			pmod_enabled = true;
++The device exposes a power supply, so the details described in
++Documentation/devicetree/bindings/power/supply/power_supply.txt apply.
 +
-+		if (!of_property_read_u32(dev->of_node,
-+					  "maxim,cache-time", &tmp))
-+			cache_time = tmp;
++Required properties:
++- compatible: must be "maxim,ds2760"
 +
-+		if (!of_property_read_u32(dev->of_node,
-+					  "maxim,rated-capacity", &tmp))
-+			rated_capacity = tmp / 10; /* property is in mAh */
++Optional properties:
++- power-supplies:	Refers to one or more power supplies connected to
++			this battery.
++- maxim,pmod-enabled:	This boolean property enables the DS2760 to enter
++			sleep mode when the DQ line goes low for greater
++			than 2 seconds and leave sleep Mode when the DQ
++			line goes high.
++- maxim,cache-time:	Time im milliseconds to cache the data for. When
++			this time expires, the values are read again from
++			the hardware. Defaults to 1000.
++- maxim,rated-capacity:	The rated capacity of the battery, in mAh.
++			If not specified, the value stored in the
++			non-volatile chip memory is used.
++- maxim,current-accumulator:
++			The current accumulator value in mAh.
++			If not specified, the value stored in the
++			non-volatile chip memory is used.
+diff --git a/Documentation/devicetree/bindings/w1/w1-gpio.txt b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+index 6e09c35d9f1a..6694317bcbed 100644
+--- a/Documentation/devicetree/bindings/w1/w1-gpio.txt
++++ b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+@@ -13,10 +13,16 @@ Optional properties:
+  - linux,open-drain: if specified, the data pin is considered in
+ 		     open-drain mode.
+ 
++Also refer to the generic w1.txt document.
 +
-+		if (!of_property_read_u32(dev->of_node,
-+					  "maxim,current-accumulator", &tmp))
-+			current_accum = tmp;
-+	}
+ Examples:
+ 
+ 	onewire@0 {
+ 		compatible = "w1-gpio";
+ 		gpios = <&gpio 126 0>, <&gpio 105 0>;
 +
- 	di->charge_status = POWER_SUPPLY_STATUS_UNKNOWN;
++		battery {
++			compatible = "maxim,ds2760";
++		};
+ 	};
  
- 	sl->family_data = di;
-@@ -719,7 +741,7 @@ static int w1_ds2760_add_slave(struct w1_slave *sl)
- 
- 	ds2760_battery_write_status(di, status);
- 
--	/* set rated capacity from module param */
-+	/* set rated capacity from module param or device tree */
- 	if (rated_capacity)
- 		ds2760_battery_write_rated_capacity(di, rated_capacity);
- 
-@@ -769,6 +791,13 @@ static void w1_ds2760_remove_slave(struct w1_slave *sl)
- 	power_supply_unregister(di->bat);
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id w1_ds2760_of_ids[] = {
-+	{ .compatible = "maxim,ds2760" },
-+	{}
-+};
-+#endif
+diff --git a/Documentation/devicetree/bindings/w1/w1.txt b/Documentation/devicetree/bindings/w1/w1.txt
+new file mode 100644
+index 000000000000..6ac103f972a0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/w1/w1.txt
+@@ -0,0 +1,18 @@
++Generic devicetree bindings for onewire (w1) busses
++===================================================
 +
- static struct w1_family_ops w1_ds2760_fops = {
- 	.add_slave	= w1_ds2760_add_slave,
- 	.remove_slave	= w1_ds2760_remove_slave,
-@@ -778,6 +807,7 @@ static struct w1_family_ops w1_ds2760_fops = {
- static struct w1_family w1_ds2760_family = {
- 	.fid		= W1_FAMILY_DS2760,
- 	.fops		= &w1_ds2760_fops,
-+	.of_match_table	= of_match_ptr(w1_ds2760_of_ids),
- };
- module_w1_family(w1_ds2760_family);
- 
++Onewire busses are described through nodes of their master bus controller.
++Slave devices are listed as sub-nodes of such master devices. For now, one
++one slave is allowed per bus master.
++
++
++Example:
++
++	onewire {
++		compatible = "w1-gpio";
++		gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
++
++		battery {
++			compatible = "maxim,ds2760";
++		};
++	};
 -- 
 2.17.1
 
