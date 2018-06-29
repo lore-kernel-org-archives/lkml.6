@@ -3,205 +3,226 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA26C43141
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F3EC43141
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E966427CED
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E966427CED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 23DD027D51
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 10:48:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DD027D51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755012AbeF2KpZ (ORCPT
+        id S1753785AbeF2KsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 06:45:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51634 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752138AbeF2KpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 06:45:23 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E51541C1E;
-        Fri, 29 Jun 2018 10:45:22 +0000 (UTC)
-Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6A97E2142F20;
-        Fri, 29 Jun 2018 10:45:21 +0000 (UTC)
-Subject: Re: [PATCH 2/2] KVM: X86: Implement PV send IPI support
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <1530265876-18136-1-git-send-email-wanpengli@tencent.com>
- <1530265876-18136-3-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <96bad133-077d-e27d-9f57-4df6399eb3b8@redhat.com>
-Date:   Fri, 29 Jun 2018 12:45:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 29 Jun 2018 06:48:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59462 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751114AbeF2KsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 06:48:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A35A18A;
+        Fri, 29 Jun 2018 03:48:20 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1E3B3F266;
+        Fri, 29 Jun 2018 03:48:19 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     linux-nfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     anna.schumaker@netapp.com, trond.myklebust@hammerspace.com,
+        linux-kernel@vger.kernel.org
+Subject: use-after-free in NFS
+Date:   Fri, 29 Jun 2018 11:48:18 +0100
+Message-ID: <87lgaxvpfx.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1530265876-18136-3-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 10:45:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 29 Jun 2018 10:45:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/06/2018 11:51, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Using hypercall to send IPIs by one vmexit instead of one by one for
-> xAPIC/x2APIC physical mode and one vmexit per-cluster for x2APIC cluster 
-> mode. 
-> 
-> Even if enable qemu interrupt remapping and PV TLB Shootdown, I can still 
-> observe ~14% performance boost by ebizzy benchmark for 64 vCPUs VM, the 
-> total msr-induced vmexits reduce ~70%.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  Documentation/virtual/kvm/cpuid.txt |  4 ++++
->  arch/x86/kvm/cpuid.c                |  3 ++-
->  arch/x86/kvm/x86.c                  | 25 +++++++++++++++++++++++++
->  include/uapi/linux/kvm_para.h       |  1 +
->  4 files changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-> index ab022dc..d72359f 100644
-> --- a/Documentation/virtual/kvm/cpuid.txt
-> +++ b/Documentation/virtual/kvm/cpuid.txt
-> @@ -62,6 +62,10 @@ KVM_FEATURE_ASYNC_PF_VMEXIT        ||    10 || paravirtualized async PF VM exit
->                                     ||       || can be enabled by setting bit 2
->                                     ||       || when writing to msr 0x4b564d02
->  ------------------------------------------------------------------------------
-> +KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
-> +                                   ||       || before enabling paravirtualized
-> +                                   ||       || send IPIs.
+Hi,
 
-It's not "enabling" but "using".  You also need to document the
-hypercall itself.
+Nightly LTP runs are hitting a use-after-free on upstream kernels when
+running with 64k pages. There isn't a specific test triggering the
+issue. Also, the problem is not encountered with 4k pages.
 
-Paolo
+The boards used for the nightly runs mount their filesystem (Debian
+Jessie) via NFS with the following filesystem relevant command line
+options -
 
-> +------------------------------------------------------------------------------
->  KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
->                                     ||       || per-cpu warps are expected in
->                                     ||       || kvmclock.
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 7e042e3..7bcfa61 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -621,7 +621,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  			     (1 << KVM_FEATURE_CLOCKSOURCE_STABLE_BIT) |
->  			     (1 << KVM_FEATURE_PV_UNHALT) |
->  			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
-> -			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT);
-> +			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
-> +			     (1 << KVM_FEATURE_PV_SEND_IPI);
->  
->  		if (sched_info_on())
->  			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 0046aa7..c2e6cdb 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6689,6 +6689,27 @@ static void kvm_pv_kick_cpu_op(struct kvm *kvm, unsigned long flags, int apicid)
->  	kvm_irq_delivery_to_apic(kvm, NULL, &lapic_irq, NULL);
->  }
->  
-> +static void kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap, u8 vector)
-> +{
-> +	struct kvm_apic_map *map;
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_lapic_irq lapic_irq = {0};
-> +	int i;
-> +
-> +	lapic_irq.delivery_mode = APIC_DM_FIXED;
-> +	lapic_irq.vector = vector;
-> +
-> +	rcu_read_lock();
-> +	map = rcu_dereference(kvm->arch.apic_map);
-> +
-> +	for_each_set_bit(i, &ipi_bitmap, sizeof(unsigned long)) {
-> +		vcpu = map->phys_map[i]->vcpu;
-> +		kvm_apic_set_irq(vcpu, &lapic_irq, NULL);
-> +	}
-> +
-> +	rcu_read_unlock();
-> +}
-> +
->  void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *vcpu)
->  {
->  	vcpu->arch.apicv_active = false;
-> @@ -6738,6 +6759,10 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->  		ret = kvm_pv_clock_pairing(vcpu, a0, a1);
->  		break;
->  #endif
-> +	case KVM_HC_SEND_IPI:
-> +		kvm_pv_send_ipi(vcpu->kvm, a0, a1);
-> +		ret = 0;
-> +		break;
->  	default:
->  		ret = -KVM_ENOSYS;
->  		break;
-> diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
-> index dcf629d..7395f38 100644
-> --- a/include/uapi/linux/kvm_para.h
-> +++ b/include/uapi/linux/kvm_para.h
-> @@ -26,6 +26,7 @@
->  #define KVM_HC_MIPS_EXIT_VM		7
->  #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
->  #define KVM_HC_CLOCK_PAIRING		9
-> +#define KVM_HC_SEND_IPI         	10
->  
->  /*
->   * hypercalls use architecture specific
-> 
+    "root=/dev/nfs rw nfsroot=<server IP>:<export path>,tcp,hard,intr,vers=3 rootwait"
 
+I suspect that the larger page size is uncovering a latent race but I'm
+not familiar with NFS client implementation and so could be barking up
+the wrong tree. Frustratingly I've not been able to reproduce it locally
+to create a reproducer.
+
+Thanks,
+Punit
+
+---- >8 ----
+
+[ 4116.235125] LTP: starting data_space
+[ 4116.497897] ------------[ cut here ]------------
+[ 4116.511558] refcount_t: increment on 0; use-after-free.
+[ 4116.522421] WARNING: CPU: 4 PID: 11116 at lib/refcount.c:153 refcount_inc+0x44/0x50
+[ 4116.537845] Modules linked in: overlay btrfs libcrc32c xor zstd_decompress zstd_compress xxhash raid6_pq fuse crc32_ce crct10dif_ce ipv6
+[ 4116.562596] CPU: 4 PID: 11116 Comm: kworker/4:0 Not tainted 4.18.0-rc2-00119-g59ec39fe3826 #1
+[ 4116.579770] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb 13 2018
+[ 4116.601505] Workqueue: nfsiod rpc_async_release
+[ 4116.610627] pstate: 40000005 (nZcv daif -PAN -UAO)
+[ 4116.620273] pc : refcount_inc+0x44/0x50
+[ 4116.627989] lr : refcount_inc+0x44/0x50
+[ 4116.635705] sp : ffff00000a7efba0
+[ 4116.642369] x29: ffff00000a7efba0 x28: 0000000000000000 
+[ 4116.653068] x27: 000000007fffffff x26: ffff00000a7efca0 
+[ 4116.663767] x25: 0000000000000008 x24: ffff80092054d6a0 
+[ 4116.674465] x23: ffff800942ba7140 x22: ffff00000a7efc90 
+[ 4116.685162] x21: ffff800942ba7100 x20: ffff800942ba7b00 
+[ 4116.695861] x19: ffff800942ba7100 x18: 0000000000000011 
+[ 4116.706557] x17: 0000000000000000 x16: 0000000000000000 
+[ 4116.717256] x15: 0000000000000000 x14: 0000000000000400 
+[ 4116.727953] x13: 0000000000000001 x12: 0000000000000000 
+[ 4116.738650] x11: 00000000000048ca x10: 0000000000000930 
+[ 4116.749347] x9 : ffff00000a7ef8a0 x8 : ffff8009416f0990 
+[ 4116.760046] x7 : ffff8009416f00c0 x6 : ffff80097fba20c0 
+[ 4116.770742] x5 : ffff80097fba20c0 x4 : 0000000000000000 
+[ 4116.781439] x3 : ffff80097fba8ea8 x2 : ffff8009416f0000 
+[ 4116.792137] x1 : 2e35a06ccfe9d400 x0 : 0000000000000000 
+[ 4116.802834] Call trace:
+[ 4116.807750]  refcount_inc+0x44/0x50
+[ 4116.814770]  nfs_scan_commit_list+0x84/0x128
+[ 4116.823362]  nfs_scan_commit.part.12+0x4c/0xe0
+[ 4116.832305]  __nfs_commit_inode+0x100/0x190
+[ 4116.840722]  nfs_io_completion_commit+0x14/0x20
+[ 4116.849838]  nfs_io_completion_put+0x38/0x58
+[ 4116.858430]  nfs_write_completion+0x108/0x1a0
+[ 4116.867199]  nfs_pgio_release+0x14/0x20
+[ 4116.874916]  rpc_free_task+0x28/0x48
+[ 4116.882108]  rpc_async_release+0x10/0x18
+[ 4116.890002]  process_one_work+0x1dc/0x330
+[ 4116.898068]  worker_thread+0x48/0x430
+[ 4116.905433]  kthread+0xf8/0x128
+[ 4116.911750]  ret_from_fork+0x10/0x18
+[ 4116.918939] ---[ end trace 9745b48d60ab22f6 ]---
+[ 4116.931729] WARNING: CPU: 4 PID: 11116 at fs/nfs/pagelist.c:426 nfs_free_request+0x150/0x160
+[ 4116.948730] Modules linked in: overlay btrfs libcrc32c xor zstd_decompress zstd_compress xxhash raid6_pq fuse crc32_ce crct10dif_ce ipv6
+[ 4116.973478] CPU: 4 PID: 11116 Comm: kworker/4:0 Tainted: G        W         4.18.0-rc2-00119-g59ec39fe3826 #1
+[ 4116.993452] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb 13 2018
+[ 4117.015185] Workqueue: nfsiod rpc_async_release
+[ 4117.024306] pstate: 60000005 (nZCv daif -PAN -UAO)
+[ 4117.033951] pc : nfs_free_request+0x150/0x160
+[ 4117.042718] lr : nfs_release_request+0x84/0x98
+[ 4117.051657] sp : ffff00000a7efc40
+[ 4117.058321] x29: ffff00000a7efc40 x28: 0000000000000000 
+[ 4117.069021] x27: ffff80097fbac330 x26: ffff0000091280f8 
+[ 4117.079720] x25: 0000000000000000 x24: ffff000009113000 
+[ 4117.090419] x23: ffff8009432338c8 x22: ffff8009432338d8 
+[ 4117.101119] x21: ffff800942bce480 x20: ffff800942ba4b80 
+[ 4117.111817] x19: ffff800942bce480 x18: 0000000000000000 
+[ 4117.122514] x17: 0000000000000000 x16: 0000000000000001 
+[ 4117.133211] x15: 0000000000000000 x14: 0000000000000400 
+[ 4117.143908] x13: 0000000000000001 x12: ffffffffffffffff 
+[ 4117.154604] x11: 0000000000000040 x10: 0000000000000930 
+[ 4117.165302] x9 : ffff00000a7efd50 x8 : 0000000000000000 
+[ 4117.175999] x7 : ffffffffffffffff x6 : 0000000000000001 
+[ 4117.186695] x5 : 0000000000000000 x4 : ffff0000091136c8 
+[ 4117.197392] x3 : ffff000009111388 x2 : 0000000000000005 
+[ 4117.208088] x1 : ffff800942bce480 x0 : 0000000000000c02 
+[ 4117.218784] Call trace:
+[ 4117.223700]  nfs_free_request+0x150/0x160
+[ 4117.231766]  nfs_release_request+0x84/0x98
+[ 4117.240009]  nfs_release_request+0x60/0x98
+[ 4117.248252]  nfs_unlock_and_release_request+0x1c/0x28
+[ 4117.258420]  nfs_commit_release_pages+0xa4/0x1b8
+[ 4117.267711]  nfs_commit_release+0x1c/0x30
+[ 4117.275778]  rpc_free_task+0x28/0x48
+[ 4117.282968]  rpc_async_release+0x10/0x18
+[ 4117.290860]  process_one_work+0x1dc/0x330
+[ 4117.298926]  worker_thread+0x48/0x430
+[ 4117.306290]  kthread+0xf8/0x128
+[ 4117.312606]  ret_from_fork+0x10/0x18
+[ 4117.319795] ---[ end trace 9745b48d60ab22f7 ]---
+[ 4117.329432] ------------[ cut here ]------------
+[ 4117.338741] refcount_t: underflow; use-after-free.
+[ 4117.348423] WARNING: CPU: 4 PID: 11116 at lib/refcount.c:187 refcount_sub_and_test+0x94/0xb8
+[ 4117.365418] Modules linked in: overlay btrfs libcrc32c xor zstd_decompress zstd_compress xxhash raid6_pq fuse crc32_ce crct10dif_ce ipv6
+[ 4117.390160] CPU: 4 PID: 11116 Comm: kworker/4:0 Tainted: G        W         4.18.0-rc2-00119-g59ec39fe3826 #1
+[ 4117.410133] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb 13 2018
+[ 4117.431861] Workqueue: nfsiod rpc_async_release
+[ 4117.440982] pstate: 40000005 (nZcv daif -PAN -UAO)
+[ 4117.450625] pc : refcount_sub_and_test+0x94/0xb8
+[ 4117.459918] lr : refcount_sub_and_test+0x94/0xb8
+[ 4117.469207] sp : ffff00000a7efc80
+[ 4117.475870] x29: ffff00000a7efc80 x28: 0000000000000000 
+[ 4117.486567] x27: ffff80097fbac330 x26: ffff0000091280f8 
+[ 4117.497263] x25: 0000000000000000 x24: ffff000009113000 
+[ 4117.507960] x23: ffff8009432338c8 x22: ffff8009432338d8 
+[ 4117.518655] x21: 0000000000000000 x20: ffff800943233700 
+[ 4117.529352] x19: ffff800942ba7100 x18: ffffffffffffffff 
+[ 4117.540048] x17: 0000000000000000 x16: 0000000000000000 
+[ 4117.550744] x15: ffff0000091136c8 x14: ffff0000892976c7 
+[ 4117.561441] x13: ffff0000092976d5 x12: ffff00000912b260 
+[ 4117.572137] x11: ffff00000912b000 x10: 0000000005f5e0ff 
+[ 4117.582834] x9 : ffff0000085b09a0 x8 : 6572662d72657466 
+[ 4117.593530] x7 : 612d657375203b77 x6 : ffff80097fba20c0 
+[ 4117.604225] x5 : ffff80097fba20c0 x4 : 0000000000000000 
+[ 4117.614922] x3 : ffff80097fba8ea8 x2 : ffff8009416f0000 
+[ 4117.625619] x1 : 2e35a06ccfe9d400 x0 : 0000000000000000 
+[ 4117.636315] Call trace:
+[ 4117.641229]  refcount_sub_and_test+0x94/0xb8
+[ 4117.649820]  refcount_dec_and_test+0x14/0x20
+[ 4117.658413]  nfs_release_request+0x1c/0x98
+[ 4117.666656]  nfs_unlock_and_release_request+0x1c/0x28
+[ 4117.676824]  nfs_commit_release_pages+0xa4/0x1b8
+[ 4117.686116]  nfs_commit_release+0x1c/0x30
+[ 4117.694181]  rpc_free_task+0x28/0x48
+[ 4117.701372]  rpc_async_release+0x10/0x18
+[ 4117.709262]  process_one_work+0x1dc/0x330
+[ 4117.717330]  worker_thread+0x48/0x430
+[ 4117.724695]  kthread+0xf8/0x128
+[ 4117.731010]  ret_from_fork+0x10/0x18
+[ 4117.738198] ---[ end trace 9745b48d60ab22f8 ]---
+[ 4117.747517] NFS: Invalid unlock attempted
+[ 4117.755609] ------------[ cut here ]------------
+[ 4117.764899] kernel BUG at fs/nfs/pagelist.c:359!
+[ 4117.774190] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[ 4117.785232] Modules linked in: overlay btrfs libcrc32c xor zstd_decompress zstd_compress xxhash raid6_pq fuse crc32_ce crct10dif_ce ipv6
+[ 4117.809973] CPU: 4 PID: 11116 Comm: kworker/4:0 Tainted: G        W         4.18.0-rc2-00119-g59ec39fe3826 #1
+[ 4117.829946] Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform, BIOS EDK II Feb 13 2018
+[ 4117.851675] Workqueue: nfsiod rpc_async_release
+[ 4117.860795] pstate: 40000005 (nZcv daif -PAN -UAO)
+[ 4117.870440] pc : nfs_unlock_request+0x5c/0x60
+[ 4117.879207] lr : nfs_unlock_request+0x5c/0x60
+[ 4117.887970] sp : ffff00000a7efcb0
+[ 4117.894633] x29: ffff00000a7efcb0 x28: 0000000000000000 
+[ 4117.905330] x27: ffff80097fbac330 x26: ffff0000091280f8 
+[ 4117.916027] x25: 0000000000000000 x24: ffff000009113000 
+[ 4117.926724] x23: ffff8009432338c8 x22: ffff8009432338d8 
+[ 4117.937421] x21: 0000000000000000 x20: ffff800943233700 
+[ 4117.948117] x19: ffff800942ba1780 x18: ffffffffffffffff 
+[ 4117.958814] x17: 0000000000000000 x16: 0000000000000000 
+[ 4117.969512] x15: ffff0000091136c8 x14: ffff0000892976c7 
+[ 4117.980208] x13: ffff0000092976d5 x12: ffff00000912b260 
+[ 4117.990905] x11: ffff00000912b000 x10: 0000000005f5e0ff 
+[ 4118.001602] x9 : ffff0000085b09a0 x8 : 206b636f6c6e7520 
+[ 4118.012299] x7 : 64696c61766e4920 x6 : ffff80097fba20c0 
+[ 4118.022996] x5 : ffff80097fba20c0 x4 : 0000000000000000 
+[ 4118.033693] x3 : ffff80097fba8ea8 x2 : 2e35a06ccfe9d400 
+[ 4118.044389] x1 : 0000000000000000 x0 : 000000000000001d 
+[ 4118.055088] Process kworker/4:0 (pid: 11116, stack limit = 0x00000000049b7686)
+[ 4118.069631] Call trace:
+[ 4118.074546]  nfs_unlock_request+0x5c/0x60
+[ 4118.082613]  nfs_unlock_and_release_request+0x14/0x28
+[ 4118.092781]  nfs_commit_release_pages+0xa4/0x1b8
+[ 4118.102071]  nfs_commit_release+0x1c/0x30
+[ 4118.110136]  rpc_free_task+0x28/0x48
+[ 4118.117326]  rpc_async_release+0x10/0x18
+[ 4118.125218]  process_one_work+0x1dc/0x330
+[ 4118.133284]  worker_thread+0x48/0x430
+[ 4118.140649]  kthread+0xf8/0x128
+[ 4118.146963]  ret_from_fork+0x10/0x18
+[ 4118.154155] Code: d65f03c0 d0005920 912c4000 97f8103d (d4210000) 
+[ 4118.166424] ---[ end trace 9745b48d60ab22f9 ]---
