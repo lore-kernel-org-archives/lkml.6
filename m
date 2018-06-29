@@ -2,144 +2,138 @@ Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B66BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2E1C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF7227996
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B47B27AB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 00:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mRNDiYEm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF7227996
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SNecGq5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B47B27AB2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030421AbeF2Aay (ORCPT
+        id S1755106AbeF2AdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 28 Jun 2018 20:30:54 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34671 "EHLO
+        Thu, 28 Jun 2018 20:33:06 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40608 "EHLO
         mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933008AbeF2A2u (ORCPT
+        with ESMTP id S1754565AbeF2AdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 28 Jun 2018 20:28:50 -0400
-Received: by mail-pl0-f66.google.com with SMTP id z9-v6so3564244plo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:28:50 -0700 (PDT)
+        Thu, 28 Jun 2018 20:33:04 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t6-v6so3561619plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Jun 2018 17:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=D1PO0mHJn+Uhua2TuGkTgdAGX+rVxwv+vJva+LYJL8Q=;
-        b=mRNDiYEmj8sIeSmuZ4nP1kNb1EglEu547ClBWhtRJDWrMnZlTRrA/g/gB71w7v824x
-         oLzo2SKM25DcWCBHiqulZbV6h2XFmthkD9RMrlTtLZ4ehJrWJAz8j2KFNuVNteyoVafc
-         wJPDdIZNfjfyxrK+IYAjkjzlmQIVkMQEMWiYc=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0asJfYbvMSmLeM21HjOzgKdVvDVzGK+rVRaNWLI3+Vk=;
+        b=SNecGq5h1kZJEu8zg7MNXQzH7Fz5vjnXxn95uSGA98p5lKeoCfagiDeZlbx+YswWYp
+         0OyxJ+nkxRtXDRj+aPAYThxS8aamdKrB6qOarDYPYo32Z83Ig5Fv19YldIQccJ/KwanY
+         9tJrY0+FUPSxEPw+HIIJdLEc5W2V4KVLRTwdI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=D1PO0mHJn+Uhua2TuGkTgdAGX+rVxwv+vJva+LYJL8Q=;
-        b=jVeSeKSHW7YTtLDRZs36XW6b9r/yGMzXJBB0Rr+bh4aSmBlqJiICGR92z700kmxP0o
-         F7EzHNg60CoFoH7Mn+5ctJPLl/DGC0PjIHK0930kIkPH84ngnWg+r+dLRh/irwsmHJBD
-         PNuCFevVth0roZo6xc35W78AgUtKduaAamuVDMT/fdyfyTqrq1O9Jj9vqrCWo6aslM4c
-         86qiT9P/brJyXqIFoh2B8S/MoscSaMNOOQLEmEsZfj4GZVV0V+PA0O243dWMXLQKlLAD
-         DqdD3vyfLU8fNRmHchexiu9vTE8tuYPIWWNWmR89XpDdKJIfiWDAx+r9+lFi2z8ieMKs
-         5WyA==
-X-Gm-Message-State: APt69E28jlWXIL7ltkytfNWCDliCLlzTrVUpOmQUhSCAbWxEotuXTvv5
-        98aSxq7UR5WmqPA9QMiWns+vfw==
-X-Google-Smtp-Source: ADUXVKIpCZ80o+sUAY9BLdjVApfIdemqLbdjpsSjVTvOsHLq0gekl8DAHdkoI1M17dV3s58nwS3N9g==
-X-Received: by 2002:a17:902:246a:: with SMTP id m39-v6mr12620548plg.141.1530232130503;
-        Thu, 28 Jun 2018 17:28:50 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v16-v6sm6432653pfn.105.2018.06.28.17.28.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0asJfYbvMSmLeM21HjOzgKdVvDVzGK+rVRaNWLI3+Vk=;
+        b=kfj3fCMAv9zIPc2VrO6kZmPoRdSXuE333i68STCYc+qg1A87vA10Zf2KD5+qdhfnqq
+         GASZE+dJXBSY4wVJknS9F+a603yEOgRCp6Knw8TkVctTc05W+Gx5Gd7q1ESrq+81l3ST
+         vQ/eMD5a3inQSaI2AoKJ0ItCWLo8pcmousyqJg1RfI/naOnOIGs/SosUKbcCqCqUyFaL
+         jwdoGmR9Y58ib2b11LvRjhF2pjfuLH0m8Juyd/st6dQh0pdM6/UWBLQpwP6Gpq1oxSW+
+         Se3U4bkP3GX8jBwBO8PMAtSpn+RDgU7uXBHC8PHRRy2fdyaIa8wibMaXYOBY5pGdh+B3
+         31EA==
+X-Gm-Message-State: APt69E1CUCnXzM8kwHd9KeiZBxvlTMOuyy1549cBTeZuDEr4etGOdLz4
+        okSRSEGnLHwZu80cpVDYNxdqIg==
+X-Google-Smtp-Source: ADUXVKKbSXYj7FAss5Fg/G3jqoEdwI8aWhc2YnaIF6G+5140hT62HMRXxuVdenZGIoFl1EUjSAqF4Q==
+X-Received: by 2002:a17:902:bb8a:: with SMTP id m10-v6mr12498707pls.236.1530232383802;
+        Thu, 28 Jun 2018 17:33:03 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id g2-v6sm5537332pgr.6.2018.06.28.17.33.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Jun 2018 17:28:48 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, qat-linux@intel.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/9] Crypto: Remove VLA usage (part 1)
-Date:   Thu, 28 Jun 2018 17:28:34 -0700
-Message-Id: <20180629002843.31095-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 28 Jun 2018 17:33:03 -0700 (PDT)
+Date:   Thu, 28 Jun 2018 17:33:02 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     rui.zhang@intel.com, rjw@rjwysocki.net, groeck@chromium.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        snanda@chromium.org, lenb@kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 2/2] thermal: core: introduce thermal zone
+ device mode control
+Message-ID: <20180629003302.GT129942@google.com>
+References: <20180226144118.24693-1-enric.balletbo@collabora.com>
+ <20180226144118.24693-2-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180226144118.24693-2-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v3:
-- drop *_REQUEST_ON_STACK patches. The rest of this series is pretty
-  straight-forward, and I'd like to get them tested in -next while
-  we continue to chip away at the *_REQUEST_ON_STACK VLA removal patches
-  separately. "Part 2" will continue with those.
+Hi,
 
-v2:
-- use 512 instead of PAGE_SIZE / 8 to avoid bloat on large-page archs.
-- swtich xcbc to "16" max universally.
-- fix typo in bounds check for dm buffer size.
-- examine actual reqsizes for skcipher and ahash instead of guessing.
-- improve names and comments for alg maxes
+I stumbled across this patch since I'm currently poking around with
+early thermal bringup on a platform and this patch has been integrated
+in our development tree.
 
+I'm seeing some unexpected behaviors, which could entirely due to
+wrong expectation from my side. I only have some basic working
+knowledge of the thermal framework, just want to double check and
+perhaps learn a thing or two.
 
-This is nearly the last of the VLA removals[1], but it's one of the
-largest because crypto gets used in lots of places. After looking
-through code, usage, reading the threads Gustavo started, and comparing
-the use-cases to the other VLA removals that have landed in the kernel,
-I think this series is likely the best way forward to shut the door on
-VLAs forever.
+On Mon, Feb 26, 2018 at 03:41:18PM +0100, Enric Balletbo i Serra wrote:
+> From: Zhang Rui <rui.zhang@intel.com>
+> 
+> Thermal "mode" sysfs attribute is introduced to enable/disable a thermal
+> zone, and .get_mode()/.set_mode() callback is introduced for platform
+> thermal driver to enable/disable the hardware thermal control logic. And
+> thermal core takes no action upon thermal zone enable/disable.
+> 
+> Actually, this is not quite right because thermal core still pokes those
+> disabled thermal zones occasionally, e.g. upon system resume.
+> 
+> To fix this, a new flag 'mode' is introduced in struct thermal_zone_device
+> to represent the thermal zone mode, and several decisions have been made
+> based on this flag, including
+> 1. check the thermal zone mode right after it's registered.
+> 2. skip updating thermal zone if the zone is disabled
+> 3. stop the polling timer when the thermal zone is disabled
+> 
+> Note: basically, this patch doesn't affect the existing always-enabled
+> thermal zones much, with just one exception -
+> thermal zone .get_mode() must be well prepared to reflect the real thermal
+> zone status upon the thermal zone registration.
 
-As background, the crypto stack usage is for callers to do an immediate
-bit of work that doesn't allocate new memory. This means that other VLA
-removal techniques (like just using kmalloc) aren't workable, and the
-next common technique is needed: examination of maximum stack usage and
-the addition of sanity checks. This series does that, and in several
-cases, these maximums were already implicit in the code.
+From my perspective this looks like a pretty significant change. For
+the platform I'm working on I added a thermal zone to the device tree,
+with the expectation that it would be enabled. Judging from the code
+without this patch this expectation seems to be naive, since
+of-thermal.c sets tz->mode to THERMAL_DEVICE_DISABLED, so apparently
+either userspace or some driver should call _set_mode(tz,
+THERMAL_DEVICE_ENABLED). However even without this the thermal zone
+appears to be active (I didn't really test end-to-end yet, but at
+least thermal_zone_device_update() is called and calls
+handle_thermal_trip()). Not sure why this is the case with
+THERMAL_DEVICE_DISABLED, but before I learned about the existence of
+the flag my expectation was that the zone would be enabled.
 
-This series is intended to land via the crypto tree, though it touches
-dm as well, since there are dependent patches (new crypto #defines
-being used).
+With this patch thermal_zone_device_update() is skipped if the zone
+hasn't been explictly enabled, which may be consistent with the state
+of 'tz->mode', but effectively changes the previous/current behavior.
 
-Thanks!
+Not sure if I'm just dumbly overlooking something obvious or if there
+is an actual problem with of_thermal (and maybe others).
 
--Kees
+Any insights?
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Thanks
 
-Kees Cook (9):
-  crypto: xcbc: Remove VLA usage
-  crypto: cbc: Remove VLA usage
-  crypto: shash: Remove VLA usage
-  dm integrity: Remove VLA usage
-  crypto: ahash: Remove VLA usage
-  dm verity fec: Remove VLA usage
-  crypto alg: Introduce generic max blocksize and alignmask
-  crypto: qat: Remove VLA usage
-  crypto: shash: Remove VLA usage in unaligned hashing
-
- crypto/ahash.c                           |  4 ++--
- crypto/algapi.c                          |  7 ++++++-
- crypto/algif_hash.c                      |  2 +-
- crypto/shash.c                           | 25 +++++++++++-------------
- crypto/xcbc.c                            |  9 +++++++--
- drivers/crypto/qat/qat_common/qat_algs.c |  8 ++++++--
- drivers/md/dm-integrity.c                | 23 ++++++++++++++++------
- drivers/md/dm-verity-fec.c               |  5 ++++-
- include/crypto/algapi.h                  |  4 +++-
- include/crypto/cbc.h                     |  4 +++-
- include/crypto/hash.h                    |  9 ++++++++-
- include/linux/compiler-gcc.h             |  1 -
- 12 files changed, 68 insertions(+), 33 deletions(-)
-
--- 
-2.17.1
-
+Matthias
