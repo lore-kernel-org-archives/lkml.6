@@ -2,142 +2,304 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B0AC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 16:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 452C2C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 16:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AD8823D06
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 16:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D161524865
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 16:39:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNvOdGqi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD8823D06
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3Xm99w3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D161524865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751409AbeF3QZW (ORCPT
+        id S1751372AbeF3QjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 12:25:22 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39916 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeF3QZS (ORCPT
+        Sat, 30 Jun 2018 12:39:14 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33489 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751113AbeF3QjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 12:25:18 -0400
-Received: by mail-oi0-f66.google.com with SMTP id d189-v6so2422839oib.6
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 09:25:18 -0700 (PDT)
+        Sat, 30 Jun 2018 12:39:12 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 6-v6so5936427plb.0
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 09:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IBsesTxYbpdfX9P3QFgdsqi1d5yu/tuP3GYLnArbARk=;
-        b=kNvOdGqikX3A6719n/UKWNFPnHRhp8YMGCFAOb5J20YnNYqvxfbP3NxV55n15f/Acz
-         gWmEnBDKkpvIB7j7xjhH0R25wQzqxIxY8oMAJZWDtkqNIPkFK2Mqf3gflEiYVzzy7pFJ
-         Bnv/LURao+79vqPgoHSNUmT/FgTaZ1C3UpogrSgYKOa3B9niTnDtI1eoj1w5uq4vPkU0
-         3QfGFlyqNcRwXc5hirmFyO1JPIUdZ0rBmn9+U8nSnC1XhwIFUKuXvVnuFs9Jf24zQCqF
-         1SACIcGGj/yx8ZQVl0A1fJvb83rWMvh7gKzTloQthorU+TocFMVI1PIKws8+LVAgWzOu
-         cOMw==
+        h=from:to:cc:subject:date:message-id;
+        bh=uUgCiTNGp99yknvUkLM3wa/Zyj/GytduOvTF9svjwA4=;
+        b=U3Xm99w3zvIrCMgPJaKJaTZGKHV+HsSv9Ezy69DO+XfCU3qATrjnZKhXjqDblLLoYA
+         efzUTR40AwK+V9hUseyJ6W9hguCgfh2zBgRv7vCB9/yyT8OAqZucpH78yIkLOoOig+s8
+         5vW1uFLK6aOhiwuCGO3Z6+urTvY2SEKecl9jUyxDEZnqVausNs/NHTmiH8Gli7ywIt6i
+         ItuT8bdXxOHb0UyLYBg0BglxabEZtSjQDv9h3NOylnBqU8s18L/N0rmykxUb3qxT9D/1
+         k2ZD+vakjR9cSn7Zkm/249tCe7GsOOLKqJH//ToH76J++E+nn6hAn4YBoGW0bcAPy9zH
+         x99g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IBsesTxYbpdfX9P3QFgdsqi1d5yu/tuP3GYLnArbARk=;
-        b=ssinPZ5NHEnQvbGZze+yFO892UAMThFJGX8TgZj8LROgxYIss2ivMImtpGAjxLthuK
-         KZwUWq8M66l2ZrspeLJB6JyEHEI76uBwJvC0qi30HXuIsKl9SX4MeNq94EUCdFvsvT61
-         Fs4V2KHANjNEg58dAfyRzmW9fTdS6aiph3MreK/+quV9ZFx7rskR+6w0Nv855WaiHhIC
-         oO1VRdK6ACO2HcEwo3KQnwHbAzhICBmMTA8dtFBzU0Ne/SYxFNcW/ijnkUUHVBUS7Ksy
-         3VzvqPaDY/N3mrOKsyV6Echw+Wbk/WntuuWSMj5Cf2YGzXOXdqvg9gZWtqVvbM1jWa9+
-         yCFQ==
-X-Gm-Message-State: APt69E1cqQPrlXZiSlIuwtKgZZBV1prJLsjfl4F3MdRlD4S3YOPvyyti
-        O/s4ASwQirQ9TOjSzl6WNJiGog==
-X-Google-Smtp-Source: AAOMgpcrsR8MWU7h/K3DbH2Y3IejM23mII6pIjIWPagHuRaea4vWaST8hPuO9XPdX+0q34pgRf8wzA==
-X-Received: by 2002:aca:758c:: with SMTP id q134-v6mr3683749oic.334.1530375917572;
-        Sat, 30 Jun 2018 09:25:17 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-253-228.kc.res.rr.com. [24.31.253.228])
-        by smtp.gmail.com with ESMTPSA id t7-v6sm5737494oth.12.2018.06.30.09.25.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uUgCiTNGp99yknvUkLM3wa/Zyj/GytduOvTF9svjwA4=;
+        b=O8qdcsWBzHyyCcSBs+FHRQ/Tfc2OsxzKsczGlzGmYctYtihwgqecL8Mt+ByikYRvpw
+         NkC1aOf6HpK9+hFheUdFyfmCbJnfJdVb1g3L5w9gxnDblwHoAqB3+/tIZDqcQ1GO4d0M
+         RLaZyGYvhk5YOaIHKV2ACqeJGqbqH3CPe4vgncKc3LQ/jX4DZZ2vzUsvKClEEkfL50wQ
+         M2EpbjOIF3L6LkAD/Rb1LcV9ICix/tjS6HsiS3p4ZNdfmoSR3kp/tKOqKNEZfQanXAiL
+         zzxrTg9CkF6tPXPwm7fGAuDFP0jo1JNDrBDJxxdCvCQxeRTUmJ5Wsr+6qeWbXg+99g8m
+         ORhA==
+X-Gm-Message-State: APt69E0i2+zwzQ5g+AEStj9o01Fi78uXJCWbo57oobF/vJXPqgD3BLY8
+        1Gk+8SjWfRbDiuxTf3GwywY=
+X-Google-Smtp-Source: ADUXVKLO3gXBzv4pSelpOTyjYjUzxHvoSgSCSS0QCumzGY6dxdeIJuCj99hR/qTu2565pDDnKa8+/A==
+X-Received: by 2002:a17:902:a5:: with SMTP id a34-v6mr19706224pla.80.1530376752018;
+        Sat, 30 Jun 2018 09:39:12 -0700 (PDT)
+Received: from dest.didichuxing.com ([168.63.150.120])
+        by smtp.gmail.com with ESMTPSA id b65-v6sm21473158pfg.34.2018.06.30.09.39.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Jun 2018 09:25:16 -0700 (PDT)
-Subject: Re: [Update] Regression in 4.18 - 32-bit PowerPC crashes on boot -
- bisected to commit 1d40a5ea01d5
-To:     christophe leroy <christophe.leroy@c-s.fr>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
-References: <99169786-61dd-b19c-ac81-84bcd0a67de4@lwfinger.net>
- <1a73e92a-f77d-ba1e-ebf8-b469db3c465e@c-s.fr>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <b721b0c9-a802-2296-fc82-5c11c2698327@lwfinger.net>
-Date:   Sat, 30 Jun 2018 11:25:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1a73e92a-f77d-ba1e-ebf8-b469db3c465e@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 30 Jun 2018 09:39:10 -0700 (PDT)
+From:   ufo19890607@gmail.com
+To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        yuzhoujian@didichuxing.com
+Subject: [PATCH v11 1/2] Refactor part of the oom report in dump_header
+Date:   Sun,  1 Jul 2018 00:38:58 +0800
+Message-Id: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/30/2018 04:31 AM, christophe leroy wrote:
-> 
-> 
-> Le 29/06/2018 à 22:42, Larry Finger a écrit :
->> My PowerBook G4 Aluminum crashes on boot with 4.18-rcX kernels with a kernel 
->> BUG at include/linux/page-flags.h:700! The problem was bisected to commit 
->> 1d40a5ea01d5 ("mm: mark pages in use for page tables"). It is not possible to 
->> capture the bug with anything other than a camera. The first few lines of the 
->> traceback are as follows:
->>
->> free_pgd_range+0x19c/0x30c (unreliable)
->> free_pgtables_0xa0/0xb0
->> exit_pmap+0xf4/0x16c
->> mmput+0x64/0xf0
->> do_exit+0x33c/0x89c
->> oops_end+0x13c/0x144
->> _exception_pkey+0x58/0x128
->> ret_from_except_full+0x0/0x4
->> --- interrupt: 700 at free_pgd_range+0x19c/0x30c
->>      LR = free_pgd_range+0x19c/0x30c
->> free_pgtables+0xa/0xb
->> exit_mnap+0xf4/0x16c
->> mmput+0x64/0xf0
->> flush_old_exec+0x490/0x550
->>
->> I have more information regarding this BUG. Line 700 of page-flags.h is the 
->> macro PAGE_TYPE_OPS(Table, table). For further debugging, I manually expanded 
->> the macro, and found that the bug line is VM_BUG_ON_PAGE(!PageTable(page), 
->> page) in routine __ClearPageTable(), which is called from pgtable_page_dtor() 
->> in include/linux/mm.h. I also added a printk call to PageTable() that logs 
->> page->page_type. The routine was called twice. The first had page_type of 
->> 0xfffffbff, which would have been expected for a . The second call had 
->> 0xffffffff, which led to the BUG.
->>
-> 
-> Oh, seems to be the one I noticed and told Aneesh about 
-> (https://patchwork.ozlabs.org/patch/922771/)
-> 
-> Aneesh provided the patch https://patchwork.ozlabs.org/patch/934111/ for it, 
-> does it help ?
+From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-Yes, those changes fix the problem.
+The current system wide oom report prints information about the victim
+and the allocation context and restrictions. It, however, doesn't
+provide any information about memory cgroup the victim belongs to. This
+information can be interesting for container users because they can find
+the victim's container much more easily.
 
-Larry
+I follow the advices of David Rientjes and Michal Hocko, and refactor
+part of the oom report. After this patch, users can get the memcg's
+path from the oom report and check the certain container more quickly.
+
+The oom print info after this patch:
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
+
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+---
+Below is the part of the oom report in the dmesg
+...
+[  126.168182] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
+[  126.169115] panic cpuset=/ mems_allowed=0-1
+[  126.169806] CPU: 23 PID: 8668 Comm: panic Not tainted 4.18.0-rc2+ #36
+[  126.170494] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
+[  126.171197] Call Trace:
+[  126.171901]  dump_stack+0x5a/0x73
+[  126.172593]  dump_header+0x58/0x2dc
+[  126.173294]  oom_kill_process+0x228/0x420
+[  126.173999]  ? oom_badness+0x2a/0x130
+[  126.174705]  out_of_memory+0x11a/0x4a0
+[  126.175415]  __alloc_pages_slowpath+0x7cc/0xa1e
+[  126.176128]  ? __alloc_pages_slowpath+0x194/0xa1e
+[  126.176853]  ? page_counter_try_charge+0x54/0xc0
+[  126.177580]  __alloc_pages_nodemask+0x277/0x290
+[  126.178319]  alloc_pages_vma+0x73/0x180
+[  126.179058]  do_anonymous_page+0xed/0x5a0
+[  126.179825]  __handle_mm_fault+0xbb3/0xe70
+[  126.180566]  handle_mm_fault+0xfa/0x210
+[  126.181313]  __do_page_fault+0x233/0x4c0
+[  126.182063]  do_page_fault+0x32/0x140
+[  126.182812]  ? page_fault+0x8/0x30
+[  126.183560]  page_fault+0x1e/0x30
+[  126.184311] RIP: 0033:0x7f62c9e65860
+[  126.185059] Code: Bad RIP value.
+[  126.185819] RSP: 002b:00007ffcf7bc9288 EFLAGS: 00010206
+[  126.186589] RAX: 00007f6209bd8000 RBX: 0000000000000000 RCX: 00007f6236914000
+[  126.187383] RDX: 00007f6249bd8000 RSI: 0000000000000000 RDI: 00007f6209bd8000
+[  126.188179] RBP: 00007ffcf7bc92b0 R08: ffffffffffffffff R09: 0000000000000000
+[  126.188981] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
+[  126.189793] R13: 00007ffcf7bc9390 R14: 0000000000000000 R15: 0000000000000000
+[  126.190619] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),global_oom,task_memcg=/test/test1/test2,task=panic,pid= 8673,uid=    0
+...
+
+Changes since v10:
+- divide the patch v8 into two parts. One part is to add the array of const char and put enum
+  oom_constaint into oom.h; the other adds a new func to print the missing information for the system-
+  wide oom report.
+
+Changes since v9:
+- divide the patch v8 into two parts. One part is to move enum oom_constraint into memcontrol.h; the
+  other refactors the output info in the dump_header.
+- replace orgin_memcg and kill_memcg with oom_memcg and task_memcg resptively.
+
+Changes since v8:
+- add the constraint in the oom_control structure.
+- put enum oom_constraint and constraint array into the oom.h file.
+- simplify the description for mem_cgroup_print_oom_context.
+
+Changes since v7:
+- add the constraint parameter to dump_header and oom_kill_process.
+- remove the static char array in the mem_cgroup_print_oom_context, and
+  invoke pr_cont_cgroup_path to print memcg' name.
+- combine the patchset v6 into one.
+
+Changes since v6:
+- divide the patch v5 into two parts. One part is to add an array of const char and
+  put enum oom_constraint into the memcontrol.h; the other refactors the output
+  in the dump_header.
+- limit the memory usage for the static char array by using NAME_MAX in the mem_cgroup_print_oom_context.
+- eliminate the spurious spaces in the oom's output and fix the spelling of "constrain".
+
+Changes since v5:
+- add an array of const char for each constraint.
+- replace all of the pr_cont with a single line print of the pr_info.
+- put enum oom_constraint into the memcontrol.c file for printing oom constraint.
+
+Changes since v4:
+- rename the helper's name to mem_cgroup_print_oom_context.
+- rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
+- add the constrain info in the dump_header.
+
+Changes since v3:
+- rename the helper's name to mem_cgroup_print_oom_memcg_name.
+- add the rcu lock held to the helper.
+- remove the print info of memcg's name in mem_cgroup_print_oom_info.
+
+Changes since v2:
+- add the mem_cgroup_print_memcg_name helper to print the memcg's
+  name which contains the task that will be killed by the oom-killer.
+
+Changes since v1:
+- replace adding mem_cgroup_print_oom_info with printing the memcg's
+  name only.
+
+ include/linux/oom.h | 17 +++++++++++++++++
+ mm/oom_kill.c       | 31 ++++++++++++++-----------------
+ 2 files changed, 31 insertions(+), 17 deletions(-)
+
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 6adac113e96d..5bed78d4bfb8 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -15,6 +15,20 @@ struct notifier_block;
+ struct mem_cgroup;
+ struct task_struct;
+ 
++enum oom_constraint {
++	CONSTRAINT_NONE,
++	CONSTRAINT_CPUSET,
++	CONSTRAINT_MEMORY_POLICY,
++	CONSTRAINT_MEMCG,
++};
++
++static const char * const oom_constraint_text[] = {
++	[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
++	[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
++	[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
++	[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
++};
++
+ /*
+  * Details of the page allocation that triggered the oom killer that are used to
+  * determine what should be killed.
+@@ -42,6 +56,9 @@ struct oom_control {
+ 	unsigned long totalpages;
+ 	struct task_struct *chosen;
+ 	unsigned long chosen_points;
++
++	/* Used to print the constraint info. */
++	enum oom_constraint constraint;
+ };
+ 
+ extern struct mutex oom_lock;
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 84081e77bc51..f9b08e455fd1 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -237,13 +237,6 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	return points > 0 ? points : 1;
+ }
+ 
+-enum oom_constraint {
+-	CONSTRAINT_NONE,
+-	CONSTRAINT_CPUSET,
+-	CONSTRAINT_MEMORY_POLICY,
+-	CONSTRAINT_MEMCG,
+-};
+-
+ /*
+  * Determine the type of allocation constraint.
+  */
+@@ -421,15 +414,20 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+ 
+ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ {
+-	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
+-		current->comm, oc->gfp_mask, &oc->gfp_mask,
+-		nodemask_pr_args(oc->nodemask), oc->order,
++	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), order=%d, oom_score_adj=%hd\n",
++		current->comm, oc->gfp_mask, &oc->gfp_mask, oc->order,
+ 			current->signal->oom_score_adj);
+ 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
+ 		pr_warn("COMPACTION is disabled!!!\n");
+ 
+ 	cpuset_print_current_mems_allowed();
+ 	dump_stack();
++
++	/* one line summary of the oom killer context. */
++	pr_info("oom-kill:constraint=%s,nodemask=%*pbl,task=%s,pid=%5d,uid=%5d",
++			oom_constraint_text[oc->constraint],
++			nodemask_pr_args(oc->nodemask),
++			p->comm, p->pid, from_kuid(&init_user_ns, task_uid(p)));
+ 	if (is_memcg_oom(oc))
+ 		mem_cgroup_print_oom_info(oc->memcg, p);
+ 	else {
+@@ -973,8 +971,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ /*
+  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
+  */
+-static void check_panic_on_oom(struct oom_control *oc,
+-			       enum oom_constraint constraint)
++static void check_panic_on_oom(struct oom_control *oc)
+ {
+ 	if (likely(!sysctl_panic_on_oom))
+ 		return;
+@@ -984,7 +981,7 @@ static void check_panic_on_oom(struct oom_control *oc,
+ 		 * does not panic for cpuset, mempolicy, or memcg allocation
+ 		 * failures.
+ 		 */
+-		if (constraint != CONSTRAINT_NONE)
++		if (oc->constraint != CONSTRAINT_NONE)
+ 			return;
+ 	}
+ 	/* Do not panic for oom kills triggered by sysrq */
+@@ -1021,8 +1018,8 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
+ bool out_of_memory(struct oom_control *oc)
+ {
+ 	unsigned long freed = 0;
+-	enum oom_constraint constraint = CONSTRAINT_NONE;
+ 
++	oc->constraint = CONSTRAINT_NONE;
+ 	if (oom_killer_disabled)
+ 		return false;
+ 
+@@ -1057,10 +1054,10 @@ bool out_of_memory(struct oom_control *oc)
+ 	 * Check if there were limitations on the allocation (only relevant for
+ 	 * NUMA and memcg) that may require different handling.
+ 	 */
+-	constraint = constrained_alloc(oc);
+-	if (constraint != CONSTRAINT_MEMORY_POLICY)
++	oc->constraint = constrained_alloc(oc);
++	if (oc->constraint != CONSTRAINT_MEMORY_POLICY)
+ 		oc->nodemask = NULL;
+-	check_panic_on_oom(oc, constraint);
++	check_panic_on_oom(oc);
+ 
+ 	if (!is_memcg_oom(oc) && sysctl_oom_kill_allocating_task &&
+ 	    current->mm && !oom_unkillable_task(current, NULL, oc->nodemask) &&
+-- 
+2.14.1
 
