@@ -2,300 +2,514 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D6CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346D8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7EB72810E
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:13:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EA5jVyyk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7EB72810E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C8976214DC
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:13:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8976214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936285AbeF3BNN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 21:13:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933615AbeF3BNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 21:13:08 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 039662810A;
-        Sat, 30 Jun 2018 01:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530321188;
-        bh=xK9Gm/U/1Y1rBHo2/BfNIIh/TF3zz16jq9aosou3vJo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EA5jVyykgANq5CYV05eQqPi4AoNCH29K9GRKuC257Ov/NKruwsBnt4dwHMX64aoo8
-         XfupHlEEwvfsUHxGrm5mg4GT2jtbo2ec8k2reH0xebCrdVsUM+MtPU9TZK3HYBpkRr
-         R3jeYfAo7zF2PS5G/7WIFA5/7EVBBJizx8aCydvw=
-Date:   Fri, 29 Jun 2018 20:13:06 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     linux-pci@vger.kernel.org, timur@codeaurora.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Petr Tesarik <ptesarik@suse.cz>, Ram Pai <linuxram@us.ibm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Christoffer Dall <cdall@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "maintainer:X86 ARCHITECTURE 32-BIT AND 64-BIT" <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Juergen Gross <jgross@suse.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH V4] PCI: move early dump functionality from x86 arch into
- the common code
-Message-ID: <20180630011305.GK40928@bhelgaas-glaptop.roam.corp.google.com>
-References: <1528164985-14099-1-git-send-email-okaya@codeaurora.org>
+        id S936396AbeF3BNi convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:13:38 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35179 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932375AbeF3BNd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:13:33 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c1-v6so8176861edt.2;
+        Fri, 29 Jun 2018 18:13:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=D9YJOmBUSf3nt9qADVS588/XXtpFBif4Auq453azHB8=;
+        b=kcq7vhnIV6O7XiClI72Gz8XTEffHFPpsEc5egZeOsM7vw47KVhRyWCjgKZS+r5a+2N
+         VHaXSu9WgpcnB9zbRlHA2GgGD4VGpImh8dtPACxu8EqmkiXRBr+HdkcHb/+c6UxrPAnJ
+         KzO5hD0TdZWO3xD3JHrNdGHXcgZ76a/nGv5SXwm7FKifKZWy4gPOeOaSjA5FOR8SvfoI
+         yrk6lBuM3LoZO4kWvhIr1S7HZU/xhSgkeoQNxZPbJTn6paY7rgt157biBzn6+M70QeeY
+         Qwc/URKpeqZhM0zLT5pobBuakK2LER2eV2DBKu4WYJ0CzwYIOjIPEAzicjIVD2sXEq89
+         Gvgw==
+X-Gm-Message-State: APt69E3Jz287TSV4P486wl/RntIBJ8Unx5aQqBMqJtOlCSp6SXEKUyTl
+        MkTDH6BCTBkyOMT7AklgYqnQXJt0
+X-Google-Smtp-Source: AAOMgpeGwJe0c8rPw5Gl6ZbvRt+y1udIFATpaLPOmQaw3CJlgKpgcT2lQ+MB07UDZ10T42NzT4riRA==
+X-Received: by 2002:a50:8f86:: with SMTP id y6-v6mr14784290edy.290.1530321211733;
+        Fri, 29 Jun 2018 18:13:31 -0700 (PDT)
+Received: from mail-wr0-f169.google.com (mail-wr0-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id h32-v6sm1456441edc.82.2018.06.29.18.13.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 18:13:30 -0700 (PDT)
+Received: by mail-wr0-f169.google.com with SMTP id b8-v6so10334921wro.6;
+        Fri, 29 Jun 2018 18:13:30 -0700 (PDT)
+X-Received: by 2002:adf:f9c5:: with SMTP id w5-v6mr2237071wrr.105.1530321209909;
+ Fri, 29 Jun 2018 18:13:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528164985-14099-1-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 18:13:09
+ -0700 (PDT)
+In-Reply-To: <2345297.lfuU2Dmuvs@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-6-jernej.skrabec@siol.net> <CAGb2v6465Upen-aFiLXDrSPLDGLh+2REjaZ_91W39=E1DffHeA@mail.gmail.com>
+ <2345297.lfuU2Dmuvs@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 30 Jun 2018 09:13:09 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66Xa88hqkb5OW9ROO2=cuaL6JfbmtjR3YzOumdJgw7E9Q@mail.gmail.com>
+Message-ID: <CAGb2v66Xa88hqkb5OW9ROO2=cuaL6JfbmtjR3YzOumdJgw7E9Q@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 05/24] drm/sun4i: Add TCON TOP driver
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 10:16:09PM -0400, Sinan Kaya wrote:
-> Move early dump functionality into common code so that it is available for
-> all archtiectures. No need to carry arch specific reads around as the read
-> hooks are already initialized by the time pci_setup_device() is getting
-> called during scan.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+On Sat, Jun 30, 2018 at 3:09 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 03:47:20 CEST je Chen-Yu Tsai napisal(a):
+>> Hi,
+>>
+>> So I'm late to the party, but...
+>>
+>> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > As already described in DT binding, TCON TOP is responsible for
+>> > configuring display pipeline. In this initial driver focus is on HDMI
+>> > pipeline, so TVE and LCD configuration is not implemented.
+>> >
+>> > Implemented features:
+>> > - HDMI source selection
+>> > - clock driver (TCON and DSI gating)
+>> > - connecting mixers and TCONS
+>> >
+>> > Something similar also existed in previous SoCs, except that it was part
+>> > of first TCON.
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  drivers/gpu/drm/sun4i/Makefile         |   3 +-
+>> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 300 +++++++++++++++++++++++++
+>> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.h |  40 ++++
+>> >  3 files changed, 342 insertions(+), 1 deletion(-)
+>> >  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+>> >  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+>> >
+>> > diff --git a/drivers/gpu/drm/sun4i/Makefile
+>> > b/drivers/gpu/drm/sun4i/Makefile index 2589f4acd5ae..09fbfd6304ba 100644
+>> > --- a/drivers/gpu/drm/sun4i/Makefile
+>> > +++ b/drivers/gpu/drm/sun4i/Makefile
+>> > @@ -16,7 +16,8 @@ sun8i-drm-hdmi-y              += sun8i_hdmi_phy_clk.o
+>> >
+>> >  sun8i-mixer-y                  += sun8i_mixer.o sun8i_ui_layer.o \
+>> >
+>> >                                    sun8i_vi_layer.o sun8i_ui_scaler.o \
+>> >
+>> > -                                  sun8i_vi_scaler.o sun8i_csc.o
+>> > +                                  sun8i_vi_scaler.o sun8i_csc.o \
+>> > +                                  sun8i_tcon_top.o
+>> >
+>> >  sun4i-tcon-y                   += sun4i_crtc.o
+>> >  sun4i-tcon-y                   += sun4i_dotclock.o
+>> >
+>> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+>> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c new file mode 100644
+>> > index 000000000000..8da0460e0028
+>> > --- /dev/null
+>> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+>> > @@ -0,0 +1,300 @@
+>> > +// SPDX-License-Identifier: GPL-2.0+
+>> > +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
+>> > +
+>> > +#include <drm/drmP.h>
+>> > +
+>> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
+>> > +
+>> > +#include <linux/bitfield.h>
+>> > +#include <linux/component.h>
+>> > +#include <linux/device.h>
+>> > +#include <linux/module.h>
+>> > +#include <linux/of_graph.h>
+>> > +#include <linux/platform_device.h>
+>> > +
+>> > +#include "sun8i_tcon_top.h"
+>> > +
+>> > +static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
+>> > +                                             int port_id)
+>> > +{
+>> > +       struct device_node *ep, *remote, *port;
+>> > +       struct of_endpoint endpoint;
+>> > +
+>> > +       port = of_graph_get_port_by_id(node, port_id);
+>> > +       if (!port)
+>> > +               return -ENOENT;
+>> > +
+>> > +       for_each_available_child_of_node(port, ep) {
+>> > +               remote = of_graph_get_remote_port_parent(ep);
+>> > +               if (!remote)
+>> > +                       continue;
+>> > +
+>> > +               if (of_device_is_available(remote)) {
+>> > +                       of_graph_parse_endpoint(ep, &endpoint);
+>> > +
+>> > +                       of_node_put(remote);
+>> > +
+>> > +                       return endpoint.id;
+>> > +               }
+>> > +
+>> > +               of_node_put(remote);
+>> > +       }
+>> > +
+>> > +       return -ENOENT;
+>> > +}
+>> > +
+>> > +static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
+>> > +                                                  struct clk *parent,
+>> > +                                                  void __iomem *regs,
+>> > +                                                  spinlock_t *lock,
+>> > +                                                  u8 bit, int name_index)
+>> > +{
+>> > +       const char *clk_name, *parent_name;
+>> > +       int ret;
+>> > +
+>> > +       parent_name = __clk_get_name(parent);
+>>
+>> You can simply pass in the binding clock name, and have
+>>
+>>     index = of_property_match_string(np, "clock-names", name);
+>>     parent_name = of_clk_get_parent_name(dev->of_node, index);
+>
+> That is elegant solution. Should I include that in follow up series?
 
-Applied with Andy's tested- and reviewed-by to pci/resource for v4.19,
-thanks!  This is really a nice generalization.
+If you have time for it, go ahead. This is just cleanup, so there's
+no urgency. If not, I suppose I could do it later on.
 
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  2 +-
->  arch/x86/include/asm/pci-direct.h               |  4 ---
->  arch/x86/kernel/setup.c                         |  5 ---
->  arch/x86/pci/common.c                           |  4 ---
->  arch/x86/pci/early.c                            | 44 -------------------------
->  drivers/pci/pci.c                               |  5 +++
->  drivers/pci/pci.h                               |  1 +
->  drivers/pci/probe.c                             | 19 +++++++++++
->  8 files changed, 26 insertions(+), 58 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index e490902..e64f1d8 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2995,7 +2995,7 @@
->  			See also Documentation/blockdev/paride.txt.
->  
->  	pci=option[,option...]	[PCI] various PCI subsystem options:
-> -		earlydump	[X86] dump PCI config space before the kernel
-> +		earlydump	dump PCI config space before the kernel
->  				changes anything
->  		off		[X86] don't probe for the PCI bus
->  		bios		[X86-32] force use of PCI BIOS, don't access
-> diff --git a/arch/x86/include/asm/pci-direct.h b/arch/x86/include/asm/pci-direct.h
-> index e1084f7..94597a3 100644
-> --- a/arch/x86/include/asm/pci-direct.h
-> +++ b/arch/x86/include/asm/pci-direct.h
-> @@ -15,8 +15,4 @@ extern void write_pci_config_byte(u8 bus, u8 slot, u8 func, u8 offset, u8 val);
->  extern void write_pci_config_16(u8 bus, u8 slot, u8 func, u8 offset, u16 val);
->  
->  extern int early_pci_allowed(void);
-> -
-> -extern unsigned int pci_early_dump_regs;
-> -extern void early_dump_pci_device(u8 bus, u8 slot, u8 func);
-> -extern void early_dump_pci_devices(void);
->  #endif /* _ASM_X86_PCI_DIRECT_H */
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 2f86d88..480f250 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -991,11 +991,6 @@ void __init setup_arch(char **cmdline_p)
->  		setup_clear_cpu_cap(X86_FEATURE_APIC);
->  	}
->  
-> -#ifdef CONFIG_PCI
-> -	if (pci_early_dump_regs)
-> -		early_dump_pci_devices();
-> -#endif
-> -
->  	e820__reserve_setup_data();
->  	e820__finish_early_params();
->  
-> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
-> index 563049c..d4ec117 100644
-> --- a/arch/x86/pci/common.c
-> +++ b/arch/x86/pci/common.c
-> @@ -22,7 +22,6 @@
->  unsigned int pci_probe = PCI_PROBE_BIOS | PCI_PROBE_CONF1 | PCI_PROBE_CONF2 |
->  				PCI_PROBE_MMCONF;
->  
-> -unsigned int pci_early_dump_regs;
->  static int pci_bf_sort;
->  int pci_routeirq;
->  int noioapicquirk;
-> @@ -599,9 +598,6 @@ char *__init pcibios_setup(char *str)
->  		pci_probe |= PCI_BIG_ROOT_WINDOW;
->  		return NULL;
->  #endif
-> -	} else if (!strcmp(str, "earlydump")) {
-> -		pci_early_dump_regs = 1;
-> -		return NULL;
->  	} else if (!strcmp(str, "routeirq")) {
->  		pci_routeirq = 1;
->  		return NULL;
-> diff --git a/arch/x86/pci/early.c b/arch/x86/pci/early.c
-> index e5f753c..f5fc953 100644
-> --- a/arch/x86/pci/early.c
-> +++ b/arch/x86/pci/early.c
-> @@ -57,47 +57,3 @@ int early_pci_allowed(void)
->  			PCI_PROBE_CONF1;
->  }
->  
-> -void early_dump_pci_device(u8 bus, u8 slot, u8 func)
-> -{
-> -	u32 value[256 / 4];
-> -	int i;
-> -
-> -	pr_info("pci 0000:%02x:%02x.%d config space:\n", bus, slot, func);
-> -
-> -	for (i = 0; i < 256; i += 4)
-> -		value[i / 4] = read_pci_config(bus, slot, func, i);
-> -
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, value, 256, false);
-> -}
-> -
-> -void early_dump_pci_devices(void)
-> -{
-> -	unsigned bus, slot, func;
-> -
-> -	if (!early_pci_allowed())
-> -		return;
-> -
-> -	for (bus = 0; bus < 256; bus++) {
-> -		for (slot = 0; slot < 32; slot++) {
-> -			for (func = 0; func < 8; func++) {
-> -				u32 class;
-> -				u8 type;
-> -
-> -				class = read_pci_config(bus, slot, func,
-> -							PCI_CLASS_REVISION);
-> -				if (class == 0xffffffff)
-> -					continue;
-> -
-> -				early_dump_pci_device(bus, slot, func);
-> -
-> -				if (func == 0) {
-> -					type = read_pci_config_byte(bus, slot,
-> -								    func,
-> -							       PCI_HEADER_TYPE);
-> -					if (!(type & 0x80))
-> -						break;
-> -				}
-> -			}
-> -		}
-> -	}
-> -}
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 97acba7..04052dc 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -115,6 +115,9 @@ static bool pcie_ari_disabled;
->  /* If set, the PCIe ATS capability will not be used. */
->  static bool pcie_ats_disabled;
->  
-> +/* If set, the PCI config space of each device is printed during boot. */
-> +bool pci_early_dump;
-> +
->  bool pci_ats_disabled(void)
->  {
->  	return pcie_ats_disabled;
-> @@ -5805,6 +5808,8 @@ static int __init pci_setup(char *str)
->  				pcie_ats_disabled = true;
->  			} else if (!strcmp(str, "noaer")) {
->  				pci_no_aer();
-> +			} else if (!strcmp(str, "earlydump")) {
-> +				pci_early_dump = true;
->  			} else if (!strncmp(str, "realloc=", 8)) {
->  				pci_realloc_get_opt(str + 8);
->  			} else if (!strncmp(str, "realloc", 7)) {
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index c358e7a0..c33265e 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -7,6 +7,7 @@
->  #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
->  
->  extern const unsigned char pcie_link_speed[];
-> +extern bool pci_early_dump;
->  
->  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
->  
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 56771f3..3678f0a 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1545,6 +1545,23 @@ static int pci_intx_mask_broken(struct pci_dev *dev)
->  	return 0;
->  }
->  
-> +static void early_dump_pci_device(struct pci_dev *pdev)
-> +{
-> +	u32 value[256 / 4];
-> +	int i;
-> +
-> +	if (!pci_early_dump)
-> +		return;
-> +
-> +	pci_info(pdev, "config space:\n");
-> +
-> +	for (i = 0; i < 256; i += 4)
-> +		pci_read_config_dword(pdev, i, &value[i / 4]);
-> +
-> +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, value,
-> +		       256, false);
-> +}
-> +
->  /**
->   * pci_setup_device - Fill in class and map information of a device
->   * @dev: the device structure to fill
-> @@ -1594,6 +1611,8 @@ int pci_setup_device(struct pci_dev *dev)
->  	pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
->  		   dev->vendor, dev->device, dev->hdr_type, dev->class);
->  
-> +	early_dump_pci_device(dev);
-> +
->  	/* Need to have dev->class ready */
->  	dev->cfg_size = pci_cfg_space_size(dev);
->  
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ChenYu
+
+> Best regards,
+> Jernej
+>
+>>
+>> > +       ret = of_property_read_string_index(dev->of_node,
+>> > +                                           "clock-output-names",
+>> > name_index, +                                           &clk_name);
+>> > +       if (ret)
+>> > +               return ERR_PTR(ret);
+>> > +
+>> > +       return clk_hw_register_gate(dev, clk_name, parent_name,
+>> > +                                   CLK_SET_RATE_PARENT,
+>> > +                                   regs + TCON_TOP_GATE_SRC_REG,
+>> > +                                   bit, 0, lock);
+>> > +};
+>> > +
+>> > +static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+>> > +                              void *data)
+>> > +{
+>> > +       struct platform_device *pdev = to_platform_device(dev);
+>> > +       struct clk *dsi, *tcon_tv0, *tcon_tv1, *tve0, *tve1;
+>> > +       struct clk_hw_onecell_data *clk_data;
+>> > +       struct sun8i_tcon_top *tcon_top;
+>> > +       bool mixer0_unused = false;
+>> > +       struct resource *res;
+>> > +       void __iomem *regs;
+>> > +       int ret, i, id;
+>> > +       u32 val;
+>> > +
+>> > +       tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+>> > +       if (!tcon_top)
+>> > +               return -ENOMEM;
+>> > +
+>> > +       clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
+>> > +                               sizeof(*clk_data->hws) * CLK_NUM,
+>> > +                               GFP_KERNEL);
+>> > +       if (!clk_data)
+>> > +               return -ENOMEM;
+>> > +       tcon_top->clk_data = clk_data;
+>> > +
+>> > +       spin_lock_init(&tcon_top->reg_lock);
+>> > +
+>> > +       tcon_top->rst = devm_reset_control_get(dev, NULL);
+>> > +       if (IS_ERR(tcon_top->rst)) {
+>> > +               dev_err(dev, "Couldn't get our reset line\n");
+>> > +               return PTR_ERR(tcon_top->rst);
+>> > +       }
+>> > +
+>> > +       tcon_top->bus = devm_clk_get(dev, "bus");
+>> > +       if (IS_ERR(tcon_top->bus)) {
+>> > +               dev_err(dev, "Couldn't get the bus clock\n");
+>> > +               return PTR_ERR(tcon_top->bus);
+>> > +       }
+>> > +
+>> > +       dsi = devm_clk_get(dev, "dsi");
+>> > +       if (IS_ERR(dsi)) {
+>> > +               dev_err(dev, "Couldn't get the dsi clock\n");
+>> > +               return PTR_ERR(dsi);
+>> > +       }
+>> > +
+>> > +       tcon_tv0 = devm_clk_get(dev, "tcon-tv0");
+>> > +       if (IS_ERR(tcon_tv0)) {
+>> > +               dev_err(dev, "Couldn't get the tcon-tv0 clock\n");
+>> > +               return PTR_ERR(tcon_tv0);
+>> > +       }
+>> > +
+>> > +       tcon_tv1 = devm_clk_get(dev, "tcon-tv1");
+>> > +       if (IS_ERR(tcon_tv1)) {
+>> > +               dev_err(dev, "Couldn't get the tcon-tv1 clock\n");
+>> > +               return PTR_ERR(tcon_tv1);
+>> > +       }
+>> > +
+>> > +       tve0 = devm_clk_get(dev, "tve0");
+>> > +       if (IS_ERR(tve0)) {
+>> > +               dev_err(dev, "Couldn't get the tve0 clock\n");
+>> > +               return PTR_ERR(tve0);
+>> > +       }
+>> > +
+>> > +       tve1 = devm_clk_get(dev, "tve1");
+>> > +       if (IS_ERR(tve1)) {
+>> > +               dev_err(dev, "Couldn't get the tve1 clock\n");
+>> > +               return PTR_ERR(tve1);
+>> > +       }
+>>
+>> So you don't actually have to hold references to the parent clocks.
+>>
+>> ChenYu
+>>
+>> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> > +       regs = devm_ioremap_resource(dev, res);
+>> > +       if (IS_ERR(regs))
+>> > +               return PTR_ERR(regs);
+>> > +
+>> > +       ret = reset_control_deassert(tcon_top->rst);
+>> > +       if (ret) {
+>> > +               dev_err(dev, "Could not deassert ctrl reset control\n");
+>> > +               return ret;
+>> > +       }
+>> > +
+>> > +       ret = clk_prepare_enable(tcon_top->bus);
+>> > +       if (ret) {
+>> > +               dev_err(dev, "Could not enable bus clock\n");
+>> > +               goto err_assert_reset;
+>> > +       }
+>> > +
+>> > +       val = 0;
+>> > +
+>> > +       /* check if HDMI mux output is connected */
+>> > +       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
+>> > +               /* find HDMI input endpoint id, if it is connected at
+>> > all*/
+>> > +               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
+>> > +               if (id >= 0)
+>> > +                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
+>> > +               else
+>> > +                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not
+>> > connected\n"); +       } else {
+>> > +               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not
+>> > connected\n"); +       }
+>> > +
+>> > +       writel(val, regs + TCON_TOP_GATE_SRC_REG);
+>> > +
+>> > +       val = 0;
+>> > +
+>> > +       /* process mixer0 mux output */
+>> > +       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
+>> > +       if (id >= 0) {
+>> > +               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
+>> > +       } else {
+>> > +               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not
+>> > connected\n"); +               mixer0_unused = true;
+>> > +       }
+>> > +
+>> > +       /* process mixer1 mux output */
+>> > +       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
+>> > +       if (id >= 0) {
+>> > +               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
+>> > +
+>> > +               /*
+>> > +                * mixer0 mux has priority over mixer1 mux. We have to
+>> > +                * make sure mixer0 doesn't overtake TCON from mixer1.
+>> > +                */
+>> > +               if (mixer0_unused && id == 0)
+>> > +                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
+>> > +       } else {
+>> > +               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not
+>> > connected\n"); +       }
+>> > +
+>> > +       writel(val, regs + TCON_TOP_PORT_SEL_REG);
+>> > +
+>> > +       /*
+>> > +        * TCON TOP has two muxes, which select parent clock for each TCON
+>> > TV +        * channel clock. Parent could be either TCON TV or TVE clock.
+>> > For now +        * we leave this fixed to TCON TV, since TVE driver for
+>> > R40 is not yet +        * implemented. Once it is, graph needs to be
+>> > traversed to determine +        * if TVE is active on each TCON TV. If it
+>> > is, mux should be switched +        * to TVE clock parent.
+>> > +        */
+>> > +       clk_data->hws[CLK_TCON_TOP_TV0] =
+>> > +               sun8i_tcon_top_register_gate(dev, tcon_tv0, regs,
+>> > +                                            &tcon_top->reg_lock,
+>> > +                                            TCON_TOP_TCON_TV0_GATE, 0);
+>> > +
+>> > +       clk_data->hws[CLK_TCON_TOP_TV1] =
+>> > +               sun8i_tcon_top_register_gate(dev, tcon_tv1, regs,
+>> > +                                            &tcon_top->reg_lock,
+>> > +                                            TCON_TOP_TCON_TV1_GATE, 1);
+>> > +
+>> > +       clk_data->hws[CLK_TCON_TOP_DSI] =
+>> > +               sun8i_tcon_top_register_gate(dev, dsi, regs,
+>> > +                                            &tcon_top->reg_lock,
+>> > +                                            TCON_TOP_TCON_DSI_GATE, 2);
+>> > +
+>> > +       for (i = 0; i < CLK_NUM; i++)
+>> > +               if (IS_ERR(clk_data->hws[i])) {
+>> > +                       ret = PTR_ERR(clk_data->hws[i]);
+>> > +                       goto err_unregister_gates;
+>> > +               }
+>> > +
+>> > +       clk_data->num = CLK_NUM;
+>> > +
+>> > +       ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
+>> > +                                    clk_data);
+>> > +       if (ret)
+>> > +               goto err_unregister_gates;
+>> > +
+>> > +       dev_set_drvdata(dev, tcon_top);
+>> > +
+>> > +       return 0;
+>> > +
+>> > +err_unregister_gates:
+>> > +       for (i = 0; i < CLK_NUM; i++)
+>> > +               if (clk_data->hws[i])
+>> > +                       clk_hw_unregister_gate(clk_data->hws[i]);
+>> > +       clk_disable_unprepare(tcon_top->bus);
+>> > +err_assert_reset:
+>> > +       reset_control_assert(tcon_top->rst);
+>> > +
+>> > +       return ret;
+>> > +}
+>> > +
+>> > +static void sun8i_tcon_top_unbind(struct device *dev, struct device
+>> > *master, +                                 void *data)
+>> > +{
+>> > +       struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
+>> > +       struct clk_hw_onecell_data *clk_data = tcon_top->clk_data;
+>> > +       int i;
+>> > +
+>> > +       of_clk_del_provider(dev->of_node);
+>> > +       for (i = 0; i < CLK_NUM; i++)
+>> > +               clk_hw_unregister_gate(clk_data->hws[i]);
+>> > +
+>> > +       clk_disable_unprepare(tcon_top->bus);
+>> > +       reset_control_assert(tcon_top->rst);
+>> > +}
+>> > +
+>> > +static const struct component_ops sun8i_tcon_top_ops = {
+>> > +       .bind   = sun8i_tcon_top_bind,
+>> > +       .unbind = sun8i_tcon_top_unbind,
+>> > +};
+>> > +
+>> > +static int sun8i_tcon_top_probe(struct platform_device *pdev)
+>> > +{
+>> > +       return component_add(&pdev->dev, &sun8i_tcon_top_ops);
+>> > +}
+>> > +
+>> > +static int sun8i_tcon_top_remove(struct platform_device *pdev)
+>> > +{
+>> > +       component_del(&pdev->dev, &sun8i_tcon_top_ops);
+>> > +
+>> > +       return 0;
+>> > +}
+>> > +
+>> > +/* sun4i_drv uses this list to check if a device node is a TCON TOP */
+>> > +const struct of_device_id sun8i_tcon_top_of_table[] = {
+>> > +       { .compatible = "allwinner,sun8i-r40-tcon-top" },
+>> > +       { /* sentinel */ }
+>> > +};
+>> > +MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
+>> > +EXPORT_SYMBOL(sun8i_tcon_top_of_table);
+>> > +
+>> > +static struct platform_driver sun8i_tcon_top_platform_driver = {
+>> > +       .probe          = sun8i_tcon_top_probe,
+>> > +       .remove         = sun8i_tcon_top_remove,
+>> > +       .driver         = {
+>> > +               .name           = "sun8i-tcon-top",
+>> > +               .of_match_table = sun8i_tcon_top_of_table,
+>> > +       },
+>> > +};
+>> > +module_platform_driver(sun8i_tcon_top_platform_driver);
+>> > +
+>> > +MODULE_AUTHOR("Jernej Skrabec <jernej.skrabec@siol.net>");
+>> > +MODULE_DESCRIPTION("Allwinner R40 TCON TOP driver");
+>> > +MODULE_LICENSE("GPL");
+>> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+>> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h new file mode 100644
+>> > index 000000000000..39838bbfeaee
+>> > --- /dev/null
+>> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+>> > @@ -0,0 +1,40 @@
+>> > +/* SPDX-License-Identifier: GPL-2.0+ */
+>> > +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
+>> > +
+>> > +#ifndef _SUN8I_TCON_TOP_H_
+>> > +#define _SUN8I_TCON_TOP_H_
+>> > +
+>> > +#include <linux/clk.h>
+>> > +#include <linux/clk-provider.h>
+>> > +#include <linux/reset.h>
+>> > +#include <linux/spinlock.h>
+>> > +
+>> > +#define TCON_TOP_TCON_TV_SETUP_REG     0x00
+>> > +
+>> > +#define TCON_TOP_PORT_SEL_REG          0x1C
+>> > +#define TCON_TOP_PORT_DE0_MSK                  GENMASK(1, 0)
+>> > +#define TCON_TOP_PORT_DE1_MSK                  GENMASK(5, 4)
+>> > +
+>> > +#define TCON_TOP_GATE_SRC_REG          0x20
+>> > +#define TCON_TOP_HDMI_SRC_MSK                  GENMASK(29, 28)
+>> > +#define TCON_TOP_TCON_TV1_GATE                 24
+>> > +#define TCON_TOP_TCON_TV0_GATE                 20
+>> > +#define TCON_TOP_TCON_DSI_GATE                 16
+>> > +
+>> > +#define CLK_NUM                                        3
+>> > +
+>> > +struct sun8i_tcon_top {
+>> > +       struct clk                      *bus;
+>> > +       struct clk_hw_onecell_data      *clk_data;
+>> > +       struct reset_control            *rst;
+>> > +
+>> > +       /*
+>> > +        * spinlock is used to synchronize access to same
+>> > +        * register where multiple clock gates can be set.
+>> > +        */
+>> > +       spinlock_t                      reg_lock;
+>> > +};
+>> > +
+>> > +extern const struct of_device_id sun8i_tcon_top_of_table[];
+>> > +
+>> > +#endif /* _SUN8I_TCON_TOP_H_ */
+>> > --
+>> > 2.18.0
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
