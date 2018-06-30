@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DED0C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF16C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB212150E
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB212150E
+	by mail.kernel.org (Postfix) with ESMTP id 48233218F8
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48233218F8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeF3USL (ORCPT
+        id S1751997AbeF3USH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 16:18:11 -0400
-Received: from mga14.intel.com ([192.55.52.115]:22935 "EHLO mga14.intel.com"
+        Sat, 30 Jun 2018 16:18:07 -0400
+Received: from mga05.intel.com ([192.55.52.43]:39771 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751874AbeF3USA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 16:18:00 -0400
+        id S1751466AbeF3URw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 16:17:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jun 2018 13:17:59 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jun 2018 13:17:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,291,1526367600"; 
-   d="scan'208";a="212458009"
+   d="scan'208";a="63464714"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 30 Jun 2018 13:17:47 -0700
+  by orsmga003.jf.intel.com with ESMTP; 30 Jun 2018 13:17:48 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 376A4CB; Sat, 30 Jun 2018 23:17:50 +0300 (EEST)
+        id 589DB58D; Sat, 30 Jun 2018 23:17:51 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alasdair Kergon <agk@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
@@ -44,73 +44,89 @@ To:     Alasdair Kergon <agk@redhat.com>,
         linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
         Joe Perches <joe@perches.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 0/5] bitmap: Introduce alloc/free helpers
-Date:   Sat, 30 Jun 2018 23:17:45 +0300
-Message-Id: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
+Date:   Sat, 30 Jun 2018 23:17:48 +0300
+Message-Id: <20180630201750.2588-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A lot of code is using allocation of bitmaps using BITS_PER_LONG() macro and
-sizeof(unsigned long) operator. The readability suffers because of this.
+A lot of code become ugly because of open coding allocations for bitmaps.
 
-The series introduces three helpers, i.e. bitmap_alloc(), bitmap_zalloc() and
-bitmap_free(), to make it more cleaner.
+Introduce three helpers to allow users be more clear of intention
+and keep their code neat.
 
-Patches 1 and 2 are preparatory to avoid namespace collisions between
-bitmap API and DM / MD bitmap. No functional changes intended.
+Note, due to multiple circular dependencies we may not provide
+the helpers as inliners. For now we keep them exported and, perhaps,
+at some point in the future we will sort out header inclusion and
+inheritance.
 
-Patch 3 introduces new helpers.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/bitmap.h |  8 ++++++++
+ lib/bitmap.c           | 19 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-Patches 4 and 5 is just an example how to use new helpers. Locally I have
-like dozen of them against different subsystems and drivers.
-
-Taking above into consideration it might make sense to have
-an immutable branch for this cycle.
-
-Ideally it would go through Input subsystem, thus, needs an Ack
-from MD / DM maintainer(s).
-
-Since v3:
-- split DM part and do rename accordingly (Mike)
-- explain better in the commit message why we can't make helpers as
-  inliners (Dmitry, Andrew)
-- drop applied orphaned patch
-
-Since v2:
-- fix compilation issue in MD bitmap code
-- elaborate changes in commit message of patch 5
-
-Since v1:
-- added namespace fix patch against MD bitmap API
-- moved functions to lib/bitmap.c to avoid circular dependencies
-- appended Dmitry's tags
-
-Andy Shevchenko (5):
-  dm: Avoid namespace collision with bitmap API
-  md: Avoid namespace collision with bitmap API
-  bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
-  Input: gpio-keys - Switch to bitmap_zalloc()
-  Input: evdev - Switch to bitmap API
-
- drivers/input/evdev.c                         |  16 +-
- drivers/input/keyboard/gpio_keys.c            |   8 +-
- drivers/md/dm-raid.c                          |   6 +-
- drivers/md/md-bitmap.c                        | 305 +++++++++---------
- drivers/md/md-bitmap.h                        |  60 ++--
- drivers/md/md-cluster.c                       |  18 +-
- drivers/md/md.c                               |  44 +--
- .../md/persistent-data/dm-space-map-common.c  |  20 +-
- drivers/md/raid1.c                            |  35 +-
- drivers/md/raid10.c                           |  52 ++-
- drivers/md/raid5-cache.c                      |   8 +-
- drivers/md/raid5.c                            |  44 +--
- include/linux/bitmap.h                        |   8 +
- lib/bitmap.c                                  |  19 ++
- 14 files changed, 326 insertions(+), 317 deletions(-)
-
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 1ee46f492267..acf5e8df3504 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -104,6 +104,14 @@
+  * contain all bit positions from 0 to 'bits' - 1.
+  */
+ 
++/*
++ * Allocation and deallocation of bitmap.
++ * Provided in lib/bitmap.c to avoid circular dependency.
++ */
++extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
++extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
++extern void bitmap_free(const unsigned long *bitmap);
++
+ /*
+  * lib/bitmap.c provides these functions:
+  */
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 33e95cd359a2..09acf2fd6a35 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -13,6 +13,7 @@
+ #include <linux/bitops.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ 
+@@ -1125,6 +1126,24 @@ void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int n
+ EXPORT_SYMBOL(bitmap_copy_le);
+ #endif
+ 
++unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
++{
++	return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
++}
++EXPORT_SYMBOL(bitmap_alloc);
++
++unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
++{
++	return bitmap_alloc(nbits, flags | __GFP_ZERO);
++}
++EXPORT_SYMBOL(bitmap_zalloc);
++
++void bitmap_free(const unsigned long *bitmap)
++{
++	kfree(bitmap);
++}
++EXPORT_SYMBOL(bitmap_free);
++
+ #if BITS_PER_LONG == 64
+ /**
+  * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
 -- 
 2.18.0
 
