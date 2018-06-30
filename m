@@ -2,154 +2,163 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F4BC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2CEC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 147A325742
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:18:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147A325742
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 97F3025429
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:33:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmDfJd8b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F3025429
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752908AbeF3NSS (ORCPT
+        id S1752111AbeF3Ndw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 09:18:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48371 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750892AbeF3NSP (ORCPT
+        Sat, 30 Jun 2018 09:33:52 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41202 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751060AbeF3Nds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 09:18:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1CA9E805C0; Sat, 30 Jun 2018 15:18:13 +0200 (CEST)
-Date:   Sat, 30 Jun 2018 15:18:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: v4.18-rc2 on droid4: screen turns red
-Message-ID: <20180630131812.GA549@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 30 Jun 2018 09:33:48 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so5174514pgl.8
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 06:33:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TKTeKRQWXYCQBWxq4jBLmm9sNoG9zgycBxcujch58L0=;
+        b=PmDfJd8bYzm4G2S5FJLHXSnnDrDh4wCQD5EcFsBXQJ7/3214PZcKYHPVjfg531yihe
+         w7k7+T7FU/CGkTVQMftvtbUUBpyib8BGi3QXcprvj0dpaN7a4pZ/rXk7QsmKLwqNzd9H
+         IwAcHadn2q33WVH048uxLfSs6bEiLM1Zk/sxQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TKTeKRQWXYCQBWxq4jBLmm9sNoG9zgycBxcujch58L0=;
+        b=bROuXntEwalKxG7y0jQmrl9UGAIOT6fZhbsrewU9PIOTMtTgsyI6zNUCyBLbnQBzcJ
+         MfXFnM5zyOibHJGdOfCc20vtmH1ohPlkkl+hCnwJZReK3GvvfyMJo56495LjmDr5+nf2
+         KZZvLXT+odI3uphcjvT5gHLs0giAa+RSuz3hK2nmT7gcG1o3/sf3nHLhC2w32X232IVp
+         pvB/fqVUVKm9IXt4y6wjbFhWon/GqsvFrcVsxB3eZ+KMr/XIxOYbtQVZ43fUto+DQaJB
+         mZSQOqAcovEH3LTxMkE5P7x+ajM0fnKRY9Zzu9RVZ0l7ySdzoEXezdLavbfFKEh018Fb
+         xvbQ==
+X-Gm-Message-State: APt69E3ek3TQYp4I9faR7eULc+mmpSGPTEY7jb1IJ7cEdJVvIZsTkoFo
+        S/tIRaYtY3WOH6rCzQsAWKMk
+X-Google-Smtp-Source: ADUXVKIv1T/ARd93VPMKb1JI3Stjwgj0Nd4SetDYRLjAZ4Nvo/Gv2PhI516LFqNu6zsID45TNihysA==
+X-Received: by 2002:a65:4b0f:: with SMTP id r15-v6mr16136916pgq.103.1530365627991;
+        Sat, 30 Jun 2018 06:33:47 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:73ca:b257:2c06:3367:1893:796])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm18738778pgq.89.2018.06.30.06.33.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 Jun 2018 06:33:47 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     wsa@the-dreams.de, robh+dt@kernel.org, afaerber@suse.de
+Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        andy.shevchenko@gmail.com, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/6] Add Actions Semiconductor Owl S900 I2C support
+Date:   Sat, 30 Jun 2018 19:03:24 +0530
+Message-Id: <20180630133330.23858-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+This driver has been structured in a way such that there will be only
+one controller driver for the whole Owl family series (S500, S700 and
+S900 SoCs).
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are 6 I2C controllers with separate memory mapped register space.
+The I2C controller can handle atmost two messages concatenated by a
+repeated start via its internal address feature. Hence the driver
+uses this feature for messages of length greater than 1. In those cases,
+the first message of the combined message should be a `write` with maximum
+message length 6 and the second message's maximum length should be 240 bytes.
 
-Hi!
+As far as the bus speed is concerned, this driver only supports
+Standard (100KHz) and High speed (400KHz) for now.
 
-After longer inactivity, attempt to wake up the screen results in
-screen being completely red. Not too useful. I can still connect over
-ssh.
+The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+With the mux option available only for I2C0.
 
-This happens all the time:
+For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+are exposed on the Low speed expansion connector are enabled.
 
-Jun 30 11:34:08 devuan kernel: [  143.605499] ------------[ cut here
-]------------
-Jun 30 11:34:08 devuan kernel: [  143.610168] WARNING: CPU: 1 PID:
-2220 at drivers/gpu/drm/omapdrm/
-dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
-Jun 30 11:34:08 devuan kernel: [  143.619873] Modules linked in:
-Jun 30 11:34:08 devuan kernel: [  143.622955] CPU: 1 PID: 2220 Comm:
-pulseaudio Not tainted 4.18.0-
-rc2-88315-g3452793-dirty #756
-Jun 30 11:34:08 devuan kernel: [  143.631591] Hardware name: Generic
-OMAP4 (Flattened Device Tree)
-Jun 30 11:34:08 devuan kernel: [  143.637634] [<c010f6cc>]
-(unwind_backtrace) from [<c010ba50>] (sh
-ow_stack+0x10/0x14)
-Jun 30 11:34:08 devuan kernel: [  143.645446] [<c010ba50>]
-(show_stack) from [<c086d7ec>] (dump_sta
-ck+0x8c/0xac)
-Jun 30 11:34:08 devuan kernel: [  143.652740] [<c086d7ec>]
-(dump_stack) from [<c012d364>] (__warn+0
-xe8/0x114)
-Jun 30 11:34:08 devuan kernel: [  143.659729] [<c012d364>] (__warn)
-=66rom [<c012d3cc>] (warn_slowpath_null+0x3c/0x48)
-Jun 30 11:34:08 devuan kernel: [  143.667358] [<c012d3cc>]
-(warn_slowpath_null) from [<c047b7dc>] (hdmi_audio_stop+0x5c/0x68)
-Jun 30 11:34:08 devuan kernel: [  143.675750] [<c047b7dc>]
-(hdmi_audio_stop) from [<c06a9824>] (hdmi_dai_trigger+0x6c/0x88)
-Jun 30 11:34:08 devuan kernel: [  143.683990] [<c06a9824>]
-(hdmi_dai_trigger) from [<c06990d0>] (soc_pcm_trigger+0xf0/0x130)
-Jun 30 11:34:08 devuan kernel: [  143.692291] [<c06990d0>]
-(soc_pcm_trigger) from [<c067a9f4>] (snd_pcm_do_stop+0x54/0x58)
-Jun 30 11:34:08 devuan kernel: [  143.700439] [<c067a9f4>]
-(snd_pcm_do_stop) from [<c067a7a4>] (snd_pcm_action_single+0x38/0x78)
-Jun 30 11:34:08 devuan kernel: [  143.709075] [<c067a7a4>]
-(snd_pcm_action_single) from [<c067c468>] (snd_pcm_drop+0x48/0x94)
-Jun 30 11:34:08 devuan kernel: [  143.717468] [<c067c468>]
-(snd_pcm_drop) from [<c067d508>] (snd_pcm_ioctl+0x870/0x1180)
-Jun 30 11:34:08 devuan kernel: [  143.725433] [<c067d508>]
-(snd_pcm_ioctl) from [<c0215944>] (do_vfs_ioctl+0x80/0x960)
-Jun 30 11:34:08 devuan kernel: [  143.733215] [<c0215944>]
-(do_vfs_ioctl) from [<c0216280>] (ksys_ioctl+0x5c/0x80)
-Jun 30 11:34:08 devuan kernel: [  143.740661] [<c0216280>]
-(ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
-Jun 30 11:34:08 devuan kernel: [  143.748352] Exception
-stack(0xeb8fffa8 to 0xeb8ffff0)
-Jun 30 11:34:08 devuan kernel: [  143.753448] ffa0:
-005129b0 b1971394 00000015 00004143 00000000 00512960
+This series depends on the pinctrl patch [1] is still not merged by the
+platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+Linus Walleij. For the reference, I have queued up all reviewed dts patches
+in my tree [2] from which Andreas is picking them for 4.19.
 
+For this series, since the dts patches will go through the ARM SoC tree,
+Andreas will pick it up once it is reviewed.
 
-This is probably unrelated:
+Thanks,
+Mani
 
-[13215.125732] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13245.205535] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13252.969940] power_supply battery: driver failed to report
-`power_now' property: -22
-[13275.285369] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13291.993652] Charging, 4350000 uV, 532000 uA
-[13292.001708] Charging, 4350000 uV, 532000 uA
-[13305.364837] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13335.445037] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13365.524291] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[13372.940093] power_supply battery: driver failed to report
-`power_now' property: -22
-[13383.554412] g_ether gadget: packet filter 0e
-[13383.558715] g_ether gadget: ecm req21.43 v000e i0000 l0
-[13383.580261] g_ether gadget: notify connect true
-[13383.612243] g_ether gadget: notify speed 425984000
-[13387.213256] cpcap_adc cpcap_adc.0: error reading ADC: -110
-[13387.218780] cpcap_battery cpcap_battery.0:
-cpcap_battery_get_voltage failed: -110
-[13387.523254] cpcap_adc cpcap_adc.0: error reading ADC: -110
-[13387.528778] cpcap_battery cpcap_battery.0:
-cpcap_battery_get_current failed: -110
+[1] https://patchwork.kernel.org/patch/10322937/
+[2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
 
-Ideas welcome.
+Changes in v3:
 
-Best regards,
-							Pavel
+As per Peter, Andy and Andreas review:
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+* Removed owl_i2c_reset function from interrupt handler since is
+  involves the use of delays.
+* Fixed the return path in owl_i2c_master_xfer and added a note
+* Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+  understandability
+* Ordered the includes in alphabetical order
+* Small changes to defines and added comma at the end of struct members
+* Removed rendundant 0 assignment in owl_i2c_master_xfer
+* Changed all OWL naming convention to Owl and also changed Actions Semi
+  Actions Semiconductor
 
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes in v2:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+As per Andy's review:
+* Modified infinite loops to fixed number of retries
+* Used i2c_8bit_addr_from_msg for constructing the slave address
+* Removed unnecessary parenthesis around defines
+* Modified certain dev_warn to dev_dbg
+* Modified the error handling to more generic pattern
 
-iEYEARECAAYFAls3gxQACgkQMOfwapXb+vK7CgCeNh5SaeNEdkxhV1WH7N+wtbgA
-kWoAni7rHnqSJHeSTFg0HkQ2RHWz3Eu3
-=jq3O
------END PGP SIGNATURE-----
+* Fixed the return value in owl_i2c_master_xfer
+* Added MAINTAINERS patch for I2C driver and its binding
 
---4Ckj6UjgE2iN1+kY--
+Manivannan Sadhasivam (6):
+  dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+    controller
+  arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+    nodes
+  arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+  arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+  i2c: Add Actions Semiconductor Owl family S900 I2C driver
+  MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+
+ .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+ MAINTAINERS                                   |   2 +
+ .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 ++
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+ drivers/i2c/busses/Kconfig                    |   7 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-owl.c                  | 477 ++++++++++++++++++
+ 8 files changed, 614 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+ create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+ create mode 100644 drivers/i2c/busses/i2c-owl.c
+
+-- 
+2.17.1
+
