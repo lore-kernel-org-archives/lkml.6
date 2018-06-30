@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC517C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01034C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78622561A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B7452562C
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:23:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Fiy3ONr0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78622561A
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="U6CbwVHk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7452562C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751834AbeF3RW4 (ORCPT
+        id S1751924AbeF3RXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 13:22:56 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35062 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751535AbeF3RWt (ORCPT
+        Sat, 30 Jun 2018 13:23:08 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46199 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751643AbeF3RWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 13:22:49 -0400
-Received: by mail-wr0-f195.google.com with SMTP id h40-v6so522897wrh.2
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:22:49 -0700 (PDT)
+        Sat, 30 Jun 2018 13:22:51 -0400
+Received: by mail-wr0-f194.google.com with SMTP id s11-v6so2378408wra.13
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:22:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fsd6m5/jf1NYKftQIH165+Sq4V8oS9AKP16X1iBrgJ0=;
-        b=Fiy3ONr0l60xkYMvyBs9aaRcUcKBT443cFjU/yh2i317i10DV94nj/majNNvxnAFvh
-         xnTs5M+mQxGpQMVHKOwTXNQQ3DifxukNAw+ox1f0ortXIVloHr7ZZGviNA2qJeZQpBEE
-         WL9feUN/guFljbsdO3Mudg7hp1Tg8dLW05l2lPiHpYLxAwq9rEe6+Qq3bhFjeU9lMyd4
-         J6cEVNkYXaKVwbgjcO5O+BYStMUil4+VYAf61mVkhg9COxaGHQ9kfW9JbpE1Qsd4d3Uv
-         wXCj5GxhNHVuYcZLq/Yp3t/Lk9MAqPFgt2YjoOapB5GYWcdzp9/runaDZraitTvXIwUZ
-         PSuw==
+        bh=FcJVHpmuHjOsZzXO/lpDHPoibDXGsuXvccJlC4tJ50U=;
+        b=U6CbwVHkkxqk+qJA4rTDFDc+iZg/M39cmzkcCW0a3YOg8ugrwIp76b8NO+XJA55k6O
+         mjtOA/coCh/9WHldD8UjaLUZkpXbPtstXaLSo1RUI3qzQCVCZ3ldivP8yid3O+moufWZ
+         qRWh66ADX0hAeCotpjKVrUMvOH5qcsNcQNnB3IMguGLFG7as+wpa5mkvsdx/74BniM7W
+         2wIVMeV/QqWIJxvJF6/lsPeUBfCgqYRdqt0gYaUxhiQzqieMgKP58KS1HBqrjTvIQAsk
+         LetoUT/nwc2eJFB8Ppg3brP6C/kfjo6gy5ov5wbqjsIkeIfjorL14E0YSbzZfYyMR7ld
+         u2Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fsd6m5/jf1NYKftQIH165+Sq4V8oS9AKP16X1iBrgJ0=;
-        b=pDVQ6dDuYRgGIs32z6YSnHVZljAdNCAPemZ8EwyhRLhGaRDXmlEl0a8nb2z0KpgWLC
-         4Jw1/qkRmNEhAQ7ym9339G9m4CQrX8jeHkIyMlWvy3UCWJCYkLBPF5eFUW/rCyZiOX8B
-         glhPXsaY4Q6Nz9uOAFo8AW+K2dkZBtXotlu2Ym0+yizJApl/w022/FAdLKD1iYUemtFf
-         FsPMvq3af4mo947dzRDmE6wIt5LQ5iKOTDmlNjfMtBaHXuTejuvCSkLJpeFgt7utaa9P
-         Z/p/DfFxn938WApTpY4TkkXm8mbrNc90NTEk6P1PuhZAquI1JC9FTiQsQfWoE7FuMACg
-         nOgQ==
-X-Gm-Message-State: APt69E0v2AFlR5ELLCsiKK3VRDtxtvpZajhLr0mvN8c/FvCyQ7dSnBcR
-        VNDsekIB/sKoOUWABF6zRy2MBQ==
-X-Google-Smtp-Source: AAOMgpdUUmJtas8lsvvXQ5Vrz1p1sgA+rmdN2t6nVDTZJnC1sdyu4xPqoWme0G7G0zYZAo7yLnjMxw==
-X-Received: by 2002:adf:9e48:: with SMTP id v8-v6mr5581777wre.277.1530379368421;
-        Sat, 30 Jun 2018 10:22:48 -0700 (PDT)
+        bh=FcJVHpmuHjOsZzXO/lpDHPoibDXGsuXvccJlC4tJ50U=;
+        b=SwllsD83aQLD1kjgTicv+e1BXyBXZtIEsCV0+bEAExYl5we9UVtfV0Wr9U8kyrBbr8
+         mdX/GL4cMoKN0VNRuHG3/nJfqgd7N8a9K+YuzR60pMB38ILmWTorM6/zdqNzoCwmcLde
+         Wwoq71rh9uv4u1fCdlYNTbehA3cdkCTXUEU3eZ03nUfI8xspRhkRD7eK/NQOLGPZSkWu
+         XWISkVpi5SsFthUECnG67j+wYysE4At9U/uxHHk0PNQjG5TIRSq2oVa18dm+BVi0LAJF
+         FnvwgxQub0YsW9vv8RwjPC+wWAami17iiHPr1qhLoqjelvc609aEDdaP/Zd+kHYBPQ8L
+         i4MQ==
+X-Gm-Message-State: APt69E2X/8yov7RDsrvUPS+i9EjT30hBGcQl9DVXjbm96P3P/szs9chp
+        JbGxo/4ZL3crzz8ryQ35UG4jqA==
+X-Google-Smtp-Source: AAOMgpcEukZfW600M/vsUUwFuefieXd8Y0LePXJdWRhswutVFuwqOw0kvKCtlKVND8eYm1NBBEafZw==
+X-Received: by 2002:a5d:4306:: with SMTP id h6-v6mr2969955wrq.58.1530379369810;
+        Sat, 30 Jun 2018 10:22:49 -0700 (PDT)
 Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id h1-v6sm16854885wri.90.2018.06.30.10.22.47
+        by smtp.googlemail.com with ESMTPSA id h1-v6sm16854885wri.90.2018.06.30.10.22.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 30 Jun 2018 10:22:47 -0700 (PDT)
+        Sat, 30 Jun 2018 10:22:49 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] ASoC: es7241: add dt-bindings documentation for the es7241 adc
-Date:   Sat, 30 Jun 2018 19:22:40 +0200
-Message-Id: <20180630172241.10806-2-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/2] ASoC: es7241: add es7241 codec support
+Date:   Sat, 30 Jun 2018 19:22:41 +0200
+Message-Id: <20180630172241.10806-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180630172241.10806-1-jbrunet@baylibre.com>
 References: <20180630172241.10806-1-jbrunet@baylibre.com>
@@ -73,41 +73,373 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add support for the everest es7241 which is a simple 2 channels
+analog to digital converter.
+
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../devicetree/bindings/sound/everest,es7241.txt   | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/everest,es7241.txt
+ sound/soc/codecs/Kconfig  |   4 +
+ sound/soc/codecs/Makefile |   2 +
+ sound/soc/codecs/es7241.c | 308 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 314 insertions(+)
+ create mode 100644 sound/soc/codecs/es7241.c
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es7241.txt b/Documentation/devicetree/bindings/sound/everest,es7241.txt
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index f5839eeeed5e..047ac28ba40f 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -79,6 +79,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_ES8328_SPI if SPI_MASTER
+ 	select SND_SOC_ES8328_I2C if I2C
+ 	select SND_SOC_ES7134
++	select SND_SOC_ES7241
+ 	select SND_SOC_GTM601
+ 	select SND_SOC_HDAC_HDMI
+ 	select SND_SOC_ICS43432
+@@ -584,6 +585,9 @@ config SND_SOC_HDMI_CODEC
+ config SND_SOC_ES7134
+        tristate "Everest Semi ES7134 CODEC"
+ 
++config SND_SOC_ES7241
++       tristate "Everest Semi ES7241 CODEC"
++
+ config SND_SOC_ES8316
+ 	tristate "Everest Semi ES8316 CODEC"
+ 	depends on I2C
+diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+index 6cc15d1c5767..719653a4c882 100644
+--- a/sound/soc/codecs/Makefile
++++ b/sound/soc/codecs/Makefile
+@@ -71,6 +71,7 @@ snd-soc-da732x-objs := da732x.o
+ snd-soc-da9055-objs := da9055.o
+ snd-soc-dmic-objs := dmic.o
+ snd-soc-es7134-objs := es7134.o
++snd-soc-es7241-objs := es7241.o
+ snd-soc-es8316-objs := es8316.o
+ snd-soc-es8328-objs := es8328.o
+ snd-soc-es8328-i2c-objs := es8328-i2c.o
+@@ -329,6 +330,7 @@ obj-$(CONFIG_SND_SOC_DA732X)	+= snd-soc-da732x.o
+ obj-$(CONFIG_SND_SOC_DA9055)	+= snd-soc-da9055.o
+ obj-$(CONFIG_SND_SOC_DMIC)	+= snd-soc-dmic.o
+ obj-$(CONFIG_SND_SOC_ES7134)	+= snd-soc-es7134.o
++obj-$(CONFIG_SND_SOC_ES7241)	+= snd-soc-es7241.o
+ obj-$(CONFIG_SND_SOC_ES8316)    += snd-soc-es8316.o
+ obj-$(CONFIG_SND_SOC_ES8328)	+= snd-soc-es8328.o
+ obj-$(CONFIG_SND_SOC_ES8328_I2C)+= snd-soc-es8328-i2c.o
+diff --git a/sound/soc/codecs/es7241.c b/sound/soc/codecs/es7241.c
 new file mode 100644
-index 000000000000..adee52281b3c
+index 000000000000..11958671aa80
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/everest,es7241.txt
-@@ -0,0 +1,23 @@
-+ES7134 i2s DA converter
++++ b/sound/soc/codecs/es7241.c
+@@ -0,0 +1,308 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
 +
-+Required properties:
-+- compatible : "everest,es7241"
++#include <linux/gpio/consumer.h>
++#include <linux/of_platform.h>
++#include <linux/module.h>
++#include <sound/soc.h>
 +
-+Optional properties:
-+- VDDP-supply: regulator phandle for the VDDA supply
-+- VDDA-supply: regulator phandle for the VDDP supply
-+- VDDD-supply: regulator phandle for the VDDD supply
-+- reset-gpios: gpio connected to the reset pin
-+- m0-gpios   : gpio connected to the m0 pin
-+- m1-gpios   : gpio connected to the m1 pin
-+
-+Example:
-+
-+linein: audio-codec@2 {
-+	#sound-dai-cells = <0>;
-+	compatible = "everest,es7241";
-+	VDDA-supply = <&vcc_3v3>;
-+	VDDP-supply = <&vcc_3v3>;
-+	VDDD-supply = <&vcc_3v3>;
-+	reset-gpios = <&gpio GPIOH_42>;
++struct es7241_clock_mode {
++	unsigned int rate_min;
++	unsigned int rate_max;
++	unsigned int *slv_mfs;
++	unsigned int slv_mfs_num;
++	unsigned int mst_mfs;
++	unsigned int mst_m0:1;
++	unsigned int mst_m1:1;
 +};
++
++struct es7241_chip {
++	const struct es7241_clock_mode *modes;
++	unsigned int mode_num;
++};
++
++struct es7241_data {
++	struct gpio_desc *reset;
++	struct gpio_desc *m0;
++	struct gpio_desc *m1;
++	unsigned int mclk;
++	bool is_slave;
++	const struct es7241_chip *chip;
++};
++
++static void es7241_set_mode(struct es7241_data *priv,  int m0, int m1)
++{
++	/* put the device in reset */
++	gpiod_set_value_cansleep(priv->reset, 0);
++
++	/* set the mode */
++	gpiod_set_value_cansleep(priv->m0, m0);
++	gpiod_set_value_cansleep(priv->m1, m1);
++
++	/* take the device out of reset - datasheet does not specify a delay */
++	gpiod_set_value_cansleep(priv->reset, 1);
++}
++
++static int es7241_set_slave_mode(struct es7241_data *priv,
++				 const struct es7241_clock_mode *mode,
++				 unsigned int mfs)
++{
++	int j;
++
++	if (!mfs)
++		goto out_ok;
++
++	for (j = 0; j < mode->slv_mfs_num; j++) {
++		if (mode->slv_mfs[j] == mfs)
++			goto out_ok;
++	}
++
++	return -EINVAL;
++
++out_ok:
++	es7241_set_mode(priv, 1, 1);
++	return 0;
++}
++
++static int es7241_set_master_mode(struct es7241_data *priv,
++				  const struct es7241_clock_mode *mode,
++				  unsigned int mfs)
++{
++	/*
++	 * We can't really set clock ratio, if the mclk/lrclk is different
++	 * from what we provide, then error out
++	 */
++	if (mfs && mfs != mode->mst_mfs)
++		return -EINVAL;
++
++	es7241_set_mode(priv, mode->mst_m0, mode->mst_m1);
++
++	return 0;
++}
++
++static int es7241_hw_params(struct snd_pcm_substream *substream,
++			    struct snd_pcm_hw_params *params,
++			    struct snd_soc_dai *dai)
++{
++	struct es7241_data *priv = snd_soc_dai_get_drvdata(dai);
++	unsigned int rate = params_rate(params);
++	unsigned int mfs = priv->mclk / rate;
++	int i;
++
++	for (i = 0; i < priv->chip->mode_num; i++) {
++		const struct es7241_clock_mode *mode = &priv->chip->modes[i];
++
++		if (rate < mode->rate_min || rate >= mode->rate_max)
++			continue;
++
++		if (priv->is_slave)
++			return es7241_set_slave_mode(priv, mode, mfs);
++		else
++			return es7241_set_master_mode(priv, mode, mfs);
++	}
++
++	/* should not happen */
++	dev_err(dai->dev, "unsupported rate: %u\n", rate);
++	return -EINVAL;
++}
++
++static int es7241_set_sysclk(struct snd_soc_dai *dai, int clk_id,
++			     unsigned int freq, int dir)
++{
++	struct es7241_data *priv = snd_soc_dai_get_drvdata(dai);
++
++	if (dir == SND_SOC_CLOCK_IN && clk_id == 0) {
++		priv->mclk = freq;
++		return 0;
++	}
++
++	return -ENOTSUPP;
++}
++
++static int es7241_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct es7241_data *priv = snd_soc_dai_get_drvdata(dai);
++
++	if ((fmt & SND_SOC_DAIFMT_INV_MASK) != SND_SOC_DAIFMT_NB_NF) {
++		dev_err(dai->dev, "Unsupported dai clock inversion\n");
++		return -EINVAL;
++	}
++
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++	case SND_SOC_DAIFMT_LEFT_J:
++		break;
++
++	default:
++		dev_err(dai->dev, "Unsupported dai format\n");
++		return -EINVAL;
++	}
++
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBS_CFS:
++		priv->is_slave = true;
++		break;
++	case SND_SOC_DAIFMT_CBM_CFM:
++		priv->is_slave = false;
++		break;
++
++	default:
++		dev_err(dai->dev, "Unsupported clock configuration\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const struct snd_soc_dai_ops es7241_dai_ops = {
++	.set_fmt	= es7241_set_fmt,
++	.hw_params	= es7241_hw_params,
++	.set_sysclk	= es7241_set_sysclk,
++};
++
++static struct snd_soc_dai_driver es7241_dai = {
++	.name = "es7241-hifi",
++	.capture = {
++		.stream_name = "Capture",
++		.channels_min = 2,
++		.channels_max = 2,
++		.rates = SNDRV_PCM_RATE_8000_192000,
++		.formats = (SNDRV_PCM_FMTBIT_S16_LE  |
++			    SNDRV_PCM_FMTBIT_S24_3LE |
++			    SNDRV_PCM_FMTBIT_S24_LE),
++	},
++	.ops = &es7241_dai_ops,
++};
++
++static const struct es7241_clock_mode es7241_modes[] = {
++	{
++		/* Single speed mode */
++		.rate_min = 8000,
++		.rate_max = 50000,
++		.slv_mfs = (unsigned int[]) { 256, 384, 512, 768, 1024 },
++		.slv_mfs_num = 5,
++		.mst_mfs = 256,
++		.mst_m0 = 0,
++		.mst_m1 = 0,
++	}, {
++		/* Double speed mode */
++		.rate_min = 50000,
++		.rate_max = 100000,
++		.slv_mfs = (unsigned int[]) { 128, 192 },
++		.slv_mfs_num = 2,
++		.mst_mfs = 128,
++		.mst_m0 = 1,
++		.mst_m1 = 0,
++	}, {
++		/* Quad speed mode */
++		.rate_min = 100000,
++		.rate_max = 200000,
++		.slv_mfs = (unsigned int[]) { 64 },
++		.slv_mfs_num = 1,
++		.mst_mfs = 64,
++		.mst_m0 = 0,
++		.mst_m1 = 1,
++	},
++};
++
++static const struct es7241_chip es7241_chip = {
++	.modes = es7241_modes,
++	.mode_num = ARRAY_SIZE(es7241_modes),
++};
++
++static const struct snd_soc_dapm_widget es7241_dapm_widgets[] = {
++	SND_SOC_DAPM_INPUT("AINL"),
++	SND_SOC_DAPM_INPUT("AINR"),
++	SND_SOC_DAPM_DAC("ADC", "Capture", SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_REGULATOR_SUPPLY("VDDP", 0, 0),
++	SND_SOC_DAPM_REGULATOR_SUPPLY("VDDD", 0, 0),
++	SND_SOC_DAPM_REGULATOR_SUPPLY("VDDA", 0, 0),
++};
++
++static const struct snd_soc_dapm_route es7241_dapm_routes[] = {
++	{ "ADC", NULL, "AINL", },
++	{ "ADC", NULL, "AINR", },
++	{ "ADC", NULL, "VDDA", },
++	{ "Capture", NULL, "VDDP", },
++	{ "Capture", NULL, "VDDD", },
++};
++
++static const struct snd_soc_component_driver es7241_component_driver = {
++	.dapm_widgets		= es7241_dapm_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(es7241_dapm_widgets),
++	.dapm_routes		= es7241_dapm_routes,
++	.num_dapm_routes	= ARRAY_SIZE(es7241_dapm_routes),
++	.idle_bias_on		= 1,
++	.endianness		= 1,
++	.non_legacy_dai_naming	= 1,
++};
++
++static int es7241_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct es7241_data *priv;
++	int err;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, priv);
++
++	priv->chip = of_device_get_match_data(dev);
++	if (!priv->chip) {
++		dev_err(dev, "failed to match device\n");
++		return -ENODEV;
++	}
++
++	priv->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(priv->reset)) {
++		err = PTR_ERR(priv->reset);
++		if (err != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get 'reset' gpio: %d", err);
++		return err;
++	}
++
++	priv->m0 = devm_gpiod_get_optional(dev, "m0", GPIOD_OUT_LOW);
++	if (IS_ERR(priv->m0)) {
++		err = PTR_ERR(priv->m0);
++		if (err != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get 'm0' gpio: %d", err);
++		return err;
++	}
++
++	priv->m1 = devm_gpiod_get_optional(dev, "m1", GPIOD_OUT_LOW);
++	if (IS_ERR(priv->m1)) {
++		err = PTR_ERR(priv->m1);
++		if (err != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get 'm1' gpio: %d", err);
++		return err;
++	}
++
++	return devm_snd_soc_register_component(&pdev->dev,
++				      &es7241_component_driver,
++				      &es7241_dai, 1);
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id es7241_ids[] = {
++	{ .compatible = "everest,es7241", .data = &es7241_chip },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, es7241_ids);
++#endif
++
++static struct platform_driver es7241_driver = {
++	.driver = {
++		.name = "es7241",
++		.of_match_table = of_match_ptr(es7241_ids),
++	},
++	.probe = es7241_probe,
++};
++
++module_platform_driver(es7241_driver);
++
++MODULE_DESCRIPTION("ASoC ES7241 audio codec driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL");
 -- 
 2.14.4
 
