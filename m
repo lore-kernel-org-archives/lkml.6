@@ -2,102 +2,69 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9871FC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 15:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5271C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 15:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395AF24D8E
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 15:57:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395AF24D8E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 53EF324B96
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 15:59:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1ydPeuPH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EF324B96
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751403AbeF3P5Z (ORCPT
+        id S1751331AbeF3P7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 11:57:25 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56685 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751113AbeF3P5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 11:57:24 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2515D5DFCF78E;
-        Sat, 30 Jun 2018 23:57:20 +0800 (CST)
-Received: from szvp000100637.huawei.com (10.162.55.131) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.382.0; Sat, 30 Jun
- 2018 23:57:12 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-CC:     Gao Xiang <gaoxiang25@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: avoid the global name 'fault_name'
-Date:   Sat, 30 Jun 2018 23:57:03 +0800
-Message-ID: <1530374223-130895-1-git-send-email-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        Sat, 30 Jun 2018 11:59:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751054AbeF3P7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 11:59:34 -0400
+Received: from [192.168.1.125] (cpe-24-28-70-126.austin.res.rr.com [24.28.70.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3DFE248B9;
+        Sat, 30 Jun 2018 15:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530374373;
+        bh=4hF8FwP2bWu+a2XNpFqc3qaKGgFiemWKnmr0EbcUBf0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=1ydPeuPHjEYqpgo3DyquN9xxgYD35MWvb3uyzqnY8cne3W5foiaef755FQQad0l80
+         uyboBhKwm7AFmQfS0um/I7uNEIT+Y/x2Oj1P09iwkKjPQexwzO+fv/4KXwTWJ/MR8/
+         gAWv8at+YQZl52a3cG9oai0QuhRBUy9RYK80Qmow=
+Subject: Re: [PATCH] video: fbdev: fsl-diu-fb: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180629184655.GA37391@beast>
+From:   Timur Tabi <timur@kernel.org>
+Message-ID: <1b3f78f2-9fe9-62c5-24d2-1b6651ca2f08@kernel.org>
+Date:   Sat, 30 Jun 2018 10:59:15 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.162.55.131]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180629184655.GA37391@beast>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Non-prefix global name 'fault_name' will pollute global
-namespace, fix it.
+On 6/29/18 1:46 PM, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this moves
+> the buffer off the stack (since it could be as much as 1024 bytes), and
+> uses a new area in the cursor data structure. Additionally adds missed
+> documentation and removes redundant assignments.
+> 
+> [1]https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook<keescook@chromium.org>
 
-Refer to:
-https://lists.01.org/pipermail/kbuild-all/2018-June/049660.html
-
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- fs/f2fs/f2fs.h  | 4 ++--
- fs/f2fs/super.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d8b1de..11a2e09 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -65,7 +65,7 @@ struct f2fs_fault_info {
- 	unsigned int inject_type;
- };
- 
--extern char *fault_name[FAULT_MAX];
-+extern char *f2fs_fault_name[FAULT_MAX];
- #define IS_FAULT_SET(fi, type) ((fi)->inject_type & (1 << (type)))
- #endif
- 
-@@ -1279,7 +1279,7 @@ struct f2fs_sb_info {
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- #define f2fs_show_injection_info(type)				\
- 	printk("%sF2FS-fs : inject %s in %s of %pF\n",		\
--		KERN_INFO, fault_name[type],			\
-+		KERN_INFO, f2fs_fault_name[type],		\
- 		__func__, __builtin_return_address(0))
- static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
- {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3995e92..df12dcd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -41,7 +41,7 @@
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 
--char *fault_name[FAULT_MAX] = {
-+char *f2fs_fault_name[FAULT_MAX] = {
- 	[FAULT_KMALLOC]		= "kmalloc",
- 	[FAULT_KVMALLOC]	= "kvmalloc",
- 	[FAULT_PAGE_ALLOC]	= "page alloc",
--- 
-1.9.1
-
+Acked-by: Timur Tabi <timur@kernel.org>
