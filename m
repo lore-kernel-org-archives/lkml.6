@@ -2,93 +2,147 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FC9C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4882C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16D1243A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:08:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16D1243A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 228ED24FE3
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:15:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="QN1AfHEG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228ED24FE3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751114AbeF3OIQ (ORCPT
+        id S1751185AbeF3OPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 10:08:16 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:43020 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750802AbeF3OIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 10:08:15 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w5UE7kRD013933;
-        Sat, 30 Jun 2018 15:07:47 +0100
-Date:   Sat, 30 Jun 2018 15:07:46 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Simon Que <sque@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Chan <benchan@chromium.org>,
-        Chun-Ta Lin <itspeter@chromium.org>,
-        Zhongze Hu <frankhu@chromium.org>,
-        Joe Perches <joe@perches.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>, linux-fpga@kernel.org
-Subject: Re: [PATCH v7] drivers/staging: Gasket driver framework + Apex
- driver
-Message-ID: <20180630150746.38d69e92@alans-desktop>
-In-Reply-To: <20180630024938.107529-1-sque@chromium.org>
-References: <20180630024938.107529-1-sque@chromium.org>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Sat, 30 Jun 2018 10:15:15 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:42174 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbeF3OPO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 10:15:14 -0400
+Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w5UEEr4I031526;
+        Sat, 30 Jun 2018 23:14:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w5UEEr4I031526
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530368094;
+        bh=ZyiYtlpOFdJgYfmmGUCF4qogL+Vt3foP+wrt9AR4roQ=;
+        h=From:Date:Subject:To:Cc:From;
+        b=QN1AfHEGqk5U77QnpKIQipOAgi0Q2lPZHcDhJTK3FiPZouv+h66SCDiFEYCxpYmT6
+         +jaML2KIy1jew+nWqf5GktjAdA1V9RYUbkC2OyZF/jl0GDj9lobahH+rDZPutouQf5
+         qRlatwgnrHbxsGg/x12d3CCGgWHdK8Bv63oTwg9FTlyqyG0hdZgVTNtZVxKqfx8UeF
+         zO+skjkI1U7l3jxAfQLkqWggW+46r+qWYvYx5hQWD6PK8sGKFcJeB191TZ66WkAMIv
+         qyVhtIismq4TlpexfsC/NJk9uyhl8HhC62O6rDjFSUigHk4pDw1eImLCUFDDByO5tv
+         Ozjyxi/T26VGw==
+X-Nifty-SrcIP: [209.85.213.46]
+Received: by mail-vk0-f46.google.com with SMTP id d74-v6so6911252vke.10;
+        Sat, 30 Jun 2018 07:14:54 -0700 (PDT)
+X-Gm-Message-State: APt69E2jkCrXyWkwCrsEhA1XXDK2RVjjPFd3oq3kgBkEOJncsx4Zd1lK
+        asp6DYM6TbYf3JDcQATS5BieM0PbdATrIQIixbk=
+X-Google-Smtp-Source: AAOMgpe0eMkee31BSyqC6xW6s2psiz97jltawdWK6yekOEi20pAbSVhnuvdxuOkY8wcJ54WAUinMiLyHwHvJ/wI12Gs=
+X-Received: by 2002:a1f:d982:: with SMTP id q124-v6mr11365535vkg.166.1530368092918;
+ Sat, 30 Jun 2018 07:14:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sat, 30 Jun 2018 07:14:12
+ -0700 (PDT)
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 30 Jun 2018 23:14:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASY2kiCLCUoUaE3u-ddkxRj4CvaLa1-=m72MKyAFt0bhw@mail.gmail.com>
+Message-ID: <CAK7LNASY2kiCLCUoUaE3u-ddkxRj4CvaLa1-=m72MKyAFt0bhw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v4.18-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The Gasket (Google ASIC Software, Kernel Extensions, and Tools) kernel
-> framework is a generic, flexible system that supports thin kernel
-> drivers. Gasket kernel drivers are expected to handle opening and
-> closing devices, mmap'ing BAR space as requested, a small selection of
-> ioctls, and handling page table translation (covered below). Any other
-> functions should be handled by userspace code.
+Hi Linus,
 
-So it seems to me that we shouldn't have one random layer for Google
-ASIC, another chunk of code for FPGA and so on. This all really ought to
-be unified including where possible making things meaningfully self
-describe.
-
-You also don't seem to consider partitioning of an ASIC, eg if it
-implements a serial port abstraction for debug that ought to routed to
-the kernel, nor how to handle an ASIC that provides services to multiple
-consumers ?
-
-> One of the core assumptions of the Gasket framework is that precisely
-> one process is allowed to have an open write handle to the device node
-> at any given time. (That process may, once it has one write handle, open
-
-Why ? That's a very un-Linuxlike and un-Unixlike model. It's more like
-Windows and with all the problems we know that model causes.
-
-> any number of additional write handles.) This is accomplished by
-> tracking open and close data for each driver instance.
-
-What if I want to have multiple threads not sharing an mm, or pass an
-ASIC by handle to another instance - eg if I have a master process
-assigning resources wanting to pass a handle into a container ?
-
-And what about fd passing ?
-
-It seems completely weird to try and do this given I can (given
-permissions) equally just ptrace the person with it open and use ptrace
-as a multiplexor ???
+Please pull Kbuild fixes.  Thanks!
 
 
-Also how about pointers to a real world use case example and user space ?
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-Alan
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v4.18
+
+for you to fetch changes up to 73d1c580f92b203f4c3a189ee98c917c65712f7e:
+
+  kconfig: loop boundary condition fix (2018-06-28 22:48:08 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v4.18
+
+- introduce __diag_* macros and suppress -Wattribute-alias warnings from GCC 8
+
+- fix stack protector test script for x86_64
+
+- fix line number handling in Kconfig
+
+- document that '#' starts a comment in Kconfig
+
+- handle P_SYMBOL property in dump debugging of Kconfig
+
+- correct help message of LD_DEAD_CODE_DATA_ELIMINATION
+
+- fix occasional segmentation faults in Kconfig
+
+----------------------------------------------------------------
+Arnd Bergmann (2):
+      kbuild: add macro for controlling warnings to linux/compiler.h
+      disable -Wattribute-alias warning for SYSCALL_DEFINEx()
+
+Dirk Gouders (2):
+      kconfig: fix line numbers for if-entries in menu tree
+      kconfig: handle P_SYMBOL in print_symbol()
+
+Jerry James (1):
+      kconfig: loop boundary condition fix
+
+Masahiro Yamada (1):
+      kbuild: reword help of LD_DEAD_CODE_DATA_ELIMINATION
+
+Paul Burton (1):
+      powerpc: Remove -Wattribute-alias pragmas
+
+Randy Dunlap (1):
+      kconfig: document Kconfig source file comments
+
+Sven Joachim (1):
+      stack-protector: Fix test with 32-bit userland and CONFIG_64BIT=y
+
+ Documentation/kbuild/kconfig-language.txt |  6 ++++++
+ arch/powerpc/kernel/pci_32.c              |  4 ----
+ arch/powerpc/kernel/pci_64.c              |  4 ----
+ arch/powerpc/kernel/rtas.c                |  4 ----
+ arch/powerpc/kernel/signal_32.c           |  8 --------
+ arch/powerpc/kernel/signal_64.c           |  4 ----
+ arch/powerpc/kernel/syscalls.c            |  4 ----
+ arch/powerpc/mm/subpage-prot.c            |  4 ----
+ include/linux/compat.h                    |  8 +++++++-
+ include/linux/compiler-gcc.h              | 25 +++++++++++++++++++++++++
+ include/linux/compiler_types.h            | 18 ++++++++++++++++++
+ include/linux/syscalls.h                  |  4 ++++
+ init/Kconfig                              |  7 +++----
+ scripts/gcc-x86_64-has-stack-protector.sh |  2 +-
+ scripts/kconfig/expr.h                    |  3 +++
+ scripts/kconfig/preprocess.c              |  2 +-
+ scripts/kconfig/zconf.y                   |  8 ++++++--
+ 17 files changed, 74 insertions(+), 41 deletions(-)
+
+
+-- 
+Best Regards
+Masahiro Yamada
