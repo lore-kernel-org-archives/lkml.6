@@ -2,111 +2,144 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CA2C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBACC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A37D280F8
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A37D280F8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 10D96280FE
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D96280FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936844AbeF3BLv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 21:11:51 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35120 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934996AbeF3BLo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 21:11:44 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c1-v6so8175609edt.2;
-        Fri, 29 Jun 2018 18:11:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cYJfxaw3pnudhB4+vfg1WRfg7U8DHSVUVPWndQxasGs=;
-        b=Nk+VhMByqErvakvtsXAOccH/bqXY+lkXDBvifKddXZdU8AN3VsJndVV+En7Z3w+9w+
-         AU8aXAx8N3/huqATQ/cXOneGUDOilL6Erc23Y0KFvMzwIsWkGhYETB8udlQiRn3PuAfj
-         l9dZ3+lY6IaBKb2seKahZpkaP2eJQDz3EGXfYycY2mbIvNFImJrIlyapT3wB1G4zXu2g
-         etuvzo+yFVyrUuakJi3CXR1M9iKKirq63LdI7Hm97haYjIkaSiREnybMM2ot4WcwpGsG
-         d3S2MN9SPV55CsVRvlLDoyTIak8rvG2ts5nzkkBE/HSKvCzMdpynpXj0V77xMYyN9v4X
-         sj6w==
-X-Gm-Message-State: APt69E2XQjwglogKyGfO4aKemyfA1/r/WlHJZbspdKfJOi0YtHmwQjWi
-        rm+7DTzpYQMDNxyqR7knKftAfo/9
-X-Google-Smtp-Source: AAOMgpeayOr7gThVGcO3u/aC82uOnZQJIvyj9I7RGd4Pn7EOqgIlIpKoStgCkxz/bLGb8F6GkahZtQ==
-X-Received: by 2002:a50:90e7:: with SMTP id d36-v6mr14119043eda.279.1530321103188;
-        Fri, 29 Jun 2018 18:11:43 -0700 (PDT)
-Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com. [74.125.82.48])
-        by smtp.gmail.com with ESMTPSA id x40-v6sm1095383ede.23.2018.06.29.18.11.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Jun 2018 18:11:41 -0700 (PDT)
-Received: by mail-wm0-f48.google.com with SMTP id n17-v6so3651101wmh.2;
-        Fri, 29 Jun 2018 18:11:41 -0700 (PDT)
-X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr3179899wma.143.1530321100951;
- Fri, 29 Jun 2018 18:11:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 18:11:20
- -0700 (PDT)
-In-Reply-To: <3131254.YlICBQirlu@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-17-jernej.skrabec@siol.net> <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
- <3131254.YlICBQirlu@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 30 Jun 2018 09:11:20 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64UY9t9oKPQiEJkFsTyxJOJTG9dvJMNJYoHy7CKQ4Ap2Q@mail.gmail.com>
-Message-ID: <CAGb2v64UY9t9oKPQiEJkFsTyxJOJTG9dvJMNJYoHy7CKQ4Ap2Q@mail.gmail.com>
-Subject: Re: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        id S936902AbeF3BLz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:11:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:23612 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934660AbeF3BFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:05:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 18:05:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,288,1526367600"; 
+   d="scan'208";a="212317198"
+Received: from hao-dev.bj.intel.com ([10.238.157.61])
+  by orsmga004.jf.intel.com with ESMTP; 29 Jun 2018 18:05:49 -0700
+From:   Wu Hao <hao.wu@intel.com>
+To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, hao.wu@intel.com
+Subject: [PATCH v7 05/29] fpga: region: add compat_id support
+Date:   Sat, 30 Jun 2018 08:53:12 +0800
+Message-Id: <1530320016-24712-6-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
+References: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 3:19 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 04:22:36 CEST je Chen-Yu Tsai napisal(a):
->> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
->> > Current DW HDMI PHY code never prepares and enables PHY clock after it is
->> > created. It's just used as it is. This may work in some cases, but it's
->> > clearly wrong. Fix it by adding proper calls to enable/disable PHY
->> > clock.
->> >
->> > Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
->> >
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->>
->> So why does it work on the H3? Because there's only one PLL that the whole
->> display pipeline uses?
->>
->> We should probably tag this for stable. So,
->>
->> Cc: <stable@vger.kernel.org>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->
-> Same question as before, how this should be handled? Can I send separate patch
-> with same content to stable ML only?
+This patch introduces a compat_id pointer member and sysfs interface
+for each fpga region, similar as compat_id for fpga manager, it allows
+applications to read the per region compat_id for compatibility
+checking before other actions on this fpga-region (e.g. PR).
 
-Yes, including the hash of the commit which is already in Linus' tree. So
-you have to send it after the next -rc1.
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+---
+v5: use pointer for compat_id as it's optional to implement.
+v6: add Acked-by from Alan.
+v7: update kernelversion in sysfs doc and add Acked-by from Moritz.
+---
+ Documentation/ABI/testing/sysfs-class-fpga-region |  9 +++++++++
+ drivers/fpga/fpga-region.c                        | 22 ++++++++++++++++++++++
+ include/linux/fpga/fpga-region.h                  |  2 ++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-fpga-region
 
-ChenYu
+diff --git a/Documentation/ABI/testing/sysfs-class-fpga-region b/Documentation/ABI/testing/sysfs-class-fpga-region
+new file mode 100644
+index 0000000..bc7ec644
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-fpga-region
+@@ -0,0 +1,9 @@
++What:		/sys/class/fpga_region/<region>/compat_id
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Wu Hao <hao.wu@intel.com>
++Description:	FPGA region id for compatibility check, e.g. compatibility
++		of the FPGA reconfiguration hardware and image. This value
++		is defined or calculated by the layer that is creating the
++		FPGA region. This interface returns the compat_id value or
++		just error code -ENOENT in case compat_id is not used.
+diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+index 6d214d7..0d65220 100644
+--- a/drivers/fpga/fpga-region.c
++++ b/drivers/fpga/fpga-region.c
+@@ -158,6 +158,27 @@ int fpga_region_program_fpga(struct fpga_region *region)
+ }
+ EXPORT_SYMBOL_GPL(fpga_region_program_fpga);
+ 
++static ssize_t compat_id_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
++{
++	struct fpga_region *region = to_fpga_region(dev);
++
++	if (!region->compat_id)
++		return -ENOENT;
++
++	return sprintf(buf, "%016llx%016llx\n",
++		       (unsigned long long)region->compat_id->id_h,
++		       (unsigned long long)region->compat_id->id_l);
++}
++
++static DEVICE_ATTR_RO(compat_id);
++
++static struct attribute *fpga_region_attrs[] = {
++	&dev_attr_compat_id.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(fpga_region);
++
+ /**
+  * fpga_region_create - alloc and init a struct fpga_region
+  * @dev: device parent
+@@ -258,6 +279,7 @@ static int __init fpga_region_init(void)
+ 	if (IS_ERR(fpga_region_class))
+ 		return PTR_ERR(fpga_region_class);
+ 
++	fpga_region_class->dev_groups = fpga_region_groups;
+ 	fpga_region_class->dev_release = fpga_region_dev_release;
+ 
+ 	return 0;
+diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
+index d7071cd..0521b7f 100644
+--- a/include/linux/fpga/fpga-region.h
++++ b/include/linux/fpga/fpga-region.h
+@@ -14,6 +14,7 @@
+  * @bridge_list: list of FPGA bridges specified in region
+  * @mgr: FPGA manager
+  * @info: FPGA image info
++ * @compat_id: FPGA region id for compatibility check.
+  * @priv: private data
+  * @get_bridges: optional function to get bridges to a list
+  */
+@@ -23,6 +24,7 @@ struct fpga_region {
+ 	struct list_head bridge_list;
+ 	struct fpga_manager *mgr;
+ 	struct fpga_image_info *info;
++	struct fpga_compat_id *compat_id;
+ 	void *priv;
+ 	int (*get_bridges)(struct fpga_region *region);
+ };
+-- 
+1.8.3.1
+
