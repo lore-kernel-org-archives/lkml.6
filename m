@@ -6,51 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD73BC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73504C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E60243B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:00:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E60243B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 215DE251B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:07:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 215DE251B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751576AbeF3SAt (ORCPT
+        id S1751496AbeF3SHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 14:00:49 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:53228 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeF3SAr (ORCPT
+        Sat, 30 Jun 2018 14:07:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37484 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751304AbeF3SHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 14:00:47 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id BE2C39E7B9E;
-        Sat, 30 Jun 2018 19:00:43 +0100 (BST)
-Date:   Sat, 30 Jun 2018 19:00:42 +0100
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        freeman.liu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iio: adc: Add Spreadtrum SC27XX PMICs ADC
- support
-Message-ID: <20180630190042.4962bff3@archlinux>
-In-Reply-To: <CAMz4kuJb4aRxNKXYkDJ5vQQgFRN+87_br2gp1BtTLji0dp8XHQ@mail.gmail.com>
-References: <900586c7a4ce55818ab330c738f306c7452191ef.1529550463.git.baolin.wang@linaro.org>
-        <95836d610301133ffdac1efa86d7daf4cecb97b7.1529550463.git.baolin.wang@linaro.org>
-        <20180622151338.00003622@huawei.com>
-        <CAMz4kuJUeDjTVJqNc4cNv=LwR1HkuFap4vBF7CCcrxNqnTHa-A@mail.gmail.com>
-        <20180624143009.48cf14f8@archlinux>
-        <20180624144734.62f28908@archlinux>
-        <CAMz4kuJb4aRxNKXYkDJ5vQQgFRN+87_br2gp1BtTLji0dp8XHQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        Sat, 30 Jun 2018 14:07:23 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3906E2D;
+        Sat, 30 Jun 2018 18:07:22 +0000 (UTC)
+Date:   Sat, 30 Jun 2018 11:07:20 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: /tmp/cctnQ1CM.s:35: Error: .err encountered
+Message-Id: <20180630110720.c80f060abe6d163eef78e9a6@linux-foundation.org>
+In-Reply-To: <CACT4Y+b+7T3M=5EbHSpJmMAkRQnXih2+JZqeAvxht2zzKyjD2A@mail.gmail.com>
+References: <201806301538.bewm1wka%fengguang.wu@intel.com>
+        <CACT4Y+b+7T3M=5EbHSpJmMAkRQnXih2+JZqeAvxht2zzKyjD2A@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,60 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Jun 2018 09:47:54 +0800
-Baolin Wang <baolin.wang@linaro.org> wrote:
+On Sat, 30 Jun 2018 12:27:09 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
 
-> Hi Jonathan,
-> 
-> On 24 June 2018 at 21:47, Jonathan Cameron <jic23@jic23.retrosnub.co.uk> wrote:
-> > On Sun, 24 Jun 2018 14:30:09 +0100
-> > Jonathan Cameron <jic23@kernel.org> wrote:
-> >  
-> >> On Sun, 24 Jun 2018 17:13:00 +0800
-> >> Baolin Wang <baolin.wang@linaro.org> wrote:
-> >>  
-> >> > Hi Jonathan,
-> >> >
-> >> > On 22 June 2018 at 22:13, Jonathan Cameron <jonathan.cameron@huawei.com> wrote:  
-> >> > > On Thu, 21 Jun 2018 11:14:05 +0800
-> >> > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> >> > >  
-> >> > >> From: Freeman Liu <freeman.liu@spreadtrum.com>
-> >> > >>
-> >> > >> The Spreadtrum SC27XX PMICs ADC controller contains 32 channels,
-> >> > >> which is used to sample voltages with 12 bits conversion.
-> >> > >>
-> >> > >> [Baolin Wang did lots of improvements]
-> >> > >>
-> >> > >> Signed-off-by: Freeman Liu <freeman.liu@spreadtrum.com>
-> >> > >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>  
-> >> > >
-> >> > > One trivial missed bit of cleanup inline.  I'll sort that
-> >> > > when applying if no one else points anything out before I get back to my
-> >> > > development machine.  
-> >> >
-> >> > Thanks.  
-> >>
-> >> Applied to the togreg branch of iio.git and pushed out as testing
-> >> for the autobuilders to play with it.  
-> > Sorry, backed out for now.  My togreg tree is non rebasing and
-> > this is dependant on some stuff that only went in during the merge
-> > window.
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > head:   1904148a361a07fb2d7cba1261d1d2c2f33c8d2e
+> > commit: 758517202bd2e427664857c9f2aa59da36848aca arm: port KCOV to arm
+> > date:   2 weeks ago
+> > config: arm-allmodconfig (attached as .config)
+> > compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+> > reproduce:
+> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         git checkout 758517202bd2e427664857c9f2aa59da36848aca
+> >         # save the attached .config to linux build tree
+> >         GCC_VERSION=7.2.0 make.cross ARCH=arm
 > >
-> > I'll send a pull request to GregKH fairly soon and after that do
-> > the merge back into my tree to pick that hwspin lock stuff up.
+> > All errors (new ones prefixed by >>):
 > >
-> > So this will be a week or two before I can apply it without issues.
-> >
-> > Give me a poke if I seem to have forgotten about it.  
+> >    /tmp/cctnQ1CM.s: Assembler messages:
+> >>> /tmp/cctnQ1CM.s:35: Error: .err encountered
+> >    /tmp/cctnQ1CM.s:36: Error: .err encountered
+> >    /tmp/cctnQ1CM.s:37: Error: .err encountered
 > 
-> OK. Many thanks for your help.
+> Hi kbuild test robot,
 > 
-Applied now with dependencies in place.  Applied to the togreg
-branch of iio.git and pushed out as testing for the autobuilders
-to play with it.
+> The fix was mailed more than a month ago, but still not merged into
+> the tree. That's linux...
 
-Thanks,
+That was a rather unhelpful email.
 
-Jonathan
+I've just scanned all your lkml emails since the start of May and
+cannot find anything which looks like a fix for this issue.
 
+Please resend.   About three weks ago :(
