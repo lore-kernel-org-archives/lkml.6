@@ -2,289 +2,131 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EF8C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B441EC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBCBE25437
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:11:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="UMOgM0LA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SGttwnyM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCBE25437
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6AB842540C
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB842540C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751643AbeF3ULd (ORCPT
+        id S1751850AbeF3URy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 16:11:33 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:44906 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751483AbeF3ULb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 16:11:31 -0400
-Received: by mail-yb0-f193.google.com with SMTP id a2-v6so3776338ybe.11
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 13:11:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
-        b=UMOgM0LAInt7D1iksWolfxY5qTBThOEDoJtkuo02RMxPsfurRLqBIk++kJ4tofBPuR
-         oY02mt6vvhJwEzUos3cUfmBGVTtxDE4BMHvEqPjqoPXbOWTk/+u2xRrRsNoA6xQSyy1o
-         CVMYi3jqMKitMUvEtFEhMPhXRV+nRxb7KSk1DJpdJys74KHqRQCT0LmTnwOHPmGZV3BJ
-         axgHJUr46zeL2Za1gqKt02+p1Q/2FeVKjXnYU4+alzWGBev7vW0Xf87Hzg0l8FextdJW
-         IJ5SORnHjzKhbBlxORiYIamSTXy7Yud4Myt2HJyCpJD5gvtYIbK2xnydmMpxeYEb28RG
-         98+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
-        b=SGttwnyM15ChXW31ycXDOn7KVKIrCu4LFZV2bL7ayPozfB95ob3Tj0Eu1uVyaysHnj
-         vmrH4iLu/FxDIY8kDG2VLOSSvmGU2G+FMHnuRgH6lzY3X92Ha67WcFjaPdm146WaXhzR
-         VnwKzM4iLvjTQ/xUq01d5P9vFC+r/2NL3V4Tk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
-        b=o3z8aB6+fnRgJA0O61avSyst+0ey2hd5PxQtUKdoQcasaEFEKZdWVIKTBsD+xaTVZh
-         uDjtuT36UUYY52KDR1SrRjbC/efyfgDsrK3froYCSE4GQYT2L3nF638U8C5iTn7umiON
-         Wis0qVgm910exV/g1uQRpxy4Apm+vTPOVu3UVjeaKweoxJuN1N9Z971Or2kxg4F5cHLw
-         RV1NHpxbVV2HR/XxLvCOnTWXJTFhHww6j3ii41j1Uu5qG8V4J2nNqUR89PP8nQ+xaEGT
-         Gv2ZtfF+6X6Ov72HPJdNxX8ep7aDD67o6Ak0gc5bnuFF5qZQaInET4RSovQiGPw3N+PS
-         gRRg==
-X-Gm-Message-State: APt69E0XmA5x2xfn2Bhx/N8Mxbqm0dAAJh64I7wMNZx2Hc1OzB1lk2vx
-        Ia3idOkvLnemmVUaa/gzO2Szgwes96BaCysG2AcD9g==
-X-Google-Smtp-Source: ADUXVKJnZc2h1R62fL9UGu+St32113/DxHoBWSZL0S84G/cRvr/R8AA1kt9Da2/s58qkS7rXWpP0v5ovFxmAdEj2y08=
-X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr10794685ybj.112.1530389490818;
- Sat, 30 Jun 2018 13:11:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Sat, 30 Jun 2018 13:11:30
- -0700 (PDT)
-In-Reply-To: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
-References: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 30 Jun 2018 13:11:30 -0700
-X-Google-Sender-Auth: UBU3nsZCqR_bncgpX6aNhR717ik
-Message-ID: <CAGXu5jLDULvf-VBhUfBXtSNaSWpq8irgg56LT3nHDft5gZg5Lw@mail.gmail.com>
-Subject: Re: [PATCH v3] add param that allows bootline control of hardened usercopy
-To:     Chris von Recklinghausen <crecklin@redhat.com>
-Cc:     Laura Abbott <labbott@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 30 Jun 2018 16:17:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:58752 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751523AbeF3URw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 16:17:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jun 2018 13:17:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,291,1526367600"; 
+   d="scan'208";a="71283388"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 30 Jun 2018 13:17:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 40C06C5; Sat, 30 Jun 2018 23:17:51 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
+        Joe Perches <joe@perches.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 1/5] dm: Avoid namespace collision with bitmap API
+Date:   Sat, 30 Jun 2018 23:17:46 +0300
+Message-Id: <20180630201750.2588-2-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 5:07 AM, Chris von Recklinghausen
-<crecklin@redhat.com> wrote:
-> Enabling HARDENED_USER_COPY causes measurable regressions in
+bitmap API (include/linux/bitmap.h) has 'bitmap' prefix for its methods.
 
-nit: HARDENED_USERCOPY
+On the other hand DM bitmap API is special case.
+Adding 'dm' prefix to it to avoid potential name space collision.
 
->  networking performance, up to 8% under UDP flood.
->
-> I'm running an a small packet UDP flood using pktgen vs. a host b2b
-> connected. On the receiver side the UDP packets are processed by a
-> simple user space process that just reads and drops them:
->
-> https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
->
-> Not very useful from a functional PoV, but it helps to pin-point
-> bottlenecks in the networking stack.
->
-> When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
-> regression in the receive tput, compared to the same kernel without
-> this option enabled.
->
-> With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
-> cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
->
-> The call-chain is:
->
-> __GI___libc_recvfrom
-> entry_SYSCALL_64_after_hwframe
-> do_syscall_64
-> __x64_sys_recvfrom
-> __sys_recvfrom
-> inet_recvmsg
-> udp_recvmsg
-> __check_object_size
->
-> udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
-> calls check_copy_size() (again, inlined).
+No functional changes intended.
 
-Thanks for including these details!
+Suggested-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ .../md/persistent-data/dm-space-map-common.c  | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
->
-> A generic distro may want to enable HARDENED_USER_COPY in their default
-
-same nit :)
-
-> kernel config, but at the same time, such distro may want to be able to
-> avoid the performance penalties in with the default configuration and
-> disable the stricter check on a per-boot basis.
->
-> This change adds a boot parameter that conditionally disables
-> HARDENED_USERCOPY at boot time.
->
-> v2->v3:
->         add benchmark details to commit comments
->         Don't add new item to Documentation/admin-guide/kernel-parameters.rst
->         rename boot param to "hardened_usercopy="
->         update description in Documentation/admin-guide/kernel-parameters.txt
->         static_branch_likely -> static_branch_unlikely
->         add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
->                 DEFINE_STATIC_KEY_TRUE
->         disable_huc_atboot -> enable_checks (strtobool "on" == true)
->
-> v1->v2:
->         remove CONFIG_HUC_DEFAULT_OFF
->         default is now enabled, boot param disables
->         move check to __check_object_size so as to not break optimization of
->                 __builtin_constant_p()
->         include linux/atomic.h before linux/jump_label.h
->
-> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         | 11 ++++++++
->  include/linux/jump_label.h                    |  6 +++++
->  include/linux/thread_info.h                   |  5 ++++
->  mm/usercopy.c                                 | 26 +++++++++++++++++++
->  4 files changed, 48 insertions(+)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index efc7aa7a0670..560d4dc66f02 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -816,6 +816,17 @@
->         disable=        [IPV6]
->                         See Documentation/networking/ipv6.txt.
->
-> +       hardened_usercopy=
-> +                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
-> +                        hardening is enabled for this boot. Hardened
-> +                        usercopy checking is used to protect the kernel
-> +                        from reading or writing beyond known memory
-> +                        allocation boundaries as a proactive defense
-> +                        against bounds-checking flaws in the kernel's
-> +                        copy_to_user()/copy_from_user() interface.
-> +                on      Perform hardened usercopy checks (default).
-> +                off     Disable hardened usercopy checks.
-> +
->         disable_radix   [PPC]
->                         Disable RADIX MMU mode on POWER9
->
-> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-> index b46b541c67c4..1a0b6f17a5d6 100644
-> --- a/include/linux/jump_label.h
-> +++ b/include/linux/jump_label.h
-> @@ -299,12 +299,18 @@ struct static_key_false {
->  #define DEFINE_STATIC_KEY_TRUE(name)   \
->         struct static_key_true name = STATIC_KEY_TRUE_INIT
->
-> +#define DEFINE_STATIC_KEY_TRUE_RO(name)        \
-> +       struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-> +
->  #define DECLARE_STATIC_KEY_TRUE(name)  \
->         extern struct static_key_true name
->
->  #define DEFINE_STATIC_KEY_FALSE(name)  \
->         struct static_key_false name = STATIC_KEY_FALSE_INIT
->
-> +#define DEFINE_STATIC_KEY_FALSE_RO(name)       \
-> +       struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-> +
->  #define DECLARE_STATIC_KEY_FALSE(name) \
->         extern struct static_key_false name
->
-> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-> index 8d8821b3689a..ab24fe2d3f87 100644
-> --- a/include/linux/thread_info.h
-> +++ b/include/linux/thread_info.h
-> @@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
->  #endif
->
->  #ifdef CONFIG_HARDENED_USERCOPY
-> +#include <linux/atomic.h>
-> +#include <linux/jump_label.h>
-> +
-> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
-> +
-
-This isn't needed any more since bypass_usercopy_checks is internal to
-__check_object_size() now.
-
->  extern void __check_object_size(const void *ptr, unsigned long n,
->                                         bool to_user);
->
-> diff --git a/mm/usercopy.c b/mm/usercopy.c
-> index e9e9325f7638..39f8b1409618 100644
-> --- a/mm/usercopy.c
-> +++ b/mm/usercopy.c
-> @@ -20,6 +20,8 @@
->  #include <linux/sched/task.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/thread_info.h>
-> +#include <linux/atomic.h>
-> +#include <linux/jump_label.h>
->  #include <asm/sections.h>
->
->  /*
-> @@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
->   */
->  void __check_object_size(const void *ptr, unsigned long n, bool to_user)
->  {
-> +       if (static_branch_unlikely(&bypass_usercopy_checks))
-> +               return;
-> +
->         /* Skip all tests if size is zero. */
->         if (!n)
->                 return;
-> @@ -279,3 +284,24 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
->         check_kernel_text_object((const unsigned long)ptr, n, to_user);
->  }
->  EXPORT_SYMBOL(__check_object_size);
-> +
-> +DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
-
-This can be static.
-
-> +EXPORT_SYMBOL(bypass_usercopy_checks);
-
-No longer needs to be exported.
-
-> +
-> +static bool enable_checks __initdata = true;
-> +
-> +static int __init parse_hardened_usercopy(char *str)
-> +{
-> +       return strtobool(str, &enable_checks);
-> +}
-> +
-> +__setup("hardened_usercopy=", parse_hardened_usercopy);
-> +
-> +static int __init set_hardened_usercopy(void)
-> +{
-> +       if (enable_checks == false)
-> +               static_branch_enable(&bypass_usercopy_checks);
-> +       return 1;
-> +}
-> +
-> +late_initcall(set_hardened_usercopy);
-
-Otherwise, yeah, this looks good if the copy_from_iter() path can't be improved.
-
--Kees
-
+diff --git a/drivers/md/persistent-data/dm-space-map-common.c b/drivers/md/persistent-data/dm-space-map-common.c
+index 829b4ce057d8..0a3b8ae4a29c 100644
+--- a/drivers/md/persistent-data/dm-space-map-common.c
++++ b/drivers/md/persistent-data/dm-space-map-common.c
+@@ -69,9 +69,9 @@ static struct dm_block_validator index_validator = {
+  */
+ #define BITMAP_CSUM_XOR 240779
+ 
+-static void bitmap_prepare_for_write(struct dm_block_validator *v,
+-				     struct dm_block *b,
+-				     size_t block_size)
++static void dm_bitmap_prepare_for_write(struct dm_block_validator *v,
++					struct dm_block *b,
++					size_t block_size)
+ {
+ 	struct disk_bitmap_header *disk_header = dm_block_data(b);
+ 
+@@ -81,9 +81,9 @@ static void bitmap_prepare_for_write(struct dm_block_validator *v,
+ 						       BITMAP_CSUM_XOR));
+ }
+ 
+-static int bitmap_check(struct dm_block_validator *v,
+-			struct dm_block *b,
+-			size_t block_size)
++static int dm_bitmap_check(struct dm_block_validator *v,
++			   struct dm_block *b,
++			   size_t block_size)
+ {
+ 	struct disk_bitmap_header *disk_header = dm_block_data(b);
+ 	__le32 csum_disk;
+@@ -108,8 +108,8 @@ static int bitmap_check(struct dm_block_validator *v,
+ 
+ static struct dm_block_validator dm_sm_bitmap_validator = {
+ 	.name = "sm_bitmap",
+-	.prepare_for_write = bitmap_prepare_for_write,
+-	.check = bitmap_check
++	.prepare_for_write = dm_bitmap_prepare_for_write,
++	.check = dm_bitmap_check,
+ };
+ 
+ /*----------------------------------------------------------------*/
+@@ -124,7 +124,7 @@ static void *dm_bitmap_data(struct dm_block *b)
+ 
+ #define WORD_MASK_HIGH 0xAAAAAAAAAAAAAAAAULL
+ 
+-static unsigned bitmap_word_used(void *addr, unsigned b)
++static unsigned dm_bitmap_word_used(void *addr, unsigned b)
+ {
+ 	__le64 *words_le = addr;
+ 	__le64 *w_le = words_le + (b >> ENTRIES_SHIFT);
+@@ -170,7 +170,7 @@ static int sm_find_free(void *addr, unsigned begin, unsigned end,
+ {
+ 	while (begin < end) {
+ 		if (!(begin & (ENTRIES_PER_WORD - 1)) &&
+-		    bitmap_word_used(addr, begin)) {
++		    dm_bitmap_word_used(addr, begin)) {
+ 			begin += ENTRIES_PER_WORD;
+ 			continue;
+ 		}
 -- 
-Kees Cook
-Pixel Security
+2.18.0
+
