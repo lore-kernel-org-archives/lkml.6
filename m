@@ -2,70 +2,73 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205B9C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E92AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8493224A5F
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8493224A5F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
+	by mail.kernel.org (Postfix) with ESMTP id 5466224A85
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5466224A85
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936986AbeF3ME3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 08:04:29 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:40297 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936201AbeF3ME2 (ORCPT
+        id S937026AbeF3MEv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 30 Jun 2018 08:04:51 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59773 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936201AbeF3MEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 08:04:28 -0400
-Received: from cm-84.208.136.53.getinternet.no ([84.208.136.53]:3238)
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <ywe@nyt.cloud>)
-        id 1fZEc5-0005mc-KB; Sat, 30 Jun 2018 14:04:25 +0200
-To:     LKML <linux-kernel@vger.kernel.org>, misc@openbsd.org,
-        el.es.cr@gmail.com, Michael@MichaelLarabel.com,
-        osnews-crew@osnews.com, feedback@slashdot.org
-From:   =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <ywe@nyt.cloud>
-Subject: A little video of me, and summary of research, computing part: What
- should be the way forward for OS's
-Message-ID: <6d4c8487-39b6-ea9d-9d97-d7556a86efc1@nyt.cloud>
-Date:   Sat, 30 Jun 2018 14:03:03 +0200
-User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 30 Jun 2018 08:04:49 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fZEcR-00045Q-VZ; Sat, 30 Jun 2018 12:04:48 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: make helper function to_mnt_ns static
+Date:   Sat, 30 Jun 2018 13:04:47 +0100
+Message-Id: <20180630120447.17861-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A complete and coherent philosophy is needed, that is compatible with 
-the level of intelligence needed in the computing space, that will 
-ofcourse affect society in general.
+From: Colin Ian King <colin.king@canonical.com>
 
-Chaos theory, dictates that the wings of a butterfly may cause a storm 
-elsewhere.
+The function to_mnt_ns is local to the source and does not need to be
+in global scope, so make it static.
 
-Zén buddhism will add, did the ego of the butterfly indeed cause so much 
-distress?
+Cleans up sparse warning:
+symbol 'to_mnt_ns' was not declared. Should it be static?
 
-We choose a transcendental angle on life, for high accuracy of 
-philosophical impact, without associations to vain gods, for ego.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Our website is: http://www.nyt.cloud
-
-Peace (Go With Théé)
-Ywe Cærlyn
-Léad
-0‐ṅīt Ž - 'A Transcendental Angle On Life'
-
-Video Of Me: https://youtu.be/M-wT5xy5qoA
-
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 4e630dcb75c9..e7d2119656a4 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1641,7 +1641,7 @@ static bool is_mnt_ns_file(struct dentry *dentry)
+ 	       dentry->d_fsdata == &mntns_operations;
+ }
+ 
+-struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
++static struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
+ {
+ 	return container_of(ns, struct mnt_namespace, ns);
+ }
+-- 
+2.17.1
 
