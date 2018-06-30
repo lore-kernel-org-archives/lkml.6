@@ -1,168 +1,187 @@
-Return-Path: <SRS0=sqHT=JP=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 651B8C6778C
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 23:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EF9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 00:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D5E24F6F
-	for <linux-kernel@archiver.kernel.org>; Fri, 29 Jun 2018 23:54:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gRrdOw85"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D5E24F6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 95BC927F64
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 00:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BC927F64
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936571AbeF2XyX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 19:54:23 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38363 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936131AbeF2XyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 19:54:19 -0400
-Received: by mail-pl0-f65.google.com with SMTP id d10-v6so5159146plo.5
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 16:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=24Ey+gmb6R582QBzNaKviCkBbNHZhRq2DxHTONhwfW0=;
-        b=gRrdOw85FIbD1aA1ZqBf0I7cAhw3hDu8+LdsFvQvUNbJftmZNMhF6iMQGjsL7RCn8x
-         q76rb/v5pZ6Ywry3PBnE6pCtjoJX2SVlj2TyMkvmfo6ekmGTf69X0FlkFylTivpYTSr5
-         zQNvlHHopcaHdAjQF3+c30s83dhGsridxoIrA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=24Ey+gmb6R582QBzNaKviCkBbNHZhRq2DxHTONhwfW0=;
-        b=fSwcQj4mbrCEOzoVjq6ensfV8jtZg+7Jnt6BMvUHJ4ZeiYR4Po59lgU4ahskmfBvZO
-         1gCgqhVZ9ztTGtelPEpzEJBOd2X32F7bBoc+Qz9EmgmwaF8HFdk0sbXtef9PrhevVr9T
-         q6K98ak1YxgMibuib+BtFxdYhO8h29ceWK2N91N1koFUqLXmNuEvwyZOlDhZFeAHEnMK
-         3WpRrr4wuffuOSQa3mxu4piHpX1Dpunjl3sJJ3/JcuwFxWMWZ5KlsrIPUF8PVP/zXcjt
-         kIIEHVapBzzQ6zCKklHP9ojnp+ly53s3QOLV4A46Xkbd5qa7TWEFg6YFK3Bjjuf0oQQf
-         aLcg==
-X-Gm-Message-State: APt69E3KoczE0hHEZRFRajXFGwPcBoHfk/ZEO+D9mnm+P1V9P1ebp+2A
-        oopHlLPJgrMTKCQomDy16qooiw==
-X-Google-Smtp-Source: ADUXVKIx1248cHllzXPvYXnXOXyeIYB6sBuDzYSpbZnH7O3QQb38G4m79MHMj0xKl3MgK+Cd8ZQX9A==
-X-Received: by 2002:a17:902:7896:: with SMTP id q22-v6mr16443544pll.243.1530316458589;
-        Fri, 29 Jun 2018 16:54:18 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id f128-v6sm17642881pfg.176.2018.06.29.16.54.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 29 Jun 2018 16:54:17 -0700 (PDT)
-Date:   Fri, 29 Jun 2018 16:54:17 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8998: Add thermal zone
-Message-ID: <20180629235417.GY129942@google.com>
-References: <20180628210915.160893-1-mka@chromium.org>
- <20180628210915.160893-3-mka@chromium.org>
- <CAD=FV=Wo4wc_QZYr0a2_Ge=B6T4RNJDnOyxAd8r6sT4iZJjCKg@mail.gmail.com>
- <20180629185102.GV129942@google.com>
- <3b5054bb-76e4-a06f-54bb-e6ea7bbbcc69@codeaurora.org>
+        id S936675AbeF3ABe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 20:01:34 -0400
+Received: from mga03.intel.com ([134.134.136.65]:11832 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936131AbeF3ABd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 20:01:33 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 17:01:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,288,1526367600"; 
+   d="scan'208";a="54022848"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga006.jf.intel.com with ESMTP; 29 Jun 2018 17:01:32 -0700
+Date:   Fri, 29 Jun 2018 17:00:51 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v2 2/4] x86/split_lock: Align x86_capability to unsigned
+ long to avoid split locked access
+Message-ID: <20180630000051.GC68178@romley-ivt3.sc.intel.com>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-3-git-send-email-fenghua.yu@intel.com>
+ <ae0b8cb1-a8a9-f0ef-3c20-f4fe4b9b6f4a@intel.com>
+ <alpine.DEB.2.21.1806291824010.1595@nanos.tec.linutronix.de>
+ <20180629190346.GO18979@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1806292148510.1595@nanos.tec.linutronix.de>
+ <20180629203844.GA68178@romley-ivt3.sc.intel.com>
+ <8fdfb671-f223-163b-12cd-3c97d94f91b4@intel.com>
+ <alpine.DEB.2.21.1806292334180.1595@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b5054bb-76e4-a06f-54bb-e6ea7bbbcc69@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <alpine.DEB.2.21.1806292334180.1595@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 02:29:55PM -0700, David Collins wrote:
-> Hello Matthias,
+On Fri, Jun 29, 2018 at 11:44:44PM +0200, Thomas Gleixner wrote:
+> On Fri, 29 Jun 2018, Dave Hansen wrote:
 > 
-> On 06/29/2018 11:51 AM, Matthias Kaehlcke wrote:
-> > On Thu, Jun 28, 2018 at 03:58:41PM -0700, Doug Anderson wrote:
-> >> Hi,
-> >>
-> >> On Thu, Jun 28, 2018 at 2:09 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> >>> Add pm8998 thermal zone based on the examples in the spmi-temp-alarm
-> >>> bindings.
-> >>>
-> >>> Note: devices with the pm8998 need to have a 'thermal-zones' node (which
-> >>> may be empty) with a label 'thermal_zones'.
-> >>>
-> >>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> >>> ---
-> >>>  arch/arm64/boot/dts/qcom/pm8998.dtsi | 28 ++++++++++++++++++++++++++++
-> >>>  1 file changed, 28 insertions(+)
-> >>
-> >> Do you know if this patch actually does anything since you didn't
-> >> define a cooling-maps?  Hopefully at least the critical shuts things
-> >> down?
+> > On 06/29/2018 01:38 PM, Fenghua Yu wrote:
+> > > How to handle data that is used in generic code which can be used on
+> > > non-Intel platform? For exmple, if I do this change for struct efi in
+> > > include/linux/efi.h because set_bit() sets bits in efi.flags:
+> > > -       unsigned long flags;
+> > > +       unsigned long flags __aligned(unsigned long);
+> > >  } efi;
+> > > 
+> > > People may argue that the alignment unnecessarily increases size of 'efi'
+> > > on non-Intel platform which doesn't have split lock issue. Do we care this
+> > > argument?
 > > 
-> > I need to do some additional testing, currently waiting to get the
-> > heat gun back ...
+> > Unaligned memory accesses are bad, pretty much universally.  This is a
+> > general good practice that we should have been doing anyway.  Let folks
+> > complain.  Don't let it stop you.
 > > 
-> > I would expect the critical trip point to shut the system down, though
-> > I'm not sure whether the HW temperature watchdog wouldn't cut power
-> > before that. The documentation I have access to contains some register
-> > descriptions, but isn't very verbose about the overall behavior and
-> > from the driver code that's also not really clear to me. The driver
-> > "disables software override of stage 2 and 3 shutdowns" which make me
-> > guess that a hardware shutdown kicks in at stage 2 (135°C ?). This
-> > would be roughly in line with a system reset I observed in an earlier
-> > test at a temperature > 125°C. If that's correct the trip points need
-> > to be revisited.
-> > 
-> > Maybe David Collins who recently extended the driver to add support
-> > for GEN2 PMIC peripherals can provide more details.
+> > Also, look at the size of that structure.  Look at how many pointers it
+> > has.  Do you think *anyone* is going to complain about an extra 4 bytes
+> > in a 400-byte structure?
 > 
-> The PMIC TEMP_ALARM hardware peripheral will perform an automatic partial
-> PMIC shutdown upon hitting over-temperature stage 2 (125 C).  This turns
-> off peripherals within the PMIC that are expected to draw significant
-> current.  The set of peripherals included varies between PMICs.  This
-> partial shutdown will occur simultaneously with the triggering of an
-> interrupt to the APPS processor that informs the qcom-spmi-temp-alarm
-> driver that an over-temperature threshold has been crossed.
+> But in the above case the compiler does already the right thing. Why?
+> Because struct members are aligned to their natural alignment unless the
+> struct is explicitely marked 'packed'. In that case the programmer has to
+> take care of the alignment.
 > 
-> The TEMP_ALARM peripheral will perform an automatic full PMIC shutdown
-> upon hitting over-temperature stage 3 (145 C).  Software won't receive an
-> interrupt in this case because all power is cut.
+> Just look at it with pahole:
+> 
+> 	struct efi_memory_map      memmap;               /*   280    56 */
+> 
+> 	/* XXX last struct has 7 bytes of padding */
+> 
+> 	/* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
+> 	long unsigned int          flags;                /*   336     8 */
+> 
+> The issue with the capability arrays is that the data type is u32 which has
+> the natural alignment of 4 byte, while unsigned long has 8 byte on 64bit.
+> 
+> So just slapping blindly aligned(unsigned long) to anything which is
+> accessed by locked instructions is pointless.
+> 
 
-This information is very useful, thanks David!
+Thank you for you education!
 
-The (partial) hardware shutdown seems like a good measure of last
-resort, however I suppose we prefer Linux to initiate a shutdown
-before losing part of the peripherals (drivers might not be happy
-about this and probably not revover even when the temperature goes
-down again) or reach a full PMIC shutdown.
+Below is part of the future patches that are supposed to fix more potential
+split lock issues.
 
-Please let me know if there are reasons to prefer to go the hardware
-limits, it's also an option for device makers to overwrite these
-settings if they want different behavior.
+Could you please take a look and see if the changes are in the
+right direction before I move further?
 
-> If you are not specifying an ADC channel for the qcom-spmi-temp-alarm
-> device (which would allow for polling of the real-time PMIC die
-> temperature), then notifications about stage 0 -> 1 and 1 -> 0 transitions
-> (105 C) are the only time that software could take meaningful corrective
-> action to avoid a PMIC automatic partial or full shutdown.
+diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
+index 2e20814d3ce3..ca62c3784f9a 100644
+--- a/arch/x86/boot/cpuflags.h
++++ b/arch/x86/boot/cpuflags.h
+@@ -9,7 +9,7 @@ struct cpu_features {
+ 	int level;		/* Family, or 64 for x86-64 */
+ 	int family;		/* Family, always */
+ 	int model;
+-	u32 flags[NCAPINTS];
++	u32 flags[NCAPINTS] __aligned(unsigned long);
+ };
+ 
+ extern struct cpu_features cpu;
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 8c7b3e5a2d01..24eac32b039d 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -133,7 +133,7 @@ struct mce_log_buffer {
+ 	char signature[12]; /* "MACHINECHECK" */
+ 	unsigned len;	    /* = MCE_LOG_LEN */
+ 	unsigned next;
+-	unsigned flags;
++	unsigned flags __aligned(unsigned long);
+ 	unsigned recordlen;	/* length of struct mce */
+ 	struct mce entry[MCE_LOG_LEN];
+ };
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..fe681c695638 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -488,8 +488,8 @@ static const char *table_lookup_model(struct cpuinfo_x86 *c)
+ 	return NULL;		/* Not found */
+ }
+ 
+-__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS];
+-__u32 cpu_caps_set[NCAPINTS + NBUGINTS];
++__u32 cpu_caps_cleared[NCAPINTS + NBUGINTS] __aligned(unsigned long);
++__u32 cpu_caps_set[NCAPINTS + NBUGINTS] __aligned(unsigned long);
+ 
+ void load_percpu_segment(int cpu)
+ {
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 56add823f190..e1a3c17945b5 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -963,7 +963,7 @@ extern struct efi {
+ 	efi_reset_system_t *reset_system;
+ 	efi_set_virtual_address_map_t *set_virtual_address_map;
+ 	struct efi_memory_map memmap;
+-	unsigned long flags;
++	unsigned long flags __aligned(unsigned long);
+ } efi;
+ 
+ extern struct mm_struct efi_mm;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5c91108846db..30b1f173d3ca 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -885,7 +885,7 @@ struct file {
+ 	void			*f_security;
+ #endif
+ 	/* needed for tty driver, and maybe others */
+-	void			*private_data;
++	void			*private_data __aligned(unsigned long);
+ 
+ #ifdef CONFIG_EPOLL
+ 	/* Used by fs/eventpoll.c to link all the hooks to this file */
 
-Thanks, I already experimented a a bit with this. For the record, the
-driver is https://patchwork.kernel.org/patch/10494771/ (this version
-is broken though).
-
-Cheers
-
-Matthias
