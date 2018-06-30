@@ -2,97 +2,405 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FAKE_REPLY_C,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85613C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ED0C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309C4253C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 207CE253AF
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 18:57:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbeDeT1w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 309C4253C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQFHPvh8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207CE253AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeF3SQz (ORCPT
+        id S1751675AbeF3S5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 14:16:55 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:37909 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751472AbeF3SQw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 14:16:52 -0400
-Received: by mail-wm0-f45.google.com with SMTP id 69-v6so4939694wmf.3;
-        Sat, 30 Jun 2018 11:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=zA6dCQ6FqpZgQL/9acVc94VmJs9FcYjPq3MWD7YW/a4=;
-        b=PbeDeT1w9yzCqcBF1rwb8zMapO9N2oFM3pSiNYD4s+lUS7zf+hVkyppxlr2T30cPZu
-         75pMGMO+puF2gSX++/QpchWbW/7EIPg5FVkq8FlezaHC6PRwwAobDH9O7YAHMEbRk/xn
-         zutP5FYBywNOrMkgc87To9JZe0NxJ9mJZqg1/CK8WVean4Ep1Xu7dlfwQW0M/OA9Z+u/
-         jJx8ikrAQq6bGi0K8C8XfKdYos+XLaAKlRDk4BA7YNcZVx9YEMArv3nQU/LsxcXkp2BM
-         eJNp8qS9Jt3QyRLZPaSHKjeDwmLchYh2lSZwpHP09mKWAq1ilTfuLlflP8YBIJlPtN7B
-         TZ3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zA6dCQ6FqpZgQL/9acVc94VmJs9FcYjPq3MWD7YW/a4=;
-        b=HW7pz/KzgIfeiWVtHzEssIY34ITCHJZ0C4/3QjmwEoYbq30IiUYl36Ahbo1d86/DUn
-         J0iJeVZtLl2QDbI6ik75U3Z2xAB+OzC4MUBfFfx/8USkoJgByYAoAgjxpOG5pg5/t66H
-         kDjPSIH8yqJcc2OSknOjR6YVP9fuIgpAiTRNWXdFSAv72ykDPPliw1ifD/3Y4y4y2V1r
-         06t8y0CA4syAd6pqgNBDyJcexLh6dveCEonzXLpA5nz8dzZJjRNdRN5qQ0kh6QrQ4arG
-         MqLidbCx4K7Bjq4SC2hAW/AwzWLpwWHrVoEGL9Zzinfh44Ih9Ga87aS9FtUZHVgYABHs
-         em9A==
-X-Gm-Message-State: APt69E2zfPVSKYpEiSlc39P5L209RfOUzCaw5xOP/0fRI0emkoOMfqqA
-        7znvrXhaW0rMlrNtvh6nHHIgKkSZ
-X-Google-Smtp-Source: AAOMgpctqEfsSlhX9dUXMmPRIjxXcgZDI8XrscVnA3pb992CGvNDMraXyELra5ScrhnN7QJ5hFLbrA==
-X-Received: by 2002:a1c:8647:: with SMTP id i68-v6mr4723189wmd.28.1530382611421;
-        Sat, 30 Jun 2018 11:16:51 -0700 (PDT)
-Received: from x230 (ipb218f5a1.dynamic.kabel-deutschland.de. [178.24.245.161])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm6411123wmv.48.2018.06.30.11.16.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Jun 2018 11:16:50 -0700 (PDT)
-From:   Eugeniu Rosca <roscaeugeniu@gmail.com>
-X-Google-Original-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-Date:   Sat, 30 Jun 2018 20:16:38 +0200
-To:     Julian Scheel <julian@jusst.de>, Felipe Balbi <balbi@kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCHv2 3/3] usb: gadget: f_uac*: Support multiple sampling
- rates
-Message-ID: <20180630181638.GA8807@x230>
+        Sat, 30 Jun 2018 14:57:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751318AbeF3S52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 14:57:28 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80F40253AE;
+        Sat, 30 Jun 2018 18:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530385047;
+        bh=+3z7bo+5UWwkLvYPhrNUDBSLf1RKAgYNxh9TuqugyEU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dQFHPvh8dOv0k5kVqR+7Bn+wJbituA2qDBqvHDxntfHkqpjM4+OVRbYdlIqgj4eoc
+         /zPahxmnonCXZ/IR70aTC6V7neaiga29vZO/aCql3rM6l1Zyam2lnNIRURNDro0EPt
+         ZKFC47xLvpz5fmGmgIRPX172DNbyGBqK+ccJ92Qs=
+Date:   Sat, 30 Jun 2018 13:57:26 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     dmeyer@gigaio.com
+Cc:     logang@deltatee.com, kurt.schwemmer@microsemi.com,
+        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com,
+        bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
+        allenbh@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] PCI Quirk Patchset for Microsemi Switchtec NTB
+Message-ID: <20180630185726.GA9547@bhelgaas-glaptop.roam.corp.google.com>
+References: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
+ <20180630015002.GL40928@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20170626073505.2792-4-julian@jusst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180630015002.GL40928@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Julian,
+On Fri, Jun 29, 2018 at 08:50:02PM -0500, Bjorn Helgaas wrote:
+> On Wed, May 23, 2018 at 01:18:04PM -0700, dmeyer@gigaio.com wrote:
+> > From: Doug Meyer <dmeyer@gigaio.com>
+> > 
+> > This is a resend of the patch series to enable Microsemi Switchtec
+> > NTB configurations to run with the IOMMU in the hosts turned on.
+> > Because of the nature PCI Quirk implementation, it was preferable
+> > to migrate the Microsemi PCI vendor and device definitions to the
+> > Linux canonical location. Logan Gunthorpe requested that this
+> > migration be done as a separate patch in a set, and so this patch
+> > series was created as shown here.
+> > 
+> > The first patch encapsulates the movement of constants from
+> > switchtec.h to pci_ids.h, with commensurate changes to the source
+> > files. This patch is not dependent on any other work.
+> > 
+> > The second patch is the PCI quirk implementation itself, and is
+> > completely dependent upon the first patch in this series.
+> > 
+> > Testing of the quirk was done on with a 2-host x86-64 system
+> > with all combinations of IOMMU off/on. The ntb_perf module was
+> > used as test stimulus. 
+> > 
+> > Blessings,
+> > Doug Meyer
+> > 
+> > Changes since v1:
+> > - Call pci_device_disable() at return points to clean up properly.
+> > - Changed all dev_* print macros to pci_* macros.
+> > - Removed superfluous variable initializations.
+> > 
+> > Doug Meyer (2):
+> >   NTB: Migrate PCI Constants to Cannonical PCI Header
+> >   NTB: PCI Quirk to Enable Switchtec NT Functionality with IOMMU On
+> > 
+> >  drivers/ntb/hw/mscc/ntb_hw_switchtec.c |   3 +-
+> >  drivers/pci/quirks.c                   | 197 +++++++++++++++++++++++++++++++++
+> >  drivers/pci/switch/switchtec.c         |  15 ++-
+> >  include/linux/pci_ids.h                |  32 ++++++
+> >  include/linux/switchtec.h              |   4 -
+> >  5 files changed, 238 insertions(+), 13 deletions(-)
+> 
+> I applied these with Logan's reviewed-by to my pci/switchtec branch for
+> v4.19 with the following updates:
+> 
+>   - You removed the SPDX tag from drivers/pci/switch/switchtec.c.  I assume
+>     that was a mistake, so I restored it.
+> 
+>   - I moved the PCI_VENDOR_ID_MICROSEMI definition to keep the file sorted.
+> 
+>   - I dropped the Device ID definitions per the policy at the top of the
+>     file (which I mentioned on your v1 posting).
+> 
+>   - I converted all the Device ID definition uses to raw hex constants.  I
+>     noticed that the following were defined by your patch, but not used:
+> 
+>       PCI_DEVICE_ID_MICROSEMI_PSX24XG3
+>       PCI_DEVICE_ID_MICROSEMI_PSX32XG3
+> 
+>     I can't tell whether the quirk is supposed to apply to them or not.
+> 
+> Please review and holler if I broke something.
+> 
+> This touches drivers/ntb/hw/..., which isn't my area.  Let me know if you'd
+> rather take these through a different tree.
 
-Would it be possible to revive the uac2 multiple sampling rate
-patch-set [1] by rebasing it onto the most recent kernel? If you
-don't have time for this, I could help you.
+I also:
 
-Hello Felipe,
+  - Fixed the sparse warnings reported by the kbuild test robot.
 
-Would you please give the green light to start working on this feature,
-meaning that you will accept it once enough review/testing is done?
+  - Removed some (void * __iomem) casts in the ioread32() parameters and
+    the (u64) cast on the return value.  I noticed that
+    switchtec_ntb_init_sndev() does an ioread64() of ep_map instead of two
+    ioread32() calls.  I suspect both places could and should do it the
+    same way.
 
-Best regards,
-Eugeniu.
+  - Used %02x.%d instead of %02d.%d when printing the DMA alias, so it
+    matches the other places that print PCI device addresses.
 
-[1] https://lkml.org/lkml/2017/6/30/276 ("[PATCHv2 0/3] USB Audio Gadget: Support multiple sampling rates")
+  - Replaced DECLARE_PCI_FIXUP_CLASS_FINAL with DECLARE_PCI_FIXUP_FINAL,
+    since it should be sufficient to filter on Vendor and Device ID,
+    without worrying about the class.
+
+Here's the diff from what you originally posted to what's currently on my
+pci/switchtec branch:
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index f178cecdc001..d54a182a09cf 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4787,14 +4787,13 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+ 	pci_info(pdev, "Setting Switchtec proxy ID aliases\n");
+ 
+ 	mmio_ntb = mmio + SWITCHTEC_GAS_NTB_OFFSET;
+-	mmio_ctrl = (void * __iomem) mmio_ntb + SWITCHTEC_NTB_REG_CTRL_OFFSET;
++	mmio_ctrl = (void __iomem *) mmio_ntb + SWITCHTEC_NTB_REG_CTRL_OFFSET;
+ 	mmio_sys_info = mmio + SWITCHTEC_GAS_SYS_INFO_OFFSET;
+ 
+ 	partition = ioread8(&mmio_ntb->partition_id);
+ 
+-	partition_map = (u64) ioread32((void * __iomem) &mmio_ntb->ep_map);
+-	partition_map |=
+-		((u64) ioread32((void * __iomem) &mmio_ntb->ep_map + 4)) << 32;
++	partition_map = ioread32(&mmio_ntb->ep_map);
++	partition_map |= ((u64) ioread32(&mmio_ntb->ep_map + 4)) << 32;
+ 	partition_map &= ~(1ULL << partition);
+ 
+ 	for (pp = 0; pp < (sizeof(partition_map) * 8); pp++) {
+@@ -4829,7 +4828,7 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+ 			rid_entry = ioread32(&mmio_peer_ctrl->req_id_table[te]);
+ 			devfn = (rid_entry >> 1) & 0xFF;
+ 			pci_dbg(pdev,
+-				"Aliasing Partition %d Proxy ID %02d.%d\n",
++				"Aliasing Partition %d Proxy ID %02x.%d\n",
+ 				pp, PCI_SLOT(devfn), PCI_FUNC(devfn));
+ 			pci_add_dma_alias(pdev, devfn);
+ 		}
+@@ -4838,115 +4837,59 @@ static void quirk_switchtec_ntb_dma_alias(struct pci_dev *pdev)
+ 	pci_iounmap(pdev, mmio);
+ 	pci_disable_device(pdev);
+ }
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX24XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX32XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX48XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX64XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX80XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFX96XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PSX48XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PSX64XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PSX80XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PSX96XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX24XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX32XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX48XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX64XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX80XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PAX96XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL24XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL32XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL48XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL64XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL80XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXL96XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI24XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI32XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI48XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI64XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI80XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
+-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_MICROSEMI,
+-			      PCI_DEVICE_ID_MICROSEMI_PFXI96XG3,
+-			      PCI_CLASS_BRIDGE_OTHER, 8,
+-			      quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8531,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8532,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8533,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8534,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8535,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8536,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8543,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8544,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8545,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8546,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8551,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8552,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8553,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8554,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8555,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8556,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8561,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8562,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8563,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8564,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8565,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8566,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8571,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8572,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8573,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8574,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8575,
++			quirk_switchtec_ntb_dma_alias);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8576,
++			quirk_switchtec_ntb_dma_alias);
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index 07a03b90498e..9940cc70f38b 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Microsemi Switchtec(tm) PCIe Management Driver
+  * Copyright (c) 2017, Microsemi Corporation
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 7bc61402d28b..80aec5b9a6c1 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -1668,6 +1668,7 @@
+ #define PCI_DEVICE_ID_COMPEX_ENET100VG4	0x0112
+ 
+ #define PCI_VENDOR_ID_PMC_Sierra	0x11f8
++#define PCI_VENDOR_ID_MICROSEMI		0x11f8
+ 
+ #define PCI_VENDOR_ID_RP		0x11fe
+ #define PCI_DEVICE_ID_RP32INTF		0x0001
+@@ -3082,36 +3083,4 @@
+ 
+ #define PCI_VENDOR_ID_OCZ		0x1b85
+ 
+-#define PCI_VENDOR_ID_MICROSEMI			0x11f8
+-#define PCI_DEVICE_ID_MICROSEMI_PFX24XG3	0x8531
+-#define PCI_DEVICE_ID_MICROSEMI_PFX32XG3	0x8532
+-#define PCI_DEVICE_ID_MICROSEMI_PFX48XG3	0x8533
+-#define PCI_DEVICE_ID_MICROSEMI_PFX64XG3	0x8534
+-#define PCI_DEVICE_ID_MICROSEMI_PFX80XG3	0x8535
+-#define PCI_DEVICE_ID_MICROSEMI_PFX96XG3	0x8536
+-#define PCI_DEVICE_ID_MICROSEMI_PSX24XG3	0x8541
+-#define PCI_DEVICE_ID_MICROSEMI_PSX32XG3	0x8542
+-#define PCI_DEVICE_ID_MICROSEMI_PSX48XG3	0x8543
+-#define PCI_DEVICE_ID_MICROSEMI_PSX64XG3	0x8544
+-#define PCI_DEVICE_ID_MICROSEMI_PSX80XG3	0x8545
+-#define PCI_DEVICE_ID_MICROSEMI_PSX96XG3	0x8546
+-#define PCI_DEVICE_ID_MICROSEMI_PAX24XG3	0x8551
+-#define PCI_DEVICE_ID_MICROSEMI_PAX32XG3	0x8552
+-#define PCI_DEVICE_ID_MICROSEMI_PAX48XG3	0x8553
+-#define PCI_DEVICE_ID_MICROSEMI_PAX64XG3	0x8554
+-#define PCI_DEVICE_ID_MICROSEMI_PAX80XG3	0x8555
+-#define PCI_DEVICE_ID_MICROSEMI_PAX96XG3	0x8556
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL24XG3	0x8561
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL32XG3	0x8562
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL48XG3	0x8563
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL64XG3	0x8564
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL80XG3	0x8565
+-#define PCI_DEVICE_ID_MICROSEMI_PFXL96XG3	0x8566
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI24XG3	0x8571
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI32XG3	0x8572
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI48XG3	0x8573
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI64XG3	0x8574
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI80XG3	0x8575
+-#define PCI_DEVICE_ID_MICROSEMI_PFXI96XG3	0x8576
+-
+ #endif /* _LINUX_PCI_IDS_H */
