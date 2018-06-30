@@ -2,131 +2,92 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF16C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF59C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48233218F8
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48233218F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 160752536B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:23:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160752536B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751997AbeF3USH (ORCPT
+        id S1751725AbeF3UXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 16:18:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:39771 "EHLO mga05.intel.com"
+        Sat, 30 Jun 2018 16:23:54 -0400
+Received: from mout.gmx.net ([212.227.17.21]:49175 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751466AbeF3URw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 16:17:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jun 2018 13:17:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,291,1526367600"; 
-   d="scan'208";a="63464714"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 30 Jun 2018 13:17:48 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 589DB58D; Sat, 30 Jun 2018 23:17:51 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-        Joe Perches <joe@perches.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
-Date:   Sat, 30 Jun 2018 23:17:48 +0300
-Message-Id: <20180630201750.2588-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
-References: <20180630201750.2588-1-andriy.shevchenko@linux.intel.com>
+        id S1751466AbeF3UXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 16:23:50 -0400
+Received: from ls3530.fritz.box ([92.116.139.101]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LpwZn-1g26ii2or9-00fg7p; Sat, 30
+ Jun 2018 22:23:39 +0200
+Date:   Sat, 30 Jun 2018 22:23:35 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture code cleanups and fixes
+Message-ID: <20180630202335.GA7097@ls3530.fritz.box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:PhduCnCFN5RaSQPnwZekGyEcnqVy9Qd86/tZG+PfvjnS7adu5ZI
+ WbMFBOMYy+ilgoOos9suOYEhnwh+dB4oZoZNghno7pfpSyToXzUNn72lVIwxyraRBvgzw6r
+ +/509wqWvLEtckoFmTIoz/3wxquicvuj/ugworWjeDrI55tAI1ZcTSSkEU1C3dJ5SrCI2xx
+ n5vchp11nUrEUQPIsFQAg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NiYo5hkWnsA=:9+LEtITwVEWg53I/CS/Imn
+ OCjvPaL+6oW9pA4iQXzd9Si17WjrBK20FYRMK/RMJK8nXvKMm+qACRn+ffrSjUAj9JJ6EYsJd
+ LaFQLWPAWSJk1R9XlZG/Dh9v7QC6ub1VJf9RbHCwmfnxeQrxYshhulywLwAtyPNxxcSwEl8sG
+ U1TAkFyfhlU1ttdN7C2n4FFaF937+5Ds4nK8c0e6pzwh7sTIpVXegGJG5GtzLC6JwF10T0d+b
+ eo+1iVvzbW2Ocmr/P3snMCF/+whplvZQk9VHa0o7XlVAbMIIulKbYFK0yv9LAWUW85oPgNw5a
+ eR6eCHP+kaWXA/K4VMRFlbvOM1xlLJufPv1MQS94Ukm/uAHUMYje+p+4MJiFCjaPZTJGaFfdE
+ Tj70iZtCSgFl9fZaBLmkDkXqcAGYFymaSizwtgQ47dWlYLEl/4oo03u2zjdBDzimWV8Gas27s
+ YHSJbpWT5FgvqAYadrZSQDASTyrO9fkyArju84D9Kq2mM8C/rCsdm98Lb3jdKThFztaqrO6XI
+ tmgzHofifceJ/1N+WwAiedwm8hS+vo+qUiHFXtMiKmWqSVlJuZnwJyTAKe/royqSVZIV9tOjW
+ KRvMRpYOM9EU0pxSiycbErs/X+0KRdXH1OsnynYCL+WoLgKthPwZKIsy9eUDeJYLsLwSp27GW
+ dDxfjM0C3yJ0xaoeP0/Nkyoha3qUEF/5MnOHRA60Rqas3xVa5iGt7jrQJygi37PKM+PVRVTyP
+ IgHz4g+ar2VSaNbOKWXd2JQALfgIdkv+TSnsp6RUPEH47cgAz+prQvhv+2o=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A lot of code become ugly because of open coding allocations for bitmaps.
+Hi Linus,
 
-Introduce three helpers to allow users be more clear of intention
-and keep their code neat.
+please pull some patches for the parisc architecture from:
 
-Note, due to multiple circular dependencies we may not provide
-the helpers as inliners. For now we keep them exported and, perhaps,
-at some point in the future we will sort out header inclusion and
-inheritance.
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.18-1
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/bitmap.h |  8 ++++++++
- lib/bitmap.c           | 19 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
+Nothing exiting in this patchset, just small cleanups of header files, kernel
+now defaults to 4 CPUs when building a SMP kernel, mark 16- and 64-kB page
+sizes broken and addition of the new io_pgetevents syscall.  
 
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 1ee46f492267..acf5e8df3504 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -104,6 +104,14 @@
-  * contain all bit positions from 0 to 'bits' - 1.
-  */
- 
-+/*
-+ * Allocation and deallocation of bitmap.
-+ * Provided in lib/bitmap.c to avoid circular dependency.
-+ */
-+extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
-+extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
-+extern void bitmap_free(const unsigned long *bitmap);
-+
- /*
-  * lib/bitmap.c provides these functions:
-  */
-diff --git a/lib/bitmap.c b/lib/bitmap.c
-index 33e95cd359a2..09acf2fd6a35 100644
---- a/lib/bitmap.c
-+++ b/lib/bitmap.c
-@@ -13,6 +13,7 @@
- #include <linux/bitops.h>
- #include <linux/bug.h>
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/uaccess.h>
- 
-@@ -1125,6 +1126,24 @@ void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int n
- EXPORT_SYMBOL(bitmap_copy_le);
- #endif
- 
-+unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
-+{
-+	return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
-+}
-+EXPORT_SYMBOL(bitmap_alloc);
-+
-+unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
-+{
-+	return bitmap_alloc(nbits, flags | __GFP_ZERO);
-+}
-+EXPORT_SYMBOL(bitmap_zalloc);
-+
-+void bitmap_free(const unsigned long *bitmap)
-+{
-+	kfree(bitmap);
-+}
-+EXPORT_SYMBOL(bitmap_free);
-+
- #if BITS_PER_LONG == 64
- /**
-  * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
--- 
-2.18.0
+Thanks,
+Helge
 
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      parisc: Convert printk(KERN_LEVEL) to pr_lvl()
+
+Helge Deller (6):
+      parisc: Drop struct sigaction from not exported header file
+      parisc: Mark 16kB and 64kB page sizes BROKEN
+      parisc: Default to 4 SMP CPUs
+      parisc: Wire up io_pgetevents syscall
+      parisc: Reduce debug output in unwind code
+      parisc: Build kernel without -ffunction-sections
+
+ arch/parisc/Kconfig                   |  6 +++---
+ arch/parisc/Makefile                  |  4 ----
+ arch/parisc/include/asm/signal.h      |  8 --------
+ arch/parisc/include/uapi/asm/unistd.h |  3 ++-
+ arch/parisc/kernel/drivers.c          | 25 +++++++++----------------
+ arch/parisc/kernel/syscall_table.S    |  1 +
+ arch/parisc/kernel/unwind.c           |  4 ++--
+ 7 files changed, 17 insertions(+), 34 deletions(-)
