@@ -2,120 +2,94 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64D9C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 00:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7E3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61241280C4
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 00:57:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfCqnF5i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61241280C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 729D0280C2
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:04:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 729D0280C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934241AbeF3A5Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 20:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
+        id S1755337AbeF3BEv (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:04:51 -0400
+Received: from gate.crashing.org ([63.228.1.57]:39493 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755091AbeF3A5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 20:57:20 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA8B8280C4;
-        Sat, 30 Jun 2018 00:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530320240;
-        bh=ZZg5zPuu2IzYemSYo2JLZccnFHgur4vPESMpdPn8Qg0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JfCqnF5imsAwQ1Sf1jYHCfOQAyqGnKkAB4bMuRKglpRoy/gtvsugmFh71wwTfetaN
-         k03XUtR2rgrlSpC1yCUDmgsfq47ts6cs6MZhjlJI5A5gOYDXKvmgZvbL7wrYl2WMYV
-         DfiWLa3+qF1BFIRO8Yf9HBm7Wkbyusmwm3CZ7i3k=
-Date:   Fri, 29 Jun 2018 19:57:18 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: fix restoring resized BAR state on resume
-Message-ID: <20180630005718.GJ40928@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180614122146.62118-1-christian.koenig@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180614122146.62118-1-christian.koenig@amd.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752549AbeF3BEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:04:46 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5U14aeo001625;
+        Fri, 29 Jun 2018 20:04:38 -0500
+Message-ID: <61424071cc0feb487e4b8ce2c9c396df2fc56bd9.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sat, 30 Jun 2018 11:04:36 +1000
+In-Reply-To: <CA+55aFwZG+wWwRX-FOgQHwt3eA76qgKb0W0sRGSd8Ug=szr20A@mail.gmail.com>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+         <ac64e45950c8e3df26fd50e7b251d5895c1d2201.camel@kernel.crashing.org>
+         <CA+55aFwZG+wWwRX-FOgQHwt3eA76qgKb0W0sRGSd8Ug=szr20A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 02:21:45PM +0200, Christian König wrote:
-> Resize BARs after resume to the expected size again.
+On Fri, 2018-06-29 at 06:56 -0700, Linus Torvalds wrote:
+> On Thu, Jun 28, 2018 at 7:22 PM Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> > 
+> > This fixes it by instead doing an explicit kobject_del() when
+> > the glue dir is empty, by keeping track of the number of
+> > child devices of the gluedir.
 > 
-> Signed-off-by: Christian König <christian.koenig@amd.com>
-> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199959
-> CC: stable@vger.kernel.org      # v4.15+
+> Ugh. I was hoping that you'd just do the "only check duplicate names
+> if actually in use" instead.
 
-I applied both of these to pci/resource for v4.19, thanks!  It'd be nice to
-have them in v4.18, but since it's not a regression and the problem has
-been there since v4.15, I'm not sure I could justify it.
+I had a look (see my other email). It's non-trivial. We can still look
+into it, but from what I gathered of how sysfs works, it's based on
+kernfs which doesn't have the kobjects nor access to the reference
+count, and is the holder of the names rbtree.
 
-> ---
->  drivers/pci/pci.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index bd6f156dc3cf..d4685090378b 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1159,6 +1159,33 @@ static void pci_restore_config_space(struct pci_dev *pdev)
->  	}
->  }
->  
-> +static void pci_restore_rebar_state(struct pci_dev *pdev)
-> +{
-> +	unsigned int pos, nbars, i;
-> +	u32 ctrl;
-> +
-> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
-> +	if (!pos)
-> +		return;
-> +
-> +	pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-> +	nbars = (ctrl & PCI_REBAR_CTRL_NBAR_MASK) >>
-> +		    PCI_REBAR_CTRL_NBAR_SHIFT;
-> +
-> +	for (i = 0; i < nbars; i++, pos += 8) {
-> +		struct resource *res;
-> +		int bar_idx, size;
-> +
-> +		pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-> +		bar_idx = ctrl & PCI_REBAR_CTRL_BAR_IDX;
-> +		res = pdev->resource + bar_idx;
-> +		size = order_base_2((resource_size(res) >> 20) | 1) - 1;
-> +		ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
-> +		ctrl |= size << 8;
-> +		pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
-> +	}
-> +}
-> +
->  /**
->   * pci_restore_state - Restore the saved state of a PCI device
->   * @dev: - PCI device that we're dealing with
-> @@ -1174,6 +1201,7 @@ void pci_restore_state(struct pci_dev *dev)
->  	pci_restore_pri_state(dev);
->  	pci_restore_ats_state(dev);
->  	pci_restore_vc_state(dev);
-> +	pci_restore_rebar_state(dev);
->  
->  	pci_cleanup_aer_error_status_regs(dev);
->  
-> -- 
-> 2.14.1
-> 
+So we'd need to find a way to convey that "in-use" information down to
+kernfs (I thought maybe adding an optional pointer to a kref ? but
+then, it's still somewhat racy ...)
+
+Additionally, we would need a few more pairs of eyes to make sure that
+sticking duplicates in that rbtree isn't going to break some corner
+case in there.
+
+It's a code base I'm not at all familiar with. So while I agree with
+the overall idea that a kobject whose reference has gone down to 0
+should probably be ignored by sysfs, actually doing it doesn't seem
+simple.
+
+> This patch seems to make patch 1/2 pointless. No?
+
+Somewhat. It's stil the "right thing" to do in case a hole shows up
+elsewhere, and it's an easier stable backport. But yes. I wrote it
+before I figured out what to do with 2/2 (I was still trying to do what
+you wanted and just skip ref=0 in sysfs name lookups).
+
+But yes, with 2/2, there shouldn't be a kobject with a 0 ref in the
+list anymore... hopefully.
+
+I would very much appreciate the opinion of someone more familiar with
+sysfs and the device core on all this though.
+
+Cheers,
+Ben.
+
