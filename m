@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2211AC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F17C1C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2CD2546A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC07C254D2
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:36:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVKcfjpg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD2CD2546A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrtJJBXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC07C254D2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751516AbeF3RfJ (ORCPT
+        id S1751558AbeF3Rg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 13:35:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
+        Sat, 30 Jun 2018 13:36:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751272AbeF3RfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 13:35:07 -0400
+        id S1751283AbeF3RgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 13:36:25 -0400
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2C4F2255E;
-        Sat, 30 Jun 2018 17:35:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D50002255E;
+        Sat, 30 Jun 2018 17:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530380107;
-        bh=Nb4K5MCtZ9WiofmQocg5Z4VEZ9GYIJncE+T6Nx+XZ1w=;
+        s=default; t=1530380185;
+        bh=/SHNv71ygf1JtGODJxo989CX63MHhUQFv9YuFBrZ9s4=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bVKcfjpgzgfWnOMlFyfimbatO704RMJNtZvtUi4ePnFZ7eRoNJzs7PNahdyccDo+O
-         yl7bNxVcQtOUDfuox9RxbyHxyw5JJoYiZxssbJiLCiHm5fY5fu72t1qcsKJvC89r0t
-         ydt1rMqAroh/lNo77WgXhmNv0uyB6C1Wk9x6BkZU=
-Date:   Sat, 30 Jun 2018 18:35:00 +0100
+        b=OrtJJBXro6fFwj436Yw6HI8FKFrqAwYhhg1d/hmG/6Y87KMfvYZKP0fFWd7rGkHR3
+         RbGFcTKfF6xFn0WZxGm1dVncczH+nr43QYrINSYk7FCB25h75sHP64Ay8ZXcTBgJ58
+         +MvO2wtbyPlflCvLlRLnF/HSs/1qUTahmyuHt3O4=
+Date:   Sat, 30 Jun 2018 18:36:17 +0100
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Andreas Klinger <ak@it-klinger.de>
 Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
@@ -45,10 +45,10 @@ Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
         akpm@linux-foundation.org, linus.walleij@linaro.org,
         rdunlap@infradead.org, devicetree@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] iio: hx711: add maintainer for driver
-Message-ID: <20180630183500.051452f0@archlinux>
-In-Reply-To: <20180625151845.GA6392@arbeit>
-References: <20180625151845.GA6392@arbeit>
+Subject: Re: [PATCH v2 4/4] iio: hx711: warning in dt binding example doc
+Message-ID: <20180630183617.102dfb84@archlinux>
+In-Reply-To: <20180625151926.GA6403@arbeit>
+References: <20180625151926.GA6403@arbeit>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -58,39 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Jun 2018 17:18:45 +0200
+On Mon, 25 Jun 2018 17:19:26 +0200
 Andreas Klinger <ak@it-klinger.de> wrote:
 
-> add a maintainer for driver hx711
+> device tree compiler (dtc) gives a warning if a device node has "@" with a
+> following number as it's name but no reg property.
+> 
+> fix the example in the documentation of avia,hx711 to conform to dtc
+> behavior
 > 
 > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-I applied this one before (not certain I emailed to say that)
-so please drop from future versions of the patch set.
+
+Given there will be fuzz, I'll pick this up when patches 1 and 2 are
+ready and Acked by a devicetree maintainer.
 
 Thanks,
 
 Jonathan
-
 > ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4b65225d443a..cfb8a08777ac 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2535,6 +2535,13 @@ S:	Maintained
->  F:	drivers/auxdisplay/
->  F:	include/linux/cfag12864b.h
+> diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> index d0c066e3df69..8c9bcaa4d750 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+> @@ -15,7 +15,7 @@ Optional properties:
+>  			is 50000 in the datasheet
 >  
-> +AVIA HX711 ANALOG DIGITAL CONVERTER IIO DRIVER
-> +M:	Andreas Klinger <ak@it-klinger.de>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> +F:	drivers/iio/adc/hx711.c
-> +
->  AX.25 NETWORK LAYER
->  M:	Ralf Baechle <ralf@linux-mips.org>
->  L:	linux-hams@vger.kernel.org
+>  Example:
+> -weight@0 {
+> +weight {
+>  	compatible = "avia,hx711";
+>  	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+>  	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 
