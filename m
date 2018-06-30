@@ -2,309 +2,111 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CB2C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CA2C6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D008277D3
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D008277D3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A37D280F8
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A37D280F8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936783AbeF3BLa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 21:11:30 -0400
-Received: from mga07.intel.com ([134.134.136.100]:23619 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934996AbeF3BF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 21:05:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 18:05:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,288,1526367600"; 
-   d="scan'208";a="212317216"
-Received: from hao-dev.bj.intel.com ([10.238.157.61])
-  by orsmga004.jf.intel.com with ESMTP; 29 Jun 2018 18:05:56 -0700
-From:   Wu Hao <hao.wu@intel.com>
-To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v7 07/29] fpga: dfl: add chardev support for feature devices
-Date:   Sat, 30 Jun 2018 08:53:14 +0800
-Message-Id: <1530320016-24712-8-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
-References: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
+        id S936844AbeF3BLv convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:11:51 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35120 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934996AbeF3BLo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:11:44 -0400
+Received: by mail-ed1-f67.google.com with SMTP id c1-v6so8175609edt.2;
+        Fri, 29 Jun 2018 18:11:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cYJfxaw3pnudhB4+vfg1WRfg7U8DHSVUVPWndQxasGs=;
+        b=Nk+VhMByqErvakvtsXAOccH/bqXY+lkXDBvifKddXZdU8AN3VsJndVV+En7Z3w+9w+
+         AU8aXAx8N3/huqATQ/cXOneGUDOilL6Erc23Y0KFvMzwIsWkGhYETB8udlQiRn3PuAfj
+         l9dZ3+lY6IaBKb2seKahZpkaP2eJQDz3EGXfYycY2mbIvNFImJrIlyapT3wB1G4zXu2g
+         etuvzo+yFVyrUuakJi3CXR1M9iKKirq63LdI7Hm97haYjIkaSiREnybMM2ot4WcwpGsG
+         d3S2MN9SPV55CsVRvlLDoyTIak8rvG2ts5nzkkBE/HSKvCzMdpynpXj0V77xMYyN9v4X
+         sj6w==
+X-Gm-Message-State: APt69E2XQjwglogKyGfO4aKemyfA1/r/WlHJZbspdKfJOi0YtHmwQjWi
+        rm+7DTzpYQMDNxyqR7knKftAfo/9
+X-Google-Smtp-Source: AAOMgpeayOr7gThVGcO3u/aC82uOnZQJIvyj9I7RGd4Pn7EOqgIlIpKoStgCkxz/bLGb8F6GkahZtQ==
+X-Received: by 2002:a50:90e7:: with SMTP id d36-v6mr14119043eda.279.1530321103188;
+        Fri, 29 Jun 2018 18:11:43 -0700 (PDT)
+Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com. [74.125.82.48])
+        by smtp.gmail.com with ESMTPSA id x40-v6sm1095383ede.23.2018.06.29.18.11.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Jun 2018 18:11:41 -0700 (PDT)
+Received: by mail-wm0-f48.google.com with SMTP id n17-v6so3651101wmh.2;
+        Fri, 29 Jun 2018 18:11:41 -0700 (PDT)
+X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr3179899wma.143.1530321100951;
+ Fri, 29 Jun 2018 18:11:40 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Fri, 29 Jun 2018 18:11:20
+ -0700 (PDT)
+In-Reply-To: <3131254.YlICBQirlu@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-17-jernej.skrabec@siol.net> <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
+ <3131254.YlICBQirlu@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 30 Jun 2018 09:11:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64UY9t9oKPQiEJkFsTyxJOJTG9dvJMNJYoHy7CKQ4Ap2Q@mail.gmail.com>
+Message-ID: <CAGb2v64UY9t9oKPQiEJkFsTyxJOJTG9dvJMNJYoHy7CKQ4Ap2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For feature devices drivers, both the FPGA Management Engine (FME) and
-Accelerated Function Unit (AFU) driver need to expose user interfaces via
-the device file, for example, mmap and ioctls.
+On Sat, Jun 30, 2018 at 3:19 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 04:22:36 CEST je Chen-Yu Tsai napisal(a):
+>> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > Current DW HDMI PHY code never prepares and enables PHY clock after it is
+>> > created. It's just used as it is. This may work in some cases, but it's
+>> > clearly wrong. Fix it by adding proper calls to enable/disable PHY
+>> > clock.
+>> >
+>> > Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>>
+>> So why does it work on the H3? Because there's only one PLL that the whole
+>> display pipeline uses?
+>>
+>> We should probably tag this for stable. So,
+>>
+>> Cc: <stable@vger.kernel.org>
+>> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Same question as before, how this should be handled? Can I send separate patch
+> with same content to stable ML only?
 
-This patch adds chardev support in the dfl driver for feature devices,
-FME and AFU. It reserves the chardev regions for FME and AFU and provide
-interfaces for FME and AFU driver to register their device file operations.
+Yes, including the hash of the commit which is already in Linus' tree. So
+you have to send it after the next -rc1.
 
-Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-Signed-off-by: Zhang Yi <yi.z.zhang@intel.com>
-Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
----
-v2: rebased
-v3: move chardev support to fpga-dfl framework
-v4: rebase and add more comments in code.
-v5: rebase and add dfl_ prefix to APIs and data structures.
-v6: add index in dfl_devs to link to dfl_chrdevs.
-    improve naming on APIs.
-v7: make dfl_chrdevs table static.
-    fix typos and add Acked-by from Alan.
----
- drivers/fpga/dfl.c | 125 +++++++++++++++++++++++++++++++++++++++++++++++++++--
- drivers/fpga/dfl.h |   8 ++++
- 2 files changed, 130 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-index d1dff36..b56933c 100644
---- a/drivers/fpga/dfl.c
-+++ b/drivers/fpga/dfl.c
-@@ -22,6 +22,11 @@
-  * dfl_devs table which is indexed by dfl_id_type, e.g. name string used for
-  * platform device creation (define name strings in dfl.h, as they could be
-  * reused by platform device drivers).
-+ *
-+ * if the new feature dev needs chardev support, then it's required to add
-+ * a new item in dfl_chardevs table and configure dfl_devs[i].devt_type as
-+ * index to dfl_chardevs table. If no chardev support just set devt_type
-+ * as one invalid index (DFL_FPGA_DEVT_MAX).
-  */
- enum dfl_id_type {
- 	FME_ID,		/* fme id allocation and mapping */
-@@ -29,22 +34,48 @@ enum dfl_id_type {
- 	DFL_ID_MAX,
- };
- 
-+enum dfl_fpga_devt_type {
-+	DFL_FPGA_DEVT_FME,
-+	DFL_FPGA_DEVT_PORT,
-+	DFL_FPGA_DEVT_MAX,
-+};
-+
- /**
-  * dfl_dev_info - dfl feature device information.
-  * @name: name string of the feature platform device.
-  * @dfh_id: id value in Device Feature Header (DFH) register by DFL spec.
-  * @id: idr id of the feature dev.
-+ * @devt_type: index to dfl_chrdevs[].
-  */
- struct dfl_dev_info {
- 	const char *name;
- 	u32 dfh_id;
- 	struct idr id;
-+	enum dfl_fpga_devt_type devt_type;
- };
- 
- /* it is indexed by dfl_id_type */
- static struct dfl_dev_info dfl_devs[] = {
--	{.name = DFL_FPGA_FEATURE_DEV_FME, .dfh_id = DFH_ID_FIU_FME},
--	{.name = DFL_FPGA_FEATURE_DEV_PORT, .dfh_id = DFH_ID_FIU_PORT},
-+	{.name = DFL_FPGA_FEATURE_DEV_FME, .dfh_id = DFH_ID_FIU_FME,
-+	 .devt_type = DFL_FPGA_DEVT_FME},
-+	{.name = DFL_FPGA_FEATURE_DEV_PORT, .dfh_id = DFH_ID_FIU_PORT,
-+	 .devt_type = DFL_FPGA_DEVT_PORT},
-+};
-+
-+/**
-+ * dfl_chardev_info - chardev information of dfl feature device
-+ * @name: nmae string of the char device.
-+ * @devt: devt of the char device.
-+ */
-+struct dfl_chardev_info {
-+	const char *name;
-+	dev_t devt;
-+};
-+
-+/* indexed by enum dfl_fpga_devt_type */
-+static struct dfl_chardev_info dfl_chrdevs[] = {
-+	{.name = DFL_FPGA_FEATURE_DEV_FME},
-+	{.name = DFL_FPGA_FEATURE_DEV_PORT},
- };
- 
- static void dfl_ids_init(void)
-@@ -105,6 +136,86 @@ static enum dfl_id_type dfh_id_to_type(u32 id)
- 	return DFL_ID_MAX;
- }
- 
-+static void dfl_chardev_uinit(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < DFL_FPGA_DEVT_MAX; i++)
-+		if (MAJOR(dfl_chrdevs[i].devt)) {
-+			unregister_chrdev_region(dfl_chrdevs[i].devt,
-+						 MINORMASK);
-+			dfl_chrdevs[i].devt = MKDEV(0, 0);
-+		}
-+}
-+
-+static int dfl_chardev_init(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < DFL_FPGA_DEVT_MAX; i++) {
-+		ret = alloc_chrdev_region(&dfl_chrdevs[i].devt, 0, MINORMASK,
-+					  dfl_chrdevs[i].name);
-+		if (ret)
-+			goto exit;
-+	}
-+
-+	return 0;
-+
-+exit:
-+	dfl_chardev_uinit();
-+	return ret;
-+}
-+
-+static dev_t dfl_get_devt(enum dfl_fpga_devt_type type, int id)
-+{
-+	if (type >= DFL_FPGA_DEVT_MAX)
-+		return 0;
-+
-+	return MKDEV(MAJOR(dfl_chrdevs[type].devt), id);
-+}
-+
-+/**
-+ * dfl_fpga_dev_ops_register - register cdev ops for feature dev
-+ *
-+ * @pdev: feature dev.
-+ * @fops: file operations for feature dev's cdev.
-+ * @owner: owning module/driver.
-+ *
-+ * Return: 0 on success, negative error code otherwise.
-+ */
-+int dfl_fpga_dev_ops_register(struct platform_device *pdev,
-+			      const struct file_operations *fops,
-+			      struct module *owner)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+
-+	cdev_init(&pdata->cdev, fops);
-+	pdata->cdev.owner = owner;
-+
-+	/*
-+	 * set parent to the feature device so that its refcount is
-+	 * decreased after the last refcount of cdev is gone, that
-+	 * makes sure the feature device is valid during device
-+	 * file's life-cycle.
-+	 */
-+	pdata->cdev.kobj.parent = &pdev->dev.kobj;
-+
-+	return cdev_add(&pdata->cdev, pdev->dev.devt, 1);
-+}
-+EXPORT_SYMBOL_GPL(dfl_fpga_dev_ops_register);
-+
-+/**
-+ * dfl_fpga_dev_ops_unregister - unregister cdev ops for feature dev
-+ * @pdev: feature dev.
-+ */
-+void dfl_fpga_dev_ops_unregister(struct platform_device *pdev)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+
-+	cdev_del(&pdata->cdev);
-+}
-+EXPORT_SYMBOL_GPL(dfl_fpga_dev_ops_unregister);
-+
- /**
-  * struct build_feature_devs_info - info collected during feature dev build.
-  *
-@@ -266,6 +377,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
- 		return fdev->id;
- 
- 	fdev->dev.parent = &binfo->cdev->region->dev;
-+	fdev->dev.devt = dfl_get_devt(dfl_devs[type].devt_type, fdev->id);
- 
- 	return 0;
- }
-@@ -703,13 +815,20 @@ void dfl_fpga_feature_devs_remove(struct dfl_fpga_cdev *cdev)
- 
- static int __init dfl_fpga_init(void)
- {
-+	int ret;
-+
- 	dfl_ids_init();
- 
--	return 0;
-+	ret = dfl_chardev_init();
-+	if (ret)
-+		dfl_ids_destroy();
-+
-+	return ret;
- }
- 
- static void __exit dfl_fpga_exit(void)
- {
-+	dfl_chardev_uinit();
- 	dfl_ids_destroy();
- }
- 
-diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-index 47ecb3b..66c2ade 100644
---- a/drivers/fpga/dfl.h
-+++ b/drivers/fpga/dfl.h
-@@ -15,6 +15,7 @@
- #define __FPGA_DFL_H
- 
- #include <linux/bitfield.h>
-+#include <linux/cdev.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
- #include <linux/iopoll.h>
-@@ -150,6 +151,7 @@ struct dfl_feature {
-  *
-  * @node: node to link feature devs to container device's port_dev_list.
-  * @lock: mutex to protect platform data.
-+ * @cdev: cdev of feature dev.
-  * @dev: ptr to platform device linked with this platform data.
-  * @dfl_cdev: ptr to container device.
-  * @disable_count: count for port disable.
-@@ -159,6 +161,7 @@ struct dfl_feature {
- struct dfl_feature_platform_data {
- 	struct list_head node;
- 	struct mutex lock;
-+	struct cdev cdev;
- 	struct platform_device *dev;
- 	struct dfl_fpga_cdev *dfl_cdev;
- 	unsigned int disable_count;
-@@ -176,6 +179,11 @@ static inline int dfl_feature_platform_data_size(const int num)
- 		num * sizeof(struct dfl_feature);
- }
- 
-+int dfl_fpga_dev_ops_register(struct platform_device *pdev,
-+			      const struct file_operations *fops,
-+			      struct module *owner);
-+void dfl_fpga_dev_ops_unregister(struct platform_device *pdev);
-+
- #define dfl_fpga_dev_for_each_feature(pdata, feature)			    \
- 	for ((feature) = (pdata)->features;				    \
- 	   (feature) < (pdata)->features + (pdata)->num; (feature)++)
--- 
-1.8.3.1
-
+ChenYu
