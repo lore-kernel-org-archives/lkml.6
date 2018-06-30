@@ -2,151 +2,289 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226AEC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EF8C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1FCD2515E
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBCBE25437
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:11:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjsbWU2T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FCD2515E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="UMOgM0LA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SGttwnyM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCBE25437
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751544AbeF3UED (ORCPT
+        id S1751643AbeF3ULd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 16:04:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751409AbeF3UEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 16:04:01 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D00302539E;
-        Sat, 30 Jun 2018 20:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530389041;
-        bh=skYfbwbO2dDo1MTwerXPnJ5DQ34kvIOiU+JL4pCBFrk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KjsbWU2T/pmiTF+dCykThUwd3hutD9ONP4Bh94DKL80eXdUBedS/W4MhdWlkMqr50
-         EuPQx6YAJZ/c9whRd7Pr49LuUeqNSUy/vaMNHV1NYLCs6Zg0VVyEgaucgQCfwJy5Om
-         qtwVWhAmYqhSb07+5/bICDwD18hFYGc0fwPRuBe8=
-Date:   Sat, 30 Jun 2018 15:03:59 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Tyler Baicar <tbaicar@codeaurora.org>
-Cc:     bhelgaas@google.com, poza@codeaurora.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/AER: Adopt lspci naming convention for AER prints
-Message-ID: <20180630200359.GE9547@bhelgaas-glaptop.roam.corp.google.com>
-References: <1530027855-19709-1-git-send-email-tbaicar@codeaurora.org>
+        Sat, 30 Jun 2018 16:11:33 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44906 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751483AbeF3ULb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 16:11:31 -0400
+Received: by mail-yb0-f193.google.com with SMTP id a2-v6so3776338ybe.11
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 13:11:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
+        b=UMOgM0LAInt7D1iksWolfxY5qTBThOEDoJtkuo02RMxPsfurRLqBIk++kJ4tofBPuR
+         oY02mt6vvhJwEzUos3cUfmBGVTtxDE4BMHvEqPjqoPXbOWTk/+u2xRrRsNoA6xQSyy1o
+         CVMYi3jqMKitMUvEtFEhMPhXRV+nRxb7KSk1DJpdJys74KHqRQCT0LmTnwOHPmGZV3BJ
+         axgHJUr46zeL2Za1gqKt02+p1Q/2FeVKjXnYU4+alzWGBev7vW0Xf87Hzg0l8FextdJW
+         IJ5SORnHjzKhbBlxORiYIamSTXy7Yud4Myt2HJyCpJD5gvtYIbK2xnydmMpxeYEb28RG
+         98+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
+        b=SGttwnyM15ChXW31ycXDOn7KVKIrCu4LFZV2bL7ayPozfB95ob3Tj0Eu1uVyaysHnj
+         vmrH4iLu/FxDIY8kDG2VLOSSvmGU2G+FMHnuRgH6lzY3X92Ha67WcFjaPdm146WaXhzR
+         VnwKzM4iLvjTQ/xUq01d5P9vFC+r/2NL3V4Tk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=WhTmf/HrkNxJM3n8J0v9jaJRX4CQolyAN5xNyiU23AQ=;
+        b=o3z8aB6+fnRgJA0O61avSyst+0ey2hd5PxQtUKdoQcasaEFEKZdWVIKTBsD+xaTVZh
+         uDjtuT36UUYY52KDR1SrRjbC/efyfgDsrK3froYCSE4GQYT2L3nF638U8C5iTn7umiON
+         Wis0qVgm910exV/g1uQRpxy4Apm+vTPOVu3UVjeaKweoxJuN1N9Z971Or2kxg4F5cHLw
+         RV1NHpxbVV2HR/XxLvCOnTWXJTFhHww6j3ii41j1Uu5qG8V4J2nNqUR89PP8nQ+xaEGT
+         Gv2ZtfF+6X6Ov72HPJdNxX8ep7aDD67o6Ak0gc5bnuFF5qZQaInET4RSovQiGPw3N+PS
+         gRRg==
+X-Gm-Message-State: APt69E0XmA5x2xfn2Bhx/N8Mxbqm0dAAJh64I7wMNZx2Hc1OzB1lk2vx
+        Ia3idOkvLnemmVUaa/gzO2Szgwes96BaCysG2AcD9g==
+X-Google-Smtp-Source: ADUXVKJnZc2h1R62fL9UGu+St32113/DxHoBWSZL0S84G/cRvr/R8AA1kt9Da2/s58qkS7rXWpP0v5ovFxmAdEj2y08=
+X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr10794685ybj.112.1530389490818;
+ Sat, 30 Jun 2018 13:11:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530027855-19709-1-git-send-email-tbaicar@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Sat, 30 Jun 2018 13:11:30
+ -0700 (PDT)
+In-Reply-To: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
+References: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 30 Jun 2018 13:11:30 -0700
+X-Google-Sender-Auth: UBU3nsZCqR_bncgpX6aNhR717ik
+Message-ID: <CAGXu5jLDULvf-VBhUfBXtSNaSWpq8irgg56LT3nHDft5gZg5Lw@mail.gmail.com>
+Subject: Re: [PATCH v3] add param that allows bootline control of hardened usercopy
+To:     Chris von Recklinghausen <crecklin@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 26, 2018 at 11:44:15AM -0400, Tyler Baicar wrote:
-> lspci uses abbreviated naming for AER error strings. Adopt the
-> same naming convention for the AER printing so they match.
-> 
-> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
+On Wed, Jun 27, 2018 at 5:07 AM, Chris von Recklinghausen
+<crecklin@redhat.com> wrote:
+> Enabling HARDENED_USER_COPY causes measurable regressions in
 
-Applied with Oza's reviewed-by to pci/aer for v4.19, thanks!
+nit: HARDENED_USERCOPY
 
+>  networking performance, up to 8% under UDP flood.
+>
+> I'm running an a small packet UDP flood using pktgen vs. a host b2b
+> connected. On the receiver side the UDP packets are processed by a
+> simple user space process that just reads and drops them:
+>
+> https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
+>
+> Not very useful from a functional PoV, but it helps to pin-point
+> bottlenecks in the networking stack.
+>
+> When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
+> regression in the receive tput, compared to the same kernel without
+> this option enabled.
+>
+> With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
+> cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
+>
+> The call-chain is:
+>
+> __GI___libc_recvfrom
+> entry_SYSCALL_64_after_hwframe
+> do_syscall_64
+> __x64_sys_recvfrom
+> __sys_recvfrom
+> inet_recvmsg
+> udp_recvmsg
+> __check_object_size
+>
+> udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
+> calls check_copy_size() (again, inlined).
+
+Thanks for including these details!
+
+>
+> A generic distro may want to enable HARDENED_USER_COPY in their default
+
+same nit :)
+
+> kernel config, but at the same time, such distro may want to be able to
+> avoid the performance penalties in with the default configuration and
+> disable the stricter check on a per-boot basis.
+>
+> This change adds a boot parameter that conditionally disables
+> HARDENED_USERCOPY at boot time.
+>
+> v2->v3:
+>         add benchmark details to commit comments
+>         Don't add new item to Documentation/admin-guide/kernel-parameters.rst
+>         rename boot param to "hardened_usercopy="
+>         update description in Documentation/admin-guide/kernel-parameters.txt
+>         static_branch_likely -> static_branch_unlikely
+>         add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
+>                 DEFINE_STATIC_KEY_TRUE
+>         disable_huc_atboot -> enable_checks (strtobool "on" == true)
+>
+> v1->v2:
+>         remove CONFIG_HUC_DEFAULT_OFF
+>         default is now enabled, boot param disables
+>         move check to __check_object_size so as to not break optimization of
+>                 __builtin_constant_p()
+>         include linux/atomic.h before linux/jump_label.h
+>
+> Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
 > ---
->  drivers/pci/pcie/aer.c | 46 +++++++++++++++++++++++-----------------------
->  1 file changed, 23 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a2e8838..08a5219 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -459,22 +459,22 @@ int pci_aer_init(struct pci_dev *dev)
->  };
->  
->  static const char *aer_correctable_error_string[] = {
-> -	"Receiver Error",		/* Bit Position 0	*/
-> +	"RxErr",			/* Bit Position 0	*/
->  	NULL,
->  	NULL,
->  	NULL,
->  	NULL,
->  	NULL,
-> -	"Bad TLP",			/* Bit Position 6	*/
-> -	"Bad DLLP",			/* Bit Position 7	*/
-> -	"RELAY_NUM Rollover",		/* Bit Position 8	*/
-> +	"BadTLP",			/* Bit Position 6	*/
-> +	"BadDLLP",			/* Bit Position 7	*/
-> +	"Rollover",			/* Bit Position 8	*/
->  	NULL,
->  	NULL,
->  	NULL,
-> -	"Replay Timer Timeout",		/* Bit Position 12	*/
-> -	"Advisory Non-Fatal",		/* Bit Position 13	*/
-> -	"Corrected Internal Error",	/* Bit Position 14	*/
-> -	"Header Log Overflow",		/* Bit Position 15	*/
-> +	"Timeout",			/* Bit Position 12	*/
-> +	"NonFatalErr",			/* Bit Position 13	*/
-> +	"CorrIntErr",			/* Bit Position 14	*/
-> +	"HeaderOF",			/* Bit Position 15	*/
->  };
->  
->  static const char *aer_uncorrectable_error_string[] = {
-> @@ -482,28 +482,28 @@ int pci_aer_init(struct pci_dev *dev)
->  	NULL,
->  	NULL,
->  	NULL,
-> -	"Data Link Protocol",		/* Bit Position 4	*/
-> -	"Surprise Down Error",		/* Bit Position 5	*/
-> +	"DLP",				/* Bit Position 4	*/
-> +	"SDES",				/* Bit Position 5	*/
->  	NULL,
->  	NULL,
->  	NULL,
->  	NULL,
->  	NULL,
->  	NULL,
-> -	"Poisoned TLP",			/* Bit Position 12	*/
-> -	"Flow Control Protocol",	/* Bit Position 13	*/
-> -	"Completion Timeout",		/* Bit Position 14	*/
-> -	"Completer Abort",		/* Bit Position 15	*/
-> -	"Unexpected Completion",	/* Bit Position 16	*/
-> -	"Receiver Overflow",		/* Bit Position 17	*/
-> -	"Malformed TLP",		/* Bit Position 18	*/
-> +	"TLP",				/* Bit Position 12	*/
-> +	"FCP",				/* Bit Position 13	*/
-> +	"CmpltTO",			/* Bit Position 14	*/
-> +	"CmpltAbrt",			/* Bit Position 15	*/
-> +	"UnxCmplt",			/* Bit Position 16	*/
-> +	"RxOF",				/* Bit Position 17	*/
-> +	"MalfTLP",			/* Bit Position 18	*/
->  	"ECRC",				/* Bit Position 19	*/
-> -	"Unsupported Request",		/* Bit Position 20	*/
-> -	"ACS Violation",		/* Bit Position 21	*/
-> -	"Uncorrectable Internal Error",	/* Bit Position 22	*/
-> -	"MC Blocked TLP",		/* Bit Position 23	*/
-> -	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
-> -	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
-> +	"UnsupReq",			/* Bit Position 20	*/
-> +	"ACSViol",			/* Bit Position 21	*/
-> +	"UncorrIntErr",			/* Bit Position 22	*/
-> +	"BlockedTLP",			/* Bit Position 23	*/
-> +	"AtomicOpBlocked",		/* Bit Position 24	*/
-> +	"TLPBlockedErr",		/* Bit Position 25	*/
->  };
->  
->  static const char *aer_agent_string[] = {
-> -- 
-> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
-> 
+>  .../admin-guide/kernel-parameters.txt         | 11 ++++++++
+>  include/linux/jump_label.h                    |  6 +++++
+>  include/linux/thread_info.h                   |  5 ++++
+>  mm/usercopy.c                                 | 26 +++++++++++++++++++
+>  4 files changed, 48 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7a0670..560d4dc66f02 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -816,6 +816,17 @@
+>         disable=        [IPV6]
+>                         See Documentation/networking/ipv6.txt.
+>
+> +       hardened_usercopy=
+> +                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
+> +                        hardening is enabled for this boot. Hardened
+> +                        usercopy checking is used to protect the kernel
+> +                        from reading or writing beyond known memory
+> +                        allocation boundaries as a proactive defense
+> +                        against bounds-checking flaws in the kernel's
+> +                        copy_to_user()/copy_from_user() interface.
+> +                on      Perform hardened usercopy checks (default).
+> +                off     Disable hardened usercopy checks.
+> +
+>         disable_radix   [PPC]
+>                         Disable RADIX MMU mode on POWER9
+>
+> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+> index b46b541c67c4..1a0b6f17a5d6 100644
+> --- a/include/linux/jump_label.h
+> +++ b/include/linux/jump_label.h
+> @@ -299,12 +299,18 @@ struct static_key_false {
+>  #define DEFINE_STATIC_KEY_TRUE(name)   \
+>         struct static_key_true name = STATIC_KEY_TRUE_INIT
+>
+> +#define DEFINE_STATIC_KEY_TRUE_RO(name)        \
+> +       struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
+> +
+>  #define DECLARE_STATIC_KEY_TRUE(name)  \
+>         extern struct static_key_true name
+>
+>  #define DEFINE_STATIC_KEY_FALSE(name)  \
+>         struct static_key_false name = STATIC_KEY_FALSE_INIT
+>
+> +#define DEFINE_STATIC_KEY_FALSE_RO(name)       \
+> +       struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
+> +
+>  #define DECLARE_STATIC_KEY_FALSE(name) \
+>         extern struct static_key_false name
+>
+> diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+> index 8d8821b3689a..ab24fe2d3f87 100644
+> --- a/include/linux/thread_info.h
+> +++ b/include/linux/thread_info.h
+> @@ -109,6 +109,11 @@ static inline int arch_within_stack_frames(const void * const stack,
+>  #endif
+>
+>  #ifdef CONFIG_HARDENED_USERCOPY
+> +#include <linux/atomic.h>
+> +#include <linux/jump_label.h>
+> +
+> +DECLARE_STATIC_KEY_FALSE(bypass_usercopy_checks);
+> +
+
+This isn't needed any more since bypass_usercopy_checks is internal to
+__check_object_size() now.
+
+>  extern void __check_object_size(const void *ptr, unsigned long n,
+>                                         bool to_user);
+>
+> diff --git a/mm/usercopy.c b/mm/usercopy.c
+> index e9e9325f7638..39f8b1409618 100644
+> --- a/mm/usercopy.c
+> +++ b/mm/usercopy.c
+> @@ -20,6 +20,8 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/thread_info.h>
+> +#include <linux/atomic.h>
+> +#include <linux/jump_label.h>
+>  #include <asm/sections.h>
+>
+>  /*
+> @@ -248,6 +250,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+>   */
+>  void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>  {
+> +       if (static_branch_unlikely(&bypass_usercopy_checks))
+> +               return;
+> +
+>         /* Skip all tests if size is zero. */
+>         if (!n)
+>                 return;
+> @@ -279,3 +284,24 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+>         check_kernel_text_object((const unsigned long)ptr, n, to_user);
+>  }
+>  EXPORT_SYMBOL(__check_object_size);
+> +
+> +DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
+
+This can be static.
+
+> +EXPORT_SYMBOL(bypass_usercopy_checks);
+
+No longer needs to be exported.
+
+> +
+> +static bool enable_checks __initdata = true;
+> +
+> +static int __init parse_hardened_usercopy(char *str)
+> +{
+> +       return strtobool(str, &enable_checks);
+> +}
+> +
+> +__setup("hardened_usercopy=", parse_hardened_usercopy);
+> +
+> +static int __init set_hardened_usercopy(void)
+> +{
+> +       if (enable_checks == false)
+> +               static_branch_enable(&bypass_usercopy_checks);
+> +       return 1;
+> +}
+> +
+> +late_initcall(set_hardened_usercopy);
+
+Otherwise, yeah, this looks good if the copy_from_iter() path can't be improved.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
