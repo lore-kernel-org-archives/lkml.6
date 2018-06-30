@@ -2,136 +2,154 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FBEC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F4BC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D6724446
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XeBPQDre"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D6724446
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 147A325742
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147A325742
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753026AbeF3NO4 (ORCPT
+        id S1752908AbeF3NSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 09:14:56 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37589 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752423AbeF3NOx (ORCPT
+        Sat, 30 Jun 2018 09:18:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48371 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750892AbeF3NSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 09:14:53 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 31-v6so5785985plc.4
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 06:14:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WEIedL4ETXu48HZKo7jD2vtE+rGtdBk5hzDrVj/8Q/I=;
-        b=XeBPQDreoYJBxp0AQ1t37QufkZAHF4cH8+YUPw12PD5IXWBIivqxW7G7XBc6OkwkYM
-         kQQAq+p1UrOPWRwoHdwTAprNw0asGIuuiE4h1PR502rHwlvu5/kzTxrtbGjFzztOg3e6
-         fre6XIisSb1o/gWXcchIBg5M2tq8Zyn22ruxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WEIedL4ETXu48HZKo7jD2vtE+rGtdBk5hzDrVj/8Q/I=;
-        b=kvGsWOKj4Wl0i/1uAI3G/uSbvGb6ShdjYAFIOCp53Pz89pU4RediVXXNqThubenJ7I
-         Wr5c+YffnCdJhwYZHticUD42RZzrU6r2CMPJGABAMGy6StTh/qjCEKe5pofHYJHbebS6
-         ngfliWy37Whk/C9Jiqin7JbYEepiNaQWD8HEsD/am6BB98W8Utw5EvWeXHg4poEvCBHL
-         78rVP+WYWM3px+1SOZydD3Ws10hAKJd7a4VzYPdz+6mAMiGNH47FsOsjFB64LFOu5ybH
-         6y/0SDBxV/ojosZjXJB3Wg1MxWSB5jZIE8cDWQsBSGhpKeLetNtV21a8QOXpRKQBHeH0
-         S8Rg==
-X-Gm-Message-State: APt69E15RCKijK0lfI8/moTCepy5YccDIT2SOJm84BlbIblBcwWWEKKM
-        CqP0NyToyoqoGXjWzf2XzkvF
-X-Google-Smtp-Source: ADUXVKI1jxmbuMB03bRiRrkjQu+v9tUnu3XgdCN/sLL1IS5GTb4qL0fa1joMdJXycapYOR0u1CXtqw==
-X-Received: by 2002:a17:902:42c3:: with SMTP id h61-v6mr18794773pld.319.1530364492523;
-        Sat, 30 Jun 2018 06:14:52 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:73ca:b257:2c06:3367:1893:796])
-        by smtp.gmail.com with ESMTPSA id 86-v6sm31892319pfp.17.2018.06.30.06.14.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 30 Jun 2018 06:14:51 -0700 (PDT)
-Date:   Sat, 30 Jun 2018 18:44:39 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        Thomas Liau <thomas.liau@actions-semi.com>,
-        jeff.chen@actions-semi.com
-Subject: Re: [PATCH v2 5/6] i2c: Add Actions Semi OWL family S900 I2C driver
-Message-ID: <20180630131439.GC16775@Mani-XPS-13-9360>
-References: <20180628181042.2239-1-manivannan.sadhasivam@linaro.org>
- <20180628181042.2239-6-manivannan.sadhasivam@linaro.org>
- <CAHp75Vd__qOXVxZTdxREwD6p1sEw49R2Kqb+esAmr_EhtT=gFg@mail.gmail.com>
- <20180630124400.GB16775@Mani-XPS-13-9360>
- <CAHp75Ve5Thjsux6oaZis7axF3jZwqhr2CfrXFcpZuziszB_E9A@mail.gmail.com>
+        Sat, 30 Jun 2018 09:18:15 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 1CA9E805C0; Sat, 30 Jun 2018 15:18:13 +0200 (CEST)
+Date:   Sat, 30 Jun 2018 15:18:12 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: v4.18-rc2 on droid4: screen turns red
+Message-ID: <20180630131812.GA549@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
 Content-Disposition: inline
-In-Reply-To: <CAHp75Ve5Thjsux6oaZis7axF3jZwqhr2CfrXFcpZuziszB_E9A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
 
-On Sat, Jun 30, 2018 at 04:04:20PM +0300, Andy Shevchenko wrote:
-> On Sat, Jun 30, 2018 at 3:44 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > On Sat, Jun 30, 2018 at 03:14:37PM +0300, Andy Shevchenko wrote:
-> >> On Thu, Jun 28, 2018 at 9:10 PM, Manivannan Sadhasivam
-> >> <manivannan.sadhasivam@linaro.org> wrote:
-> 
-> >> > +static int owl_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
-> >> > +                               int num)
-> >> > +{
-> >>
-> >> > +       int ret = 0, idx;
-> >>
-> >> Redundant assignment.
-> >>
-> >
-> > No. Actually the return path will be fixed in next iteration. Please
-> > see my reply to Peter's review for explanation.
-> 
-> How come? I didn't find anything related to this comment in reply you
-> are referring to.
-> I left deliberately the below part to show you the pointlessness of an
-> assignment to 0.
->
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, my bad. I overlooked this part. This assignment will be dropped.
+Hi!
 
-> >> > +       ret = owl_i2c_hw_init(i2c_dev);
-> >> > +       if (ret)
-> >> > +               return ret;
-> 
-> Do you mean you are dropping this in next revision?
-> 
+After longer inactivity, attempt to wake up the screen results in
+screen being completely red. Not too useful. I can still connect over
+ssh.
 
-Nope :)
+This happens all the time:
 
-Thanks,
-Mani
+Jun 30 11:34:08 devuan kernel: [  143.605499] ------------[ cut here
+]------------
+Jun 30 11:34:08 devuan kernel: [  143.610168] WARNING: CPU: 1 PID:
+2220 at drivers/gpu/drm/omapdrm/
+dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
+Jun 30 11:34:08 devuan kernel: [  143.619873] Modules linked in:
+Jun 30 11:34:08 devuan kernel: [  143.622955] CPU: 1 PID: 2220 Comm:
+pulseaudio Not tainted 4.18.0-
+rc2-88315-g3452793-dirty #756
+Jun 30 11:34:08 devuan kernel: [  143.631591] Hardware name: Generic
+OMAP4 (Flattened Device Tree)
+Jun 30 11:34:08 devuan kernel: [  143.637634] [<c010f6cc>]
+(unwind_backtrace) from [<c010ba50>] (sh
+ow_stack+0x10/0x14)
+Jun 30 11:34:08 devuan kernel: [  143.645446] [<c010ba50>]
+(show_stack) from [<c086d7ec>] (dump_sta
+ck+0x8c/0xac)
+Jun 30 11:34:08 devuan kernel: [  143.652740] [<c086d7ec>]
+(dump_stack) from [<c012d364>] (__warn+0
+xe8/0x114)
+Jun 30 11:34:08 devuan kernel: [  143.659729] [<c012d364>] (__warn)
+=66rom [<c012d3cc>] (warn_slowpath_null+0x3c/0x48)
+Jun 30 11:34:08 devuan kernel: [  143.667358] [<c012d3cc>]
+(warn_slowpath_null) from [<c047b7dc>] (hdmi_audio_stop+0x5c/0x68)
+Jun 30 11:34:08 devuan kernel: [  143.675750] [<c047b7dc>]
+(hdmi_audio_stop) from [<c06a9824>] (hdmi_dai_trigger+0x6c/0x88)
+Jun 30 11:34:08 devuan kernel: [  143.683990] [<c06a9824>]
+(hdmi_dai_trigger) from [<c06990d0>] (soc_pcm_trigger+0xf0/0x130)
+Jun 30 11:34:08 devuan kernel: [  143.692291] [<c06990d0>]
+(soc_pcm_trigger) from [<c067a9f4>] (snd_pcm_do_stop+0x54/0x58)
+Jun 30 11:34:08 devuan kernel: [  143.700439] [<c067a9f4>]
+(snd_pcm_do_stop) from [<c067a7a4>] (snd_pcm_action_single+0x38/0x78)
+Jun 30 11:34:08 devuan kernel: [  143.709075] [<c067a7a4>]
+(snd_pcm_action_single) from [<c067c468>] (snd_pcm_drop+0x48/0x94)
+Jun 30 11:34:08 devuan kernel: [  143.717468] [<c067c468>]
+(snd_pcm_drop) from [<c067d508>] (snd_pcm_ioctl+0x870/0x1180)
+Jun 30 11:34:08 devuan kernel: [  143.725433] [<c067d508>]
+(snd_pcm_ioctl) from [<c0215944>] (do_vfs_ioctl+0x80/0x960)
+Jun 30 11:34:08 devuan kernel: [  143.733215] [<c0215944>]
+(do_vfs_ioctl) from [<c0216280>] (ksys_ioctl+0x5c/0x80)
+Jun 30 11:34:08 devuan kernel: [  143.740661] [<c0216280>]
+(ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
+Jun 30 11:34:08 devuan kernel: [  143.748352] Exception
+stack(0xeb8fffa8 to 0xeb8ffff0)
+Jun 30 11:34:08 devuan kernel: [  143.753448] ffa0:
+005129b0 b1971394 00000015 00004143 00000000 00512960
 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+
+This is probably unrelated:
+
+[13215.125732] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13245.205535] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13252.969940] power_supply battery: driver failed to report
+`power_now' property: -22
+[13275.285369] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13291.993652] Charging, 4350000 uV, 532000 uA
+[13292.001708] Charging, 4350000 uV, 532000 uA
+[13305.364837] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13335.445037] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13365.524291] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[13372.940093] power_supply battery: driver failed to report
+`power_now' property: -22
+[13383.554412] g_ether gadget: packet filter 0e
+[13383.558715] g_ether gadget: ecm req21.43 v000e i0000 l0
+[13383.580261] g_ether gadget: notify connect true
+[13383.612243] g_ether gadget: notify speed 425984000
+[13387.213256] cpcap_adc cpcap_adc.0: error reading ADC: -110
+[13387.218780] cpcap_battery cpcap_battery.0:
+cpcap_battery_get_voltage failed: -110
+[13387.523254] cpcap_adc cpcap_adc.0: error reading ADC: -110
+[13387.528778] cpcap_battery cpcap_battery.0:
+cpcap_battery_get_current failed: -110
+
+Ideas welcome.
+
+Best regards,
+							Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAls3gxQACgkQMOfwapXb+vK7CgCeNh5SaeNEdkxhV1WH7N+wtbgA
+kWoAni7rHnqSJHeSTFg0HkQ2RHWz3Eu3
+=jq3O
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
