@@ -2,96 +2,105 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAACC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A752C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F327323D59
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB07526AEB
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:52:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MBB1r1AI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F327323D59
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVEkIxVi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB07526AEB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937033AbeF3KeC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 06:34:02 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43056 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936922AbeF3Kcr (ORCPT
+        id S936890AbeF3Kwo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 30 Jun 2018 06:52:44 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41555 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936205AbeF3Kwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 06:32:47 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5UAWjc7064961;
-        Sat, 30 Jun 2018 05:32:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530354765;
-        bh=uZRUh2ZG1qyfO39Il1OIhm8YPqcSz+mQT19CzuhyxMo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=MBB1r1AI03Z1WV/RufEELWFCG7DkjxkR2HDDKgZu5Lqe66pJxxN6jL+dZ3sWSywQD
-         clCHl113l7ZTVsoCvTI9gIkC7gS9GCf+SCvMBg58naS/PK+p3Oh8220DOYWARrtU0V
-         fSQUaS7dIQj2mK5yQOfEtXsy+35iek0IynFlHqb8=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWj07020195;
-        Sat, 30 Jun 2018 05:32:45 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 30
- Jun 2018 05:32:45 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sat, 30 Jun 2018 05:32:45 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWd6T013640;
-        Sat, 30 Jun 2018 05:32:42 -0500
-From:   Vignesh R <vigneshr@ti.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     Vignesh R <vigneshr@ti.com>, <linux-iio@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-input@vger.kernel.org>
-Subject: [PATCH 1/5] mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
-Date:   Sat, 30 Jun 2018 16:03:14 +0530
-Message-ID: <20180630103318.25355-2-vigneshr@ti.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180630103318.25355-1-vigneshr@ti.com>
-References: <20180630103318.25355-1-vigneshr@ti.com>
+        Sat, 30 Jun 2018 06:52:42 -0400
+Received: by mail-wr0-f195.google.com with SMTP id h10-v6so11047308wrq.8
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 03:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A09mRPxCI3TXO2gKLokIl5WDuEa2/30+gdvZII+W3gU=;
+        b=TVEkIxVizAJZ/74YbPGiB7hWkS8pFeez+lgGlXbxuoNbF935JAxOt1TvKE1J30GSQn
+         ORYk9osnPUy1LE5PmSx4zaD0GSj9rXXmW/d+5TdrKbMwkjVG8zkefLP8HevkWRnW6s/g
+         Jo7dwS0Ig6aqVDaiZk7HAWtsjyskIvMlB6YAZ32vzel4Ii1s9o+R8XHfk1/npZ2C3x3W
+         baXL6sgpy9IBUO0b+wNssmqrglKlPvv/CA1u5mtJ+TkAE637eiHgqVsn2v7vNe95e9z9
+         Iot5AD9nK010rGLAruHU2PezfLW/JA5vcQtm7xFWbWLUzSa77ocW5jzCjw2uaLS1ASih
+         gVOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A09mRPxCI3TXO2gKLokIl5WDuEa2/30+gdvZII+W3gU=;
+        b=Nx4gDLa0njW6eD29wmX9pK+qEU0n7FHnd2ybnGzh7nti5wAyBGkTsdZpKcVcLVn0kq
+         gHnYmcpRdm9cJC1+SgJTiTxH3VhKyMI4YV1sYLOdA3YKqIE1mnlFOAVfJMppOhA4RrEm
+         b/AgAjGvSN+8T9AQJnb/9awOtTreTtPY7Pf22ahYul3Cqn+whYfh322Wc1nkqguU4gyO
+         LAdkcYKqODeF1/qqRWXAcqdjx24tTC+KLrIqkxZi3jwXFii4odWjIeqNaszmLOgRzoTb
+         TWtnvjMAedVAUgLAxMM750nQdUxKVSMIJDnYydRU2B+3J6IjjJ9UfwVBn6dF9Z2O0NNW
+         ykYw==
+X-Gm-Message-State: APt69E3veUG6IQ4p1fgM2khuQJtG3AquhdSCwJgWka4H7oaCFLMyrifZ
+        K3cVok9YwOKMW7Z9b+xQXRxwZdex
+X-Google-Smtp-Source: AAOMgpdOjoWntQn6T8sPXFpseLlgzB/CL+sijY3Pw5y+rhQYZZRGaVClJ7+yuH4wkorv+nS3JypW2w==
+X-Received: by 2002:adf:c4a7:: with SMTP id m36-v6mr14279466wrf.103.1530355961327;
+        Sat, 30 Jun 2018 03:52:41 -0700 (PDT)
+Received: from [192.168.1.4] (x4db215a8.dyn.telefonica.de. [77.178.21.168])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm2516405wmh.41.2018.06.30.03.52.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 Jun 2018 03:52:40 -0700 (PDT)
+Subject: Re: [PATCH] staging: rtl8723bs: fix comparsion to true/false and
+ brace issues
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180630100252.572-1-straube.linux@gmail.com>
+ <m2tvpkegdj.fsf@linux-m68k.org>
+From:   Michael Straube <straube.linux@gmail.com>
+Message-ID: <f150191b-3458-75d0-e338-f609503b177a@gmail.com>
+Date:   Sat, 30 Jun 2018 12:52:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <m2tvpkegdj.fsf@linux-m68k.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently tscadc MFD is marked as wakeup capable which incorrect
-because, its actually touch event by child TSC device that wakes up the
-system. Therefore, remove device_init_wakeup() call that marks TSCADC
-device as wakeup capable in favor of moving to mark TSC input device as
-wakeup capable later.
+On 06/30/18 12:08, Andreas Schwab wrote:
+> On Jun 30 2018, Michael Straube <straube.linux@gmail.com> wrote:
+> 
+>> @@ -115,11 +115,10 @@ s32 rtw_btcoex_IsBTCoexCtrlAMPDUSize(struct adapter *padapter)
+>>   
+>>   void rtw_btcoex_SetManualControl(struct adapter *padapter, u8 manual)
+>>   {
+>> -	if (true == manual) {
+>> +	if (manual)
+>>   		hal_btcoex_SetManualControl(padapter, true);
+>> -	} else{
+>> +	else
+>>   		hal_btcoex_SetManualControl(padapter, false);
+>> -	}
+> 
+> aka. hal_btcoex_SetManualControl(padapter, manual);
+> 
+> Andreas.
+> 
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- drivers/mfd/ti_am335x_tscadc.c | 1 -
- 1 file changed, 1 deletion(-)
+Ah, thanks!
 
-diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-index 47012c0899cd..858c1a071a81 100644
---- a/drivers/mfd/ti_am335x_tscadc.c
-+++ b/drivers/mfd/ti_am335x_tscadc.c
-@@ -270,7 +270,6 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto err_disable_clk;
- 
--	device_init_wakeup(&pdev->dev, true);
- 	platform_set_drvdata(pdev, tscadc);
- 	return 0;
- 
--- 
-2.18.0
-
+Michael
