@@ -2,110 +2,112 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1614BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9066DC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4372087A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:28:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4372087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D2BE21525
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:33:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2BE21525
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755532AbeF3C2c (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 22:28:32 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:40437 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755481AbeF3C2b (ORCPT
+        id S936233AbeF3CdF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 22:33:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60366 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755609AbeF3CdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 22:28:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R771e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3dwYc9_1530325696;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3dwYc9_1530325696)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 30 Jun 2018 10:28:22 +0800
-Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
- large mapping
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
- <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
-Date:   Fri, 29 Jun 2018 19:28:15 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 29 Jun 2018 22:33:02 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A94F0891;
+        Sat, 30 Jun 2018 02:33:01 +0000 (UTC)
+Date:   Fri, 29 Jun 2018 19:33:00 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     david@fromorbit.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dan.j.williams@intel.com, dvyukov@google.com, glider@google.com
+Subject: Re: [PATCH v2] kernel/memremap, kasan: Make ZONE_DEVICE with work
+ with KASAN
+Message-Id: <20180629193300.0ae0f25880a800bd27952b15@linux-foundation.org>
+In-Reply-To: <20180629164932.740-1-aryabinin@virtuozzo.com>
+References: <20180625170259.30393-1-aryabinin@virtuozzo.com>
+        <20180629164932.740-1-aryabinin@virtuozzo.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 29 Jun 2018 19:49:32 +0300 Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
 
+> KASAN learns about hot added memory via the memory hotplug notifier.
+> The devm_memremap_pages() intentionally skips calling memory hotplug
+> notifiers.
 
-On 6/29/18 6:35 PM, Andrew Morton wrote:
-> On Sat, 30 Jun 2018 06:39:44 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->
-> And...
->
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 87dcf83..d61e08b 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -2763,6 +2763,128 @@ static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
->>   	return 1;
->>   }
->>   
->> +/* Consider PUD size or 1GB mapping as large mapping */
->> +#ifdef HPAGE_PUD_SIZE
->> +#define LARGE_MAP_THRESH	HPAGE_PUD_SIZE
->> +#else
->> +#define LARGE_MAP_THRESH	(1 * 1024 * 1024 * 1024)
->> +#endif
-> So this assumes that 32-bit machines cannot have 1GB mappings (fair
-> enough) and this is the sole means by which we avoid falling into the
-> "len >= LARGE_MAP_THRESH" codepath, which will behave very badly, at
-> least because for such machines, VM_DEAD is zero.
->
-> This is rather ugly and fragile.  And, I guess, explains why we can't
-> give all mappings this treatment: 32-bit machines can't do it.  And
-> we're adding a bunch of code to 32-bit kernels which will never be
-> executed.
->
-> I'm thinking it would be better to be much more explicit with "#ifdef
-> CONFIG_64BIT" in this code, rather than relying upon the above magic.
->
-> But I tend to think that the fact that we haven't solved anything on
-> locked vmas or on uprobed mappings is a shostopper for the whole
-> approach :(
+Why does it do that?
 
-I agree it is not that perfect. But, it still could improve the most use 
-cases.
+> So KASAN doesn't know anything about new memory added
+> by devm_memremap_pages(). This causes to crash when KASAN tries to
+> access non-existent shadow memory:
+> 
+>  BUG: unable to handle kernel paging request at ffffed0078000000
+>  RIP: 0010:check_memory_region+0x82/0x1e0
+>  Call Trace:
+>   memcpy+0x1f/0x50
+>   pmem_do_bvec+0x163/0x720
+>   pmem_make_request+0x305/0xac0
+>   generic_make_request+0x54f/0xcf0
+>   submit_bio+0x9c/0x370
+>   submit_bh_wbc+0x4c7/0x700
+>   block_read_full_page+0x5ef/0x870
+>   do_read_cache_page+0x2b8/0xb30
+>   read_dev_sector+0xbd/0x3f0
+>   read_lba.isra.0+0x277/0x670
+>   efi_partition+0x41a/0x18f0
+>   check_partition+0x30d/0x5e9
+>   rescan_partitions+0x18c/0x840
+>   __blkdev_get+0x859/0x1060
+>   blkdev_get+0x23f/0x810
+>   __device_add_disk+0x9c8/0xde0
+>   pmem_attach_disk+0x9a8/0xf50
+>   nvdimm_bus_probe+0xf3/0x3c0
+>   driver_probe_device+0x493/0xbd0
+>   bus_for_each_drv+0x118/0x1b0
+>   __device_attach+0x1cd/0x2b0
+>   bus_probe_device+0x1ac/0x260
+>   device_add+0x90d/0x1380
+>   nd_async_device_register+0xe/0x50
+>   async_run_entry_fn+0xc3/0x5d0
+>   process_one_work+0xa0a/0x1810
+>   worker_thread+0x87/0xe80
+>   kthread+0x2d7/0x390
+>   ret_from_fork+0x3a/0x50
+> 
+> Add kasan_add_zero_shadow()/kasan_remove_zero_shadow() - post mm_init()
+> interface to map/unmap kasan_zero_page at requested virtual addresses.
+> And use it to add/remove the shadow memory for hotpluged/unpluged
+> device memory.
+> 
+> Reported-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Alexander Potapenko <glider@google.com>
 
-For the locked vmas and hugetlb vmas, unmapping operations need modify 
-vm_flags. But, I'm wondering we might be able to separate unmap and 
-vm_flags update. Because we know they will be unmapped right away, the 
-vm_flags might be able to be updated in write mmap_sem critical section 
-before the actual unmap is called or after it. This is just off the top 
-of my head.
+No cc:stable? Which kernel version(s) do you believe need the fix?
 
-For uprobed mappings, I'm not sure how vital it is to this case.
+>  include/linux/kasan.h |  13 ++-
+>  kernel/memremap.c     |  10 ++
+>  mm/kasan/kasan_init.c | 316 +++++++++++++++++++++++++++++++++++++++++++++++---
 
-Thanks,
-Yang
-
->
+It's a surprisingly large amount of ode to do something which KASAN
+already does for hotplugged memory.  How come?
 
