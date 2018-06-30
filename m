@@ -2,94 +2,130 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17C1C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839F0C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC07C254D2
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB1F2475E
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 17:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrtJJBXr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC07C254D2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGFs9ocn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB1F2475E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751558AbeF3Rg1 (ORCPT
+        id S1751505AbeF3Ryp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 13:36:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751283AbeF3RgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 13:36:25 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D50002255E;
-        Sat, 30 Jun 2018 17:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530380185;
-        bh=/SHNv71ygf1JtGODJxo989CX63MHhUQFv9YuFBrZ9s4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OrtJJBXro6fFwj436Yw6HI8FKFrqAwYhhg1d/hmG/6Y87KMfvYZKP0fFWd7rGkHR3
-         RbGFcTKfF6xFn0WZxGm1dVncczH+nr43QYrINSYk7FCB25h75sHP64Ay8ZXcTBgJ58
-         +MvO2wtbyPlflCvLlRLnF/HSs/1qUTahmyuHt3O4=
-Date:   Sat, 30 Jun 2018 18:36:17 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Andreas Klinger <ak@it-klinger.de>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, mchehab@kernel.org,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, linus.walleij@linaro.org,
-        rdunlap@infradead.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] iio: hx711: warning in dt binding example doc
-Message-ID: <20180630183617.102dfb84@archlinux>
-In-Reply-To: <20180625151926.GA6403@arbeit>
-References: <20180625151926.GA6403@arbeit>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 30 Jun 2018 13:54:45 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43353 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeF3Ryo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 13:54:44 -0400
+Received: by mail-wr0-f193.google.com with SMTP id c5-v6so11651309wrs.10
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d7yBsC8xiTu7Prf1zV0jH7gf4djJhP68DNCj0g4Bpdg=;
+        b=UGFs9ocnhyKVi3ZwWftDg26ieGQYtfyYtVm69FHqxMtQVT3PjiV0x8vuEIjTb8Vr3J
+         Y8td7xAL8QNXcAOs5nilGAyrpBmyJNuNL8vNbUfi05oI5HVN8eWMujI7ePFEkYBYY9+4
+         HKNc2chvg4pbkfC2CtfhqwNdGo7Dd5XC5YgP7VVN248Lc/3+mUIAy+p4nJztairpuUlx
+         uyfi86gN1d8rtPg7khB/YmLHlpkG6TuDNEvawWm9vmYcJWflUh3MML+YU2YbQhgGtui9
+         yKkUUdTWAymD/7zseMEKB7WM4PCagpQMmfRY8hdkUPEntzZO7tEDDhnZW+752Cx4yLin
+         4p8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d7yBsC8xiTu7Prf1zV0jH7gf4djJhP68DNCj0g4Bpdg=;
+        b=YWJfl6DyCWW3d6pdvSNzpWDZFdLTqVaGacXZVrLf5X2+UxZ4pVRPuX3BOY72FVTuoD
+         HOXrhg7m3qcphKJTj7VAx3hCA9XbrBIofp5BelajMP0uC9X/AbOzQ3rO9npFEAjAAgpx
+         LP6B5N/97q7v82g2tRIz5sUo8x/U4kqypwbgoCwGEqGIElF8KDfSA5UqlIpi3E2zJBuB
+         KvsGjWd6R1NR7Ktd3d+sLdYm2mW5xdNHSa099kzqhGt5D69Yzidt5PPhY8rKgOEjBRHR
+         F6PhXm1/mvsBOsvRqP+mikO10fP3QPOqL5ILffzjE+7NNb/TrFh5H5ajc6loyXXGd3ae
+         XUHQ==
+X-Gm-Message-State: APt69E0fbzzsUPcvq+oqHMfLP0l+a5CycpIx37sWvG7tyvWKc5uVWcpx
+        mx3QbYZpXCxIFIawKTQqVlk=
+X-Google-Smtp-Source: AAOMgpfY1VZ9BKdk5L09GwHrdl6x2+dU2gs+19rKCKDGH5ABYe1qdcDsPodtxn7T2Bz8BQDqM18FEg==
+X-Received: by 2002:adf:f74d:: with SMTP id z13-v6mr1335799wrp.85.1530381283032;
+        Sat, 30 Jun 2018 10:54:43 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
+        by smtp.gmail.com with ESMTPSA id q70-v6sm8362266wmd.45.2018.06.30.10.54.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 Jun 2018 10:54:42 -0700 (PDT)
+Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: Fix direct mode write
+ timeouts
+To:     Vignesh R <vigneshr@ti.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20180630105421.550-1-vigneshr@ti.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b029ab9a-782b-b2d8-a80e-ae8e5c5e511d@gmail.com>
+Date:   Sat, 30 Jun 2018 15:21:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180630105421.550-1-vigneshr@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 25 Jun 2018 17:19:26 +0200
-Andreas Klinger <ak@it-klinger.de> wrote:
-
-> device tree compiler (dtc) gives a warning if a device node has "@" with a
-> following number as it's name but no reg property.
+On 06/30/2018 12:54 PM, Vignesh R wrote:
+> Sometimes when writing large size files to flash in direct/memory mapped
+> mode, it is seen that flash write enable command times out with error:
+> [  503.146293] cadence-qspi 47040000.ospi: Flash command execution timed out.
 > 
-> fix the example in the documentation of avia,hx711 to conform to dtc
-> behavior
+> This is because, we need to make sure previous direct write operation
+> is complete by polling for IDLE bit in CONFIG_REG before starting the
+> next operation.
 > 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> Fix this by polling for IDLE bit after memory mapped write.
+> 
+> Fixes: a27f2eaf2b27 ("mtd: spi-nor: cadence-quadspi: Add support for direct access mode")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
 
-Given there will be fuzz, I'll pick this up when patches 1 and 2 are
-ready and Acked by a devicetree maintainer.
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
-Thanks,
-
-Jonathan
 > ---
->  Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mtd/spi-nor/cadence-quadspi.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> index d0c066e3df69..8c9bcaa4d750 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-> @@ -15,7 +15,7 @@ Optional properties:
->  			is 50000 in the datasheet
+> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+> index c3f7aaa5d18f..d7e10b36a0b9 100644
+> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+> @@ -926,10 +926,12 @@ static ssize_t cqspi_write(struct spi_nor *nor, loff_t to,
+>  	if (ret)
+>  		return ret;
 >  
->  Example:
-> -weight@0 {
-> +weight {
->  	compatible = "avia,hx711";
->  	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
->  	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+> -	if (f_pdata->use_direct_mode)
+> +	if (f_pdata->use_direct_mode) {
+>  		memcpy_toio(cqspi->ahb_base + to, buf, len);
+> -	else
+> +		ret = cqspi_wait_idle(cqspi);
+> +	} else {
+>  		ret = cqspi_indirect_write_execute(nor, to, buf, len);
+> +	}
+>  	if (ret)
+>  		return ret;
+>  
+> 
 
+
+-- 
+Best regards,
+Marek Vasut
