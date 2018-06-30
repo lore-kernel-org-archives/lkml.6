@@ -2,111 +2,93 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41706C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FC9C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6DF825717
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 13:54:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6DF825717
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C16D1243A4
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16D1243A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751146AbeF3NyV (ORCPT
+        id S1751114AbeF3OIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 09:54:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45214 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750892AbeF3NyR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 09:54:17 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5UDrxwf044466
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 09:54:16 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jx5rjrre9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 09:54:16 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Sat, 30 Jun 2018 14:54:15 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 30 Jun 2018 14:54:13 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5UDsCOs39190668
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 30 Jun 2018 13:54:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9C194C04A;
-        Sat, 30 Jun 2018 14:53:58 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C9604C044;
-        Sat, 30 Jun 2018 14:53:57 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.205.240])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 30 Jun 2018 14:53:57 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Sat, 30 Jun 2018 16:54:10 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        linux-snps-arc@lists.infradead.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] arc/Kconfig: add the "Memory Management" menu around include mm/Kconfig
-Date:   Sat, 30 Jun 2018 16:54:09 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18063013-4275-0000-0000-00000293A732
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18063013-4276-0000-0000-0000379B1B36
-Message-Id: <1530366849-19257-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-30_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=927 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806300164
+        Sat, 30 Jun 2018 10:08:16 -0400
+Received: from www.llwyncelyn.cymru ([82.70.14.225]:43020 "EHLO fuzix.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750802AbeF3OIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 10:08:15 -0400
+Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
+        by fuzix.org (8.15.2/8.15.2) with ESMTP id w5UE7kRD013933;
+        Sat, 30 Jun 2018 15:07:47 +0100
+Date:   Sat, 30 Jun 2018 15:07:46 +0100
+From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+To:     Simon Que <sque@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Chan <benchan@chromium.org>,
+        Chun-Ta Lin <itspeter@chromium.org>,
+        Zhongze Hu <frankhu@chromium.org>,
+        Joe Perches <joe@perches.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>, linux-fpga@kernel.org
+Subject: Re: [PATCH v7] drivers/staging: Gasket driver framework + Apex
+ driver
+Message-ID: <20180630150746.38d69e92@alans-desktop>
+In-Reply-To: <20180630024938.107529-1-sque@chromium.org>
+References: <20180630024938.107529-1-sque@chromium.org>
+Organization: Intel Corporation
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Otherwise mm configuration options show up in the top level menu.
+> The Gasket (Google ASIC Software, Kernel Extensions, and Tools) kernel
+> framework is a generic, flexible system that supports thin kernel
+> drivers. Gasket kernel drivers are expected to handle opening and
+> closing devices, mmap'ing BAR space as requested, a small selection of
+> ioctls, and handling page table translation (covered below). Any other
+> functions should be handled by userspace code.
 
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
----
- arch/arc/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+So it seems to me that we shouldn't have one random layer for Google
+ASIC, another chunk of code for FPGA and so on. This all really ought to
+be unified including where possible making things meaningfully self
+describe.
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index e81bcd271be7..44a20141639a 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -556,12 +556,14 @@ endmenu
- 
- endmenu	 # "ARC Architecture Configuration"
- 
-+menu "Memory Management"
- source "mm/Kconfig"
- 
- config FORCE_MAX_ZONEORDER
- 	int "Maximum zone order"
- 	default "12" if ARC_HUGEPAGE_16M
- 	default "11"
-+endmenu # "Memory Management"
- 
- source "net/Kconfig"
- source "drivers/Kconfig"
--- 
-2.7.4
+You also don't seem to consider partitioning of an ASIC, eg if it
+implements a serial port abstraction for debug that ought to routed to
+the kernel, nor how to handle an ASIC that provides services to multiple
+consumers ?
 
+> One of the core assumptions of the Gasket framework is that precisely
+> one process is allowed to have an open write handle to the device node
+> at any given time. (That process may, once it has one write handle, open
+
+Why ? That's a very un-Linuxlike and un-Unixlike model. It's more like
+Windows and with all the problems we know that model causes.
+
+> any number of additional write handles.) This is accomplished by
+> tracking open and close data for each driver instance.
+
+What if I want to have multiple threads not sharing an mm, or pass an
+ASIC by handle to another instance - eg if I have a master process
+assigning resources wanting to pass a handle into a container ?
+
+And what about fd passing ?
+
+It seems completely weird to try and do this given I can (given
+permissions) equally just ptrace the person with it open and use ptrace
+as a multiplexor ???
+
+
+Also how about pointers to a real world use case example and user space ?
+
+Alan
