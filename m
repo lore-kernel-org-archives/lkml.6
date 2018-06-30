@@ -2,89 +2,95 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE19C6778C
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4DDC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869F32802D
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2A4B2802D
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 02:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0GNDr6t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869F32802D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AU5yijqm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A4B2802D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935241AbeF3CVp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 22:21:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755150AbeF3CVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 22:21:43 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9386C2802D;
-        Sat, 30 Jun 2018 02:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530325302;
-        bh=t+jxLsG7Yt/6E8ijUsSV50MZl/1eBNADpuwNT2Nei5I=;
-        h=Subject:From:To:Cc:Date:From;
-        b=S0GNDr6tTt/e4KsPnWkU6qUbjkuAjOuF/IPnUPn0EsMR69z43ZnPnLnIaVqz0v+0d
-         aQYntq2jBHau7B6n4+V46YDU5ttToPtdDw0ojF9RoDj6K2EAUrTdfmcIDSPrd45VZc
-         dn2DFOrrjRZaNuAquA+pWBtQ9SeYWza1sPS+FdTY=
-Subject: [PATCH] PCI: Make pci_get_rom_size() static
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>
-Date:   Fri, 29 Jun 2018 21:21:39 -0500
-Message-ID: <153032529978.134892.3376112989125005436.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S936150AbeF3CWS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 22:22:18 -0400
+Received: from mail-it0-f49.google.com ([209.85.214.49]:52341 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935515AbeF3CWN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 22:22:13 -0400
+Received: by mail-it0-f49.google.com with SMTP id p4-v6so5375815itf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Jun 2018 19:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JcyxqYYcay/Qsr52+haYXlxp2B0gkYov29mUd/11po8=;
+        b=AU5yijqmW/ZaRQlKskFG6uFzFrK/RSpbOpkmevd5USL2Ee6mvT0QTldhSyTEJxBGc+
+         h2IY/pQcDef3SbQwRExsqNMB9jDSG+rKh3bwdA21L/hO6J42qH8uyjrc25udQJd8wjgL
+         qftqCxy+xpO7Smk5R4MbyFHONZzen9s9jdFcM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JcyxqYYcay/Qsr52+haYXlxp2B0gkYov29mUd/11po8=;
+        b=l628ikpvfpFCETO9qNNymOvNA4DkiCrcOo4yncV3bWDNLFbnDL8/n01b2uUHxEBryP
+         3cOjAq7u0VD9mTJP4Lf/izf5gLpKeB9haXVl5E76lDRLf6uQ/dRBPYD2ksZZKwd7SxLG
+         6bxxhqvzAaEmuM6HoFEG0oZPugwPnpPEXtZlKOrGYBBA9q1gcA9Z74XweGEUdx395Z7m
+         zVrUAgk5nP3PBfDC28LVUKbVwyw6nDwrWOVCwwdWXIrFn9r1eeO7qn24Z3z6OecIegN/
+         DaqvYR8lHt4fcvEbG+bi2TTjIiKJ2mN4UR9OAHo82vGQxpPdDtt2Om/j/M7SPNGsu24Y
+         jaLA==
+X-Gm-Message-State: APt69E0643afmT9IwhUyai79Stvalm/0cZ28OL5F2RpPi050OxslhefM
+        6TLDPa2PZDh3WvKGdZ2HR0fRNsR9mr/pDHdQupU=
+X-Google-Smtp-Source: AAOMgpfdEf7RqLkGz2WRV6/fFW5XABr5eDxPRhJcGEA6VgxXxcPUKfmUlxdukp5SFdleILWrwC1E+YYyHx0Y3PSK1Ew=
+X-Received: by 2002:a02:664b:: with SMTP id l11-v6mr14520665jaf.70.1530325332255;
+ Fri, 29 Jun 2018 19:22:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <99169786-61dd-b19c-ac81-84bcd0a67de4@lwfinger.net>
+ <CA+55aFzZ7PND2Xvz9wB1jaCmp0rBMTSmJtKiFwSeOWy9iLSd8Q@mail.gmail.com> <20180629214647.mkgpni6hxj7aore4@kshutemo-mobl1>
+In-Reply-To: <20180629214647.mkgpni6hxj7aore4@kshutemo-mobl1>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 29 Jun 2018 19:22:01 -0700
+Message-ID: <CA+55aFySZ39GHpK4XPvsOGv6yfsn9PyR+3Fs9_zb=2CQ2ha+rQ@mail.gmail.com>
+Subject: Re: [Update] Regression in 4.18 - 32-bit PowerPC crashes on boot -
+ bisected to commit 1d40a5ea01d5
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     aneesh.kumar@linux.ibm.com,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Fri, Jun 29, 2018 at 2:46 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> Looks like pgtable_page_dtor() gets called in __pte_free_tlb() path twice.
+> Once in __pte_free_tlb() itself and the second time in pgtable_free().
 
-pci_get_rom_size() is called only from pci_map_rom(), so it can be static.
-Make it static and remove the declaration from include/linux/pci.h.
+Ahh, that would certainly do it,. and explains why this hits ppc32 but
+not x86, for example.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/rom.c   |    3 ++-
- include/linux/pci.h |    1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/rom.c b/drivers/pci/rom.c
-index 3a33f5ce314a..137bf0cee897 100644
---- a/drivers/pci/rom.c
-+++ b/drivers/pci/rom.c
-@@ -80,7 +80,8 @@ EXPORT_SYMBOL_GPL(pci_disable_rom);
-  * The PCI window size could be much larger than the
-  * actual image size.
-  */
--size_t pci_get_rom_size(struct pci_dev *pdev, void __iomem *rom, size_t size)
-+static size_t pci_get_rom_size(struct pci_dev *pdev, void __iomem *rom,
-+			       size_t size)
- {
- 	void __iomem *image;
- 	int last_image;
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 340029b2fb38..f40d3e05ccd1 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1122,7 +1122,6 @@ int pci_enable_rom(struct pci_dev *pdev);
- void pci_disable_rom(struct pci_dev *pdev);
- void __iomem __must_check *pci_map_rom(struct pci_dev *pdev, size_t *size);
- void pci_unmap_rom(struct pci_dev *pdev, void __iomem *rom);
--size_t pci_get_rom_size(struct pci_dev *pdev, void __iomem *rom, size_t size);
- void __iomem __must_check *pci_platform_rom(struct pci_dev *pdev, size_t *size);
- 
- /* Power management related routines */
-
+                Linus
