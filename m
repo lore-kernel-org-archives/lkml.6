@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F44C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAACC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A200A23D2D
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F327323D59
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:34:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AMDcKoKY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A200A23D2D
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MBB1r1AI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F327323D59
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030383AbeF3Kdk (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 06:33:40 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35474 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936968AbeF3Kcx (ORCPT
+        id S937033AbeF3KeC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 30 Jun 2018 06:34:02 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:43056 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936922AbeF3Kcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 06:32:53 -0400
+        Sat, 30 Jun 2018 06:32:47 -0400
 Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5UAWodw083312;
-        Sat, 30 Jun 2018 05:32:50 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5UAWjc7064961;
+        Sat, 30 Jun 2018 05:32:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530354770;
-        bh=8fi/71q/obnfhJODoFaw6CTlI1k6NEwEsZbpjNO63ww=;
+        s=ti-com-17Q1; t=1530354765;
+        bh=uZRUh2ZG1qyfO39Il1OIhm8YPqcSz+mQT19CzuhyxMo=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=AMDcKoKYHvLMLa6sImnS0+b4xXu4PmqQf76Yop8NAF9C/E1R0N7yIEJn8Fd0Ksu4r
-         ZXshdIDzq9w5fawgBS+Jvi0v95lz/IEZZVFQa/TabVc1opKrXYuitoVErF6szHj5Ry
-         yhMtzPEtJfvdMk+MgcDu9dmdahmzYLK0y4Ryg5b0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWoFG020290;
-        Sat, 30 Jun 2018 05:32:50 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        b=MBB1r1AI03Z1WV/RufEELWFCG7DkjxkR2HDDKgZu5Lqe66pJxxN6jL+dZ3sWSywQD
+         clCHl113l7ZTVsoCvTI9gIkC7gS9GCf+SCvMBg58naS/PK+p3Oh8220DOYWARrtU0V
+         fSQUaS7dIQj2mK5yQOfEtXsy+35iek0IynFlHqb8=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWj07020195;
+        Sat, 30 Jun 2018 05:32:45 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sat, 30
- Jun 2018 05:32:50 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ Jun 2018 05:32:45 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sat, 30 Jun 2018 05:32:50 -0500
+ Sat, 30 Jun 2018 05:32:45 -0500
 Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWd6V013640;
-        Sat, 30 Jun 2018 05:32:48 -0500
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5UAWd6T013640;
+        Sat, 30 Jun 2018 05:32:42 -0500
 From:   Vignesh R <vigneshr@ti.com>
 To:     Jonathan Cameron <jic23@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -56,9 +55,9 @@ To:     Jonathan Cameron <jic23@kernel.org>,
 CC:     Vignesh R <vigneshr@ti.com>, <linux-iio@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-input@vger.kernel.org>
-Subject: [PATCH 3/5] mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup capable
-Date:   Sat, 30 Jun 2018 16:03:16 +0530
-Message-ID: <20180630103318.25355-4-vigneshr@ti.com>
+Subject: [PATCH 1/5] mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
+Date:   Sat, 30 Jun 2018 16:03:14 +0530
+Message-ID: <20180630103318.25355-2-vigneshr@ti.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180630103318.25355-1-vigneshr@ti.com>
 References: <20180630103318.25355-1-vigneshr@ti.com>
@@ -70,44 +69,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a child device like touchscreen is wakeup capable, then keep ADC
-interface on, so that a touching resistive screen will generate wakeup
-event to the system.
+Currently tscadc MFD is marked as wakeup capable which incorrect
+because, its actually touch event by child TSC device that wakes up the
+system. Therefore, remove device_init_wakeup() call that marks TSCADC
+device as wakeup capable in favor of moving to mark TSC input device as
+wakeup capable later.
 
 Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- drivers/mfd/ti_am335x_tscadc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/mfd/ti_am335x_tscadc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
-index 858c1a071a81..c21ed54d1662 100644
+index 47012c0899cd..858c1a071a81 100644
 --- a/drivers/mfd/ti_am335x_tscadc.c
 +++ b/drivers/mfd/ti_am335x_tscadc.c
-@@ -294,11 +294,24 @@ static int ti_tscadc_remove(struct platform_device *pdev)
+@@ -270,7 +270,6 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		goto err_disable_clk;
+ 
+-	device_init_wakeup(&pdev->dev, true);
+ 	platform_set_drvdata(pdev, tscadc);
  	return 0;
- }
  
-+static int __maybe_unused ti_tscadc_can_wakeup(struct device *dev, void *data)
-+{
-+	return device_may_wakeup(dev);
-+}
-+
- static int __maybe_unused tscadc_suspend(struct device *dev)
- {
- 	struct ti_tscadc_dev	*tscadc = dev_get_drvdata(dev);
- 
- 	regmap_write(tscadc->regmap, REG_SE, 0x00);
-+	if (device_for_each_child(dev, NULL, ti_tscadc_can_wakeup)) {
-+		u32 ctrl;
-+
-+		regmap_read(tscadc->regmap, REG_CTRL, &ctrl);
-+		ctrl &= ~(CNTRLREG_POWERDOWN);
-+		ctrl |= CNTRLREG_TSCSSENB;
-+		regmap_write(tscadc->regmap, REG_CTRL, ctrl);
-+	}
- 	pm_runtime_put_sync(dev);
- 
- 	return 0;
 -- 
 2.18.0
 
