@@ -6,63 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5BAC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205B9C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 814A6249FE
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:03:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814A6249FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 8493224A5F
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 12:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8493224A5F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936964AbeF3MDs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 08:03:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37980 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936201AbeF3MDq (ORCPT
+        id S936986AbeF3ME3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 30 Jun 2018 08:04:29 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:40297 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936201AbeF3ME2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 08:03:46 -0400
-Received: from localhost (unknown [183.108.164.149])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 945A0144C612D;
-        Sat, 30 Jun 2018 05:03:44 -0700 (PDT)
-Date:   Sat, 30 Jun 2018 21:03:42 +0900 (KST)
-Message-Id: <20180630.210342.804224843120744818.davem@davemloft.net>
-To:     lipeng321@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, yisen.zhuang@huawei.com,
-        salil.mehta@huawei.com
-Subject: Re: [PATCH net-next 05/10] net: hns3: using modulo for cyclic
- counters in hclge_cmd_send
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1530271385-49668-6-git-send-email-lipeng321@huawei.com>
-References: <1530271385-49668-1-git-send-email-lipeng321@huawei.com>
-        <1530271385-49668-6-git-send-email-lipeng321@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 30 Jun 2018 05:03:46 -0700 (PDT)
+        Sat, 30 Jun 2018 08:04:28 -0400
+Received: from cm-84.208.136.53.getinternet.no ([84.208.136.53]:3238)
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <ywe@nyt.cloud>)
+        id 1fZEc5-0005mc-KB; Sat, 30 Jun 2018 14:04:25 +0200
+To:     LKML <linux-kernel@vger.kernel.org>, misc@openbsd.org,
+        el.es.cr@gmail.com, Michael@MichaelLarabel.com,
+        osnews-crew@osnews.com, feedback@slashdot.org
+From:   =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <ywe@nyt.cloud>
+Subject: A little video of me, and summary of research, computing part: What
+ should be the way forward for OS's
+Message-ID: <6d4c8487-39b6-ea9d-9d97-d7556a86efc1@nyt.cloud>
+Date:   Sat, 30 Jun 2018 14:03:03 +0200
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
-Date: Fri, 29 Jun 2018 19:23:00 +0800
+A complete and coherent philosophy is needed, that is compatible with 
+the level of intelligence needed in the computing space, that will 
+ofcourse affect society in general.
 
-> @@ -228,8 +228,7 @@ int hclge_cmd_send(struct hclge_hw *hw, struct hclge_desc *desc, int num)
->  		desc_to_use = &hw->cmq.csq.desc[hw->cmq.csq.next_to_use];
->  		*desc_to_use = desc[handle];
->  		(hw->cmq.csq.next_to_use)++;
-> -		if (hw->cmq.csq.next_to_use == hw->cmq.csq.desc_num)
-> -			hw->cmq.csq.next_to_use = 0;
-> +		hw->cmq.csq.next_to_use %= hw->cmq.csq.desc_num;
->  		handle++;
+Chaos theory, dictates that the wings of a butterfly may cause a storm 
+elsewhere.
 
-I would advise against this.
+Zén buddhism will add, did the ego of the butterfly indeed cause so much 
+distress?
 
-The "%" modulus operation takes many cpu cycles, and the current code
-is thus much faster.
+We choose a transcendental angle on life, for high accuracy of 
+philosophical impact, without associations to vain gods, for ego.
+
+Our website is: http://www.nyt.cloud
+
+Peace (Go With Théé)
+Ywe Cærlyn
+Léad
+0‐ṅīt Ž - 'A Transcendental Angle On Life'
+
+Video Of Me: https://youtu.be/M-wT5xy5qoA
+
+
+
