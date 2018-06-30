@@ -2,126 +2,151 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C914C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 226AEC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F4A254C1
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1FCD2515E
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 20:04:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KRwfTlR1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F4A254C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjsbWU2T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1FCD2515E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeF3Tpf (ORCPT
+        id S1751544AbeF3UED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 15:45:35 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:37026 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751339AbeF3Tpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 15:45:32 -0400
-Received: by mail-io0-f195.google.com with SMTP id s26-v6so11399724ioj.4
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 12:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=93baChKvo0kLQnGN470g45eX5iAKo1yJSCX2sk11CA0=;
-        b=KRwfTlR1fetS8dp+2lyAWDw4EXgiFO+xygAvBo8HZ/o40s1usabnzMjrEc8by5qdPa
-         Ek9zKFZxj1vlZ5P0ZVXu4u4WH0m6pZS/01/ZkhDM+fFdsdsXzVfqJALGSB2eYhasfGJJ
-         2AI57GiSWym8geb32dWs170A6IPURaLQPklO0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=93baChKvo0kLQnGN470g45eX5iAKo1yJSCX2sk11CA0=;
-        b=aMEx7z5Z0a5xSUYAY1rZmPy1DKUIIkmmH86K7gxIw7+8RQt4eLOPotGc4sQif+X5KA
-         LJq5oyjnGe+BTerCGiDYJnyKvclGJqIU6pYjIJf3PwJhCe1ypbyuFkI8/BdXjN8YTrvk
-         d1XeNKxjMmKWZs464UTvBDcqzBVnTVRdAJ+F2Ssn0enPcw/iTLj0ZTZJoNrIXsEN79SA
-         in9sCgBVRKI4ICL7qfyLPdHPfPQHncG8qAyKe+P8CfTuVddC/xmNXirHSXnri2MY2RRN
-         TElLr4gGXxIfTm/nm7XDQ/9LEeMEq5Q+04TugldYzDnwUWeuuoXL3GlQc2JmCxXj9cDI
-         /4lQ==
-X-Gm-Message-State: APt69E2+wqeQ1DnaF7tx2YlMJePgrfwREW1O9FfN5IEw46zVNhWBFv13
-        AXpd2dBUraJ9klMiIMN6E5/zZTjHe9v6X0qDtuM=
-X-Google-Smtp-Source: AAOMgpezs2a1XySz4NWRSP6u+D1GqJxpty1d0mBs5Cfx7018VolAiZ/sCg5gFUpdPny93U4ERVEPWKTlqXY2Qt+7gHw=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr17059832ion.259.1530387931879;
- Sat, 30 Jun 2018 12:45:31 -0700 (PDT)
+        Sat, 30 Jun 2018 16:04:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751409AbeF3UEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 16:04:01 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D00302539E;
+        Sat, 30 Jun 2018 20:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530389041;
+        bh=skYfbwbO2dDo1MTwerXPnJ5DQ34kvIOiU+JL4pCBFrk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KjsbWU2T/pmiTF+dCykThUwd3hutD9ONP4Bh94DKL80eXdUBedS/W4MhdWlkMqr50
+         EuPQx6YAJZ/c9whRd7Pr49LuUeqNSUy/vaMNHV1NYLCs6Zg0VVyEgaucgQCfwJy5Om
+         qtwVWhAmYqhSb07+5/bICDwD18hFYGc0fwPRuBe8=
+Date:   Sat, 30 Jun 2018 15:03:59 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Tyler Baicar <tbaicar@codeaurora.org>
+Cc:     bhelgaas@google.com, poza@codeaurora.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/AER: Adopt lspci naming convention for AER prints
+Message-ID: <20180630200359.GE9547@bhelgaas-glaptop.roam.corp.google.com>
+References: <1530027855-19709-1-git-send-email-tbaicar@codeaurora.org>
 MIME-Version: 1.0
-References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
- <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com> <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
-In-Reply-To: <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 30 Jun 2018 12:45:21 -0700
-Message-ID: <CA+55aFwg+j60ZFi7t7kVXbobCT4XHoiZP_w6+Cbm+AeU1ytfNQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drivers: core: Don't try to use a dead glue_dir
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530027855-19709-1-git-send-email-tbaicar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 7:21 PM Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
->
-> Under some circumstances (such as when using kobject debugging)
-> a gluedir whose kref is 0 might remain in the class kset for
-> a long time. The reason is that we don't actively remove glue
-> dirs when they become empty, but instead rely on the implicit
-> removal done by kobject_release(), which can happen some amount
-> of time after the last kobject_put().
->
-> Using such a dead object is a bad idea and will lead to warnings
-> and crashes.
+On Tue, Jun 26, 2018 at 11:44:15AM -0400, Tyler Baicar wrote:
+> lspci uses abbreviated naming for AER error strings. Adopt the
+> same naming convention for the AER printing so they match.
+> 
+> Signed-off-by: Tyler Baicar <tbaicar@codeaurora.org>
 
-So with the other patch in mind, here's my comments on this one. Pick
-one of two scenarios:
+Applied with Oza's reviewed-by to pci/aer for v4.19, thanks!
 
- (a) it's obviously correct.
-
-     We obviously can *not* take an object with a zero refcount,
-because it is already been scheduled for kobject_cleanup(), and
-incrementing the refcount is simply fundamentally wrong, because
-incrementing the refcount won't unschedule the deletion of the object.
-
- (b) the patch is wrong, and our "kobject_get()" should cancel the
-kobject_cleanup() instead.
-
-There are problems with both of the above cases.
-
-The "patch is obviously correct" case leads to another issue: why
-would kobject_get() _ever_ succeed on an object wioth a zero refcount?
-IOW, why do we have kobject_get() vs kobject_get_unless_zero() in the
-first place? It is *never* ok to get an kobject with a zero refcount
-because of the above "it's already scheduled for deletion" issue.
-
-The (b) case sounds nice, and would actually fix the problem that
-patch 2/2 was tryihng to address, and would make
-CONFIG_DEBUG_KOBJECT_RELEASE work.
-
-HOWEVER. It's completely untenable in reality - it's a nightmare from
-a locking standpoint, because kref_put() literally depends not on
-locking, but on the exclusive "went to zero".
-
-So I think (b) is practically not acceptable. Which means that (a) is
-the right reaction, and "kobject_get()" on an object with a zero
-refcount is _always_ wrong.
-
-But that says that "yes, the patch is obviously correct", but it also
-says "the patch should be pointless, because kobject_get() should just
-_always_ have the semantics of "kobject_get_unless_zero()", and the
-latter shouldn't even exist.
-
-Greg? When would it possibly be valid to do "kobject_get()" on a zero
-refcount object? I don't see it. But this is all very much your code.
-
-               Linus
+> ---
+>  drivers/pci/pcie/aer.c | 46 +++++++++++++++++++++++-----------------------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a2e8838..08a5219 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -459,22 +459,22 @@ int pci_aer_init(struct pci_dev *dev)
+>  };
+>  
+>  static const char *aer_correctable_error_string[] = {
+> -	"Receiver Error",		/* Bit Position 0	*/
+> +	"RxErr",			/* Bit Position 0	*/
+>  	NULL,
+>  	NULL,
+>  	NULL,
+>  	NULL,
+>  	NULL,
+> -	"Bad TLP",			/* Bit Position 6	*/
+> -	"Bad DLLP",			/* Bit Position 7	*/
+> -	"RELAY_NUM Rollover",		/* Bit Position 8	*/
+> +	"BadTLP",			/* Bit Position 6	*/
+> +	"BadDLLP",			/* Bit Position 7	*/
+> +	"Rollover",			/* Bit Position 8	*/
+>  	NULL,
+>  	NULL,
+>  	NULL,
+> -	"Replay Timer Timeout",		/* Bit Position 12	*/
+> -	"Advisory Non-Fatal",		/* Bit Position 13	*/
+> -	"Corrected Internal Error",	/* Bit Position 14	*/
+> -	"Header Log Overflow",		/* Bit Position 15	*/
+> +	"Timeout",			/* Bit Position 12	*/
+> +	"NonFatalErr",			/* Bit Position 13	*/
+> +	"CorrIntErr",			/* Bit Position 14	*/
+> +	"HeaderOF",			/* Bit Position 15	*/
+>  };
+>  
+>  static const char *aer_uncorrectable_error_string[] = {
+> @@ -482,28 +482,28 @@ int pci_aer_init(struct pci_dev *dev)
+>  	NULL,
+>  	NULL,
+>  	NULL,
+> -	"Data Link Protocol",		/* Bit Position 4	*/
+> -	"Surprise Down Error",		/* Bit Position 5	*/
+> +	"DLP",				/* Bit Position 4	*/
+> +	"SDES",				/* Bit Position 5	*/
+>  	NULL,
+>  	NULL,
+>  	NULL,
+>  	NULL,
+>  	NULL,
+>  	NULL,
+> -	"Poisoned TLP",			/* Bit Position 12	*/
+> -	"Flow Control Protocol",	/* Bit Position 13	*/
+> -	"Completion Timeout",		/* Bit Position 14	*/
+> -	"Completer Abort",		/* Bit Position 15	*/
+> -	"Unexpected Completion",	/* Bit Position 16	*/
+> -	"Receiver Overflow",		/* Bit Position 17	*/
+> -	"Malformed TLP",		/* Bit Position 18	*/
+> +	"TLP",				/* Bit Position 12	*/
+> +	"FCP",				/* Bit Position 13	*/
+> +	"CmpltTO",			/* Bit Position 14	*/
+> +	"CmpltAbrt",			/* Bit Position 15	*/
+> +	"UnxCmplt",			/* Bit Position 16	*/
+> +	"RxOF",				/* Bit Position 17	*/
+> +	"MalfTLP",			/* Bit Position 18	*/
+>  	"ECRC",				/* Bit Position 19	*/
+> -	"Unsupported Request",		/* Bit Position 20	*/
+> -	"ACS Violation",		/* Bit Position 21	*/
+> -	"Uncorrectable Internal Error",	/* Bit Position 22	*/
+> -	"MC Blocked TLP",		/* Bit Position 23	*/
+> -	"AtomicOp Egress Blocked",	/* Bit Position 24	*/
+> -	"TLP Prefix Blocked Error",	/* Bit Position 25	*/
+> +	"UnsupReq",			/* Bit Position 20	*/
+> +	"ACSViol",			/* Bit Position 21	*/
+> +	"UncorrIntErr",			/* Bit Position 22	*/
+> +	"BlockedTLP",			/* Bit Position 23	*/
+> +	"AtomicOpBlocked",		/* Bit Position 24	*/
+> +	"TLPBlockedErr",		/* Bit Position 25	*/
+>  };
+>  
+>  static const char *aer_agent_string[] = {
+> -- 
+> Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+> Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project.
+> 
