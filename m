@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 843B6C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2147DC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DF925703
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:55:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DF925703
+	by mail.kernel.org (Postfix) with ESMTP id D29BF2576A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:55:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29BF2576A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751702AbeF3Ozp (ORCPT
+        id S1751998AbeF3Ozv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 10:55:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60190 "EHLO
+        Sat, 30 Jun 2018 10:55:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38712 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751472AbeF3Oz0 (ORCPT
+        by vger.kernel.org with ESMTP id S1751761AbeF3Ozg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 10:55:26 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5UErWKg126323
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:26 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jx5xvacs4-1
+        Sat, 30 Jun 2018 10:55:36 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5UErVuK052358
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:35 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jx6dfhbrp-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:26 -0400
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:35 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Sat, 30 Jun 2018 15:55:24 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sat, 30 Jun 2018 15:55:33 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 30 Jun 2018 15:55:20 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5UEtKkd37355616
+        Sat, 30 Jun 2018 15:55:30 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5UEtT3S34668774
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 30 Jun 2018 14:55:20 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE3BA42041;
-        Sat, 30 Jun 2018 15:55:06 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4AC594203F;
-        Sat, 30 Jun 2018 15:55:05 +0100 (BST)
+        Sat, 30 Jun 2018 14:55:29 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A06564C04A;
+        Sat, 30 Jun 2018 15:55:15 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D1B04C040;
+        Sat, 30 Jun 2018 15:55:14 +0100 (BST)
 Received: from rapoport-lnx (unknown [9.148.205.240])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 30 Jun 2018 15:55:05 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Sat, 30 Jun 2018 17:55:17 +0300
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sat, 30 Jun 2018 15:55:13 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Sat, 30 Jun 2018 17:55:27 +0300
 From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
 To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -59,20 +59,20 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         linux-mm <linux-mm@kvack.org>,
         lkml <linux-kernel@vger.kernel.org>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH v2 04/11] docs/mm: bootmem: add kernel-doc description of 'struct bootmem_data'
-Date:   Sat, 30 Jun 2018 17:54:59 +0300
+Subject: [PATCH v2 08/11] docs/mm: memblock: add kernel-doc comments for memblock_add[_node]
+Date:   Sat, 30 Jun 2018 17:55:03 +0300
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18063014-0028-0000-0000-000002D6B5D4
+x-cbid: 18063014-0008-0000-0000-0000024E31D5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18063014-0029-0000-0000-0000238E2AF4
-Message-Id: <1530370506-21751-5-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18063014-0009-0000-0000-000021B43444
+Message-Id: <1530370506-21751-9-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-30_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1806300176
@@ -83,37 +83,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- include/linux/bootmem.h | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ mm/memblock.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/bootmem.h b/include/linux/bootmem.h
-index 7942a96..4251519 100644
---- a/include/linux/bootmem.h
-+++ b/include/linux/bootmem.h
-@@ -27,9 +27,20 @@ extern unsigned long max_pfn;
- extern unsigned long long max_possible_pfn;
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 8159869..3e6be01 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -595,12 +595,35 @@ int __init_memblock memblock_add_range(struct memblock_type *type,
+ 	}
+ }
  
- #ifndef CONFIG_NO_BOOTMEM
--/*
-- * node_bootmem_map is a map pointer - the bits represent all physical 
-- * memory pages (including holes) on the node.
 +/**
-+ * struct bootmem_data - per-node information used by the bootmem allocator
-+ * @node_min_pfn: the starting physical address of the node's memory
-+ * @node_low_pfn: the end physical address of the directly addressable memory
-+ * @node_bootmem_map: is a bitmap pointer - the bits represent all physical
-+ *		      memory pages (including holes) on the node.
-+ * @last_end_off: the offset within the page of the end of the last allocation;
-+ *                if 0, the page used is full
-+ * @hint_idx: the PFN of the page used with the last allocation;
-+ *            together with using this with the @last_end_offset field,
-+ *            a test can be made to see if allocations can be merged
-+ *            with the page used for the last allocation rather than
-+ *            using up a full new page.
-+ * @list: list entry in the linked list ordered by the memory addresses
-  */
- typedef struct bootmem_data {
- 	unsigned long node_min_pfn;
++ * memblock_add_node - add new memblock region within a NUMA node
++ * @base: base address of the new region
++ * @size: size of the new region
++ * @nid: nid of the new region
++ *
++ * Add new memblock region [@base, @base + @size) to the "memory"
++ * type. See memblock_add_range() description for mode details
++ *
++ * Return:
++ * 0 on success, -errno on failure.
++ */
+ int __init_memblock memblock_add_node(phys_addr_t base, phys_addr_t size,
+ 				       int nid)
+ {
+ 	return memblock_add_range(&memblock.memory, base, size, nid, 0);
+ }
+ 
++/**
++ * memblock_add - add new memblock region
++ * @base: base address of the new region
++ * @size: size of the new region
++ *
++ * Add new memblock region [@base, @base + @size) to the "memory"
++ * type. See memblock_add_range() description for mode details
++ *
++ * Return:
++ * 0 on success, -errno on failure.
++ */
+ int __init_memblock memblock_add(phys_addr_t base, phys_addr_t size)
+ {
+ 	phys_addr_t end = base + size - 1;
+@@ -1464,9 +1487,9 @@ void __init __memblock_free_early(phys_addr_t base, phys_addr_t size)
+ 	memblock_remove_range(&memblock.reserved, base, size);
+ }
+ 
+-/*
++/**
+  * __memblock_free_late - free bootmem block pages directly to buddy allocator
+- * @addr: phys starting address of the  boot memory block
++ * @base: phys starting address of the  boot memory block
+  * @size: size of the boot memory block in bytes
+  *
+  * This is only useful when the bootmem allocator has already been torn
 -- 
 2.7.4
 
