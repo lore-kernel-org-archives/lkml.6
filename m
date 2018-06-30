@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32C2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9A8C6778C
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D0D24AE5
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:08:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D0D24AE5
+	by mail.kernel.org (Postfix) with ESMTP id 5252324275
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:08:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5252324275
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936646AbeF3BIe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 21:08:34 -0400
-Received: from mga11.intel.com ([192.55.52.93]:26625 "EHLO mga11.intel.com"
+        id S936281AbeF3BG4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:06:56 -0400
+Received: from mga01.intel.com ([192.55.52.88]:57850 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936293AbeF3BG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 21:06:58 -0400
+        id S1752633AbeF3BGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:06:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 18:06:58 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jun 2018 18:06:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,288,1526367600"; 
-   d="scan'208";a="212317453"
+   d="scan'208";a="212317417"
 Received: from hao-dev.bj.intel.com ([10.238.157.61])
-  by orsmga004.jf.intel.com with ESMTP; 29 Jun 2018 18:06:56 -0700
+  by orsmga004.jf.intel.com with ESMTP; 29 Jun 2018 18:06:47 -0700
 From:   Wu Hao <hao.wu@intel.com>
 To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com
-Subject: [PATCH v7 24/29] fpga: dfl: afu: add port ops support
-Date:   Sat, 30 Jun 2018 08:53:31 +0800
-Message-Id: <1530320016-24712-25-git-send-email-hao.wu@intel.com>
+        yi.z.zhang@intel.com, hao.wu@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>
+Subject: [PATCH v7 21/29] fpga: dfl: add fpga region platform driver for FME
+Date:   Sat, 30 Jun 2018 08:53:28 +0800
+Message-Id: <1530320016-24712-22-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
 References: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
@@ -46,166 +50,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch registers the port ops into the global list in the DFL
-framework, and it allows other modules to use the port ops. And
-This patch includes the implementation of the get_id and enable_set
-ops too.
+This patch adds fpga region platform driver for FPGA Management Engine.
+It register an fpga region with given fpga manager / bridge device.
 
+Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
 Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v6: rebase, fix copyright time and add Acked-by from Alan.
+v3: rename driver to fpga-dfl-fme-region
+    fix fpga_mgr_put order problem in remove function.
+    rebased due to fpga api changes.
+v4: rename to dfl-fme-region, fix SPDX license issue
+    include dfl-fme-pr.h instead of dfl-fme.h and dfl.h
+    add Acked-by from Alan and Moritz
+v5: rebase, due to fpga region api changes.
+v6: rebase and fix copyright time.
+v7: fix kbuild issue.
 ---
- drivers/fpga/dfl-afu-main.c | 122 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 1 deletion(-)
+ drivers/fpga/Kconfig          |  6 +++
+ drivers/fpga/Makefile         |  1 +
+ drivers/fpga/dfl-fme-region.c | 88 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 95 insertions(+)
+ create mode 100644 drivers/fpga/dfl-fme-region.c
 
-diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-index 08f88cd..a38d6a8 100644
---- a/drivers/fpga/dfl-afu-main.c
-+++ b/drivers/fpga/dfl-afu-main.c
-@@ -19,6 +19,83 @@
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 11d1943..f99f422 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -168,6 +168,12 @@ config FPGA_DFL_FME_BRIDGE
+ 	help
+ 	  Say Y to enable FPGA Bridge driver for FPGA Management Engine.
  
- #include "dfl.h"
++config FPGA_DFL_FME_REGION
++	tristate "FPGA DFL FME Region Driver"
++	depends on FPGA_DFL_FME && HAS_IOMEM
++	help
++	  Say Y to enable FPGA Region driver for FPGA Management Engine.
++
+ config FPGA_DFL_PCI
+ 	tristate "FPGA DFL PCIe Device Driver"
+ 	depends on PCI && FPGA_DFL
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index cda0551..637c275 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -34,6 +34,7 @@ obj-$(CONFIG_FPGA_DFL)			+= dfl.o
+ obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
+ obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
+ obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)	+= dfl-fme-br.o
++obj-$(CONFIG_FPGA_DFL_FME_REGION)	+= dfl-fme-region.o
  
-+/**
-+ * port_enable - enable a port
-+ * @pdev: port platform device.
+ dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+ 
+diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
+new file mode 100644
+index 0000000..a6e0bde
+--- /dev/null
++++ b/drivers/fpga/dfl-fme-region.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * FPGA Region Driver for FPGA Management Engine (FME)
 + *
-+ * Enable Port by clear the port soft reset bit, which is set by default.
-+ * The User AFU is unable to respond to any MMIO access while in reset.
-+ * port_enable function should only be used after port_disable
-+ * function.
++ * Copyright (C) 2017-2018 Intel Corporation, Inc.
++ *
++ * Authors:
++ *   Wu Hao <hao.wu@intel.com>
++ *   Joseph Grecco <joe.grecco@intel.com>
++ *   Enno Luebbers <enno.luebbers@intel.com>
++ *   Tim Whisonant <tim.whisonant@intel.com>
++ *   Ananda Ravuri <ananda.ravuri@intel.com>
++ *   Henry Mitchel <henry.mitchel@intel.com>
 + */
-+static void port_enable(struct platform_device *pdev)
++
++#include <linux/module.h>
++#include <linux/fpga/fpga-region.h>
++
++#include "dfl-fme-pr.h"
++
++static int fme_region_get_bridges(struct fpga_region *region)
 +{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	void __iomem *base;
-+	u64 v;
++	struct dfl_fme_region_pdata *pdata = region->priv;
++	struct device *dev = &pdata->br->dev;
 +
-+	WARN_ON(!pdata->disable_count);
-+
-+	if (--pdata->disable_count != 0)
-+		return;
-+
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	/* Clear port soft reset */
-+	v = readq(base + PORT_HDR_CTRL);
-+	v &= ~PORT_CTRL_SFTRST;
-+	writeq(v, base + PORT_HDR_CTRL);
++	return fpga_bridge_get_to_list(dev, region->info, &region->bridge_list);
 +}
 +
-+#define RST_POLL_INVL 10 /* us */
-+#define RST_POLL_TIMEOUT 1000 /* us */
-+
-+/**
-+ * port_disable - disable a port
-+ * @pdev: port platform device.
-+ *
-+ * Disable Port by setting the port soft reset bit, it puts the port into
-+ * reset.
-+ */
-+static int port_disable(struct platform_device *pdev)
++static int fme_region_probe(struct platform_device *pdev)
 +{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	void __iomem *base;
-+	u64 v;
++	struct dfl_fme_region_pdata *pdata = dev_get_platdata(&pdev->dev);
++	struct device *dev = &pdev->dev;
++	struct fpga_region *region;
++	struct fpga_manager *mgr;
++	int ret;
 +
-+	if (pdata->disable_count++ != 0)
-+		return 0;
++	mgr = fpga_mgr_get(&pdata->mgr->dev);
++	if (IS_ERR(mgr))
++		return -EPROBE_DEFER;
 +
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	/* Set port soft reset */
-+	v = readq(base + PORT_HDR_CTRL);
-+	v |= PORT_CTRL_SFTRST;
-+	writeq(v, base + PORT_HDR_CTRL);
-+
-+	/*
-+	 * HW sets ack bit to 1 when all outstanding requests have been drained
-+	 * on this port and minimum soft reset pulse width has elapsed.
-+	 * Driver polls port_soft_reset_ack to determine if reset done by HW.
-+	 */
-+	if (readq_poll_timeout(base + PORT_HDR_CTRL, v, v & PORT_CTRL_SFTRST,
-+			       RST_POLL_INVL, RST_POLL_TIMEOUT)) {
-+		dev_err(&pdev->dev, "timeout, fail to reset device\n");
-+		return -ETIMEDOUT;
++	region = fpga_region_create(dev, mgr, fme_region_get_bridges);
++	if (!region) {
++		ret = -ENOMEM;
++		goto eprobe_mgr_put;
 +	}
++
++	region->priv = pdata;
++	platform_set_drvdata(pdev, region);
++
++	ret = fpga_region_register(region);
++	if (ret)
++		goto region_free;
++
++	dev_dbg(dev, "DFL FME FPGA Region probed\n");
++
++	return 0;
++
++region_free:
++	fpga_region_free(region);
++eprobe_mgr_put:
++	fpga_mgr_put(mgr);
++	return ret;
++}
++
++static int fme_region_remove(struct platform_device *pdev)
++{
++	struct fpga_region *region = dev_get_drvdata(&pdev->dev);
++
++	fpga_region_unregister(region);
++	fpga_mgr_put(region->mgr);
 +
 +	return 0;
 +}
 +
-+static int port_get_id(struct platform_device *pdev)
-+{
-+	void __iomem *base;
-+
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	return FIELD_GET(PORT_CAP_PORT_NUM, readq(base + PORT_HDR_CAP));
-+}
-+
- static int port_hdr_init(struct platform_device *pdev,
- 			 struct dfl_feature *feature)
- {
-@@ -119,6 +196,28 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	.unlocked_ioctl = afu_ioctl,
- };
- 
-+static int port_enable_set(struct platform_device *pdev, bool enable)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	int ret = 0;
-+
-+	mutex_lock(&pdata->lock);
-+	if (enable)
-+		port_enable(pdev);
-+	else
-+		ret = port_disable(pdev);
-+	mutex_unlock(&pdata->lock);
-+
-+	return ret;
-+}
-+
-+static struct dfl_fpga_port_ops afu_port_ops = {
-+	.name = DFL_FPGA_FEATURE_DEV_PORT,
-+	.owner = THIS_MODULE,
-+	.get_id = port_get_id,
-+	.enable_set = port_enable_set,
++static struct platform_driver fme_region_driver = {
++	.driver	= {
++		.name    = DFL_FPGA_FME_REGION,
++	},
++	.probe   = fme_region_probe,
++	.remove  = fme_region_remove,
 +};
 +
- static int afu_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -154,7 +253,28 @@ static int afu_remove(struct platform_device *pdev)
- 	.remove  = afu_remove,
- };
- 
--module_platform_driver(afu_driver);
-+static int __init afu_init(void)
-+{
-+	int ret;
++module_platform_driver(fme_region_driver);
 +
-+	dfl_fpga_port_ops_add(&afu_port_ops);
-+
-+	ret = platform_driver_register(&afu_driver);
-+	if (ret)
-+		dfl_fpga_port_ops_del(&afu_port_ops);
-+
-+	return ret;
-+}
-+
-+static void __exit afu_exit(void)
-+{
-+	platform_driver_unregister(&afu_driver);
-+
-+	dfl_fpga_port_ops_del(&afu_port_ops);
-+}
-+
-+module_init(afu_init);
-+module_exit(afu_exit);
- 
- MODULE_DESCRIPTION("FPGA Accelerated Function Unit driver");
- MODULE_AUTHOR("Intel Corporation");
++MODULE_DESCRIPTION("FPGA Region for DFL FPGA Management Engine");
++MODULE_AUTHOR("Intel Corporation");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:dfl-fme-region");
 -- 
 1.8.3.1
 
