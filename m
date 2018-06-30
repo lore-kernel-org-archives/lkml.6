@@ -2,76 +2,108 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8434BC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 04:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68D2C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 04:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FFE02512A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 04:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFE02512A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 58E112772F
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 04:26:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E112772F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeF3EE5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 00:04:57 -0400
-Received: from smtprelay0090.hostedemail.com ([216.40.44.90]:59810 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751861AbeF3EE4 (ORCPT
+        id S932343AbeF3E0x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 30 Jun 2018 00:26:53 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35388 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932137AbeF3E0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 00:04:56 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 54A0918008658;
-        Sat, 30 Jun 2018 04:04:55 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: ship02_47f50dfc1f93f
-X-Filterd-Recvd-Size: 1833
-Received: from XPS-9350 (cpe-23-242-70-174.socal.res.rr.com [23.242.70.174])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 30 Jun 2018 04:04:54 +0000 (UTC)
-Message-ID: <15a087e0c207e87b0e1e7e0bdd5a09c5d336c224.camel@perches.com>
-Subject: Re: [PATCH] modsign: log module name in the event of an error
-From:   Joe Perches <joe@perches.com>
-To:     Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>
-Date:   Fri, 29 Jun 2018 21:04:52 -0700
-In-Reply-To: <20180629155329.2076-1-jeyu@kernel.org>
-References: <20180629155329.2076-1-jeyu@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Sat, 30 Jun 2018 00:26:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3eli3V_1530332784;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3eli3V_1530332784)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 30 Jun 2018 12:26:29 +0800
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
+ <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
+ <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <ce2f93d3-fe0e-89c2-5465-94cfa974f1ea@linux.alibaba.com>
+Date:   Fri, 29 Jun 2018 21:26:23 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-29 at 17:53 +0200, Jessica Yu wrote:
-> Now that we have the load_info struct all initialized (including
-> info->name, which contains the name of the module) before
-> module_sig_check(), make the load_info struct and hence module name
-> available to mod_verify_sig() so that we can log the module name in the
-> event of an error.
-[]
-> diff --git a/kernel/module-internal.h b/kernel/module-internal.h
-[]
-> +extern int mod_verify_sig(const void *mod, struct load_info *info,
-> +			  unsigned long *_modlen);
-> diff --git a/kernel/module.c b/kernel/module.c
-[]
-> @@ -2778,7 +2758,7 @@ static int module_sig_check(struct load_info *info, int flags)
->  	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
->  		/* We truncate the module to discard the signature */
->  		info->len -= markerlen;
-> -		err = mod_verify_sig(mod, &info->len);
-> +		err = mod_verify_sig(mod, info, &info->len);
 
-This is the only place this is used correct?
-So why pass info and info->member?
 
-info should be enough
+On 6/29/18 8:15 PM, Andrew Morton wrote:
+> On Fri, 29 Jun 2018 19:28:15 -0700 Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>
+>>
+>>> we're adding a bunch of code to 32-bit kernels which will never be
+>>> executed.
+>>>
+>>> I'm thinking it would be better to be much more explicit with "#ifdef
+>>> CONFIG_64BIT" in this code, rather than relying upon the above magic.
+>>>
+>>> But I tend to think that the fact that we haven't solved anything on
+>>> locked vmas or on uprobed mappings is a shostopper for the whole
+>>> approach :(
+>> I agree it is not that perfect. But, it still could improve the most use
+>> cases.
+> Well, those unaddressed usecases will need to be fixed at some point.
 
+Yes, definitely.
+
+> What's our plan for that?
+
+As I mentioned in the earlier email, locked and hugetlb cases might be 
+able to be solved by separating vm_flags update and actual unmap. I will 
+look into it further later.
+
+ From my point of view, uprobe mapping sounds not that vital.
+
+>
+> Would one of your earlier designs have addressed all usecases?  I
+> expect the dumb unmap-a-little-bit-at-a-time approach would have?
+
+Yes. The v1 design does unmap with holding write map_sem. So, the 
+vm_flags update is not a problem.
+
+Thanks,
+Yang
+
+>
+>> For the locked vmas and hugetlb vmas, unmapping operations need modify
+>> vm_flags. But, I'm wondering we might be able to separate unmap and
+>> vm_flags update. Because we know they will be unmapped right away, the
+>> vm_flags might be able to be updated in write mmap_sem critical section
+>> before the actual unmap is called or after it. This is just off the top
+>> of my head.
+>>
+>> For uprobed mappings, I'm not sure how vital it is to this case.
+>>
+>> Thanks,
+>> Yang
+>>
 
