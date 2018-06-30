@@ -2,176 +2,145 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB96CC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB80AC3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2D6252BD
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 728C025387
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:33:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8uGi9OJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2D6252BD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="EFsFEYLC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728C025387
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751728AbeF3TYH (ORCPT
+        id S1751576AbeF3TdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 15:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751450AbeF3TYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 15:24:05 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA14F240E3;
-        Sat, 30 Jun 2018 19:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530386644;
-        bh=lpnlRBT36rooQPFX3qan3jron4LMfmGE/bH06GC/oR4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N8uGi9OJsVRkLy4RKgitehaIKeeSUv6u75uItuyujavgZbDgeSVOOJ11Ipse69a2+
-         0zG1yBfRkGlsI3UDklOplqzEDYlfm4g3EakIDj3Ds/KY+AxPQDdvbUN82AwW7uo1qj
-         YU8mfwAvR1112dqe5nAf5XDnWvyGXvm2fu3IyumU=
-Date:   Sat, 30 Jun 2018 14:24:03 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V3] PCI: Enable PASID when End-to-End TLP is supported by
- all bridges
-Message-ID: <20180630192403.GC9547@bhelgaas-glaptop.roam.corp.google.com>
-References: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
+        Sat, 30 Jun 2018 15:33:12 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37365 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbeF3TdI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 15:33:08 -0400
+Received: by mail-lf0-f66.google.com with SMTP id g21-v6so9144014lfb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 12:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=XQQVbe7WjMMgPqR5Uj9hCyXP8h5tJXalFOTPJ+fMQhE=;
+        b=EFsFEYLC7Lgbv21Y5F+ZnDUtGgpI2lRxXfefz6wCazr/uVADTeWOKrfNVW9J5v8lML
+         98a2H31V7Hf/2vAYTGDISLV+v3VSqAaU+kDgqR/rGo2TCteGp1C7/V7z6nD0Ea57A4on
+         jrOI+ByiYnQLY7Lba41MWp59y2fVwYJl6J5HY1hjs34AnjNNaAIrWa4dYMsyfMxV3Vld
+         Ciylxfdv0EcecRPvEV9AqKKcWRkcIOlNNNkd8yzg+EIYdscUeEmGUTiWmulwM4ySwIkZ
+         7KEXjMH9SirjkmNTt4RdFwGsOADZ71gZ95m21nNukaz1kQ4W6isIqxX9DQ0jPHXz/Mhy
+         2UJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=XQQVbe7WjMMgPqR5Uj9hCyXP8h5tJXalFOTPJ+fMQhE=;
+        b=WhMGLOXAddioDTxoZnrCTh0Pges6CJ1IdCwGG1thpa9Rdyt4Ywwpt8qAH3TocgnQfp
+         zi77SbKcoC5iL7d25mxt3+Fxi/MDR9i1hSOXGR8HrRU7GMAX2zJPVaLgyGKSwjl4otNc
+         s1+gjcQ1vPYozVxJCFFuVV1xVk3ZotpzDH22LGQZPeHzXqIuQq24iuzihZo095U5cXMR
+         BJw0o+gOZ3kxPkFKEiiJkW9o0ldK4FQmmGmY/cjgZoHFBDEqRFHsuSOnnSa+KqOZsu89
+         6eRq+B8sMmlIMnzd3DyejELLavAs+D0sjzFZyX3nP3ZTc/JLWld9FwAR+UXSuUSKSvNl
+         bzYQ==
+X-Gm-Message-State: APt69E3ZIJGsDOVmIRfyyiSr7g87aBx9xCy+tWSf0Vtpz8j6b3xqXhlu
+        yTSpku4mOkENbrdExoUH8H3YHA==
+X-Google-Smtp-Source: AAOMgpcMgGPPuF2PzyIARbaifiMeKlaYClkPkhN1kUGF+mhatW1bYiy1RGu/njBgpE49JSu18ju+CA==
+X-Received: by 2002:a19:ca09:: with SMTP id a9-v6mr3254486lfg.142.1530387187248;
+        Sat, 30 Jun 2018 12:33:07 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id p75-v6sm1548725lfg.42.2018.06.30.12.33.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 Jun 2018 12:33:04 -0700 (PDT)
+Date:   Sat, 30 Jun 2018 12:32:54 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20180630193254.irrglaxamez7ryt2@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530372264-20653-1-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 11:24:24AM -0400, Sinan Kaya wrote:
-> A PCIe endpoint carries the process address space identifier (PASID) in
-> the TLP prefix as part of the memory read/write transaction. The address
-> information in the TLP is relevant only for a given PASID context.
-> 
-> An IOMMU takes PASID value and the address information from the
-> TLP to look up the physical address in the system.
-> 
-> PASID is an End-End TLP Prefix (PCIe r4.0, sec 6.20).  Sec 2.2.10.2 says
-> 
->   It is an error to receive a TLP with an End-End TLP Prefix by a
->   Receiver that does not support End-End TLP Prefixes. A TLP in
->   violation of this rule is handled as a Malformed TLP. This is a
->   reported error associated with the Receiving Port (see Section 6.2).
-> 
-> Prevent error condition by proactively requiring End-to-End TLP
-> prefix to be supported on the entire data path between the endpoint and
-> the root port before enabling PASID.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Hi Linus,
 
-Applied to pci/virtualization for v4.19, thanks!
 
-> ---
->  drivers/pci/ats.c             |  3 +++
->  drivers/pci/probe.c           | 24 ++++++++++++++++++++++++
->  include/linux/pci.h           |  1 +
->  include/uapi/linux/pci_regs.h |  1 +
->  4 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-> index 4923a2a..5b78f3b 100644
-> --- a/drivers/pci/ats.c
-> +++ b/drivers/pci/ats.c
-> @@ -273,6 +273,9 @@ int pci_enable_pasid(struct pci_dev *pdev, int features)
->  	if (WARN_ON(pdev->pasid_enabled))
->  		return -EBUSY;
->  
-> +	if (!pdev->eetlp_prefix_path)
-> +		return -EINVAL;
-> +
->  	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
->  	if (!pos)
->  		return -EINVAL;
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ac876e3..39fd3ac 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2042,6 +2042,29 @@ static void pci_configure_ltr(struct pci_dev *dev)
->  #endif
->  }
->  
-> +static void pci_configure_eetlp_prefix(struct pci_dev *dev)
-> +{
-> +#ifdef CONFIG_PCI_PASID
-> +	struct pci_dev *bridge;
-> +	u32 cap;
-> +
-> +	if (!pci_is_pcie(dev))
-> +		return;
-> +
-> +	pcie_capability_read_dword(dev, PCI_EXP_DEVCAP2, &cap);
-> +	if (!(cap & PCI_EXP_DEVCAP2_E2ETLP))
-> +		return;
-> +
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT)
-> +		dev->eetlp_prefix_path = 1;
-> +	else {
-> +		bridge = pci_upstream_bridge(dev);
-> +		if (bridge && bridge->eetlp_prefix_path)
-> +			dev->eetlp_prefix_path = 1;
-> +	}
-> +#endif
-> +}
-> +
->  static void pci_configure_device(struct pci_dev *dev)
->  {
->  	struct hotplug_params hpp;
-> @@ -2051,6 +2074,7 @@ static void pci_configure_device(struct pci_dev *dev)
->  	pci_configure_extended_tags(dev, NULL);
->  	pci_configure_relaxed_ordering(dev);
->  	pci_configure_ltr(dev);
-> +	pci_configure_eetlp_prefix(dev);
->  
->  	memset(&hpp, 0, sizeof(hpp));
->  	ret = pci_get_hp_params(dev, &hpp);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 340029b..6ba8184 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -350,6 +350,7 @@ struct pci_dev {
->  	unsigned int	ltr_path:1;	/* Latency Tolerance Reporting
->  					   supported from root to here */
->  #endif
-> +	unsigned int	eetlp_prefix_path:1;	/* End-to-End TLP Prefix */
->  
->  	pci_channel_state_t error_state;	/* Current connectivity state */
->  	struct device	dev;			/* Generic device interface */
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 4da87e2..a617ab2 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -636,6 +636,7 @@
->  #define  PCI_EXP_DEVCAP2_OBFF_MASK	0x000c0000 /* OBFF support mechanism */
->  #define  PCI_EXP_DEVCAP2_OBFF_MSG	0x00040000 /* New message signaling */
->  #define  PCI_EXP_DEVCAP2_OBFF_WAKE	0x00080000 /* Re-use WAKE# for OBFF */
-> +#define PCI_EXP_DEVCAP2_E2ETLP		0x00200000 /* End-to-End TLP Prefix */
->  #define PCI_EXP_DEVCTL2		40	/* Device Control 2 */
->  #define  PCI_EXP_DEVCTL2_COMP_TIMEOUT	0x000f	/* Completion Timeout Value */
->  #define  PCI_EXP_DEVCTL2_COMP_TMOUT_DIS	0x0010	/* Completion Timeout Disable */
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The following changes since commit 86676c4685f774d818f7a6c401c925bbf2a92903:
+
+  arm64: dts: uniphier: fix widget name of headphone for LD11/LD20 boards (2018-06-27 07:14:47 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
+
+for you to fetch changes up to 4ca2f0b945fad835959fa596df47817797987cd2:
+
+  Merge tag 'davinci-fixes-for-v4.18' of git://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci into fixes (2018-06-29 14:08:27 -0700)
+
+----------------------------------------------------------------
+ARM: SoC fixes for 4.18-rc
+
+A smaller batch for the end of the week (let's see if I can keep the
+weekly cadence going for once).
+
+All medium-grade fixes here, nothing worrisome:
+ - Fixes for some fairly old bugs around SD card write-protect detection
+   and GPIO interrupt assignments on Davinci.
+ - Wifi module suspend fix for Hikey.
+ - Minor DT tweaks to fix inaccuracies for Amlogic platforms, on of
+   which solves booting with third-party u-boot.
+
+----------------------------------------------------------------
+Adam Ford (1):
+      ARM: davinci: board-da850-evm: fix WP pin polarity for MMC/SD
+
+Jerome Brunet (2):
+      ARM64: dts: meson: disable sd-uhs modes on the libretech-cc
+      ARM64: dts: meson-axg: fix ethernet stability issue
+
+Keerthy (1):
+      ARM: dts: da850: Fix interrups property for gpio
+
+Kevin Hilman (2):
+      ARM64: dts: meson: fix register ranges for SD/eMMC
+      ARM64: dts: meson-gx: fix ATF reserved memory region
+
+Martin Blumenstingl (1):
+      ARM64: dts: meson-gxl: fix Mali GPU compatible string
+
+Neil Armstrong (1):
+      ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
+
+Olof Johansson (3):
+      Merge tag 'amlogic-fixes' of https://git.kernel.org/.../khilman/linux-amlogic into fixes
+      Merge tag 'hisi-fixes-for-4.18' of git://github.com/hisilicon/linux-hisi into fixes
+      Merge tag 'davinci-fixes-for-v4.18' of git://git.kernel.org/.../nsekhar/linux-davinci into fixes
+
+oscardagrach (2):
+      arm64: dts: hikey: Define wl1835 power capabilities
+      arm64: dts: hikey960: Define wl1837 power capabilities
+
+ arch/arm/boot/dts/da850.dtsi                              |  6 +-----
+ arch/arm/mach-davinci/board-da850-evm.c                   |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts            | 15 ++++++++++++++-
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi                |  4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi                 | 12 +++++++++---
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi           |  2 +-
+ .../boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts     |  3 ---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi     |  7 +++++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                |  8 --------
+ arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts         |  2 ++
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts            |  2 ++
+ 11 files changed, 39 insertions(+), 24 deletions(-)
