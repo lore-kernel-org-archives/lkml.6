@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74026C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB1AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA8A2575D
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:56:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA8A2575D
+	by mail.kernel.org (Postfix) with ESMTP id 2511F2575D
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 14:56:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2511F2575D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752050AbeF3O4D (ORCPT
+        id S1752085AbeF3O4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 10:56:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751834AbeF3Ozl (ORCPT
+        Sat, 30 Jun 2018 10:56:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45128 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751574AbeF3Ozb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 10:55:41 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5UErVTt036138
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:40 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jx3g6x3h2-1
+        Sat, 30 Jun 2018 10:55:31 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5UErZtC010768
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:31 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jx4xkbme7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:40 -0400
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 10:55:31 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Sat, 30 Jun 2018 15:55:38 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sat, 30 Jun 2018 15:55:28 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 30 Jun 2018 15:55:35 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5UEtYsX31391866
+        Sat, 30 Jun 2018 15:55:25 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5UEtOTr36175976
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 30 Jun 2018 14:55:34 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A21442042;
-        Sat, 30 Jun 2018 15:55:21 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB73742041;
-        Sat, 30 Jun 2018 15:55:19 +0100 (BST)
+        Sat, 30 Jun 2018 14:55:24 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CFCA9AE04D;
+        Sat, 30 Jun 2018 15:55:14 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E4DFAE051;
+        Sat, 30 Jun 2018 15:55:13 +0100 (BST)
 Received: from rapoport-lnx (unknown [9.148.205.240])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 30 Jun 2018 15:55:19 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Sat, 30 Jun 2018 17:55:32 +0300
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sat, 30 Jun 2018 15:55:13 +0100 (BST)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Sat, 30 Jun 2018 17:55:22 +0300
 From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
 To:     Jonathan Corbet <corbet@lwn.net>
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -59,99 +59,288 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         linux-mm <linux-mm@kvack.org>,
         lkml <linux-kernel@vger.kernel.org>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH v2 10/11] docs/mm: memblock: add overview documentation
-Date:   Sat, 30 Jun 2018 17:55:05 +0300
+Subject: [PATCH v2 06/11] mm/memblock: add a name for memblock flags enumeration
+Date:   Sat, 30 Jun 2018 17:55:01 +0300
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18063014-0028-0000-0000-000002D6B5D8
+x-cbid: 18063014-0008-0000-0000-0000024E31D3
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18063014-0029-0000-0000-0000238E2AF9
-Message-Id: <1530370506-21751-11-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18063014-0009-0000-0000-000021B43442
+Message-Id: <1530370506-21751-7-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-30_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=992 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1806300176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since kernel-doc does not like anonymous enums the name is required for
+adding documentation. While on it, I've also updated all the function
+declarations to use 'enum memblock_flags' instead of unsigned long.
+
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- mm/memblock.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ include/linux/memblock.h | 22 +++++++++++-----------
+ mm/memblock.c            | 37 +++++++++++++++++++++----------------
+ mm/nobootmem.c           |  2 +-
+ 3 files changed, 33 insertions(+), 28 deletions(-)
 
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index ca59883..8b8fbce 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -21,7 +21,7 @@
+ #define INIT_PHYSMEM_REGIONS	4
+ 
+ /* Definition of memblock flags. */
+-enum {
++enum memblock_flags {
+ 	MEMBLOCK_NONE		= 0x0,	/* No special request */
+ 	MEMBLOCK_HOTPLUG	= 0x1,	/* hotpluggable region */
+ 	MEMBLOCK_MIRROR		= 0x2,	/* mirrored region */
+@@ -31,7 +31,7 @@ enum {
+ struct memblock_region {
+ 	phys_addr_t base;
+ 	phys_addr_t size;
+-	unsigned long flags;
++	enum memblock_flags flags;
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	int nid;
+ #endif
+@@ -72,7 +72,7 @@ void memblock_discard(void);
+ 
+ phys_addr_t memblock_find_in_range_node(phys_addr_t size, phys_addr_t align,
+ 					phys_addr_t start, phys_addr_t end,
+-					int nid, ulong flags);
++					int nid, enum memblock_flags flags);
+ phys_addr_t memblock_find_in_range(phys_addr_t start, phys_addr_t end,
+ 				   phys_addr_t size, phys_addr_t align);
+ void memblock_allow_resize(void);
+@@ -89,19 +89,19 @@ int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+ int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
+ int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
+-ulong choose_memblock_flags(void);
++enum memblock_flags choose_memblock_flags(void);
+ 
+ /* Low level functions */
+ int memblock_add_range(struct memblock_type *type,
+ 		       phys_addr_t base, phys_addr_t size,
+-		       int nid, unsigned long flags);
++		       int nid, enum memblock_flags flags);
+ 
+-void __next_mem_range(u64 *idx, int nid, ulong flags,
++void __next_mem_range(u64 *idx, int nid, enum memblock_flags flags,
+ 		      struct memblock_type *type_a,
+ 		      struct memblock_type *type_b, phys_addr_t *out_start,
+ 		      phys_addr_t *out_end, int *out_nid);
+ 
+-void __next_mem_range_rev(u64 *idx, int nid, ulong flags,
++void __next_mem_range_rev(u64 *idx, int nid, enum memblock_flags flags,
+ 			  struct memblock_type *type_a,
+ 			  struct memblock_type *type_b, phys_addr_t *out_start,
+ 			  phys_addr_t *out_end, int *out_nid);
+@@ -253,13 +253,13 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+ 			   NUMA_NO_NODE, MEMBLOCK_NONE, p_start, p_end, NULL)
+ 
+ static inline void memblock_set_region_flags(struct memblock_region *r,
+-					     unsigned long flags)
++					     enum memblock_flags flags)
+ {
+ 	r->flags |= flags;
+ }
+ 
+ static inline void memblock_clear_region_flags(struct memblock_region *r,
+-					       unsigned long flags)
++					       enum memblock_flags flags)
+ {
+ 	r->flags &= ~flags;
+ }
+@@ -317,10 +317,10 @@ static inline bool memblock_bottom_up(void)
+ 
+ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
+ 					phys_addr_t start, phys_addr_t end,
+-					ulong flags);
++					enum memblock_flags flags);
+ phys_addr_t memblock_alloc_base_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t max_addr,
+-					int nid, ulong flags);
++					int nid, enum memblock_flags flags);
+ phys_addr_t memblock_alloc_base(phys_addr_t size, phys_addr_t align,
+ 				phys_addr_t max_addr);
+ phys_addr_t __memblock_alloc_base(phys_addr_t size, phys_addr_t align,
 diff --git a/mm/memblock.c b/mm/memblock.c
-index 3e6be01..084f5f5 100644
+index cc16d70..4f5aecb 100644
 --- a/mm/memblock.c
 +++ b/mm/memblock.c
-@@ -27,6 +27,61 @@
+@@ -61,7 +61,7 @@ static int memblock_can_resize __initdata_memblock;
+ static int memblock_memory_in_slab __initdata_memblock = 0;
+ static int memblock_reserved_in_slab __initdata_memblock = 0;
  
- #include "internal.h"
+-ulong __init_memblock choose_memblock_flags(void)
++enum memblock_flags __init_memblock choose_memblock_flags(void)
+ {
+ 	return system_has_some_mirror ? MEMBLOCK_MIRROR : MEMBLOCK_NONE;
+ }
+@@ -110,7 +110,7 @@ bool __init_memblock memblock_overlaps_region(struct memblock_type *type,
+ static phys_addr_t __init_memblock
+ __memblock_find_range_bottom_up(phys_addr_t start, phys_addr_t end,
+ 				phys_addr_t size, phys_addr_t align, int nid,
+-				ulong flags)
++				enum memblock_flags flags)
+ {
+ 	phys_addr_t this_start, this_end, cand;
+ 	u64 i;
+@@ -144,7 +144,7 @@ __memblock_find_range_bottom_up(phys_addr_t start, phys_addr_t end,
+ static phys_addr_t __init_memblock
+ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+ 			       phys_addr_t size, phys_addr_t align, int nid,
+-			       ulong flags)
++			       enum memblock_flags flags)
+ {
+ 	phys_addr_t this_start, this_end, cand;
+ 	u64 i;
+@@ -189,7 +189,8 @@ __memblock_find_range_top_down(phys_addr_t start, phys_addr_t end,
+  */
+ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+-					phys_addr_t end, int nid, ulong flags)
++					phys_addr_t end, int nid,
++					enum memblock_flags flags)
+ {
+ 	phys_addr_t kernel_end, ret;
  
-+/**
-+ * DOC: memblock overview
-+ *
-+ * Memblock is a method of managing memory regions during the early
-+ * boot period when the usual kernel memory allocators are not up and
-+ * running.
-+ *
-+ * Memblock views the system memory as collections of contiguous
-+ * regions. There are several types of these collections:
-+ *
-+ * * ``memory`` - describes the physical memory available to the
-+ *   kernel; this may differ from the actual physical memory installed
-+ *   in the system, for instance when the memory is restricted with
-+ *   ``mem=`` command line parameter
-+ * * ``reserved`` - describes the regions that were allocated
-+ * * ``physmap`` - describes the actual physical memory regardless of
-+ *   the possible restrictions; the ``physmap`` type is only available
-+ *   on some architectures.
-+ *
-+ * Each region is represented by :c:type:`struct memblock_region` that
-+ * defines the region extents, its attributes and NUMA node id on NUMA
-+ * systems. Every memory type is described by the :c:type:`struct
-+ * memblock_type` which contains an array of memory regions along with
-+ * the allocator metadata. The memory types are nicely wrapped with
-+ * :c:type:`struct memblock`. This structure is statically initialzed
-+ * at build time. The region arrays for the "memory" and "reserved"
-+ * types are initially sized to %INIT_MEMBLOCK_REGIONS and for the
-+ * "physmap" type to %INIT_PHYSMEM_REGIONS.
-+ * The :c:func:`memblock_allow_resize` enables automatic resizing of
-+ * the region arrays during addition of new regions. This feature
-+ * should be used with care so that memory allocated for the region
-+ * array will not overlap with areas that should be reserved, for
-+ * example initrd.
-+ *
-+ * The early architecture setup should tell memblock what the physical
-+ * memory layout is by using :c:func:`memblock_add` or
-+ * :c:func:`memblock_add_node` functions. The first function does not
-+ * assign the region to a NUMA node and it is appropriate for UMA
-+ * systems. Yet, it is possible to use it on NUMA systems as well and
-+ * assign the region to a NUMA node later in the setup process using
-+ * :c:func:`memblock_set_node`. The :c:func:`memblock_add_node`
-+ * performs such an assignment directly.
-+ *
-+ * Once memblock is setup the memory can be allocated using either
-+ * memblock or bootmem APIs.
-+ *
-+ * As the system boot progresses, the architecture specific
-+ * :c:func:`mem_init` function frees all the memory to the buddy page
-+ * allocator.
-+ *
-+ * If an architecure enables %CONFIG_ARCH_DISCARD_MEMBLOCK, the
-+ * memblock data structures will be discarded after the system
-+ * initialization compltes.
-+ */
-+
- static struct memblock_region memblock_memory_init_regions[INIT_MEMBLOCK_REGIONS] __initdata_memblock;
- static struct memblock_region memblock_reserved_init_regions[INIT_MEMBLOCK_REGIONS] __initdata_memblock;
- #ifdef CONFIG_HAVE_MEMBLOCK_PHYS_MAP
+@@ -252,7 +253,7 @@ phys_addr_t __init_memblock memblock_find_in_range(phys_addr_t start,
+ 					phys_addr_t align)
+ {
+ 	phys_addr_t ret;
+-	ulong flags = choose_memblock_flags();
++	enum memblock_flags flags = choose_memblock_flags();
+ 
+ again:
+ 	ret = memblock_find_in_range_node(size, align, start, end,
+@@ -473,7 +474,8 @@ static void __init_memblock memblock_merge_regions(struct memblock_type *type)
+ static void __init_memblock memblock_insert_region(struct memblock_type *type,
+ 						   int idx, phys_addr_t base,
+ 						   phys_addr_t size,
+-						   int nid, unsigned long flags)
++						   int nid,
++						   enum memblock_flags flags)
+ {
+ 	struct memblock_region *rgn = &type->regions[idx];
+ 
+@@ -505,7 +507,7 @@ static void __init_memblock memblock_insert_region(struct memblock_type *type,
+  */
+ int __init_memblock memblock_add_range(struct memblock_type *type,
+ 				phys_addr_t base, phys_addr_t size,
+-				int nid, unsigned long flags)
++				int nid, enum memblock_flags flags)
+ {
+ 	bool insert = false;
+ 	phys_addr_t obase = base;
+@@ -874,7 +876,8 @@ void __init_memblock __next_reserved_mem_region(u64 *idx,
+  * As both region arrays are sorted, the function advances the two indices
+  * in lockstep and returns each intersection.
+  */
+-void __init_memblock __next_mem_range(u64 *idx, int nid, ulong flags,
++void __init_memblock __next_mem_range(u64 *idx, int nid,
++				      enum memblock_flags flags,
+ 				      struct memblock_type *type_a,
+ 				      struct memblock_type *type_b,
+ 				      phys_addr_t *out_start,
+@@ -983,7 +986,8 @@ void __init_memblock __next_mem_range(u64 *idx, int nid, ulong flags,
+  *
+  * Reverse of __next_mem_range().
+  */
+-void __init_memblock __next_mem_range_rev(u64 *idx, int nid, ulong flags,
++void __init_memblock __next_mem_range_rev(u64 *idx, int nid,
++					  enum memblock_flags flags,
+ 					  struct memblock_type *type_a,
+ 					  struct memblock_type *type_b,
+ 					  phys_addr_t *out_start,
+@@ -1141,7 +1145,8 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+ 
+ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+-					phys_addr_t end, int nid, ulong flags)
++					phys_addr_t end, int nid,
++					enum memblock_flags flags)
+ {
+ 	phys_addr_t found;
+ 
+@@ -1163,7 +1168,7 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 
+ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
+ 					phys_addr_t start, phys_addr_t end,
+-					ulong flags)
++					enum memblock_flags flags)
+ {
+ 	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE,
+ 					flags);
+@@ -1171,14 +1176,14 @@ phys_addr_t __init memblock_alloc_range(phys_addr_t size, phys_addr_t align,
+ 
+ phys_addr_t __init memblock_alloc_base_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t max_addr,
+-					int nid, ulong flags)
++					int nid, enum memblock_flags flags)
+ {
+ 	return memblock_alloc_range_nid(size, align, 0, max_addr, nid, flags);
+ }
+ 
+ phys_addr_t __init memblock_alloc_nid(phys_addr_t size, phys_addr_t align, int nid)
+ {
+-	ulong flags = choose_memblock_flags();
++	enum memblock_flags flags = choose_memblock_flags();
+ 	phys_addr_t ret;
+ 
+ again:
+@@ -1259,7 +1264,7 @@ static void * __init memblock_virt_alloc_internal(
+ {
+ 	phys_addr_t alloc;
+ 	void *ptr;
+-	ulong flags = choose_memblock_flags();
++	enum memblock_flags flags = choose_memblock_flags();
+ 
+ 	if (WARN_ONCE(nid == MAX_NUMNODES, "Usage of MAX_NUMNODES is deprecated. Use NUMA_NO_NODE instead\n"))
+ 		nid = NUMA_NO_NODE;
+@@ -1734,7 +1739,7 @@ phys_addr_t __init_memblock memblock_get_current_limit(void)
+ static void __init_memblock memblock_dump(struct memblock_type *type)
+ {
+ 	phys_addr_t base, end, size;
+-	unsigned long flags;
++	enum memblock_flags flags;
+ 	int idx;
+ 	struct memblock_region *rgn;
+ 
+@@ -1752,7 +1757,7 @@ static void __init_memblock memblock_dump(struct memblock_type *type)
+ 			snprintf(nid_buf, sizeof(nid_buf), " on node %d",
+ 				 memblock_get_region_node(rgn));
+ #endif
+-		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#lx\n",
++		pr_info(" %s[%#x]\t[%pa-%pa], %pa bytes%s flags: %#x\n",
+ 			type->name, idx, &base, &end, &size, nid_buf, flags);
+ 	}
+ }
+diff --git a/mm/nobootmem.c b/mm/nobootmem.c
+index c2cfa04..439af3b 100644
+--- a/mm/nobootmem.c
++++ b/mm/nobootmem.c
+@@ -42,7 +42,7 @@ static void * __init __alloc_memory_core_early(int nid, u64 size, u64 align,
+ {
+ 	void *ptr;
+ 	u64 addr;
+-	ulong flags = choose_memblock_flags();
++	enum memblock_flags flags = choose_memblock_flags();
+ 
+ 	if (limit > memblock.current_limit)
+ 		limit = memblock.current_limit;
 -- 
 2.7.4
 
