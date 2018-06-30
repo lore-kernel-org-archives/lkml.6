@@ -2,114 +2,195 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E8DC3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F78C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F59271F8
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:11:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F59271F8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 91BD324BE1
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 10:14:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BD324BE1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030305AbeF3KLq (ORCPT
+        id S1030312AbeF3KOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 06:11:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49698 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934077AbeF3KLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 06:11:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7222EAE5E;
-        Sat, 30 Jun 2018 10:11:41 +0000 (UTC)
-Subject: Re: [PATCH v2 5/7] mm: rename and change semantics of
- nr_indirectly_reclaimable_bytes
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vijayanand Jitta <vjitta@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20180618091808.4419-6-vbabka@suse.cz>
- <201806201923.mC5ZpigB%fengguang.wu@intel.com>
- <38c6a6e1-c5e0-fd7d-4baf-1f0f09be5094@suse.cz>
- <20180629211201.GA14897@castle.DHCP.thefacebook.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <ef2dea13-0102-c4bc-a28f-c1b2408f0753@suse.cz>
-Date:   Sat, 30 Jun 2018 12:09:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 30 Jun 2018 06:14:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50142 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933924AbeF3KOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 06:14:33 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 514332F3BE1A5;
+        Sat, 30 Jun 2018 18:14:28 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.382.0; Sat, 30 Jun 2018 18:14:19 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to do sanity check with reserved blkaddr of inline inode
+Date:   Sat, 30 Jun 2018 18:13:40 +0800
+Message-ID: <20180630101340.34350-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20180629211201.GA14897@castle.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 11:12 PM, Roman Gushchin wrote:
->>
->> The vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES was introduced by commit
->> eb59254608bc ("mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES") with the goal of
->> accounting objects that can be reclaimed, but cannot be allocated via a
->> SLAB_RECLAIM_ACCOUNT cache. This is now possible via kmalloc() with
->> __GFP_RECLAIMABLE flag, and the dcache external names user is converted.
->>
->> The counter is however still useful for accounting direct page allocations
->> (i.e. not slab) with a shrinker, such as the ION page pool. So keep it, and:
-> 
-> Btw, it looks like I've another example of usefulness of this counter:
-> dynamic per-cpu data.
+As Wen Xu reported in bugzilla, after image was injected with random data
+by fuzzing, inline inode would contain invalid reserved blkaddr, then
+during inline conversion, we will encounter illegal memory accessing
+reported by KASAN, the root cause of this is when writing out converted
+inline page, we will use invalid reserved blkaddr to update sit bitmap,
+result in accessing memory beyond sit bitmap boundary.
 
-Hmm, but are those reclaimable? Most likely not in general? Do you have
-examples that are?
+In order to fix this issue, let's do sanity check with reserved block
+address of inline inode to avoid above condition.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200179
+
+[ 1428.846352] BUG: KASAN: use-after-free in update_sit_entry+0x80/0x7f0
+[ 1428.846618] Read of size 4 at addr ffff880194483540 by task a.out/2741
+
+[ 1428.846855] CPU: 0 PID: 2741 Comm: a.out Tainted: G        W         4.17.0+ #1
+[ 1428.846858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[ 1428.846860] Call Trace:
+[ 1428.846868]  dump_stack+0x71/0xab
+[ 1428.846875]  print_address_description+0x6b/0x290
+[ 1428.846881]  kasan_report+0x28e/0x390
+[ 1428.846888]  ? update_sit_entry+0x80/0x7f0
+[ 1428.846898]  update_sit_entry+0x80/0x7f0
+[ 1428.846906]  f2fs_allocate_data_block+0x6db/0xc70
+[ 1428.846914]  ? f2fs_get_node_info+0x14f/0x590
+[ 1428.846920]  do_write_page+0xc8/0x150
+[ 1428.846928]  f2fs_outplace_write_data+0xfe/0x210
+[ 1428.846935]  ? f2fs_do_write_node_page+0x170/0x170
+[ 1428.846941]  ? radix_tree_tag_clear+0xff/0x130
+[ 1428.846946]  ? __mod_node_page_state+0x22/0xa0
+[ 1428.846951]  ? inc_zone_page_state+0x54/0x100
+[ 1428.846956]  ? __test_set_page_writeback+0x336/0x5d0
+[ 1428.846964]  f2fs_convert_inline_page+0x407/0x6d0
+[ 1428.846971]  ? f2fs_read_inline_data+0x3b0/0x3b0
+[ 1428.846978]  ? __get_node_page+0x335/0x6b0
+[ 1428.846987]  f2fs_convert_inline_inode+0x41b/0x500
+[ 1428.846994]  ? f2fs_convert_inline_page+0x6d0/0x6d0
+[ 1428.847000]  ? kasan_unpoison_shadow+0x31/0x40
+[ 1428.847005]  ? kasan_kmalloc+0xa6/0xd0
+[ 1428.847024]  f2fs_file_mmap+0x79/0xc0
+[ 1428.847029]  mmap_region+0x58b/0x880
+[ 1428.847037]  ? arch_get_unmapped_area+0x370/0x370
+[ 1428.847042]  do_mmap+0x55b/0x7a0
+[ 1428.847048]  vm_mmap_pgoff+0x16f/0x1c0
+[ 1428.847055]  ? vma_is_stack_for_current+0x50/0x50
+[ 1428.847062]  ? __fsnotify_update_child_dentry_flags.part.1+0x160/0x160
+[ 1428.847068]  ? do_sys_open+0x206/0x2a0
+[ 1428.847073]  ? __fget+0xb4/0x100
+[ 1428.847079]  ksys_mmap_pgoff+0x278/0x360
+[ 1428.847085]  ? find_mergeable_anon_vma+0x50/0x50
+[ 1428.847091]  do_syscall_64+0x73/0x160
+[ 1428.847098]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1428.847102] RIP: 0033:0x7fb1430766ba
+[ 1428.847103] Code: 89 f5 41 54 49 89 fc 55 53 74 35 49 63 e8 48 63 da 4d 89 f9 49 89 e8 4d 63 d6 48 89 da 4c 89 ee 4c 89 e7 b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 56 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 1f 00
+[ 1428.847162] RSP: 002b:00007ffc651d9388 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+[ 1428.847167] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb1430766ba
+[ 1428.847170] RDX: 0000000000000001 RSI: 0000000000001000 RDI: 0000000000000000
+[ 1428.847173] RBP: 0000000000000003 R08: 0000000000000003 R09: 0000000000000000
+[ 1428.847176] R10: 0000000000008002 R11: 0000000000000246 R12: 0000000000000000
+[ 1428.847179] R13: 0000000000001000 R14: 0000000000008002 R15: 0000000000000000
+
+[ 1428.847252] Allocated by task 2683:
+[ 1428.847372]  kasan_kmalloc+0xa6/0xd0
+[ 1428.847380]  kmem_cache_alloc+0xc8/0x1e0
+[ 1428.847385]  getname_flags+0x73/0x2b0
+[ 1428.847390]  user_path_at_empty+0x1d/0x40
+[ 1428.847395]  vfs_statx+0xc1/0x150
+[ 1428.847401]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847405]  do_syscall_64+0x73/0x160
+[ 1428.847411]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847466] Freed by task 2683:
+[ 1428.847566]  __kasan_slab_free+0x137/0x190
+[ 1428.847571]  kmem_cache_free+0x85/0x1e0
+[ 1428.847575]  filename_lookup+0x191/0x280
+[ 1428.847580]  vfs_statx+0xc1/0x150
+[ 1428.847585]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847590]  do_syscall_64+0x73/0x160
+[ 1428.847596]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847648] The buggy address belongs to the object at ffff880194483300
+                which belongs to the cache names_cache of size 4096
+[ 1428.847946] The buggy address is located 576 bytes inside of
+                4096-byte region [ffff880194483300, ffff880194484300)
+[ 1428.848234] The buggy address belongs to the page:
+[ 1428.848366] page:ffffea0006512000 count:1 mapcount:0 mapping:ffff8801f3586380 index:0x0 compound_mapcount: 0
+[ 1428.848606] flags: 0x17fff8000008100(slab|head)
+[ 1428.848737] raw: 017fff8000008100 dead000000000100 dead000000000200 ffff8801f3586380
+[ 1428.848931] raw: 0000000000000000 0000000000070007 00000001ffffffff 0000000000000000
+[ 1428.849122] page dumped because: kasan: bad access detected
+
+[ 1428.849305] Memory state around the buggy address:
+[ 1428.849436]  ffff880194483400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849620]  ffff880194483480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849804] >ffff880194483500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849985]                                            ^
+[ 1428.850120]  ffff880194483580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.850303]  ffff880194483600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.850498] ==================================================================
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inline.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 9a245d2d5b7c..2bcb2d36f024 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -130,6 +130,16 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 	if (err)
+ 		return err;
+ 
++	if (unlikely(dn->data_blkaddr != NEW_ADDR)) {
++		f2fs_put_dnode(dn);
++		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
++		f2fs_msg(fio.sbi->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dn->inode->i_ino, dn->data_blkaddr);
++		return -EINVAL;
++	}
++
+ 	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
+ 
+ 	f2fs_do_read_inline_data(page, dn->inode_page);
+@@ -363,6 +373,17 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 	if (err)
+ 		goto out;
+ 
++	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
++		f2fs_put_dnode(&dn);
++		set_sbi_flag(F2FS_P_SB(page), SBI_NEED_FSCK);
++		f2fs_msg(F2FS_P_SB(page)->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dir->i_ino, dn.data_blkaddr);
++		err = -EINVAL;
++		goto out;
++	}
++
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 
+ 	dentry_blk = page_address(page);
+-- 
+2.18.0.rc1
+
