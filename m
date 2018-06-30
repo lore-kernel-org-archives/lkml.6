@@ -2,122 +2,110 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F94C6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F3FC6778A
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969C42802D
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:50:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnYy7TBu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969C42802D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 319512802E
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 01:51:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319512802E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936236AbeF3BuH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 29 Jun 2018 21:50:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59254 "EHLO mail.kernel.org"
+        id S936479AbeF3BvU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 29 Jun 2018 21:51:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:46053 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936028AbeF3BuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 29 Jun 2018 21:50:04 -0400
-Received: from localhost (unknown [69.71.4.100])
+        id S936028AbeF3BvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 29 Jun 2018 21:51:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FED12802D;
-        Sat, 30 Jun 2018 01:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530323403;
-        bh=KyAEAZ27JOcqG2ZCSGZRLUe8xrWodVETpyS48w24eYM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SnYy7TBuj1pTFURv32E0OUSc1UKOiwR6xmxmqRYd1VF21sfR3cS4LjNnRvS9mNyyZ
-         eKHfgftVFlwCiflKUYuPZDcETcGS0kiK0jQ349Wa3FSFHnKHehY4WVh1fb2a52Sozz
-         Hz45K4qIwkVgUmYKdQFIAOx1kL8uIHcp1lPSbgOs=
-Date:   Fri, 29 Jun 2018 20:50:02 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     dmeyer@gigaio.com
-Cc:     logang@deltatee.com, kurt.schwemmer@microsemi.com,
-        linux-pci@vger.kernel.org, linux-ntb@googlegroups.com,
-        bhelgaas@google.com, jdmason@kudzu.us, dave.jiang@intel.com,
-        allenbh@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] PCI Quirk Patchset for Microsemi Switchtec NTB
-Message-ID: <20180630015002.GL40928@bhelgaas-glaptop.roam.corp.google.com>
-References: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 41Hc1d5J5hz9rvt;
+        Sat, 30 Jun 2018 11:51:16 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     aneesh.kumar@linux.ibm.com, arnd@arndb.de, hch@lst.de,
+        leitao@debian.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.18-3 tag
+Date:   Sat, 30 Jun 2018 11:51:16 +1000
+Message-ID: <87lgaxm48b.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527106686-18852-1-git-send-email-dmeyer@gigaio.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 01:18:04PM -0700, dmeyer@gigaio.com wrote:
-> From: Doug Meyer <dmeyer@gigaio.com>
-> 
-> This is a resend of the patch series to enable Microsemi Switchtec
-> NTB configurations to run with the IOMMU in the hosts turned on.
-> Because of the nature PCI Quirk implementation, it was preferable
-> to migrate the Microsemi PCI vendor and device definitions to the
-> Linux canonical location. Logan Gunthorpe requested that this
-> migration be done as a separate patch in a set, and so this patch
-> series was created as shown here.
-> 
-> The first patch encapsulates the movement of constants from
-> switchtec.h to pci_ids.h, with commensurate changes to the source
-> files. This patch is not dependent on any other work.
-> 
-> The second patch is the PCI quirk implementation itself, and is
-> completely dependent upon the first patch in this series.
-> 
-> Testing of the quirk was done on with a 2-host x86-64 system
-> with all combinations of IOMMU off/on. The ntb_perf module was
-> used as test stimulus. 
-> 
-> Blessings,
-> Doug Meyer
-> 
-> Changes since v1:
-> - Call pci_device_disable() at return points to clean up properly.
-> - Changed all dev_* print macros to pci_* macros.
-> - Removed superfluous variable initializations.
-> 
-> Doug Meyer (2):
->   NTB: Migrate PCI Constants to Cannonical PCI Header
->   NTB: PCI Quirk to Enable Switchtec NT Functionality with IOMMU On
-> 
->  drivers/ntb/hw/mscc/ntb_hw_switchtec.c |   3 +-
->  drivers/pci/quirks.c                   | 197 +++++++++++++++++++++++++++++++++
->  drivers/pci/switch/switchtec.c         |  15 ++-
->  include/linux/pci_ids.h                |  32 ++++++
->  include/linux/switchtec.h              |   4 -
->  5 files changed, 238 insertions(+), 13 deletions(-)
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-I applied these with Logan's reviewed-by to my pci/switchtec branch for
-v4.19 with the following updates:
+Hi Linus,
 
-  - You removed the SPDX tag from drivers/pci/switch/switchtec.c.  I assume
-    that was a mistake, so I restored it.
+Please pull some more powerpc fixes for 4.18:
 
-  - I moved the PCI_VENDOR_ID_MICROSEMI definition to keep the file sorted.
+The following changes since commit fadd03c615922d8521a2e76d4ba2335891cb2790:
 
-  - I dropped the Device ID definitions per the policy at the top of the
-    file (which I mentioned on your v1 posting).
+  powerpc/mm/hash/4k: Free hugetlb page table caches correctly. (2018-06-20 09:13:25 +1000)
 
-  - I converted all the Device ID definition uses to raw hex constants.  I
-    noticed that the following were defined by your patch, but not used:
+are available in the git repository at:
 
-      PCI_DEVICE_ID_MICROSEMI_PSX24XG3
-      PCI_DEVICE_ID_MICROSEMI_PSX32XG3
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.18-3
 
-    I can't tell whether the quirk is supposed to apply to them or not.
+for you to fetch changes up to 22db552b50fa11d8c1d171de908a1f9ef62172b7:
 
-Please review and holler if I broke something.
+  powerpc/powermac: Fix rtc read/write functions (2018-06-27 13:48:49 +1000)
 
-This touches drivers/ntb/hw/..., which isn't my area.  Let me know if you'd
-rather take these through a different tree.
+- ------------------------------------------------------------------
+powerpc fixes for 4.18 #3
 
-Bjorn
+Two regression fixes, and a new syscall wire-up.
+
+A fix for the recent conversion to time64_t in the powermac RTC routines, which
+caused time to go backward.
+
+Another fix for fallout from the split PMD PTL conversion.
+
+Wire up the new io_pgetevents() syscall.
+
+Thanks to:
+  Aneesh Kumar K.V, Arnd Bergmann, Breno Leitao, Mathieu Malaterre.
+
+- ------------------------------------------------------------------
+Aneesh Kumar K.V (1):
+      powerpc/mm/32: Fix pgtable_page_dtor call
+
+Arnd Bergmann (1):
+      powerpc/powermac: Fix rtc read/write functions
+
+Breno Leitao (1):
+      powerpc: Wire up io_pgetevents
+
+
+ arch/powerpc/include/asm/book3s/32/pgalloc.h |  1 -
+ arch/powerpc/include/asm/nohash/32/pgalloc.h |  1 -
+ arch/powerpc/include/asm/systbl.h            |  1 +
+ arch/powerpc/include/asm/unistd.h            |  2 +-
+ arch/powerpc/include/uapi/asm/unistd.h       |  1 +
+ arch/powerpc/platforms/powermac/time.c       | 29 +++++++++++++++++++---------
+ 6 files changed, 23 insertions(+), 12 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJbNuG+AAoJEFHr6jzI4aWA1EAP/RdhBfhErOfaR6CN9hB7JT0f
+4ibdfYQzfGLhml40w70BnSR1rJZtQLk3TZUeT4bhjWb9GRLmakXf1iwp0yGle6gX
+Y+r54Jy3lqD8dHEn1cONQYAOdADBAv1OFZ54cCnch1yvjOxnFTDn4jR0jjLnM8Jk
+fD1VBRgCTJT5lkNpfIP2UtbEcy2Y9E4QCCUDCRaAYTPwJQqjIBcuNmxahObvawhe
+U1k9FhPcqwUPD0jjEbEBvwnaPEZzvHOnqU4G2elBmHjBSPCFXVWQ+4AdDlAHK67J
+qEx3q6Xycw8ATmonwPxxv8eu7Lq0XgSYXB/zUmjp1pvcOCMdYZ0Lei0yyPJfcFWA
+PX9RtlENuMbhz6Pm1INhtcm+yxV9v+nzHAI40kVHh+yZLQTK2zt8jZiqFs3ZHOm5
+NY55XIWW1ATnKB9T0Teu/efEDTBHtDtTQ5hmJW88UB3Fd9OVjTspz6aWVlTB4VRr
+jxT0VedPt3B/zTwEpIeA6W3/WgveIhK8VZ49ntMqAINw4tsc4gc7a6A98riZ9Oxw
+YQ9pPqejx9Jw/2AeYhZ1RA/hV9REICIicX6fxR98fkx2ViqNF8OC3YzvQXNJWe3L
+EyRx1TLj/8lb0o5A92rOeeL/5QQK+H5PGoIY9gY6NhsDDSAadtHu1oAhftscVopZ
+k94DXR9yFZg+aoU2lWDp
+=NS+i
+-----END PGP SIGNATURE-----
