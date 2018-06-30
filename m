@@ -2,89 +2,126 @@ Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A2BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C914C3279B
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CC121888
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F4A254C1
+	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 19:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K7vfaQa0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CC121888
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KRwfTlR1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F4A254C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751878AbeF3TdW (ORCPT
+        id S1751561AbeF3Tpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 15:33:22 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48460 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751483AbeF3TdL (ORCPT
+        Sat, 30 Jun 2018 15:45:35 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:37026 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbeF3Tpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 15:33:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5UJU66a014095;
-        Sat, 30 Jun 2018 19:32:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=nfLYEXe7JXyeQbPcS+B8Fb3OLb9n0f+MLF4TCgxxS4s=;
- b=K7vfaQa02KrJEedxS1pqTT9cCNubyKa4hBZkqLu58dCHQcVOXo37B8IVhC2QbDN6Q8/o
- qv4wTt0K2Hs1VlDXUaRWrgp9UGGXgbp/0pG8eMDB9UgX4dw0vVCgXpHiH1tfFBz92gjN
- W1b7UxryG9d1fzNd1b8XpP5pVQ9dzjhaJOKEwWBQ8mTwY6dZe3JiK/5yy9EqSPPEfYTP
- aHvY7ECbN1JMwXlAoCneMXnRr+pezIu0z5IJ3KSsARNBUMcLVwtar1nPEpsS7+Z14Hha
- luOXVBDyF1v2bq+IJGdB2OXsZby7dUmCzvjY2etinvzgJdqDDwfpgqXa0/j8aK3NEPkg rw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2jx2gprxqt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 30 Jun 2018 19:32:59 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5UJWxuJ020953
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 30 Jun 2018 19:32:59 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5UJWwYr013539;
-        Sat, 30 Jun 2018 19:32:58 GMT
-Received: from mwanda (/197.157.0.50)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 30 Jun 2018 12:32:57 -0700
-Date:   Sat, 30 Jun 2018 22:32:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Peter Vernia <peter.vernia@gmail.com>
-Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
-        John Crispin <blogic@openwrt.org>
-Subject: Re: [PATCH] staging: mt7621-pinctrl: Replaces "unsigned" with
- "unsigned int", fixes mixed indentation, and puts spaces after commas.
-Message-ID: <20180630193245.qtowzg7cecjk27ek@mwanda>
-References: <1530379055-6713-1-git-send-email-peter.vernia@gmail.com>
+        Sat, 30 Jun 2018 15:45:32 -0400
+Received: by mail-io0-f195.google.com with SMTP id s26-v6so11399724ioj.4
+        for <linux-kernel@vger.kernel.org>; Sat, 30 Jun 2018 12:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=93baChKvo0kLQnGN470g45eX5iAKo1yJSCX2sk11CA0=;
+        b=KRwfTlR1fetS8dp+2lyAWDw4EXgiFO+xygAvBo8HZ/o40s1usabnzMjrEc8by5qdPa
+         Ek9zKFZxj1vlZ5P0ZVXu4u4WH0m6pZS/01/ZkhDM+fFdsdsXzVfqJALGSB2eYhasfGJJ
+         2AI57GiSWym8geb32dWs170A6IPURaLQPklO0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=93baChKvo0kLQnGN470g45eX5iAKo1yJSCX2sk11CA0=;
+        b=aMEx7z5Z0a5xSUYAY1rZmPy1DKUIIkmmH86K7gxIw7+8RQt4eLOPotGc4sQif+X5KA
+         LJq5oyjnGe+BTerCGiDYJnyKvclGJqIU6pYjIJf3PwJhCe1ypbyuFkI8/BdXjN8YTrvk
+         d1XeNKxjMmKWZs464UTvBDcqzBVnTVRdAJ+F2Ssn0enPcw/iTLj0ZTZJoNrIXsEN79SA
+         in9sCgBVRKI4ICL7qfyLPdHPfPQHncG8qAyKe+P8CfTuVddC/xmNXirHSXnri2MY2RRN
+         TElLr4gGXxIfTm/nm7XDQ/9LEeMEq5Q+04TugldYzDnwUWeuuoXL3GlQc2JmCxXj9cDI
+         /4lQ==
+X-Gm-Message-State: APt69E2+wqeQ1DnaF7tx2YlMJePgrfwREW1O9FfN5IEw46zVNhWBFv13
+        AXpd2dBUraJ9klMiIMN6E5/zZTjHe9v6X0qDtuM=
+X-Google-Smtp-Source: AAOMgpezs2a1XySz4NWRSP6u+D1GqJxpty1d0mBs5Cfx7018VolAiZ/sCg5gFUpdPny93U4ERVEPWKTlqXY2Qt+7gHw=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr17059832ion.259.1530387931879;
+ Sat, 30 Jun 2018 12:45:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530379055-6713-1-git-send-email-peter.vernia@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8940 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=626
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1806300230
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+ <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com> <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
+In-Reply-To: <828fb935c0cd04e74a09b8ed2b78aca405d7c5b2.camel@kernel.crashing.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 30 Jun 2018 12:45:21 -0700
+Message-ID: <CA+55aFwg+j60ZFi7t7kVXbobCT4XHoiZP_w6+Cbm+AeU1ytfNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drivers: core: Don't try to use a dead glue_dir
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 01:17:29PM -0400, Peter Vernia wrote:
-> Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
+On Thu, Jun 28, 2018 at 7:21 PM Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+>
+> Under some circumstances (such as when using kobject debugging)
+> a gluedir whose kref is 0 might remain in the class kset for
+> a long time. The reason is that we don't actively remove glue
+> dirs when they become empty, but instead rely on the implicit
+> removal done by kobject_release(), which can happen some amount
+> of time after the last kobject_put().
+>
+> Using such a dead object is a bad idea and will lead to warnings
+> and crashes.
 
-The subject is over 72 characters or whatever the limit is and there
-isn't a commit message.
+So with the other patch in mind, here's my comments on this one. Pick
+one of two scenarios:
 
-regards,
-dan carpenter
+ (a) it's obviously correct.
 
+     We obviously can *not* take an object with a zero refcount,
+because it is already been scheduled for kobject_cleanup(), and
+incrementing the refcount is simply fundamentally wrong, because
+incrementing the refcount won't unschedule the deletion of the object.
+
+ (b) the patch is wrong, and our "kobject_get()" should cancel the
+kobject_cleanup() instead.
+
+There are problems with both of the above cases.
+
+The "patch is obviously correct" case leads to another issue: why
+would kobject_get() _ever_ succeed on an object wioth a zero refcount?
+IOW, why do we have kobject_get() vs kobject_get_unless_zero() in the
+first place? It is *never* ok to get an kobject with a zero refcount
+because of the above "it's already scheduled for deletion" issue.
+
+The (b) case sounds nice, and would actually fix the problem that
+patch 2/2 was tryihng to address, and would make
+CONFIG_DEBUG_KOBJECT_RELEASE work.
+
+HOWEVER. It's completely untenable in reality - it's a nightmare from
+a locking standpoint, because kref_put() literally depends not on
+locking, but on the exclusive "went to zero".
+
+So I think (b) is practically not acceptable. Which means that (a) is
+the right reaction, and "kobject_get()" on an object with a zero
+refcount is _always_ wrong.
+
+But that says that "yes, the patch is obviously correct", but it also
+says "the patch should be pointless, because kobject_get() should just
+_always_ have the semantics of "kobject_get_unless_zero()", and the
+latter shouldn't even exist.
+
+Greg? When would it possibly be valid to do "kobject_get()" on a zero
+refcount object? I don't see it. But this is all very much your code.
+
+               Linus
