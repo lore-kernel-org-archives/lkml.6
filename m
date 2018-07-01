@@ -2,305 +2,166 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463F3C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C384EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0048D240E4
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:44:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnU+Ih+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0048D240E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 72D1A24143
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:48:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D1A24143
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752275AbeGAIoW (ORCPT
+        id S1752194AbeGAIr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 04:44:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58632 "EHLO mail.kernel.org"
+        Sun, 1 Jul 2018 04:47:59 -0400
+Received: from mout.web.de ([212.227.15.3]:36073 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752010AbeGAIoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 04:44:20 -0400
-Received: from dragon (unknown [45.56.152.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A59DE22439;
-        Sun,  1 Jul 2018 08:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530434659;
-        bh=YESRxHyyWNCgiFHC81/ePGyYVgLW6UUUXSqxPjlIQ2I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FnU+Ih+mmYPlsC9kpxFWPI71gv0w3iqpu9s21WLMjU9LhUxqS9rT+5rP0QdZwFQ7y
-         3H/BJyfS+gz+cibAyBwUnl/AydNODVYvaPaSxFFrumrjQc0MX/esEoajStLpuMM35J
-         fexQNZyft4T9OoPxExKBtOI8TxTxucBwlaA0VcbA=
-Date:   Sun, 1 Jul 2018 16:44:05 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, cphealy@gmail.com,
-        andrew.smirnov@gmail.com, l.stach@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: imx: add ZII SCU2 Mezz board
-Message-ID: <20180701084404.GJ4348@dragon>
-References: <1529603100-31958-1-git-send-email-andrey.gusakov@cogentembedded.com>
- <1529603100-31958-4-git-send-email-andrey.gusakov@cogentembedded.com>
+        id S1752010AbeGAIr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 04:47:56 -0400
+Received: from [192.168.1.3] ([77.181.193.101]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LlnQO-1g8bmT2P0i-00ZPZ0; Sun, 01
+ Jul 2018 10:47:13 +0200
+To:     Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+Cc:     kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20180601004233.37822-13-keescook@chromium.org>
+Subject: Re: [PATCH v3 12/16] treewide: Use array_size() for kmalloc()-family
+From:   SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <b4c01457-7ea5-e7e3-be8b-f00fba6bac2b@users.sourceforge.net>
+Date:   Sun, 1 Jul 2018 10:46:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529603100-31958-4-git-send-email-andrey.gusakov@cogentembedded.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180601004233.37822-13-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:KY50xjN06J2j+XRRb90gZGSHbtq+81xTCsEWHM+H7rnbOV6nE2h
+ iKghSo4YHDUtgwCKTkXGLMv4OmyH2vs60+yucDH1Wr67Pzs0STSJITJ+H994bjAIqsO6sWm
+ S6lKzGNSJoOYeC9pUf7rCxqEMPDuv8yzMpilfhGD7v8/0w5b0mbdsB/A+LPnarAfhldPVtT
+ 2IUR+TKaO8QVag9V6x3rw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vn8fXjOXSEY=:yg/z7w2B2ZeT3AAhRB0c1Y
+ m7IRKhU+7P9IcVcV7T/zueVVo8F7YK8tI+f5T3W5YJ/Hvo18AyNlH9nMOsS5e403eZbTNso7T
+ VHxRY2O0q6QPB42yHN+pZRKrAymDbPoKxMosA4/XyfWcj/BeKhZXd10YfdEdxs5wADSHjbqdq
+ noQpIdiSu0Q1mPswL340NPaJ4s/whgc1fSmbfMYx+eUYh3Kz7K78ERtji4nnsASH472hkze5f
+ WNDbqSGCaXig+tBweR7LWf7Vvri68JZiLiCwaaJOt+PRNL98a9Eume2Etmdt53iQ1VivF6XiR
+ n8Ew7EJ4PocE21WFHrDT5yKX6/mah7sk+4Ta+j9iqAlaWPZWCF8YQSFbIxA4XCnz3SeVUqzqc
+ 1DE8oykqtHcHREEJhOcE+8h77he47HdlQOgNiVh/No0cbDUtHNC9B9K654wbcBIleoPeJuHTz
+ zpCljt4Ik2kl91bbJmGj1KNwWN5r+6YSd84tS0bnWYBL8pcIPGKjBDvW1Z3s4qRsrGwe3a0NK
+ e6bZVAbBeWzJBGL8xf2zUC5H0xw+4Pwm0F/ij+vN+cPNzpWpKTZAJ0isbLYjkUehpZqjxRL1h
+ PGNbgrK8koV0LxvU5gkYNAFXyShX9LYvngtnEJjX5vd2I9Ya6tf9e/9LS3mNokRkt8aSJyvJ1
+ nmv/mcGQB/sQ3PFP9Af/mtrRbJCu5Kki8knjzn2qrzBe7iMie04PM4qP2XvG1P0l34Tl6OyLr
+ 1ywgGbxw+lMHQROPpl1eAf59vfn+Zslji0jOwWKxf2aI4EvfVIwhsMDVxMW5x2KtBxEW8//i1
+ SeEgAXk
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 08:45:00PM +0300, Andrey Gusakov wrote:
-> This adds support for the Zodiac Inflight Innovations SCU2 Mezz
-> board, which is based on the i.MX51.
-> 
-> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> ---
->  arch/arm/boot/dts/Makefile                |   3 +-
->  arch/arm/boot/dts/imx51-zii-scu2-mezz.dts | 190 ++++++++++++++++++++++++++++++
->  2 files changed, 192 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index d8900f4..e0dc187 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -359,7 +359,8 @@ dtb-$(CONFIG_SOC_IMX51) += \
->  	imx51-eukrea-mbimxsd51-baseboard.dtb \
->  	imx51-ts4800.dtb \
->  	imx51-zii-rdu1.dtb \
-> -	imx51-zii-scu2-esb.dtb
-> +	imx51-zii-scu2-esb.dtb \
-> +	imx51-zii-scu2-mezz.dtb
->  dtb-$(CONFIG_SOC_IMX53) += \
->  	imx53-ard.dtb \
->  	imx53-cx9020.dtb \
-> diff --git a/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts b/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
-> new file mode 100644
-> index 0000000..f58572a
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
-> @@ -0,0 +1,190 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +// Copyright (C) 2018 Zodiac Inflight Innovations
-> +
-> +/dts-v1/;
-> +#include "imx51-zii-common.dtsi"
-> +
-> +/ {
-> +	model = "ZII SCU2 Mezz Board";
-> +	compatible = "zii,imx51-scu2-mezz", "fsl,imx51";
-> +
-> +	aliases {
-> +		mdio-gpio0 = &mdio_gpio;
-> +	};
-> +
-> +	mdio_gpio: mdio-gpio {
-> +		compatible = "virtual,mdio-gpio";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_swmdio>;
-> +		gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>, /* mdc */
-> +			<&gpio2 6 GPIO_ACTIVE_HIGH>; /* mdio */
-> +
+> For kmalloc()-family allocations, instead of A * B, use array_size().
+> Similarly, instead of A * B *C, use array3_size().
 
-The newline in middle of property list is not really necessary.
+It took a while until my software development attention was caught also
+by this update suggestion.
 
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		switch@0 {
-> +			compatible = "marvell,mv88e6085";
-> +			reg = <0>;
-> +			dsa,member = <0 0>;
-> +			eeprom-length = <512>;
-> +			interrupt-parent = <&gpio1>;
-> +			interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					label = "port4";
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +					label = "port5";
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +					label = "port6";
-> +				};
-> +
-> +				port@3 {
-> +					reg = <3>;
-> +					label = "port7";
-> +				};
-> +
-> +				port@4 {
-> +					reg = <4>;
-> +					label = "cpu";
-> +					ethernet = <&fec>;
-> +
-> +					fixed-link {
-> +						speed = <100>;
-> +						full-duplex;
-> +					};
-> +				};
-> +
-> +				port@5 {
-> +					reg = <5>;
-> +					label = "mezz2esb";
-> +					phy-mode = "sgmii";
 
-Please have a newline between property list and child node.
+> Note that:
+> 	kmalloc(array_size(a, b), ...);
+> could be written as:
+> 	kmalloc_array(a, b, ...)
+> (and similarly, kzalloc(array_size(a, b), ...) as kcalloc(a, b, ...))
 
-> +					fixed-link {
-> +						speed = <1000>;
-> +						full-duplex;
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&usb_vbus {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usb_mmc_reset>;
-> +	gpio = <&gpio3 13 GPIO_ACTIVE_LOW>;
-> +	startup-delay-us = <150000>;
-> +};
+This is good to know, isn't it?
 
-Please sort these labelled nodes alphabetically in label name.  &iomuxc
-can be an exception though.
 
-> +
-> +&esdhc1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_esdhc1_4bit &pinctrl_esdhc1_8bit>;
-> +	bus-width = <8>;
-> +};
-> +
-> +&fec {
-> +	phy-reset-gpios = <&gpio2 14 GPIO_ACTIVE_LOW>;
-> +	phy-reset-duration = <1>;
-> +	phy-supply = <&vgen3_reg>;
-> +	phy-handle = <&ethphy>;
-> +
-> +	mdio {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ethphy: ethernet-phy@0 {
-> +			reg = <0>;
-> +			max-speed = <100>;
-> +		};
-> +	};
-> +};
-> +
-> +
-> +&i2c_gpio {
-> +	gpios = <&gpio3 2 GPIO_ACTIVE_HIGH>, /* sda */
-> +		<&gpio3 1 GPIO_ACTIVE_HIGH>; /* scl */
-> +};
-> +
-> +&uart2 {
-> +	status = "disabled";
-> +};
-> +
-> +&vsd_reg {
-> +	regulator-always-on;
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_fec: fecgrp {
-> +		fsl,pins = <
-> +			MX51_PAD_DISP2_DAT15__FEC_TDATA0	0x2004
-> +			MX51_PAD_DISP2_DAT6__FEC_TDATA1		0x2004
-> +			MX51_PAD_DISP2_DAT7__FEC_TDATA2		0x2004
-> +			MX51_PAD_DISP2_DAT8__FEC_TDATA3		0x2004
-> +			MX51_PAD_DISP2_DAT9__FEC_TX_EN		0x2004
-> +			MX51_PAD_DISP2_DAT10__FEC_COL		0x0180
-> +			MX51_PAD_DISP2_DAT11__FEC_RX_CLK	0x0180
-> +			MX51_PAD_DISP2_DAT12__FEC_RX_DV		0x20a4
-> +			MX51_PAD_DISP2_DAT1__FEC_RX_ER		0x20a4
-> +			MX51_PAD_DISP2_DAT13__FEC_TX_CLK	0x2180
-> +			MX51_PAD_DI_GP3__FEC_TX_ER		0x2004
-> +			MX51_PAD_DISP2_DAT14__FEC_RDATA0	0x2180
-> +			MX51_PAD_DI2_DISP_CLK__FEC_RDATA1	0x0085
-> +			MX51_PAD_DI_GP4__FEC_RDATA2		0x0085
-> +			MX51_PAD_DISP2_DAT0__FEC_RDATA3		0x0085
-> +			MX51_PAD_DI2_PIN2__FEC_MDC		0x2004
-> +			MX51_PAD_DI2_PIN3__FEC_MDIO		0x01f5
-> +			MX51_PAD_DI2_PIN4__FEC_CRS		0x0180
-> +			MX51_PAD_EIM_A20__GPIO2_14		0x0085
-> +			MX51_PAD_EIM_A21__GPIO2_15		0x00e5
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		fsl,pins = <
-> +			MX51_PAD_UART1_RXD__UART1_RXD		0x1c5
-> +			MX51_PAD_UART1_TXD__UART1_TXD		0x1c5
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +	};
+> but this made the Coccinelle script WAY larger.
 
-Why this empty pinctrl?
+Such a consequence is usual when the corresponding software development
+challenges grow.
+Are there further approaches to consider?
 
-> +
-> +	pinctrl_uart3: uart3grp {
-> +		fsl,pins = <
-> +			MX51_PAD_UART3_RXD__UART3_RXD		0x1c5
-> +			MX51_PAD_UART3_TXD__UART3_TXD		0x1c5
-> +		>;
-> +	};
-> +
-> +	pinctrl_usb_mmc_reset: usbmmcgrp {
-> +		fsl,pins = <
-> +			MX51_PAD_CSI1_D9__GPIO3_13		0x85
-> +		>;
-> +	};
-> +
-> +	pinctrl_swmdio: swmdiogrp {
-> +		fsl,pins = <
-> +			MX51_PAD_EIM_D22__GPIO2_6		0x100
-> +			MX51_PAD_EIM_D23__GPIO2_7		0x100
-> +		>;
-> +	};
-> +
-> +	pinctrl_swi2c: swi2cgrp {
-> +		fsl,pins = <
-> +			MX51_PAD_DI1_PIN12__GPIO3_1		0x100
-> +			MX51_PAD_DI1_PIN13__GPIO3_2		0x100
-> +		>;
-> +	};
 
-Please sort these pinctrl nodes alphabetically as well.
+> There is no desire to replace kmalloc_array() with kmalloc(array_size(...), ...),
+> but given the number of changes made treewide,
 
-Shawn
+The number of changed source files can be impressive overall.
 
-> +};
-> -- 
-> 1.9.1
-> 
+
+> I opted for Coccinelle simplicity.
+
+I suggest to reconsider corresponding consequences.
+
+I find that an important aspect can be missing in this commit description then.
+How would you like to determine if the array size calculation (multiplication)
+should be performed together with an overflow check (or not)?
+
+How do you think about to express such a case distinction also in a bigger
+script for the semantic patch language?
+
+
+> This also tries to isolate sizeof() and constant factors, in an attempt
+> to regularize the argument ordering.
+
+This desire is reasonable.
+
+
+> Automatically generated using the following Coccinelle script:
+
+I have taken another look at implementation details.
+
+* My view might not matter for the generated changes from this run
+  of a limited SmPL script.
+
+* My suggestions will influence the run time characteristics if such a source
+  code transformation pattern will be executed again.
+
+
+> // 2-factor product with sizeof(variable)
+> @@
+> identifier alloc =~ "kmalloc|kzalloc|kvmalloc|kvzalloc";
+
+* This regular expression could be optimised to the specification “kv?[mz]alloc”.
+  Extensions will be useful for further function names.
+
+* The repetition of such a constraint in subsequent SmPL rules could be avoided
+  if inheritance will be used for this metavariable.
+
+
+> expression GFP, THING;
+> identifier COUNT;
+> @@
+>
+> - alloc(sizeof(THING) * COUNT, GFP)
+> + alloc(array_size(COUNT, sizeof(THING)), GFP)
+
+More change items are specified here than what would be essentially necessary.
+* Function name
+* Second parameter
+
+This can be a design option to give the Coccinelle software the opportunity
+for additional source code formatting (pretty printing).
+
+
+These SmPL rules were designed in the way so far that they are independent
+from previous rules. This approach contains the risk that a metavariable type
+like “expression” can match more source code than it was expected.
+This technical detail matters for the selection of the replacement “array3_size”.
+
+
+The comments in the script indicate a desire for specific case distinctions.
+I have got the impression that the use of SmPL disjunctions will be more
+appropriate for the desired condition checks.
+A priority could be specified then for involved pattern evaluation.
+
+Would you like to adjust the transformation pattern any further?
+
+Regards,
+Markus
