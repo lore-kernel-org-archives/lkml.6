@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BEDC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA86C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D890625082
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D890625082
+	by mail.kernel.org (Postfix) with ESMTP id AB90325081
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB90325081
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753215AbeGAQPW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60544 "EHLO
+        id S932977AbeGAQPZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60534 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752467AbeGAQPT (ORCPT
+        with ESMTP id S1752958AbeGAQPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:19 -0400
+        Sun, 1 Jul 2018 12:15:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEC42ACC;
-        Sun,  1 Jul 2018 16:15:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A12064A3;
+        Sun,  1 Jul 2018 16:15:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Balbir Singh <bsingharora@gmail.com>,
+        stable@vger.kernel.org, Xiangning Yu <yuxiangning@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 012/105] tcp: verify the checksum of the first data segment in a new connection
-Date:   Sun,  1 Jul 2018 18:01:22 +0200
-Message-Id: <20180701153150.356578061@linuxfoundation.org>
+Subject: [PATCH 4.4 011/105] bonding: re-evaluate force_primary when the primary slave name changes
+Date:   Sun,  1 Jul 2018 18:01:21 +0200
+Message-Id: <20180701153150.285695723@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,60 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank van der Linden <fllinden@amazon.com>
+From: Xiangning Yu <yuxiangning@gmail.com>
 
-[ Upstream commit 4fd44a98ffe0d048246efef67ed640fdf2098a62 ]
+[ Upstream commit eb55bbf865d9979098c6a7a17cbdb41237ece951 ]
 
-commit 079096f103fa ("tcp/dccp: install syn_recv requests into ehash
-table") introduced an optimization for the handling of child sockets
-created for a new TCP connection.
+There is a timing issue under active-standy mode, when bond_enslave() is
+called, bond->params.primary might not be initialized yet.
 
-But this optimization passes any data associated with the last ACK of the
-connection handshake up the stack without verifying its checksum, because it
-calls tcp_child_process(), which in turn calls tcp_rcv_state_process()
-directly.  These lower-level processing functions do not do any checksum
-verification.
+Any time the primary slave string changes, bond->force_primary should be
+set to true to make sure the primary becomes the active slave.
 
-Insert a tcp_checksum_complete call in the TCP_NEW_SYN_RECEIVE path to
-fix this.
-
-Fixes: 079096f103fa ("tcp/dccp: install syn_recv requests into ehash table")
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Tested-by: Balbir Singh <bsingharora@gmail.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Xiangning Yu <yuxiangning@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_ipv4.c |    4 ++++
- net/ipv6/tcp_ipv6.c |    4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/net/bonding/bond_options.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -1627,6 +1627,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -1115,6 +1115,7 @@ static int bond_option_primary_set(struc
+ 				    slave->dev->name);
+ 			rcu_assign_pointer(bond->primary_slave, slave);
+ 			strcpy(bond->params.primary, slave->dev->name);
++			bond->force_primary = true;
+ 			bond_select_active_slave(bond);
+ 			goto out;
  		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
-+		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1415,6 +1415,10 @@ process:
- 			reqsk_put(req);
- 			goto discard_it;
- 		}
-+		if (tcp_checksum_complete(skb)) {
-+			reqsk_put(req);
-+			goto csum_error;
-+		}
- 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
- 			inet_csk_reqsk_queue_drop_and_put(sk, req);
- 			goto lookup;
 
 
