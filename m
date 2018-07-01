@@ -3,37 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FDFC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA1CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB8824EF3
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB8824EF3
+	by mail.kernel.org (Postfix) with ESMTP id A108424EF3
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A108424EF3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753665AbeGAQou (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:44:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38092 "EHLO
+        id S933940AbeGAQoy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:44:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933940AbeGAQol (ORCPT
+        with ESMTP id S933918AbeGAQoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:44:41 -0400
+        Sun, 1 Jul 2018 12:44:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F36F92B;
-        Sun,  1 Jul 2018 16:44:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D620792B;
+        Sun,  1 Jul 2018 16:44:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>, Shaohua Li <shli@fb.com>
-Subject: [PATCH 4.17 150/220] md: fix two problems with setting the "re-add" device state.
-Date:   Sun,  1 Jul 2018 18:22:54 +0200
-Message-Id: <20180701160914.570637652@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.17 176/220] media: v4l2-compat-ioctl32: prevent go past max size
+Date:   Sun,  1 Jul 2018 18:23:20 +0200
+Message-Id: <20180701160915.589831406@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,64 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 011abdc9df559ec75779bb7c53a744c69b2a94c6 upstream.
+commit ea72fbf588ac9c017224dcdaa2019ff52ca56fee upstream.
 
-If "re-add" is written to the "state" file for a device
-which is faulty, this has an effect similar to removing
-and re-adding the device.  It should take up the
-same slot in the array that it previously had, and
-an accelerated (e.g. bitmap-based) rebuild should happen.
+As warned by smatch:
+	drivers/media/v4l2-core/v4l2-compat-ioctl32.c:879 put_v4l2_ext_controls32() warn: check for integer overflow 'count'
 
-The slot that "it previously had" is determined by
-rdev->saved_raid_disk.
-However this is not set when a device fails (only when a device
-is added), and it is cleared when resync completes.
-This means that "re-add" will normally work once, but may not work a
-second time.
+The access_ok() logic should check for too big arrays too.
 
-This patch includes two fixes.
-1/ when a device fails, record the ->raid_disk value in
-    ->saved_raid_disk before clearing ->raid_disk
-2/ when "re-add" is written to a device for which
-    ->saved_raid_disk is not set, fail.
-
-I think this is suitable for stable as it can
-cause re-adding a device to be forced to do a full
-resync which takes a lot longer and so puts data at
-more risk.
-
-Cc: <stable@vger.kernel.org> (v4.1)
-Fixes: 97f6cd39da22 ("md-cluster: re-add capabilities")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/md.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2853,7 +2853,8 @@ state_store(struct md_rdev *rdev, const
- 			err = 0;
- 		}
- 	} else if (cmd_match(buf, "re-add")) {
--		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1)) {
-+		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
-+			rdev->saved_raid_disk >= 0) {
- 			/* clear_bit is performed _after_ all the devices
- 			 * have their local Faulty bit cleared. If any writes
- 			 * happen in the meantime in the local node, they
-@@ -8641,6 +8642,7 @@ static int remove_and_add_spares(struct
- 			if (mddev->pers->hot_remove_disk(
- 				    mddev, rdev) == 0) {
- 				sysfs_unlink_rdev(mddev, rdev);
-+				rdev->saved_raid_disk = rdev->raid_disk;
- 				rdev->raid_disk = -1;
- 				removed++;
- 			}
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -871,7 +871,7 @@ static int put_v4l2_ext_controls32(struc
+ 	    get_user(kcontrols, &kp->controls))
+ 		return -EFAULT;
+ 
+-	if (!count)
++	if (!count || count > (U32_MAX/sizeof(*ucontrols)))
+ 		return 0;
+ 	if (get_user(p, &up->controls))
+ 		return -EFAULT;
 
 
