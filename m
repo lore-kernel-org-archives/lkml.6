@@ -3,39 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D4CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B30C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563E125187
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563E125187
+	by mail.kernel.org (Postfix) with ESMTP id 432A22518E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432A22518E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965252AbeGAQZu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:25:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33722 "EHLO
+        id S933788AbeGAQZ4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:25:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33738 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933606AbeGAQZo (ORCPT
+        with ESMTP id S965255AbeGAQZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:44 -0400
+        Sun, 1 Jul 2018 12:25:51 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA066ACD;
-        Sun,  1 Jul 2018 16:25:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 443D3AD8;
+        Sun,  1 Jul 2018 16:25:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Alex Estrin <alex.estrin@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 035/101] IB/{hfi1, qib}: Add handling of kernel restart
-Date:   Sun,  1 Jul 2018 18:21:21 +0200
-Message-Id: <20180701160758.567957420@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.9 004/101] x86/mce: Fix incorrect "Machine check from unknown source" message
+Date:   Sun,  1 Jul 2018 18:20:50 +0200
+Message-Id: <20180701160757.311573596@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -52,134 +54,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Estrin <alex.estrin@intel.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 8d3e71136a080d007620472f50c7b3e63ba0f5cf upstream.
+commit 40c36e2741d7fe1e66d6ec55477ba5fd19c9c5d2 upstream.
 
-A warm restart will fail to unload the driver, leaving link state
-potentially flapping up to the point the BIOS resets the adapter.
-Correct the issue by hooking the shutdown pci method,
-which will bring port down.
+Some injection testing resulted in the following console log:
 
-Cc: <stable@vger.kernel.org> # 4.9.x
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Alex Estrin <alex.estrin@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+  mce: [Hardware Error]: CPU 22: Machine Check Exception: f Bank 1: bd80000000100134
+  mce: [Hardware Error]: RIP 10:<ffffffffc05292dd> {pmem_do_bvec+0x11d/0x330 [nd_pmem]}
+  mce: [Hardware Error]: TSC c51a63035d52 ADDR 3234bc4000 MISC 88
+  mce: [Hardware Error]: PROCESSOR 0:50654 TIME 1526502199 SOCKET 0 APIC 38 microcode 2000043
+  mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+  Kernel panic - not syncing: Machine check from unknown source
+
+This confused everybody because the first line quite clearly shows
+that we found a logged error in "Bank 1", while the last line says
+"unknown source".
+
+The problem is that the Linux code doesn't do the right thing
+for a local machine check that results in a fatal error.
+
+It turns out that we know very early in the handler whether the
+machine check is fatal. The call to mce_no_way_out() has checked
+all the banks for the CPU that took the local machine check. If
+it says we must crash, we can do so right away with the right
+messages.
+
+We do scan all the banks again. This means that we might initially
+not see a problem, but during the second scan find something fatal.
+If this happens we print a slightly different message (so I can
+see if it actually every happens).
+
+[ bp: Remove unneeded severity assignment. ]
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: stable@vger.kernel.org # 4.2
+Link: http://lkml.kernel.org/r/52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/hfi.h     |    1 +
- drivers/infiniband/hw/hfi1/init.c    |   13 +++++++++++++
- drivers/infiniband/hw/qib/qib.h      |    1 +
- drivers/infiniband/hw/qib/qib_init.c |   13 +++++++++++++
- 4 files changed, 28 insertions(+)
+ arch/x86/kernel/cpu/mcheck/mce.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/hfi.h
-+++ b/drivers/infiniband/hw/hfi1/hfi.h
-@@ -1631,6 +1631,7 @@ struct cc_state *get_cc_state_protected(
- #define HFI1_HAS_SDMA_TIMEOUT  0x8
- #define HFI1_HAS_SEND_DMA      0x10   /* Supports Send DMA */
- #define HFI1_FORCED_FREEZE     0x80   /* driver forced freeze mode */
-+#define HFI1_SHUTDOWN          0x100  /* device is shutting down */
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1140,13 +1140,18 @@ void do_machine_check(struct pt_regs *re
+ 		lmce = m.mcgstatus & MCG_STATUS_LMCES;
  
- /* IB dword length mask in PBC (lower 11 bits); same for all chips */
- #define HFI1_PBC_LENGTH_MASK                     ((1 << 11) - 1)
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -857,6 +857,10 @@ static void shutdown_device(struct hfi1_
- 	unsigned pidx;
- 	int i;
+ 	/*
++	 * Local machine check may already know that we have to panic.
++	 * Broadcast machine check begins rendezvous in mce_start()
+ 	 * Go through all banks in exclusion of the other CPUs. This way we
+ 	 * don't report duplicated events on shared banks because the first one
+-	 * to see it will clear it. If this is a Local MCE, then no need to
+-	 * perform rendezvous.
++	 * to see it will clear it.
+ 	 */
+-	if (!lmce)
++	if (lmce) {
++		if (no_way_out)
++			mce_panic("Fatal local machine check", &m, msg);
++	} else {
+ 		order = mce_start(&no_way_out);
++	}
  
-+	if (dd->flags & HFI1_SHUTDOWN)
-+		return;
-+	dd->flags |= HFI1_SHUTDOWN;
-+
- 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
- 		ppd = dd->pport + pidx;
+ 	for (i = 0; i < cfg->banks; i++) {
+ 		__clear_bit(i, toclear);
+@@ -1222,12 +1227,17 @@ void do_machine_check(struct pt_regs *re
+ 			no_way_out = worst >= MCE_PANIC_SEVERITY;
+ 	} else {
+ 		/*
+-		 * Local MCE skipped calling mce_reign()
+-		 * If we found a fatal error, we need to panic here.
++		 * If there was a fatal machine check we should have
++		 * already called mce_panic earlier in this function.
++		 * Since we re-read the banks, we might have found
++		 * something new. Check again to see if we found a
++		 * fatal error. We call "mce_severity()" again to
++		 * make sure we have the right "msg".
+ 		 */
+-		 if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3)
+-			mce_panic("Machine check from unknown source",
+-				NULL, NULL);
++		if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
++			mce_severity(&m, cfg->tolerant, &msg, true);
++			mce_panic("Local fatal machine check!", &m, msg);
++		}
+ 	}
  
-@@ -1168,6 +1172,7 @@ void hfi1_disable_after_error(struct hfi
- 
- static void remove_one(struct pci_dev *);
- static int init_one(struct pci_dev *, const struct pci_device_id *);
-+static void shutdown_one(struct pci_dev *);
- 
- #define DRIVER_LOAD_MSG "Intel " DRIVER_NAME " loaded: "
- #define PFX DRIVER_NAME ": "
-@@ -1184,6 +1189,7 @@ static struct pci_driver hfi1_pci_driver
- 	.name = DRIVER_NAME,
- 	.probe = init_one,
- 	.remove = remove_one,
-+	.shutdown = shutdown_one,
- 	.id_table = hfi1_pci_tbl,
- 	.err_handler = &hfi1_pci_err_handler,
- };
-@@ -1590,6 +1596,13 @@ static void remove_one(struct pci_dev *p
- 	postinit_cleanup(dd);
- }
- 
-+static void shutdown_one(struct pci_dev *pdev)
-+{
-+	struct hfi1_devdata *dd = pci_get_drvdata(pdev);
-+
-+	shutdown_device(dd);
-+}
-+
- /**
-  * hfi1_create_rcvhdrq - create a receive header queue
-  * @dd: the hfi1_ib device
---- a/drivers/infiniband/hw/qib/qib.h
-+++ b/drivers/infiniband/hw/qib/qib.h
-@@ -1250,6 +1250,7 @@ static inline struct qib_ibport *to_ipor
- #define QIB_BADINTR           0x8000 /* severe interrupt problems */
- #define QIB_DCA_ENABLED       0x10000 /* Direct Cache Access enabled */
- #define QIB_HAS_QSFP          0x20000 /* device (card instance) has QSFP */
-+#define QIB_SHUTDOWN          0x40000 /* device is shutting down */
- 
- /*
-  * values for ppd->lflags (_ib_port_ related flags)
---- a/drivers/infiniband/hw/qib/qib_init.c
-+++ b/drivers/infiniband/hw/qib/qib_init.c
-@@ -878,6 +878,10 @@ static void qib_shutdown_device(struct q
- 	struct qib_pportdata *ppd;
- 	unsigned pidx;
- 
-+	if (dd->flags & QIB_SHUTDOWN)
-+		return;
-+	dd->flags |= QIB_SHUTDOWN;
-+
- 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
- 		ppd = dd->pport + pidx;
- 
-@@ -1223,6 +1227,7 @@ void qib_disable_after_error(struct qib_
- 
- static void qib_remove_one(struct pci_dev *);
- static int qib_init_one(struct pci_dev *, const struct pci_device_id *);
-+static void qib_shutdown_one(struct pci_dev *);
- 
- #define DRIVER_LOAD_MSG "Intel " QIB_DRV_NAME " loaded: "
- #define PFX QIB_DRV_NAME ": "
-@@ -1240,6 +1245,7 @@ static struct pci_driver qib_driver = {
- 	.name = QIB_DRV_NAME,
- 	.probe = qib_init_one,
- 	.remove = qib_remove_one,
-+	.shutdown = qib_shutdown_one,
- 	.id_table = qib_pci_tbl,
- 	.err_handler = &qib_pci_err_handler,
- };
-@@ -1591,6 +1597,13 @@ static void qib_remove_one(struct pci_de
- 	qib_postinit_cleanup(dd);
- }
- 
-+static void qib_shutdown_one(struct pci_dev *pdev)
-+{
-+	struct qib_devdata *dd = pci_get_drvdata(pdev);
-+
-+	qib_shutdown_device(dd);
-+}
-+
- /**
-  * qib_create_rcvhdrq - create a receive header queue
-  * @dd: the qlogic_ib device
+ 	/*
 
 
