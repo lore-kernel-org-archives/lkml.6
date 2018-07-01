@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC727C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8679C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A248A25B0F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A248A25B0F
+	by mail.kernel.org (Postfix) with ESMTP id AD80F24C75
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD80F24C75
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753107AbeGASnY (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:43:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60096 "EHLO
+        id S932357AbeGAQNO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:13:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932379AbeGAQNQ (ORCPT
+        with ESMTP id S932083AbeGAQNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:16 -0400
+        Sun, 1 Jul 2018 12:13:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A1FA86A;
-        Sun,  1 Jul 2018 16:13:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDD8686A;
+        Sun,  1 Jul 2018 16:13:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 3.18 53/85] mips: ftrace: fix static function graph tracing
-Date:   Sun,  1 Jul 2018 18:02:11 +0200
-Message-Id: <20180701153124.468655835@linuxfoundation.org>
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3.18 51/85] ASoC: cirrus: i2s: Fix LRCLK configuration
+Date:   Sun,  1 Jul 2018 18:02:09 +0200
+Message-Id: <20180701153124.389620745@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -52,80 +50,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
 
-commit 6fb8656646f996d1eef42e6d56203c4915cb9e08 upstream.
+commit 2d534113be9a2aa532a1ae127a57e83558aed358 upstream.
 
-ftrace_graph_caller was never run after calling ftrace_trace_function,
-breaking the function graph tracer. Fix this, bringing it in line with the
-x86 implementation.
+The bit responsible for LRCLK polarity is i2s_tlrs (0), not i2s_trel (2)
+(refer to "EP93xx User's Guide").
 
-While we're at it, also streamline the control flow of _mcount a bit to
-reduce the number of branches.
+Previously card drivers which specified SND_SOC_DAIFMT_NB_IF actually got
+SND_SOC_DAIFMT_NB_NF, an adaptation is necessary to retain the old
+behavior.
 
-This issue was reported before:
-https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
-
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/18929/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: stable@vger.kernel.org # v3.17+
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/mcount.S |   27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ sound/soc/cirrus/edb93xx.c     |    2 +-
+ sound/soc/cirrus/ep93xx-i2s.c  |    8 ++++----
+ sound/soc/cirrus/snappercl15.c |    2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/mips/kernel/mcount.S
-+++ b/arch/mips/kernel/mcount.S
-@@ -116,10 +116,20 @@ ftrace_stub:
- NESTED(_mcount, PT_SIZE, ra)
- 	PTR_LA	t1, ftrace_stub
- 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
--	bne	t1, t2, static_trace
-+	beq	t1, t2, fgraph_trace
- 	 nop
+--- a/sound/soc/cirrus/edb93xx.c
++++ b/sound/soc/cirrus/edb93xx.c
+@@ -67,7 +67,7 @@ static struct snd_soc_dai_link edb93xx_d
+ 	.cpu_dai_name	= "ep93xx-i2s",
+ 	.codec_name	= "spi0.0",
+ 	.codec_dai_name	= "cs4271-hifi",
+-	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
++	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+ 			  SND_SOC_DAIFMT_CBS_CFS,
+ 	.ops		= &edb93xx_ops,
+ };
+--- a/sound/soc/cirrus/ep93xx-i2s.c
++++ b/sound/soc/cirrus/ep93xx-i2s.c
+@@ -213,24 +213,24 @@ static int ep93xx_i2s_set_dai_fmt(struct
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+ 	case SND_SOC_DAIFMT_NB_NF:
+ 		/* Negative bit clock, lrclk low on left word */
+-		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL);
++		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS);
+ 		break;
  
-+	MCOUNT_SAVE_REGS
-+
-+	move	a0, ra		/* arg1: self return address */
-+	jalr	t2		/* (1) call *ftrace_trace_function */
-+	 move	a1, AT		/* arg2: parent's return address */
-+
-+	MCOUNT_RESTORE_REGS
-+
-+fgraph_trace:
- #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
-+	PTR_LA	t1, ftrace_stub
- 	PTR_L	t3, ftrace_graph_return
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
-@@ -128,24 +138,11 @@ NESTED(_mcount, PT_SIZE, ra)
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
- #endif
--	b	ftrace_stub
--#ifdef CONFIG_32BIT
--	 addiu sp, sp, 8
--#else
--	 nop
--#endif
--
--static_trace:
--	MCOUNT_SAVE_REGS
--
--	move	a0, ra		/* arg1: self return address */
--	jalr	t2		/* (1) call *ftrace_trace_function */
--	 move	a1, AT		/* arg2: parent's return address */
+ 	case SND_SOC_DAIFMT_NB_IF:
+ 		/* Negative bit clock, lrclk low on right word */
+ 		clk_cfg &= ~EP93XX_I2S_CLKCFG_CKP;
+-		clk_cfg |= EP93XX_I2S_CLKCFG_REL;
++		clk_cfg |= EP93XX_I2S_CLKCFG_LRS;
+ 		break;
  
--	MCOUNT_RESTORE_REGS
- #ifdef CONFIG_32BIT
- 	addiu sp, sp, 8
- #endif
-+
- 	.globl ftrace_stub
- ftrace_stub:
- 	RETURN_BACK
+ 	case SND_SOC_DAIFMT_IB_NF:
+ 		/* Positive bit clock, lrclk low on left word */
+ 		clk_cfg |= EP93XX_I2S_CLKCFG_CKP;
+-		clk_cfg &= ~EP93XX_I2S_CLKCFG_REL;
++		clk_cfg &= ~EP93XX_I2S_CLKCFG_LRS;
+ 		break;
+ 
+ 	case SND_SOC_DAIFMT_IB_IF:
+ 		/* Positive bit clock, lrclk low on right word */
+-		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL;
++		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS;
+ 		break;
+ 	}
+ 
+--- a/sound/soc/cirrus/snappercl15.c
++++ b/sound/soc/cirrus/snappercl15.c
+@@ -72,7 +72,7 @@ static struct snd_soc_dai_link snappercl
+ 	.codec_dai_name	= "tlv320aic23-hifi",
+ 	.codec_name	= "tlv320aic23-codec.0-001a",
+ 	.platform_name	= "ep93xx-i2s",
+-	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
++	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+ 			  SND_SOC_DAIFMT_CBS_CFS,
+ 	.ops		= &snappercl15_ops,
+ };
 
 
