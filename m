@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9D4C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58BBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF3B25256
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF3B25256
+	by mail.kernel.org (Postfix) with ESMTP id 6F8C925256
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F8C925256
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965875AbeGAQbB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:31:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34870 "EHLO
+        id S1030464AbeGAQbF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:31:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34880 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030445AbeGAQay (ORCPT
+        with ESMTP id S965762AbeGAQa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:54 -0400
+        Sun, 1 Jul 2018 12:30:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29C6AACD;
-        Sun,  1 Jul 2018 16:30:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0444ACD;
+        Sun,  1 Jul 2018 16:30:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 033/157] fuse: fix control dir setup and teardown
-Date:   Sun,  1 Jul 2018 18:21:45 +0200
-Message-Id: <20180701160854.011683496@linuxfoundation.org>
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 042/157] powerpc/fadump: Unregister fadump on kexec down path.
+Date:   Sun,  1 Jul 2018 18:21:54 +0200
+Message-Id: <20180701160854.728801306@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,68 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit 6becdb601bae2a043d7fb9762c4d48699528ea6e upstream.
+commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
 
-syzbot is reporting NULL pointer dereference at fuse_ctl_remove_conn() [1].
-Since fc->ctl_ndents is incremented by fuse_ctl_add_conn() when new_inode()
-failed, fuse_ctl_remove_conn() reaches an inode-less dentry and tries to
-clear d_inode(dentry)->i_private field.
+Unregister fadump on kexec down path otherwise the fadump registration
+in new kexec-ed kernel complains that fadump is already registered.
+This makes new kernel to continue using fadump registered by previous
+kernel which may lead to invalid vmcore generation. Hence this patch
+fixes this issue by un-registering fadump in fadump_cleanup() which is
+called during kexec path so that new kernel can register fadump with
+new valid values.
 
-Fix by only adding the dentry to the array after being fully set up.
-
-When tearing down the control directory, do d_invalidate() on it to get rid
-of any mounts that might have been added.
-
-[1] https://syzkaller.appspot.com/bug?id=f396d863067238959c91c0b7cfc10b163638cac6
-Reported-by: syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>
-Fixes: bafa96541b25 ("[PATCH] fuse: add control filesystem")
-Cc: <stable@vger.kernel.org> # v2.6.18
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
+Cc: stable@vger.kernel.org # v3.4+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/control.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/fadump.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -211,10 +211,11 @@ static struct dentry *fuse_ctl_add_dentr
- 	if (!dentry)
- 		return NULL;
- 
--	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
- 	inode = new_inode(fuse_control_sb);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		return NULL;
-+	}
- 
- 	inode->i_ino = get_next_ino();
- 	inode->i_mode = mode;
-@@ -228,6 +229,9 @@ static struct dentry *fuse_ctl_add_dentr
- 	set_nlink(inode, nlink);
- 	inode->i_private = fc;
- 	d_add(dentry, inode);
-+
-+	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
-+
- 	return dentry;
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1155,6 +1155,9 @@ void fadump_cleanup(void)
+ 		init_fadump_mem_struct(&fdm,
+ 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
+ 		fadump_invalidate_dump(&fdm);
++	} else if (fw_dump.dump_registered) {
++		/* Un-register Firmware-assisted dump if it was registered. */
++		fadump_unregister_dump(&fdm);
+ 	}
  }
  
-@@ -284,7 +288,10 @@ void fuse_ctl_remove_conn(struct fuse_co
- 	for (i = fc->ctl_ndents - 1; i >= 0; i--) {
- 		struct dentry *dentry = fc->ctl_dentry[i];
- 		d_inode(dentry)->i_private = NULL;
--		d_drop(dentry);
-+		if (!i) {
-+			/* Get rid of submounts: */
-+			d_invalidate(dentry);
-+		}
- 		dput(dentry);
- 	}
- 	drop_nlink(d_inode(fuse_control_sb->s_root));
 
 
