@@ -3,40 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FABC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685A3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D47EB2526C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47EB2526C
+	by mail.kernel.org (Postfix) with ESMTP id 1E50E2526C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E50E2526C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030570AbeGAQbz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:31:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35060 "EHLO
+        id S965913AbeGAQcB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:32:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030556AbeGAQbu (ORCPT
+        with ESMTP id S965102AbeGAQb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:50 -0400
+        Sun, 1 Jul 2018 12:31:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D78F49B;
-        Sun,  1 Jul 2018 16:31:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 974E292B;
+        Sun,  1 Jul 2018 16:31:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Alex Estrin <alex.estrin@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 060/157] IB/{hfi1, qib}: Add handling of kernel restart
-Date:   Sun,  1 Jul 2018 18:22:12 +0200
-Message-Id: <20180701160855.634384175@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 035/157] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
+Date:   Sun,  1 Jul 2018 18:21:47 +0200
+Message-Id: <20180701160854.145513593@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,134 +49,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Estrin <alex.estrin@intel.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 8d3e71136a080d007620472f50c7b3e63ba0f5cf upstream.
+commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
 
-A warm restart will fail to unload the driver, leaving link state
-potentially flapping up to the point the BIOS resets the adapter.
-Correct the issue by hooking the shutdown pci method,
-which will bring port down.
+In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
+validating DAWR region end") we fixed setting the DAWR end point to
+its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
+PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
 
-Cc: <stable@vger.kernel.org> # 4.9.x
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Alex Estrin <alex.estrin@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
+zero (memset() in hw_breakpoint_init()). This worked with
+arch_validate_hwbkpt_settings() before the above patch was applied but
+is now broken if the breakpoint is 512byte aligned.
+
+This sets the length of the breakpoint to 8 bytes when using
+PTRACE_SET_DEBUGREG.
+
+Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
+Cc: stable@vger.kernel.org # v3.11+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/hfi.h     |    1 +
- drivers/infiniband/hw/hfi1/init.c    |   13 +++++++++++++
- drivers/infiniband/hw/qib/qib.h      |    1 +
- drivers/infiniband/hw/qib/qib_init.c |   13 +++++++++++++
- 4 files changed, 28 insertions(+)
+ arch/powerpc/kernel/ptrace.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/hw/hfi1/hfi.h
-+++ b/drivers/infiniband/hw/hfi1/hfi.h
-@@ -1851,6 +1851,7 @@ struct cc_state *get_cc_state_protected(
- #define HFI1_HAS_SDMA_TIMEOUT  0x8
- #define HFI1_HAS_SEND_DMA      0x10   /* Supports Send DMA */
- #define HFI1_FORCED_FREEZE     0x80   /* driver forced freeze mode */
-+#define HFI1_SHUTDOWN          0x100  /* device is shutting down */
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -2362,6 +2362,7 @@ static int ptrace_set_debugreg(struct ta
+ 	/* Create a new breakpoint request if one doesn't exist already */
+ 	hw_breakpoint_init(&attr);
+ 	attr.bp_addr = hw_brk.address;
++	attr.bp_len = 8;
+ 	arch_bp_generic_fields(hw_brk.type,
+ 			       &attr.bp_type);
  
- /* IB dword length mask in PBC (lower 11 bits); same for all chips */
- #define HFI1_PBC_LENGTH_MASK                     ((1 << 11) - 1)
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -1029,6 +1029,10 @@ static void shutdown_device(struct hfi1_
- 	unsigned pidx;
- 	int i;
- 
-+	if (dd->flags & HFI1_SHUTDOWN)
-+		return;
-+	dd->flags |= HFI1_SHUTDOWN;
-+
- 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
- 		ppd = dd->pport + pidx;
- 
-@@ -1353,6 +1357,7 @@ void hfi1_disable_after_error(struct hfi
- 
- static void remove_one(struct pci_dev *);
- static int init_one(struct pci_dev *, const struct pci_device_id *);
-+static void shutdown_one(struct pci_dev *);
- 
- #define DRIVER_LOAD_MSG "Intel " DRIVER_NAME " loaded: "
- #define PFX DRIVER_NAME ": "
-@@ -1369,6 +1374,7 @@ static struct pci_driver hfi1_pci_driver
- 	.name = DRIVER_NAME,
- 	.probe = init_one,
- 	.remove = remove_one,
-+	.shutdown = shutdown_one,
- 	.id_table = hfi1_pci_tbl,
- 	.err_handler = &hfi1_pci_err_handler,
- };
-@@ -1780,6 +1786,13 @@ static void remove_one(struct pci_dev *p
- 	postinit_cleanup(dd);
- }
- 
-+static void shutdown_one(struct pci_dev *pdev)
-+{
-+	struct hfi1_devdata *dd = pci_get_drvdata(pdev);
-+
-+	shutdown_device(dd);
-+}
-+
- /**
-  * hfi1_create_rcvhdrq - create a receive header queue
-  * @dd: the hfi1_ib device
---- a/drivers/infiniband/hw/qib/qib.h
-+++ b/drivers/infiniband/hw/qib/qib.h
-@@ -1250,6 +1250,7 @@ static inline struct qib_ibport *to_ipor
- #define QIB_BADINTR           0x8000 /* severe interrupt problems */
- #define QIB_DCA_ENABLED       0x10000 /* Direct Cache Access enabled */
- #define QIB_HAS_QSFP          0x20000 /* device (card instance) has QSFP */
-+#define QIB_SHUTDOWN          0x40000 /* device is shutting down */
- 
- /*
-  * values for ppd->lflags (_ib_port_ related flags)
---- a/drivers/infiniband/hw/qib/qib_init.c
-+++ b/drivers/infiniband/hw/qib/qib_init.c
-@@ -850,6 +850,10 @@ static void qib_shutdown_device(struct q
- 	struct qib_pportdata *ppd;
- 	unsigned pidx;
- 
-+	if (dd->flags & QIB_SHUTDOWN)
-+		return;
-+	dd->flags |= QIB_SHUTDOWN;
-+
- 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
- 		ppd = dd->pport + pidx;
- 
-@@ -1189,6 +1193,7 @@ void qib_disable_after_error(struct qib_
- 
- static void qib_remove_one(struct pci_dev *);
- static int qib_init_one(struct pci_dev *, const struct pci_device_id *);
-+static void qib_shutdown_one(struct pci_dev *);
- 
- #define DRIVER_LOAD_MSG "Intel " QIB_DRV_NAME " loaded: "
- #define PFX QIB_DRV_NAME ": "
-@@ -1206,6 +1211,7 @@ static struct pci_driver qib_driver = {
- 	.name = QIB_DRV_NAME,
- 	.probe = qib_init_one,
- 	.remove = qib_remove_one,
-+	.shutdown = qib_shutdown_one,
- 	.id_table = qib_pci_tbl,
- 	.err_handler = &qib_pci_err_handler,
- };
-@@ -1556,6 +1562,13 @@ static void qib_remove_one(struct pci_de
- 	qib_postinit_cleanup(dd);
- }
- 
-+static void qib_shutdown_one(struct pci_dev *pdev)
-+{
-+	struct qib_devdata *dd = pci_get_drvdata(pdev);
-+
-+	qib_shutdown_device(dd);
-+}
-+
- /**
-  * qib_create_rcvhdrq - create a receive header queue
-  * @dd: the qlogic_ib device
 
 
