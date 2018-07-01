@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD45C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04904C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D531925177
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D531925177
+	by mail.kernel.org (Postfix) with ESMTP id B2BB22517B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BB22517B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965148AbeGAQZR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:25:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33628 "EHLO
+        id S1753561AbeGAQZV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:25:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932790AbeGAQZJ (ORCPT
+        with ESMTP id S933428AbeGAQZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:09 -0400
+        Sun, 1 Jul 2018 12:25:12 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B095ACD;
-        Sun,  1 Jul 2018 16:25:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD737AD8;
+        Sun,  1 Jul 2018 16:25:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 025/101] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
-Date:   Sun,  1 Jul 2018 18:21:11 +0200
-Message-Id: <20180701160758.152657125@linuxfoundation.org>
+Subject: [PATCH 4.9 026/101] powerpc/ptrace: Fix enforcement of DAWR constraints
+Date:   Sun,  1 Jul 2018 18:21:12 +0200
+Message-Id: <20180701160758.190665542@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -51,40 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Neuling <mikey@neuling.org>
 
-commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
+commit cd6ef7eebf171bfcba7dc2df719c2a4958775040 upstream.
 
-In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
-validating DAWR region end") we fixed setting the DAWR end point to
-its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
-PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
+Back when we first introduced the DAWR, in commit 4ae7ebe9522a
+("powerpc: Change hardware breakpoint to allow longer ranges"), we
+screwed up the constraint making it a 1024 byte boundary rather than a
+512. This makes the check overly permissive. Fortunately GDB is the
+only real user and it always did they right thing, so we never
+noticed.
 
-PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
-zero (memset() in hw_breakpoint_init()). This worked with
-arch_validate_hwbkpt_settings() before the above patch was applied but
-is now broken if the breakpoint is 512byte aligned.
+This fixes the constraint to 512 bytes.
 
-This sets the length of the breakpoint to 8 bytes when using
-PTRACE_SET_DEBUGREG.
-
-Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
-Cc: stable@vger.kernel.org # v3.11+
+Fixes: 4ae7ebe9522a ("powerpc: Change hardware breakpoint to allow longer ranges")
+Cc: stable@vger.kernel.org # v3.9+
 Signed-off-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/ptrace.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/kernel/hw_breakpoint.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -2380,6 +2380,7 @@ static int ptrace_set_debugreg(struct ta
- 	/* Create a new breakpoint request if one doesn't exist already */
- 	hw_breakpoint_init(&attr);
- 	attr.bp_addr = hw_brk.address;
-+	attr.bp_len = 8;
- 	arch_bp_generic_fields(hw_brk.type,
- 			       &attr.bp_type);
- 
+--- a/arch/powerpc/kernel/hw_breakpoint.c
++++ b/arch/powerpc/kernel/hw_breakpoint.c
+@@ -175,8 +175,8 @@ int arch_validate_hwbkpt_settings(struct
+ 	if (cpu_has_feature(CPU_FTR_DAWR)) {
+ 		length_max = 512 ; /* 64 doublewords */
+ 		/* DAWR region can't cross 512 boundary */
+-		if ((bp->attr.bp_addr >> 10) != 
+-		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
++		if ((bp->attr.bp_addr >> 9) !=
++		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 9))
+ 			return -EINVAL;
+ 	}
+ 	if (info->len >
 
 
