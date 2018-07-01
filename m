@@ -3,44 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0C2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 03:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34E9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 03:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C408E25384
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 03:49:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C408E25384
+	by mail.kernel.org (Postfix) with ESMTP id 5A1FD25385
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 03:52:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1FD25385
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeGADtY (ORCPT
+        id S1752249AbeGADwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 23:49:24 -0400
-Received: from gate.crashing.org ([63.228.1.57]:48288 "EHLO gate.crashing.org"
+        Sat, 30 Jun 2018 23:52:23 -0400
+Received: from gate.crashing.org ([63.228.1.57]:48302 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752164AbeGADtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 23:49:23 -0400
+        id S1752177AbeGADwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 23:52:21 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w613nEjH020784;
-        Sat, 30 Jun 2018 22:49:15 -0500
-Message-ID: <9f2faf2b65f8025c70cbb233e0bae39df650860f.camel@kernel.crashing.org>
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w613qCiV020823;
+        Sat, 30 Jun 2018 22:52:13 -0500
+Message-ID: <743d1ab2e9cf2e89ef5a024e4b29b5f37ad45c00.camel@kernel.crashing.org>
 Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joel Stanley <joel@jms.id.au>
-Date:   Sun, 01 Jul 2018 13:49:14 +1000
-In-Reply-To: <CA+55aFwwzF-PeS02x-9FFSQdPpJgmaEtC8KNfG_U_DTbSXz+-g@mail.gmail.com>
+        Joel Stanley <joel@jms.id.au>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Sun, 01 Jul 2018 13:52:12 +1000
+In-Reply-To: <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
 References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
          <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
          <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
          <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
-         <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
-         <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
-         <CA+55aFwwzF-PeS02x-9FFSQdPpJgmaEtC8KNfG_U_DTbSXz+-g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
 Mime-Version: 1.0
@@ -50,66 +48,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-06-30 at 19:18 -0700, Linus Torvalds wrote:
-> On Sat, Jun 30, 2018 at 7:07 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+(This is a resend with lkml added for background & archival purposes)
+
+On Sat, 2018-06-30 at 12:29 -0700, Linus Torvalds wrote:
+> On Thu, Jun 28, 2018 at 7:19 PM Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
 > > 
-> > Those locks won't protect kobj races in _general_ (ie there is no
-> > locking between two totally unrelated buses), but they *should*
-> > serialize the case of a device being added within one class. No?
+> > For devices with a class, we create a "glue" directory between
+> > the parent device and the new device with the class name.
+> > 
+> > This directory is never "explicitely" removed when empty however,
+> > this is left to the implicit sysfs removal done by kobjects when
+> > they are released on the last kobject_put().
+> > 
+> > This is problematic because as long as it's not been removed from
+> > sysfs, it is still present in the class kset and in sysfs directory
+> > structure.
 > 
-> Side note: there had *better* be some locking whenever there is a way
-> to find an object, because otherwise you have a fundamental lifetime
-> problem: one thread finding the object at the same time another thread
-> frees it for the last time. Even the "unless_zero()" won't fix it,
-> because the final free will release the underlying object itself, so
-> the "zero" state is ephemeral.
+> Ok, so I don't hate the patch per se, but looking around, I think this
+> is still wrong in the end.
+> 
+> Why?
+> 
+> Because normally, the last kobject_put() really does do a synchronous
+> kobject_del(). So normally, this is all completely pointless, and the
+> normal kobject lifetime rules should be sufficient.
 
-Right. We agree. The problem here relates to that built-in cleanup in
-kobject_release() which violates that rule: it removes the object from
-sysfs (and from any kset) after the reference has been dropped.
+Not entirely sadly....
 
-Users such as the gluedir code try to workaround this by using outer
-mutexes or locks, but it's fundamentally racy if there's any chance
-that another 3rd party holds the last reference, since in that case,
-the cleanup happens outside of any added locking.
+There's a small race between the kref going down to 0 and the last
+kobject_put(). Something might still "catch" the 0-reference object
+during that window. 
 
-That's why I tend to think that anything that relies on that "late
-removal from sysfs" is broken by design :) Anything that uses kobject
-should ensure they are taken out of sysfs and their respective ksets
-before the last reference drops.
+In this specific case our bacon is mostly saved by the gdp_mutex which
+is taken by cleanup_glue_dir() around what *should* be the lats
+kobject_put.... but what if it isn't ?
 
-Now it's probably all fine for most cases, I assume sysfs itself checks
-the reference to be non-0 in lookup path (I haven't checked), at least
-to prevent use-after-free. This is still open to the duplicate name
-issue. The bigger issue of use-after-free only happens in the rare
-cases where there's a separate list being maintained and cleaned up
-late.
+If anything else happens to hold a reference to the directory object
+(open files in sysfs maybe ?), then the last put will come from
+elsewhere and will happen without that mutex being held, thus re-
+opening the tiny race.
 
-The gluedir is such an example because it "manually" thrawls the kset
-list.
-
-So you are right, kobject_get should probably always be _unless_zero,
-but my point is we even with that, we probably still need to ensure the
-gluedir is taken out of the kset before we drop the last reference, so
-this can be done with the appropriate upper layer subsystem locking,
-and thus without racing with a new device being bound.
+Is this possible ?
  
-> That locking might be just RCU during lookup, and rcu-delaying the
-> release, of course.  I think that's all the sysfs code needs, for
-> example, since that's what lookup uses.
+> So I *think* your problem happens because you have
+> CONFIG_DEBUG_KOBJECT_RELEASE enabled, and that intentionally delays
+> the cleanup.
+
+I think it just opens an existing race more widely. The race always
+exist becaues another CPU can observe the object between the reference
+going to 0 and the last kobject_del done by kobject_release. That's one
+main reason why I dislike this "auto-clean" mechanism.
+
+One other way to solve it, which I just thought about, could be to,
+inside kobject_put() itself, check that the reference is *1* and do
+kobject_del() before the last kref_put. That does mean that somebody
+can snatch it in that window after it's been removed from sysfs though,
+is that ok ? It won't crash I suppose...
+
+> This is actually not really what DEBUG_KOBJECT_RELEASE is really
+> documented to do.  It is documented as a "let's debug problems where
+> drivers think deletion is immediate", but the sysfs interaction with
+> the same-name issue really smells different.
 > 
-> And for any other embedded kobj cases, where you can reach the object
-> using some random subsystem pointers, there had better be other
-> locking in place for that pointer lookup vs the last removal.
+> So what the patch does is basically to just fight
+> DEBUG_KOBJECT_RELEASE delaying rules, and that kind of stinks.
+
+Not entirely, it fight an existing race that DEBUG_KOBJECT_RELEASE just
+opens more widely.
+
+> To me, it really feels like either we should see the
+> DEBUG_KOBJECT_RELEASE rules are "real" (in which case fighting them is
+> wrong), or we should admit that DEBUG_KOBJECT_RELEASE causes problems
+> (in which case we should probably try to fix the debug aid).
 > 
-> kobject itself doesn't provide that locking, it only provides the
-> reference counting. But that's partly why it really has to disallow
-> any kobject_get() of a zero object, because it means that the
-> tear-down has been started, but the tear-down itself may not have had
-> time to get the lock yet (ie kobject_release() may be just about to
-> call the t->release() function).
+> Ben, can you confirm that your problem just goes away if you don't
+> select DEBUG_KOBJECT_RELEASE?
+
+The easily reproducable crash goes away, because the device I've been
+observing these is a tiny slow single core ARM embedded thing. But I'm
+not sure the therical race is solved.
+
+> Greg - comments? The pattern of "remove last device, add a new device
+> of the same class" really seems to be a valid pattern, and
+> CONFIG_DEBUG_KOBJECT_RELEASE seems to actively break it.
 > 
-> But maybe I'm missing something subtle.
+> Could we perhaps add a synthetic test for exactly this pattern (add a
+> silly device with a bogus class, remove it, and add another device
+> with the same class)?
 > 
->                Linus
+>                  Linus
