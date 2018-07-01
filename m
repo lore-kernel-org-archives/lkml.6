@@ -3,39 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82908C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F09DDC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EA02089F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EA02089F
+	by mail.kernel.org (Postfix) with ESMTP id B3404255CD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3404255CD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030635AbeGARSh (ORCPT
+        id S1031260AbeGARSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:18:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36818 "EHLO
+        Sun, 1 Jul 2018 13:18:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36802 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030987AbeGAQjB (ORCPT
+        with ESMTP id S1031659AbeGAQiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:01 -0400
+        Sun, 1 Jul 2018 12:38:55 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FE1092B;
-        Sun,  1 Jul 2018 16:39:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B936AA6;
+        Sun,  1 Jul 2018 16:38:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Finley Xiao <finley.xiao@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.17 055/220] soc: rockchip: power-domain: Fix wrong value when power up pd with writemask
-Date:   Sun,  1 Jul 2018 18:21:19 +0200
-Message-Id: <20180701160910.637487959@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.17 053/220] powerpc/fadump: Unregister fadump on kexec down path.
+Date:   Sun,  1 Jul 2018 18:21:17 +0200
+Message-Id: <20180701160910.551321291@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,37 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit 9e59c5f66c624b43c766a9fe3b2430e0e976bf0e upstream.
+commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
 
-Solve the pd could only ever turn off but never turn them on again,
-if the pd registers have the writemask bits.
+Unregister fadump on kexec down path otherwise the fadump registration
+in new kexec-ed kernel complains that fadump is already registered.
+This makes new kernel to continue using fadump registered by previous
+kernel which may lead to invalid vmcore generation. Hence this patch
+fixes this issue by un-registering fadump in fadump_cleanup() which is
+called during kexec path so that new kernel can register fadump with
+new valid values.
 
-So far this affects the rk3328 only.
-
-Fixes: 79bb17ce8edb ("soc: rockchip: power-domain: Support domain control in hiword-registers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
+Cc: stable@vger.kernel.org # v3.4+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/rockchip/pm_domains.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/fadump.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -255,7 +255,7 @@ static void rockchip_do_pmu_set_power_do
- 		return;
- 	else if (pd->info->pwr_w_mask)
- 		regmap_write(pmu->regmap, pmu->info->pwr_offset,
--			     on ? pd->info->pwr_mask :
-+			     on ? pd->info->pwr_w_mask :
- 			     (pd->info->pwr_mask | pd->info->pwr_w_mask));
- 	else
- 		regmap_update_bits(pmu->regmap, pmu->info->pwr_offset,
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1155,6 +1155,9 @@ void fadump_cleanup(void)
+ 		init_fadump_mem_struct(&fdm,
+ 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
+ 		fadump_invalidate_dump(&fdm);
++	} else if (fw_dump.dump_registered) {
++		/* Un-register Firmware-assisted dump if it was registered. */
++		fadump_unregister_dump(&fdm);
+ 	}
+ }
+ 
 
 
