@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0F9C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091A9C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808CC2174B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 808CC2174B
+	by mail.kernel.org (Postfix) with ESMTP id B5D2821765
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D2821765
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933039AbeGASjF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:39:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60394 "EHLO
+        id S932983AbeGASja (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:39:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753162AbeGAQOl (ORCPT
+        with ESMTP id S1752729AbeGAQOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:41 -0400
+        Sun, 1 Jul 2018 12:14:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B98E486D;
-        Sun,  1 Jul 2018 16:14:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E6054A3;
+        Sun,  1 Jul 2018 16:14:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>,
-        John Muir <john@jmuir.com>, Csaba Henk <csaba@gluster.com>,
-        Anand Avati <avati@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 3.18 57/85] fuse: dont keep dead fuse_conn at fuse_fill_super().
-Date:   Sun,  1 Jul 2018 18:02:15 +0200
-Message-Id: <20180701153124.632727819@linuxfoundation.org>
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH 3.18 82/85] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
+Date:   Sun,  1 Jul 2018 18:02:40 +0200
+Message-Id: <20180701153125.627241749@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -53,41 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 543b8f8662fe6d21f19958b666ab0051af9db21a upstream.
+commit eef04c7b3786ff0c9cb1019278b6c6c2ea0ad4ff upstream.
 
-syzbot is reporting use-after-free at fuse_kill_sb_blk() [1].
-Since sb->s_fs_info field is not cleared after fc was released by
-fuse_conn_put() when initialization failed, fuse_kill_sb_blk() finds
-already released fc and tries to hold the lock. Fix this by clearing
-sb->s_fs_info field after calling fuse_conn_put().
+Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
+MSIs") fixed a couple of errors in error cleanup path of
+xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
+__unbind_from_irq() with an unbound irq, which would result in
+triggering the BUG_ON there.
 
-[1] https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
+Since there is really no reason for the BUG_ON (xen_free_irq() can
+operate on unbound irqs) we can remove it.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>
-Fixes: 3b463ae0c626 ("fuse: invalidation reverse calls")
-Cc: John Muir <john@jmuir.com>
-Cc: Csaba Henk <csaba@gluster.com>
-Cc: Anand Avati <avati@redhat.com>
-Cc: <stable@vger.kernel.org> # v2.6.31
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/events/events_base.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1125,6 +1125,7 @@ static int fuse_fill_super(struct super_
-  err_put_conn:
- 	fuse_bdi_destroy(fc);
- 	fuse_conn_put(fc);
-+	sb->s_fs_info = NULL;
-  err_fput:
- 	fput(file);
-  err:
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -636,8 +636,6 @@ static void __unbind_from_irq(unsigned i
+ 		xen_irq_info_cleanup(info);
+ 	}
+ 
+-	BUG_ON(info_for_irq(irq)->type == IRQT_UNBOUND);
+-
+ 	xen_free_irq(irq);
+ }
+ 
 
 
