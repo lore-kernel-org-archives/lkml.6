@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45466C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18ECC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB85B2518F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB85B2518F
+	by mail.kernel.org (Postfix) with ESMTP id 8C48B25190
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C48B25190
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965282AbeGAQ0F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:26:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33758 "EHLO
+        id S965020AbeGAQ0L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:26:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933898AbeGAQZ5 (ORCPT
+        with ESMTP id S965283AbeGAQ0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:57 -0400
+        Sun, 1 Jul 2018 12:26:06 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46333AEF;
-        Sun,  1 Jul 2018 16:25:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D95EFAD8;
+        Sun,  1 Jul 2018 16:26:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siarhei Liakh <siarhei.liakh@concurrent-rt.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Borislav Petkov" <bpetkov@suse.de>
-Subject: [PATCH 4.9 006/101] x86: Call fixup_exception() before notify_die() in math_error()
-Date:   Sun,  1 Jul 2018 18:20:52 +0200
-Message-Id: <20180701160757.395224196@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.9 009/101] signal/xtensa: Consistenly use SIGBUS in do_unaligned_user
+Date:   Sun,  1 Jul 2018 18:20:55 +0200
+Message-Id: <20180701160757.514976203@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -53,58 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siarhei Liakh <Siarhei.Liakh@concurrent-rt.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 3ae6295ccb7cf6d344908209701badbbbb503e40 upstream.
+commit 7de712ccc096b81d23cc0a941cd9b8cb3956605d upstream.
 
-fpu__drop() has an explicit fwait which under some conditions can trigger a
-fixable FPU exception while in kernel. Thus, we should attempt to fixup the
-exception first, and only call notify_die() if the fixup failed just like
-in do_general_protection(). The original call sequence incorrectly triggers
-KDB entry on debug kernels under particular FPU-intensive workloads.
+While working on changing this code to use force_sig_fault I
+discovered that do_unaliged_user is sets si_signo to SIGBUS and passes
+SIGSEGV to force_sig_info.  Which is just b0rked.
 
-Andy noted, that this makes the whole conditional irq enable thing even
-more inconsistent, but fixing that it outside the scope of this.
+The code is reporting a SIGBUS error so replace the SIGSEGV with SIGBUS.
 
-Signed-off-by: Siarhei Liakh <siarhei.liakh@concurrent-rt.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Borislav  Petkov" <bpetkov@suse.de>
+Cc: Chris Zankel <chris@zankel.net>
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-xtensa@linux-xtensa.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+Fixes: 5a0015d62668 ("[PATCH] xtensa: Architecture support for Tensilica Xtensa Part 3")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/traps.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/xtensa/kernel/traps.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -799,16 +799,18 @@ static void math_error(struct pt_regs *r
- 	char *str = (trapnr == X86_TRAP_MF) ? "fpu exception" :
- 						"simd exception";
+--- a/arch/xtensa/kernel/traps.c
++++ b/arch/xtensa/kernel/traps.c
+@@ -334,7 +334,7 @@ do_unaligned_user (struct pt_regs *regs)
+ 	info.si_errno = 0;
+ 	info.si_code = BUS_ADRALN;
+ 	info.si_addr = (void *) regs->excvaddr;
+-	force_sig_info(SIGSEGV, &info, current);
++	force_sig_info(SIGBUS, &info, current);
  
--	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, SIGFPE) == NOTIFY_STOP)
--		return;
- 	cond_local_irq_enable(regs);
- 
- 	if (!user_mode(regs)) {
--		if (!fixup_exception(regs, trapnr)) {
--			task->thread.error_code = error_code;
--			task->thread.trap_nr = trapnr;
-+		if (fixup_exception(regs, trapnr))
-+			return;
-+
-+		task->thread.error_code = error_code;
-+		task->thread.trap_nr = trapnr;
-+
-+		if (notify_die(DIE_TRAP, str, regs, error_code,
-+					trapnr, SIGFPE) != NOTIFY_STOP)
- 			die(str, regs, error_code);
--		}
- 		return;
- 	}
- 
+ }
+ #endif
 
 
