@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE68C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95576C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E462516C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E462516C
+	by mail.kernel.org (Postfix) with ESMTP id 4D23325171
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D23325171
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933891AbeGAQY7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:24:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33566 "EHLO
+        id S964989AbeGAQZH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:25:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33608 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964871AbeGAQYt (ORCPT
+        with ESMTP id S932790AbeGAQZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:49 -0400
+        Sun, 1 Jul 2018 12:25:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68920ACD;
-        Sun,  1 Jul 2018 16:24:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E46AAE0;
+        Sun,  1 Jul 2018 16:25:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Borislav Petkov <bp@suse.de>
-Subject: [PATCH 4.9 002/101] x86/mce: Improve error message when kernel cannot recover
-Date:   Sun,  1 Jul 2018 18:20:48 +0200
-Message-Id: <20180701160757.232966479@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 023/101] fuse: fix control dir setup and teardown
+Date:   Sun,  1 Jul 2018 18:21:09 +0200
+Message-Id: <20180701160758.070967043@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -53,56 +50,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Luck <tony.luck@intel.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit c7d606f560e4c698884697fef503e4abacdd8c25 upstream.
+commit 6becdb601bae2a043d7fb9762c4d48699528ea6e upstream.
 
-Since we added support to add recovery from some errors inside the kernel in:
+syzbot is reporting NULL pointer dereference at fuse_ctl_remove_conn() [1].
+Since fc->ctl_ndents is incremented by fuse_ctl_add_conn() when new_inode()
+failed, fuse_ctl_remove_conn() reaches an inode-less dentry and tries to
+clear d_inode(dentry)->i_private field.
 
-commit b2f9d678e28c ("x86/mce: Check for faults tagged in EXTABLE_CLASS_FAULT exception table entries")
+Fix by only adding the dentry to the array after being fully set up.
 
-we have done a less than stellar job at reporting the cause of recoverable
-machine checks that occur in other parts of the kernel. The user just gets
-the unhelpful message:
+When tearing down the control directory, do d_invalidate() on it to get rid
+of any mounts that might have been added.
 
-	mce: [Hardware Error]: Machine check: Action required: unknown MCACOD
-
-doubly unhelpful when they check the manual for the reported IA32_MSR_STATUS.MCACOD
-and see that it is listed as one of the standard recoverable values.
-
-Add an extra rule to the MCE severity table to catch this case and report it
-as:
-
-	mce: [Hardware Error]: Machine check: Data load in unrecoverable area of kernel
-
-Fixes: b2f9d678e28c ("x86/mce: Check for faults tagged in EXTABLE_CLASS_FAULT exception table entries")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: stable@vger.kernel.org # 4.6+
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/4cc7c465150a9a48b8b9f45d0b840278e77eb9b5.1527283897.git.tony.luck@intel.com
+[1] https://syzkaller.appspot.com/bug?id=f396d863067238959c91c0b7cfc10b163638cac6
+Reported-by: syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>
+Fixes: bafa96541b25 ("[PATCH] fuse: add control filesystem")
+Cc: <stable@vger.kernel.org> # v2.6.18
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce-severity.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/fuse/control.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-@@ -143,6 +143,11 @@ static struct severity {
- 		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_INSTR),
- 		USER
- 		),
-+	MCESEV(
-+		PANIC, "Data load in unrecoverable area of kernel",
-+		SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_DATA),
-+		KERNEL
-+		),
- #endif
- 	MCESEV(
- 		PANIC, "Action required: unknown MCACOD",
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -211,10 +211,11 @@ static struct dentry *fuse_ctl_add_dentr
+ 	if (!dentry)
+ 		return NULL;
+ 
+-	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
+ 	inode = new_inode(fuse_control_sb);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		return NULL;
++	}
+ 
+ 	inode->i_ino = get_next_ino();
+ 	inode->i_mode = mode;
+@@ -228,6 +229,9 @@ static struct dentry *fuse_ctl_add_dentr
+ 	set_nlink(inode, nlink);
+ 	inode->i_private = fc;
+ 	d_add(dentry, inode);
++
++	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
++
+ 	return dentry;
+ }
+ 
+@@ -284,7 +288,10 @@ void fuse_ctl_remove_conn(struct fuse_co
+ 	for (i = fc->ctl_ndents - 1; i >= 0; i--) {
+ 		struct dentry *dentry = fc->ctl_dentry[i];
+ 		d_inode(dentry)->i_private = NULL;
+-		d_drop(dentry);
++		if (!i) {
++			/* Get rid of submounts: */
++			d_invalidate(dentry);
++		}
+ 		dput(dentry);
+ 	}
+ 	drop_nlink(d_inode(fuse_control_sb->s_root));
 
 
