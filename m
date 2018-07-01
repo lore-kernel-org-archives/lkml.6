@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B108C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E4CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022C62563B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022C62563B
+	by mail.kernel.org (Postfix) with ESMTP id 8833B2567E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8833B2567E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031495AbeGAR1E (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:27:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36284 "EHLO
+        id S934124AbeGAR12 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:27:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36260 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031428AbeGAQh3 (ORCPT
+        with ESMTP id S1031414AbeGAQhY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:29 -0400
+        Sun, 1 Jul 2018 12:37:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E63AACC;
-        Sun,  1 Jul 2018 16:37:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A1ADACC;
+        Sun,  1 Jul 2018 16:37:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.17 023/220] mmc: renesas_sdhi: really fix WP logic regressions
-Date:   Sun,  1 Jul 2018 18:20:47 +0200
-Message-Id: <20180701160909.322850655@linuxfoundation.org>
+        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 021/220] PM / core: Fix supplier device runtime PM usage counter imbalance
+Date:   Sun,  1 Jul 2018 18:20:45 +0200
+Message-Id: <20180701160909.235911641@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,99 +50,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit ef5332c10d4f332a2ac79e9ad5452f4e89d1815a upstream.
+commit 47e5abfb546a3ace23a77453dc2e9db92704c5ac upstream.
 
-This reverts commit e060d376cc61 ("mmc: renesas_sdhi: fix WP detection")
-and adds some code to really fix the regressions.
+If a device link is added via device_link_add() by the driver of the
+link's consumer device, the supplier's runtime PM usage counter is
+going to be dropped by the pm_runtime_put_suppliers() call in
+driver_probe_device().  However, in that case it is not incremented
+unless the supplier driver is already present and the link is not
+stateless.  That leads to a runtime PM usage counter imbalance for
+the supplier device in a few cases.
 
-It was missed so far that Renesas R-Car instantiations of SDHI chose to
-disable internal WP and used the existence of "wp-gpios" to en/disable
-WP at all.
+To prevent that from happening, bump up the supplier runtime
+PM usage counter in device_link_add() for all links with the
+DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
+time.  Use pm_runtime_get_noresume() for that as the callers of
+device_link_add() who want the supplier to be resumed by it are
+expected to pass DL_FLAG_RPM_ACTIVE in flags to it anyway, but
+additionally resume the supplier if the link is added during
+consumer driver probe to retain the existing behavior for the
+callers depending on it.
 
-With the first refactoring by Yamada-san with commit 2ad1db059b9a ("mmc:
-renesas_sdhi: use MMC_CAP2_NO_WRITE_PROTECT instead of TMIO own flag"),
-WP was always disabled even when GPIOs were present. With Wolfram's
-first fix which gets now reverted, GPIOs were honored. But when not
-available, the fallback was to internal WP and not to disabled WP. This
-caused wrong WP status on uSD card slots.
-
-Restore the old behaviour now. By default, WP is disabled. When a GPIO
-is found, the GPIO re-enables WP. We will think about possible better
-ways to handle this in the future.
-
-Tested on a previously regressing Renesas Lager board (H2) and a still
-working Renesas Salvator-X board (M3-W).
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 21d5c57b3726 (PM / runtime: Use device links)
+Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 4.10+ <stable@vger.kernel.org> # 4.10+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/renesas_sdhi_core.c          |    5 +++++
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |    1 +
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      |    3 +++
- 3 files changed, 9 insertions(+)
+ drivers/base/core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -28,6 +28,7 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/slot-gpio.h>
- #include <linux/mfd/tmio.h>
- #include <linux/sh_dma.h>
- #include <linux/delay.h>
-@@ -534,6 +535,10 @@ int renesas_sdhi_probe(struct platform_d
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
- 	host->dma_ops		= dma_ops;
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -216,6 +216,13 @@ struct device_link *device_link_add(stru
+ 			link->rpm_active = true;
+ 		}
+ 		pm_runtime_new_link(consumer);
++		/*
++		 * If the link is being added by the consumer driver at probe
++		 * time, balance the decrementation of the supplier's runtime PM
++		 * usage counter after consumer probe in driver_probe_device().
++		 */
++		if (consumer->links.status == DL_DEV_PROBING)
++			pm_runtime_get_noresume(supplier);
+ 	}
+ 	get_device(supplier);
+ 	link->supplier = supplier;
+@@ -235,12 +242,12 @@ struct device_link *device_link_add(stru
+ 			switch (consumer->links.status) {
+ 			case DL_DEV_PROBING:
+ 				/*
+-				 * Balance the decrementation of the supplier's
+-				 * runtime PM usage counter after consumer probe
+-				 * in driver_probe_device().
++				 * Some callers expect the link creation during
++				 * consumer driver probe to resume the supplier
++				 * even without DL_FLAG_RPM_ACTIVE.
+ 				 */
+ 				if (flags & DL_FLAG_PM_RUNTIME)
+-					pm_runtime_get_sync(supplier);
++					pm_runtime_resume(supplier);
  
-+	/* For some SoC, we disable internal WP. GPIO may override this */
-+	if (mmc_can_gpio_ro(host->mmc))
-+		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
-+
- 	/* SDR speeds are only available on Gen2+ */
- 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
- 		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -87,6 +87,7 @@ static const struct renesas_sdhi_of_data
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -42,6 +42,7 @@ static const struct renesas_sdhi_of_data
- static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- };
- 
- /* Definitions for sampling clocks */
-@@ -61,6 +62,7 @@ static const struct renesas_sdhi_of_data
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
- 	.scc_offset	= 0x0300,
-@@ -81,6 +83,7 @@ static const struct renesas_sdhi_of_data
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-+	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
- 	.taps		= rcar_gen3_scc_taps,
+ 				link->status = DL_STATE_CONSUMER_PROBE;
+ 				break;
 
 
