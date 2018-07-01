@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FB1C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFFBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6984524B66
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6984524B66
+	by mail.kernel.org (Postfix) with ESMTP id 26F6D24B03
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F6D24B03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030951AbeGAQe1 (ORCPT
+        id S1030601AbeGARoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:34:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35540 "EHLO
+        Sun, 1 Jul 2018 13:44:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030538AbeGAQeO (ORCPT
+        with ESMTP id S1030952AbeGAQe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:14 -0400
+        Sun, 1 Jul 2018 12:34:27 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E6FE92B;
-        Sun,  1 Jul 2018 16:34:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1A5F49B;
+        Sun,  1 Jul 2018 16:34:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, martin bayern <Martinbayern@outlook.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 110/157] ubi: fastmap: Correctly handle interrupted erasures in EBA
-Date:   Sun,  1 Jul 2018 18:23:02 +0200
-Message-Id: <20180701160858.034279888@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.14 080/157] PCI: Add ACS quirk for Intel 300 series
+Date:   Sun,  1 Jul 2018 18:22:32 +0200
+Message-Id: <20180701160856.588317083@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,141 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 781932375ffc6411713ee0926ccae8596ed0261c upstream.
+commit f154a718e6cc0d834f5ac4dc4c3b174e65f3659e upstream.
 
-Fastmap cannot track the LEB unmap operation, therefore it can
-happen that after an interrupted erasure the mapping still looks
-good from Fastmap's point of view, while reading from the PEB will
-cause an ECC error and confuses the upper layer.
+Intel 300 series chipset still has the same ACS issue as the previous
+generations so extend the ACS quirk to cover it as well.
 
-Instead of teaching users of UBI how to deal with that, we read back
-the VID header and check for errors. If the PEB is empty or shows ECC
-errors we fixup the mapping and schedule the PEB for erasure.
-
-Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
-Cc: <stable@vger.kernel.org>
-Reported-by: martin bayern <Martinbayern@outlook.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/eba.c |   90 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -490,6 +490,82 @@ out_unlock:
- 	return err;
- }
- 
-+#ifdef CONFIG_MTD_UBI_FASTMAP
-+/**
-+ * check_mapping - check and fixup a mapping
-+ * @ubi: UBI device description object
-+ * @vol: volume description object
-+ * @lnum: logical eraseblock number
-+ * @pnum: physical eraseblock number
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4388,6 +4388,11 @@ static int pci_quirk_qcom_rp_acs(struct
+  *
+  * 0x9d10-0x9d1b PCI Express Root port #{1-12}
+  *
++ * The 300 series chipset suffers from the same bug so include those root
++ * ports here as well.
 + *
-+ * Checks whether a given mapping is valid. Fastmap cannot track LEB unmap
-+ * operations, if such an operation is interrupted the mapping still looks
-+ * good, but upon first read an ECC is reported to the upper layer.
-+ * Normaly during the full-scan at attach time this is fixed, for Fastmap
-+ * we have to deal with it while reading.
-+ * If the PEB behind a LEB shows this symthom we change the mapping to
-+ * %UBI_LEB_UNMAPPED and schedule the PEB for erasure.
++ * 0xa32c-0xa343 PCI Express Root port #{0-24}
 + *
-+ * Returns 0 on success, negative error code in case of failure.
-+ */
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+			 int *pnum)
-+{
-+	int err;
-+	struct ubi_vid_io_buf *vidb;
-+
-+	if (!ubi->fast_attach)
-+		return 0;
-+
-+	vidb = ubi_alloc_vid_buf(ubi, GFP_NOFS);
-+	if (!vidb)
-+		return -ENOMEM;
-+
-+	err = ubi_io_read_vid_hdr(ubi, *pnum, vidb, 0);
-+	if (err > 0 && err != UBI_IO_BITFLIPS) {
-+		int torture = 0;
-+
-+		switch (err) {
-+			case UBI_IO_FF:
-+			case UBI_IO_FF_BITFLIPS:
-+			case UBI_IO_BAD_HDR:
-+			case UBI_IO_BAD_HDR_EBADMSG:
-+				break;
-+			default:
-+				ubi_assert(0);
-+		}
-+
-+		if (err == UBI_IO_BAD_HDR_EBADMSG || err == UBI_IO_FF_BITFLIPS)
-+			torture = 1;
-+
-+		down_read(&ubi->fm_eba_sem);
-+		vol->eba_tbl->entries[lnum].pnum = UBI_LEB_UNMAPPED;
-+		up_read(&ubi->fm_eba_sem);
-+		ubi_wl_put_peb(ubi, vol->vol_id, lnum, *pnum, torture);
-+
-+		*pnum = UBI_LEB_UNMAPPED;
-+	} else if (err < 0) {
-+		ubi_err(ubi, "unable to read VID header back from PEB %i: %i",
-+			*pnum, err);
-+
-+		goto out_free;
-+	}
-+
-+	err = 0;
-+
-+out_free:
-+	ubi_free_vid_buf(vidb);
-+
-+	return err;
-+}
-+#else
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+		  int *pnum)
-+{
-+	return 0;
-+}
-+#endif
-+
- /**
-  * ubi_eba_read_leb - read data.
-  * @ubi: UBI device description object
-@@ -522,7 +598,13 @@ int ubi_eba_read_leb(struct ubi_device *
- 		return err;
- 
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
--	if (pnum < 0) {
-+	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out_unlock;
-+	}
-+
-+	if (pnum == UBI_LEB_UNMAPPED) {
- 		/*
- 		 * The logical eraseblock is not mapped, fill the whole buffer
- 		 * with 0xFF bytes. The exception is static volumes for which
-@@ -931,6 +1013,12 @@ int ubi_eba_write_leb(struct ubi_device
- 
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
- 	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out;
-+	}
-+
-+	if (pnum >= 0) {
- 		dbg_eba("write %d bytes at offset %d of LEB %d:%d, PEB %d",
- 			len, offset, vol_id, lnum, pnum);
+  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
+  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
+  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
+@@ -4405,6 +4410,7 @@ static bool pci_quirk_intel_spt_pch_acs_
+ 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
+ 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
+ 	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
++	case 0xa32c ... 0xa343:				/* 300 series */
+ 		return true;
+ 	}
  
 
 
