@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D093C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F90C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5791257B8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:55:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5791257B8
+	by mail.kernel.org (Postfix) with ESMTP id E76A2257BE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:55:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E76A2257BE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753662AbeGARzM (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:55:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35022 "EHLO
+        id S965654AbeGARzi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:55:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030519AbeGAQbg (ORCPT
+        with ESMTP id S1030501AbeGAQba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:36 -0400
+        Sun, 1 Jul 2018 12:31:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62AC392B;
-        Sun,  1 Jul 2018 16:31:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1EBBAD8;
+        Sun,  1 Jul 2018 16:31:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan M Schaeckeler <sschaeck@cisco.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.14 055/157] of: unittest: for strings, account for trailing \0 in property length field
-Date:   Sun,  1 Jul 2018 18:22:07 +0200
-Message-Id: <20180701160855.396618751@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 4.14 053/157] ARM64: dts: meson: disable sd-uhs modes on the libretech-cc
+Date:   Sun,  1 Jul 2018 18:22:05 +0200
+Message-Id: <20180701160855.296379694@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,63 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan M Schaeckeler <sschaeck@cisco.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 3b9cf7905fe3ab35ab437b5072c883e609d3498d upstream.
+commit d5b4885b1dff72ac670b518cfeaac719d768bd4d upstream.
 
-For strings, account for trailing \0 in property length field:
+There is a problem with the sd-uhs mode when doing a soft reboot.
+Switching back from 1.8v to 3.3v messes with the card, which no longer
+respond (timeout errors). According to the specification, we should
+perform a card reset (power cycling the card) but this is something we
+cannot control on this design.
 
-This is consistent with how dtc builds string properties.
+Then the only solution to restore the communication with the card is an
+"unplug-plug" which is not acceptable
 
-Function __of_prop_dup() would misbehave on such properties as it duplicates
-properties based on the property length field creating new string values
-without trailing \0s.
+Until we find a solution, if any, disable the sd-uhs modes on this design.
+For the people using uhs at the moment, there will a performance drop as
+a result.
 
-Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-Tested-by: Frank Rowand <frank.rowand@sony.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 3cde63ebc85c ("ARM64: dts: meson-gxl: libretech-cc: enable high speed modes")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/unittest.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -164,20 +164,20 @@ static void __init of_unittest_dynamic(v
- 	/* Add a new property - should pass*/
- 	prop->name = "new-property";
- 	prop->value = "new-property-data";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) == 0, "Adding a new property failed\n");
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -205,9 +205,6 @@
  
- 	/* Try to add an existing property - should fail */
- 	prop++;
- 	prop->name = "new-property";
- 	prop->value = "new-property-data-should-fail";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) != 0,
- 		 "Adding an existing property should have failed\n");
- 
- 	/* Try to modify an existing property - should pass */
- 	prop->value = "modify-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating an existing property should have passed\n");
- 
-@@ -185,7 +185,7 @@ static void __init of_unittest_dynamic(v
- 	prop++;
- 	prop->name = "modify-property";
- 	prop->value = "modify-missing-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating a missing property should have passed\n");
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+-	sd-uhs-sdr12;
+-	sd-uhs-sdr25;
+-	sd-uhs-sdr50;
+ 	max-frequency = <100000000>;
+ 	disable-wp;
  
 
 
