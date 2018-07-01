@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E61C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F38C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7268F25956
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7268F25956
+	by mail.kernel.org (Postfix) with ESMTP id 35F2F2595B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F2F2595B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965272AbeGASVR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:21:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33586 "EHLO
+        id S934163AbeGASVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:21:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33556 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933801AbeGAQYy (ORCPT
+        with ESMTP id S965205AbeGAQYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:54 -0400
+        Sun, 1 Jul 2018 12:24:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E008AD8;
-        Sun,  1 Jul 2018 16:24:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 998D1AF3;
+        Sun,  1 Jul 2018 16:24:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Austin <chadaustin@fb.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 021/101] fuse: atomic_o_trunc should truncate pagecache
-Date:   Sun,  1 Jul 2018 18:21:07 +0200
-Message-Id: <20180701160757.989301182@linuxfoundation.org>
+        stable@vger.kernel.org, Nordmark Claes <Claes.Nordmark@tieto.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.9 019/101] ipmi:bt: Set the timeout before doing a capabilities check
+Date:   Sun,  1 Jul 2018 18:21:05 +0200
+Message-Id: <20180701160757.909465632@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,52 +49,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit df0e91d488276086bc07da2e389986cae0048c37 upstream.
+commit fe50a7d0393a552e4539da2d31261a59d6415950 upstream.
 
-Fuse has an "atomic_o_trunc" mode, where userspace filesystem uses the
-O_TRUNC flag in the OPEN request to truncate the file atomically with the
-open.
+There was one place where the timeout value for an operation was
+not being set, if a capabilities request was done from idle.  Move
+the timeout value setting to before where that change might be
+requested.
 
-In this mode there's no need to send a SETATTR request to userspace after
-the open, so fuse_do_setattr() checks this mode and returns.  But this
-misses the important step of truncating the pagecache.
+IMHO the cause here is the invisible returns in the macros.  Maybe
+that's a job for later, though.
 
-Add the missing parts of truncation to the ATTR_OPEN branch.
-
-Reported-by: Chad Austin <chadaustin@fb.com>
-Fixes: 6ff958edbf39 ("fuse: add atomic open+truncate support")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: <stable@vger.kernel.org>
+Reported-by: Nordmark Claes <Claes.Nordmark@tieto.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dir.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_bt_sm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1633,8 +1633,19 @@ int fuse_do_setattr(struct dentry *dentr
- 		return err;
+--- a/drivers/char/ipmi/ipmi_bt_sm.c
++++ b/drivers/char/ipmi/ipmi_bt_sm.c
+@@ -522,11 +522,12 @@ static enum si_sm_result bt_event(struct
+ 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
+ 			BT_CONTROL(BT_H_BUSY);
  
- 	if (attr->ia_valid & ATTR_OPEN) {
--		if (fc->atomic_o_trunc)
-+		/* This is coming from open(..., ... | O_TRUNC); */
-+		WARN_ON(!(attr->ia_valid & ATTR_SIZE));
-+		WARN_ON(attr->ia_size != 0);
-+		if (fc->atomic_o_trunc) {
-+			/*
-+			 * No need to send request to userspace, since actual
-+			 * truncation has already been done by OPEN.  But still
-+			 * need to truncate page cache.
-+			 */
-+			i_size_write(inode, 0);
-+			truncate_pagecache(inode, 0);
- 			return 0;
-+		}
- 		file = NULL;
- 	}
++		bt->timeout = bt->BT_CAP_req2rsp;
++
+ 		/* Read BT capabilities if it hasn't been done yet */
+ 		if (!bt->BT_CAP_outreqs)
+ 			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
+ 					SI_SM_CALL_WITHOUT_DELAY);
+-		bt->timeout = bt->BT_CAP_req2rsp;
+ 		BT_SI_SM_RETURN(SI_SM_IDLE);
  
+ 	case BT_STATE_XACTION_START:
 
 
