@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0BAC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C781C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BEB25108
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BEB25108
+	by mail.kernel.org (Postfix) with ESMTP id CBF2125109
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF2125109
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965095AbeGAQUT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:20:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33322 "EHLO
+        id S965117AbeGAQUW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:20:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33348 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbeGAQUE (ORCPT
+        with ESMTP id S965076AbeGAQUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:20:04 -0400
+        Sun, 1 Jul 2018 12:20:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2AF549B;
-        Sun,  1 Jul 2018 16:20:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 455F492B;
+        Sun,  1 Jul 2018 16:20:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.4 079/105] backlight: tps65217_bl: Fix Device Tree node lookup
-Date:   Sun,  1 Jul 2018 18:02:29 +0200
-Message-Id: <20180701153155.149740747@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 082/105] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
+Date:   Sun,  1 Jul 2018 18:02:32 +0200
+Message-Id: <20180701153155.345741421@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,43 +49,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 2b12dfa124dbadf391cb9a616aaa6b056823bf75 upstream.
+commit dbcb82b93f3e8322891e47472c89e63058b81e99 upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+sync_switch is a facility to synchronize decoding more closely with the
+point in the kernel when the context actually switched.
 
-This would only cause trouble if the child node is missing while there
-is an unrelated node named "backlight" elsewhere in the tree.
+In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
+transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
+Add it.
 
-Cc: stable <stable@vger.kernel.org>     # 3.7
-Fixes: eebfdc17cc6c ("backlight: Add TPS65217 WLED driver")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/backlight/tps65217_bl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/intel-pt.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/video/backlight/tps65217_bl.c
-+++ b/drivers/video/backlight/tps65217_bl.c
-@@ -184,11 +184,11 @@ static struct tps65217_bl_pdata *
- tps65217_bl_parse_dt(struct platform_device *pdev)
- {
- 	struct tps65217 *tps = dev_get_drvdata(pdev->dev.parent);
--	struct device_node *node = of_node_get(tps->dev->of_node);
-+	struct device_node *node;
- 	struct tps65217_bl_pdata *pdata, *err;
- 	u32 val;
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -1246,6 +1246,7 @@ static int intel_pt_sample(struct intel_
  
--	node = of_find_node_by_name(node, "backlight");
-+	node = of_get_child_by_name(tps->dev->of_node, "backlight");
- 	if (!node)
- 		return ERR_PTR(-ENODEV);
- 
+ 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
+ 		switch (ptq->switch_state) {
++		case INTEL_PT_SS_NOT_TRACING:
+ 		case INTEL_PT_SS_UNKNOWN:
+ 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
+ 			err = intel_pt_next_tid(pt, ptq);
 
 
