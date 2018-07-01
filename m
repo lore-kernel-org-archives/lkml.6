@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA66C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9EEC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63865252F9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63865252F9
+	by mail.kernel.org (Postfix) with ESMTP id D0521252F9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0521252F9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031239AbeGAQgR (ORCPT
+        id S1031253AbeGAQgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:36:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35928 "EHLO
+        Sun, 1 Jul 2018 12:36:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031228AbeGAQgJ (ORCPT
+        with ESMTP id S1031237AbeGAQgR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:09 -0400
+        Sun, 1 Jul 2018 12:36:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E69FD49B;
-        Sun,  1 Jul 2018 16:36:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9E7C49B;
+        Sun,  1 Jul 2018 16:36:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Chris Chiu <chiu@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 116/157] mfd: intel-lpss: Fix Intel Cannon Lake LPSS I2C input clock
-Date:   Sun,  1 Jul 2018 18:23:08 +0200
-Message-Id: <20180701160858.346611662@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 119/157] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
+Date:   Sun,  1 Jul 2018 18:23:11 +0200
+Message-Id: <20180701160858.677214225@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -55,86 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 4e93a658576ab115977225c9d0992b97ff19ba8c upstream.
+commit dbcb82b93f3e8322891e47472c89e63058b81e99 upstream.
 
-Intel Cannon Lake PCH has much higher 216 MHz input clock to LPSS I2C
-than Sunrisepoint which uses 120 MHz. Preliminary information was that
-both share the same clock rate but actual silicon implements elevated
-rate for better support for 3.4 MHz high-speed I2C.
+sync_switch is a facility to synchronize decoding more closely with the
+point in the kernel when the context actually switched.
 
-This incorrect input clock rate results too high I2C bus clock in case
-ACPI doesn't provide tuned I2C timing parameters since I2C host
-controller driver calculates them from input clock rate.
+In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
+transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
+Add it.
 
-Fix this by using the correct rate. We still share the same 230 ns SDA
-hold time value than Sunrisepoint.
-
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
-Fixes: b418bbff36dd ("mfd: intel-lpss: Add Intel Cannonlake PCI IDs")
-Reported-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Reported-by: Chris Chiu <chiu@endlessm.com>
-Reported-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Tested-by: Jian-Hong Pan <jian-hong@endlessm.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/intel-lpss-pci.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ tools/perf/util/intel-pt.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mfd/intel-lpss-pci.c
-+++ b/drivers/mfd/intel-lpss-pci.c
-@@ -124,6 +124,11 @@ static const struct intel_lpss_platform_
- 	.properties = apl_i2c_properties,
- };
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -1560,6 +1560,7 @@ static int intel_pt_sample(struct intel_
  
-+static const struct intel_lpss_platform_info cnl_i2c_info = {
-+	.clk_rate = 216000000,
-+	.properties = spt_i2c_properties,
-+};
-+
- static const struct pci_device_id intel_lpss_pci_ids[] = {
- 	/* BXT A-Step */
- 	{ PCI_VDEVICE(INTEL, 0x0aac), (kernel_ulong_t)&bxt_i2c_info },
-@@ -207,13 +212,13 @@ static const struct pci_device_id intel_
- 	{ PCI_VDEVICE(INTEL, 0x9daa), (kernel_ulong_t)&spt_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dab), (kernel_ulong_t)&spt_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dfb), (kernel_ulong_t)&spt_info },
--	{ PCI_VDEVICE(INTEL, 0x9dc5), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x9dc6), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9dc5), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9dc6), (kernel_ulong_t)&cnl_i2c_info },
- 	{ PCI_VDEVICE(INTEL, 0x9dc7), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0x9de8), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x9de9), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x9dea), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0x9deb), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9de8), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9de9), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9dea), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0x9deb), (kernel_ulong_t)&cnl_i2c_info },
- 	/* SPT-H */
- 	{ PCI_VDEVICE(INTEL, 0xa127), (kernel_ulong_t)&spt_uart_info },
- 	{ PCI_VDEVICE(INTEL, 0xa128), (kernel_ulong_t)&spt_uart_info },
-@@ -240,10 +245,10 @@ static const struct pci_device_id intel_
- 	{ PCI_VDEVICE(INTEL, 0xa32b), (kernel_ulong_t)&spt_info },
- 	{ PCI_VDEVICE(INTEL, 0xa37b), (kernel_ulong_t)&spt_info },
- 	{ PCI_VDEVICE(INTEL, 0xa347), (kernel_ulong_t)&spt_uart_info },
--	{ PCI_VDEVICE(INTEL, 0xa368), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0xa369), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0xa36a), (kernel_ulong_t)&spt_i2c_info },
--	{ PCI_VDEVICE(INTEL, 0xa36b), (kernel_ulong_t)&spt_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa368), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa369), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa36a), (kernel_ulong_t)&cnl_i2c_info },
-+	{ PCI_VDEVICE(INTEL, 0xa36b), (kernel_ulong_t)&cnl_i2c_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, intel_lpss_pci_ids);
+ 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
+ 		switch (ptq->switch_state) {
++		case INTEL_PT_SS_NOT_TRACING:
+ 		case INTEL_PT_SS_UNKNOWN:
+ 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
+ 			err = intel_pt_next_tid(pt, ptq);
 
 
