@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AA2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6EBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D54324FC7
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D54324FC7
+	by mail.kernel.org (Postfix) with ESMTP id A449F24FBB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A449F24FBB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932164AbeGAQMr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:12:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59992 "EHLO
+        id S932198AbeGAQMt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:12:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59980 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932126AbeGAQMm (ORCPT
+        with ESMTP id S932083AbeGAQMk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:42 -0400
+        Sun, 1 Jul 2018 12:12:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 239514A3;
-        Sun,  1 Jul 2018 16:12:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5797E86A;
+        Sun,  1 Jul 2018 16:12:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3.18 42/85] libata: zpodd: make arrays cdb static, reduces object code size
-Date:   Sun,  1 Jul 2018 18:02:00 +0200
-Message-Id: <20180701153124.042343656@linuxfoundation.org>
+        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 41/85] ALSA: hda - Handle kzalloc() failure in snd_hda_attach_pcm_stream()
+Date:   Sun,  1 Jul 2018 18:01:59 +0200
+Message-Id: <20180701153123.997484161@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -49,48 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Bo Chen <chenbo@pdx.edu>
 
-commit 795ef788145ed2fa023efdf11e8d5d7bedc21462 upstream.
+commit a3aa60d511746bd6c0d0366d4eb90a7998bcde8b upstream.
 
-Don't populate the arrays cdb on the stack, instead make them static.
-Makes the object code smaller by 230 bytes:
+When 'kzalloc()' fails in 'snd_hda_attach_pcm_stream()', a new pcm instance is
+created without setting its operators via 'snd_pcm_set_ops()'. Following
+operations on the new pcm instance can trigger kernel null pointer dereferences
+and cause kernel oops.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-   3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
+This bug was found with my work on building a gray-box fault-injection tool for
+linux-kernel-module binaries. A kernel null pointer dereference was confirmed
+from line 'substream->ops->open()' in function 'snd_pcm_open_substream()' in
+file 'sound/core/pcm_native.c'.
 
-After:
-   text	   data	    bss	    dec	    hex	filename
-   3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
+This patch fixes the bug by calling 'snd_device_free()' in the error handling
+path of 'kzalloc()', which removes the new pcm instance from the snd card before
+returns with an error code.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-zpodd.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_controller.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-zpodd.c
-+++ b/drivers/ata/libata-zpodd.c
-@@ -34,7 +34,7 @@ struct zpodd {
- static int eject_tray(struct ata_device *dev)
- {
- 	struct ata_taskfile tf;
--	const char cdb[] = {  GPCMD_START_STOP_UNIT,
-+	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
- 		0, 0, 0,
- 		0x02,     /* LoEj */
- 		0, 0, 0, 0, 0, 0, 0,
-@@ -55,7 +55,7 @@ static enum odd_mech_type zpodd_get_mech
- 	unsigned int ret;
- 	struct rm_feature_desc *desc = (void *)(buf + 8);
- 	struct ata_taskfile tf;
--	char cdb[] = {  GPCMD_GET_CONFIGURATION,
-+	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
- 			2,      /* only 1 feature descriptor requested */
- 			0, 3,   /* 3, removable medium feature */
- 			0, 0, 0,/* reserved */
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -915,8 +915,10 @@ static int azx_attach_pcm_stream(struct
+ 		return err;
+ 	strlcpy(pcm->name, cpcm->name, sizeof(pcm->name));
+ 	apcm = kzalloc(sizeof(*apcm), GFP_KERNEL);
+-	if (apcm == NULL)
++	if (apcm == NULL) {
++		snd_device_free(chip->card, pcm);
+ 		return -ENOMEM;
++	}
+ 	apcm->chip = chip;
+ 	apcm->pcm = pcm;
+ 	apcm->codec = codec;
 
 
