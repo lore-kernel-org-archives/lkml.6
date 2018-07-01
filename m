@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A847C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF85AC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE4B251C9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE4B251C9
+	by mail.kernel.org (Postfix) with ESMTP id 685C1251CB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685C1251CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752710AbeGALKk (ORCPT
+        id S1752729AbeGALKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:10:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47866 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:10:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47858 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752296AbeGALJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:03 -0400
+        id S1752311AbeGALJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A4438AF5B;
+        by mx1.suse.de (Postfix) with ESMTP id C79AAAF62;
         Sun,  1 Jul 2018 11:09:00 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
@@ -38,21 +38,13 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        =?UTF-8?q?Konstantin=20B=C3=B6hm?= <konstantin.boehm@ancud.de>,
-        Jan Jongboom <jan.jongboom@arm.com>,
-        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
-        lora@radioshuttle.de, Alexander Graf <agraf@suse.de>,
-        =?UTF-8?q?Michal=20Kube=C4=8Dek?= <mkubecek@suse.cz>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Subject: [RFC net-next 00/15] net: A socket API for LoRa
-Date:   Sun,  1 Jul 2018 13:07:49 +0200
-Message-Id: <20180701110804.32415-1-afaerber@suse.de>
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [RFC net-next 10/15] net: lora: Add Microchip RN2483
+Date:   Sun,  1 Jul 2018 13:07:59 +0200
+Message-Id: <20180701110804.32415-11-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
+References: <20180701110804.32415-1-afaerber@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -61,218 +53,585 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The Microchip RN2483 and RN2903 are UART based modules exposing both
+LoRaWAN and LoRa. The RN2483 supports switching between 433 and 868 MHz.
 
-LoRa is a long-range, low-power wireless technology by Semtech.
-Unlike other LPWAN technologies, users don't need to rely on infrastructure
-providers and SIM cards and expensive subscription plans, they can set up
-their own gateways. Modules, adapters and evaluation boards are available
-from a large number of vendors.
-
-Many vendors also make available Open Source software examples on GitHub.
-But when taking a closer look, many of them combine licenses in ways that are
-not redistributable. My reports have remained without response or solution.
-
-https://github.com/ernstdevreede/lmic_pi/issues/2
-https://github.com/Snootlab/lmic_chisterapi/issues/2
-https://github.com/Snootlab/lora_chisterapi/issues/2
-
-Another issue was that most such projects around the Raspberry Pi make use of
-spidev to communicate with the Semtech chipsets from userspace. The Linux spi
-maintainers have chosen to greet any such users of spidev with a friendly
-WARN_ON(), preferring in-kernel spi drivers and white-listing individual
-devices only.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/spi/spidev.c?h=v4.17#n722
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/spi/spidev.c?h=v4.17#n667
-
-Also I don't quite see the point in having userspace probe what SPI devices
-are connected to a generic spidev driver when we have an easy Device Tree
-hardware description on arm/arm64 that could give us that info.
-
-I raised the topic during Q&A of a FOSDEM 2017 talk (cut off at the end
-of the video) but unfortunately found no one to collaborate on this.
-
-https://archive.fosdem.org/2017/schedule/event/lorawan/
-
-Instead of porting from wiringPi to a differently licensed GPIO library
-and dealing with seemingly unmaintained LoRaWAN code dumps, I started a
-spi kernel driver for SX1276 back in 2016. But obviously a kernel driver
-isn't too helpful without a userspace API to send and receive packets.
-
-This patchset, updated from 2017 and extended, is implementing kernel drivers
-for various LoRa chipsets and modules. As API I'm proposing a PF_LORA socket
-implementation. Why? LoRa uses data packets with headers and checksums
-and differing MTUs and multiple protocols layered on top of it. Apart from
-simple headers for addressing used by RadioHead library and IMST's LoRa P2P
-protocol, the main use case (not implemented in this patchset) is expected
-to be LoRaWAN. And LoRaWAN has competing proprietary protocols, such as
-Link Labs' Symphony Link or GlobalSat M.O.S.T. or RadioShuttle, that might
-at some point want to adopt a standard API for their implementations, too.
-
-Ready-made LoRa hardware modules come in three flavors,
-a) with SPI access to the underlying Semtech chipsets, needing a software
-   implementation of e.g. LoRaWAN protocol stack (i.e., a soft MAC),
-b) with a custom, often UART based interface and a pre-certified LoRaWAN
-   protocol stack already integrated (i.e., hard/full MAC), and
-c) with a microcontroller that serves not only for the protocol stack but
-   also as application processor, not offering a ready-made interface.
-
-This patchset focuses on option a). An SX1276 based LoRaWAN stack appeared
-to be the project of Jian-Hong Pan and is not included here.
-This patchset also includes drivers for b), from text based AT commands to
-a binary SLIP based HCI protocol.
-Hardware examples for c) are Murata CMWX1ZZABZ-078 and RAK813.
-
-This patchset is clearly not ready for merging, but is being submitted for
-discussion, as requested by Jiri, in particular of the design choices:
-
-1) PF_LORA/AF_LORA and associated identifiers are proposed to represent
-   this technology. While for an SX1276 - case a) above - it might work to
-   layer LoRaWAN as a protocol option for PF_LORA and add LoRaWAN address
-   fields to the union in my sockaddr_lora, how would that work for devices
-   that only support LoRaWAN but not pure LoRa? Do we need both AF_LORA and
-   AF_LORAWAN, or just a separate ETH_P_LORAWAN or ARPHRD_LORAWAN?
-
-2) PF_LORA is used with SOCK_DGRAM here. The assumption is that RAW mode
-   would be DGRAM plus preamble plus optional checksum.
-
-3) Only the transmit path is partially implemented already. The assumption
-   is that the devices should go into receive mode by default and only
-   interrupt that when asked to transmit.
-
-4) Some hardware settings need to be supplied externally, such as the radio
-   frequency for some modules, but many others can be runtime-configured,
-   such as Spreading Factor, Bandwidth, Sync Word, or which antenna to use.
-   What settings should be implemented as socket option vs. netlink layer
-   vs. ioctl vs. sysfs? What are the criteria to apply?
-
-5) Many of the modules support multiple modes, such as LoRa, LoRaWAN and FSK.
-   Lacking a LoRaWAN implementation, I am currently switching them into LoRa
-   mode at probe time wherever possible. How do we deal with that properly?
-
-  a) Is there any precedence from the Wifi world for dynamically selecting
-     between our own trusted Open Source implementation vs. hardware/firmware
-     accelerated and/or certified implementations?
-
-  b) Would a proof of concept for FSK (non-LoRa) modes be required for
-     merging any LoRa driver for chipsets that support both? Or is there any
-     facility or design guidelines that would allow us to focus on LoRa and
-     LoRaWAN and leave non-LoRa radio modes to later contributors?
-
-As evident by the many questions, this is my first deep dive into the Linux
-net subsystem. It's also my first experiments with the new serdev subsystem,
-so in particular the receive paths will need some review and optimizations.
-
-This patchset was developed and tested mainly as KMP, originally at
-https://github.com/afaerber/lora-modules. It was recently transformed into a
-linux-next based tree, still mostly tested on our openSUSE Tumbleweed kernel
-with a differing AF_LORA value below current AF_MAX limit.
-
-Some corresponding Device Tree Overlays have been collected here:
-https://github.com/afaerber/dt-overlays
-
-Only European models for 868 MHz and 433 MHz could be tested when available.
-Thanks to all companies and people that have supported this project so far.
-
-Have a lot of fun!
-
-Cheers,
-Andreas
-
-Cc: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Matthias Brugger <mbrugger@suse.com>
-Cc: Konstantin Böhm <konstantin.boehm@ancud.de>
-Cc: Jan Jongboom <jan.jongboom@arm.com>
-Cc: Janus Piwek <jpiwek@arroweurope.com>
-Cc: Michael Röder <michael.roeder@avnet.eu>
-Cc: Dollar Chen (陳義元) <dollar.chen@wtmec.com>
-Cc: Ken Yu (禹凯) <ken.yu@rakwireless.com>
-Cc: Jon Ortego <Jon.Ortego@imst.de>
-Cc: contact@snootlab.com
-Cc: Ben Whitten <ben.whitten@lairdtech.com>
-Cc: Brian Ray <brian.ray@link-labs.com>
-Cc: lora@globalsat.com.tw
-Cc: lora@radioshuttle.de
-Cc: Alexander Graf <agraf@suse.de>
-Cc: Michal Kubeček <mkubecek@suse.cz>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Steve deRosier <derosier@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
-
-Andreas Färber (15):
-  net: Reserve protocol numbers for LoRa
-  net: lora: Define sockaddr_lora
-  net: lora: Add protocol numbers
-  net: Add lora subsystem
-  HACK: net: lora: Deal with .poll_mask in 4.18-rc2
-  net: lora: Prepare for device drivers
-  net: lora: Add Semtech SX1276
-  net: lora: sx1276: Add debugfs
-  net: lora: Prepare EUI helpers
-  net: lora: Add Microchip RN2483
-  net: lora: Add IMST WiMOD
-  net: lora: Add USI WM-SG-SM-42
-  net: lora: Prepare RAK RAK811
-  net: lora: Prepare Semtech SX1257
-  net: lora: Add Semtech SX1301
-
- drivers/net/Makefile                |   1 +
- drivers/net/lora/Kconfig            |  72 ++++
- drivers/net/lora/Makefile           |  32 ++
- drivers/net/lora/dev.c              | 125 ++++++
- drivers/net/lora/rak811.c           | 219 +++++++++++
- drivers/net/lora/rn2483.c           | 344 +++++++++++++++++
- drivers/net/lora/rn2483.h           |  40 ++
- drivers/net/lora/rn2483_cmd.c       | 130 +++++++
- drivers/net/lora/sx1257.c           |  96 +++++
- drivers/net/lora/sx1276.c           | 740 ++++++++++++++++++++++++++++++++++++
- drivers/net/lora/sx1301.c           | 446 ++++++++++++++++++++++
- drivers/net/lora/usi.c              | 411 ++++++++++++++++++++
- drivers/net/lora/wimod.c            | 597 +++++++++++++++++++++++++++++
- include/linux/lora/dev.h            |  44 +++
- include/linux/lora/skb.h            |  29 ++
- include/linux/socket.h              |   4 +-
- include/uapi/linux/if_arp.h         |   1 +
- include/uapi/linux/if_ether.h       |   1 +
- include/uapi/linux/lora.h           |  24 ++
- net/Kconfig                         |   1 +
- net/Makefile                        |   1 +
- net/lora/Kconfig                    |  15 +
- net/lora/Makefile                   |   8 +
- net/lora/af_lora.c                  | 152 ++++++++
- net/lora/af_lora.h                  |  13 +
- net/lora/dgram.c                    | 297 +++++++++++++++
- security/selinux/hooks.c            |   4 +-
- security/selinux/include/classmap.h |   4 +-
- 28 files changed, 3848 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/lora/Kconfig
- create mode 100644 drivers/net/lora/Makefile
- create mode 100644 drivers/net/lora/dev.c
- create mode 100644 drivers/net/lora/rak811.c
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ drivers/net/lora/Kconfig      |   7 +
+ drivers/net/lora/Makefile     |   4 +
+ drivers/net/lora/rn2483.c     | 344 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/net/lora/rn2483.h     |  40 +++++
+ drivers/net/lora/rn2483_cmd.c | 130 ++++++++++++++++
+ 5 files changed, 525 insertions(+)
  create mode 100644 drivers/net/lora/rn2483.c
  create mode 100644 drivers/net/lora/rn2483.h
  create mode 100644 drivers/net/lora/rn2483_cmd.c
- create mode 100644 drivers/net/lora/sx1257.c
- create mode 100644 drivers/net/lora/sx1276.c
- create mode 100644 drivers/net/lora/sx1301.c
- create mode 100644 drivers/net/lora/usi.c
- create mode 100644 drivers/net/lora/wimod.c
- create mode 100644 include/linux/lora/dev.h
- create mode 100644 include/linux/lora/skb.h
- create mode 100644 include/uapi/linux/lora.h
- create mode 100644 net/lora/Kconfig
- create mode 100644 net/lora/Makefile
- create mode 100644 net/lora/af_lora.c
- create mode 100644 net/lora/af_lora.h
- create mode 100644 net/lora/dgram.c
 
+diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
+index 0436f6b09a1c..940bd2cbe106 100644
+--- a/drivers/net/lora/Kconfig
++++ b/drivers/net/lora/Kconfig
+@@ -17,6 +17,13 @@ config LORA_DEV
+ 
+ if LORA_DEV
+ 
++config LORA_RN2483
++	tristate "Microchip RN2483/RN2903 driver"
++	default y
++	depends on SERIAL_DEV_BUS
++	help
++	  Microchip RN2483/2903
++
+ config LORA_SX1276
+ 	tristate "Semtech SX127x SPI driver"
+ 	default y
+diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
+index 8845542dba50..07839c3ce9f8 100644
+--- a/drivers/net/lora/Makefile
++++ b/drivers/net/lora/Makefile
+@@ -9,5 +9,9 @@ lora-dev-y := dev.o
+ # Alphabetically sorted.
+ #
+ 
++obj-$(CONFIG_LORA_RN2483) += lora-rn2483.o
++lora-rn2483-y := rn2483.o
++lora-rn2483-y += rn2483_cmd.o
++
+ obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
+ lora-sx1276-y := sx1276.o
+diff --git a/drivers/net/lora/rn2483.c b/drivers/net/lora/rn2483.c
+new file mode 100644
+index 000000000000..8b9ec2575ee2
+--- /dev/null
++++ b/drivers/net/lora/rn2483.c
+@@ -0,0 +1,344 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Microchip RN2483/RN2903
++ *
++ * Copyright (c) 2017-2018 Andreas Färber
++ */
++
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/lora.h>
++#include <linux/module.h>
++#include <linux/netdevice.h>
++#include <linux/of.h>
++#include <linux/serdev.h>
++#include <linux/lora/dev.h>
++
++#include "rn2483.h"
++
++struct rn2483_priv {
++	struct lora_priv lora;
++};
++
++static netdev_tx_t rn2483_loradev_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++{
++	if (skb->protocol != htons(ETH_P_LORA)) {
++		kfree_skb(skb);
++		netdev->stats.tx_dropped++;
++		return NETDEV_TX_OK;
++	}
++
++	netif_stop_queue(netdev);
++
++	/* TODO */
++	return NETDEV_TX_OK;
++}
++
++static int rn2483_loradev_open(struct net_device *netdev)
++{
++	int ret;
++
++	netdev_dbg(netdev, "%s", __func__);
++
++	ret = open_loradev(netdev);
++	if (ret)
++		return ret;
++
++	netif_start_queue(netdev);
++
++	return 0;
++}
++
++static int rn2483_loradev_stop(struct net_device *netdev)
++{
++	netdev_dbg(netdev, "%s", __func__);
++
++	netif_stop_queue(netdev);
++	close_loradev(netdev);
++
++	return 0;
++}
++
++static const struct net_device_ops rn2483_net_device_ops = {
++	.ndo_open = rn2483_loradev_open,
++	.ndo_stop = rn2483_loradev_stop,
++	.ndo_start_xmit = rn2483_loradev_start_xmit,
++};
++
++int rn2483_readline_timeout(struct rn2483_device *rndev, char **line, unsigned long timeout)
++{
++	timeout = wait_for_completion_timeout(&rndev->line_recv_comp, timeout);
++	if (!timeout)
++		return -ETIMEDOUT;
++
++	*line = devm_kstrdup(&rndev->serdev->dev, rndev->buf, GFP_KERNEL);
++	complete(&rndev->line_read_comp);
++	if (!*line)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void rn2483_receive_line(struct rn2483_device *rndev, const char *sz, size_t len)
++{
++	dev_dbg(&rndev->serdev->dev, "Received line '%s' (%d)", sz, (int)len);
++
++	reinit_completion(&rndev->line_read_comp);
++	complete(&rndev->line_recv_comp);
++	wait_for_completion(&rndev->line_read_comp);
++	reinit_completion(&rndev->line_recv_comp);
++}
++
++static int rn2483_receive_buf(struct serdev_device *serdev, const u8 *data, size_t count)
++{
++	struct rn2483_device *rndev = serdev_device_get_drvdata(serdev);
++	size_t i;
++
++	dev_dbg(&serdev->dev, "Receive (%d)", (int)count);
++	if (!rndev->buf) {
++		rndev->buf = devm_kmalloc(&serdev->dev, count, GFP_KERNEL);
++		if (!rndev->buf)
++			return 0;
++		rndev->buflen = 0;
++	} else {
++		void *tmp = devm_kmalloc(&serdev->dev, rndev->buflen + count, GFP_KERNEL);
++		if (!tmp)
++			return 0;
++		memcpy(tmp, rndev->buf, rndev->buflen);
++		devm_kfree(&serdev->dev, rndev->buf);
++		rndev->buf = tmp;
++	}
++
++	for (i = 0; i < count; i++) {
++		if (data[i] == '\r') {
++			rndev->saw_cr = true;
++		} else if (data[i] == '\n' && rndev->saw_cr) {
++			if (i > 1)
++				memcpy(rndev->buf + rndev->buflen, data, i - 1);
++			((char *)rndev->buf)[rndev->buflen + i - 1] = 0;
++			rn2483_receive_line(rndev, rndev->buf, rndev->buflen + i - 1);
++			rndev->saw_cr = false;
++			devm_kfree(&serdev->dev, rndev->buf);
++			rndev->buf = NULL;
++			rndev->buflen = 0;
++			return i + 1;
++		} else
++			rndev->saw_cr = false;
++	}
++
++	memcpy(rndev->buf + rndev->buflen, data, count);
++	rndev->buflen += count;
++	return count;
++}
++
++static const struct serdev_device_ops rn2483_serdev_client_ops = {
++	.receive_buf = rn2483_receive_buf,
++};
++
++static int rn2483_probe(struct serdev_device *sdev)
++{
++	struct rn2483_device *rndev;
++	char *line, *cmd;
++	char sz[5];
++	u32 status;
++	int ret;
++
++	dev_info(&sdev->dev, "Probing");
++
++	rndev = devm_kzalloc(&sdev->dev, sizeof(struct rn2483_device), GFP_KERNEL);
++	if (!rndev)
++		return -ENOMEM;
++
++	rndev->serdev = sdev;
++	init_completion(&rndev->line_recv_comp);
++	init_completion(&rndev->line_read_comp);
++	mutex_init(&rndev->cmd_lock);
++	serdev_device_set_drvdata(sdev, rndev);
++
++	rndev->reset_gpio = devm_gpiod_get_optional(&sdev->dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(rndev->reset_gpio))
++		return PTR_ERR(rndev->reset_gpio);
++
++	ret = serdev_device_open(sdev);
++	if (ret) {
++		dev_err(&sdev->dev, "Failed to open (%d)", ret);
++		return ret;
++	}
++
++	serdev_device_set_baudrate(sdev, 57600);
++	serdev_device_set_flow_control(sdev, false);
++
++	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
++	msleep(5);
++	serdev_device_set_client_ops(sdev, &rn2483_serdev_client_ops);
++	gpiod_set_value_cansleep(rndev->reset_gpio, 1);
++	msleep(100);
++
++	ret = rn2483_readline_timeout(rndev, &line, HZ);
++	if (ret) {
++		if (ret != -ENOMEM)
++			dev_err(&sdev->dev, "Timeout waiting for firmware identification");
++		goto err_timeout;
++	}
++
++	if (strlen(line) < strlen("RNxxxx X.Y.Z MMM DD YYYY HH:MM:SS") || line[6] != ' ' ||
++			strncmp(line, "RN", 2) != 0) {
++		dev_err(&sdev->dev, "Unexpected response '%s'", line);
++		devm_kfree(&sdev->dev, line);
++		ret = -EINVAL;
++		goto err_version;
++	}
++	dev_info(&sdev->dev, "Firmware '%s'", line);
++	strncpy(sz, line + 2, 4);
++	sz[4] = 0;
++	devm_kfree(&sdev->dev, line);
++	ret = kstrtouint(sz, 10, &rndev->model);
++	if (ret)
++		goto err_model;
++	if (!(rndev->model == 2483 || rndev->model == 2903)) {
++		dev_err(&sdev->dev, "Unknown model %u", rndev->model);
++		ret = -ENOTSUPP;
++		goto err_model;
++	}
++	dev_info(&sdev->dev, "Detected RN%u", rndev->model);
++
++	ret = rn2483_sys_get_hweui(rndev, &rndev->hweui);
++	if (ret) {
++		if (ret != -ENOMEM)
++			dev_err(&sdev->dev, "Failed to read HWEUI (%d)", ret);
++		goto err_hweui;
++	}
++	dev_info(&sdev->dev, "HWEUI " PRIxLORAEUI, LORA_EUI(rndev->hweui));
++
++	switch (rndev->model) {
++	case 2483:
++		ret = rn2483_mac_get_band(rndev, &rndev->band);
++		if (ret) {
++			dev_err(&sdev->dev, "Failed to read band (%d)", ret);
++			goto err_band;
++		}
++		dev_info(&sdev->dev, "Frequency band %u MHz", rndev->band);
++
++		ret = rn2483_mac_reset_band(rndev, 433);
++		if (ret) {
++			dev_err(&sdev->dev, "Failed to reset band (%d)", ret);
++			goto err_band;
++		}
++		rndev->band = 433;
++
++		ret = rn2483_mac_get_band(rndev, &rndev->band);
++		if (!ret)
++			dev_info(&sdev->dev, "New frequency band: %u MHz", rndev->band);
++		break;
++	case 2903:
++		/* No "mac get band" command available */
++		rndev->band = 915;
++		break;
++	}
++
++	ret = rn2483_mac_get_status(rndev, &status);
++	if (!ret)
++		dev_info(&sdev->dev, "MAC status %08x", status);
++
++	if (true) {
++		u32 pause;
++		ret = rn2483_mac_pause(rndev, &pause);
++		if (!ret)
++			dev_info(&sdev->dev, "MAC pausing (0x%08x)", pause);
++		ret = rn2483_mac_resume(rndev);
++		if (!ret)
++			dev_info(&sdev->dev, "MAC resuming");
++	}
++
++	cmd = "mac get sync";
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, cmd, &line, HZ);
++	mutex_unlock(&rndev->cmd_lock);
++	if (!ret) {
++		dev_info(&sdev->dev, "%s => '%s'", cmd, line);
++		devm_kfree(&sdev->dev, line);
++	}
++
++	rndev->netdev = alloc_loradev(sizeof(struct rn2483_priv));
++	if (!rndev->netdev) {
++		ret = -ENOMEM;
++		goto err_alloc_netdev;
++	}
++
++	rndev->netdev->netdev_ops = &rn2483_net_device_ops;
++	SET_NETDEV_DEV(rndev->netdev, &sdev->dev);
++
++	ret = register_loradev(rndev->netdev);
++	if (ret)
++		goto err_register_netdev;
++
++	dev_info(&sdev->dev, "Done.");
++
++	return 0;
++
++err_register_netdev:
++	free_loradev(rndev->netdev);
++err_alloc_netdev:
++err_band:
++err_hweui:
++err_model:
++err_version:
++err_timeout:
++	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
++	return ret;
++}
++
++static void rn2483_remove(struct serdev_device *sdev)
++{
++	struct rn2483_device *rndev = serdev_device_get_drvdata(sdev);
++
++	unregister_loradev(rndev->netdev);
++	free_loradev(rndev->netdev);
++
++	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
++
++	complete(&rndev->line_read_comp);
++
++	serdev_device_close(sdev);
++
++	dev_info(&sdev->dev, "Removed");
++}
++
++static const struct of_device_id rn2483_of_match[] = {
++	{ .compatible = "microchip,rn2483" },
++	{ .compatible = "microchip,rn2903" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, rn2483_of_match);
++
++static struct serdev_device_driver rn2483_serdev_driver = {
++	.probe = rn2483_probe,
++	.remove = rn2483_remove,
++	.driver = {
++		.name = "rn2483",
++		.of_match_table = rn2483_of_match,
++	},
++};
++
++static int __init rn2483_init(void)
++{
++	int ret;
++
++	ret = serdev_device_driver_register(&rn2483_serdev_driver);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void __exit rn2483_exit(void)
++{
++	serdev_device_driver_unregister(&rn2483_serdev_driver);
++}
++
++module_init(rn2483_init);
++module_exit(rn2483_exit);
++
++MODULE_DESCRIPTION("RN2483 serdev driver");
++MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/net/lora/rn2483.h b/drivers/net/lora/rn2483.h
+new file mode 100644
+index 000000000000..f92660286f15
+--- /dev/null
++++ b/drivers/net/lora/rn2483.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (c) 2017-2018 Andreas Färber
++ */
++#ifndef _RN2483_H
++#define _RN2483_H
++
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/netdevice.h>
++#include <linux/serdev.h>
++#include <linux/lora/dev.h>
++
++struct rn2483_device {
++	struct serdev_device *serdev;
++	struct gpio_desc *reset_gpio;
++	struct net_device *netdev;
++	unsigned model;
++	lora_eui hweui;
++	unsigned band;
++	bool saw_cr;
++	void *buf;
++	size_t buflen;
++	struct completion line_recv_comp;
++	struct completion line_read_comp;
++	struct mutex cmd_lock;
++};
++
++int rn2483_readline_timeout(struct rn2483_device *rndev, char **line, unsigned long timeout);
++int rn2483_send_command_timeout(struct rn2483_device *rndev,
++	const char *cmd, char **resp, unsigned long timeout);
++
++int rn2483_sys_get_hweui(struct rn2483_device *rndev, lora_eui *val);
++int rn2483_mac_get_band(struct rn2483_device *rndev, uint *val);
++int rn2483_mac_get_status(struct rn2483_device *rndev, u32 *val);
++int rn2483_mac_reset_band(struct rn2483_device *rndev, unsigned band);
++int rn2483_mac_pause(struct rn2483_device *rndev, u32 *max_pause);
++int rn2483_mac_resume(struct rn2483_device *rndev);
++
++#endif
+diff --git a/drivers/net/lora/rn2483_cmd.c b/drivers/net/lora/rn2483_cmd.c
+new file mode 100644
+index 000000000000..6d6fca8fa93c
+--- /dev/null
++++ b/drivers/net/lora/rn2483_cmd.c
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Microchip RN2483/RN2903 - UART commands
++ *
++ * Copyright (c) 2017-2018 Andreas Färber
++ */
++#include "rn2483.h"
++
++#define RN2483_CMD_TIMEOUT HZ
++
++int rn2483_send_command_timeout(struct rn2483_device *rndev,
++	const char *cmd, char **resp, unsigned long timeout)
++{
++	int ret;
++
++	ret = serdev_device_write_buf(rndev->serdev, cmd, strlen(cmd));
++	if (ret < 0)
++		return ret;
++
++	ret = serdev_device_write_buf(rndev->serdev, "\r\n", 2);
++	if (ret < 0)
++		return ret;
++
++	return rn2483_readline_timeout(rndev, resp, timeout);
++}
++
++int rn2483_sys_get_hweui(struct rn2483_device *rndev, lora_eui *val)
++{
++	int ret;
++	char *line;
++
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, "sys get hweui", &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	if (ret)
++		return ret;
++
++	ret = lora_strtoeui(line, val);
++	devm_kfree(&rndev->serdev->dev, line);
++	return ret;
++}
++
++int rn2483_mac_get_band(struct rn2483_device *rndev, uint *val)
++{
++	int ret;
++	char *line;
++
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, "mac get band", &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	if (ret)
++		return ret;
++
++	ret = kstrtouint(line, 10, val);
++	devm_kfree(&rndev->serdev->dev, line);
++
++	return ret;
++}
++
++int rn2483_mac_get_status(struct rn2483_device *rndev, u32 *val)
++{
++	int ret;
++	char *line;
++
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, "mac get status", &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	if (ret)
++		return ret;
++
++	ret = kstrtou32(line, 16, val);
++	devm_kfree(&rndev->serdev->dev, line);
++	return ret;
++}
++
++int rn2483_mac_reset_band(struct rn2483_device *rndev, unsigned band)
++{
++	int ret;
++	char *line, *cmd;
++
++	cmd = devm_kasprintf(&rndev->serdev->dev, GFP_KERNEL, "mac reset %u", band);
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, cmd, &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	devm_kfree(&rndev->serdev->dev, cmd);
++	if (ret)
++		return ret;
++
++	if (strcmp(line, "ok") == 0)
++		ret = 0;
++	else if (strcmp(line, "invalid_param") == 0)
++		ret = -EINVAL;
++	else
++		ret = -EPROTO;
++
++	devm_kfree(&rndev->serdev->dev, line);
++	return ret;
++}
++
++int rn2483_mac_pause(struct rn2483_device *rndev, u32 *max_pause)
++{
++	int ret;
++	char *line;
++
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, "mac pause", &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	if (ret)
++		return ret;
++
++	ret = kstrtou32(line, 10, max_pause);
++	devm_kfree(&rndev->serdev->dev, line);
++	return ret;
++}
++
++int rn2483_mac_resume(struct rn2483_device *rndev)
++{
++	int ret;
++	char *line;
++
++	mutex_lock(&rndev->cmd_lock);
++	ret = rn2483_send_command_timeout(rndev, "mac resume", &line, RN2483_CMD_TIMEOUT);
++	mutex_unlock(&rndev->cmd_lock);
++	if (ret)
++		return ret;
++
++	ret = (strcmp(line, "ok") == 0) ? 0 : -EPROTO;
++	devm_kfree(&rndev->serdev->dev, line);
++	return ret;
++}
 -- 
 2.16.4
 
