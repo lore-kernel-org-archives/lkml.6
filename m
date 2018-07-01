@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BEC9C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58034C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D6E2587D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D6E2587D
+	by mail.kernel.org (Postfix) with ESMTP id 152CB2587E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152CB2587E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752984AbeGASH1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:07:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34366 "EHLO
+        id S965711AbeGAQ2k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:28:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34332 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965716AbeGAQ2m (ORCPT
+        with ESMTP id S965655AbeGAQ2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:42 -0400
+        Sun, 1 Jul 2018 12:28:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D25E192B;
-        Sun,  1 Jul 2018 16:28:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3C71AD8;
+        Sun,  1 Jul 2018 16:28:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Berg <bberg@redhat.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 097/101] ALSA: hda/realtek - Fix pop noise on Lenovo P50 & co
-Date:   Sun,  1 Jul 2018 18:22:23 +0200
-Message-Id: <20180701160801.036082559@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 094/101] Input: elan_i2c_smbus - fix more potential stack buffer overflows
+Date:   Sun,  1 Jul 2018 18:22:20 +0200
+Message-Id: <20180701160800.915074029@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,60 +51,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit d5a6cabf02210b896a60eee7c04c670ee9ba6dca upstream.
+commit 50fc7b61959af4b95fafce7fe5dd565199e0b61a upstream.
 
-Some Lenovo laptops, e.g. Lenovo P50, showed the pop noise at resume
-or runtime resume.  It turned out to be reduced by applying
-alc_no_shutup() just like TPT440 quirk does.
+Commit 40f7090bb1b4 ("Input: elan_i2c_smbus - fix corrupted stack")
+fixed most of the functions using i2c_smbus_read_block_data() to
+allocate a buffer with the maximum block size.  However three
+functions were left unchanged:
 
-Since there are many Lenovo models showing the same behavior, put this
-workaround in ALC269_FIXUP_THINKPAD_ACPI entry so that it's applied
-commonly to all such Lenovo machines.
+* In elan_smbus_initialize(), increase the buffer size in the same
+  way.
+* In elan_smbus_calibrate_result(), the buffer is provided by the
+  caller (calibrate_store()), so introduce a bounce buffer.  Also
+  name the result buffer size.
+* In elan_smbus_get_report(), the buffer is provided by the caller
+  but happens to be the right length.  Add a compile-time assertion
+  to ensure this remains the case.
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Tested-by: Benjamin Berg <bberg@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: <stable@vger.kernel.org> # 3.19+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/input/mouse/elan_i2c.h       |    2 ++
+ drivers/input/mouse/elan_i2c_core.c  |    2 +-
+ drivers/input/mouse/elan_i2c_smbus.c |   10 ++++++++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4473,7 +4473,6 @@ static void alc_fixup_tpt440_dock(struct
- 	struct alc_spec *spec = codec->spec;
+--- a/drivers/input/mouse/elan_i2c.h
++++ b/drivers/input/mouse/elan_i2c.h
+@@ -27,6 +27,8 @@
+ #define ETP_DISABLE_POWER	0x0001
+ #define ETP_PRESSURE_OFFSET	25
  
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
--		spec->shutup = alc_no_shutup; /* reduce click noise */
- 		spec->reboot_notify = alc_d3_at_reboot; /* reduce noise */
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
- 		codec->power_save_node = 0; /* avoid click noises */
-@@ -4835,6 +4834,13 @@ static void alc280_fixup_hp_9480m(struct
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
- 
-+static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
-+				    const struct hda_fixup *fix, int action)
-+{
-+	alc_fixup_no_shutup(codec, fix, action); /* reduce click noise */
-+	hda_fixup_thinkpad_acpi(codec, fix, action);
-+}
++#define ETP_CALIBRATE_MAX_LEN	3
 +
- /* for dell wmi mic mute led */
- #include "dell_wmi_helper.c"
+ /* IAP Firmware handling */
+ #define ETP_PRODUCT_ID_FORMAT_STRING	"%d.0"
+ #define ETP_FW_NAME		"elan_i2c_" ETP_PRODUCT_ID_FORMAT_STRING ".bin"
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -595,7 +595,7 @@ static ssize_t calibrate_store(struct de
+ 	int tries = 20;
+ 	int retval;
+ 	int error;
+-	u8 val[3];
++	u8 val[ETP_CALIBRATE_MAX_LEN];
  
-@@ -5350,7 +5356,7 @@ static const struct hda_fixup alc269_fix
- 	},
- 	[ALC269_FIXUP_THINKPAD_ACPI] = {
- 		.type = HDA_FIXUP_FUNC,
--		.v.func = hda_fixup_thinkpad_acpi,
-+		.v.func = alc_fixup_thinkpad_acpi,
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_SKU_IGNORE,
- 	},
+ 	retval = mutex_lock_interruptible(&data->sysfs_mutex);
+ 	if (retval)
+--- a/drivers/input/mouse/elan_i2c_smbus.c
++++ b/drivers/input/mouse/elan_i2c_smbus.c
+@@ -56,7 +56,7 @@
+ static int elan_smbus_initialize(struct i2c_client *client)
+ {
+ 	u8 check[ETP_SMBUS_HELLOPACKET_LEN] = { 0x55, 0x55, 0x55, 0x55, 0x55 };
+-	u8 values[ETP_SMBUS_HELLOPACKET_LEN] = { 0, 0, 0, 0, 0 };
++	u8 values[I2C_SMBUS_BLOCK_MAX] = {0};
+ 	int len, error;
+ 
+ 	/* Get hello packet */
+@@ -117,12 +117,16 @@ static int elan_smbus_calibrate(struct i
+ static int elan_smbus_calibrate_result(struct i2c_client *client, u8 *val)
+ {
+ 	int error;
++	u8 buf[I2C_SMBUS_BLOCK_MAX] = {0};
++
++	BUILD_BUG_ON(ETP_CALIBRATE_MAX_LEN > sizeof(buf));
+ 
+ 	error = i2c_smbus_read_block_data(client,
+-					  ETP_SMBUS_CALIBRATE_QUERY, val);
++					  ETP_SMBUS_CALIBRATE_QUERY, buf);
+ 	if (error < 0)
+ 		return error;
+ 
++	memcpy(val, buf, ETP_CALIBRATE_MAX_LEN);
+ 	return 0;
+ }
+ 
+@@ -470,6 +474,8 @@ static int elan_smbus_get_report(struct
+ {
+ 	int len;
+ 
++	BUILD_BUG_ON(I2C_SMBUS_BLOCK_MAX > ETP_SMBUS_REPORT_LEN);
++
+ 	len = i2c_smbus_read_block_data(client,
+ 					ETP_SMBUS_PACKET_QUERY,
+ 					&report[ETP_SMBUS_REPORT_OFFSET]);
 
 
