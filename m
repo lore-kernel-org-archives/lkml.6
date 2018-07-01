@@ -2,79 +2,80 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C78C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4D5C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D742532F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:11:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OLI5t7e0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D742532F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5837725218
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:25:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5837725218
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeGAGLz (ORCPT
+        id S1752062AbeGAGY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 02:11:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49156 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751890AbeGAGLx (ORCPT
+        Sun, 1 Jul 2018 02:24:58 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:53472 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeGAGY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 02:11:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=g8edyzh8ue/QMpkqn2FyjaAi8m37ftCnyXbEoVfK6jk=; b=OLI5t7e0SLrqGtTtCuOf/hC39v
-        dRedg0MFjh/EOsEfUuXWsUUGDPTIkOMVYnhQ1yl2s9K8XktW6D7Dy2ijNyjHd0STjtvy06DwP336L
-        K0mZpKDWCLTSsYvleyEO4f6Pb3gcgrRrC46hhCPUVOUCoOw6PjyxGO0M4HnQRLV9PLxJr02XM8I5z
-        +N/Tl3ERj90xjo8C2OThZO7hucJ+RJCxDxnhtovBPxnuHWTTYgIz3qo5k0ZZ88y9DjDb2QFMuvkEV
-        SS5x1v37dEJ17oPn5vWI+J0HUHTxzx+plSTojSoxO0C3fTSogygsyT29VIJHGicPF0I7wFh75iylh
-        aN/AUC+g==;
-Received: from [88.128.82.117] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fZVaQ-0003vU-Fr; Sun, 01 Jul 2018 06:11:50 +0000
-Date:   Sun, 1 Jul 2018 08:11:46 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: [GIT PULL] dma-mapping fix for Linux 4.18
-Message-ID: <20180701061146.GA16461@infradead.org>
+        Sun, 1 Jul 2018 02:24:56 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fZVmi-0006S2-Bg; Sun, 01 Jul 2018 14:24:32 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fZVmV-0007oa-HJ; Sun, 01 Jul 2018 14:24:19 +0800
+Date:   Sun, 1 Jul 2018 14:24:19 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
+        dm-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 11/11] crypto: skcipher: Remove VLA usage for
+ SKCIPHER_REQUEST_ON_STACK
+Message-ID: <20180701062419.3opt7mnljf76hi4k@gondor.apana.org.au>
+References: <20180625211026.15819-1-keescook@chromium.org>
+ <20180625211026.15819-12-keescook@chromium.org>
+ <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
+ <CAGXu5jKYb-0NNvOcN79hzqU7O6vCFhMTBDGBL8Knuoc-YHamPg@mail.gmail.com>
+ <20180627143622.ntksjxsymo4yw6dz@gondor.apana.org.au>
+ <CAGXu5jJ2Z=YP+fNsvy+6a_BpC1ibZf6tOzZuPHk=Qx1qNVvOZw@mail.gmail.com>
+ <20180627222749.xa5333caq5vaa7st@gondor.apana.org.au>
+ <CAGXu5jKas=OyJPsrMthxjEykG=FkHDW84dO4bKGpj-50JjUYwQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAGXu5jKas=OyJPsrMthxjEykG=FkHDW84dO4bKGpj-50JjUYwQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit f57494321cbf5b1e7769b6135407d2995a369e28:
+On Wed, Jun 27, 2018 at 05:10:05PM -0700, Kees Cook wrote:
+>
+> In both cases here, what is "cipher"? i.e. what ciphers could lrw be
+> wrapping, and what ciphers could cts be wrapping, so that I can
+> examine the blocksizes, etc?
 
-  Merge tag 'xfs-4.18-fixes-2' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2018-06-27 12:21:06 -0700)
+A cipher is a simple cipher like aes that operates on a single
+block.
 
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.18-2
-
-for you to fetch changes up to 210d0797c97d0e8f3b1a932a0dc143f4c57008a3:
-
-  swiotlb: export swiotlb_dma_ops (2018-06-28 14:00:40 +0200)
-
-----------------------------------------------------------------
-Add a missing export required by riscv and unicore
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      swiotlb: export swiotlb_dma_ops
-
- kernel/dma/swiotlb.c | 1 +
- 1 file changed, 1 insertion(+)
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
