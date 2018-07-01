@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9A1C3279B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E773FC6778D
 	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 00:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E2325454
+	by mail.kernel.org (Postfix) with ESMTP id A01A925462
 	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 00:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZdKsM9g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E2325454
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E84xo5eQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01A925462
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752146AbeGAAUF (ORCPT
+        id S1752173AbeGAAUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 20:20:05 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39924 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeGAAUA (ORCPT
+        Sat, 30 Jun 2018 20:20:06 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41827 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751995AbeGAAUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 20:20:00 -0400
-Received: by mail-pf0-f194.google.com with SMTP id s21-v6so5840675pfm.6;
-        Sat, 30 Jun 2018 17:20:00 -0700 (PDT)
+        Sat, 30 Jun 2018 20:20:01 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so5537930pgl.8;
+        Sat, 30 Jun 2018 17:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tJImHBF2EwXLlmdkVXoaXDFCNFb51x1QyyG4T9zW/E4=;
-        b=DZdKsM9gH4e+GY7qP4HxJIjBmAaKD/unCTpZVUfMI00l4QR4jByVbRd789W0o3Zf3M
-         tdYVNhcRzcjvui/qdgGtS0NyoAxFhHcyI/ZwETOcoWvP3k5xYY1Ad9Xslue1MeZKzlI4
-         ib0b2zRFQgp2RIcWP77w81CAmuyB2XATtmR2dOfTrs2A8VujDZ6k6U1hLLGNiuxCTirH
-         AW4glZmwPVdrF4rcAS6xXW6rtWMV2Rop7oCG5uJ2Cta8Jp5uxIKiSgmn5spuBMIj0Wkx
-         f+hNO42y1atlFvkTh2J4x4Oq+LHjmq5yO0SkuSF036mZcLhH3ebN18xzNX6xfmkS3pwe
-         0SFQ==
+        bh=lP4IG4mDY9DgV+tOoDW146wl3lit/aOFC7RSHZ9QL6c=;
+        b=E84xo5eQKz4KNGxu7uDS0UKfA3B1D62Zw1K/4tHTOorVNsDWjRY04O1nJH3uDAafsK
+         7P6C/8dARm1FEPPiOLTvUU9gz7OUP3IEeeCf4nNnJvFjj1nR8Tuz+m77Lj+P20S3GmMI
+         sIFwmRCixl00l2EgStY7IRXBQ3MW26Fg5+FjA8uYUCiGLTnotKaBGTTho10eC/TtneTt
+         4oGEW/oyjHb5d02c3XAgnJYCRsBcgX5LcTLYms1yjvNgiCCRhFWWnj03YMYf1IpFg9Xb
+         2pUVw9RUG9idZX2cs2rYBXtwcMx/4NJyVAkpdyA7Nc0pJH4/xBox9xIfZFG+CDclKk3T
+         5qLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tJImHBF2EwXLlmdkVXoaXDFCNFb51x1QyyG4T9zW/E4=;
-        b=YR5bff6EF3eht/t7Tqf0bKltAOg7tgRolgNBvqGYFe1Fbyfnf2ruDd1wilt8dv0sXK
-         SyhvmKeXgUZPpf/ZTkn5g9kbOn8W/Jhqnp+WFG3LPbPkoR1uwvxj2h8s6NCvA+ilkWiW
-         6atr5PnA7YUk7cak4S6Vv/6pkmNPf6oOiTyOc2BZzYzJP6yWhnIwZMLg8v4Vd16pdq2X
-         O8PkMVy55JqL6CkKBpwnv1QJezS+5khIvITXkb7CfRDc2K7dhS9ECz5DI2aHLF5WLf6Q
-         j/91n6GJf/INmrz7DC7ehPJCeDVZ0Z+0UC4h2w3Hm3xkqoMIloHPgIAvTptzL+KiP8xi
-         WeiQ==
-X-Gm-Message-State: APt69E1uOdmlA2MAUMeyFYEGn2Rtne4fiOpo+7VqN1N/d2xy37nSAUMr
-        XgEWtq83xhQYBFyfLw4wxc+bmg==
-X-Google-Smtp-Source: AAOMgpfYFXQoC53btLL6OlvRYpeiWO4DJjPYrJLoy95gFXKTjZPRMnKI3P9VTVoUE5Oi7LVoCtGpzQ==
-X-Received: by 2002:a62:904c:: with SMTP id a73-v6mr20026986pfe.145.1530404399460;
-        Sat, 30 Jun 2018 17:19:59 -0700 (PDT)
+        bh=lP4IG4mDY9DgV+tOoDW146wl3lit/aOFC7RSHZ9QL6c=;
+        b=aAI/0Uc6rzG4mpn/wcdXoT2YnIE5uVIMLJlA+9GDphe6Yh4qTaoKC3ZnjtxjZkOy8C
+         4lFH1wWsl2Y9Yc3qwVlMliOHTGKDCV1P11Cd/gDbpMeZoDAH7Fxmm6d+HKsaGCdqIGSq
+         peJ3CP8NtXOvM+XXf3KVho5+AzNzr0LRee8VuagbEO8TTPqOpmlHmYkmJAOsWgh4Ip2m
+         ydHyfY/zCRs0kEw8yimP8NNQbzQpjz1ISeBjiokZCFK1EnjZcvL4jwY7el0GogxOMyVc
+         6KhNtMWEV5Ldw+J0AsbFkeb5ecKgEreJqX3EP5BcoBaBnVCtMBlN3WotF5+uvcBwRyWP
+         05jw==
+X-Gm-Message-State: APt69E3Lni98y2u0CftrIjjkDi7hnSlMi+yLGN7/KU3oRubolNVFqR7l
+        /l8sNvRynpzPjMso927K+D0kIw==
+X-Google-Smtp-Source: AAOMgpdE64+1zV7GJaXTBdEg3SRPrxLh8GJ+isMaAZUmLxh0Y2PhJsD7c0Q5SUzLmZ6eAx22p8Osvg==
+X-Received: by 2002:a62:ae08:: with SMTP id q8-v6mr19171813pff.126.1530404400761;
+        Sat, 30 Jun 2018 17:20:00 -0700 (PDT)
 Received: from hobbes.alyptik.lan ([2605:e000:1117:c002:2e0:1bff:fe70:ea])
-        by smtp.gmail.com with ESMTPSA id b123-v6sm8424566pfb.156.2018.06.30.17.19.58
+        by smtp.gmail.com with ESMTPSA id b123-v6sm8424566pfb.156.2018.06.30.17.19.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Jun 2018 17:19:58 -0700 (PDT)
+        Sat, 30 Jun 2018 17:20:00 -0700 (PDT)
 From:   Joey Pabalinas <joeypabalinas@gmail.com>
 To:     linux-input@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Daniel Martin <consume.noise@gmail.com>
-Subject: [PATCH 2/4] HID: multitouch: don't check HID_GROUP_MULTITOUCH_WIN_8 for serial protocol
-Date:   Sat, 30 Jun 2018 14:19:51 -1000
-Message-Id: <0aaacf083be5b68a830f9e174f9abee3b00c5a51.1530402641.git.joeypabalinas@gmail.com>
+Subject: [PATCH 3/4] HID: multitouch: drop reports containing invalid values
+Date:   Sat, 30 Jun 2018 14:19:52 -1000
+Message-Id: <29ad484c1b357fd7fd670a6f252d097677b808f8.1530402641.git.joeypabalinas@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1530402641.git.joeypabalinas@gmail.com>
 References: <cover.1530402641.git.joeypabalinas@gmail.com>
@@ -74,33 +74,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HID_GROUP_MULTITOUCH_WIN_8 group never needs to check for the serial
-protocol, so avoid setting `td->serial_maybe = true;` in order to avoid
-an unnecessary mt_post_parse_default_settings() call
+Avoid processing reports containing invalid values to reduce
+multitouch input stutter.
 
 Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index a793076139d7d0db9b..c0654db0b736543ca0 100644
+index c0654db0b736543ca0..08b50e5908cecdda66 100644
 --- a/drivers/hid/hid-multitouch.c
 +++ b/drivers/hid/hid-multitouch.c
-@@ -1460,11 +1460,13 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (!td->fields) {
- 		dev_err(&hdev->dev, "cannot allocate multitouch fields data\n");
- 		return -ENOMEM;
- 	}
+@@ -694,10 +694,19 @@ static void mt_complete_slot(struct mt_device *td, struct input_dev *input)
+ {
+ 	if ((td->mtclass.quirks & MT_QUIRK_CONTACT_CNT_ACCURATE) &&
+ 	    td->num_received >= td->num_expected)
+ 		return;
  
--	if (id->vendor == HID_ANY_ID && id->product == HID_ANY_ID)
-+	if (id->vendor == HID_ANY_ID
-+			&& id->product == HID_ANY_ID
-+			&& id->group != HID_GROUP_MULTITOUCH_WIN_8)
- 		td->serial_maybe = true;
- 
- 	/* This allows the driver to correctly support devices
- 	 * that emit events over several HID messages.
- 	 */
++	/* drop invalid values after counting them */
++	if (td->curdata.x == 0xffff &&
++			td->curdata.y == 0xffff &&
++			td->curdata.w == 0xffff &&
++			td->curdata.h == 0xffff) {
++		td->num_received++;
++		return;
++	}
++
+ 	if (td->curvalid || (td->mtclass.quirks & MT_QUIRK_ALWAYS_VALID)) {
+ 		int active;
+ 		int slotnum = mt_compute_slot(td, input);
+ 		struct mt_slot *s = &td->curdata;
+ 		struct input_mt *mt = input->mt;
 -- 
 2.18.0
 
