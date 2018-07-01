@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49496C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD5C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73317256CE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73317256CE
+	by mail.kernel.org (Postfix) with ESMTP id 7A6BB256CF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6BB256CF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934239AbeGARh5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:37:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35920 "EHLO
+        id S1031201AbeGAQgB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:36:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031215AbeGAQgF (ORCPT
+        with ESMTP id S1031184AbeGAQfy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:05 -0400
+        Sun, 1 Jul 2018 12:35:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33CAD49B;
-        Sun,  1 Jul 2018 16:36:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F21EACC;
+        Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 115/157] mfd: intel-lpss: Program REMAP register in PIO mode
-Date:   Sun,  1 Jul 2018 18:23:07 +0200
-Message-Id: <20180701160858.301992590@linuxfoundation.org>
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 146/157] Input: elantech - fix V4 report decoding for module with middle key
+Date:   Sun,  1 Jul 2018 18:23:38 +0200
+Message-Id: <20180701160900.448265156@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,41 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: ??? <kt.liao@emc.com.tw>
 
-commit d28b62520830b2d0bffa2d98e81afc9f5e537e8b upstream.
+commit e0ae2519ca004a628fa55aeef969c37edce522d3 upstream.
 
-According to documentation REMAP register has to be programmed in
-either DMA or PIO mode of the slice.
+Some touchpad has middle key and it will be indicated in bit 2 of packet[0].
+We need to fix V4 formation's byte mask to prevent error decoding.
 
-Move the DMA capability check below to let REMAP register be programmed
-in PIO mode.
-
-Cc: stable@vger.kernel.org # 4.3+
-Fixes: 4b45efe85263 ("mfd: Add support for Intel Sunrisepoint LPSS devices")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/intel-lpss.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/mouse/elantech.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mfd/intel-lpss.c
-+++ b/drivers/mfd/intel-lpss.c
-@@ -275,11 +275,11 @@ static void intel_lpss_init_dev(const st
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -804,7 +804,7 @@ static int elantech_packet_check_v4(stru
+ 	else if (ic_version == 7 && etd->samples[1] == 0x2A)
+ 		sanity_check = ((packet[3] & 0x1c) == 0x10);
+ 	else
+-		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
++		sanity_check = ((packet[0] & 0x08) == 0x00 &&
+ 				(packet[3] & 0x1c) == 0x10);
  
- 	intel_lpss_deassert_reset(lpss);
- 
-+	intel_lpss_set_remap_addr(lpss);
-+
- 	if (!intel_lpss_has_idma(lpss))
- 		return;
- 
--	intel_lpss_set_remap_addr(lpss);
--
- 	/* Make sure that SPI multiblock DMA transfers are re-enabled */
- 	if (lpss->type == LPSS_DEV_SPI)
- 		writel(value, lpss->priv + LPSS_PRIV_SSP_REG);
+ 	if (!sanity_check)
 
 
