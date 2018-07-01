@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D83DC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4B0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02AC4254DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AC4254DA
+	by mail.kernel.org (Postfix) with ESMTP id D3912254DD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3912254DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeGAQzS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:55:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38168 "EHLO
+        id S934163AbeGAQzg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:55:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38150 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934017AbeGAQpJ (ORCPT
+        with ESMTP id S933988AbeGAQpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:09 -0400
+        Sun, 1 Jul 2018 12:45:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D6C9A73;
-        Sun,  1 Jul 2018 16:45:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FC90A73;
+        Sun,  1 Jul 2018 16:45:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Martin Townsend <mtownsend1973@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.17 152/220] ubi: fastmap: Cancel work upon detach
-Date:   Sun,  1 Jul 2018 18:22:56 +0200
-Message-Id: <20180701160914.645275127@linuxfoundation.org>
+        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.17 184/220] video: uvesafb: Fix integer overflow in allocation
+Date:   Sun,  1 Jul 2018 18:23:28 +0200
+Message-Id: <20180701160915.900637503@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,67 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Kees Cook <keescook@chromium.org>
 
-commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
+commit 9f645bcc566a1e9f921bdae7528a01ced5bc3713 upstream.
 
-Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
-fastmap work on detach") does not really fix the problem, it just
-reduces the risk to hit the race window where fastmap work races against
-free()'ing ubi->volumes[].
+cmap->len can get close to INT_MAX/2, allowing for an integer overflow in
+allocation. This uses kmalloc_array() instead to catch the condition.
 
-The correct approach is making sure that no more fastmap work is in
-progress before we free ubi data structures.
-So we cancel fastmap work right after the ubi background thread is
-stopped.
-By setting ubi->thread_enabled to zero we make sure that no further work
-tries to wake the thread.
-
-Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
-Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
+Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
+Fixes: 8bdb3a2d7df48 ("uvesafb: the driver core")
 Cc: stable@vger.kernel.org
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Martin Townsend <mtownsend1973@gmail.com>
-
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/build.c |    3 +++
- drivers/mtd/ubi/wl.c    |    4 +---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/video/fbdev/uvesafb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -1091,6 +1091,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
- 	if (ubi->bgt_thread)
- 		kthread_stop(ubi->bgt_thread);
+--- a/drivers/video/fbdev/uvesafb.c
++++ b/drivers/video/fbdev/uvesafb.c
+@@ -1044,7 +1044,8 @@ static int uvesafb_setcmap(struct fb_cma
+ 		    info->cmap.len || cmap->start < info->cmap.start)
+ 			return -EINVAL;
  
-+#ifdef CONFIG_MTD_UBI_FASTMAP
-+	cancel_work_sync(&ubi->fm_work);
-+#endif
- 	ubi_debugfs_exit_dev(ubi);
- 	uif_close(ubi);
- 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1505,6 +1505,7 @@ int ubi_thread(void *u)
- 	}
- 
- 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
-+	ubi->thread_enabled = 0;
- 	return 0;
- }
- 
-@@ -1514,9 +1515,6 @@ int ubi_thread(void *u)
-  */
- static void shutdown_work(struct ubi_device *ubi)
- {
--#ifdef CONFIG_MTD_UBI_FASTMAP
--	flush_work(&ubi->fm_work);
--#endif
- 	while (!list_empty(&ubi->works)) {
- 		struct ubi_work *wrk;
+-		entries = kmalloc(sizeof(*entries) * cmap->len, GFP_KERNEL);
++		entries = kmalloc_array(cmap->len, sizeof(*entries),
++					GFP_KERNEL);
+ 		if (!entries)
+ 			return -ENOMEM;
  
 
 
