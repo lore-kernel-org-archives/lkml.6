@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F075C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E77CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E510625661
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E510625661
+	by mail.kernel.org (Postfix) with ESMTP id 0CF872566A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF872566A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030862AbeGARWY (ORCPT
+        id S1753800AbeGARWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:22:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36622 "EHLO
+        Sun, 1 Jul 2018 13:22:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031527AbeGAQiD (ORCPT
+        with ESMTP id S1031513AbeGAQiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:38:03 -0400
+        Sun, 1 Jul 2018 12:38:00 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D62992B;
-        Sun,  1 Jul 2018 16:38:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42D43ACC;
+        Sun,  1 Jul 2018 16:37:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, dan.j.williams@intel.com,
         jgross@suse.com, kirill.shutemov@linux.intel.com, mhocko@suse.com,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 005/220] x86/platform/UV: Add kernel parameter to set memory block size
-Date:   Sun,  1 Jul 2018 18:20:29 +0200
-Message-Id: <20180701160908.520467416@linuxfoundation.org>
+Subject: [PATCH 4.17 004/220] x86/platform/UV: Use new set memory block size function
+Date:   Sun,  1 Jul 2018 18:20:28 +0200
+Message-Id: <20180701160908.466151825@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -60,14 +60,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: mike.travis@hpe.com <mike.travis@hpe.com>
 
-commit d7609f4210cb716c11abfe2bfb5997191095d00b upstream.
+commit bbbd2b51a2aa0d76b3676271e216cf3647773397 upstream.
 
-Add a kernel parameter that allows setting UV memory block size.  This
-is to provide an adjustment for new forms of PMEM and other DIMM memory
-that might require alignment restrictions other than scanning the global
-address table for the required minimum alignment.  The value set will be
-further adjusted by both the GAM range table scan as well as restrictions
-imposed by set_memory_block_size_order().
+Add a call to the new function to "adjust" the current fixed UV memory
+block size of 2GB so it can be changed to a different physical boundary.
+This accommodates changes in the Intel BIOS, and therefore UV BIOS,
+which now can align boundaries different than the previous UV standard
+of 2GB.  It also flags any UV Global Address boundaries from BIOS that
+cause a change in the mem block size (boundary).
+
+The current boundary of 2GB has been used on UV since the first system
+release in 2009 with Linux 2.6 and has worked fine.  But the new NVDIMM
+persistent memory modules (PMEM), along with the Intel BIOS changes to
+support these modules caused the memory block size boundary to be set
+to a lower limit.  Intel only guarantees that this minimum boundary at
+64MB though the current Linux limit is 128MB.
+
+Note that the default remains 2GB if no changes occur.
 
 Signed-off-by: Mike Travis <mike.travis@hpe.com>
 Reviewed-by: Andrew Banman <andrew.banman@hpe.com>
@@ -82,33 +91,106 @@ Cc: jgross@suse.com
 Cc: kirill.shutemov@linux.intel.com
 Cc: mhocko@suse.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/20180524201711.854849120@stormcage.americas.sgi.com
+Link: https://lkml.kernel.org/lkml/20180524201711.732785782@stormcage.americas.sgi.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/apic/x2apic_uv_x.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/x86/kernel/apic/x2apic_uv_x.c |   49 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 46 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/kernel/apic/x2apic_uv_x.c
 +++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -396,6 +396,17 @@ EXPORT_SYMBOL(uv_hub_info_version);
- /* Default UV memory block size is 2GB */
- static unsigned long mem_block_size = (2UL << 30);
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/crash_dump.h>
+ #include <linux/reboot.h>
++#include <linux/memory.h>
  
-+/* Kernel parameter to specify UV mem block size */
-+static int parse_mem_block_size(char *ptr)
+ #include <asm/uv/uv_mmrs.h>
+ #include <asm/uv/uv_hub.h>
+@@ -392,6 +393,40 @@ extern int uv_hub_info_version(void)
+ }
+ EXPORT_SYMBOL(uv_hub_info_version);
+ 
++/* Default UV memory block size is 2GB */
++static unsigned long mem_block_size = (2UL << 30);
++
++static __init int adj_blksize(u32 lgre)
 +{
-+	unsigned long size = memparse(ptr, NULL);
++	unsigned long base = (unsigned long)lgre << UV_GAM_RANGE_SHFT;
++	unsigned long size;
 +
-+	/* Size will be rounded down by set_block_size() below */
++	for (size = mem_block_size; size > MIN_MEMORY_BLOCK_SIZE; size >>= 1)
++		if (IS_ALIGNED(base, size))
++			break;
++
++	if (size >= mem_block_size)
++		return 0;
++
 +	mem_block_size = size;
-+	return 0;
++	return 1;
 +}
-+early_param("uv_memblksize", parse_mem_block_size);
 +
- static __init int adj_blksize(u32 lgre)
++static __init void set_block_size(void)
++{
++	unsigned int order = ffs(mem_block_size);
++
++	if (order) {
++		/* adjust for ffs return of 1..64 */
++		set_memory_block_size_order(order - 1);
++		pr_info("UV: mem_block_size set to 0x%lx\n", mem_block_size);
++	} else {
++		/* bad or zero value, default to 1UL << 31 (2GB) */
++		pr_err("UV: mem_block_size error with 0x%lx\n", mem_block_size);
++		set_memory_block_size_order(31);
++	}
++}
++
+ /* Build GAM range lookup table: */
+ static __init void build_uv_gr_table(void)
  {
- 	unsigned long base = (unsigned long)lgre << UV_GAM_RANGE_SHFT;
+@@ -1180,23 +1215,30 @@ static void __init decode_gam_rng_tbl(un
+ 					<< UV_GAM_RANGE_SHFT);
+ 		int order = 0;
+ 		char suffix[] = " KMGTPE";
++		int flag = ' ';
+ 
+ 		while (size > 9999 && order < sizeof(suffix)) {
+ 			size /= 1024;
+ 			order++;
+ 		}
+ 
++		/* adjust max block size to current range start */
++		if (gre->type == 1 || gre->type == 2)
++			if (adj_blksize(lgre))
++				flag = '*';
++
+ 		if (!index) {
+ 			pr_info("UV: GAM Range Table...\n");
+-			pr_info("UV:  # %20s %14s %5s %4s %5s %3s %2s\n", "Range", "", "Size", "Type", "NASID", "SID", "PN");
++			pr_info("UV:  # %20s %14s %6s %4s %5s %3s %2s\n", "Range", "", "Size", "Type", "NASID", "SID", "PN");
+ 		}
+-		pr_info("UV: %2d: 0x%014lx-0x%014lx %5lu%c %3d   %04x  %02x %02x\n",
++		pr_info("UV: %2d: 0x%014lx-0x%014lx%c %5lu%c %3d   %04x  %02x %02x\n",
+ 			index++,
+ 			(unsigned long)lgre << UV_GAM_RANGE_SHFT,
+ 			(unsigned long)gre->limit << UV_GAM_RANGE_SHFT,
+-			size, suffix[order],
++			flag, size, suffix[order],
+ 			gre->type, gre->nasid, gre->sockid, gre->pnode);
+ 
++		/* update to next range start */
+ 		lgre = gre->limit;
+ 		if (sock_min > gre->sockid)
+ 			sock_min = gre->sockid;
+@@ -1427,6 +1469,7 @@ static void __init uv_system_init_hub(vo
+ 
+ 	build_socket_tables();
+ 	build_uv_gr_table();
++	set_block_size();
+ 	uv_init_hub_info(&hub_info);
+ 	uv_possible_blades = num_possible_nodes();
+ 	if (!_node_to_pnode)
 
 
