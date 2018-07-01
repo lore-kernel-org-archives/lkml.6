@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58034C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85458C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152CB2587E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152CB2587E
+	by mail.kernel.org (Postfix) with ESMTP id 4C7002587F
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7002587F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965711AbeGAQ2k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:28:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34332 "EHLO
+        id S934063AbeGASHw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:07:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34360 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965655AbeGAQ2a (ORCPT
+        with ESMTP id S965702AbeGAQ2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:30 -0400
+        Sun, 1 Jul 2018 12:28:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3C71AD8;
-        Sun,  1 Jul 2018 16:28:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 984E992B;
+        Sun,  1 Jul 2018 16:28:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 094/101] Input: elan_i2c_smbus - fix more potential stack buffer overflows
-Date:   Sun,  1 Jul 2018 18:22:20 +0200
-Message-Id: <20180701160800.915074029@linuxfoundation.org>
+Subject: [PATCH 4.9 096/101] Input: elantech - fix V4 report decoding for module with middle key
+Date:   Sun,  1 Jul 2018 18:22:22 +0200
+Message-Id: <20180701160800.997786658@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -51,95 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: ??? <kt.liao@emc.com.tw>
 
-commit 50fc7b61959af4b95fafce7fe5dd565199e0b61a upstream.
+commit e0ae2519ca004a628fa55aeef969c37edce522d3 upstream.
 
-Commit 40f7090bb1b4 ("Input: elan_i2c_smbus - fix corrupted stack")
-fixed most of the functions using i2c_smbus_read_block_data() to
-allocate a buffer with the maximum block size.  However three
-functions were left unchanged:
+Some touchpad has middle key and it will be indicated in bit 2 of packet[0].
+We need to fix V4 formation's byte mask to prevent error decoding.
 
-* In elan_smbus_initialize(), increase the buffer size in the same
-  way.
-* In elan_smbus_calibrate_result(), the buffer is provided by the
-  caller (calibrate_store()), so introduce a bounce buffer.  Also
-  name the result buffer size.
-* In elan_smbus_get_report(), the buffer is provided by the caller
-  but happens to be the right length.  Add a compile-time assertion
-  to ensure this remains the case.
-
-Cc: <stable@vger.kernel.org> # 3.19+
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c.h       |    2 ++
- drivers/input/mouse/elan_i2c_core.c  |    2 +-
- drivers/input/mouse/elan_i2c_smbus.c |   10 ++++++++--
- 3 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/input/mouse/elantech.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/mouse/elan_i2c.h
-+++ b/drivers/input/mouse/elan_i2c.h
-@@ -27,6 +27,8 @@
- #define ETP_DISABLE_POWER	0x0001
- #define ETP_PRESSURE_OFFSET	25
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -800,7 +800,7 @@ static int elantech_packet_check_v4(stru
+ 	else if (ic_version == 7 && etd->samples[1] == 0x2A)
+ 		sanity_check = ((packet[3] & 0x1c) == 0x10);
+ 	else
+-		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
++		sanity_check = ((packet[0] & 0x08) == 0x00 &&
+ 				(packet[3] & 0x1c) == 0x10);
  
-+#define ETP_CALIBRATE_MAX_LEN	3
-+
- /* IAP Firmware handling */
- #define ETP_PRODUCT_ID_FORMAT_STRING	"%d.0"
- #define ETP_FW_NAME		"elan_i2c_" ETP_PRODUCT_ID_FORMAT_STRING ".bin"
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -595,7 +595,7 @@ static ssize_t calibrate_store(struct de
- 	int tries = 20;
- 	int retval;
- 	int error;
--	u8 val[3];
-+	u8 val[ETP_CALIBRATE_MAX_LEN];
- 
- 	retval = mutex_lock_interruptible(&data->sysfs_mutex);
- 	if (retval)
---- a/drivers/input/mouse/elan_i2c_smbus.c
-+++ b/drivers/input/mouse/elan_i2c_smbus.c
-@@ -56,7 +56,7 @@
- static int elan_smbus_initialize(struct i2c_client *client)
- {
- 	u8 check[ETP_SMBUS_HELLOPACKET_LEN] = { 0x55, 0x55, 0x55, 0x55, 0x55 };
--	u8 values[ETP_SMBUS_HELLOPACKET_LEN] = { 0, 0, 0, 0, 0 };
-+	u8 values[I2C_SMBUS_BLOCK_MAX] = {0};
- 	int len, error;
- 
- 	/* Get hello packet */
-@@ -117,12 +117,16 @@ static int elan_smbus_calibrate(struct i
- static int elan_smbus_calibrate_result(struct i2c_client *client, u8 *val)
- {
- 	int error;
-+	u8 buf[I2C_SMBUS_BLOCK_MAX] = {0};
-+
-+	BUILD_BUG_ON(ETP_CALIBRATE_MAX_LEN > sizeof(buf));
- 
- 	error = i2c_smbus_read_block_data(client,
--					  ETP_SMBUS_CALIBRATE_QUERY, val);
-+					  ETP_SMBUS_CALIBRATE_QUERY, buf);
- 	if (error < 0)
- 		return error;
- 
-+	memcpy(val, buf, ETP_CALIBRATE_MAX_LEN);
- 	return 0;
- }
- 
-@@ -470,6 +474,8 @@ static int elan_smbus_get_report(struct
- {
- 	int len;
- 
-+	BUILD_BUG_ON(I2C_SMBUS_BLOCK_MAX > ETP_SMBUS_REPORT_LEN);
-+
- 	len = i2c_smbus_read_block_data(client,
- 					ETP_SMBUS_PACKET_QUERY,
- 					&report[ETP_SMBUS_REPORT_OFFSET]);
+ 	if (!sanity_check)
 
 
