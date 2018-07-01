@@ -2,175 +2,116 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237ACC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A32FC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B526525011
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:11:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B526525011
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 1192E25012
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HOzPGeu0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1192E25012
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeGAPLe convert rfc822-to-8bit (ORCPT
+        id S1752431AbeGAPLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 11:11:34 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38372 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeGAPLb (ORCPT
+        Sun, 1 Jul 2018 11:11:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752375AbeGAPLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 11:11:31 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a5-v6so9999710edt.5;
-        Sun, 01 Jul 2018 08:11:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FW+/61WnQUYRv1/lzZHbUzBfvkhOWRA4gKBQ9S/wWQk=;
-        b=kb1A71mhVSyEH/gt22XDrNxziePI0DBngeFR4FkSL7THFsf/74NH7KPh4I4ZmmxOju
-         vsszEEG2KQvxHWIJkcjtQ2RGJoNAIA1qs/fGCiAMGzgsLarKlqcz/9WPpRLSnBxI2t1k
-         TiBP/lIr4jZ/ffSuVbrIR5rkHBSd/90eYyQKcUrTnZXMnYoR5AlIXnAEpn3ZEG0c29ta
-         nPWZxb2u9LZqLTVeeVi1/XLnMn8xf6WWUCvlRm9tOVGsaBAC6mlT3wUTk7kfNIdr61Bg
-         sa6PEA3GXHf9vPVyNdySCICjXCt5Jmu/XqZCv0rdFRqo2/Kzv8a6a7eLQTaqdb7fV658
-         2f0g==
-X-Gm-Message-State: APt69E13zKmSpmwhfYuZi2WIybVvzk/A2Z0U3FvEgxiAXHNIkPwELAdE
-        ATnzm80U6pOIzPGqwKsNqOoOSVEA
-X-Google-Smtp-Source: AAOMgpdUHg6rfCSwMcqfiRaDk/MA+Xf0ulhJswmmNtyckUoRyU1OS8xrhLVV48lNU2iJrDOGd4c8wA==
-X-Received: by 2002:aa7:d717:: with SMTP id t23-v6mr21032718edq.102.1530457889815;
-        Sun, 01 Jul 2018 08:11:29 -0700 (PDT)
-Received: from mail-wr0-f176.google.com (mail-wr0-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id x40-v6sm2888538ede.23.2018.07.01.08.11.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 08:11:28 -0700 (PDT)
-Received: by mail-wr0-f176.google.com with SMTP id j33-v6so208601wrj.5;
-        Sun, 01 Jul 2018 08:11:27 -0700 (PDT)
-X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr6658485wrh.148.1530457887310;
- Sun, 01 Jul 2018 08:11:27 -0700 (PDT)
+        Sun, 1 Jul 2018 11:11:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cXNo213cBbFS6Q4PmkrJZh3pyEvomLUW9dsL7cvkBqY=; b=HOzPGeu0hoiEUDxbfk1xasArQ
+        wSliHFBzDYfMuj1ksSdJGX685drmC7mbJqs5uWzswc3A08hkg3YvR1kvlLmoOUR5zL0smEqJE0Zqk
+        aRfs1UmdkgH4b3Iwr0Y+556gtnOe1K5A8t7A4QtH30fdMK0vdD7RG5Wqwm38KDtjZ4A8TGp/2wPta
+        pGHQLQC8/AM45yZ3w7QbRYknjZhjn4ujoTsD8+ZN2dEeD5fLiTFjCSeN6UxRvzxn4BRxE29A5ezcf
+        G3d4TuEuoqzXbcxtBAYnUtqpnNBVs9CtUv3ZbvX4IuTXsv6ATni5eLzJFIS3Y4qKe+eZaA142GbCx
+        jA/2QkbMg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fZe0m-00045K-Vz; Sun, 01 Jul 2018 15:11:37 +0000
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+To:     Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Li Jun <jun.li@nxp.com>
+References: <20180629145719.0d7b8fe7@canb.auug.org.au>
+ <20180701084343.GA12939@kroah.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <244bd3de-4c96-d366-6d51-d3ce9642713e@infradead.org>
+Date:   Sun, 1 Jul 2018 08:11:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 08:11:06 -0700 (PDT)
-In-Reply-To: <8952939.l1hLr1Mv9y@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <2676604.ZYCNkuCdbT@jernej-laptop> <CAGb2v67kBRWkJpJogFR4GXgA66dsxVaMVWN8MDiP_wFTqxW-=g@mail.gmail.com>
- <8952939.l1hLr1Mv9y@jernej-laptop>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 1 Jul 2018 23:11:06 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
-Message-ID: <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if
- they don't have channel 0
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180701084343.GA12939@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 4:27 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai napisal(a):
->> On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
+On 07/01/18 01:43, Greg KH wrote:
+> On Fri, Jun 29, 2018 at 02:57:19PM +1000, Stephen Rothwell wrote:
+>> Hi Greg,
 >>
->> <jernej.skrabec@siol.net> wrote:
->> > Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai napisal(a):
->> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
->> >
->> > wrote:
->> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
->> >> > Because of that, all output endpoints on such TCON node will point to a
->> >> > encoder which is part of component framework.
->> >> >
->> >> > Correct current graph traversing algorithm in such way that it doesn't
->> >> > skip output enpoints with id 0 on TV TCONs.
->> >>
->> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
->> >> have channel 0, it must be skipped.
->> >
->> > I'm not sure where this is stated. I read TCON binding again. Can you
->> > please point me to it?
+>> Today's linux-next merge of the usb tree got a conflict in:
 >>
->> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bind
->> ings/display/sunxi/sun4i-drm.txt#L169
+>>   drivers/staging/typec/Kconfig
 >>
->> Our TCON driver still expects RGB or LVDS panel / bridges on endpoint 0.
->
-> Yes, but that can only happen on TCON which has channel 0. TV TCONs (those
-> with channel 1 only) can't have panels or bridges connected to them, because
-> they are internally always connected to either HDMI or TV encoder or both.
-> Actually, R40 is the only SoC, where same TV TCON can be connected to TV
-> encoder or HDMI. Others have specialized TV TCONs, which are connect to only
-> one encoder.
->
-> IMO TV TCONs are really just stripped down LCD TCONs to support one (or max
-> two) specific encoder.
-
-I agree. We've seen these first in the H3, and the reverse, TCONs only with
-LCD, on the A23/A33.
-
->> So I guess this was sort of implied historically. It's no longer true.
->> This is something we should probably fix.
->
-> Fixed in what way? You mean update bindings to mention that TCON output
-> endpoint 0 is reserved for panels or bridges?
-
-Either that, or have the drm driver look at other endpoints. I guess we
-should ask Maxime if this is already done or not, since the DSI driver
-isn't endpoint 0 in the A33 dtsi.
-
+>> between commit:
 >>
->> In practice our drivers don't look at it (yet), but rely on the downstream
->> encoder type to determine which channel to use.
+>>   e16711c32bca ("staging/typec: fix tcpci_rt1711h build errors")
 >>
->> But please add the "allwinner,tcon-channel" property as specified in
->> the binding.
->
-> It's my understanding of TCON binding documentation that property
-> "allwinner,tcon-channel" is needed only if TCON supports both channels. TV
-> TCON clearly supports only channel 1. In that case, there is no doubt to which
-> channel output endpoint belongs.
->
-> If that's not true, dt bindings documentation should be reworded to contain
-> word "needed" or something similar. Currently, no DT for newer SoC contains
-> that property (for example, A83T, H3, H5 or even A33). On A33 this is even
-> more interesting, since tcon0 has only channel 0 and has DSI output endpoint
-> with number 1. According to TCON binding docs, if "allwinner,tcon-channel" is
-> not preset, endpoint number represent channel. So, that would mean DSI needs
-> channel 1 on tcon which supports clearly only channel 0. So either there TCON
-> bindings documentation needs updates or DT for A33 has to be updated.
-
-Maxime? You did the A33 DSI stuff.
-
-> BTW, "allwinner,tcon-channel" property is not used at all in the code.
-
-Yes I'm aware. We just base the channel selection on the encoder type instead.
-TV-like ones use channel 1, LCD ones use channel 0.
-
+>> from the usb.current tree and commit:
 >>
->> > So on TV TCONs on R40 (without channel 0) TVE would be endpoint 1 and HDMI
->> > endpoint 2 (or the other way around)?
+>>   990da41530b3 ("staging: typec: tcpci: move tcpci drivers out of staging")
 >>
->> Which one goes first doesn't quite matter. IIRC there's also a mux for TVE?
->
-> AFAIK, TV TCON is by default connected to TV encoder unless HDMI mux in TCON
-> TOP points to it. I think it's best put TVE with lower number since it's
-> default and HDMI with higher number.
+>> from the usb tree.
+>>
+>> I fixed it up (I removed the file and allpied the patch below) and can
+>> carry the fix as necessary. This is now fixed as far as linux-next is
+>> concerned, but any non trivial conflicts should be mentioned to your
+>> upstream maintainer when your tree is submitted for merging.  You may
+>> also want to consider cooperating with the maintainer of the conflicting
+>> tree to minimise any particularly complex conflicts.
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Fri, 29 Jun 2018 14:54:04 +1000
+>> Subject: [PATCH] usb: update for tcpci drivers moving out of staging
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  drivers/usb/typec/Kconfig | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+>> index 972fd1911045..ee808903983f 100644
+>> --- a/drivers/usb/typec/Kconfig
+>> +++ b/drivers/usb/typec/Kconfig
+>> @@ -65,6 +65,7 @@ config TYPEC_TCPCI
+>>  
+>>  config TYPEC_RT1711H
+>>  	tristate "Richtek RT1711H Type-C chip driver"
+>> +	depends on I2C
+> 
+> Thanks for this, I'll apply this to my tree when I merge these together
+> in a few days.
 
-Ok. As long as its specified in the binding, as a contract between the dts
-and the graph parsing code.
+I suppose that I could ack it since it's the same as my patch except
+for the line numbers...
 
-Regards
-ChenYu
+-- 
+~Randy
