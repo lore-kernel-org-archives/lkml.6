@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271D4C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43F1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED38254EA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED38254EA
+	by mail.kernel.org (Postfix) with ESMTP id 94A0E254F2
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A0E254F2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933694AbeGAQ4j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:56:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38120 "EHLO
+        id S964875AbeGAQ44 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:56:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753661AbeGAQot (ORCPT
+        with ESMTP id S934033AbeGAQoq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:44:49 -0400
+        Sun, 1 Jul 2018 12:44:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A19F8A73;
-        Sun,  1 Jul 2018 16:44:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F138D92B;
+        Sun,  1 Jul 2018 16:44:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.17 179/220] media: dvb_frontend: fix locking issues at dvb_frontend_get_event()
-Date:   Sun,  1 Jul 2018 18:23:23 +0200
-Message-Id: <20180701160915.700903478@linuxfoundation.org>
+Subject: [PATCH 4.17 178/220] media: rc: mce_kbd decoder: fix stuck keys
+Date:   Sun,  1 Jul 2018 18:23:22 +0200
+Message-Id: <20180701160915.662882079@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,73 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Sean Young <sean@mess.org>
 
-commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
+commit 63039c29f7a4ce8a8bd165173840543c0098d7b0 upstream.
 
-As warned by smatch:
-	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
-	  Locked on:   line 288
-	               line 295
-	               line 306
-	               line 314
-	  Unlocked on: line 303
-
-The lock implementation for get event is wrong, as, if an
-interrupt occurs, down_interruptible() will fail, and the
-routine will call up() twice when userspace calls the ioctl
-again.
-
-The bad code is there since when Linux migrated to git, in
-2005.
+The MCE Remote sends a 0 scancode when keys are released. If this is not
+received or decoded, then keys can get "stuck"; the keyup event is not
+sent since the input_sync() is missing from the timeout handler.
 
 Cc: stable@vger.kernel.org
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/dvb-core/dvb_frontend.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/media/rc/ir-mce_kbd-decoder.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -275,8 +275,20 @@ static void dvb_frontend_add_event(struc
- 	wake_up_interruptible (&events->wait_queue);
+--- a/drivers/media/rc/ir-mce_kbd-decoder.c
++++ b/drivers/media/rc/ir-mce_kbd-decoder.c
+@@ -130,6 +130,8 @@ static void mce_kbd_rx_timeout(struct ti
+ 
+ 	for (i = 0; i < MCIR2_MASK_KEYS_START; i++)
+ 		input_report_key(raw->mce_kbd.idev, kbd_keycodes[i], 0);
++
++	input_sync(raw->mce_kbd.idev);
  }
  
-+static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
-+				   struct dvb_fe_events *events)
-+{
-+	int ret;
-+
-+	up(&fepriv->sem);
-+	ret = events->eventw != events->eventr;
-+	down(&fepriv->sem);
-+
-+	return ret;
-+}
-+
- static int dvb_frontend_get_event(struct dvb_frontend *fe,
--			    struct dvb_frontend_event *event, int flags)
-+			          struct dvb_frontend_event *event, int flags)
- {
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
- 	struct dvb_fe_events *events = &fepriv->events;
-@@ -294,13 +306,8 @@ static int dvb_frontend_get_event(struct
- 		if (flags & O_NONBLOCK)
- 			return -EWOULDBLOCK;
- 
--		up(&fepriv->sem);
--
--		ret = wait_event_interruptible (events->wait_queue,
--						events->eventw != events->eventr);
--
--		if (down_interruptible (&fepriv->sem))
--			return -ERESTARTSYS;
-+		ret = wait_event_interruptible(events->wait_queue,
-+					       dvb_frontend_test_event(fepriv, events));
- 
- 		if (ret < 0)
- 			return ret;
+ static enum mce_kbd_mode mce_kbd_mode(struct mce_kbd_dec *data)
 
 
