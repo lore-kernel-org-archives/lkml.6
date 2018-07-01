@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7288C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F2AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991122553F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:32:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991122553F
+	by mail.kernel.org (Postfix) with ESMTP id 130F0256AD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130F0256AD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966005AbeGARcr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:32:47 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44713 "EHLO
+        id S934164AbeGARcx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:32:53 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:44544 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1031275AbeGARcS (ORCPT
+        by vger.kernel.org with ESMTP id S1031403AbeGARcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 13:32:18 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0744162|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CKx77fG_1530466299;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CKx77fG_1530466299)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Mon, 02 Jul 2018 01:31:40 +0800
+        Sun, 1 Jul 2018 13:32:17 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0744162|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03272;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CKwjpWO_1530466296;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CKwjpWO_1530466296)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Mon, 02 Jul 2018 01:31:36 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         tglx@linutronix.de, daniel.lezcano@linaro.org,
@@ -33,9 +33,9 @@ To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
 Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
         thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
         green.hu@gmail.com
-Subject: [PATCH V2 17/19] csky: Misc headers
-Date:   Mon,  2 Jul 2018 01:30:20 +0800
-Message-Id: <e1c914049eb8fd5e6e0f998871192e03b0508fa4.1530465326.git.ren_guo@c-sky.com>
+Subject: [PATCH V2 11/19] csky: Atomic operations
+Date:   Mon,  2 Jul 2018 01:30:14 +0800
+Message-Id: <860b8db036b33d7b3648cb1f4ec827a53dc1a01b.1530465326.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1530465325.git.ren_guo@c-sky.com>
 References: <cover.1530465325.git.ren_guo@c-sky.com>
@@ -48,571 +48,389 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- arch/csky/abiv1/inc/abi/reg_ops.h      |  47 ++++++
- arch/csky/abiv1/inc/abi/regdef.h       |  15 ++
- arch/csky/abiv2/inc/abi/reg_ops.h      |  38 +++++
- arch/csky/abiv2/inc/abi/regdef.h       |  15 ++
- arch/csky/include/asm/bitops.h         | 277 +++++++++++++++++++++++++++++++++
- arch/csky/include/asm/checksum.h       |  77 +++++++++
- arch/csky/include/asm/reg_ops.h        |  16 ++
- arch/csky/include/uapi/asm/byteorder.h |  14 ++
- 8 files changed, 499 insertions(+)
- create mode 100644 arch/csky/abiv1/inc/abi/reg_ops.h
- create mode 100644 arch/csky/abiv1/inc/abi/regdef.h
- create mode 100644 arch/csky/abiv2/inc/abi/reg_ops.h
- create mode 100644 arch/csky/abiv2/inc/abi/regdef.h
- create mode 100644 arch/csky/include/asm/bitops.h
- create mode 100644 arch/csky/include/asm/checksum.h
- create mode 100644 arch/csky/include/asm/reg_ops.h
- create mode 100644 arch/csky/include/uapi/asm/byteorder.h
+ arch/csky/include/asm/cmpxchg.h        |  68 +++++++++++++
+ arch/csky/include/asm/spinlock.h       | 174 +++++++++++++++++++++++++++++++++
+ arch/csky/include/asm/spinlock_types.h |  20 ++++
+ arch/csky/kernel/atomic.S              |  87 +++++++++++++++++
+ 4 files changed, 349 insertions(+)
+ create mode 100644 arch/csky/include/asm/cmpxchg.h
+ create mode 100644 arch/csky/include/asm/spinlock.h
+ create mode 100644 arch/csky/include/asm/spinlock_types.h
+ create mode 100644 arch/csky/kernel/atomic.S
 
-diff --git a/arch/csky/abiv1/inc/abi/reg_ops.h b/arch/csky/abiv1/inc/abi/reg_ops.h
+diff --git a/arch/csky/include/asm/cmpxchg.h b/arch/csky/include/asm/cmpxchg.h
 new file mode 100644
-index 0000000..7c31ac3
+index 0000000..1c30a28
 --- /dev/null
-+++ b/arch/csky/abiv1/inc/abi/reg_ops.h
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ABI_REG_OPS_H
-+#define __ABI_REG_OPS_H
-+#include <asm/reg_ops.h>
-+
-+#define cprcr(reg)					\
-+({							\
-+	unsigned int tmp;				\
-+	asm volatile("cprcr %0, "reg"\n":"=b"(tmp));	\
-+	tmp;						\
-+})
-+
-+#define cpwcr(reg, val)					\
-+({							\
-+	asm volatile("cpwcr %0, "reg"\n"::"b"(val));	\
-+})
-+
-+static inline unsigned int mfcr_hint(void)
-+{
-+	return mfcr("cr30");
-+}
-+
-+static inline unsigned int mfcr_msa0(void)
-+{
-+	return cprcr("cpcr30");
-+}
-+
-+static inline void mtcr_msa0(unsigned int value)
-+{
-+	cpwcr("cpcr30", value);
-+}
-+
-+static inline unsigned int mfcr_msa1(void)
-+{
-+	return cprcr("cpcr31");
-+}
-+
-+static inline void mtcr_msa1(unsigned int value)
-+{
-+	cpwcr("cpcr31", value);
-+}
-+
-+static inline unsigned int mfcr_ccr2(void){return 0;}
-+
-+#endif /* __ABI_REG_OPS_H */
-+
-diff --git a/arch/csky/abiv1/inc/abi/regdef.h b/arch/csky/abiv1/inc/abi/regdef.h
-new file mode 100644
-index 0000000..0c3596d
---- /dev/null
-+++ b/arch/csky/abiv1/inc/abi/regdef.h
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef  __ASM_CSKY_REGDEF_H
-+#define  __ASM_CSKY_REGDEF_H
-+
-+#define syscallid	r1
-+#define r11_sig		r11
-+
-+#define regs_syscallid(regs) regs->regs[9]
-+
-+#define DEFAULT_PSR_VALUE	0x8f000000
-+
-+#define SYSTRACE_SAVENUM	2
-+
-+#endif /* __ASM_CSKY_REGDEF_H */
-diff --git a/arch/csky/abiv2/inc/abi/reg_ops.h b/arch/csky/abiv2/inc/abi/reg_ops.h
-new file mode 100644
-index 0000000..a8b2a52
---- /dev/null
-+++ b/arch/csky/abiv2/inc/abi/reg_ops.h
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ABI_REG_OPS_H
-+#define __ABI_REG_OPS_H
-+#include <asm/reg_ops.h>
-+
-+static inline unsigned int mfcr_hint(void)
-+{
-+	return mfcr("cr31");
-+}
-+
-+static inline unsigned int mfcr_ccr2(void)
-+{
-+	return mfcr("cr23");
-+}
-+
-+static inline unsigned int mfcr_msa0(void)
-+{
-+	return mfcr("cr<30, 15>");
-+}
-+
-+static inline void mtcr_msa0(unsigned int value)
-+{
-+	mtcr("cr<30, 15>", value);
-+}
-+
-+static inline unsigned int mfcr_msa1(void)
-+{
-+	return mfcr("cr<31, 15>");
-+}
-+
-+static inline void mtcr_msa1(unsigned int value)
-+{
-+	mtcr("cr<31, 15>", value);
-+}
-+
-+#endif /* __ABI_REG_OPS_H */
-+
-diff --git a/arch/csky/abiv2/inc/abi/regdef.h b/arch/csky/abiv2/inc/abi/regdef.h
-new file mode 100644
-index 0000000..2c36d60
---- /dev/null
-+++ b/arch/csky/abiv2/inc/abi/regdef.h
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef  __ASM_CSKY_REGDEF_H
-+#define  __ASM_CSKY_REGDEF_H
-+
-+#define syscallid	r7
-+#define r11_sig		r11
-+
-+#define regs_syscallid(regs) regs->regs[3]
-+
-+#define DEFAULT_PSR_VALUE	0x8f000200
-+
-+#define SYSTRACE_SAVENUM	5
-+
-+#endif /* __ASM_CSKY_REGDEF_H */
-diff --git a/arch/csky/include/asm/bitops.h b/arch/csky/include/asm/bitops.h
-new file mode 100644
-index 0000000..b2460c5
---- /dev/null
-+++ b/arch/csky/include/asm/bitops.h
-@@ -0,0 +1,277 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ASM_CSKY_BITOPS_H
-+#define __ASM_CSKY_BITOPS_H
-+
-+#include <linux/compiler.h>
-+
-+/*
-+ * asm-generic/bitops/ffs.h
-+ */
-+static inline int ffs(int x)
-+{
-+	if(!x) return 0;
-+
-+	asm volatile (
-+		"brev %0\n"
-+		"ff1  %0\n"
-+		"addi %0, 1\n"
-+		:"=&r"(x)
-+		:"0"(x));
-+	return x;
-+}
-+
-+/*
-+ * asm-generic/bitops/__ffs.h
-+ */
-+static __always_inline unsigned long __ffs(unsigned long x)
-+{
-+	asm volatile (
-+		"brev %0\n"
-+		"ff1  %0\n"
-+		:"=&r"(x)
-+		:"0"(x));
-+	return x;
-+}
-+
-+/*
-+ * asm-generic/bitops/fls.h
-+ */
-+static __always_inline int fls(int x)
-+{
-+	asm volatile(
-+		"ff1 %0\n"
-+		:"=&r"(x)
-+		:"0"(x));
-+
-+	return (32 - x);
-+}
-+
-+/*
-+ * asm-generic/bitops/__fls.h
-+ */
-+static __always_inline unsigned long __fls(unsigned long x)
-+{
-+	return fls(x) - 1;
-+}
-+
-+#include <asm-generic/bitops/ffz.h>
-+#include <asm-generic/bitops/fls64.h>
-+#include <asm-generic/bitops/find.h>
-+
-+#ifndef _LINUX_BITOPS_H
-+#error only <linux/bitops.h> can be included directly
-+#endif
-+
-+#include <asm-generic/bitops/sched.h>
-+#include <asm-generic/bitops/hweight.h>
-+#include <asm-generic/bitops/lock.h>
++++ b/arch/csky/include/asm/cmpxchg.h
+@@ -0,0 +1,68 @@
++#ifndef __ASM_CSKY_CMPXCHG_H
++#define __ASM_CSKY_CMPXCHG_H
 +
 +#ifdef CONFIG_CPU_HAS_LDSTEX
++#include <linux/bug.h>
++#include <asm/barrier.h>
 +
-+/*
-+ * set_bit - Atomically set a bit in memory
-+ * @nr: the bit to set
-+ * @addr: the address to start counting from
-+ *
-+ * This function is atomic and may not be reordered.  See __set_bit()
-+ * if you do not require the atomic guarantees.
-+ *
-+ * Note: there are no guarantees that this function will not be reordered
-+ * on non x86 architectures, so if you are writing portable code,
-+ * make sure not to rely on its reordering guarantees.
-+ *
-+ * Note that @nr may be almost arbitrarily large; this function is not
-+ * restricted to acting on a single-word quantity.
-+ */
-+static inline void set_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long tmp;
-+
-+	/* *p  |= mask; */
-+	asm volatile (
-+		"1:	ldex.w		%0, (%2)	\n"
-+		"	or32		%0, %0, %1	\n"
-+		"	stex.w		%0, (%2)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp)
-+		: "r"(mask), "r"(p)
-+		: "memory");
-+	smp_mb();
-+}
-+
-+/**
-+ * clear_bit - Clears a bit in memory
-+ * @nr: Bit to clear
-+ * @addr: Address to start counting from
-+ *
-+ * clear_bit() is atomic and may not be reordered.  However, it does
-+ * not contain a memory barrier, so if it is used for locking purposes,
-+ * you should call smp_mb__before_atomic() and/or smp_mb__after_atomic()
-+ * in order to ensure changes are visible on other processors.
-+ */
-+static inline void clear_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long tmp;
-+
-+	/* *p &= ~mask; */
-+	mask = ~mask;
-+	asm volatile (
-+		"1:	ldex.w		%0, (%2)	\n"
-+		"	and32		%0, %0, %1	\n"
-+		"	stex.w		%0, (%2)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp)
-+		: "r"(mask), "r"(p)
-+		: "memory");
-+	smp_mb();
-+}
-+
-+/**
-+ * change_bit - Toggle a bit in memory
-+ * @nr: Bit to change
-+ * @addr: Address to start counting from
-+ *
-+ * change_bit() is atomic and may not be reordered. It may be
-+ * reordered on other architectures than x86.
-+ * Note that @nr may be almost arbitrarily large; this function is not
-+ * restricted to acting on a single-word quantity.
-+ */
-+static inline void change_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long tmp;
-+
-+	/* *p ^= mask; */
-+	asm volatile (
-+		"1:	ldex.w		%0, (%2)	\n"
-+		"	xor32		%0, %0, %1	\n"
-+		"	stex.w		%0, (%2)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp)
-+		: "r"(mask), "r"(p)
-+		: "memory");
-+	smp_mb();
-+}
-+
-+/**
-+ * test_and_set_bit - Set a bit and return its old value
-+ * @nr: Bit to set
-+ * @addr: Address to count from
-+ *
-+ * This operation is atomic and cannot be reordered.
-+ * It may be reordered on other architectures than x86.
-+ * It also implies a memory barrier.
-+ */
-+static inline int test_and_set_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long old, tmp;
-+
-+	/*
-+	 * old = *p;
-+	 * *p = old | mask;
-+	 */
-+	asm volatile (
-+		"1:	ldex.w		%1, (%3)	\n"
-+		"	mov		%0, %1		\n"
-+		"	or32		%0, %0, %2	\n"
-+		"	stex.w		%0, (%3)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp), "=&r"(old)
-+		: "r"(mask), "r"(p)
-+		: "memory");
-+
-+	smp_mb();
-+
-+	return (old & mask) != 0;
-+}
-+
-+/**
-+ * test_and_clear_bit - Clear a bit and return its old value
-+ * @nr: Bit to clear
-+ * @addr: Address to count from
-+ *
-+ * This operation is atomic and cannot be reordered.
-+ * It can be reorderdered on other architectures other than x86.
-+ * It also implies a memory barrier.
-+ */
-+static inline int test_and_clear_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long old, tmp, mask_not;
-+
-+	/*
-+	 * old = *p;
-+	 * *p = old & ~mask;
-+	 */
-+	mask_not = ~mask;
-+	asm volatile (
-+		"1:	ldex.w		%1, (%3)	\n"
-+		"	mov		%0, %1		\n"
-+		"	and32		%0, %0, %2	\n"
-+		"	stex.w		%0, (%3)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp), "=&r"(old)
-+		: "r"(mask_not), "r"(p)
-+		: "memory");
-+
-+	smp_mb();
-+
-+	return (old & mask) != 0;
-+}
-+
-+/**
-+ * test_and_change_bit - Change a bit and return its old value
-+ * @nr: Bit to change
-+ * @addr: Address to count from
-+ *
-+ * This operation is atomic and cannot be reordered.
-+ * It also implies a memory barrier.
-+ */
-+static inline int test_and_change_bit(int nr, volatile unsigned long *addr)
-+{
-+	unsigned long mask = BIT_MASK(nr);
-+	unsigned long *p = ((unsigned long *)addr) + BIT_WORD(nr);
-+	unsigned long old, tmp;
-+
-+	/*
-+	 * old = *p;
-+	 * *p = old ^ mask;
-+	 */
-+	asm volatile (
-+		"1:	ldex.w		%1, (%3)	\n"
-+		"	mov		%0, %1		\n"
-+		"	xor32		%0, %0, %2	\n"
-+		"	stex.w		%0, (%3)	\n"
-+		"	bez		%0, 1b		\n"
-+		: "=&r"(tmp), "=&r"(old)
-+		: "r"(mask), "r"(p)
-+		: "memory");
-+
-+	smp_mb();
-+
-+	return (old & mask) != 0;
-+}
-+
-+#else
-+#include <asm-generic/bitops/atomic.h>
-+#endif
-+
-+/*
-+ * bug fix, why only could use atomic!!!!
-+ */
-+#include <asm-generic/bitops/non-atomic.h>
-+#define __clear_bit(nr,vaddr) clear_bit(nr,vaddr)
-+
-+#include <asm-generic/bitops/le.h>
-+#include <asm-generic/bitops/ext2-atomic.h>
-+#endif /* __ASM_CSKY_BITOPS_H */
-+
-diff --git a/arch/csky/include/asm/checksum.h b/arch/csky/include/asm/checksum.h
-new file mode 100644
-index 0000000..3f7d255
---- /dev/null
-+++ b/arch/csky/include/asm/checksum.h
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ASM_CSKY_CHECKSUM_H
-+#define __ASM_CSKY_CHECKSUM_H
-+
-+#include <linux/in6.h>
-+#include <asm/byteorder.h>
-+
-+static inline __sum16 csum_fold(__wsum csum)
-+{
-+	u32 tmp;
-+	asm volatile(
-+		"mov	%1, %0\n"
-+		"rori	%0, 16\n"
-+		"addu	%0, %1\n"
-+		"lsri	%0, 16\n"
-+		:"=r"(csum), "=r"(tmp)
-+		:"0"(csum));
-+	return (__force __sum16)~csum;
-+}
-+#define csum_fold csum_fold
-+
-+static inline __wsum
-+csum_tcpudp_nofold(
-+	__be32 saddr,
-+	__be32 daddr,
-+	unsigned short len,
-+	unsigned short proto,
-+	__wsum sum
-+	)
-+{
-+	asm volatile(
-+		"clrc\n"
-+		"addc    %0, %1\n"
-+		"addc    %0, %2\n"
-+		"addc    %0, %3\n"
-+		"inct    %0\n"
-+		:"=r"(sum)
-+		:"r"((__force u32)saddr),
-+		"r"((__force u32)daddr),
-+#ifdef __BIG_ENDIAN
-+		"r"(proto + len),
-+#else
-+		"r"((proto + len) << 8),
-+#endif
-+		"0" ((__force unsigned long)sum)
-+		:"cc");
-+	return sum;
-+}
-+#define csum_tcpudp_nofold csum_tcpudp_nofold
-+
-+static __inline__ __sum16
-+csum_ipv6_magic(
-+	const struct in6_addr *saddr,
-+	const struct in6_addr *daddr,
-+	__u32 len,
-+	unsigned short proto,
-+	__wsum sum
-+	)
-+{
-+	sum += saddr->in6_u.u6_addr32[0];
-+	sum += saddr->in6_u.u6_addr32[1];
-+	sum += saddr->in6_u.u6_addr32[2];
-+	sum += saddr->in6_u.u6_addr32[3];
-+	sum += daddr->in6_u.u6_addr32[0];
-+	sum += daddr->in6_u.u6_addr32[1];
-+	sum += daddr->in6_u.u6_addr32[2];
-+	sum += daddr->in6_u.u6_addr32[3];
-+	sum += (len + proto);
-+
-+	return csum_fold(sum);
-+}
-+#define _HAVE_ARCH_IPV6_CSUM
-+
-+#include <asm-generic/checksum.h>
-+
-+#endif /* __ASM_CSKY_CHECKSUM_H */
-diff --git a/arch/csky/include/asm/reg_ops.h b/arch/csky/include/asm/reg_ops.h
-new file mode 100644
-index 0000000..6963e5a
---- /dev/null
-+++ b/arch/csky/include/asm/reg_ops.h
-@@ -0,0 +1,16 @@
-+#ifndef __ASM_REGS_OPS_H
-+#define __ASM_REGS_OPS_H
-+
-+#define mfcr(reg)					\
-+({							\
-+	unsigned int tmp;				\
-+	asm volatile("mfcr %0, "reg"\n":"=r"(tmp));	\
-+	tmp;						\
++#define __xchg(new, ptr, size)					\
++({								\
++	__typeof__(ptr) __ptr = (ptr);				\
++	__typeof__(new) __new = (new);				\
++	__typeof__(*(ptr)) __ret;				\
++	unsigned long tmp;					\
++	switch (size) {						\
++	case 4:							\
++		asm volatile (					\
++		"1:	ldex.w		%0, (%3) \n"		\
++		"	mov		%1, %2   \n"		\
++		"	stex.w		%1, (%3) \n"		\
++		"	bez		%1, 1b   \n"		\
++			: "=&r" (__ret), "=&r" (tmp)		\
++			: "r" (__new), "r"(__ptr)		\
++			: "memory");				\
++		smp_mb();					\
++		break;						\
++	default:						\
++		BUILD_BUG();					\
++	}							\
++	__ret;							\
 +})
 +
-+#define mtcr(reg, val)					\
-+({							\
-+	asm volatile("mtcr %0, "reg"\n"::"r"(val));	\
++#define xchg(ptr, x)	(__xchg((x), (ptr), sizeof(*(ptr))))
++
++#define __cmpxchg(ptr, old, new, size)				\
++({								\
++	__typeof__(ptr) __ptr = (ptr);				\
++	__typeof__(new) __new = (new);				\
++	__typeof__(new) __tmp;					\
++	__typeof__(old) __old = (old);				\
++	__typeof__(*(ptr)) __ret;				\
++	switch (size) {						\
++	case 4:							\
++		asm volatile (					\
++		"1:	ldex.w		%0, (%3) \n"		\
++		"	cmpne		%0, %4   \n"		\
++		"	bt		2f       \n"		\
++		"	mov		%1, %2   \n"		\
++		"	stex.w		%1, (%3) \n"		\
++		"	bez		%1, 1b   \n"		\
++		"2:				 \n"		\
++			: "=&r" (__ret), "=&r" (__tmp)		\
++			: "r" (__new), "r"(__ptr), "r"(__old)	\
++			: "memory");				\
++		smp_mb();					\
++		break;						\
++	default:						\
++		BUILD_BUG();					\
++	}							\
++	__ret;							\
 +})
 +
-+#endif /* __ASM_REGS_OPS_H */
-diff --git a/arch/csky/include/uapi/asm/byteorder.h b/arch/csky/include/uapi/asm/byteorder.h
-new file mode 100644
-index 0000000..d254522
---- /dev/null
-+++ b/arch/csky/include/uapi/asm/byteorder.h
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+#ifndef __ASM_CSKY_BYTEORDER_H
-+#define __ASM_CSKY_BYTEORDER_H
-+
-+#if defined(__cskyBE__)
-+#include <linux/byteorder/big_endian.h>
-+#elif defined(__cskyLE__)
-+#include <linux/byteorder/little_endian.h>
++#define cmpxchg(ptr, o, n) \
++	(__cmpxchg((ptr), (o), (n), sizeof(*(ptr))))
 +#else
-+# error "There is no __cskyBE__, __cskyLE__"
++#include <asm-generic/cmpxchg.h>
 +#endif
 +
-+#endif /* __ASM_CSKY_BYTEORDER_H */
++#endif /* __ASM_CSKY_CMPXCHG_H */
+diff --git a/arch/csky/include/asm/spinlock.h b/arch/csky/include/asm/spinlock.h
+new file mode 100644
+index 0000000..ca10d0e
+--- /dev/null
++++ b/arch/csky/include/asm/spinlock.h
+@@ -0,0 +1,174 @@
++#ifndef __ASM_CSKY_SPINLOCK_H
++#define __ASM_CSKY_SPINLOCK_H
++
++#include <linux/spinlock_types.h>
++#include <asm/barrier.h>
++
++#define arch_spin_is_locked(x)	(READ_ONCE((x)->lock) != 0)
++
++/****** spin lock/unlock/trylock ******/
++static inline void arch_spin_lock(arch_spinlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 1b   \n"
++		"	movi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++}
++
++static inline void arch_spin_unlock(arch_spinlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	movi		%0, 0    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++}
++
++static inline int arch_spin_trylock(arch_spinlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 2f   \n"
++		"	movi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++
++	return !tmp;
++}
++
++/****** read lock/unlock/trylock ******/
++static inline void arch_read_lock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	blz		%0, 1b   \n"
++		"	addi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++}
++
++static inline void arch_read_unlock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++}
++
++static inline int arch_read_trylock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	blz		%0, 2f   \n"
++		"	addi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++
++	return !tmp;
++}
++
++/****** write lock/unlock/trylock ******/
++static inline void arch_write_lock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 1b   \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++}
++
++static inline void arch_write_unlock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	smp_mb();
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	movi		%0, 0    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++}
++
++static inline int arch_write_trylock(arch_rwlock_t *lock)
++{
++	unsigned int *p = &lock->lock;
++	unsigned int tmp;
++
++	asm volatile (
++		"1:	ldex.w		%0, (%1) \n"
++		"	bnez		%0, 2f   \n"
++		"	subi		%0, 1    \n"
++		"	stex.w		%0, (%1) \n"
++		"	bez		%0, 1b   \n"
++		"	movi		%0, 0    \n"
++		"2:				 \n"
++		: "=&r" (tmp)
++		: "r"(p)
++		: "memory");
++	smp_mb();
++
++	return !tmp;
++}
++
++#endif /* __ASM_CSKY_SPINLOCK_H */
+diff --git a/arch/csky/include/asm/spinlock_types.h b/arch/csky/include/asm/spinlock_types.h
+new file mode 100644
+index 0000000..ea890ef
+--- /dev/null
++++ b/arch/csky/include/asm/spinlock_types.h
+@@ -0,0 +1,20 @@
++#ifndef __ASM_CSKY_SPINLOCK_TYPES_H
++#define __ASM_CSKY_SPINLOCK_TYPES_H
++
++#ifndef __LINUX_SPINLOCK_TYPES_H
++# error "please don't include this file directly"
++#endif
++
++typedef struct {
++	unsigned int lock;
++} arch_spinlock_t;
++
++#define __ARCH_SPIN_LOCK_UNLOCKED	{ 0 }
++
++typedef struct {
++	unsigned int lock;
++} arch_rwlock_t;
++
++#define __ARCH_RW_LOCK_UNLOCKED		{ 0 }
++
++#endif
+diff --git a/arch/csky/kernel/atomic.S b/arch/csky/kernel/atomic.S
+new file mode 100644
+index 0000000..95ae696
+--- /dev/null
++++ b/arch/csky/kernel/atomic.S
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/linkage.h>
++#include <abi/entry.h>
++
++.text
++
++/*
++ * int csky_cmpxchg(int oldval, int newval, int *ptr)
++ *
++ * If *ptr != oldval && return 1,
++ * else *ptr = newval return 0.
++ */
++#ifdef CONFIG_CPU_HAS_LDSTEX
++ENTRY(csky_cmpxchg)
++	USPTOKSP
++	mfcr	a3, epc
++	INCTRAP	a3
++
++	subi    sp, 8
++	stw     a3, (sp, 0)
++	mfcr    a3, epsr
++	stw     a3, (sp, 4)
++
++	psrset	ee
++1:
++	ldex	a3, (a2)
++	cmpne	a0, a3
++	bt16	2f
++	mov	a3, a1
++	stex	a3, (a2)
++	bez	a3, 1b
++2:
++	sync.is
++	mvc	a0
++	ldw	a3, (sp, 0)
++	mtcr	a3, epc
++	ldw     a3, (sp, 4)
++	mtcr	a3, epsr
++	addi	sp, 8
++	KSPTOUSP
++	rte
++END(csky_cmpxchg)
++#else
++ENTRY(csky_cmpxchg)
++	USPTOKSP
++	mfcr	a3, epc
++	INCTRAP	a3
++
++	subi    sp, 8
++	stw     a3, (sp, 0)
++	mfcr    a3, epsr
++	stw     a3, (sp, 4)
++
++	psrset	ee
++1:
++	ldw	a3, (a2)
++	cmpne	a0, a3
++	bt16	3f
++2:
++	stw	a1, (a2)
++3:
++	mvc	a0
++	ldw	a3, (sp, 0)
++	mtcr	a3, epc
++	ldw     a3, (sp, 4)
++	mtcr	a3, epsr
++	addi	sp, 8
++	KSPTOUSP
++	rte
++END(csky_cmpxchg)
++
++/*
++ * Called from tlbmodified exception
++ */
++ENTRY(csky_cmpxchg_fixup)
++	mfcr	a0, epc
++	lrw	a1, 2b
++	cmpne	a1, a0
++	bt	1f
++	subi	a1, (2b - 1b)
++	stw	a1, (sp, LSAVE_PC)
++1:
++	rts
++END(csky_cmpxchg_fixup)
++#endif
++
 -- 
 2.7.4
 
