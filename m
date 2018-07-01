@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4767C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7059EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05A8255EC
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:21:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05A8255EC
+	by mail.kernel.org (Postfix) with ESMTP id 362B92564A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362B92564A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030784AbeGARVW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:21:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36702 "EHLO
+        id S965980AbeGARVo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:21:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031572AbeGAQiW (ORCPT
+        with ESMTP id S1031094AbeGAQiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:38:22 -0400
+        Sun, 1 Jul 2018 12:38:14 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E25DC92B;
-        Sun,  1 Jul 2018 16:38:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B383292B;
+        Sun,  1 Jul 2018 16:38:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.17 043/220] fuse: fix control dir setup and teardown
-Date:   Sun,  1 Jul 2018 18:21:07 +0200
-Message-Id: <20180701160910.121576575@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.17 009/220] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
+Date:   Sun,  1 Jul 2018 18:20:33 +0200
+Message-Id: <20180701160908.712729964@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,68 +50,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit 6becdb601bae2a043d7fb9762c4d48699528ea6e upstream.
+commit 1f74c8a64798e2c488f86efc97e308b85fb7d7aa upstream.
 
-syzbot is reporting NULL pointer dereference at fuse_ctl_remove_conn() [1].
-Since fc->ctl_ndents is incremented by fuse_ctl_add_conn() when new_inode()
-failed, fuse_ctl_remove_conn() reaches an inode-less dentry and tries to
-clear d_inode(dentry)->i_private field.
+mce_no_way_out() does a quick check during #MC to see whether some of
+the MCEs logged would require the kernel to panic immediately. And it
+passes a struct mce where MCi_STATUS gets written.
 
-Fix by only adding the dentry to the array after being fully set up.
+However, after having saved a valid status value, the next iteration
+of the loop which goes over the MCA banks on the CPU, overwrites the
+valid status value because we're using struct mce as storage instead of
+a temporary variable.
 
-When tearing down the control directory, do d_invalidate() on it to get rid
-of any mounts that might have been added.
+Which leads to MCE records with an empty status value:
 
-[1] https://syzkaller.appspot.com/bug?id=f396d863067238959c91c0b7cfc10b163638cac6
-Reported-by: syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>
-Fixes: bafa96541b25 ("[PATCH] fuse: add control filesystem")
-Cc: <stable@vger.kernel.org> # v2.6.18
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+  mce: [Hardware Error]: CPU 0: Machine Check Exception: 6 Bank 0: 0000000000000000
+  mce: [Hardware Error]: RIP 10:<ffffffffbd42fbd7> {trigger_mce+0x7/0x10}
+
+In order to prevent the loss of the status register value, return
+immediately when severity is a panic one so that we can panic
+immediately with the first fatal MCE logged. This is also the intention
+of this function and not to noodle over the banks while a fatal MCE is
+already logged.
+
+Tony: read the rest of the MCA bank to populate the struct mce fully.
+
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20180622095428.626-8-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/control.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -211,10 +211,11 @@ static struct dentry *fuse_ctl_add_dentr
- 	if (!dentry)
- 		return NULL;
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -772,23 +772,25 @@ EXPORT_SYMBOL_GPL(machine_check_poll);
+ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 			  struct pt_regs *regs)
+ {
+-	int i, ret = 0;
+ 	char *tmp;
++	int i;
  
--	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
- 	inode = new_inode(fuse_control_sb);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		return NULL;
-+	}
+ 	for (i = 0; i < mca_cfg.banks; i++) {
+ 		m->status = mce_rdmsrl(msr_ops.status(i));
+-		if (m->status & MCI_STATUS_VAL) {
+-			__set_bit(i, validp);
+-			if (quirk_no_way_out)
+-				quirk_no_way_out(i, m, regs);
+-		}
++		if (!(m->status & MCI_STATUS_VAL))
++			continue;
++
++		__set_bit(i, validp);
++		if (quirk_no_way_out)
++			quirk_no_way_out(i, m, regs);
  
- 	inode->i_ino = get_next_ino();
- 	inode->i_mode = mode;
-@@ -228,6 +229,9 @@ static struct dentry *fuse_ctl_add_dentr
- 	set_nlink(inode, nlink);
- 	inode->i_private = fc;
- 	d_add(dentry, inode);
-+
-+	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
-+
- 	return dentry;
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
++			mce_read_aux(m, i);
+ 			*msg = tmp;
+-			ret = 1;
++			return 1;
+ 		}
+ 	}
+-	return ret;
++	return 0;
  }
  
-@@ -284,7 +288,10 @@ void fuse_ctl_remove_conn(struct fuse_co
- 	for (i = fc->ctl_ndents - 1; i >= 0; i--) {
- 		struct dentry *dentry = fc->ctl_dentry[i];
- 		d_inode(dentry)->i_private = NULL;
--		d_drop(dentry);
-+		if (!i) {
-+			/* Get rid of submounts: */
-+			d_invalidate(dentry);
-+		}
- 		dput(dentry);
- 	}
- 	drop_nlink(d_inode(fuse_control_sb->s_root));
+ /*
 
 
