@@ -2,111 +2,69 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F63BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9007BC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2583C259AB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2583C259AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 530C2259B4
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530C2259B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965331AbeGASZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:25:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33024 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753334AbeGAQSb (ORCPT
+        id S965244AbeGAS0n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:26:43 -0400
+Received: from smtprelay0062.hostedemail.com ([216.40.44.62]:37011 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753200AbeGAS0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:31 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E54EB92B;
-        Sun,  1 Jul 2018 16:18:30 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 043/105] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
-Date:   Sun,  1 Jul 2018 18:01:53 +0200
-Message-Id: <20180701153152.368272091@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
-References: <20180701153149.382300170@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Sun, 1 Jul 2018 14:26:37 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8AA6D181D341D;
+        Sun,  1 Jul 2018 18:26:35 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bird78_56799f9de8425
+X-Filterd-Recvd-Size: 1503
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  1 Jul 2018 18:26:34 +0000 (UTC)
+Message-ID: <653914f26dc8433a3f682b5e7eb850ab94bd431d.camel@perches.com>
+Subject: Re: [PATCH 0/3] cast sizeof to int for comparison
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>, linux-usb@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Date:   Sun, 01 Jul 2018 11:26:32 -0700
+In-Reply-To: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Sun, 2018-07-01 at 19:32 +0200, Julia Lawall wrote:
+> Comparing an int to a size, which is unsigned, causes the int to become
+> unsigned, giving the wrong result.
+> 
+> The semantic match that finds this problem is as follows:
+> (http://coccinelle.lip6.fr/)
 
-------------------
+Great, thanks.
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+But what about the ones in net/smc like:
 
-commit 91d06971881f71d945910de128658038513d1b24 upstream.
+> net/smc/smc_clc.c:	
+> 
+>         len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
+>                              sizeof(struct smc_clc_msg_decline));
+>         if (len < sizeof(struct smc_clc_msg_decline))
 
-Currently we do not have an isync, or any other context synchronizing
-instruction prior to the slbie/slbmte in _switch() that updates the
-SLB entry for the kernel stack.
-
-However that is not correct as outlined in the ISA.
-
->From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
-
-  "Changing the contents of ... the contents of SLB entries ... can
-   have the side effect of altering the context in which data
-   addresses and instruction addresses are interpreted, and in which
-   instructions are executed and data accesses are performed.
-   ...
-   These side effects need not occur in program order, and therefore
-   may require explicit synchronization by software.
-   ...
-   The synchronizing instruction before the context-altering
-   instruction ensures that all instructions up to and including that
-   synchronizing instruction are fetched and executed in the context
-   that existed before the alteration."
-
-And page 1136:
-
-  "For data accesses, the context synchronizing instruction before the
-   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
-   that all preceding instructions that access data storage have
-   completed to a point at which they have reported all exceptions
-   they will cause."
-
-We're not aware of any bugs caused by this, but it should be fixed
-regardless.
-
-Add the missing isync when updating kernel stack SLB entry.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-[mpe: Flesh out change log with more ISA text & explanation]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/powerpc/kernel/entry_64.S |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -574,6 +574,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
- 	 * actually hit this code path.
- 	 */
- 
-+	isync
- 	slbie	r6
- 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
- 	slbmte	r7,r0
-
-
+Are those detected by the semantic match and ignored?
