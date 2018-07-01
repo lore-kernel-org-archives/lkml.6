@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADACAC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB6FC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A63025171
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A63025171
+	by mail.kernel.org (Postfix) with ESMTP id 314E42516C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314E42516C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965084AbeGAQYs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:24:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33526 "EHLO
+        id S933863AbeGAQY6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:24:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33574 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965131AbeGAQYk (ORCPT
+        with ESMTP id S964872AbeGAQYw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:40 -0400
+        Sun, 1 Jul 2018 12:24:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA9E4AE0;
-        Sun,  1 Jul 2018 16:24:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E21DAD8;
+        Sun,  1 Jul 2018 16:24:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 4.9 017/101] mips: ftrace: fix static function graph tracing
-Date:   Sun,  1 Jul 2018 18:21:03 +0200
-Message-Id: <20180701160757.823536881@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 020/101] Bluetooth: hci_qca: Avoid missing rampatch failure with userspace fw loader
+Date:   Sun,  1 Jul 2018 18:21:06 +0200
+Message-Id: <20180701160757.949253636@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -51,80 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Amit Pundir <amit.pundir@linaro.org>
 
-commit 6fb8656646f996d1eef42e6d56203c4915cb9e08 upstream.
+commit 7dc5fe0814c35ec4e7d2e8fa30abab72e0e6a172 upstream.
 
-ftrace_graph_caller was never run after calling ftrace_trace_function,
-breaking the function graph tracer. Fix this, bringing it in line with the
-x86 implementation.
+AOSP use userspace firmware loader to load firmwares, which will
+return -EAGAIN in case qca/rampatch_00440302.bin is not found.
+Since there is no rampatch for dragonboard820c QCA controller
+revision, just make it work as is.
 
-While we're at it, also streamline the control flow of _mcount a bit to
-reduce the number of branches.
-
-This issue was reported before:
-https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
-
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/18929/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: stable@vger.kernel.org # v3.17+
+CC: Loic Poulain <loic.poulain@linaro.org>
+CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>
+CC: Johan Hedberg <johan.hedberg@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/mcount.S |   27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ drivers/bluetooth/hci_qca.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/mips/kernel/mcount.S
-+++ b/arch/mips/kernel/mcount.S
-@@ -116,10 +116,20 @@ ftrace_stub:
- NESTED(_mcount, PT_SIZE, ra)
- 	PTR_LA	t1, ftrace_stub
- 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
--	bne	t1, t2, static_trace
-+	beq	t1, t2, fgraph_trace
- 	 nop
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -939,6 +939,12 @@ static int qca_setup(struct hci_uart *hu
+ 	} else if (ret == -ENOENT) {
+ 		/* No patch/nvm-config found, run with original fw/config */
+ 		ret = 0;
++	} else if (ret == -EAGAIN) {
++		/*
++		 * Userspace firmware loader will return -EAGAIN in case no
++		 * patch/nvm-config is found, so run with original fw/config.
++		 */
++		ret = 0;
+ 	}
  
-+	MCOUNT_SAVE_REGS
-+
-+	move	a0, ra		/* arg1: self return address */
-+	jalr	t2		/* (1) call *ftrace_trace_function */
-+	 move	a1, AT		/* arg2: parent's return address */
-+
-+	MCOUNT_RESTORE_REGS
-+
-+fgraph_trace:
- #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
-+	PTR_LA	t1, ftrace_stub
- 	PTR_L	t3, ftrace_graph_return
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
-@@ -128,24 +138,11 @@ NESTED(_mcount, PT_SIZE, ra)
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
- #endif
--	b	ftrace_stub
--#ifdef CONFIG_32BIT
--	 addiu sp, sp, 8
--#else
--	 nop
--#endif
--
--static_trace:
--	MCOUNT_SAVE_REGS
--
--	move	a0, ra		/* arg1: self return address */
--	jalr	t2		/* (1) call *ftrace_trace_function */
--	 move	a1, AT		/* arg2: parent's return address */
- 
--	MCOUNT_RESTORE_REGS
- #ifdef CONFIG_32BIT
- 	addiu sp, sp, 8
- #endif
-+
- 	.globl ftrace_stub
- ftrace_stub:
- 	RETURN_BACK
+ 	/* Setup bdaddr */
 
 
