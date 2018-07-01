@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9C4C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181BBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5FE25326
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5FE25326
+	by mail.kernel.org (Postfix) with ESMTP id C92C225328
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92C225328
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031423AbeGAQh0 (ORCPT
+        id S1031436AbeGAQhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:37:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36218 "EHLO
+        Sun, 1 Jul 2018 12:37:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031397AbeGAQhQ (ORCPT
+        with ESMTP id S1031403AbeGAQhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:16 -0400
+        Sun, 1 Jul 2018 12:37:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F114892B;
-        Sun,  1 Jul 2018 16:37:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A792A73;
+        Sun,  1 Jul 2018 16:37:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.17 019/220] PCI / PM: Do not clear state_saved for devices that remain suspended
-Date:   Sun,  1 Jul 2018 18:20:43 +0200
-Message-Id: <20180701160909.148373756@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Woods <brian.woods@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        boris.ostrovsky@oracle.com, xen-devel@lists.xenproject.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 002/220] x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths
+Date:   Sun,  1 Jul 2018 18:20:26 +0200
+Message-Id: <20180701160908.369313453@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,52 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 656088aa9b513907833ba091d0dcde87571fe05b upstream.
+commit 74899d92e66663dc7671a8017b3146dcd4735f3b upstream.
 
-The state_saved flag should not be cleared in pci_pm_suspend() if the
-given device is going to remain suspended, or the device's config
-space will not be restored properly during the subsequent resume.
+Commit:
 
-Namely, if the device is going to stay in suspend, both the late
-and noirq callbacks return early for it, so if its state_saved flag
-is cleared in pci_pm_suspend(), it will remain unset throughout the
-remaining part of suspend and resume and pci_restore_state() called
-for the device going forward will return without doing anything.
+  1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
 
-For this reason, change pci_pm_suspend() to only clear state_saved
-if the given device is not going to remain suspended.  [This is
-analogous to what commit ae860a19f37c (PCI / PM: Do not clear
-state_saved in pci_pm_freeze() when smart suspend is set) did for
-hibernation.]
+... added speculative_store_bypass_ht_init() to the per-CPU initialization sequence.
 
-Fixes: c4b65157aeef (PCI / PM: Take SMART_SUSPEND driver flag into account)
-Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+speculative_store_bypass_ht_init() needs to be called on each CPU for
+PV guests, too.
+
+Reported-by: Brian Woods <brian.woods@amd.com>
+Tested-by: Brian Woods <brian.woods@amd.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: <stable@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: boris.ostrovsky@oracle.com
+Cc: xen-devel@lists.xenproject.org
+Fixes: 1f50ddb4f4189243c05926b842dc1a0332195f31 ("x86/speculation: Handle HT correctly on AMD")
+Link: https://lore.kernel.org/lkml/20180621084331.21228-1-jgross@suse.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci-driver.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/xen/smp_pv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -753,10 +753,11 @@ static int pci_pm_suspend(struct device
- 	 * better to resume the device from runtime suspend here.
- 	 */
- 	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
--	    !pci_dev_keep_suspended(pci_dev))
-+	    !pci_dev_keep_suspended(pci_dev)) {
- 		pm_runtime_resume(dev);
-+		pci_dev->state_saved = false;
-+	}
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -32,6 +32,7 @@
+ #include <xen/interface/vcpu.h>
+ #include <xen/interface/xenpmu.h>
  
--	pci_dev->state_saved = false;
- 	if (pm->suspend) {
- 		pci_power_t prev = pci_dev->current_state;
- 		int error;
++#include <asm/spec-ctrl.h>
+ #include <asm/xen/interface.h>
+ #include <asm/xen/hypercall.h>
+ 
+@@ -70,6 +71,8 @@ static void cpu_bringup(void)
+ 	cpu_data(cpu).x86_max_cores = 1;
+ 	set_cpu_sibling_map(cpu);
+ 
++	speculative_store_bypass_ht_init();
++
+ 	xen_setup_cpu_clockevents();
+ 
+ 	notify_cpu_starting(cpu);
+@@ -250,6 +253,8 @@ static void __init xen_pv_smp_prepare_cp
+ 	}
+ 	set_cpu_sibling_map(0);
+ 
++	speculative_store_bypass_ht_init();
++
+ 	xen_pmu_init(0);
+ 
+ 	if (xen_smp_intr_init(0) || xen_smp_intr_init_pv(0))
 
 
