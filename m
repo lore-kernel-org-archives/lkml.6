@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7C1C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5897BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E0A23C1E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E0A23C1E
+	by mail.kernel.org (Postfix) with ESMTP id 1EE5323C1E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE5323C1E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030936AbeGAQeW (ORCPT
+        id S1030963AbeGAQeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:34:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35530 "EHLO
+        Sun, 1 Jul 2018 12:34:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35574 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030893AbeGAQeL (ORCPT
+        with ESMTP id S1030932AbeGAQeW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:11 -0400
+        Sun, 1 Jul 2018 12:34:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B5CB49B;
-        Sun,  1 Jul 2018 16:34:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8F4E649B;
+        Sun,  1 Jul 2018 16:34:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Martin Townsend <mtownsend1973@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.14 109/157] ubi: fastmap: Cancel work upon detach
-Date:   Sun,  1 Jul 2018 18:23:01 +0200
-Message-Id: <20180701160857.991611035@linuxfoundation.org>
+        Sridhar Pitchai <sridhar.pitchai@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.14 078/157] PCI: hv: Make sure the bus domain is really unique
+Date:   Sun,  1 Jul 2018 18:22:30 +0200
+Message-Id: <20180701160856.494165698@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -52,67 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Sridhar Pitchai <Sridhar.Pitchai@microsoft.com>
 
-commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
+commit 29927dfb7f69bcf2ae7fd1cda10997e646a5189c upstream.
 
-Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
-fastmap work on detach") does not really fix the problem, it just
-reduces the risk to hit the race window where fastmap work races against
-free()'ing ubi->volumes[].
+When Linux runs as a guest VM in Hyper-V and Hyper-V adds the virtual PCI
+bus to the guest, Hyper-V always provides unique PCI domain.
 
-The correct approach is making sure that no more fastmap work is in
-progress before we free ubi data structures.
-So we cancel fastmap work right after the ubi background thread is
-stopped.
-By setting ubi->thread_enabled to zero we make sure that no further work
-tries to wake the thread.
+commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
+overrode unique domain with the serial number of the first device added to
+the virtual PCI bus.
 
-Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
-Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
-Cc: stable@vger.kernel.org
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Martin Townsend <mtownsend1973@gmail.com>
+The reason for that patch was to have a consistent and short name for the
+device, but Hyper-V doesn't provide unique serial numbers. Using non-unique
+serial numbers as domain IDs leads to duplicate device addresses, which
+causes PCI bus registration to fail.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
+commit 0c195567a8f6 ("netvsc: transparent VF management") avoids the need
+for commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
+domain").  When scripts were used to configure VF devices, the name of
+the VF needed to be consistent and short, but with commit 0c195567a8f6
+("netvsc: transparent VF management") all the setup is done in the kernel,
+and we do not need to maintain consistent name.
+
+Revert commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
+domain") so we can reliably support multiple devices being assigned to
+a guest.
+
+Tag the patch for stable kernels containing commit 0c195567a8f6
+("netvsc: transparent VF management").
+
+Fixes: 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
+Signed-off-by: Sridhar Pitchai <sridhar.pitchai@microsoft.com>
+[lorenzo.pieralisi@arm.com: trimmed commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org # v4.14+
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/build.c |    3 +++
- drivers/mtd/ubi/wl.c    |    4 +---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/pci/host/pci-hyperv.c |   11 -----------
+ 1 file changed, 11 deletions(-)
 
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -1082,6 +1082,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
- 	if (ubi->bgt_thread)
- 		kthread_stop(ubi->bgt_thread);
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1610,17 +1610,6 @@ static struct hv_pci_dev *new_pcichild_d
+ 	get_pcichild(hpdev, hv_pcidev_ref_childlist);
+ 	spin_lock_irqsave(&hbus->device_list_lock, flags);
  
-+#ifdef CONFIG_MTD_UBI_FASTMAP
-+	cancel_work_sync(&ubi->fm_work);
-+#endif
- 	ubi_debugfs_exit_dev(ubi);
- 	uif_close(ubi);
- 
---- a/drivers/mtd/ubi/wl.c
-+++ b/drivers/mtd/ubi/wl.c
-@@ -1505,6 +1505,7 @@ int ubi_thread(void *u)
- 	}
- 
- 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
-+	ubi->thread_enabled = 0;
- 	return 0;
- }
- 
-@@ -1514,9 +1515,6 @@ int ubi_thread(void *u)
-  */
- static void shutdown_work(struct ubi_device *ubi)
- {
--#ifdef CONFIG_MTD_UBI_FASTMAP
--	flush_work(&ubi->fm_work);
--#endif
- 	while (!list_empty(&ubi->works)) {
- 		struct ubi_work *wrk;
- 
+-	/*
+-	 * When a device is being added to the bus, we set the PCI domain
+-	 * number to be the device serial number, which is non-zero and
+-	 * unique on the same VM.  The serial numbers start with 1, and
+-	 * increase by 1 for each device.  So device names including this
+-	 * can have shorter names than based on the bus instance UUID.
+-	 * Only the first device serial number is used for domain, so the
+-	 * domain number will not change after the first device is added.
+-	 */
+-	if (list_empty(&hbus->children))
+-		hbus->sysdata.domain = desc->ser;
+ 	list_add_tail(&hpdev->list_entry, &hbus->children);
+ 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ 	return hpdev;
 
 
