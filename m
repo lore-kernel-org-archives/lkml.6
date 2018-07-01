@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB16EC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48ADC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BECE25B5C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:46:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BECE25B5C
+	by mail.kernel.org (Postfix) with ESMTP id 81EF325B58
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:46:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81EF325B58
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932133AbeGASqL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:46:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59960 "EHLO
+        id S932290AbeGASqs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:46:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753042AbeGAQMe (ORCPT
+        with ESMTP id S1752946AbeGAQMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:34 -0400
+        Sun, 1 Jul 2018 12:12:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9EE1ACC;
-        Sun,  1 Jul 2018 16:12:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87B9686A;
+        Sun,  1 Jul 2018 16:12:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaco Kroon <jaco@uls.co.za>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>
-Subject: [PATCH 3.18 39/85] ext4: fix fencepost error in check for inode count overflow during resize
-Date:   Sun,  1 Jul 2018 18:01:57 +0200
-Message-Id: <20180701153123.913932258@linuxfoundation.org>
+        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 34/85] ARM: davinci: board-dm646x-evm: set VPIF capture card name
+Date:   Sun,  1 Jul 2018 18:01:52 +0200
+Message-Id: <20180701153123.720410719@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,37 +49,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Sekhar Nori <nsekhar@ti.com>
 
-commit 4f2f76f751433908364ccff82f437a57d0e6e9b7 upstream.
+[ Upstream commit bb7298a7e87cf3430eb62be8746e5d7a07ca9d7c ]
 
-ext4_resize_fs() has an off-by-one bug when checking whether growing of
-a filesystem will not overflow inode count. As a result it allows a
-filesystem with 8192 inodes per group to grow to 64TB which overflows
-inode count to 0 and makes filesystem unusable. Fix it.
+VPIF capture driver expects card name to be set since it
+uses it without checking for NULL. The commit which
+introduced VPIF display and capture support added card
+name only for display, not for capture.
 
-Cc: stable@vger.kernel.org
-Fixes: 3f8a6411fbada1fa482276591e037f3b1adcf55b
-Reported-by: Jaco Kroon <jaco@uls.co.za>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Set it in platform data to probe driver successfully.
+
+While at it, also fix the display card name to something more
+appropriate.
+
+Fixes: 85609c1ccda6 ("DaVinci: DM646x - platform changes for vpif capture and display drivers")
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-davinci/board-dm646x-evm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1906,7 +1906,7 @@ retry:
- 		return 0;
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -538,7 +538,7 @@ static struct vpif_display_config dm646x
+ 		.outputs = dm6467_ch0_outputs,
+ 		.output_count = ARRAY_SIZE(dm6467_ch0_outputs),
+ 	},
+-	.card_name	= "DM646x EVM",
++	.card_name	= "DM646x EVM Video Display",
+ };
  
- 	n_group = ext4_get_group_number(sb, n_blocks_count - 1);
--	if (n_group > (0xFFFFFFFFUL / EXT4_INODES_PER_GROUP(sb))) {
-+	if (n_group >= (0xFFFFFFFFUL / EXT4_INODES_PER_GROUP(sb))) {
- 		ext4_warning(sb, "resize would cause inodes_count overflow");
- 		return -EINVAL;
- 	}
+ /**
+@@ -696,6 +696,7 @@ static struct vpif_capture_config dm646x
+ 			.fid_pol = 0,
+ 		},
+ 	},
++	.card_name = "DM646x EVM Video Capture",
+ };
+ 
+ static void __init evm_init_video(void)
 
 
