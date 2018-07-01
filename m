@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CBC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25247C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C4525418
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C4525418
+	by mail.kernel.org (Postfix) with ESMTP id CC8C22541C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8C22541C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965951AbeGAQp6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38290 "EHLO
+        id S965990AbeGAQqJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:46:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38316 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032218AbeGAQpw (ORCPT
+        with ESMTP id S965956AbeGAQqD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:52 -0400
+        Sun, 1 Jul 2018 12:46:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3EB43ACC;
-        Sun,  1 Jul 2018 16:45:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CFFCA73;
+        Sun,  1 Jul 2018 16:46:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Berg <bberg@redhat.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 203/220] ALSA: hda/realtek - Fix pop noise on Lenovo P50 & co
-Date:   Sun,  1 Jul 2018 18:23:47 +0200
-Message-Id: <20180701160916.654275999@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 205/220] ALSA: hda/realtek - Fix the problem of two front mics on more machines
+Date:   Sun,  1 Jul 2018 18:23:49 +0200
+Message-Id: <20180701160916.733438448@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,60 +49,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit d5a6cabf02210b896a60eee7c04c670ee9ba6dca upstream.
+commit e41fc8c5bd41b96bfae5ce4c66bee6edabc932e8 upstream.
 
-Some Lenovo laptops, e.g. Lenovo P50, showed the pop noise at resume
-or runtime resume.  It turned out to be reduced by applying
-alc_no_shutup() just like TPT440 quirk does.
+We have 3 more Lenovo machines, they all have 2 front mics on them,
+so they need the fixup to change the location for one of two mics.
 
-Since there are many Lenovo models showing the same behavior, put this
-workaround in ALC269_FIXUP_THINKPAD_ACPI entry so that it's applied
-commonly to all such Lenovo machines.
+Among these 3 Lenovo machines, one of them has the same pin cfg as the
+machine with subid 0x17aa3138, so use the pin cfg table to apply fixup
+for them. The rest machines don't share the same pin cfg, so far use
+the subid to apply fixup for them.
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Tested-by: Benjamin Berg <bberg@redhat.com>
+Fixes: a3dafb2200bf ("ALSA: hda/realtek - adjust the location of one mic")
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_realtek.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -4985,7 +4985,6 @@ static void alc_fixup_tpt440_dock(struct
- 	struct alc_spec *spec = codec->spec;
- 
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
--		spec->shutup = alc_no_shutup; /* reduce click noise */
- 		spec->reboot_notify = alc_d3_at_reboot; /* reduce noise */
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
- 		codec->power_save_node = 0; /* avoid click noises */
-@@ -5384,6 +5383,13 @@ static void alc274_fixup_bind_dacs(struc
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
- 
-+static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
-+				    const struct hda_fixup *fix, int action)
-+{
-+	alc_fixup_no_shutup(codec, fix, action); /* reduce click noise */
-+	hda_fixup_thinkpad_acpi(codec, fix, action);
-+}
-+
- /* for dell wmi mic mute led */
- #include "dell_wmi_helper.c"
- 
-@@ -5927,7 +5933,7 @@ static const struct hda_fixup alc269_fix
- 	},
- 	[ALC269_FIXUP_THINKPAD_ACPI] = {
- 		.type = HDA_FIXUP_FUNC,
--		.v.func = hda_fixup_thinkpad_acpi,
-+		.v.func = alc_fixup_thinkpad_acpi,
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_SKU_IGNORE,
- 	},
+@@ -6584,8 +6584,9 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
++	SND_PCI_QUIRK(0x17aa, 0x312a, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+-	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
++	SND_PCI_QUIRK(0x17aa, 0x3136, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+@@ -6763,6 +6764,12 @@ static const struct snd_hda_pin_quirk al
+ 		{0x14, 0x90170110},
+ 		{0x19, 0x02a11030},
+ 		{0x21, 0x02211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC294_FIXUP_LENOVO_MIC_LOCATION,
++		{0x14, 0x90170110},
++		{0x19, 0x02a11030},
++		{0x1a, 0x02a11040},
++		{0x1b, 0x01014020},
++		{0x21, 0x0221101f}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a60140},
+ 		{0x14, 0x90170110},
 
 
