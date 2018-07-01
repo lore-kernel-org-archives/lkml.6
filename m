@@ -2,116 +2,101 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D44C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE35C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C11E255E3
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C11E255E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F6E0255E8
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xan1wICk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6E0255E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964828AbeGARMh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:12:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37192 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031912AbeGAQka (ORCPT
+        id S965236AbeGARMw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:12:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45596 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965010AbeGARMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:40:30 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89985ACD;
-        Sun,  1 Jul 2018 16:40:29 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH 4.17 087/220] IB/core: Make testing MR flags for writability a static inline function
-Date:   Sun,  1 Jul 2018 18:21:51 +0200
-Message-Id: <20180701160912.060316245@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
-References: <20180701160908.272447118@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Sun, 1 Jul 2018 13:12:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=x5kXwPwTXSAp5NRLmSnXsrEsbaqAPQxaKURKHvXJedo=; b=Xan1wICkXfDLY8zMeLEkPUJUt
+        ZP3Mm4BKTLNLtaK/IFOR+3L2uWGfMfPL5uPgiLIYJMHgvHbaEhHyfl9v5jK8C35upXiK3C85b5J5e
+        WxRqUIMapLPzHl7e8dGhIDOWjTCxp49TUIB4xCfPI/bRWMPcZ6kE+ty+fDGxra1PSFrU2DfTj6iMV
+        Ja4rYBIuepOvrb6oUUDVyaczC5XT7ElwH9Zkn2a01kHIiWlIzbIBr+ZBtfo3Kndh/R80yPBX4kW/2
+        owmpmYq0/Qk2G8tnPnR5i5S+BEDZmKLz3dob6najzfbXm0miVALcz0ddwUs1WcIRWWBaE1ijrlKDm
+        Q6yAL+2Sw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fZfu1-0001C5-Qr; Sun, 01 Jul 2018 17:12:45 +0000
+To:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] kbuild: check for /sbin/depmod installed
+Message-ID: <1df7f847-484c-a368-9dc2-50d191f8be9b@infradead.org>
+Date:   Sun, 1 Jul 2018 10:12:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-------------------
+Verify that 'depmod' ($DEPMOD) is installed.
+This is a partial revert of 620c231c7a7f (from 2012):
+  ("kbuild: do not check for ancient modutils tools")
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Fixes kernel bugzilla #198965:
+https://bugzilla.kernel.org/show_bug.cgi?id=198965
 
-commit 08bb558ac11ab944e0539e78619d7b4c356278bd upstream.
-
-Make the MR writability flags check, which is performed in umem.c,
-a static inline function in file ib_verbs.h
-
-This allows the function to be used by low-level infiniband drivers.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Cc: stable@vger.kernel.org # any kernel since 2012
 ---
- drivers/infiniband/core/umem.c |   11 +----------
- include/rdma/ib_verbs.h        |   14 ++++++++++++++
- 2 files changed, 15 insertions(+), 10 deletions(-)
+ scripts/depmod.sh |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -119,16 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_uc
- 	umem->length     = size;
- 	umem->address    = addr;
- 	umem->page_shift = PAGE_SHIFT;
--	/*
--	 * We ask for writable memory if any of the following
--	 * access flags are set.  "Local write" and "remote write"
--	 * obviously require write access.  "Remote atomic" can do
--	 * things like fetch and add, which will modify memory, and
--	 * "MW bind" can change permissions by binding a window.
--	 */
--	umem->writable  = !!(access &
--		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
--		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
-+	umem->writable   = ib_access_writable(access);
+--- lnx-418-rc2.orig/scripts/depmod.sh
++++ lnx-418-rc2/scripts/depmod.sh
+@@ -10,10 +10,16 @@ fi
+ DEPMOD=$1
+ KERNELRELEASE=$2
  
- 	if (access & IB_ACCESS_ON_DEMAND) {
- 		ret = ib_umem_odp_get(context, umem, access);
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -3734,6 +3734,20 @@ static inline int ib_check_mr_access(int
- 	return 0;
- }
+-if ! test -r System.map -a -x "$DEPMOD"; then
++if ! test -r System.map ; then
+ 	exit 0
+ fi
  
-+static inline bool ib_access_writable(int access_flags)
-+{
-+	/*
-+	 * We have writable memory backing the MR if any of the following
-+	 * access flags are set.  "Local write" and "remote write" obviously
-+	 * require write access.  "Remote atomic" can do things like fetch and
-+	 * add, which will modify memory, and "MW bind" can change permissions
-+	 * by binding a window.
-+	 */
-+	return access_flags &
-+		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
-+		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND);
-+}
++if [ -z $(command -v $DEPMOD) ]; then
++	echo "'make *install' requires $DEPMOD. Please install it." >&2
++	echo "This is probably in the module-init-tools package." >&2
++	exit 1
++fi
 +
- /**
-  * ib_check_mr_status: lightweight check of MR status.
-  *     This routine may provide status checks on a selected
+ # older versions of depmod require the version string to start with three
+ # numbers, so we cheat with a symlink here
+ depmod_hack_needed=true
 
 
