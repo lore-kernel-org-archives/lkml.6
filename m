@@ -3,40 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE0EC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DFAC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058A32558C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058A32558C
+	by mail.kernel.org (Postfix) with ESMTP id CA5E62558C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5E62558C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933933AbeGARHA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:07:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37536 "EHLO
+        id S1032126AbeGAQl7 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:41:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031607AbeGAQmH (ORCPT
+        with ESMTP id S1031342AbeGAQlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:07 -0400
+        Sun, 1 Jul 2018 12:41:45 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A554BAA6;
-        Sun,  1 Jul 2018 16:42:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0ACAAA6;
+        Sun,  1 Jul 2018 16:41:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.17 122/220] MIPS: pb44: Fix i2c-gpio GPIO descriptor table
-Date:   Sun,  1 Jul 2018 18:22:26 +0200
-Message-Id: <20180701160913.445786757@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.17 078/220] of: overlay: validate offset from property fixups
+Date:   Sun,  1 Jul 2018 18:21:42 +0200
+Message-Id: <20180701160911.704332946@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,47 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Frank Rowand <frank.rowand@sony.com>
 
-commit 326345f995a83e326fa2e01d54bfa9a6a307bd4d upstream.
+commit 482137bf2aecd887ebfa8756456764a2f6a0e545 upstream.
 
-I used bad names in my clumsiness when rewriting many board
-files to use GPIO descriptors instead of platform data. A few
-had the platform_device ID set to -1 which would indeed give
-the device name "i2c-gpio".
+The smatch static checker marks the data in offset as untrusted,
+leading it to warn:
 
-But several had it set to >=0 which gives the names
-"i2c-gpio.0", "i2c-gpio.1" ...
+  drivers/of/resolver.c:125 update_usages_of_a_phandle_reference()
+  error: buffer underflow 'prop->value' 's32min-s32max'
 
-Fix the one affected board in the MIPS tree. Sorry.
+Add check to verify that offset is within the property data.
 
-Fixes: b2e63555592f ("i2c: gpio: Convert to use descriptors")
-Reported-by: Simon Guinot <simon.guinot@sequanux.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Simon Guinot <simon.guinot@sequanux.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.15+
-Patchwork: https://patchwork.linux-mips.org/patch/19387/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ath79/mach-pb44.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/of/resolver.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/mips/ath79/mach-pb44.c
-+++ b/arch/mips/ath79/mach-pb44.c
-@@ -34,7 +34,7 @@
- #define PB44_KEYS_DEBOUNCE_INTERVAL	(3 * PB44_KEYS_POLL_INTERVAL)
+--- a/drivers/of/resolver.c
++++ b/drivers/of/resolver.c
+@@ -122,6 +122,11 @@ static int update_usages_of_a_phandle_re
+ 			goto err_fail;
+ 		}
  
- static struct gpiod_lookup_table pb44_i2c_gpiod_table = {
--	.dev_id = "i2c-gpio",
-+	.dev_id = "i2c-gpio.0",
- 	.table = {
- 		GPIO_LOOKUP_IDX("ath79-gpio", PB44_GPIO_I2C_SDA,
- 				NULL, 0, GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
++		if (offset < 0 || offset + sizeof(__be32) > prop->length) {
++			err = -EINVAL;
++			goto err_fail;
++		}
++
+ 		*(__be32 *)(prop->value + offset) = cpu_to_be32(phandle);
+ 	}
+ 
 
 
