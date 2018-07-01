@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4927C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19053C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D9472517C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9472517C
+	by mail.kernel.org (Postfix) with ESMTP id C789D2517C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C789D2517C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965199AbeGAQZ0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:25:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33660 "EHLO
+        id S1753518AbeGAQZf (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:25:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33680 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932790AbeGAQZW (ORCPT
+        with ESMTP id S932790AbeGAQZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:22 -0400
+        Sun, 1 Jul 2018 12:25:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF859ACD;
-        Sun,  1 Jul 2018 16:25:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82B9CAD8;
+        Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 029/101] powerpc/fadump: Unregister fadump on kexec down path.
-Date:   Sun,  1 Jul 2018 18:21:15 +0200
-Message-Id: <20180701160758.311820750@linuxfoundation.org>
+        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
+        Rabin Vincent <rabin@rab.in>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.9 030/101] ARM: 8764/1: kgdb: fix NUMREGBYTES so that gdb_regs[] is the correct size
+Date:   Sun,  1 Jul 2018 18:21:16 +0200
+Message-Id: <20180701160758.361937930@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,39 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+From: David Rivshin <DRivshin@allworx.com>
 
-commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
+commit 76ed0b803a2ab793a1b27d1dfe0de7955282cd34 upstream.
 
-Unregister fadump on kexec down path otherwise the fadump registration
-in new kexec-ed kernel complains that fadump is already registered.
-This makes new kernel to continue using fadump registered by previous
-kernel which may lead to invalid vmcore generation. Hence this patch
-fixes this issue by un-registering fadump in fadump_cleanup() which is
-called during kexec path so that new kernel can register fadump with
-new valid values.
+NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly
+based on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM
+is the number of total registers, while GDB_MAX_REGS is the number
+of 'unsigned longs' it takes to serialize those registers. Since
+FP registers require 3 'unsigned longs' each, DBG_MAX_REG_NUM is
+smaller than GDB_MAX_REGS.
 
-Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+This causes GDB 8.0 give the following error on connect:
+"Truncated register 19 in remote 'g' packet"
+
+This also causes the register serialization/deserialization logic
+to overflow gdb_regs[], overwriting whatever follows.
+
+Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
+Cc: <stable@vger.kernel.org> # 2.6.37+
+Signed-off-by: David Rivshin <drivshin@allworx.com>
+Acked-by: Rabin Vincent <rabin@rab.in>
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/fadump.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/include/asm/kgdb.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -1033,6 +1033,9 @@ void fadump_cleanup(void)
- 		init_fadump_mem_struct(&fdm,
- 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
- 		fadump_invalidate_dump(&fdm);
-+	} else if (fw_dump.dump_registered) {
-+		/* Un-register Firmware-assisted dump if it was registered. */
-+		fadump_unregister_dump(&fdm);
- 	}
- }
+--- a/arch/arm/include/asm/kgdb.h
++++ b/arch/arm/include/asm/kgdb.h
+@@ -76,7 +76,7 @@ extern int kgdb_fault_expected;
  
+ #define KGDB_MAX_NO_CPUS	1
+ #define BUFMAX			400
+-#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
++#define NUMREGBYTES		(GDB_MAX_REGS << 2)
+ #define NUMCRITREGBYTES		(32 << 2)
+ 
+ #define _R0			0
 
 
