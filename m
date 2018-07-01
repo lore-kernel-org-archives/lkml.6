@@ -2,40 +2,41 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_RED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C962C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5479C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477F125733
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:45:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477F125733
+	by mail.kernel.org (Postfix) with ESMTP id A0AAD25732
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0AAD25732
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030895AbeGAQeL (ORCPT
+        id S1030996AbeGARqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:34:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35500 "EHLO
+        Sun, 1 Jul 2018 13:46:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35508 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030862AbeGAQeA (ORCPT
+        with ESMTP id S1030867AbeGAQeD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:00 -0400
+        Sun, 1 Jul 2018 12:34:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4535F49B;
-        Sun,  1 Jul 2018 16:33:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5883749B;
+        Sun,  1 Jul 2018 16:34:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Marcin Ziemianowicz <marcin@ziemianowicz.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.14 105/157] clk: at91: PLL recalc_rate() now using cached MUL and DIV values
-Date:   Sun,  1 Jul 2018 18:22:57 +0200
-Message-Id: <20180701160857.813646068@linuxfoundation.org>
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.14 106/157] rtc: sun6i: Fix bit_idx value for clk_register_gate
+Date:   Sun,  1 Jul 2018 18:22:58 +0200
+Message-Id: <20180701160857.846199118@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -52,64 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-commit a982e45dc150da3a08907b6dd676b735391704b4 upstream.
+commit 09018d4bd7994c2c9f775029bc24589bc85f76fa upstream.
 
-When a USB device is connected to the USB host port on the SAM9N12 then
-you get "-62" error which seems to indicate USB replies from the device
-are timing out. Based on a logic sniffer, I saw the USB bus was running
-at half speed.
+clk-gate core will take bit_idx through clk_register_gate
+and then do clk_gate_ops by using BIT(bit_idx), but rtc-sun6i
+is passing bit_idx as BIT(bit_idx) it becomes BIT(BIT(bit_idx)
+which is wrong and eventually external gate clock is not enabling.
 
-The PLL code uses cached MUL and DIV values which get set in set_rate()
-and applied in prepare(), but the recalc_rate() function instead
-queries the hardware instead of using these cached values. Therefore,
-if recalc_rate() is called between a set_rate() and prepare(), the
-wrong frequency is calculated and later the USB clock divider for the
-SAM9N12 SOC will be configured for an incorrect clock.
+This patch fixed by passing bit index and the original change
+introduced from below commit.
+"rtc: sun6i: Add support for the external oscillator gate"
+(sha1: 	17ecd246414b3a0fe0cb248c86977a8bda465b7b)
 
-In my case, the PLL hardware was set to 96 Mhz before the OHCI
-driver loads, and therefore the usb clock divider was being set
-to /2 even though the OHCI driver set the PLL to 48 Mhz.
-
-As an alternative explanation, I noticed this was fixed in the past by
-87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
-driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
-at91: make use of syscon/regmap internally").
-
-Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Fixes: 17ecd246414b ("rtc: sun6i: Add support for the external oscillator gate")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/at91/clk-pll.c |   13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/rtc/rtc-sun6i.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -132,19 +132,8 @@ static unsigned long clk_pll_recalc_rate
- 					 unsigned long parent_rate)
- {
- 	struct clk_pll *pll = to_clk_pll(hw);
--	unsigned int pllr;
--	u16 mul;
--	u8 div;
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -74,7 +74,7 @@
+ #define SUN6I_ALARM_CONFIG_WAKEUP		BIT(0)
  
--	regmap_read(pll->regmap, PLL_REG(pll->id), &pllr);
--
--	div = PLL_DIV(pllr);
--	mul = PLL_MUL(pllr, pll->layout);
--
--	if (!div || !mul)
--		return 0;
--
--	return (parent_rate / div) * (mul + 1);
-+	return (parent_rate / pll->div) * (pll->mul + 1);
- }
+ #define SUN6I_LOSC_OUT_GATING			0x0060
+-#define SUN6I_LOSC_OUT_GATING_EN		BIT(0)
++#define SUN6I_LOSC_OUT_GATING_EN_OFFSET		0
  
- static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
+ /*
+  * Get date values
+@@ -253,7 +253,7 @@ static void __init sun6i_rtc_clk_init(st
+ 				      &clkout_name);
+ 	rtc->ext_losc = clk_register_gate(NULL, clkout_name, rtc->hw.init->name,
+ 					  0, rtc->base + SUN6I_LOSC_OUT_GATING,
+-					  SUN6I_LOSC_OUT_GATING_EN, 0,
++					  SUN6I_LOSC_OUT_GATING_EN_OFFSET, 0,
+ 					  &rtc->lock);
+ 	if (IS_ERR(rtc->ext_losc)) {
+ 		pr_crit("Couldn't register the LOSC external gate\n");
 
 
