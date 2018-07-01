@@ -3,37 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1938C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62041C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0C725969
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0C725969
+	by mail.kernel.org (Postfix) with ESMTP id 230A325969
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230A325969
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934211AbeGASVv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:21:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33538 "EHLO
+        id S965184AbeGASWP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:22:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33524 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965203AbeGAQYn (ORCPT
+        with ESMTP id S964845AbeGAQYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:43 -0400
+        Sun, 1 Jul 2018 12:24:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BDD7FAE0;
-        Sun,  1 Jul 2018 16:24:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E8A3ACD;
+        Sun,  1 Jul 2018 16:24:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 018/101] branch-check: fix long->int truncation when profiling branches
-Date:   Sun,  1 Jul 2018 18:21:04 +0200
-Message-Id: <20180701160757.866490495@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.9 016/101] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date:   Sun,  1 Jul 2018 18:21:02 +0200
+Message-Id: <20180701160757.782482744@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,41 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
+commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
 
-The function __builtin_expect returns long type (see the gcc
-documentation), and so do macros likely and unlikely. Unfortunatelly, when
-CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
-unlikely expand to __branch_check__ and __branch_check__ truncates the
-long type to int. This unintended truncation may cause bugs in various
-kernel code (we found a bug in dm-writecache because of it), so it's
-better to fix __branch_check__ to return long.
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.
 
-Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
+Remove support for this rarely-used format, as vsprintf() (and e.g.
+printk()) must be callable from any context.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Any remaining out-of-tree users will start seeing the clock's name
+printed instead of its rate.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
+Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.1+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/printk-formats.txt |    3 +--
+ lib/vsprintf.c                   |    3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -113,7 +113,7 @@ void ftrace_likely_update(struct ftrace_
- #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
+--- a/Documentation/printk-formats.txt
++++ b/Documentation/printk-formats.txt
+@@ -279,11 +279,10 @@ struct clk:
  
- #define __branch_check__(x, expect) ({					\
--			int ______r;					\
-+			long ______r;					\
- 			static struct ftrace_branch_data		\
- 				__attribute__((__aligned__(4)))		\
- 				__attribute__((section("_ftrace_annotated_branch"))) \
+ 	%pC	pll1
+ 	%pCn	pll1
+-	%pCr	1560000000
+ 
+ 	For printing struct clk structures. '%pC' and '%pCn' print the name
+ 	(Common Clock Framework) or address (legacy clock framework) of the
+-	structure; '%pCr' prints the current clock rate.
++	structure.
+ 
+ 	Passed by reference.
+ 
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1391,9 +1391,6 @@ char *clock(char *buf, char *end, struct
+ 		return string(buf, end, NULL, spec);
+ 
+ 	switch (fmt[1]) {
+-	case 'r':
+-		return number(buf, end, clk_get_rate(clk), spec);
+-
+ 	case 'n':
+ 	default:
+ #ifdef CONFIG_COMMON_CLK
 
 
