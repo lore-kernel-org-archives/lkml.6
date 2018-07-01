@@ -6,64 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43032C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237ACC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB76B24E27
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB76B24E27
+	by mail.kernel.org (Postfix) with ESMTP id B526525011
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B526525011
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeGANxW convert rfc822-to-8bit (ORCPT
+        id S1752343AbeGAPLe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 09:53:22 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44657 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752239AbeGANxT (ORCPT
+        Sun, 1 Jul 2018 11:11:34 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38372 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeGAPLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 09:53:19 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f12-v6so579945edq.11;
-        Sun, 01 Jul 2018 06:53:17 -0700 (PDT)
+        Sun, 1 Jul 2018 11:11:31 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a5-v6so9999710edt.5;
+        Sun, 01 Jul 2018 08:11:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9/IHec6WYsweI45bWrEUHHyYl7QqYaLRfYTyof9n8XA=;
-        b=dZ/L2+1MQaT71IVAMGUkdrnnOKAz1l8HuON0jVrcw74dbenzr6HrgUzDYFsJewzpD1
-         Nvx9t9ybopCzVdXv8/OSteeZTzZPiI67GLI0utlmyuJf9uAwJNX0ItXDQO4owvJhqNaq
-         jd9KU8PyAE7SNKmT1s15u3tjKujJyoOtR2DbAkHDK53tnb4/FKJcctylJgUH3cWik37p
-         1R8ADVtyPAoRr+jEFgHqVNM40ue7PfTpOAd+TM93E8im+Wzb6AP+5EQUQOuLDQNGkXQy
-         GOxQvv9TlmAkqYGUKIhPFWxuZFfWUt1J2bcv04O5pW6sp9LqnJs2kW6at/TDRlXPwU41
-         Xr8Q==
-X-Gm-Message-State: APt69E0iyNM78WLYanDg6fHv8nQ60KveHZs1mx+iOIprPSKFZzZB4zoM
-        JJiMKb+dRgpZHGB3rT4OPMlCdAOS
-X-Google-Smtp-Source: AAOMgpdlDxIqEA51DzbjUN1hlthYLoVCOl/ehv3lnkqfDQNLH+j9Gk6WeVMbLq0zq9LfYm9jZkcn2A==
-X-Received: by 2002:aa7:d788:: with SMTP id s8-v6mr20113069edq.228.1530453197079;
-        Sun, 01 Jul 2018 06:53:17 -0700 (PDT)
-Received: from mail-wr0-f175.google.com (mail-wr0-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id i34-v6sm6418992edc.29.2018.07.01.06.53.16
+        bh=FW+/61WnQUYRv1/lzZHbUzBfvkhOWRA4gKBQ9S/wWQk=;
+        b=kb1A71mhVSyEH/gt22XDrNxziePI0DBngeFR4FkSL7THFsf/74NH7KPh4I4ZmmxOju
+         vsszEEG2KQvxHWIJkcjtQ2RGJoNAIA1qs/fGCiAMGzgsLarKlqcz/9WPpRLSnBxI2t1k
+         TiBP/lIr4jZ/ffSuVbrIR5rkHBSd/90eYyQKcUrTnZXMnYoR5AlIXnAEpn3ZEG0c29ta
+         nPWZxb2u9LZqLTVeeVi1/XLnMn8xf6WWUCvlRm9tOVGsaBAC6mlT3wUTk7kfNIdr61Bg
+         sa6PEA3GXHf9vPVyNdySCICjXCt5Jmu/XqZCv0rdFRqo2/Kzv8a6a7eLQTaqdb7fV658
+         2f0g==
+X-Gm-Message-State: APt69E13zKmSpmwhfYuZi2WIybVvzk/A2Z0U3FvEgxiAXHNIkPwELAdE
+        ATnzm80U6pOIzPGqwKsNqOoOSVEA
+X-Google-Smtp-Source: AAOMgpdUHg6rfCSwMcqfiRaDk/MA+Xf0ulhJswmmNtyckUoRyU1OS8xrhLVV48lNU2iJrDOGd4c8wA==
+X-Received: by 2002:aa7:d717:: with SMTP id t23-v6mr21032718edq.102.1530457889815;
+        Sun, 01 Jul 2018 08:11:29 -0700 (PDT)
+Received: from mail-wr0-f176.google.com (mail-wr0-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id x40-v6sm2888538ede.23.2018.07.01.08.11.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 06:53:16 -0700 (PDT)
-Received: by mail-wr0-f175.google.com with SMTP id p12-v6so12966167wrn.11;
-        Sun, 01 Jul 2018 06:53:16 -0700 (PDT)
-X-Received: by 2002:adf:ae09:: with SMTP id x9-v6mr16912667wrc.19.1530453195945;
- Sun, 01 Jul 2018 06:53:15 -0700 (PDT)
+        Sun, 01 Jul 2018 08:11:28 -0700 (PDT)
+Received: by mail-wr0-f176.google.com with SMTP id j33-v6so208601wrj.5;
+        Sun, 01 Jul 2018 08:11:27 -0700 (PDT)
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr6658485wrh.148.1530457887310;
+ Sun, 01 Jul 2018 08:11:27 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 06:52:55 -0700 (PDT)
-In-Reply-To: <3055462.VmN8MJVs7V@jernej-laptop>
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 08:11:06 -0700 (PDT)
+In-Reply-To: <8952939.l1hLr1Mv9y@jernej-laptop>
 References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <21259128.K3MyN3b6Bq@jernej-laptop> <CAGb2v66q3a9nNjkSP1rgh9voMToutDxHtY1x1Wpkf8eEmLWLAA@mail.gmail.com>
- <3055462.VmN8MJVs7V@jernej-laptop>
+ <2676604.ZYCNkuCdbT@jernej-laptop> <CAGb2v67kBRWkJpJogFR4GXgA66dsxVaMVWN8MDiP_wFTqxW-=g@mail.gmail.com>
+ <8952939.l1hLr1Mv9y@jernej-laptop>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sun, 1 Jul 2018 21:52:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66y2NZexb94gZ9qa9rP7akdEFWSy43CU5G-UrGR2ad2BQ@mail.gmail.com>
-Message-ID: <CAGb2v66y2NZexb94gZ9qa9rP7akdEFWSy43CU5G-UrGR2ad2BQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
+Date:   Sun, 1 Jul 2018 23:11:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
+Message-ID: <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if
+ they don't have channel 0
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
         Gustavo Padovan <gustavo@padovan.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <seanpaul@chromium.org>,
@@ -81,531 +81,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 6:41 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 08:51:07 CEST je Chen-Yu Tsai napisal(a):
->> On Thu, Jun 28, 2018 at 1:15 PM, Jernej Škrabec <jernej.skrabec@siol.net>
-> wrote:
->> > Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai napisal(a):
->> >> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+On Sun, Jul 1, 2018 at 4:27 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai napisal(a):
+>> On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
+>>
+>> <jernej.skrabec@siol.net> wrote:
+>> > Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai napisal(a):
+>> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
 >> >
 >> > wrote:
->> >> > Add all entries needed for HDMI to function properly.
+>> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
+>> >> > Because of that, all output endpoints on such TCON node will point to a
+>> >> > encoder which is part of component framework.
 >> >> >
->> >> > Since R40 has highly configurable pipeline, both mixers and both TCON
->> >> > TVs are added. Board specific DT should then connect them together
->> >> > trough TCON TOP muxers to best fit the purpose of the board.
->> >> >
->> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >> > ---
->> >> >
->> >> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269 +++++++++++++++++++++++++++++++
->> >> >  1 file changed, 269 insertions(+)
->> >> >
->> >> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> > b/arch/arm/boot/dts/sun8i-r40.dtsi index 173dcc1652d2..a2a75fb04caf
->> >> > 100644
->> >> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
->> >> > @@ -42,8 +42,11 @@
->> >> >
->> >> >   */
->> >> >
->> >> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> >> >
->> >> > +#include <dt-bindings/clock/sun8i-de2.h>
->> >> >
->> >> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
->> >> >
->> >> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
->> >
->> > Maxime, above line breaks compilation for build robot, sorry.
->> >
->> >> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
->> >> >
->> >> > +#include <dt-bindings/reset/sun8i-de2.h>
->> >> >
->> >> >  / {
->> >> >
->> >> >         #address-cells = <1>;
->> >> >
->> >> > @@ -99,12 +102,76 @@
->> >> >
->> >> >                 };
->> >> >
->> >> >         };
->> >> >
->> >> > +       de: display-engine {
->> >> > +               compatible = "allwinner,sun8i-r40-display-engine",
->> >> > +                            "allwinner,sun8i-h3-display-engine";
+>> >> > Correct current graph traversing algorithm in such way that it doesn't
+>> >> > skip output enpoints with id 0 on TV TCONs.
 >> >>
->> >> Given that the display pipeline looks different, they should not be
->> >> compatible.
+>> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
+>> >> have channel 0, it must be skipped.
 >> >
->> > Ok.
->> >
->> >> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
->> >> > +               status = "disabled";
->> >> > +       };
->> >> > +
->> >> >
->> >> >         soc {
->> >> >
->> >> >                 compatible = "simple-bus";
->> >> >                 #address-cells = <1>;
->> >> >                 #size-cells = <1>;
->> >> >                 ranges;
->> >> >
->> >> > +               display_clocks: clock@1000000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-de2-clk",
->> >> > +                                    "allwinner,sun8i-h3-de2-clk";
->> >> > +                       reg = <0x01000000 0x100000>;
->> >> > +                       clocks = <&ccu CLK_DE>,
->> >> > +                                <&ccu CLK_BUS_DE>;
->> >> > +                       clock-names = "mod",
->> >> > +                                     "bus";
->> >> > +                       resets = <&ccu RST_BUS_DE>;
->> >> > +                       #clock-cells = <1>;
->> >> > +                       #reset-cells = <1>;
->> >> > +               };
->> >> > +
->> >> > +               mixer0: mixer@1100000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-0";
->> >> > +                       reg = <0x01100000 0x100000>;
->> >> > +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
->> >> > +                                <&display_clocks CLK_MIXER0>;
->> >> > +                       clock-names = "bus",
->> >> > +                                     "mod";
->> >> > +                       resets = <&display_clocks RST_MIXER0>;
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               mixer0_out: port@1 {
->> >> > +                                       reg = <1>;
->> >> > +                                       mixer0_out_tcon_top: endpoint {
->> >> > +                                               remote-endpoint =
->> >> > <&tcon_top_mixer0_in_mixer0>; +
->> >> > };
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> > +               mixer1: mixer@1200000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-1";
->> >> > +                       reg = <0x01200000 0x100000>;
->> >> > +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
->> >> > +                                <&display_clocks CLK_MIXER1>;
->> >> > +                       clock-names = "bus",
->> >> > +                                     "mod";
->> >> > +                       resets = <&display_clocks RST_WB>;
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               mixer1_out: port@1 {
->> >> > +                                       reg = <1>;
->> >> > +                                       mixer1_out_tcon_top: endpoint {
->> >> > +                                               remote-endpoint =
->> >> > <&tcon_top_mixer1_in_mixer1>; +
->> >> > };
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> >
->> >> >                 nmi_intc: interrupt-controller@1c00030 {
->> >> >
->> >> >                         compatible = "allwinner,sun7i-a20-sc-nmi";
->> >> >                         interrupt-controller;
->> >> >
->> >> > @@ -451,6 +518,163 @@
->> >> >
->> >> >                         #size-cells = <0>;
->> >> >
->> >> >                 };
->> >> >
->> >> > +               tcon_top: tcon-top@1c70000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-tcon-top";
->> >> > +                       reg = <0x01c70000 0x1000>;
->> >> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
->> >> > +                                <&ccu CLK_TCON_TV0>,
->> >> > +                                <&ccu CLK_TVE0>,
->> >> > +                                <&ccu CLK_TCON_TV1>,
->> >> > +                                <&ccu CLK_TVE1>,
->> >> > +                                <&ccu CLK_DSI_DPHY>;
->> >> > +                       clock-names = "bus",
->> >> > +                                     "tcon-tv0",
->> >> > +                                     "tve0",
->> >> > +                                     "tcon-tv1",
->> >> > +                                     "tve1",
->> >> > +                                     "dsi";
->> >> > +                       clock-output-names = "tcon-top-tv0",
->> >> > +                                            "tcon-top-tv1",
->> >> > +                                            "tcon-top-dsi";
->> >> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
->> >> > +                       #clock-cells = <1>;
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               tcon_top_mixer0_in: port@0 {
->> >> > +                                       reg = <0>;
->> >> > +
->> >> > +                                       tcon_top_mixer0_in_mixer0:
->> >> > endpoint { +
->> >> > remote-endpoint = <&mixer0_out_tcon_top>; +
->> >> >
->> >> >         };
->> >> >
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_top_mixer0_out: port@1 {
->> >> > +                                       #address-cells = <1>;
->> >> > +                                       #size-cells = <0>;
->> >> > +                                       reg = <1>;
->> >> > +
->> >> > +                                       tcon_top_mixer0_out_tcon_lcd0:
->> >> > endpoint@0 { +                                               reg = <0>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer0_out_tcon_lcd1:
->> >> > endpoint@1 { +                                               reg = <1>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer0_out_tcon_tv0:
->> >> > endpoint@2 { +                                               reg = <2>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer0_out_tcon_tv1:
->> >> > endpoint@3 { +                                               reg = <3>;
->> >> > +                                       };
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_top_mixer1_in: port@2 {
->> >> > +                                       reg = <2>;
->> >> > +
->> >> > +                                       tcon_top_mixer1_in_mixer1:
->> >> > endpoint { +
->> >> > remote-endpoint = <&mixer1_out_tcon_top>; +
->> >> >
->> >> >         };
->> >> >
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_top_mixer1_out: port@3 {
->> >> > +                                       #address-cells = <1>;
->> >> > +                                       #size-cells = <0>;
->> >> > +                                       reg = <3>;
->> >> > +
->> >> > +                                       tcon_top_mixer1_out_tcon_lcd0:
->> >> > endpoint@0 { +                                               reg = <0>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer1_out_tcon_lcd1:
->> >> > endpoint@1 { +                                               reg = <1>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer1_out_tcon_tv0:
->> >> > endpoint@2 { +                                               reg = <2>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_mixer1_out_tcon_tv1:
->> >> > endpoint@3 { +                                               reg = <3>;
->> >> > +                                       };
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_top_hdmi_in: port@4 {
->> >> > +                                       #address-cells = <1>;
->> >> > +                                       #size-cells = <0>;
->> >> > +                                       reg = <4>;
->> >> > +
->> >> > +                                       tcon_top_hdmi_in_tcon_tv0:
->> >> > endpoint@0 { +                                               reg = <0>;
->> >> > +                                       };
->> >> > +
->> >> > +                                       tcon_top_hdmi_in_tcon_tv1:
->> >> > endpoint@1 { +                                               reg = <1>;
->> >> > +                                       };
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_top_hdmi_out: port@5 {
->> >> > +                                       reg = <5>;
->> >> > +
->> >> > +                                       tcon_top_hdmi_out_hdmi:
->> >> > endpoint {
->> >> > +                                               remote-endpoint =
->> >> > <&hdmi_in_tcon_top>; +                                       };
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> > +               tcon_tv0: lcd-controller@1c73000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
->> >> > +                                    "allwinner,sun8i-a83t-tcon-tv";
->> >> > +                       reg = <0x01c73000 0x1000>;
->> >> > +                       interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
->> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top
->> >> > 0>;
->> >> > +                       clock-names = "ahb", "tcon-ch1";
->> >> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
->> >> > +                       reset-names = "lcd";
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               tcon_tv0_in: port@0 {
->> >> > +                                       reg = <0>;
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_tv0_out: port@1 {
->> >> > +                                       reg = <1>;
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> > +               tcon_tv1: lcd-controller@1c74000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
->> >> > +                                    "allwinner,sun8i-a83t-tcon-tv";
->> >> > +                       reg = <0x01c74000 0x1000>;
->> >> > +                       interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
->> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top
->> >> > 1>;
->> >> > +                       clock-names = "ahb", "tcon-ch1";
->> >> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
->> >> > +                       reset-names = "lcd";
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               tcon_tv1_in: port@0 {
->> >> > +                                       reg = <0>;
->> >> > +                               };
->> >> > +
->> >> > +                               tcon_tv1_out: port@1 {
->> >> > +                                       reg = <1>;
->> >>
->> >> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
->> >> connections. Also, on the driver side, there's no code to handle
->> >> dynamically mapping mixers to the TCONs that are being used. In the past
->> >> we
->> >> had simple 1:1 mappings. This is no longer the case, and it needs to be
->> >> dealt with.
->> >
->> > How would TCON TOP driver know how to set muxes? There are no appropriate
->> > bingings for muxes, except for V4L2 subsystem, which doesn't really work
->> > here.
->> This will end up being a bunch of custom functions exported from the TCON
->> TOP driver to the TCON driver. As for bindings, the stuff you already have
->> is mostly enough. You do have to specify the endpoint ID vs component
->> mapping, so you can find the correct one.
+>> > I'm not sure where this is stated. I read TCON binding again. Can you
+>> > please point me to it?
 >>
->> For example, you would specify that the IDs for TCON LCDs be 0 and 1, and
->> TCON TVs be 2 and 3. Matching the actual register values is a nice
->> convenience. These would be used by the driver as the TCON ID.
+>> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bind
+>> ings/display/sunxi/sun4i-drm.txt#L169
+>>
+>> Our TCON driver still expects RGB or LVDS panel / bridges on endpoint 0.
 >
-> So something that's already done (minus full connections).
+> Yes, but that can only happen on TCON which has channel 0. TV TCONs (those
+> with channel 1 only) can't have panels or bridges connected to them, because
+> they are internally always connected to either HDMI or TV encoder or both.
+> Actually, R40 is the only SoC, where same TV TCON can be connected to TV
+> encoder or HDMI. Others have specialized TV TCONs, which are connect to only
+> one encoder.
 >
->>
->> Also, we might want to consider them as two pairs of two TCONs (LCD + TV).
->> The CRTC in DRM land is actually the mixer + TCON on our platform. This
->> means we only have two CRTCs. So we could have CRTC 0 = mixer 0 + TCON LCD
->> 0 + TCON TV 0. The "TCON_TVx_OUTSEL" and "DE_PORTx PERH Select" muxes would
->> be set at run time in the mode set function, selecting either LCD or TV
->> based on what encoder is attached.
+> IMO TV TCONs are really just stripped down LCD TCONs to support one (or max
+> two) specific encoder.
+
+I agree. We've seen these first in the H3, and the reverse, TCONs only with
+LCD, on the A23/A33.
+
+>> So I guess this was sort of implied historically. It's no longer true.
+>> This is something we should probably fix.
 >
-> That proposal would still limit some combinations. For example, that would put
-> DSI always on mixer1, since it can be connected to only LCD TCON 1. It can
-> also cause undesired combination in laptop solutions. Consider that PCB
-> designer connected LCD1 pins to panel for some reason. Panel is definetly main
-> screen and should definetly be connected to mixer0, but in that case, it would
-> be to mixer1.
+> Fixed in what way? You mean update bindings to mention that TCON output
+> endpoint 0 is reserved for panels or bridges?
 
-There's no reason we can't have dynamically assigned mixer+tcon pairs, but
-that would mean implementing additional scheduling code that we don't have
-yet. The current sunxi-drm and CRTC code assume static mappings.
+Either that, or have the drm driver look at other endpoints. I guess we
+should ask Maxime if this is already done or not, since the DSI driver
+isn't endpoint 0 in the A33 dtsi.
 
-We could do this as a second step if you're up to it.
-
-> Additionaly, since HDMI would became floating between TV TCON 0 and 1, whoever
-> would write board DT would need to know this and enable only TV TCON1 if LCD
-> is desired to be connected to mixer0 (or vice versa).
-
-There's no reason not to have all TCONs enabled by default. We would consider
-the display-engine node controlling whether everything actually gets used.
-
-> If we really want universal solution with full connections, addtional property
-> has to be defined and used for that.
+>>
+>> In practice our drivers don't look at it (yet), but rely on the downstream
+>> encoder type to determine which channel to use.
+>>
+>> But please add the "allwinner,tcon-channel" property as specified in
+>> the binding.
 >
->>
->> This limitation is a software one, and should not bleed over into the
->> hardware representation.
->>
->> > Additionaly, how would HDMI know which TCON belongs to it to appropriately
->> > set possible_crtcs?
->>
->> HDMI is connected to the two TCON TVs through the TCON TOP mux. We handle
->> TCON output muxing in the TCON driver, using the set_mux callback in the
->> quirks. For R40, this callback would probably call into the TCON TOP driver
->> asking it to set the mux to some value.
->>
->> > Currently, my idea is that board DT creates wanted connections. Since
->> > there is only one valid connection for each mux, driver knows eactly what
->> > to write into mux register. HDMI driver can simply check which TCON
->> > connection is valid in HDMI input mux and select it in possible_crtcs.
->>
->> But that is not how the actual hardware looks like. The device tree should
->> model the hardware, not a subset of it just because one thinks the
->> implementation is difficult or won't be used at all.
->>
->> Furthermore, I think you have it backwards. possible_crtcs is generated
->> based on (in our case) the connections between TCON and HDMI based on the
->> device tree graph. So if you have both hooked up, both will show up in
->> possible_crtcs, but only one crtc will actually be selected to feed the
->> HDMI encoder. If you really need to access the current crtc, the
->> drm_encoder struct contains a pointer to it.
->>
->> In DE 1.0 driver, we leave all the muxing to the TCON driver. See
->>
->>
->> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/sun4i/sun4i_
->> tcon.c#L537
->>
->> So in a sense, the HDMI encoder should be and is hooked up to both TCONs,
->> but only one is active at any given time.
+> It's my understanding of TCON binding documentation that property
+> "allwinner,tcon-channel" is needed only if TCON supports both channels. TV
+> TCON clearly supports only channel 1. In that case, there is no doubt to which
+> channel output endpoint belongs.
 >
-> So something like that I had in v1 series. I'll implement something similar.
-> That would also mean we need R40 specific TV TCON compatible. I'll restore
-> that.
->
-> Just a question on future situation when TVE driver will be implemented.
-> Suppose that R40 board has TVE0 and HDMI as outputs. This would mean that TVE0
-> has possible crtcs set as 0b01 and HDMI 0b11. Will be DRM framework smart
-> enough that it will put HDMI on second crtc because TVE0 can be connected to
-> only to first crtc?
+> If that's not true, dt bindings documentation should be reworded to contain
+> word "needed" or something similar. Currently, no DT for newer SoC contains
+> that property (for example, A83T, H3, H5 or even A33). On A33 this is even
+> more interesting, since tcon0 has only channel 0 and has DSI output endpoint
+> with number 1. According to TCON binding docs, if "allwinner,tcon-channel" is
+> not preset, endpoint number represent channel. So, that would mean DSI needs
+> channel 1 on tcon which supports clearly only channel 0. So either there TCON
+> bindings documentation needs updates or DT for A33 has to be updated.
 
-Yes. If the possible_clones setting for the encoder is not set, the DRM
-framework will not do mirroring, and will keep each active encoder on a
-separate crtc.
+Maxime? You did the A33 DSI stuff.
 
->
+> BTW, "allwinner,tcon-channel" property is not used at all in the code.
+
+Yes I'm aware. We just base the channel selection on the encoder type instead.
+TV-like ones use channel 1, LCD ones use channel 0.
+
 >>
->> > Please also note that mixer0 and mixer1 don't have same capabilities and
->> > you generally want mixer0 to be connected to main output. This is in
->> > contrast to DE1 SoCs, where both backends and both frontends have same
->> > capability.
->> Yes. But who's to say the two display outputs can't be reversed or swapped
->> around? With fixed singular connections, you also rule out mirrored output.
+>> > So on TV TCONs on R40 (without channel 0) TVE would be endpoint 1 and HDMI
+>> > endpoint 2 (or the other way around)?
+>>
+>> Which one goes first doesn't quite matter. IIRC there's also a mux for TVE?
 >
-> I don't think there is standard way to swap around mixers at runtime,
-> expecially if crtcs are represented as mixer + TCON pair.
+> AFAIK, TV TCON is by default connected to TV encoder unless HDMI mux in TCON
+> TOP points to it. I think it's best put TVE with lower number since it's
+> default and HDMI with higher number.
 
-As I mentioned above, we will have to do this on our own.
-
-> I'm not sure what do you mean with mirrored output or at least why singular
-> connections would prevent mirroring. HW mirroring needs DRM writeback support
-> which is currently in RFC phase if I'm not mistaken. Once implemented in DRM
-> framework and in sun4i-drm, it would be possible only to mirror mixer0 ->
-> mixer1, because mixer1 doesn't support writeback (at least on existing SoCs).
-
-What I meant was it might be possible to drive two TCONs with one mixer, or
-two encoders with one TCON. I guess the latter is not possible since each
-TCON only has one channel. Not sure about the former.
+Ok. As long as its specified in the binding, as a contract between the dts
+and the graph parsing code.
 
 Regards
 ChenYu
-
-> Best regards,
-> Jernej
->
->>
->> ChenYu
->>
->> >> ChenYu
->> >>
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> >
->> >> >                 gic: interrupt-controller@1c81000 {
->> >> >
->> >> >                         compatible = "arm,gic-400";
->> >> >                         reg = <0x01c81000 0x1000>,
->> >> >
->> >> > @@ -461,6 +685,51 @@
->> >> >
->> >> >                         #interrupt-cells = <3>;
->> >> >                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4)
->> >> >                         |
->> >> >                         IRQ_TYPE_LEVEL_HIGH)>;
->> >> >
->> >> >                 };
->> >> >
->> >> > +
->> >> > +               hdmi: hdmi@1ee0000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-dw-hdmi",
->> >> > +                                    "allwinner,sun8i-a83t-dw-hdmi";
->> >> > +                       reg = <0x01ee0000 0x10000>;
->> >> > +                       reg-io-width = <1>;
->> >> > +                       interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
->> >> > +                       clocks = <&ccu CLK_BUS_HDMI0>, <&ccu
->> >> > CLK_HDMI_SLOW>, +                                <&ccu CLK_HDMI>;
->> >> > +                       clock-names = "iahb", "isfr", "tmds";
->> >> > +                       resets = <&ccu RST_BUS_HDMI1>;
->> >> > +                       reset-names = "ctrl";
->> >> > +                       phys = <&hdmi_phy>;
->> >> > +                       phy-names = "hdmi-phy";
->> >> > +                       status = "disabled";
->> >> > +
->> >> > +                       ports {
->> >> > +                               #address-cells = <1>;
->> >> > +                               #size-cells = <0>;
->> >> > +
->> >> > +                               hdmi_in: port@0 {
->> >> > +                                       reg = <0>;
->> >> > +
->> >> > +                                       hdmi_in_tcon_top: endpoint {
->> >> > +                                               remote-endpoint =
->> >> > <&tcon_top_hdmi_out_hdmi>; +                                       };
->> >> > +                               };
->> >> > +
->> >> > +                               hdmi_out: port@1 {
->> >> > +                                       reg = <1>;
->> >> > +                               };
->> >> > +                       };
->> >> > +               };
->> >> > +
->> >> > +               hdmi_phy: hdmi-phy@1ef0000 {
->> >> > +                       compatible = "allwinner,sun8i-r40-hdmi-phy",
->> >> > +                                    "allwinner,sun50i-a64-hdmi-phy";
->> >> > +                       reg = <0x01ef0000 0x10000>;
->> >> > +                       clocks = <&ccu CLK_BUS_HDMI1>, <&ccu
->> >> > CLK_HDMI_SLOW>, +                                <&ccu 7>, <&ccu 16>;
->> >> > +                       clock-names = "bus", "mod", "pll-0", "pll-1";
->> >> > +                       resets = <&ccu RST_BUS_HDMI0>;
->> >> > +                       reset-names = "phy";
->> >> > +                       #phy-cells = <0>;
->> >> > +               };
->> >> >
->> >> >         };
->> >> >
->> >> >         timer {
->> >> >
->> >> > --
->> >> > 2.18.0
->> >
->> > --
->> > You received this message because you are subscribed to the Google Groups
->> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
->> > emails from it, send an email to
->> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
->> > https://groups.google.com/d/optout.
->
->
->
->
