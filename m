@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769E1C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0F6C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3905925A8B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3905925A8B
+	by mail.kernel.org (Postfix) with ESMTP id 48C9F25A83
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C9F25A83
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933540AbeGASgK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:36:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60602 "EHLO
+        id S933051AbeGAQPd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60578 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933057AbeGAQPg (ORCPT
+        with ESMTP id S933013AbeGAQP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:36 -0400
+        Sun, 1 Jul 2018 12:15:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 852CB4A3;
-        Sun,  1 Jul 2018 16:15:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63A4386D;
+        Sun,  1 Jul 2018 16:15:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 018/105] ALSA: hda: add dock and led support for HP EliteBook 830 G5
-Date:   Sun,  1 Jul 2018 18:01:28 +0200
-Message-Id: <20180701153150.743505578@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
+Subject: [PATCH 4.4 015/105] driver core: Dont ignore class_dir_create_and_add() failure.
+Date:   Sun,  1 Jul 2018 18:01:25 +0200
+Message-Id: <20180701153150.531114598@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,32 +50,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 2861751f67b91e1d24e68010ced96614fb3140f4 upstream.
+commit 84d0c27d6233a9ba0578b20f5a09701eb66cee42 upstream.
 
-This patch adds missing initialisation for HP 2013 UltraSlim Dock
-Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP EliteBook 830 G5
+syzbot is hitting WARN() at kernfs_add_one() [1].
+This is because kernfs_create_link() is confused by previous device_add()
+call which continued without setting dev->kobj.parent field when
+get_device_parent() failed by memory allocation fault injection.
+Fix this by propagating the error from class_dir_create_and_add() to
+the calllers of get_device_parent().
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[1] https://syzkaller.appspot.com/bug?id=fae0fb607989ea744526d1c082a5b8de6529116f
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/base/core.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -851,6 +851,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -759,7 +759,7 @@ class_dir_create_and_add(struct class *c
+ 
+ 	dir = kzalloc(sizeof(*dir), GFP_KERNEL);
+ 	if (!dir)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	dir->class = class;
+ 	kobject_init(&dir->kobj, &class_dir_ktype);
+@@ -769,7 +769,7 @@ class_dir_create_and_add(struct class *c
+ 	retval = kobject_add(&dir->kobj, parent_kobj, "%s", class->name);
+ 	if (retval < 0) {
+ 		kobject_put(&dir->kobj);
+-		return NULL;
++		return ERR_PTR(retval);
+ 	}
+ 	return &dir->kobj;
+ }
+@@ -1076,6 +1076,10 @@ int device_add(struct device *dev)
+ 
+ 	parent = get_device(dev->parent);
+ 	kobj = get_device_parent(dev, parent);
++	if (IS_ERR(kobj)) {
++		error = PTR_ERR(kobj);
++		goto parent_error;
++	}
+ 	if (kobj)
+ 		dev->kobj.parent = kobj;
+ 
+@@ -1174,6 +1178,7 @@ done:
+ 	kobject_del(&dev->kobj);
+  Error:
+ 	cleanup_glue_dir(dev, glue_dir);
++parent_error:
+ 	put_device(parent);
+ name_error:
+ 	kfree(dev->p);
+@@ -1990,6 +1995,11 @@ int device_move(struct device *dev, stru
+ 	device_pm_lock();
+ 	new_parent = get_device(new_parent);
+ 	new_parent_kobj = get_device_parent(dev, new_parent);
++	if (IS_ERR(new_parent_kobj)) {
++		error = PTR_ERR(new_parent_kobj);
++		put_device(new_parent);
++		goto out;
++	}
+ 
+ 	pr_debug("device: '%s': %s: moving to '%s'\n", dev_name(dev),
+ 		 __func__, new_parent ? dev_name(new_parent) : "<NULL>");
 
 
