@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E49AFC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB3CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5E9255B7
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:19:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E5E9255B7
+	by mail.kernel.org (Postfix) with ESMTP id D864B255BF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:20:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D864B255BF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934230AbeGARTm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:19:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36774 "EHLO
+        id S965654AbeGARUD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:20:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030981AbeGAQip (ORCPT
+        with ESMTP id S1031345AbeGAQim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:38:45 -0400
+        Sun, 1 Jul 2018 12:38:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C592A92B;
-        Sun,  1 Jul 2018 16:38:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A97892B;
+        Sun,  1 Jul 2018 16:38:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Haren Myneni <haren@us.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.17 051/220] powerpc/powernv/cpuidle: Init all present cpus for deep states
-Date:   Sun,  1 Jul 2018 18:21:15 +0200
-Message-Id: <20180701160910.457887906@linuxfoundation.org>
+Subject: [PATCH 4.17 050/220] powerpc/powernv: copy/paste - Mask SO bit in CR
+Date:   Sun,  1 Jul 2018 18:21:14 +0200
+Message-Id: <20180701160910.418692598@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,48 +49,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+From: Haren Myneni <haren@us.ibm.com>
 
-commit ac9816dcbab53c57bcf1d7b15370b08f1e284318 upstream.
+commit 75743649064ec0cf5ddd69f240ef23af66dde16e upstream.
 
-Init all present cpus for deep states instead of "all possible" cpus.
-Init fails if a possible cpu is guarded. Resulting in making only
-non-deep states available for cpuidle/hotplug.
+NX can set the 3rd bit in CR register for XER[SO] (Summary overflow)
+which is not related to paste request. The current paste function
+returns failure for a successful request when this bit is set. So mask
+this bit and check the proper return status.
 
-Stewart says, this means that for single threaded workloads, if you
-guard out a CPU core you'll not get WoF (Workload Optimised
-Frequency), which means that performance goes down when you wouldn't
-expect it to.
-
-Fixes: 77b54e9f213f ("powernv/powerpc: Add winkle support for offline cpus")
-Cc: stable@vger.kernel.org # v3.19+
-Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Fixes: 2392c8c8c045 ("powerpc/powernv/vas: Define copy/paste interfaces")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Haren Myneni <haren@us.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/idle.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/powernv/copy-paste.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/idle.c
-+++ b/arch/powerpc/platforms/powernv/idle.c
-@@ -79,7 +79,7 @@ static int pnv_save_sprs_for_deep_states
- 	uint64_t msr_val = MSR_IDLE;
- 	uint64_t psscr_val = pnv_deepest_stop_psscr_val;
+--- a/arch/powerpc/platforms/powernv/copy-paste.h
++++ b/arch/powerpc/platforms/powernv/copy-paste.h
+@@ -42,5 +42,6 @@ static inline int vas_paste(void *paste_
+ 		: "b" (offset), "b" (paste_address)
+ 		: "memory", "cr0");
  
--	for_each_possible_cpu(cpu) {
-+	for_each_present_cpu(cpu) {
- 		uint64_t pir = get_hard_smp_processor_id(cpu);
- 		uint64_t hsprg0_val = (uint64_t)paca_ptrs[cpu];
- 
-@@ -814,7 +814,7 @@ static int __init pnv_init_idle_states(v
- 		int cpu;
- 
- 		pr_info("powernv: idle: Saving PACA pointers of all CPUs in their thread sibling PACA\n");
--		for_each_possible_cpu(cpu) {
-+		for_each_present_cpu(cpu) {
- 			int base_cpu = cpu_first_thread_sibling(cpu);
- 			int idx = cpu_thread_in_core(cpu);
- 			int i;
+-	return (cr >> CR0_SHIFT) & CR0_MASK;
++	/* We mask with 0xE to ignore SO */
++	return (cr >> CR0_SHIFT) & 0xE;
+ }
 
 
