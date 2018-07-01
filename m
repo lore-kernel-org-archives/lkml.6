@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B124C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40064C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F94F24131
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F94F24131
+	by mail.kernel.org (Postfix) with ESMTP id 0386C24486
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0386C24486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeGAHDw (ORCPT
+        id S1752292AbeGAHD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 03:03:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:47352 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752148AbeGAHDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 03:03:40 -0400
+        Sun, 1 Jul 2018 03:03:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47378 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752175AbeGAHDt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 03:03:49 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEA6718A;
-        Sun,  1 Jul 2018 00:03:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 621661529;
+        Sun,  1 Jul 2018 00:03:49 -0700 (PDT)
 Received: from sugar.benyossef.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED0F43F318;
-        Sun,  1 Jul 2018 00:03:37 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 863193F318;
+        Sun,  1 Jul 2018 00:03:47 -0700 (PDT)
 From:   Gilad Ben-Yossef <gilad@benyossef.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
 Cc:     Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
-        stable@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] crypto: ccree: fix iv handling
-Date:   Sun,  1 Jul 2018 08:02:36 +0100
-Message-Id: <1530428560-4440-4-git-send-email-gilad@benyossef.com>
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6/6] crypto: ccree: rate limit debug print
+Date:   Sun,  1 Jul 2018 08:02:39 +0100
+Message-Id: <1530428560-4440-7-git-send-email-gilad@benyossef.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
 References: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
@@ -45,163 +44,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We were copying our last cipher block into the request for use as IV for
-all modes of operations. Fix this by discerning the behaviour based on
-the mode of operation used: copy ciphertext for CBC, update counter for
-CTR.
+A debug print about register status post interrupt can happen
+quite often. Rate limit it to avoid cluttering the log.
 
-CC: stable@vger.kernel.org
-Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
-Reported by: Hadar Gat <hadar.gat@arm.com>
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/crypto/ccree/cc_cipher.c | 111 +++++++++++++++++++++++++++++----------
- 1 file changed, 84 insertions(+), 27 deletions(-)
+ drivers/crypto/ccree/cc_driver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index d2810c1..958ced3 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -593,34 +593,82 @@ static void cc_setup_cipher_data(struct crypto_tfm *tfm,
- 	}
- }
- 
-+/*
-+ * Update a CTR-AES 128 bit counter
-+ */
-+static void cc_update_ctr(u8 *ctr, unsigned int increment)
-+{
-+	if (IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) ||
-+	    IS_ALIGNED((unsigned long)ctr, 8)) {
-+
-+		__be64 *high_be = (__be64 *)ctr;
-+		__be64 *low_be = high_be + 1;
-+		u64 orig_low = __be64_to_cpu(*low_be);
-+		u64 new_low = orig_low + (u64)increment;
-+
-+		*low_be = __cpu_to_be64(new_low);
-+
-+		if (new_low < orig_low)
-+			*high_be = __cpu_to_be64(__be64_to_cpu(*high_be) + 1);
-+	} else {
-+		u8 *pos = (ctr + AES_BLOCK_SIZE);
-+		u8 val;
-+		unsigned int size;
-+
-+		for (; increment; increment--)
-+			for (size = AES_BLOCK_SIZE; size; size--) {
-+				val = *--pos + 1;
-+				*pos = val;
-+				if (val)
-+					break;
-+			}
-+	}
-+}
-+
- static void cc_cipher_complete(struct device *dev, void *cc_req, int err)
- {
- 	struct skcipher_request *req = (struct skcipher_request *)cc_req;
- 	struct scatterlist *dst = req->dst;
- 	struct scatterlist *src = req->src;
- 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
--	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
--	unsigned int ivsize = crypto_skcipher_ivsize(tfm);
-+	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
-+	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
-+	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
-+	unsigned int len;
- 
--	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
--	kzfree(req_ctx->iv);
-+	switch (ctx_p->cipher_mode) {
-+	case DRV_CIPHER_CBC:
-+		/*
-+		 * The crypto API expects us to set the req->iv to the last
-+		 * ciphertext block. For encrypt, simply copy from the result.
-+		 * For decrypt, we must copy from a saved buffer since this
-+		 * could be an in-place decryption operation and the src is
-+		 * lost by this point.
-+		 */
-+		if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
-+			memcpy(req->iv, req_ctx->backup_info, ivsize);
-+			kzfree(req_ctx->backup_info);
-+		} else if (!err) {
-+			len = req->cryptlen - ivsize;
-+			scatterwalk_map_and_copy(req->iv, req->dst, len,
-+						 ivsize, 0);
-+		}
-+		break;
- 
--	/*
--	 * The crypto API expects us to set the req->iv to the last
--	 * ciphertext block. For encrypt, simply copy from the result.
--	 * For decrypt, we must copy from a saved buffer since this
--	 * could be an in-place decryption operation and the src is
--	 * lost by this point.
--	 */
--	if (req_ctx->gen_ctx.op_type == DRV_CRYPTO_DIRECTION_DECRYPT)  {
--		memcpy(req->iv, req_ctx->backup_info, ivsize);
--		kzfree(req_ctx->backup_info);
--	} else if (!err) {
--		scatterwalk_map_and_copy(req->iv, req->dst,
--					 (req->cryptlen - ivsize),
--					 ivsize, 0);
-+	case DRV_CIPHER_CTR:
-+		/* Compute the counter of the last block */
-+		len = ALIGN(req->cryptlen, AES_BLOCK_SIZE) / AES_BLOCK_SIZE;
-+		cc_update_ctr((u8 *)req->iv, len);
-+		break;
-+
-+	default:
-+		break;
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index bd974fe..1ff229c 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -131,8 +131,8 @@ static irqreturn_t cc_isr(int irq, void *dev_id)
  	}
  
-+	cc_unmap_cipher_request(dev, req_ctx, ivsize, src, dst);
-+	kzfree(req_ctx->iv);
-+
- 	skcipher_request_complete(req, err);
- }
+ 	if (irr) {
+-		dev_dbg(dev, "IRR includes unknown cause bits (0x%08X)\n",
+-			irr);
++		dev_dbg_ratelimited(dev, "IRR includes unknown cause bits (0x%08X)\n",
++				    irr);
+ 		/* Just warning */
+ 	}
  
-@@ -752,20 +800,29 @@ static int cc_cipher_encrypt(struct skcipher_request *req)
- static int cc_cipher_decrypt(struct skcipher_request *req)
- {
- 	struct crypto_skcipher *sk_tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_tfm *tfm = crypto_skcipher_tfm(sk_tfm);
-+	struct cc_cipher_ctx *ctx_p = crypto_tfm_ctx(tfm);
- 	struct cipher_req_ctx *req_ctx = skcipher_request_ctx(req);
- 	unsigned int ivsize = crypto_skcipher_ivsize(sk_tfm);
- 	gfp_t flags = cc_gfp_flags(&req->base);
-+	unsigned int len;
- 
--	/*
--	 * Allocate and save the last IV sized bytes of the source, which will
--	 * be lost in case of in-place decryption and might be needed for CTS.
--	 */
--	req_ctx->backup_info = kmalloc(ivsize, flags);
--	if (!req_ctx->backup_info)
--		return -ENOMEM;
-+	if (ctx_p->cipher_mode == DRV_CIPHER_CBC) {
-+
-+		/* Allocate and save the last IV sized bytes of the source,
-+		 * which will be lost in case of in-place decryption.
-+		 */
-+		req_ctx->backup_info = kzalloc(ivsize, flags);
-+		if (!req_ctx->backup_info)
-+			return -ENOMEM;
-+
-+		len = req->cryptlen - ivsize;
-+		scatterwalk_map_and_copy(req_ctx->backup_info, req->src, len,
-+					 ivsize, 0);
-+	} else {
-+		req_ctx->backup_info = NULL;
-+	}
- 
--	scatterwalk_map_and_copy(req_ctx->backup_info, req->src,
--				 (req->cryptlen - ivsize), ivsize, 0);
- 	req_ctx->is_giv = false;
- 
- 	return cc_cipher_process(req, DRV_CRYPTO_DIRECTION_DECRYPT);
 -- 
 2.7.4
 
