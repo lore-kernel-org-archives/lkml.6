@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8756FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2782C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C81B25260
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C81B25260
+	by mail.kernel.org (Postfix) with ESMTP id 610D725262
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610D725262
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeGAGfV (ORCPT
+        id S1752146AbeGAGfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 02:35:21 -0400
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25331 "EHLO
+        Sun, 1 Jul 2018 02:35:25 -0400
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25333 "EHLO
         sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbeGAGfQ (ORCPT
+        with ESMTP id S1751463AbeGAGfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 02:35:16 -0400
+        Sun, 1 Jul 2018 02:35:22 -0400
 DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
   s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=WI4cq10DuNVEtiomUTABhoSdMjlKQ0/dJ2ZXJXTV1t9S+78SUhGF/GMGae2O5Quqm1o8SlJa7HyI
-    hskMJU3mPPlGBMm75XM2kWxWdR7wL6oZdTT2AIyDkv8du/KSiAm0  
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=fVbwKyfytxdcVSjRkdAi1yC6jFdkgLicWrVmuinO5AkyOGs93PBOT296Xyw9a1tSaJI847crsjGP
+    p5VnYoJto0sLBzYTGwLSKCEp8WT/Viy3kOYm5TIrHpf7yBsNy2VP  
 Received: from YEHS1XR956R00D1.lenovo.com (111.197.253.128 [111.197.253.128]) by mx.zohomail.com
-        with SMTPS id 1530425981524952.5109760313196; Sat, 30 Jun 2018 23:19:41 -0700 (PDT)
+        with SMTPS id 1530425986938903.8361140701428; Sat, 30 Jun 2018 23:19:46 -0700 (PDT)
 From:   Huaisheng Ye <yehs2007@zoho.com>
 To:     dan.j.williams@intel.com
 Cc:     dave.jiang@intel.com, willy@infradead.org,
@@ -38,10 +38,12 @@ Cc:     dave.jiang@intel.com, willy@infradead.org,
         jack@suse.com, chengnt@lenovo.com, linux-nvdimm@lists.01.org,
         linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
         Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH 1/3] drivers/dax/super: Add annotation for ops in struct dax_device
-Date:   Sun,  1 Jul 2018 14:18:46 +0800
-Message-Id: <20180701061848.7036-1-yehs2007@zoho.com>
+Subject: [PATCH 2/3] fs/ext2/inode: Fix a type cast error for fsdax
+Date:   Sun,  1 Jul 2018 14:18:47 +0800
+Message-Id: <20180701061848.7036-2-yehs2007@zoho.com>
 X-Mailer: git-send-email 2.17.0.windows.1
+In-Reply-To: <20180701061848.7036-1-yehs2007@zoho.com>
+References: <20180701061848.7036-1-yehs2007@zoho.com>
 X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,26 +52,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huaisheng Ye <yehs1@lenovo.com>
 
-There is no annotation for member ops within struct dax_device.
-Add it.
+The type of offset within struct iomap is loff_t, which represents
+file offset of mapping.
+
+In ext2_iomap_begin, iomap->offset shall be given a type cast as
+loff_t instead of u64.
 
 Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
 ---
- drivers/dax/super.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ext2/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 2b2332b..aa6382a 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -161,6 +161,7 @@ enum dax_device_flags {
-  * @host: optional name for lookups where the device path is not available
-  * @private: dax driver private data
-  * @flags: state and boolean properties
-+ * @ops: function pointers for direct_access and fs-dax
-  */
- struct dax_device {
- 	struct hlist_node list;
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 7163590..ca211bd 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -816,7 +816,7 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 
+ 	iomap->flags = 0;
+ 	iomap->bdev = inode->i_sb->s_bdev;
+-	iomap->offset = (u64)first_block << blkbits;
++	iomap->offset = (loff_t)first_block << blkbits;
+ 	iomap->dax_dev = sbi->s_daxdev;
+ 
+ 	if (ret == 0) {
 -- 
 1.8.3.1
 
