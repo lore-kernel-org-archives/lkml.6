@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021FAC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3640C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6037252EF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6037252EF
+	by mail.kernel.org (Postfix) with ESMTP id 6B645252DD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B645252DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031159AbeGAQft (ORCPT
+        id S1031172AbeGAQfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:35:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35826 "EHLO
+        Sun, 1 Jul 2018 12:35:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35844 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031115AbeGAQff (ORCPT
+        with ESMTP id S1031127AbeGAQfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:35 -0400
+        Sun, 1 Jul 2018 12:35:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A51DAAA6;
-        Sun,  1 Jul 2018 16:35:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 190B3ACC;
+        Sun,  1 Jul 2018 16:35:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Hussam Al-Tayeb <me@hussam.eu.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 140/157] mm: fix devmem_is_allowed() for sub-page System RAM intersections
-Date:   Sun,  1 Jul 2018 18:23:32 +0200
-Message-Id: <20180701160900.064492727@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH 4.14 141/157] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
+Date:   Sun,  1 Jul 2018 18:23:33 +0200
+Message-Id: <20180701160900.127266867@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,70 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit 2bdce74412c249ac01dfe36b6b0043ffd7a5361e upstream.
+commit eef04c7b3786ff0c9cb1019278b6c6c2ea0ad4ff upstream.
 
-Hussam reports:
+Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
+MSIs") fixed a couple of errors in error cleanup path of
+xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
+__unbind_from_irq() with an unbound irq, which would result in
+triggering the BUG_ON there.
 
-    I was poking around and for no real reason, I did cat /dev/mem and
-    strings /dev/mem.  Then I saw the following warning in dmesg. I saved it
-    and rebooted immediately.
+Since there is really no reason for the BUG_ON (xen_free_irq() can
+operate on unbound irqs) we can remove it.
 
-     memremap attempted on mixed range 0x000000000009c000 size: 0x1000
-     ------------[ cut here ]------------
-     WARNING: CPU: 0 PID: 11810 at kernel/memremap.c:98 memremap+0x104/0x170
-     [..]
-     Call Trace:
-      xlate_dev_mem_ptr+0x25/0x40
-      read_mem+0x89/0x1a0
-      __vfs_read+0x36/0x170
-
-The memremap() implementation checks for attempts to remap System RAM
-with MEMREMAP_WB and instead redirects those mapping attempts to the
-linear map.  However, that only works if the physical address range
-being remapped is page aligned.  In low memory we have situations like
-the following:
-
-    00000000-00000fff : Reserved
-    00001000-0009fbff : System RAM
-    0009fc00-0009ffff : Reserved
-
-...where System RAM intersects Reserved ranges on a sub-page page
-granularity.
-
-Given that devmem_is_allowed() special cases any attempt to map System
-RAM in the first 1MB of memory, replace page_is_ram() with the more
-precise region_intersects() to trap attempts to map disallowed ranges.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199999
-Link: http://lkml.kernel.org/r/152856436164.18127.2847888121707136898.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: 92281dee825f ("arch: introduce memremap()")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Hussam Al-Tayeb <me@hussam.eu.org>
-Tested-by: Hussam Al-Tayeb <me@hussam.eu.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/xen/events/events_base.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -706,7 +706,9 @@ void __init init_mem_mapping(void)
-  */
- int devmem_is_allowed(unsigned long pagenr)
- {
--	if (page_is_ram(pagenr)) {
-+	if (region_intersects(PFN_PHYS(pagenr), PAGE_SIZE,
-+				IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
-+			!= REGION_DISJOINT) {
- 		/*
- 		 * For disallowed memory regions in the low 1MB range,
- 		 * request that the page be shown as all zeros.
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -628,8 +628,6 @@ static void __unbind_from_irq(unsigned i
+ 		xen_irq_info_cleanup(info);
+ 	}
+ 
+-	BUG_ON(info_for_irq(irq)->type == IRQT_UNBOUND);
+-
+ 	xen_free_irq(irq);
+ }
+ 
 
 
