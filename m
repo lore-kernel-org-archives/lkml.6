@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0E3C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B8FC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8152255B9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8152255B9
+	by mail.kernel.org (Postfix) with ESMTP id DF545255BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF545255BD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933171AbeGARKU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:10:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37286 "EHLO
+        id S934092AbeGARKf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:10:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37278 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031995AbeGAQlD (ORCPT
+        with ESMTP id S1031716AbeGAQlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:03 -0400
+        Sun, 1 Jul 2018 12:41:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22CBDAA6;
-        Sun,  1 Jul 2018 16:41:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DF51ACC;
+        Sun,  1 Jul 2018 16:40:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.17 098/220] RDMA/core: Save kernel caller name when creating CQ using ib_create_cq()
-Date:   Sun,  1 Jul 2018 18:22:02 +0200
-Message-Id: <20180701160912.507158106@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.17 097/220] xprtrdma: Return -ENOBUFS when no pages are available
+Date:   Sun,  1 Jul 2018 18:22:01 +0200
+Message-Id: <20180701160912.467292953@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,121 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bharat Potnuri <bharat@chelsio.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit 7350cdd0257e73a37df57253fb9decd8effacd37 upstream.
+commit a8f688ec437dc2045cc8f0c89fe877d5803850da upstream.
 
-Few kernel applications like SCST-iSER create CQ using ib_create_cq(),
-where accessing CQ structures using rdma restrack tool leads to below NULL
-pointer dereference. This patch saves caller kernel module name similar to
-ib_alloc_cq().
+The use of -EAGAIN in rpcrdma_convert_iovs() is a latent bug: the
+transport never calls xprt_write_space() when more pages become
+available. -ENOBUFS will trigger the correct "delay briefly and call
+again" logic.
 
-BUG: unable to handle kernel NULL pointer dereference at           (null)
-IP: [<ffffffff8132ca70>] skip_spaces+0x30/0x30
-PGD 738bac067 PUD 8533f0067 PMD 0
-Oops: 0000 [#1] SMP
-R10: ffff88017fc03300 R11: 0000000000000246 R12: 0000000000000000
-R13: ffff88082fa5a668 R14: ffff88017475a000 R15: 0000000000000000
-FS:  00002b32726582c0(0000) GS:ffff88087fc40000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000008491a1000 CR4: 00000000003607e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- [<ffffffffc05af69c>] ? fill_res_name_pid+0x7c/0x90 [ib_core]
- [<ffffffffc05af79f>] fill_res_cq_entry+0xef/0x170 [ib_core]
- [<ffffffffc05af4c4>] res_get_common_dumpit+0x3c4/0x480 [ib_core]
- [<ffffffffc05af5d3>] nldev_res_get_cq_dumpit+0x13/0x20 [ib_core]
- [<ffffffff815bc1e7>] netlink_dump+0x117/0x2e0
- [<ffffffff815bcb8b>] __netlink_dump_start+0x1ab/0x230
- [<ffffffffc059fead>] ibnl_rcv_msg+0x11d/0x1f0 [ib_core]
- [<ffffffffc05af5c0>] ? nldev_res_get_mr_dumpit+0x20/0x20 [ib_core]
- [<ffffffffc059fd90>] ? rdma_nl_multicast+0x30/0x30 [ib_core]
- [<ffffffff815bea49>] netlink_rcv_skb+0xa9/0xc0
- [<ffffffffc05a0018>] ibnl_rcv+0x98/0xb0 [ib_core]
- [<ffffffff815be132>] netlink_unicast+0xf2/0x1b0
- [<ffffffff815be50f>] netlink_sendmsg+0x31f/0x6a0
- [<ffffffff8156b580>] sock_sendmsg+0xb0/0xf0
- [<ffffffff816ace9e>] ? _raw_spin_unlock_bh+0x1e/0x20
- [<ffffffff8156f998>] ? release_sock+0x118/0x170
- [<ffffffff8156b731>] SYSC_sendto+0x121/0x1c0
- [<ffffffff81568340>] ? sock_alloc_file+0xa0/0x140
- [<ffffffff81221265>] ? __fd_install+0x25/0x60
- [<ffffffff8156c2ce>] SyS_sendto+0xe/0x10
- [<ffffffff816b6c2a>] system_call_fastpath+0x16/0x1b
-RIP  [<ffffffff8132ca70>] skip_spaces+0x30/0x30
-RSP <ffff88072be97760>
-CR2: 0000000000000000
-
-Cc: <stable@vger.kernel.org>
-Fixes: f66c8ba4c9fa ("RDMA/core: Save kernel caller name when creating PD and CQ objects")
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 7a89f9c626e3 ("xprtrdma: Honor ->send_request API contract")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@vger.kernel.org # 4.8+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/verbs.c |   14 ++++++++------
- include/rdma/ib_verbs.h         |   13 ++++++++-----
- 2 files changed, 16 insertions(+), 11 deletions(-)
+ net/sunrpc/xprtrdma/rpc_rdma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/verbs.c
-+++ b/drivers/infiniband/core/verbs.c
-@@ -1562,11 +1562,12 @@ EXPORT_SYMBOL(ib_destroy_qp);
- 
- /* Completion queues */
- 
--struct ib_cq *ib_create_cq(struct ib_device *device,
--			   ib_comp_handler comp_handler,
--			   void (*event_handler)(struct ib_event *, void *),
--			   void *cq_context,
--			   const struct ib_cq_init_attr *cq_attr)
-+struct ib_cq *__ib_create_cq(struct ib_device *device,
-+			     ib_comp_handler comp_handler,
-+			     void (*event_handler)(struct ib_event *, void *),
-+			     void *cq_context,
-+			     const struct ib_cq_init_attr *cq_attr,
-+			     const char *caller)
- {
- 	struct ib_cq *cq;
- 
-@@ -1580,12 +1581,13 @@ struct ib_cq *ib_create_cq(struct ib_dev
- 		cq->cq_context    = cq_context;
- 		atomic_set(&cq->usecnt, 0);
- 		cq->res.type = RDMA_RESTRACK_CQ;
-+		cq->res.kern_name = caller;
- 		rdma_restrack_add(&cq->res);
- 	}
- 
- 	return cq;
- }
--EXPORT_SYMBOL(ib_create_cq);
-+EXPORT_SYMBOL(__ib_create_cq);
- 
- int rdma_set_cq_moderation(struct ib_cq *cq, u16 cq_count, u16 cq_period)
- {
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -3310,11 +3310,14 @@ int ib_process_cq_direct(struct ib_cq *c
-  *
-  * Users can examine the cq structure to determine the actual CQ size.
-  */
--struct ib_cq *ib_create_cq(struct ib_device *device,
--			   ib_comp_handler comp_handler,
--			   void (*event_handler)(struct ib_event *, void *),
--			   void *cq_context,
--			   const struct ib_cq_init_attr *cq_attr);
-+struct ib_cq *__ib_create_cq(struct ib_device *device,
-+			     ib_comp_handler comp_handler,
-+			     void (*event_handler)(struct ib_event *, void *),
-+			     void *cq_context,
-+			     const struct ib_cq_init_attr *cq_attr,
-+			     const char *caller);
-+#define ib_create_cq(device, cmp_hndlr, evt_hndlr, cq_ctxt, cq_attr) \
-+	__ib_create_cq((device), (cmp_hndlr), (evt_hndlr), (cq_ctxt), (cq_attr), KBUILD_MODNAME)
- 
- /**
-  * ib_resize_cq - Modifies the capacity of the CQ.
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -230,7 +230,7 @@ rpcrdma_convert_iovs(struct rpcrdma_xprt
+ 			 */
+ 			*ppages = alloc_page(GFP_ATOMIC);
+ 			if (!*ppages)
+-				return -EAGAIN;
++				return -ENOBUFS;
+ 		}
+ 		seg->mr_page = *ppages;
+ 		seg->mr_offset = (char *)page_base;
 
 
