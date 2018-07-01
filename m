@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E014C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2417AC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D4A25891
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:08:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D4A25891
+	by mail.kernel.org (Postfix) with ESMTP id D0D8F24AD8
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:08:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D8F24AD8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753620AbeGASIc (ORCPT
+        id S1030189AbeGAQ2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:08:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34300 "EHLO
+        Sun, 1 Jul 2018 12:28:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34252 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964962AbeGAQ2V (ORCPT
+        with ESMTP id S964984AbeGAQ2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:21 -0400
+        Sun, 1 Jul 2018 12:28:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40896ACD;
-        Sun,  1 Jul 2018 16:28:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5334C92B;
+        Sun,  1 Jul 2018 16:28:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Hussam Al-Tayeb <me@hussam.eu.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 091/101] mm: fix devmem_is_allowed() for sub-page System RAM intersections
-Date:   Sun,  1 Jul 2018 18:22:17 +0200
-Message-Id: <20180701160800.798439352@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 077/101] perf intel-pt: Fix decoding to accept CBR between FUP and corresponding TIP
+Date:   Sun,  1 Jul 2018 18:22:03 +0200
+Message-Id: <20180701160800.249972934@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -53,70 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 2bdce74412c249ac01dfe36b6b0043ffd7a5361e upstream.
+commit bd2e49ec48feb1855f7624198849eea4610e2286 upstream.
 
-Hussam reports:
+It is possible to have a CBR packet between a FUP packet and
+corresponding TIP packet. Stop treating it as an error.
 
-    I was poking around and for no real reason, I did cat /dev/mem and
-    strings /dev/mem.  Then I saw the following warning in dmesg. I saved it
-    and rebooted immediately.
-
-     memremap attempted on mixed range 0x000000000009c000 size: 0x1000
-     ------------[ cut here ]------------
-     WARNING: CPU: 0 PID: 11810 at kernel/memremap.c:98 memremap+0x104/0x170
-     [..]
-     Call Trace:
-      xlate_dev_mem_ptr+0x25/0x40
-      read_mem+0x89/0x1a0
-      __vfs_read+0x36/0x170
-
-The memremap() implementation checks for attempts to remap System RAM
-with MEMREMAP_WB and instead redirects those mapping attempts to the
-linear map.  However, that only works if the physical address range
-being remapped is page aligned.  In low memory we have situations like
-the following:
-
-    00000000-00000fff : Reserved
-    00001000-0009fbff : System RAM
-    0009fc00-0009ffff : Reserved
-
-...where System RAM intersects Reserved ranges on a sub-page page
-granularity.
-
-Given that devmem_is_allowed() special cases any attempt to map System
-RAM in the first 1MB of memory, replace page_is_ram() with the more
-precise region_intersects() to trap attempts to map disallowed ranges.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199999
-Link: http://lkml.kernel.org/r/152856436164.18127.2847888121707136898.stgit@dwillia2-desk3.amr.corp.intel.com
-Fixes: 92281dee825f ("arch: introduce memremap()")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reported-by: Hussam Al-Tayeb <me@hussam.eu.org>
-Tested-by: Hussam Al-Tayeb <me@hussam.eu.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1527762225-26024-3-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/init.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -653,7 +653,9 @@ void __init init_mem_mapping(void)
-  */
- int devmem_is_allowed(unsigned long pagenr)
- {
--	if (page_is_ram(pagenr)) {
-+	if (region_intersects(PFN_PHYS(pagenr), PAGE_SIZE,
-+				IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
-+			!= REGION_DISJOINT) {
- 		/*
- 		 * For disallowed memory regions in the low 1MB range,
- 		 * request that the page be shown as all zeros.
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1517,7 +1517,6 @@ static int intel_pt_walk_fup_tip(struct
+ 		case INTEL_PT_PSB:
+ 		case INTEL_PT_TSC:
+ 		case INTEL_PT_TMA:
+-		case INTEL_PT_CBR:
+ 		case INTEL_PT_MODE_TSX:
+ 		case INTEL_PT_BAD:
+ 		case INTEL_PT_PSBEND:
+@@ -1526,6 +1525,10 @@ static int intel_pt_walk_fup_tip(struct
+ 			decoder->pkt_step = 0;
+ 			return -ENOENT;
+ 
++		case INTEL_PT_CBR:
++			intel_pt_calc_cbr(decoder);
++			break;
++
+ 		case INTEL_PT_OVF:
+ 			return intel_pt_overflow(decoder);
+ 
 
 
