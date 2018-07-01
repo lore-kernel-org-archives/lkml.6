@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5ACC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C212C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4497F2513D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4497F2513D
+	by mail.kernel.org (Postfix) with ESMTP id 1D4CC25231
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D4CC25231
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030273AbeGAQ3u (ORCPT
+        id S1030293AbeGAQ3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:29:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34554 "EHLO
+        Sun, 1 Jul 2018 12:29:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030264AbeGAQ3m (ORCPT
+        with ESMTP id S1030264AbeGAQ3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:42 -0400
+        Sun, 1 Jul 2018 12:29:51 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03551ACD;
-        Sun,  1 Jul 2018 16:29:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A52EE92B;
+        Sun,  1 Jul 2018 16:29:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 017/157] ASoC: dapm: delete dapm_kcontrol_data paths list before freeing it
-Date:   Sun,  1 Jul 2018 18:21:29 +0200
-Message-Id: <20180701160853.135123575@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Woods <brian.woods@amd.com>,
+        Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        boris.ostrovsky@oracle.com, xen-devel@lists.xenproject.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 002/157] x86/xen: Add call of speculative_store_bypass_ht_init() to PV paths
+Date:   Sun,  1 Jul 2018 18:21:14 +0200
+Message-Id: <20180701160852.414936941@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,38 +55,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Juergen Gross <jgross@suse.com>
 
-commit ff2faf1289c1f81b5b26b9451dd1c2006aac8db8 upstream.
+commit 74899d92e66663dc7671a8017b3146dcd4735f3b upstream.
 
-dapm_kcontrol_data is freed as part of dapm_kcontrol_free(), leaving the
-paths pointer dangling in the list.
+Commit:
 
-This leads to system crash when we try to unload and reload sound card.
-I hit this bug during ADSP crash/reboot test case on Dragon board DB410c.
+  1f50ddb4f418 ("x86/speculation: Handle HT correctly on AMD")
 
-Without this patch, on SLAB Poisoning enabled build, kernel crashes with
-"BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten"
+... added speculative_store_bypass_ht_init() to the per-CPU initialization sequence.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+speculative_store_bypass_ht_init() needs to be called on each CPU for
+PV guests, too.
+
+Reported-by: Brian Woods <brian.woods@amd.com>
+Tested-by: Brian Woods <brian.woods@amd.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: <stable@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: boris.ostrovsky@oracle.com
+Cc: xen-devel@lists.xenproject.org
+Fixes: 1f50ddb4f4189243c05926b842dc1a0332195f31 ("x86/speculation: Handle HT correctly on AMD")
+Link: https://lore.kernel.org/lkml/20180621084331.21228-1-jgross@suse.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-dapm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/xen/smp_pv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -430,6 +430,8 @@ err_data:
- static void dapm_kcontrol_free(struct snd_kcontrol *kctl)
- {
- 	struct dapm_kcontrol_data *data = snd_kcontrol_chip(kctl);
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -32,6 +32,7 @@
+ #include <xen/interface/vcpu.h>
+ #include <xen/interface/xenpmu.h>
+ 
++#include <asm/spec-ctrl.h>
+ #include <asm/xen/interface.h>
+ #include <asm/xen/hypercall.h>
+ 
+@@ -70,6 +71,8 @@ static void cpu_bringup(void)
+ 	cpu_data(cpu).x86_max_cores = 1;
+ 	set_cpu_sibling_map(cpu);
+ 
++	speculative_store_bypass_ht_init();
 +
-+	list_del(&data->paths);
- 	kfree(data->wlist);
- 	kfree(data);
- }
+ 	xen_setup_cpu_clockevents();
+ 
+ 	notify_cpu_starting(cpu);
+@@ -250,6 +253,8 @@ static void __init xen_pv_smp_prepare_cp
+ 	}
+ 	set_cpu_sibling_map(0);
+ 
++	speculative_store_bypass_ht_init();
++
+ 	xen_pmu_init(0);
+ 
+ 	if (xen_smp_intr_init(0) || xen_smp_intr_init_pv(0))
 
 
