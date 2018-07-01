@@ -2,76 +2,74 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1354C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A60C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDAC25082
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5178F250AF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:19:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FizCA/I8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FDAC25082
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TPHS9oML"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5178F250AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752263AbeGALQK (ORCPT
+        id S1752275AbeGALS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:16:10 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43275 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751899AbeGALQH (ORCPT
+        Sun, 1 Jul 2018 07:18:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55969 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752039AbeGALSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:16:07 -0400
-Received: by mail-wr0-f193.google.com with SMTP id c5-v6so12760812wrs.10
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:16:07 -0700 (PDT)
+        Sun, 1 Jul 2018 07:18:55 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so6234615wmv.5
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lZJS+mNYfXe7gOWAErGL25NJ/BmqvDdUHhBU9uzp1CE=;
-        b=FizCA/I8a+3XxPubSd5coc28rfmYM27DhulR64dLUcj6BAUOKngvwr79ESmPhHzWV9
-         2DJw1FPt6DAJtNxF/ug9wA3/d9FB5YQEFKDUSC53PwjvT0PAQpOJvl7t+xm3hrIk8f+/
-         9SUIxsAWhVTt5kPmIY1NAlIy4ztUBfokoIceA=
+        bh=BUMWhxEWmE1kVcOCWlCQB5vtRIjGLDWsf9Ir+D+mc0U=;
+        b=TPHS9oMLoBJkaIfD7SNVsf9s6pOAUHJ3hKMcTxarfpc8Zdo4jZqWMA1/Njxrzvsnn4
+         f7DzQBcn+zejoGmvb+6h0MhbmPuCex4irFUonNFNOCCDNjcy/FE9o5RdHHd54IOBXhb5
+         noZ86sWmfAfgk9FAPcZ9DKD5s9lIUZMxf6zuI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lZJS+mNYfXe7gOWAErGL25NJ/BmqvDdUHhBU9uzp1CE=;
-        b=X4IKVMoo/91F3AMlwH+ZWRxQbf60PPYi4ULPu6H4x4OvLdzYlfX37JUI5ctLa2zlRg
-         XiHPli4rgUyr0DuyWNxUlMKsp3NZ5a4Zb3sOhLuUT8L5ZmE3SocgA5Wh0NnO4ZO3JbrT
-         tc+kpo7fYVycs40Z3zG8zxeApILPndjnCHymx76DPJvlBydXxLrxFfr80+8Hq1zuOpAo
-         fKzOZG7tAIqRJ6y5c8gfF8X1hdInkwT5pZlqi6LnYB4uaHLYby4CQmI+Thc98R8W7A19
-         495JHZsH0qmO3VR34xFzmdcW54ycCl/1K31500Z8T7DwlI+yOHU9S5KTLmPJssP3o5ro
-         JjeA==
-X-Gm-Message-State: APt69E3StFcabtnIVyBAtEPH6vRHgPSPwZvETBuC56id+zBOlNh93pg8
-        qQCJhANQxopZdsxs4cz1nAnRuA==
-X-Google-Smtp-Source: AAOMgpcE16Nmo4aHGcTnYtZVjbMX2IF+f5JmDM/Z3wUoFBNF6sGHCX1BukWCMycsjH+L0OREthLfCw==
-X-Received: by 2002:adf:ee81:: with SMTP id b1-v6mr17822708wro.21.1530443766528;
-        Sun, 01 Jul 2018 04:16:06 -0700 (PDT)
+        bh=BUMWhxEWmE1kVcOCWlCQB5vtRIjGLDWsf9Ir+D+mc0U=;
+        b=UG4V/6ol/3h8O2pA8L3Uz0pwrQfyXKZE5Sql0y40usD++JvKLJ+LhmGr8TfV2Y6Ukl
+         GtynMgKdt0/XN7+vYuGzbRmtX8r4fXIHxUO+f3GbbYVwaE0cbfmkj0b5hmH2vx9AI7kK
+         vC+fPNyYkzgLctyyBg4DgYGXUkPSc2Odl//stAsBu4si2ttTB+tASHLe4VnGjdVBj9rH
+         1TehXHiAGgRxfSvcYenVHnEVwLxpjPYJowjT/AdRrLY4pz3Fq9/yACbYB2pqYMeEQ0DS
+         lX0Lax8lhv+75w9tvFwoY/hHX1ShWuTV/kIXoJ/dfNKLOPvzOeWOmtg8td7bCliJEij9
+         TqQw==
+X-Gm-Message-State: APt69E01tlkJ1TnKT3i2E2Zt/xPUDZF5W/VW58vJU7yermfVIOFWsKSI
+        iyf8LiokNg92oqGbf8+1ZZRt48QZChM=
+X-Google-Smtp-Source: AAOMgpfmRjOQUHq8KucnzYROfYcR9D2eBMjc5id8bBYHRTTXiMVxWK8CFGDlpcTdwJwHakvsx9VZxw==
+X-Received: by 2002:a1c:8647:: with SMTP id i68-v6mr5958363wmd.28.1530443934019;
+        Sun, 01 Jul 2018 04:18:54 -0700 (PDT)
 Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id g88-v6sm8353908wmc.27.2018.07.01.04.16.04
+        by smtp.googlemail.com with ESMTPSA id d4-v6sm16528983wrp.51.2018.07.01.04.18.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 04:16:05 -0700 (PDT)
+        Sun, 01 Jul 2018 04:18:53 -0700 (PDT)
 Subject: Re: [PATCH v5 4/8] interconnect: qcom: Add RPM communication
-To:     Evan Green <evgreen@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org, bjorn.andersson@linaro.org,
         amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 References: <20180620121141.15403-1-georgi.djakov@linaro.org>
  <20180620121141.15403-5-georgi.djakov@linaro.org>
- <CAE=gft7+S7MJHB2jw8SNewNcr2OvK+1a-PdJdcaonTphJX7c8A@mail.gmail.com>
+ <20180627005523.GS129942@google.com>
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 Openpgp: preference=signencrypt
 Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
@@ -117,10 +115,10 @@ Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
  E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
  KEmKjLDvB0pePJkdTw==
-Message-ID: <0b0f1afb-b356-f922-4685-6f0a5c86e0ec@linaro.org>
-Date:   Sun, 1 Jul 2018 14:16:05 +0300
+Message-ID: <185ab8a2-f4e5-dd4f-6446-44ab7fddf12e@linaro.org>
+Date:   Sun, 1 Jul 2018 14:18:52 +0300
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft7+S7MJHB2jw8SNewNcr2OvK+1a-PdJdcaonTphJX7c8A@mail.gmail.com>
+In-Reply-To: <20180627005523.GS129942@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -129,59 +127,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+Hi Matthias,
 
-On 06/26/2018 11:47 PM, Evan Green wrote:
-> Hi Georgi,
-> 
-> On Wed, Jun 20, 2018 at 5:11 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>
+On 06/27/2018 03:55 AM, Matthias Kaehlcke wrote:
+> On Wed, Jun 20, 2018 at 03:11:37PM +0300, Georgi Djakov wrote:
 >> On some Qualcomm SoCs, there is a remote processor, which controls some of
 >> the Network-On-Chip interconnect resources. Other CPUs express their needs
 >> by communicating with this processor. Add a driver to handle comminication
->> with this remote processor.
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
-
-[..]
-
->> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
->> new file mode 100644
->> index 000000000000..2a0c41db91c4
->> --- /dev/null
->> +++ b/drivers/interconnect/qcom/Makefile
->> @@ -0,0 +1,2 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +obj-y += smd-rpm.o
 > 
-> This new file has an unexpressed dependency on CONFIG_QCOM_SMD_RPM due
-> to qcom_rpm_smd_write. RPMh-based systems won't need this file, right?
-> Maybe this file should live behind some config?
-
-Right, I just made this a separate config, as the the kbuild bot also
-reported an issue with the modular build.
+> s/comminication/communication/
+> 
 
 [..]
 
->> diff --git a/drivers/interconnect/qcom/smd-rpm.h b/drivers/interconnect/qcom/smd-rpm.h
->> new file mode 100644
->> index 000000000000..0f4a3da31cf6
->> --- /dev/null
->> +++ b/drivers/interconnect/qcom/smd-rpm.h
->> @@ -0,0 +1,15 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +// SPDX-License-Identifier: GPL-2.0
 >> +/*
->> + * Copyright (c) 2018, Linaro Ltd.
->> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
->> + */
->> +
->> +#ifndef __LINUX_INTERCONNECT_QCOM_RPM_H
->> +#define __LINUX_INTERCONNECT_QCOM_RPM_H
+>> + * RPM over SMD communication wrapper for interconects
 > 
-> This doesn't really reflect the path, should this be something different?
+> s/interconects/interconnects/
+> 
 
-Will update!
+Thanks, will fix them!
 
-Thanks,
+BR,
 Georgi
