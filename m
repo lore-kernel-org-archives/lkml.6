@@ -3,40 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164CCC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBBEC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C552424F91
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C552424F91
+	by mail.kernel.org (Postfix) with ESMTP id 8130124F91
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8130124F91
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeGAQLn (ORCPT
+        id S1752771AbeGAQLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:11:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59756 "EHLO
+        Sun, 1 Jul 2018 12:11:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752670AbeGAQLi (ORCPT
+        with ESMTP id S1752734AbeGAQLn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:11:38 -0400
+        Sun, 1 Jul 2018 12:11:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F37FAD8;
-        Sun,  1 Jul 2018 16:11:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E907AEF;
+        Sun,  1 Jul 2018 16:11:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, Jacek Tomaka <jacek.tomaka@poczta.fm>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 09/85] drm/msm: Fix possible null dereference on failure of get_pages()
-Date:   Sun,  1 Jul 2018 18:01:27 +0200
-Message-Id: <20180701153122.731952098@linuxfoundation.org>
+Subject: [PATCH 3.18 16/85] x86/cpu/intel: Add missing TLB cpuid values
+Date:   Sun,  1 Jul 2018 18:01:34 +0200
+Message-Id: <20180701153122.999005905@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -53,62 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: "jacek.tomaka@poczta.fm" <jacek.tomaka@poczta.fm>
 
-[ Upstream commit 3976626ea3d2011f8fd3f3a47070a8b792018253 ]
+[ Upstream commit b837913fc2d9061bf9b8c0dd6bf2d24e2f98b84a ]
 
-Commit 62e3a3e342af changed get_pages() to initialise
-msm_gem_object::pages before trying to initialise msm_gem_object::sgt,
-so that put_pages() would properly clean up pages in the failure
-case.
+Make kernel print the correct number of TLB entries on Intel Xeon Phi 7210
+(and others)
 
-However, this means that put_pages() now needs to check that
-msm_gem_object::sgt is not null before trying to clean it up, and
-this check was only applied to part of the cleanup code.  Move
-it all into the conditional block.  (Strictly speaking we don't
-need to make the kfree() conditional, but since we can't avoid
-checking for null ourselves we may as well do so.)
+Before:
+[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+After:
+[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
 
-Fixes: 62e3a3e342af ("drm/msm: fix leak in failed get_pages")
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+The entries do exist in the official Intel SMD but the type column there is
+incorrect (states "Cache" where it should read "TLB"), but the entries for
+the values 0x6B, 0x6C and 0x6D are correctly described as 'Data TLB'.
+
+Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20180423161425.24366-1-jacekt@dugeo.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/msm_gem.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/intel.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -110,17 +110,19 @@ static void put_pages(struct drm_gem_obj
- 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
- 
- 	if (msm_obj->pages) {
--		/* For non-cached buffers, ensure the new pages are clean
--		 * because display controller, GPU, etc. are not coherent:
--		 */
--		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
--			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
--					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
-+		if (msm_obj->sgt) {
-+			/* For non-cached buffers, ensure the new
-+			 * pages are clean because display controller,
-+			 * GPU, etc. are not coherent:
-+			 */
-+			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
-+				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
-+					     msm_obj->sgt->nents,
-+					     DMA_BIDIRECTIONAL);
- 
--		if (msm_obj->sgt)
- 			sg_free_table(msm_obj->sgt);
--
--		kfree(msm_obj->sgt);
-+			kfree(msm_obj->sgt);
-+		}
- 
- 		if (iommu_present(&platform_bus_type))
- 			drm_gem_put_pages(obj, msm_obj->pages, true, false);
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -561,6 +561,9 @@ static const struct _tlb_table intel_tlb
+ 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
+ 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
+ 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
++	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
++	{ 0x6c, TLB_DATA_2M_4M,		128,	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
++	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
+ 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
+ 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
+ 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
 
 
