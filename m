@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CF6C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04C2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94AB258E8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:15:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94AB258E8
+	by mail.kernel.org (Postfix) with ESMTP id AC0C6258F9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0C6258F9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965436AbeGASPd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:15:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33964 "EHLO
+        id S965422AbeGASQE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:16:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33902 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965356AbeGAQ0o (ORCPT
+        with ESMTP id S965335AbeGAQ03 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:44 -0400
+        Sun, 1 Jul 2018 12:26:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A9D092B;
-        Sun,  1 Jul 2018 16:26:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B8A1B14;
+        Sun,  1 Jul 2018 16:26:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 039/101] RDMA/mlx4: Discard unknown SQP work requests
-Date:   Sun,  1 Jul 2018 18:21:25 +0200
-Message-Id: <20180701160758.731045435@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.9 052/101] X.509: unpack RSA signatureValue field from BIT STRING
+Date:   Sun,  1 Jul 2018 18:21:38 +0200
+Message-Id: <20180701160759.228980051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,32 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-commit 6b1ca7ece15e94251d1d0d919f813943e4a58059 upstream.
+commit b65c32ec5a942ab3ada93a048089a938918aba7f upstream.
 
-There is no need to crash the machine if unknown work request was
-received in SQP MAD.
+The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+For RSA signatures this BIT STRING is of so-called primitive subtype, which
+contains a u8 prefix indicating a count of unused bits in the encoding.
 
-Cc: <stable@vger.kernel.org> # 3.6
-Fixes: 37bfc7c1e83f ("IB/mlx4: SR-IOV multiplex and demultiplex MADs")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+We have to strip this prefix from signature data, just as we already do for
+key data in x509_extract_key_data() function.
+
+This wasn't noticed earlier because this prefix byte is zero for RSA key
+sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+prefixes has no bearing on its value.
+
+The signature length, however was incorrect, which is a problem for RSA
+implementations that need it to be exactly correct (like AMD CCP).
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx4/mad.c |    1 -
- 1 file changed, 1 deletion(-)
+ crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/infiniband/hw/mlx4/mad.c
-+++ b/drivers/infiniband/hw/mlx4/mad.c
-@@ -1897,7 +1897,6 @@ static void mlx4_ib_sqp_comp_worker(stru
- 					       "buf:%lld\n", wc.wr_id);
- 				break;
- 			default:
--				BUG_ON(1);
- 				break;
- 			}
- 		} else  {
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -249,6 +249,15 @@ int x509_note_signature(void *context, s
+ 		return -EINVAL;
+ 	}
+ 
++	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
++		/* Discard the BIT STRING metadata */
++		if (vlen < 1 || *(const u8 *)value != 0)
++			return -EBADMSG;
++
++		value++;
++		vlen--;
++	}
++
+ 	ctx->cert->raw_sig = value;
+ 	ctx->cert->raw_sig_size = vlen;
+ 	return 0;
 
 
