@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C2EC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37000C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF6D2597F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF6D2597F
+	by mail.kernel.org (Postfix) with ESMTP id E413D24453
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E413D24453
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965173AbeGASXQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:23:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33444 "EHLO
+        id S965050AbeGASX4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:23:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33116 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753558AbeGAQY0 (ORCPT
+        with ESMTP id S1753424AbeGAQS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:26 -0400
+        Sun, 1 Jul 2018 12:18:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04E45AEF;
-        Sun,  1 Jul 2018 16:24:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D76E249B;
+        Sun,  1 Jul 2018 16:18:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 012/101] ASoC: dapm: delete dapm_kcontrol_data paths list before freeing it
-Date:   Sun,  1 Jul 2018 18:20:58 +0200
-Message-Id: <20180701160757.630627041@linuxfoundation.org>
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hans Verkuil <hansverk@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 088/105] media: cx231xx: Add support for AverMedia DVD EZMaker 7
+Date:   Sun,  1 Jul 2018 18:02:38 +0200
+Message-Id: <20180701153155.756543640@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+References: <20180701153149.382300170@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,42 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit ff2faf1289c1f81b5b26b9451dd1c2006aac8db8 upstream.
+commit 29e61d6ef061b012d320327af7dbb3990e75be45 upstream.
 
-dapm_kcontrol_data is freed as part of dapm_kcontrol_free(), leaving the
-paths pointer dangling in the list.
+User reports AverMedia DVD EZMaker 7 can be driven by VIDEO_GRABBER.
+Add the device to the id_table to make it work.
 
-This leads to system crash when we try to unload and reload sound card.
-I hit this bug during ADSP crash/reboot test case on Dragon board DB410c.
+BugLink: https://bugs.launchpad.net/bugs/1620762
 
-Without this patch, on SLAB Poisoning enabled build, kernel crashes with
-"BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten"
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Hans Verkuil <hansverk@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-dapm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/usb/cx231xx/cx231xx-cards.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -425,6 +425,8 @@ err_data:
- static void dapm_kcontrol_free(struct snd_kcontrol *kctl)
- {
- 	struct dapm_kcontrol_data *data = snd_kcontrol_chip(kctl);
-+
-+	list_del(&data->paths);
- 	kfree(data->wlist);
- 	kfree(data);
- }
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -864,6 +864,9 @@ struct usb_device_id cx231xx_id_table[]
+ 	 .driver_info = CX231XX_BOARD_CNXT_RDE_250},
+ 	{USB_DEVICE(0x0572, 0x58A0),
+ 	 .driver_info = CX231XX_BOARD_CNXT_RDU_250},
++	/* AverMedia DVD EZMaker 7 */
++	{USB_DEVICE(0x07ca, 0xc039),
++	 .driver_info = CX231XX_BOARD_CNXT_VIDEO_GRABBER},
+ 	{USB_DEVICE(0x2040, 0xb110),
+ 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL},
+ 	{USB_DEVICE(0x2040, 0xb111),
 
 
