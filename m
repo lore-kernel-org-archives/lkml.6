@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B560C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 219A1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C035F2527D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C035F2527D
+	by mail.kernel.org (Postfix) with ESMTP id D8B3A25288
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B3A25288
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030648AbeGAQcc (ORCPT
+        id S1030660AbeGAQci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:32:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35168 "EHLO
+        Sun, 1 Jul 2018 12:32:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35158 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030468AbeGAQc1 (ORCPT
+        with ESMTP id S1030629AbeGAQcY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:27 -0400
+        Sun, 1 Jul 2018 12:32:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C17AE49B;
-        Sun,  1 Jul 2018 16:32:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D2F192B;
+        Sun,  1 Jul 2018 16:32:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 036/157] powerpc/perf: Fix memory allocation for core-imc based on num_possible_cpus()
-Date:   Sun,  1 Jul 2018 18:21:48 +0200
-Message-Id: <20180701160854.193836240@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 071/157] xprtrdma: Return -ENOBUFS when no pages are available
+Date:   Sun,  1 Jul 2018 18:22:23 +0200
+Message-Id: <20180701160856.169716045@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,92 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-commit d2032678e57fc508d7878307badde8f89b632ba3 upstream.
+commit a8f688ec437dc2045cc8f0c89fe877d5803850da upstream.
 
-Currently memory is allocated for core-imc based on cpu_present_mask,
-which has bit 'cpu' set iff cpu is populated. We use (cpu number / threads
-per core) as the array index to access the memory.
+The use of -EAGAIN in rpcrdma_convert_iovs() is a latent bug: the
+transport never calls xprt_write_space() when more pages become
+available. -ENOBUFS will trigger the correct "delay briefly and call
+again" logic.
 
-Under some circumstances firmware marks a CPU as GUARDed CPU and boot the
-system, until cleared of errors, these CPU's are unavailable for all
-subsequent boots. GUARDed CPUs are possible but not present from linux
-view, so it blows a hole when we assume the max length of our allocation
-is driven by our max present cpus, where as one of the cpus might be online
-and be beyond the max present cpus, due to the hole.
-So (cpu number / threads per core) value bounds the array index and leads
-to memory overflow.
-
-Call trace observed during a guard test:
-
-Faulting instruction address: 0xc000000000149f1c
-cpu 0x69: Vector: 380 (Data Access Out of Range) at [c000003fea303420]
-    pc:c000000000149f1c: prefetch_freepointer+0x14/0x30
-    lr:c00000000014e0f8: __kmalloc+0x1a8/0x1ac
-    sp:c000003fea3036a0
-   msr:9000000000009033
-   dar:c9c54b2c91dbf6b7
-  current = 0xc000003fea2c0000
-  paca    = 0xc00000000fddd880	 softe: 3	 irq_happened: 0x01
-    pid   = 1, comm = swapper/104
-Linux version 4.16.7-openpower1 (smc@smc-desktop) (gcc version 6.4.0
-(Buildroot 2018.02.1-00006-ga8d1126)) #2 SMP Fri May 4 16:44:54 PDT 2018
-enter ? for help
-call trace:
-	 __kmalloc+0x1a8/0x1ac
-	 (unreliable)
-	 init_imc_pmu+0x7f4/0xbf0
-	 opal_imc_counters_probe+0x3fc/0x43c
-	 platform_drv_probe+0x48/0x80
-	 driver_probe_device+0x22c/0x308
-	 __driver_attach+0xa0/0xd8
-	 bus_for_each_dev+0x88/0xb4
-	 driver_attach+0x2c/0x40
-	 bus_add_driver+0x1e8/0x228
-	 driver_register+0xd0/0x114
-	 __platform_driver_register+0x50/0x64
-	 opal_imc_driver_init+0x24/0x38
-	 do_one_initcall+0x150/0x15c
-	 kernel_init_freeable+0x250/0x254
-	 kernel_init+0x1c/0x150
-	 ret_from_kernel_thread+0x5c/0xc8
-
-Allocating memory for core-imc based on cpu_possible_mask, which has
-bit 'cpu' set iff cpu is populatable, will fix this issue.
-
-Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Tested-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Fixes: 39a846db1d57 ("powerpc/perf: Add core IMC PMU support")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 7a89f9c626e3 ("xprtrdma: Honor ->send_request API contract")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@vger.kernel.org # 4.8+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/perf/imc-pmu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sunrpc/xprtrdma/rpc_rdma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/perf/imc-pmu.c
-+++ b/arch/powerpc/perf/imc-pmu.c
-@@ -1131,7 +1131,7 @@ static int init_nest_pmu_ref(void)
- 
- static void cleanup_all_core_imc_memory(void)
- {
--	int i, nr_cores = DIV_ROUND_UP(num_present_cpus(), threads_per_core);
-+	int i, nr_cores = DIV_ROUND_UP(num_possible_cpus(), threads_per_core);
- 	struct imc_mem_info *ptr = core_imc_pmu->mem_info;
- 	int size = core_imc_pmu->counter_mem_size;
- 
-@@ -1239,7 +1239,7 @@ static int imc_mem_init(struct imc_pmu *
- 		if (!pmu_ptr->pmu.name)
- 			return -ENOMEM;
- 
--		nr_cores = DIV_ROUND_UP(num_present_cpus(), threads_per_core);
-+		nr_cores = DIV_ROUND_UP(num_possible_cpus(), threads_per_core);
- 		pmu_ptr->mem_info = kcalloc(nr_cores, sizeof(struct imc_mem_info),
- 								GFP_KERNEL);
- 
+--- a/net/sunrpc/xprtrdma/rpc_rdma.c
++++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+@@ -229,7 +229,7 @@ rpcrdma_convert_iovs(struct rpcrdma_xprt
+ 			 */
+ 			*ppages = alloc_page(GFP_ATOMIC);
+ 			if (!*ppages)
+-				return -EAGAIN;
++				return -ENOBUFS;
+ 		}
+ 		seg->mr_page = *ppages;
+ 		seg->mr_offset = (char *)page_base;
 
 
