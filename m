@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBCFC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B206C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2324125244
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2324125244
+	by mail.kernel.org (Postfix) with ESMTP id 38A5B25249
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A5B25249
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030375AbeGAQaW (ORCPT
+        id S1030392AbeGAQa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:30:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34720 "EHLO
+        Sun, 1 Jul 2018 12:30:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34728 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965255AbeGAQaP (ORCPT
+        with ESMTP id S1030360AbeGAQaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:15 -0400
+        Sun, 1 Jul 2018 12:30:18 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F75092B;
-        Sun,  1 Jul 2018 16:30:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF0D492B;
+        Sun,  1 Jul 2018 16:30:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nordmark Claes <Claes.Nordmark@tieto.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.14 027/157] ipmi:bt: Set the timeout before doing a capabilities check
-Date:   Sun,  1 Jul 2018 18:21:39 +0200
-Message-Id: <20180701160853.650634269@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.14 028/157] Bluetooth: hci_qca: Avoid missing rampatch failure with userspace fw loader
+Date:   Sun,  1 Jul 2018 18:21:40 +0200
+Message-Id: <20180701160853.714702973@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,42 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Amit Pundir <amit.pundir@linaro.org>
 
-commit fe50a7d0393a552e4539da2d31261a59d6415950 upstream.
+commit 7dc5fe0814c35ec4e7d2e8fa30abab72e0e6a172 upstream.
 
-There was one place where the timeout value for an operation was
-not being set, if a capabilities request was done from idle.  Move
-the timeout value setting to before where that change might be
-requested.
+AOSP use userspace firmware loader to load firmwares, which will
+return -EAGAIN in case qca/rampatch_00440302.bin is not found.
+Since there is no rampatch for dragonboard820c QCA controller
+revision, just make it work as is.
 
-IMHO the cause here is the invisible returns in the macros.  Maybe
-that's a job for later, though.
-
-Reported-by: Nordmark Claes <Claes.Nordmark@tieto.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org
+CC: Loic Poulain <loic.poulain@linaro.org>
+CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>
+CC: Johan Hedberg <johan.hedberg@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_bt_sm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_qca.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_bt_sm.c
-+++ b/drivers/char/ipmi/ipmi_bt_sm.c
-@@ -522,11 +522,12 @@ static enum si_sm_result bt_event(struct
- 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
- 			BT_CONTROL(BT_H_BUSY);
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -936,6 +936,12 @@ static int qca_setup(struct hci_uart *hu
+ 	} else if (ret == -ENOENT) {
+ 		/* No patch/nvm-config found, run with original fw/config */
+ 		ret = 0;
++	} else if (ret == -EAGAIN) {
++		/*
++		 * Userspace firmware loader will return -EAGAIN in case no
++		 * patch/nvm-config is found, so run with original fw/config.
++		 */
++		ret = 0;
+ 	}
  
-+		bt->timeout = bt->BT_CAP_req2rsp;
-+
- 		/* Read BT capabilities if it hasn't been done yet */
- 		if (!bt->BT_CAP_outreqs)
- 			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
- 					SI_SM_CALL_WITHOUT_DELAY);
--		bt->timeout = bt->BT_CAP_req2rsp;
- 		BT_SI_SM_RETURN(SI_SM_IDLE);
- 
- 	case BT_STATE_XACTION_START:
+ 	/* Setup bdaddr */
 
 
