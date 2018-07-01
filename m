@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA68C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3A6C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5206B2508C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5206B2508C
+	by mail.kernel.org (Postfix) with ESMTP id 8BE0425098
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE0425098
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933226AbeGAQP5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60654 "EHLO
+        id S933288AbeGAQP7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933048AbeGAQPw (ORCPT
+        with ESMTP id S1753218AbeGAQPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:52 -0400
+        Sun, 1 Jul 2018 12:15:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07CEA4A3;
-        Sun,  1 Jul 2018 16:15:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E6144A3;
+        Sun,  1 Jul 2018 16:15:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Richard W.M. Jones" <rjones@redhat.com>,
-        Lorenzo Dalrio <lorenzo.dalrio@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.4 023/105] libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
-Date:   Sun,  1 Jul 2018 18:01:33 +0200
-Message-Id: <20180701153151.057619477@linuxfoundation.org>
+Subject: [PATCH 4.4 022/105] libata: zpodd: small read overflow in eject_tray()
+Date:   Sun,  1 Jul 2018 18:01:32 +0200
+Message-Id: <20180701153150.998817882@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,56 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 2cfce3a86b64b53f0a70e92a6a659c720c319b45 upstream.
+commit 18c9a99bce2a57dfd7e881658703b5d7469cc7b9 upstream.
 
-Commit 184add2ca23c ("libata: Apply NOLPM quirk for SanDisk
-SD7UB3Q*G1001 SSDs") disabled LPM for SanDisk SD7UB3Q*G1001 SSDs.
+We read from the cdb[] buffer in ata_exec_internal_sg().  It has to be
+ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
 
-This has lead to several reports of users of that SSD where LPM
-was working fine and who know have a significantly increased idle
-power consumption on their laptops.
-
-Likely there is another problem on the T450s from the original
-reporter which gets exposed by the uncore reaching deeper sleep
-states (higher PC-states) due to LPM being enabled. The problem as
-reported, a hardfreeze about once a day, already did not sound like
-it would be caused by LPM and the reports of the SSD working fine
-confirm this. The original reporter is ok with dropping the quirk.
-
-A X250 user has reported the same hard freeze problem and for him
-the problem went away after unrelated updates, I suspect some GPU
-driver stack changes fixed things.
-
-TL;DR: The original reporters problem were triggered by LPM but not
-an LPM issue, so drop the quirk for the SSD in question.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1583207
-Cc: stable@vger.kernel.org
-Cc: Richard W.M. Jones <rjones@redhat.com>
-Cc: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Reported-by: Lorenzo Dalrio <lorenzo.dalrio@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: 213342053db5 ("libata: handle power transition of ODD")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Acked-by: "Richard W.M. Jones" <rjones@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/ata/libata-zpodd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4247,9 +4247,6 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
--	/* Sandisk devices which are known to not handle LPM well */
--	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
--
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -34,7 +34,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
 
 
