@@ -6,42 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6813BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05671C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A7E725313
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7E725313
+	by mail.kernel.org (Postfix) with ESMTP id B3CF925319
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CF925319
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031354AbeGAQgy (ORCPT
+        id S1031369AbeGAQhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:36:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36108 "EHLO
+        Sun, 1 Jul 2018 12:37:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36132 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031061AbeGAQgr (ORCPT
+        with ESMTP id S1031352AbeGAQgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:47 -0400
+        Sun, 1 Jul 2018 12:36:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E630A73;
-        Sun,  1 Jul 2018 16:36:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88386ACC;
+        Sun,  1 Jul 2018 16:36:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 001/220] x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
-Date:   Sun,  1 Jul 2018 18:20:25 +0200
-Message-Id: <20180701160908.329822656@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 4.17 011/220] m68k/mm: Adjust VM area to be unmapped by gap size for __iounmap()
+Date:   Sun,  1 Jul 2018 18:20:35 +0200
+Message-Id: <20180701160908.824938082@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,81 +50,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Michael Schmitz <schmitzmic@gmail.com>
 
-commit eab6870fee877258122a042bfd99ee7908c40280 upstream.
+commit 3f90f9ef2dda316d64e420d5d51ba369587ccc55 upstream.
 
-Mark Rutland noticed that GCC optimization passes have the potential to elide
-necessary invocations of the array_index_mask_nospec() instruction sequence,
-so mark the asm() volatile.
+If 020/030 support is enabled, get_io_area() leaves an IO_SIZE gap
+between mappings which is added to the vm_struct representing the
+mapping.  __ioremap() uses the actual requested size (after alignment),
+while __iounmap() is passed the size from the vm_struct.
 
-Mark explains:
+On 020/030, early termination descriptors are used to set up mappings of
+extent 'size', which are validated on unmapping. The unmapped gap of
+size IO_SIZE defeats the sanity check of the pmd tables, causing
+__iounmap() to loop forever on 030.
 
-"The volatile will inhibit *some* cases where the compiler could lift the
- array_index_nospec() call out of a branch, e.g. where there are multiple
- invocations of array_index_nospec() with the same arguments:
+On 040/060, unmapping of page table entries does not check for a valid
+mapping, so the umapping loop always completes there.
 
-        if (idx < foo) {
-                idx1 = array_idx_nospec(idx, foo)
-                do_something(idx1);
-        }
+Adjust size to be unmapped by the gap that had been added in the
+vm_struct prior.
 
-        < some other code >
+This fixes the hang in atari_platform_init() reported a long time ago,
+and a similar one reported by Finn recently (addressed by removing
+ioremap() use from the SWIM driver.
 
-        if (idx < foo) {
-                idx2 = array_idx_nospec(idx, foo);
-                do_something_else(idx2);
-        }
+Tested on my Falcon in 030 mode - untested but should work the same on
+040/060 (the extra page tables cleared there would never have been set
+up anyway).
 
- ... since the compiler can determine that the two invocations yield the same
- result, and reuse the first result (likely the same register as idx was in
- originally) for the second branch, effectively re-writing the above as:
-
-        if (idx < foo) {
-                idx = array_idx_nospec(idx, foo);
-                do_something(idx);
-        }
-
-        < some other code >
-
-        if (idx < foo) {
-                do_something_else(idx);
-        }
-
- ... if we don't take the first branch, then speculatively take the second, we
- lose the nospec protection.
-
- There's more info on volatile asm in the GCC docs:
-
-   https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
- "
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <stable@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: babdde2698d4 ("x86: Implement array_index_mask_nospec")
-Link: https://lkml.kernel.org/lkml/152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+[geert: Minor commit description improvements]
+[geert: This was fixed in 2.4.23, but not in 2.5.x]
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/barrier.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/m68k/mm/kmap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -38,7 +38,7 @@ static inline unsigned long array_index_
- {
- 	unsigned long mask;
- 
--	asm ("cmp %1,%2; sbb %0,%0;"
-+	asm volatile ("cmp %1,%2; sbb %0,%0;"
- 			:"=r" (mask)
- 			:"g"(size),"r" (index)
- 			:"cc");
+--- a/arch/m68k/mm/kmap.c
++++ b/arch/m68k/mm/kmap.c
+@@ -89,7 +89,8 @@ static inline void free_io_area(void *ad
+ 	for (p = &iolist ; (tmp = *p) ; p = &tmp->next) {
+ 		if (tmp->addr == addr) {
+ 			*p = tmp->next;
+-			__iounmap(tmp->addr, tmp->size);
++			/* remove gap added in get_io_area() */
++			__iounmap(tmp->addr, tmp->size - IO_SIZE);
+ 			kfree(tmp);
+ 			return;
+ 		}
 
 
