@@ -6,38 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4810C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABC7C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9316D25B0B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9316D25B0B
+	by mail.kernel.org (Postfix) with ESMTP id 4204A25B0F
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:43:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4204A25B0F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932868AbeGASml (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:42:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60148 "EHLO
+        id S932713AbeGASnD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:43:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbeGAQNa (ORCPT
+        with ESMTP id S1752985AbeGAQN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:30 -0400
+        Sun, 1 Jul 2018 12:13:27 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43EDC86D;
-        Sun,  1 Jul 2018 16:13:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6598E86A;
+        Sun,  1 Jul 2018 16:13:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 23/85] kthread, sched/wait: Fix kthread_parkme() wait-loop
-Date:   Sun,  1 Jul 2018 18:01:41 +0200
-Message-Id: <20180701153123.280903344@linuxfoundation.org>
+Subject: [PATCH 3.18 22/85] parisc: drivers.c: Fix section mismatches
+Date:   Sun,  1 Jul 2018 18:01:40 +0200
+Message-Id: <20180701153123.231347975@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -54,71 +49,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 741a76b350897604c48fb12beff1c9b77724dc96 ]
+[ Upstream commit b819439fea305a0bfd6ca23a7994fd1a8847c0d8 ]
 
-Gaurav reported a problem with __kthread_parkme() where a concurrent
-try_to_wake_up() could result in competing stores to ->state which,
-when the TASK_PARKED store got lost bad things would happen.
+Fix two section mismatches in drivers.c:
+1) Section mismatch in reference from the function alloc_tree_node() to
+   the function .init.text:create_tree_node().
+2) Section mismatch in reference from the function walk_native_bus() to
+   the function .init.text:alloc_pa_dev().
 
-The comment near set_current_state() actually mentions this competing
-store, but only mentions the case against TASK_RUNNING. This same
-store, with different timing, can happen against a subsequent !RUNNING
-store.
-
-This normally is not a problem, because as per that same comment, the
-!RUNNING state store is inside a condition based wait-loop:
-
-  for (;;) {
-    set_current_state(TASK_UNINTERRUPTIBLE);
-    if (!need_sleep)
-      break;
-    schedule();
-  }
-  __set_current_state(TASK_RUNNING);
-
-If we loose the (first) TASK_UNINTERRUPTIBLE store to a previous
-(concurrent) wakeup, the schedule() will NO-OP and we'll go around the
-loop once more.
-
-The problem here is that the TASK_PARKED store is not inside the
-KTHREAD_SHOULD_PARK condition wait-loop.
-
-There is a genuine issue with sleeps that do not have a condition;
-this is addressed in a subsequent patch.
-
-Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kthread.c |    7 ++++---
+ arch/parisc/kernel/drivers.c |    7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -156,12 +156,13 @@ void *probe_kthread_data(struct task_str
- 
- static void __kthread_parkme(struct kthread *self)
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -448,7 +448,8 @@ static int match_by_id(struct device * d
+  * Checks all the children of @parent for a matching @id.  If none
+  * found, it allocates a new device and returns it.
+  */
+-static struct parisc_device * alloc_tree_node(struct device *parent, char id)
++static struct parisc_device * __init alloc_tree_node(
++			struct device *parent, char id)
  {
--	__set_current_state(TASK_PARKED);
--	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
-+	for (;;) {
-+		set_current_state(TASK_PARKED);
-+		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
-+			break;
- 		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
- 			complete(&self->parked);
- 		schedule();
--		__set_current_state(TASK_PARKED);
- 	}
- 	clear_bit(KTHREAD_IS_PARKED, &self->flags);
- 	__set_current_state(TASK_RUNNING);
+ 	struct match_id_data d = {
+ 		.id = id,
+@@ -822,8 +823,8 @@ void walk_lower_bus(struct parisc_device
+  * devices which are not physically connected (such as extra serial &
+  * keyboard ports).  This problem is not yet solved.
+  */
+-static void walk_native_bus(unsigned long io_io_low, unsigned long io_io_high,
+-                            struct device *parent)
++static void __init walk_native_bus(unsigned long io_io_low,
++	unsigned long io_io_high, struct device *parent)
+ {
+ 	int i, devices_found = 0;
+ 	unsigned long hpa = io_io_low;
 
 
