@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1083AC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3E3C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA66724F16
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA66724F16
+	by mail.kernel.org (Postfix) with ESMTP id 72891250F1
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72891250F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeGAQSr (ORCPT
+        id S1753415AbeGAQSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:18:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33074 "EHLO
+        Sun, 1 Jul 2018 12:18:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbeGAQSn (ORCPT
+        with ESMTP id S1753217AbeGAQSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:43 -0400
+        Sun, 1 Jul 2018 12:18:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FD0C49B;
-        Sun,  1 Jul 2018 16:18:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0B2549B;
+        Sun,  1 Jul 2018 16:18:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 083/105] perf intel-pt: Fix decoding to accept CBR between FUP and corresponding TIP
-Date:   Sun,  1 Jul 2018 18:02:33 +0200
-Message-Id: <20180701153155.402706615@linuxfoundation.org>
+Subject: [PATCH 4.4 085/105] perf intel-pt: Fix "Unexpected indirect branch" error
+Date:   Sun,  1 Jul 2018 18:02:35 +0200
+Message-Id: <20180701153155.529983389@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,41 +52,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit bd2e49ec48feb1855f7624198849eea4610e2286 upstream.
+commit 9fb523363f6e3984457fee95bb7019395384ffa7 upstream.
 
-It is possible to have a CBR packet between a FUP packet and
-corresponding TIP packet. Stop treating it as an error.
+Some Atom CPUs can produce FUP packets that contain NLIP (next linear
+instruction pointer) instead of CLIP (current linear instruction
+pointer).  That will result in "Unexpected indirect branch" errors. Fix
+by comparing IP to NLIP in that case.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-3-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1527762225-26024-5-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   17 +++++++++++++++--
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    9 +++++++++
+ tools/perf/util/intel-pt.c                          |    4 ++++
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
 --- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
 +++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1487,7 +1487,6 @@ static int intel_pt_walk_fup_tip(struct
- 		case INTEL_PT_PSB:
- 		case INTEL_PT_TSC:
- 		case INTEL_PT_TMA:
--		case INTEL_PT_CBR:
- 		case INTEL_PT_MODE_TSX:
- 		case INTEL_PT_BAD:
- 		case INTEL_PT_PSBEND:
-@@ -1496,6 +1495,10 @@ static int intel_pt_walk_fup_tip(struct
- 			decoder->pkt_step = 0;
- 			return -ENOENT;
+@@ -111,6 +111,7 @@ struct intel_pt_decoder {
+ 	bool have_cyc;
+ 	bool fixup_last_mtc;
+ 	bool have_last_ip;
++	enum intel_pt_param_flags flags;
+ 	uint64_t pos;
+ 	uint64_t last_ip;
+ 	uint64_t ip;
+@@ -213,6 +214,8 @@ struct intel_pt_decoder *intel_pt_decode
+ 	decoder->data               = params->data;
+ 	decoder->return_compression = params->return_compression;
  
-+		case INTEL_PT_CBR:
-+			intel_pt_calc_cbr(decoder);
-+			break;
++	decoder->flags              = params->flags;
 +
- 		case INTEL_PT_OVF:
- 			return intel_pt_overflow(decoder);
+ 	decoder->period             = params->period;
+ 	decoder->period_type        = params->period_type;
  
+@@ -1010,6 +1013,15 @@ out_no_progress:
+ 	return err;
+ }
+ 
++static inline bool intel_pt_fup_with_nlip(struct intel_pt_decoder *decoder,
++					  struct intel_pt_insn *intel_pt_insn,
++					  uint64_t ip, int err)
++{
++	return decoder->flags & INTEL_PT_FUP_WITH_NLIP && !err &&
++	       intel_pt_insn->branch == INTEL_PT_BR_INDIRECT &&
++	       ip == decoder->ip + intel_pt_insn->length;
++}
++
+ static int intel_pt_walk_fup(struct intel_pt_decoder *decoder)
+ {
+ 	struct intel_pt_insn intel_pt_insn;
+@@ -1022,7 +1034,8 @@ static int intel_pt_walk_fup(struct inte
+ 		err = intel_pt_walk_insn(decoder, &intel_pt_insn, ip);
+ 		if (err == INTEL_PT_RETURN)
+ 			return 0;
+-		if (err == -EAGAIN) {
++		if (err == -EAGAIN ||
++		    intel_pt_fup_with_nlip(decoder, &intel_pt_insn, ip, err)) {
+ 			if (decoder->set_fup_tx_flags) {
+ 				decoder->set_fup_tx_flags = false;
+ 				decoder->tx_flags = decoder->fup_tx_flags;
+@@ -1032,7 +1045,7 @@ static int intel_pt_walk_fup(struct inte
+ 				decoder->state.flags = decoder->fup_tx_flags;
+ 				return 0;
+ 			}
+-			return err;
++			return -EAGAIN;
+ 		}
+ 		decoder->set_fup_tx_flags = false;
+ 		if (err)
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+@@ -53,6 +53,14 @@ enum {
+ 	INTEL_PT_ERR_MAX,
+ };
+ 
++enum intel_pt_param_flags {
++	/*
++	 * FUP packet can contain next linear instruction pointer instead of
++	 * current linear instruction pointer.
++	 */
++	INTEL_PT_FUP_WITH_NLIP	= 1 << 0,
++};
++
+ struct intel_pt_state {
+ 	enum intel_pt_sample_type type;
+ 	int err;
+@@ -91,6 +99,7 @@ struct intel_pt_params {
+ 	unsigned int mtc_period;
+ 	uint32_t tsc_ctc_ratio_n;
+ 	uint32_t tsc_ctc_ratio_d;
++	enum intel_pt_param_flags flags;
+ };
+ 
+ struct intel_pt_decoder;
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -676,6 +676,7 @@ static struct intel_pt_queue *intel_pt_a
+ 						   unsigned int queue_nr)
+ {
+ 	struct intel_pt_params params = { .get_trace = 0, };
++	struct perf_env *env = pt->machine->env;
+ 	struct intel_pt_queue *ptq;
+ 
+ 	ptq = zalloc(sizeof(struct intel_pt_queue));
+@@ -753,6 +754,9 @@ static struct intel_pt_queue *intel_pt_a
+ 		}
+ 	}
+ 
++	if (env->cpuid && !strncmp(env->cpuid, "GenuineIntel,6,92,", 18))
++		params.flags |= INTEL_PT_FUP_WITH_NLIP;
++
+ 	ptq->decoder = intel_pt_decoder_new(&params);
+ 	if (!ptq->decoder)
+ 		goto out_free;
 
 
