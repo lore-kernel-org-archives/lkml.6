@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2664C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B00C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97F3F25A78
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F3F25A78
+	by mail.kernel.org (Postfix) with ESMTP id 9890125A86
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9890125A86
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933423AbeGASfc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:35:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60626 "EHLO
+        id S1752964AbeGASfv (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:35:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933120AbeGAQPo (ORCPT
+        with ESMTP id S932463AbeGAQPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:44 -0400
+        Sun, 1 Jul 2018 12:15:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE91986D;
-        Sun,  1 Jul 2018 16:15:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42E7E4A3;
+        Sun,  1 Jul 2018 16:15:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 020/105] cpufreq: Fix new policy initialization during limits updates via sysfs
-Date:   Sun,  1 Jul 2018 18:01:30 +0200
-Message-Id: <20180701153150.870493235@linuxfoundation.org>
+        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 019/105] ALSA: hda: add dock and led support for HP ProBook 640 G4
+Date:   Sun,  1 Jul 2018 18:01:29 +0200
+Message-Id: <20180701153150.808748390@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,50 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tao Wang <kevin.wangtao@hisilicon.com>
+From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit c7d1f119c48f64bebf0fa1e326af577c6152fe30 upstream.
+commit 7eef32c1ef895a3a96463f9cbd04203007cd5555 upstream.
 
-If the policy limits are updated via cpufreq_update_policy() and
-subsequently via sysfs, the limits stored in user_policy may be
-set incorrectly.
+This patch adds missing initialisation for HP 2013 UltraSlim Dock
+Line-In/Out PINs and activates keyboard mute/micmute leds
+for HP ProBook 640 G4
 
-For example, if both min and max are set via sysfs to the maximum
-available frequency, user_policy.min and user_policy.max will also
-be the maximum.  If a policy notifier triggered by
-cpufreq_update_policy() lowers both the min and the max at this
-point, that change is not reflected by the user_policy limits, so
-if the max is updated again via sysfs to the same lower value,
-then user_policy.max will be lower than user_policy.min which
-shouldn't happen.  In particular, if one of the policy CPUs is
-then taken offline and back online, cpufreq_set_policy() will
-fail for it due to a failing limits check.
-
-To prevent that from happening, initialize the min and max fields
-of the new_policy object to the ones stored in user_policy that
-were previously set via sysfs.
-
-Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -603,6 +603,8 @@ static ssize_t store_##file_name					\
- 	struct cpufreq_policy new_policy;				\
- 									\
- 	memcpy(&new_policy, policy, sizeof(*policy));			\
-+	new_policy.min = policy->user_policy.min;			\
-+	new_policy.max = policy->user_policy.max;			\
- 									\
- 	ret = sscanf(buf, "%u", &new_policy.object);			\
- 	if (ret != 1)							\
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -852,6 +852,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+ 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
 
 
