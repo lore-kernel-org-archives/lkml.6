@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0266C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED2892083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2892083B
+	by mail.kernel.org (Postfix) with ESMTP id 5A32F23C1E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A32F23C1E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030799AbeGAQde (ORCPT
+        id S1030818AbeGAQdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:33:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35400 "EHLO
+        Sun, 1 Jul 2018 12:33:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030751AbeGAQd3 (ORCPT
+        with ESMTP id S1030801AbeGAQdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:29 -0400
+        Sun, 1 Jul 2018 12:33:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0E1F92B;
-        Sun,  1 Jul 2018 16:33:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4538649B;
+        Sun,  1 Jul 2018 16:33:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Eda Zhou <ezhou@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 095/157] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
-Date:   Sun,  1 Jul 2018 18:22:47 +0200
-Message-Id: <20180701160857.299369412@linuxfoundation.org>
+Subject: [PATCH 4.14 097/157] scsi: zfcp: fix missing SCSI trace for result of eh_host_reset_handler
+Date:   Sun,  1 Jul 2018 18:22:49 +0200
+Message-Id: <20180701160857.404982605@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,42 +52,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
+commit df30781699f53e4fd4c494c6f7dd16e3d5c21d30 upstream.
 
-This patch prevents driver from setting lower default speed of 1 GB/sec,
-if the switch does not support Get Port Speed Capabilities (GPSC)
-command. Setting this default speed results into much lower write
-performance for large sequential WRITE.  This patch modifies driver to
-check for gpsc_supported flags and prevents driver from issuing
-MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
-does not send this mailbox command, firmware assumes maximum supported
-link speed and will operate at the max speed.
+For problem determination we need to see whether and why we were successful
+or not. This allows deduction of scsi_eh escalation.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reported-by: Eda Zhou <ezhou@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Tested-by: Ewan D. Milne <emilne@redhat.com>
+Example trace record formatted with zfcpdbf from s390-tools:
+
+Timestamp      : ...
+Area           : SCSI
+Subarea        : 00
+Level          : 1
+Exception      : -
+CPU ID         : ..
+Caller         : 0x...
+Record ID      : 1
+Tag            : schrh_r        SCSI host reset handler result
+Request ID     : 0x0000000000000000                     none (invalid)
+SCSI ID        : 0xffffffff                             none (invalid)
+SCSI LUN       : 0xffffffff                             none (invalid)
+SCSI LUN high  : 0xffffffff                             none (invalid)
+SCSI result    : 0x00002002     field re-used for midlayer value: SUCCESS
+                                or in other cases: 0x2009 == FAST_IO_FAIL
+SCSI retries   : 0xff                                   none (invalid)
+SCSI allowed   : 0xff                                   none (invalid)
+SCSI scribble  : 0xffffffffffffffff                     none (invalid)
+SCSI opcode    : ffffffff ffffffff ffffffff ffffffff    none (invalid)
+FCP rsp inf cod: 0xff                                   none (invalid)
+FCP rsp IU     : 00000000 00000000 00000000 00000000    none (invalid)
+                 00000000 00000000
+
+v2.6.35 commit a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from
+fc_block_scsi_eh to scsi eh") introduced the first return with something
+other than the previously hardcoded single SUCCESS return path.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from fc_block_scsi_eh to scsi eh")
+Cc: <stable@vger.kernel.org> #2.6.38+
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/scsi/zfcp_dbf.c  |   40 ++++++++++++++++++++++++++++++++++++++++
+ drivers/s390/scsi/zfcp_ext.h  |    2 ++
+ drivers/s390/scsi/zfcp_scsi.c |   11 ++++++-----
+ 3 files changed, 48 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -4627,7 +4627,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
- 		return;
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -664,6 +664,46 @@ void zfcp_dbf_scsi(char *tag, int level,
+ 	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
+ }
  
- 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
--	    fcport->fp_speed > ha->link_data_rate)
-+	    fcport->fp_speed > ha->link_data_rate ||
-+	    !ha->flags.gpsc_supported)
- 		return;
++/**
++ * zfcp_dbf_scsi_eh() - Trace event for special cases of scsi_eh callbacks.
++ * @tag: Identifier for event.
++ * @adapter: Pointer to zfcp adapter as context for this event.
++ * @scsi_id: SCSI ID/target to indicate scope of task management function (TMF).
++ * @ret: Return value of calling function.
++ *
++ * This SCSI trace variant does not depend on any of:
++ * scsi_cmnd, zfcp_fsf_req, scsi_device.
++ */
++void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
++		      unsigned int scsi_id, int ret)
++{
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_dbf_scsi *rec = &dbf->scsi_buf;
++	unsigned long flags;
++	static int const level = 1;
++
++	if (unlikely(!debug_level_enabled(adapter->dbf->scsi, level)))
++		return;
++
++	spin_lock_irqsave(&dbf->scsi_lock, flags);
++	memset(rec, 0, sizeof(*rec));
++
++	memcpy(rec->tag, tag, ZFCP_DBF_TAG_LEN);
++	rec->id = ZFCP_DBF_SCSI_CMND;
++	rec->scsi_result = ret; /* re-use field, int is 4 bytes and fits */
++	rec->scsi_retries = ~0;
++	rec->scsi_allowed = ~0;
++	rec->fcp_rsp_info = ~0;
++	rec->scsi_id = scsi_id;
++	rec->scsi_lun = (u32)ZFCP_DBF_INVALID_LUN;
++	rec->scsi_lun_64_hi = (u32)(ZFCP_DBF_INVALID_LUN >> 32);
++	rec->host_scribble = ~0;
++	memset(rec->scsi_opcode, 0xff, ZFCP_DBF_SCSI_OPCODE);
++
++	debug_event(dbf->scsi, level, rec, sizeof(*rec));
++	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
++}
++
+ static debug_info_t *zfcp_dbf_reg(const char *name, int size, int rec_size)
+ {
+ 	struct debug_info *d;
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -52,6 +52,8 @@ extern void zfcp_dbf_san_res(char *, str
+ extern void zfcp_dbf_san_in_els(char *, struct zfcp_fsf_req *);
+ extern void zfcp_dbf_scsi(char *, int, struct scsi_cmnd *,
+ 			  struct zfcp_fsf_req *);
++extern void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
++			     unsigned int scsi_id, int ret);
  
- 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
+ /* zfcp_erp.c */
+ extern void zfcp_erp_set_adapter_status(struct zfcp_adapter *, u32);
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -323,15 +323,16 @@ static int zfcp_scsi_eh_host_reset_handl
+ {
+ 	struct zfcp_scsi_dev *zfcp_sdev = sdev_to_zfcp(scpnt->device);
+ 	struct zfcp_adapter *adapter = zfcp_sdev->port->adapter;
+-	int ret;
++	int ret = SUCCESS, fc_ret;
+ 
+ 	zfcp_erp_adapter_reopen(adapter, 0, "schrh_1");
+ 	zfcp_erp_wait(adapter);
+-	ret = fc_block_scsi_eh(scpnt);
+-	if (ret)
+-		return ret;
++	fc_ret = fc_block_scsi_eh(scpnt);
++	if (fc_ret)
++		ret = fc_ret;
+ 
+-	return SUCCESS;
++	zfcp_dbf_scsi_eh("schrh_r", adapter, ~0, ret);
++	return ret;
+ }
+ 
+ struct scsi_transport_template *zfcp_scsi_transport_template;
 
 
