@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C20C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB63A2554F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:03:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB63A2554F
+	by mail.kernel.org (Postfix) with ESMTP id 6BA8A254F6
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA8A254F6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753955AbeGARDZ (ORCPT
+        id S1032042AbeGAQmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:03:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37750 "EHLO
+        Sun, 1 Jul 2018 12:42:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37682 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032282AbeGAQnC (ORCPT
+        with ESMTP id S1031569AbeGAQmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:02 -0400
+        Sun, 1 Jul 2018 12:42:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3ACDA73;
-        Sun,  1 Jul 2018 16:43:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C829AA6;
+        Sun,  1 Jul 2018 16:42:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 140/220] scsi: zfcp: fix misleading REC trigger trace where erp_action setup failed
-Date:   Sun,  1 Jul 2018 18:22:44 +0200
-Message-Id: <20180701160914.159937225@linuxfoundation.org>
+Subject: [PATCH 4.17 134/220] scsi: qla2xxx: Delete session for nport id change
+Date:   Sun,  1 Jul 2018 18:22:38 +0200
+Message-Id: <20180701160913.915354761@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,116 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 512857a795cbbda5980efa4cdb3c0b6602330408 upstream.
+commit 1d317b21231bb2b81a6e0f94f708b8619ec8775b upstream.
 
-If a SCSI device is deleted during scsi_eh host reset, we cannot get a
-reference to the SCSI device anymore since scsi_device_get returns !=0 by
-design. Assuming the recovery of adapter and port(s) was successful,
-zfcp_erp_strategy_followup_success() attempts to trigger a LUN reset for the
-half-gone SCSI device. Unfortunately, it causes the following confusing
-trace record which states that zfcp will do a LUN recovery as "ERP need" is
-ZFCP_ERP_ACTION_REOPEN_LUN == 1 and equals "ERP want".
+This patch fixes regression introduced by commit a4239945b8ad ("scsi:
+qla2xxx: Add switch command to simplify fabric discovery") by scheduling
+session deletion when Nport ID changes.
 
-Old example trace record formatted with zfcpdbf from s390-tools:
+[mkp: clarified commit]
 
-Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
-LUN            : 0x<FCP_LUN>
-WWPN           : 0x<WWPN>
-D_ID           : 0x<N_Port-ID>
-Adapter status : 0x5400050b
-Port status    : 0x54000001
-LUN status     : 0x40000000     ZFCP_STATUS_COMMON_RUNNING
-                                but not ZFCP_STATUS_COMMON_UNBLOCKED as it
-                                was closed on close part of adapter reopen
-ERP want       : 0x01
-ERP need       : 0x01           misleading
-
-However, zfcp_erp_setup_act() returns NULL as it cannot get the reference.
-Hence, zfcp_erp_action_enqueue() takes an early goto out and _NO_ recovery
-actually happens.
-
-We always do want the recovery trigger trace record even if no erp_action
-could be enqueued as in this case. For other cases where we did not enqueue
-an erp_action, 'need' has always been zero to indicate this. In order to
-indicate above goto out, introduce an eyecatcher "flag" to mark the "ERP
-need" as 'not needed' but still keep the information which erp_action type,
-that zfcp_erp_required_act() had decided upon, is needed.  0xc_ is chosen to
-be visibly different from 0x0_ in "ERP want".
-
-New example trace record formatted with zfcpdbf from s390-tools:
-
-Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
-LUN            : 0x<FCP_LUN>
-WWPN           : 0x<WWPN>
-D_ID           : 0x<N_Port-ID>
-Adapter status : 0x5400050b
-Port status    : 0x54000001
-LUN status     : 0x40000000
-ERP want       : 0x01
-ERP need       : 0xc1           would need LUN ERP, but no action set up
-                   ^
-
-Before v2.6.38 commit ae0904f60fab ("[SCSI] zfcp: Redesign of the debug
-tracing for recovery actions.") we could detect this case because the
-"erp_action" field in the trace was NULL. The rework removed erp_action as
-argument and field from the trace.
-
-This patch here is for tracing. A fix to allow LUN recovery in the case at
-hand is a topic for a separate patch.
-
-See also commit fdbd1c5e27da ("[SCSI] zfcp: Allow running unit/LUN shutdown
-without acquiring reference") for a similar case and background info.
-
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: ae0904f60fab ("[SCSI] zfcp: Redesign of the debug tracing for recovery actions.")
-Cc: <stable@vger.kernel.org> #2.6.38+
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Fixes: a4239945b8ad ("scsi: qla2xxx: Add switch command to simplify fabric discovery")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_erp.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_gs.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -35,11 +35,23 @@ enum zfcp_erp_steps {
- 	ZFCP_ERP_STEP_LUN_OPENING	= 0x2000,
- };
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3915,7 +3915,6 @@ void qla24xx_async_gnnft_done(scsi_qla_h
+ 			if (memcmp(rp->port_name, fcport->port_name, WWN_SIZE))
+ 				continue;
+ 			fcport->scan_state = QLA_FCPORT_FOUND;
+-			fcport->d_id.b24 = rp->id.b24;
+ 			found = true;
+ 			/*
+ 			 * If device was not a fabric device before.
+@@ -3923,7 +3922,10 @@ void qla24xx_async_gnnft_done(scsi_qla_h
+ 			if ((fcport->flags & FCF_FABRIC_DEVICE) == 0) {
+ 				qla2x00_clear_loop_id(fcport);
+ 				fcport->flags |= FCF_FABRIC_DEVICE;
++			} else if (fcport->d_id.b24 != rp->id.b24) {
++				qlt_schedule_sess_for_deletion(fcport);
+ 			}
++			fcport->d_id.b24 = rp->id.b24;
+ 			break;
+ 		}
  
-+/**
-+ * enum zfcp_erp_act_type - Type of ERP action object.
-+ * @ZFCP_ERP_ACTION_REOPEN_LUN: LUN recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_PORT: Port recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_PORT_FORCED: Forced port recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_ADAPTER: Adapter recovery.
-+ * @ZFCP_ERP_ACTION_NONE: Eyecatcher pseudo flag to bitwise or-combine with
-+ *			  either of the other enum values.
-+ *			  Used to indicate that an ERP action could not be
-+ *			  set up despite a detected need for some recovery.
-+ */
- enum zfcp_erp_act_type {
- 	ZFCP_ERP_ACTION_REOPEN_LUN         = 1,
- 	ZFCP_ERP_ACTION_REOPEN_PORT	   = 2,
- 	ZFCP_ERP_ACTION_REOPEN_PORT_FORCED = 3,
- 	ZFCP_ERP_ACTION_REOPEN_ADAPTER     = 4,
-+	ZFCP_ERP_ACTION_NONE		   = 0xc0,
- };
- 
- enum zfcp_erp_act_state {
-@@ -257,8 +269,10 @@ static int zfcp_erp_action_enqueue(int w
- 		goto out;
- 
- 	act = zfcp_erp_setup_act(need, act_status, adapter, port, sdev);
--	if (!act)
-+	if (!act) {
-+		need |= ZFCP_ERP_ACTION_NONE; /* marker for trace */
- 		goto out;
-+	}
- 	atomic_or(ZFCP_STATUS_ADAPTER_ERP_PENDING, &adapter->status);
- 	++adapter->erp_total_count;
- 	list_add_tail(&act->list, &adapter->erp_ready_head);
 
 
