@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DD2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4BAC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4FC24E1A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4FC24E1A
+	by mail.kernel.org (Postfix) with ESMTP id 1419F2427A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1419F2427A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031654AbeGAQiu (ORCPT
+        id S1031669AbeGAQi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:38:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36740 "EHLO
+        Sun, 1 Jul 2018 12:38:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031609AbeGAQid (ORCPT
+        with ESMTP id S1031375AbeGAQiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:38:33 -0400
+        Sun, 1 Jul 2018 12:38:51 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B85D892B;
-        Sun,  1 Jul 2018 16:38:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3449992B;
+        Sun,  1 Jul 2018 16:38:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.17 047/220] powerpc/perf: Fix memory allocation for core-imc based on num_possible_cpus()
-Date:   Sun,  1 Jul 2018 18:21:11 +0200
-Message-Id: <20180701160910.284235427@linuxfoundation.org>
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Paul Burton <paul.burton@mips.com>
+Subject: [PATCH 4.17 035/220] mips: ftrace: fix static function graph tracing
+Date:   Sun,  1 Jul 2018 18:20:59 +0200
+Message-Id: <20180701160909.797865281@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,92 +52,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-commit d2032678e57fc508d7878307badde8f89b632ba3 upstream.
+commit 6fb8656646f996d1eef42e6d56203c4915cb9e08 upstream.
 
-Currently memory is allocated for core-imc based on cpu_present_mask,
-which has bit 'cpu' set iff cpu is populated. We use (cpu number / threads
-per core) as the array index to access the memory.
+ftrace_graph_caller was never run after calling ftrace_trace_function,
+breaking the function graph tracer. Fix this, bringing it in line with the
+x86 implementation.
 
-Under some circumstances firmware marks a CPU as GUARDed CPU and boot the
-system, until cleared of errors, these CPU's are unavailable for all
-subsequent boots. GUARDed CPUs are possible but not present from linux
-view, so it blows a hole when we assume the max length of our allocation
-is driven by our max present cpus, where as one of the cpus might be online
-and be beyond the max present cpus, due to the hole.
-So (cpu number / threads per core) value bounds the array index and leads
-to memory overflow.
+While we're at it, also streamline the control flow of _mcount a bit to
+reduce the number of branches.
 
-Call trace observed during a guard test:
+This issue was reported before:
+https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
 
-Faulting instruction address: 0xc000000000149f1c
-cpu 0x69: Vector: 380 (Data Access Out of Range) at [c000003fea303420]
-    pc:c000000000149f1c: prefetch_freepointer+0x14/0x30
-    lr:c00000000014e0f8: __kmalloc+0x1a8/0x1ac
-    sp:c000003fea3036a0
-   msr:9000000000009033
-   dar:c9c54b2c91dbf6b7
-  current = 0xc000003fea2c0000
-  paca    = 0xc00000000fddd880	 softe: 3	 irq_happened: 0x01
-    pid   = 1, comm = swapper/104
-Linux version 4.16.7-openpower1 (smc@smc-desktop) (gcc version 6.4.0
-(Buildroot 2018.02.1-00006-ga8d1126)) #2 SMP Fri May 4 16:44:54 PDT 2018
-enter ? for help
-call trace:
-	 __kmalloc+0x1a8/0x1ac
-	 (unreliable)
-	 init_imc_pmu+0x7f4/0xbf0
-	 opal_imc_counters_probe+0x3fc/0x43c
-	 platform_drv_probe+0x48/0x80
-	 driver_probe_device+0x22c/0x308
-	 __driver_attach+0xa0/0xd8
-	 bus_for_each_dev+0x88/0xb4
-	 driver_attach+0x2c/0x40
-	 bus_add_driver+0x1e8/0x228
-	 driver_register+0xd0/0x114
-	 __platform_driver_register+0x50/0x64
-	 opal_imc_driver_init+0x24/0x38
-	 do_one_initcall+0x150/0x15c
-	 kernel_init_freeable+0x250/0x254
-	 kernel_init+0x1c/0x150
-	 ret_from_kernel_thread+0x5c/0xc8
-
-Allocating memory for core-imc based on cpu_possible_mask, which has
-bit 'cpu' set iff cpu is populatable, will fix this issue.
-
-Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Tested-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-Fixes: 39a846db1d57 ("powerpc/perf: Add core IMC PMU support")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Tested-by: Matt Redfearn <matt.redfearn@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/18929/
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: stable@vger.kernel.org # v3.17+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/perf/imc-pmu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/kernel/mcount.S |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
---- a/arch/powerpc/perf/imc-pmu.c
-+++ b/arch/powerpc/perf/imc-pmu.c
-@@ -1146,7 +1146,7 @@ static int init_nest_pmu_ref(void)
+--- a/arch/mips/kernel/mcount.S
++++ b/arch/mips/kernel/mcount.S
+@@ -119,10 +119,20 @@ NESTED(_mcount, PT_SIZE, ra)
+ EXPORT_SYMBOL(_mcount)
+ 	PTR_LA	t1, ftrace_stub
+ 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
+-	bne	t1, t2, static_trace
++	beq	t1, t2, fgraph_trace
+ 	 nop
  
- static void cleanup_all_core_imc_memory(void)
- {
--	int i, nr_cores = DIV_ROUND_UP(num_present_cpus(), threads_per_core);
-+	int i, nr_cores = DIV_ROUND_UP(num_possible_cpus(), threads_per_core);
- 	struct imc_mem_info *ptr = core_imc_pmu->mem_info;
- 	int size = core_imc_pmu->counter_mem_size;
++	MCOUNT_SAVE_REGS
++
++	move	a0, ra		/* arg1: self return address */
++	jalr	t2		/* (1) call *ftrace_trace_function */
++	 move	a1, AT		/* arg2: parent's return address */
++
++	MCOUNT_RESTORE_REGS
++
++fgraph_trace:
+ #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
++	PTR_LA	t1, ftrace_stub
+ 	PTR_L	t3, ftrace_graph_return
+ 	bne	t1, t3, ftrace_graph_caller
+ 	 nop
+@@ -131,24 +141,11 @@ EXPORT_SYMBOL(_mcount)
+ 	bne	t1, t3, ftrace_graph_caller
+ 	 nop
+ #endif
+-	b	ftrace_stub
+-#ifdef CONFIG_32BIT
+-	 addiu sp, sp, 8
+-#else
+-	 nop
+-#endif
+-
+-static_trace:
+-	MCOUNT_SAVE_REGS
+-
+-	move	a0, ra		/* arg1: self return address */
+-	jalr	t2		/* (1) call *ftrace_trace_function */
+-	 move	a1, AT		/* arg2: parent's return address */
  
-@@ -1264,7 +1264,7 @@ static int imc_mem_init(struct imc_pmu *
- 		if (!pmu_ptr->pmu.name)
- 			return -ENOMEM;
- 
--		nr_cores = DIV_ROUND_UP(num_present_cpus(), threads_per_core);
-+		nr_cores = DIV_ROUND_UP(num_possible_cpus(), threads_per_core);
- 		pmu_ptr->mem_info = kcalloc(nr_cores, sizeof(struct imc_mem_info),
- 								GFP_KERNEL);
- 
+-	MCOUNT_RESTORE_REGS
+ #ifdef CONFIG_32BIT
+ 	addiu sp, sp, 8
+ #endif
++
+ 	.globl ftrace_stub
+ ftrace_stub:
+ 	RETURN_BACK
 
 
