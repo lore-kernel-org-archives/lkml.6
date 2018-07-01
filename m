@@ -2,125 +2,264 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F24FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 23:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0C8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 23:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22FF6257AA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 23:34:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DRZKJRG0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22FF6257AA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id C4218257AA
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 23:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4218257AA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeGAXee (ORCPT
+        id S1752726AbeGAXg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 19:34:34 -0400
-Received: from ozlabs.org ([203.11.71.1]:44675 "EHLO ozlabs.org"
+        Sun, 1 Jul 2018 19:36:57 -0400
+Received: from gate.crashing.org ([63.228.1.57]:55814 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752566AbeGAXec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 19:34:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Jmtp3pQKz9s2R;
-        Mon,  2 Jul 2018 09:34:24 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1530488070;
-        bh=Vi6vAoDWt/cFmd9y/1q5yHIrRD780wcYPqT6kr7+vVI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DRZKJRG0hJra6E0BiEnGLfLdV+P2NjvG1aAX4nRW1NSSHevmjKU6hsnRpEa5GivOq
-         EuHHFnm67aH30G7peumNr7Jkso0pF31ChwcXktOu0VVSMYSrICOQCAwQfbn81R2URI
-         cGSZA5HCe4/7TxQW27dt0GZHH6GcD4xug090M5mrXHlQBXWJVYU/l/9499ch+oCG4K
-         +o0ydj0nN9YTUbHxjF32TBdeET0USQp+KeDnVoZ3LxLPJ/6swh90BUWuEjeJ0vd8hz
-         55slLFugPTPKwSzl1Ce2NuwBin6V5FueGyr7WI2Ip3laSuWYf6EUq6jKCJyakaKJcI
-         +nLgaPaPppPtw==
-Date:   Mon, 2 Jul 2018 09:34:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@suse.de>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] siox: don't create a thread without starting it
-Message-ID: <20180702093404.747c4148@canb.auug.org.au>
-In-Reply-To: <20180629073858.5gwpfwqo2ccb4jaa@pengutronix.de>
-References: <20180626073134.GW2458@hirez.programming.kicks-ass.net>
-        <20180628075742.8991-1-u.kleine-koenig@pengutronix.de>
-        <20180629073858.5gwpfwqo2ccb4jaa@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XZ.tc74IMPq1Qd/_=+KptGf"; protocol="application/pgp-signature"
+        id S1752566AbeGAXgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 19:36:54 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w61NaZ0p017774;
+        Sun, 1 Jul 2018 18:36:38 -0500
+Message-ID: <d56f1c255f7caa913ad77a174e1e3bde08043ac0.camel@kernel.crashing.org>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>
+Date:   Mon, 02 Jul 2018 09:36:35 +1000
+In-Reply-To: <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+         <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+         <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
+         <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
+         <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
+         <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
+         <675c0752ea41c9dc52c2a4b69f09fb9746207de3.camel@kernel.crashing.org>
+         <CA+55aFxqUyACDPBL4trTfGyJudg8P7YGazVGUW7-UaNFJiwZRQ@mail.gmail.com>
+         <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+         <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XZ.tc74IMPq1Qd/_=+KptGf
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2018-07-01 at 10:04 -0700, Linus Torvalds wrote:
+> 
+> So this is where we disagree:
+> 
+> > Thus in that scenario the "last minute" kobject_release() done by the
+> > last kobject_put() will be effectively unprotected from for example the
+> > gdp_mutex (in the case of the gluedirs) or whatever other locking the
+> > subsystem owning the kobject is using to avoid making that "refount 0"
+> > object "discoverable".
+> 
+> No. *Fundamentally*, there is only one thing that protects that
+> object: the refcount.
+> 
+> And my argument is that anything that has this model (which means
+> anything that has any sysfs linkage, which pretty much means any
+> kobject) absolutely *must* use "kobject_get_unless_zero()" unless it
+> had an existing stable pointer and just wants to increase the refcount
+> (ie "already got a reference throuigh one of my data structures that
+> use the lock")
+> 
+> But if you have that model, that means that the "last drop" is
+> actually almost totally irrelevant.  Because it doesn't matter if it's
+> done inside the lock or not - you know that once it has been done,
+> that object is entirely gone. It's not discoverable any more -
+> regardless of locking. The discoverability is basically controlled
+> entirely by the refcount.
 
-Hi Uwe,
+This is almost true... the issue there is that gap of time between the
+refcount going to 0 and kobject_release() actually doing the
+kobject_del. Thus the object will be present in the kset for example,
+and thus discoverable, while its refcount is 0.
 
-On Fri, 29 Jun 2018 09:38:58 +0200 Uwe Kleine-K=C3=B6nig <u.kleine-koenig@p=
-engutronix.de> wrote:
->
-> On Thu, Jun 28, 2018 at 09:57:42AM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > Greg, you applied the initial patches creating drivers/siox. I assume
-> > you will continue to apply siox patches and tell if I should search a
-> > different path for these. =20
->=20
-> I put the two patches that I'd like to get in during the next merge
-> window into a branch in my repository:
->=20
-> 	https://git.pengutronix.de/git/ukl/linux siox/next
->=20
-> I assume you wouldn't object to add this branch to linux-next?
+Yes, you are absolutely right, anything that can find such a dead
+object must be using kobject_get_unless_zero(). This is what patch 1/2
+does and it fixes the basic crashing race.
 
-Added from today.  Is this a continuing effort, or should I just remove
-the tree once Greg has merged it?
+But we are then exposed to the duplicate name issue on fast bind/unbind
+or add/remove.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+> So what happens then?
+> 
+> The locking isn't important for the last release, but it *is*
+> important for new object *creation*.
+> 
+> Why?
+> 
+> The refcount means that once an object is gone, it's gone for
+> *everyone*. It's a one-way thing, and it's thread-safe. So the code
+> that does *creation* can do this:
+> 
+>  - get subsystem lock
+>  - look up object (using the "unless_zero()" model)
+>  - if you got the object, re-use it, and you're done: drop lock and return
+>  - otherwise, you know that nobody else can get it either
+>  - create new object and instantiate it
+>  - drop lock
+> 
+> and this means that you create a new object IFF the old object had its
+> refcount drop to zero. So you always have exactly one copy (or no copy
+> at all, in between the last drop and the creation of the new one).
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Except that create will occasionally fail due to duplicate names. So we
+need to fix that one way or another (see below)
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+> See? The lack of locking at drop time didn't matter.  The refcount
+> itself serialized things.
 
---=20
+Oh I absolutely agree with all that when it comes to object lifetime, I
+don't completely agree when it comes to visibility to the outside
+world, see below.
+
+> So the above is what I *think* the "glue_dir" logic should be. No need
+> for any other count. Just re-use the old glue dir if you can find it,
+> and create a new one if you can't.
+> 
+> The one important thing is that the object lookup above needs to use
+> the lookup needs to find the object all the way until the refcount has
+> become zero. And that actually means that the object MUST NOT be
+> removed from the object lists until *after* the refcount has been
+> decremented to zero. Which is actually why that "automatic cleanup"
+> that you hate is actually an integral and important part of the
+> process: removing the object *before* the refcount went to zero is
+> broken, because that means that the "look up object" phase can now
+> miss an object that still has a non-zero refcount.
+
+In the case of gluedir that is perfectly fine though. It's a bit like
+having an open unlinked file. You want to "unlink" the gluedir
+synchronously with the last of its children going away, in order to be
+able to create a new one as soon as a new children comes in. However
+you don't want to "free" the underlying kobject until after all users
+have dropped their reference.
+
+What I don't like is that idea of conflating discoverability and
+lifetime. We may just have to agree to disagree on that one, but unless
+we can make kernfs&sysfs prevent "finding" of a 0-ref object and thus
+allow creating of a duplicate in that case (which isn't that simple a
+problem to solve), we still have a problem.  
+
+> > So my patch 1/2 prevents us from finding the old dying object (and thus
+> > from crashing) but replaces this with the duplicate name problem.
+> 
+> So I absolutely agree with your patch 1/2. My argument against it is
+> actually that I think the "unless_zero" thing needs to be more
+> universal.
+
+I agree with that, absolutely. kobject_get() should probably just be an
+unless_zero variant always rather than a special case.
+
+> > My patch 2/2 removes that second problem by ensuring we remove the
+> > object from sysfs synchronously in device_del when it no longer
+> > contains any children, explicitely rather than implicitely by the
+> > virtue of doing the "last" kobject_put.
+> 
+> No. See above. The reason I think your patch 2/2 is wrong is that is
+> actually *breaks* the above model, exactly because of that thing that
+> you hatre.
+> 
+> The explicit removal is actively wrong for the "I want to reuse the
+> object" model, exactly because it happens before the refcount has gone
+> to zero.
+
+That's indeed where we disagree.
+
+In fact that's the entire point of the gdb_mutex today, ie the code was
+clearly written with the *intention* that kobject_put() in device_del
+is the last thing happening to the glue dir so that it gets
+synchronously removed from the kset and sysfs along with the last
+child.
+
+This is the only reason why it makes any sense to be taking that mutex
+around kobject_put.
+
+It does so in order to avoid the race alltogether.
+
+And that assumption in the code today is wrong because there could be
+another reference being held, delaying the removal from the kset and
+sysfs to outside of that mutex.
+
+So kobject debugging's delayed freeing doesn't create a new race here,
+it just exposes more widely an existing one.
+
+So to get back to "how do we fix things", I think we agree with patch 1
+and we agree that we should probably make kobject_get unconditionally
+be a "unless zero" version accross the board, but let's Greg chime in
+here before we do anything drastic.
+
+This fixes the use-after-free and crash. However it does open us to a
+duplicate name window where we'll fail to re-bind or re-add a device
+due to a late un-reference. Kobject debugging makes this very likely to
+happen by delaying the freeing by seconds, but without it, there' still
+a small window.
+
+There's two ways we've proposed to fix this. One is my patch 2 which
+you don't like, which basically is equivalent to saying let's unlink
+the gluedir synchronously with the last children going away, and keep
+the kobeject refcount strictly as a mean to deal with the liftime of
+the structure (freeing it). It uses the existing gdp_mutex and just
+makes the existing assumptions in the code work.
+
+The other way is what you prefer, which I agree is a good idea, but it
+will take me at least some time to figure out a way to actually
+implement it, and it is to essentially change sysfs so that objects
+that have a refount of 0 aren't discoverable anymore, so that we don't
+name-clash on trying to create a new one.
+
+It's tricky because all the name business is handled by kernfs which
+has no idea about kobjects of krefs. My initial idea would be to add an
+optional pointer to a kref to kernfs entries, so it can check the
+refcount on lookups and name collision checks. I'm not entirely certain
+how to work out the locking/ordering for this though, we might need to
+add memory barriers in kobject_put to match.
+
+> > > No.  That the zero kobject_get() will not result in a warning. It just
+> > > does a kref_get(), no warnings anywhere.
+> > 
+> > It's there but it's in refcount:
+> > 
+> > void refcount_inc(refcount_t *r)
+> > {
+> >         WARN_ONCE(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-after-free.\n");
+> > }
+> > EXPORT_SYMBOL(refcount_inc);
+> > 
+> > In fact that's how I started digging into that problem in the first place :-)
+> 
+> Hey, you are again hitting this because of extra config options.
+
+Ah possibly. I enabled every debug option I could find :-)
+> 
+> Because the refcount_inc() that I found looks like this:
+> 
+>   static inline void refcount_inc(refcount_t *r)
+>   {
+>           atomic_inc(&r->refs);
+>   }
+> 
+> and has no warning.
+> 
+> I wonder how many people actually run with REFCOUNT_FULL that warns -
+> because it's way too expensive. It's not set in the default Fedora
+> config, for example, and that's despite how Fedora tends to set all
+> the other debug options.
+> 
+> So no, it really doesn't warn normally.
+
+Yup, you're right.
+
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Ben.
 
---Sig_/XZ.tc74IMPq1Qd/_=+KptGf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls5ZOwACgkQAVBC80lX
-0Gw63wf/UiObveADuneZX6MIVg0xuaVZ1xDD7OF4cLwimqA9vetj1Et0RVlRzdKg
-H8NzHIxt8vSJUsWv9bhEL3S/UC0rPI87nWq/A837FMTrnNjTQDqhPJoMog+7SQS/
-7DLuKVtOq+uv7vILTIZqJ45CyyfDXY7UYZL0hA0067TWPycYLQM6RYMzsfD1rMPJ
-r4s7bEYyrV3SUiT9R8VGoKIJVjyY7Rfk8Knr9NX7xCSl0FAQcVREh3QZcBoVTGit
-C65wtq3Yf937M6/hkZE7UjHo/LLTF666oTTOb5jumQDi+V9tQ1jwEuxtzo1FmqoH
-Cd119+sW29ML+3gFoJYs5Mo23htA9A==
-=VSYh
------END PGP SIGNATURE-----
-
---Sig_/XZ.tc74IMPq1Qd/_=+KptGf--
