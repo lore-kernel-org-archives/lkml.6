@@ -2,169 +2,180 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9A8C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C34C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF39214FE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CF39214FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 10F9321545
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:54:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HapR8h5+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10F9321545
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030639AbeGARx4 (ORCPT
+        id S1030561AbeGARyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:53:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35068 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030559AbeGAQbx (ORCPT
+        Sun, 1 Jul 2018 13:54:20 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53170 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965078AbeGARyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:53 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DDD9149B;
-        Sun,  1 Jul 2018 16:31:52 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH 4.14 061/157] IB/mlx4: Mark user MR as writable if actual virtual memory is writable
-Date:   Sun,  1 Jul 2018 18:22:13 +0200
-Message-Id: <20180701160855.682216232@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
-References: <20180701160852.287307684@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Sun, 1 Jul 2018 13:54:13 -0400
+Received: by mail-wm0-f67.google.com with SMTP id w16-v6so6074584wmc.2;
+        Sun, 01 Jul 2018 10:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Lj8n2ojFUnc3yYApZULrlC+qSnU1dL6EMNwgDX8FzVQ=;
+        b=HapR8h5+JhIP6m4IbV6gWrKLyHMWEHiYzl2PhDTlXt8gdE2BKyL7Jhoq03fW7rtOpY
+         aLWmZ51dfk2ClwhEcBzbxDH0ujdVHPlQ3rDYjsiXKxcNM+AVH40UWdH9NwS2rBFjkngc
+         VpxANP02fO/2cgmGpsiRV/klWkFAKpeHJDRXdrF1Kc/Cr6k05hz18tuhhZUzwMbFg3fC
+         UqaAO+qUuwdS6aMZlNS0XBH1PfaZ4sbdqJtJtqL4AtOgf32EBiaZTZBqONb0KTnfOUzQ
+         adFGvIVjVTUzovToJ+VM4v/t7Apd7L95CKprn+oJkllgDDH0m/q5/rostek/VrZRXR7W
+         6JDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Lj8n2ojFUnc3yYApZULrlC+qSnU1dL6EMNwgDX8FzVQ=;
+        b=Y+62jAK47vhYmynklaZvpF8w4fwCvallwcIVBwAmqYm5BhxksKe/eWyVsUclETMXb2
+         ydpIUF8BjO1T4z8G3pKQ7/pD7+lJSCPVJmu3kTimT+Q/LZc8j7o3SvKd/qfX+BIXLiDX
+         R1qGf7bGEw7UCw4g8tDlk132YITE2AUV7HAUJLVht7G+x0JOZi8lWzymdhMxYgovkSjR
+         pOUL7txZJisogY8jlyFjuTwdr5xQE3WA9gfdfiECCjt4P06SGE4QrjHrfUUUi2bZPDjw
+         ZmP/bYud8iME80zgqxcUSd0yl0RFDzwgTq7tB42RRhHwO4DKeDduE8hfr4u7oM87u9hk
+         +q8Q==
+X-Gm-Message-State: APt69E2EMazg613MyKTeIhLwaHk2FxhprrZ3T1l6XpG9j+iNebGv5zsH
+        DJdMAyY9K/ab7n0YjydDuH2XK6T8res=
+X-Google-Smtp-Source: AAOMgpeEkE+v4x+4grQm/wN1Xz5HOQtnby/hhadgcUaaqhskoWrqEnKsh+d72HM5biwTirxV4sbZsA==
+X-Received: by 2002:a1c:99c5:: with SMTP id b188-v6mr5915770wme.15.1530467651923;
+        Sun, 01 Jul 2018 10:54:11 -0700 (PDT)
+Received: from [192.168.0.103] (p5B3F6705.dip0.t-ipconnect.de. [91.63.103.5])
+        by smtp.gmail.com with ESMTPSA id t11-v6sm3524725wro.53.2018.07.01.10.54.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Jul 2018 10:54:11 -0700 (PDT)
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
+ bindings
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, devicetree@vger.kernel.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-4-sravanhome@gmail.com>
+ <20180630093202.GB7320@Mani-XPS-13-9360>
+ <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
+ <20180701173706.GA15895@Mani-XPS-13-9360>
+From:   Saravanan Sekar <sravanhome@gmail.com>
+Message-ID: <c9c737ff-c94f-a508-2cf7-a12456ec9e8a@gmail.com>
+Date:   Sun, 1 Jul 2018 19:54:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180701173706.GA15895@Mani-XPS-13-9360>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Mani,
 
-------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+On 07/01/18 19:37, Manivannan Sadhasivam wrote:
+> On Sun, Jul 01, 2018 at 07:26:20PM +0200, Saravanan Sekar wrote:
+>> Hi Mani
+>>
+>>
+>> On 06/30/18 11:32, Manivannan Sadhasivam wrote:
+>>> Hi Saravanan,
+>>>
+>>> I agree with modifying the existing binding to accomodate other
+>>> SoC's of the same family. But the binding should be
+>>> "actions,owl-cmu.txt" since it reflects the family name.
+>> Agree, will modify the name
+>>
+>>> Andreas, what do you think?
+>>>
+>>> On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
+>>>> Modify clock bindings common Actions Semi Soc family S700/S900.
+>>>>
+>>>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+>>>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+>>>> ---
+>>>>    ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+>>>>    1 file changed, 10 insertions(+), 8 deletions(-)
+>>>>    rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> similarity index 71%
+>>>> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>>>> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> index 93e4fb827cd6..8dc7edb4d198 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>>>> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> @@ -1,12 +1,14 @@
+>>>> -* Actions S900 Clock Management Unit (CMU)
+>>>> +* Actions S900/S700 Clock Management Unit (CMU)
+>>> Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+>> sure
+>>
+> During the review of I2C controller driver, Andreas pointed out that
+> we should use Owl instead of OWL in all places and also Actions should
+> be replaced by Actions Semiconductor. So, please change it in relevant
+> places. For this binding, title should be:
+>
+> Actions Semiconductor Owl SoC's Clock Management Unit (CMU).
 
-commit d8f9cc328c8888369880e2527e9186d745f2bbf6 upstream.
 
-To allow rereg_user_mr to modify the MR from read-only to writable without
-using get_user_pages again, we needed to define the initial MR as writable.
-However, this was originally done unconditionally, without taking into
-account the writability of the underlying virtual memory.
+Ok will change as mentioned above.
 
-As a result, any attempt to register a read-only MR over read-only
-virtual memory failed.
-
-To fix this, do not add the writable flag bit when the user virtual memory
-is not writable (e.g. const memory).
-
-However, when the underlying memory is NOT writable (and we therefore
-do not define the initial MR as writable), the IB core adds a
-"force writable" flag to its user-pages request. If this succeeds,
-the reg_user_mr caller gets a writable copy of the original pages.
-
-If the user-space caller then does a rereg_user_mr operation to enable
-writability, this will succeed. This should not be allowed, since
-the original virtual memory was not writable.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 9376932d0c26 ("IB/mlx4_ib: Add support for user MR re-registration")
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/infiniband/hw/mlx4/mr.c |   50 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 42 insertions(+), 8 deletions(-)
-
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -131,6 +131,40 @@ out:
- 	return err;
- }
- 
-+static struct ib_umem *mlx4_get_umem_mr(struct ib_ucontext *context, u64 start,
-+					u64 length, u64 virt_addr,
-+					int access_flags)
-+{
-+	/*
-+	 * Force registering the memory as writable if the underlying pages
-+	 * are writable.  This is so rereg can change the access permissions
-+	 * from readable to writable without having to run through ib_umem_get
-+	 * again
-+	 */
-+	if (!ib_access_writable(access_flags)) {
-+		struct vm_area_struct *vma;
-+
-+		down_read(&current->mm->mmap_sem);
-+		/*
-+		 * FIXME: Ideally this would iterate over all the vmas that
-+		 * cover the memory, but for now it requires a single vma to
-+		 * entirely cover the MR to support RO mappings.
-+		 */
-+		vma = find_vma(current->mm, start);
-+		if (vma && vma->vm_end >= start + length &&
-+		    vma->vm_start <= start) {
-+			if (vma->vm_flags & VM_WRITE)
-+				access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		} else {
-+			access_flags |= IB_ACCESS_LOCAL_WRITE;
-+		}
-+
-+		up_read(&current->mm->mmap_sem);
-+	}
-+
-+	return ib_umem_get(context, start, length, access_flags, 0);
-+}
-+
- struct ib_mr *mlx4_ib_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
- 				  u64 virt_addr, int access_flags,
- 				  struct ib_udata *udata)
-@@ -145,10 +179,8 @@ struct ib_mr *mlx4_ib_reg_user_mr(struct
- 	if (!mr)
- 		return ERR_PTR(-ENOMEM);
- 
--	/* Force registering the memory as writable. */
--	/* Used for memory re-registeration. HCA protects the access */
--	mr->umem = ib_umem_get(pd->uobject->context, start, length,
--			       access_flags | IB_ACCESS_LOCAL_WRITE, 0);
-+	mr->umem = mlx4_get_umem_mr(pd->uobject->context, start, length,
-+				    virt_addr, access_flags);
- 	if (IS_ERR(mr->umem)) {
- 		err = PTR_ERR(mr->umem);
- 		goto err_free;
-@@ -215,6 +247,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 	}
- 
- 	if (flags & IB_MR_REREG_ACCESS) {
-+		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
-+			return -EPERM;
-+
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
- 
-@@ -228,10 +263,9 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *
- 
- 		mlx4_mr_rereg_mem_cleanup(dev->dev, &mmr->mmr);
- 		ib_umem_release(mmr->umem);
--		mmr->umem = ib_umem_get(mr->uobject->context, start, length,
--					mr_access_flags |
--					IB_ACCESS_LOCAL_WRITE,
--					0);
-+		mmr->umem =
-+			mlx4_get_umem_mr(mr->uobject->context, start, length,
-+					 virt_addr, mr_access_flags);
- 		if (IS_ERR(mmr->umem)) {
- 			err = PTR_ERR(mmr->umem);
- 			/* Prevent mlx4_ib_dereg_mr from free'ing invalid pointer */
-
+> Thanks,
+> Mani
+>
+>>>> -The Actions S900 clock management unit generates and supplies clock to various
+>>>> -controllers within the SoC. The clock binding described here is applicable to
+>>>> -S900 SoC.
+>>>> +The Actions S900/S700 clock management unit generates and supplies clock to
+>>>> +various controllers within the SoC. The clock binding described here is
+>>>> +applicable to S900/S700 SoC.
+>>>>    Required Properties:
+>>>> -- compatible: should be "actions,s900-cmu"
+>>>> +- compatible: should be one of this
+>>> Change to: compatible: should be one of the following:
+>> sure
+>>
+>>> Thanks,
+>>> Mani
+>>>
+>>>> +	"actions,s900-cmu"
+>>>> +	"actions,s700-cmu"
+>>>>    - reg: physical base address of the controller and length of memory mapped
+>>>>      region.
+>>>>    - clocks: Reference to the parent clocks ("hosc", "losc")
+>>>> @@ -15,9 +17,9 @@ Required Properties:
+>>>>    Each clock is assigned an identifier, and client nodes can use this identifier
+>>>>    to specify the clock which they consume.
+>>>> -All available clocks are defined as preprocessor macros in
+>>>> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+>>>> -tree sources.
+>>>> +All available clocks are defined as preprocessor macros in corresponding
+>>>> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
+>>>> +device tree sources.
+>>>>    External clocks:
+>>>> -- 
+>>>> 2.18.0
+>>>>
+>> Thanks,
+>> Saravanan
 
