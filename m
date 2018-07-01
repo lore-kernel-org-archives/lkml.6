@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E77CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD580C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF872566A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:22:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF872566A
+	by mail.kernel.org (Postfix) with ESMTP id 82C1C25670
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C1C25670
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753800AbeGARWo (ORCPT
+        id S1753844AbeGARXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:22:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36596 "EHLO
+        Sun, 1 Jul 2018 13:23:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031513AbeGAQiA (ORCPT
+        with ESMTP id S1031485AbeGAQhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:38:00 -0400
+        Sun, 1 Jul 2018 12:37:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42D43ACC;
-        Sun,  1 Jul 2018 16:37:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04FAC92B;
+        Sun,  1 Jul 2018 16:37:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, dan.j.williams@intel.com,
         jgross@suse.com, kirill.shutemov@linux.intel.com, mhocko@suse.com,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 004/220] x86/platform/UV: Use new set memory block size function
-Date:   Sun,  1 Jul 2018 18:20:28 +0200
-Message-Id: <20180701160908.466151825@linuxfoundation.org>
+Subject: [PATCH 4.17 003/220] x86/platform/UV: Add adjustable set memory block size function
+Date:   Sun,  1 Jul 2018 18:20:27 +0200
+Message-Id: <20180701160908.421691551@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -60,23 +60,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: mike.travis@hpe.com <mike.travis@hpe.com>
 
-commit bbbd2b51a2aa0d76b3676271e216cf3647773397 upstream.
+commit f642fb5864a6e3645edce6f85ffe7b44d5e9b990 upstream.
 
-Add a call to the new function to "adjust" the current fixed UV memory
-block size of 2GB so it can be changed to a different physical boundary.
-This accommodates changes in the Intel BIOS, and therefore UV BIOS,
-which now can align boundaries different than the previous UV standard
-of 2GB.  It also flags any UV Global Address boundaries from BIOS that
-cause a change in the mem block size (boundary).
+Add a new function to "adjust" the current fixed UV memory block size
+of 2GB so it can be changed to a different physical boundary.  This is
+out of necessity so arch dependent code can accommodate specific BIOS
+requirements which can align these new PMEM modules at less than the
+default boundaries.
 
-The current boundary of 2GB has been used on UV since the first system
-release in 2009 with Linux 2.6 and has worked fine.  But the new NVDIMM
-persistent memory modules (PMEM), along with the Intel BIOS changes to
-support these modules caused the memory block size boundary to be set
-to a lower limit.  Intel only guarantees that this minimum boundary at
-64MB though the current Linux limit is 128MB.
-
-Note that the default remains 2GB if no changes occur.
+A "set order" type of function was used to insure that the memory block
+size will be a power of two value without requiring a validity check.
+64GB was chosen as the upper limit for memory block size values to
+accommodate upcoming 4PB systems which have 6 more bits of physical
+address space (46 becoming 52).
 
 Signed-off-by: Mike Travis <mike.travis@hpe.com>
 Reviewed-by: Andrew Banman <andrew.banman@hpe.com>
@@ -91,106 +87,59 @@ Cc: jgross@suse.com
 Cc: kirill.shutemov@linux.intel.com
 Cc: mhocko@suse.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/lkml/20180524201711.732785782@stormcage.americas.sgi.com
+Link: https://lkml.kernel.org/lkml/20180524201711.609546602@stormcage.americas.sgi.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/apic/x2apic_uv_x.c |   49 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
+ arch/x86/mm/init_64.c  |   20 ++++++++++++++++----
+ include/linux/memory.h |    1 +
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -26,6 +26,7 @@
- #include <linux/delay.h>
- #include <linux/crash_dump.h>
- #include <linux/reboot.h>
-+#include <linux/memory.h>
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1350,16 +1350,28 @@ int kern_addr_valid(unsigned long addr)
+ /* Amount of ram needed to start using large blocks */
+ #define MEM_SIZE_FOR_LARGE_BLOCK (64UL << 30)
  
- #include <asm/uv/uv_mmrs.h>
- #include <asm/uv/uv_hub.h>
-@@ -392,6 +393,40 @@ extern int uv_hub_info_version(void)
- }
- EXPORT_SYMBOL(uv_hub_info_version);
- 
-+/* Default UV memory block size is 2GB */
-+static unsigned long mem_block_size = (2UL << 30);
-+
-+static __init int adj_blksize(u32 lgre)
++/* Adjustable memory block size */
++static unsigned long set_memory_block_size;
++int __init set_memory_block_size_order(unsigned int order)
 +{
-+	unsigned long base = (unsigned long)lgre << UV_GAM_RANGE_SHFT;
-+	unsigned long size;
++	unsigned long size = 1UL << order;
 +
-+	for (size = mem_block_size; size > MIN_MEMORY_BLOCK_SIZE; size >>= 1)
-+		if (IS_ALIGNED(base, size))
-+			break;
++	if (size > MEM_SIZE_FOR_LARGE_BLOCK || size < MIN_MEMORY_BLOCK_SIZE)
++		return -EINVAL;
 +
-+	if (size >= mem_block_size)
-+		return 0;
-+
-+	mem_block_size = size;
-+	return 1;
++	set_memory_block_size = size;
++	return 0;
 +}
 +
-+static __init void set_block_size(void)
-+{
-+	unsigned int order = ffs(mem_block_size);
-+
-+	if (order) {
-+		/* adjust for ffs return of 1..64 */
-+		set_memory_block_size_order(order - 1);
-+		pr_info("UV: mem_block_size set to 0x%lx\n", mem_block_size);
-+	} else {
-+		/* bad or zero value, default to 1UL << 31 (2GB) */
-+		pr_err("UV: mem_block_size error with 0x%lx\n", mem_block_size);
-+		set_memory_block_size_order(31);
-+	}
-+}
-+
- /* Build GAM range lookup table: */
- static __init void build_uv_gr_table(void)
+ static unsigned long probe_memory_block_size(void)
  {
-@@ -1180,23 +1215,30 @@ static void __init decode_gam_rng_tbl(un
- 					<< UV_GAM_RANGE_SHFT);
- 		int order = 0;
- 		char suffix[] = " KMGTPE";
-+		int flag = ' ';
+ 	unsigned long boot_mem_end = max_pfn << PAGE_SHIFT;
+ 	unsigned long bz;
  
- 		while (size > 9999 && order < sizeof(suffix)) {
- 			size /= 1024;
- 			order++;
- 		}
+-	/* If this is UV system, always set 2G block size */
+-	if (is_uv_system()) {
+-		bz = MAX_BLOCK_SIZE;
++	/* If memory block size has been set, then use it */
++	bz = set_memory_block_size;
++	if (bz)
+ 		goto done;
+-	}
  
-+		/* adjust max block size to current range start */
-+		if (gre->type == 1 || gre->type == 2)
-+			if (adj_blksize(lgre))
-+				flag = '*';
-+
- 		if (!index) {
- 			pr_info("UV: GAM Range Table...\n");
--			pr_info("UV:  # %20s %14s %5s %4s %5s %3s %2s\n", "Range", "", "Size", "Type", "NASID", "SID", "PN");
-+			pr_info("UV:  # %20s %14s %6s %4s %5s %3s %2s\n", "Range", "", "Size", "Type", "NASID", "SID", "PN");
- 		}
--		pr_info("UV: %2d: 0x%014lx-0x%014lx %5lu%c %3d   %04x  %02x %02x\n",
-+		pr_info("UV: %2d: 0x%014lx-0x%014lx%c %5lu%c %3d   %04x  %02x %02x\n",
- 			index++,
- 			(unsigned long)lgre << UV_GAM_RANGE_SHFT,
- 			(unsigned long)gre->limit << UV_GAM_RANGE_SHFT,
--			size, suffix[order],
-+			flag, size, suffix[order],
- 			gre->type, gre->nasid, gre->sockid, gre->pnode);
+ 	/* Use regular block if RAM is smaller than MEM_SIZE_FOR_LARGE_BLOCK */
+ 	if (boot_mem_end < MEM_SIZE_FOR_LARGE_BLOCK) {
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -38,6 +38,7 @@ struct memory_block {
  
-+		/* update to next range start */
- 		lgre = gre->limit;
- 		if (sock_min > gre->sockid)
- 			sock_min = gre->sockid;
-@@ -1427,6 +1469,7 @@ static void __init uv_system_init_hub(vo
+ int arch_get_memory_phys_device(unsigned long start_pfn);
+ unsigned long memory_block_size_bytes(void);
++int set_memory_block_size_order(unsigned int order);
  
- 	build_socket_tables();
- 	build_uv_gr_table();
-+	set_block_size();
- 	uv_init_hub_info(&hub_info);
- 	uv_possible_blades = num_possible_nodes();
- 	if (!_node_to_pnode)
+ /* These states are exposed to userspace as text strings in sysfs */
+ #define	MEM_ONLINE		(1<<0) /* exposed to userspace */
 
 
