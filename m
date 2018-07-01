@@ -2,133 +2,124 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1E2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5F7C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B9C25780
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:39:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B9C25780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DA3624D77
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:47:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vXvjNnrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA3624D77
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeGAVjW (ORCPT
+        id S1752591AbeGAVrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 17:39:22 -0400
-Received: from smtprelay0216.hostedemail.com ([216.40.44.216]:56307 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752495AbeGAVjV (ORCPT
+        Sun, 1 Jul 2018 17:47:40 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33169 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752531AbeGAVrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 17:39:21 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id B9CC918045E87;
-        Sun,  1 Jul 2018 21:39:20 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: cave43_172a3ed53ef0d
-X-Filterd-Recvd-Size: 3519
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Sun,  1 Jul 2018 21:39:19 +0000 (UTC)
-Message-ID: <6d3fb517adb8880d9f7642d185405590dc9f7e83.camel@perches.com>
-Subject: Re: [PATCH v3 2/2] ubi: expose the volume CRC check skip flag
-From:   Joe Perches <joe@perches.com>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        dedekind1@gmail.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Date:   Sun, 01 Jul 2018 14:39:17 -0700
-In-Reply-To: <2098416.O8QMNZQyoz@blindfold>
-References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com>
-         <20180701223347.2cef133b@bbrezillon>
-         <cdc8383433a1f67f4d5f5d9c528e116ee10c7466.camel@perches.com>
-         <2098416.O8QMNZQyoz@blindfold>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 1 Jul 2018 17:47:36 -0400
+Received: by mail-qt0-f196.google.com with SMTP id l10-v6so12379664qtj.0;
+        Sun, 01 Jul 2018 14:47:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lVy5TAWvx22BqFCUQamA4m90HZcwdWMblej4nLaEIuE=;
+        b=vXvjNnrJwu1KVKGLiHVoN2j62WaPHQrS9yYhETCdSXjzGDnU4cCOdP8YYESW5iigih
+         uTMN/vNGXBEnL77WXqPgRIx1n4unQoXmU0PjLqkwpZDQLw9LJ0B8FFcVYH9+HzmHF6X0
+         khiX7Qce9SxNo2TLjB/c7xODwjEEt9ZW6kqmMJwjeGaOYAJqoI9GCnvKKposfxOsMXhw
+         fXooU2FAd3NgMaWEyOwL2XESbjJqA6LRRFdntWxDOsoxpTcyzgfthuxI9/jwlATdbW7k
+         iw9keOCdElBencKzWS0A0GCB7yicvVy034P1oPttiqn6kdhxV1/C3QAlezVFUSgbajR5
+         TL2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lVy5TAWvx22BqFCUQamA4m90HZcwdWMblej4nLaEIuE=;
+        b=VmGy875uPbT0a2YJnHJUxZuesR2Rl41LXpbdNFzRKHbJb9sIxpx73FKINjPsxHUXjV
+         pL3kwdDQ0eYEDQeA6QgRGONFMVNpLiJ1177Jltskf1C+BFlAsWA6PREuOJs6TfAwn5Gk
+         depRaD7lrprXvymtJVCaSdOteZrOaD5JC6hs1dbsZzjE5XGWxMxZhV9rUcwvMlXNHqDB
+         rpZPONEt2/8lHnc0NUXwZs0Pq/vWlogjn1KsgECajkr2qsljToM5JS9tyexL7v1cWXXO
+         ztmLXSKLImis4CQ7zjgG3tbtYyGWCa/k+uwdqQlWtdgmphHXvsklkq8oUyExMGzh+1SV
+         bBWQ==
+X-Gm-Message-State: APt69E3we0iGmlp1P49+k6DCQzw1TlRR1ZX0wvI9vGaprmMxpWgeWuOd
+        CQI8/XXI6bOmZKVP9VgyEDVaDakG
+X-Google-Smtp-Source: AAOMgpc1eylKfZ0w+mdz1S3VAUWlUNr57ILDV0iFiLjnvrkcJhdMkN/H8Un96NiT+L1/erxdgT1xsg==
+X-Received: by 2002:ac8:1a90:: with SMTP id x16-v6mr20158512qtj.160.1530481655380;
+        Sun, 01 Jul 2018 14:47:35 -0700 (PDT)
+Received: from alienarch.lan (toroon4828w-lp130-01-76-71-113-250.dsl.bell.ca. [76.71.113.250])
+        by smtp.googlemail.com with ESMTPSA id l22-v6sm3354095qkh.72.2018.07.01.14.47.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Jul 2018 14:47:34 -0700 (PDT)
+From:   Jun Bo Bi <jambonmcyeah@gmail.com>
+To:     linux-input@vger.kernel.org
+Cc:     jambonmcyeah@gmail.com, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hdegoede@redhat.com,
+        dvhart@infradead.org, andy@infradead.org
+Subject: [PATCH] platform/x86: touchscreen_dmi: Add touchscreen platform data for the Onda V820w tablet
+Date:   Sun,  1 Jul 2018 17:47:14 -0400
+Message-Id: <20180701214714.2522-1-jambonmcyeah@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-07-01 at 23:01 +0200, Richard Weinberger wrote:
-> Am Sonntag, 1. Juli 2018, 22:54:32 CEST schrieb Joe Perches:
-> > On Sun, 2018-07-01 at 22:33 +0200, Boris Brezillon wrote:
-> > > On Sun, 01 Jul 2018 21:35:57 +0200 Richard Weinberger <richard@nod.at> wrote:
-> > > > Am Donnerstag, 28. Juni 2018, 09:40:53 CEST schrieb Quentin Schulz:
-> > > > > Now that we have the logic for skipping CRC check for static UBI volumes
-> > > > > in the core, let's expose it to users.
-> > []
-> > > > > diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
-> > []
-> > > > > @@ -622,6 +622,10 @@ static int verify_mkvol_req(const struct ubi_device *ubi,
-> > > > >  	    req->vol_type != UBI_STATIC_VOLUME)
-> > > > >  		goto bad;
-> > > > >  
-> > > > > +	if (req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG &&
-> > > 
-> > > Oops, missed that req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG check was
-> > > missing parens (checkpatch --strict should complain about that).
-> > 
-> > Why should checkpatch complain?
-> > & has higher precedence than &&.
-> 
-> The code is more readable.
+Add touchscreen platform data for the Onda V820w tablet
 
-IYO.  checkpatch doesn't care and I think it's unnecessary.
+Signed-off-by: Jun Bo Bi <jambonmcyeah@gmail.com>
+---
+ drivers/platform/x86/touchscreen_dmi.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Just fyi:
-
-checkpatch does suggest parenthesis removal with --strict
-when using
-	== or !=
-with
-	&& or ||
-
-e.g.:
-
-$ cat -n foo.c
-     1	bool function(void)
-     2	{
-     3		if (foo & 1 && bar & 2)
-     4			return true;
-     5		if ((foo & 1) && (bar && 2))
-     6			return true;
-     7		if (foo == 1 && bar != 2)
-     8			return true;
-     9		if ((foo == 1) && (bar != 2))
-    10			return true;
-    11		return false;
-    12	}
-
-$ ./scripts/checkpatch.pl -f --strict foo.c
-WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-#1: FILE: foo.c:1:
-+bool function(void)
-
-CHECK: Unnecessary parentheses around 'foo == 1'
-#9: FILE: foo.c:9:
-+	if ((foo == 1) && (bar != 2))
-
-CHECK: Unnecessary parentheses around 'bar != 2'
-#9: FILE: foo.c:9:
-+	if ((foo == 1) && (bar != 2))
-
-total: 0 errors, 1 warnings, 2 checks, 12 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
-
-foo.c has style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-      them to the maintainer, see CHECKPATCH in MAINTAINERS.
-
+diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+index 6284946cb0d1..a8e083db0369 100644
+--- a/drivers/platform/x86/touchscreen_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -204,6 +204,22 @@ static const struct ts_dmi_data onda_obook_20_plus_data = {
+ 	.properties	= onda_obook_20_plus_props,
+ };
+ 
++static const struct property_entry onda_v820w_32g_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1665),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
++	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl1680-onda-v820w-32g.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	{ }
++};
++
++static const struct silead_ts_dmi_data onda_v820w_32g_data = {
++	.acpi_name	= "MSSL1680:00",
++	.properties	= onda_v820w_32g_props,
++};
++
+ static const struct property_entry onda_v891w_v1_props[] = {
+ 	PROPERTY_ENTRY_U32("touchscreen-min-x", 46),
+ 	PROPERTY_ENTRY_U32("touchscreen-min-y",  8),
+@@ -470,6 +486,14 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "OBOOK 20 PLUS"),
+ 		},
+ 	},
++	{
++		/* ONDA V820w DualOS */
++		.driver_data = (void *)&onda_v820w_32g_data,
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ONDA"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "V820w DualOS")
++		},
++	},
+ 	{
+ 		/* ONDA V891w revision P891WBEBV1B00 aka v1 */
+ 		.driver_data = (void *)&onda_v891w_v1_data,
+-- 
+2.18.0
 
