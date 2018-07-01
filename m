@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492FFC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908BEC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E2225076
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E2225076
+	by mail.kernel.org (Postfix) with ESMTP id 55C0625077
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C0625077
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932915AbeGAQPB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60428 "EHLO
+        id S932302AbeGAQPG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60454 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932811AbeGAQOu (ORCPT
+        with ESMTP id S1752231AbeGAQO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:50 -0400
+        Sun, 1 Jul 2018 12:14:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23DCC4A3;
-        Sun,  1 Jul 2018 16:14:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8066B4A3;
+        Sun,  1 Jul 2018 16:14:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 58/85] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
-Date:   Sun,  1 Jul 2018 18:02:16 +0200
-Message-Id: <20180701153124.670441820@linuxfoundation.org>
+Subject: [PATCH 3.18 61/85] powerpc/fadump: Unregister fadump on kexec down path.
+Date:   Sun,  1 Jul 2018 18:02:19 +0200
+Message-Id: <20180701153124.792123400@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,63 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit 91d06971881f71d945910de128658038513d1b24 upstream.
+commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
 
-Currently we do not have an isync, or any other context synchronizing
-instruction prior to the slbie/slbmte in _switch() that updates the
-SLB entry for the kernel stack.
+Unregister fadump on kexec down path otherwise the fadump registration
+in new kexec-ed kernel complains that fadump is already registered.
+This makes new kernel to continue using fadump registered by previous
+kernel which may lead to invalid vmcore generation. Hence this patch
+fixes this issue by un-registering fadump in fadump_cleanup() which is
+called during kexec path so that new kernel can register fadump with
+new valid values.
 
-However that is not correct as outlined in the ISA.
-
->From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
-
-  "Changing the contents of ... the contents of SLB entries ... can
-   have the side effect of altering the context in which data
-   addresses and instruction addresses are interpreted, and in which
-   instructions are executed and data accesses are performed.
-   ...
-   These side effects need not occur in program order, and therefore
-   may require explicit synchronization by software.
-   ...
-   The synchronizing instruction before the context-altering
-   instruction ensures that all instructions up to and including that
-   synchronizing instruction are fetched and executed in the context
-   that existed before the alteration."
-
-And page 1136:
-
-  "For data accesses, the context synchronizing instruction before the
-   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
-   that all preceding instructions that access data storage have
-   completed to a point at which they have reported all exceptions
-   they will cause."
-
-We're not aware of any bugs caused by this, but it should be fixed
-regardless.
-
-Add the missing isync when updating kernel stack SLB entry.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-[mpe: Flesh out change log with more ISA text & explanation]
+Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
+Cc: stable@vger.kernel.org # v3.4+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/entry_64.S |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/kernel/fadump.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -521,6 +521,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
- 	 * actually hit this code path.
- 	 */
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1025,6 +1025,9 @@ void fadump_cleanup(void)
+ 		init_fadump_mem_struct(&fdm,
+ 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
+ 		fadump_invalidate_dump(&fdm);
++	} else if (fw_dump.dump_registered) {
++		/* Un-register Firmware-assisted dump if it was registered. */
++		fadump_unregister_dump(&fdm);
+ 	}
+ }
  
-+	isync
- 	slbie	r6
- 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
- 	slbmte	r7,r0
 
 
