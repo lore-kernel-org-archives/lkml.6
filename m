@@ -2,116 +2,142 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2EFC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006A8C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553092598E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 553092598E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id B606C25997
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B606C25997
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965295AbeGASZJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:25:09 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:53331 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965029AbeGASZF (ORCPT
+        id S965320AbeGASZe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:25:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33042 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753225AbeGAQSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 14:25:05 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41Jf1m5FZ3z1qvNr;
-        Sun,  1 Jul 2018 20:24:59 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41Jf1l0Cj4z1rZMR;
-        Sun,  1 Jul 2018 20:24:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id YWSdVObc2MXe; Sun,  1 Jul 2018 20:24:57 +0200 (CEST)
-X-Auth-Info: NGDPfZ6UbfCwxToQ3S73cD2K6MC8uDeC+VSxiazQb8o=
-Received: from [192.168.178.26] (unknown [62.91.12.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun,  1 Jul 2018 20:24:57 +0200 (CEST)
-Subject: Re: [PATCH v2 0/3] Add clock driver for Actions S700 SoC
-To:     =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Saravanan Sekar <sravanhome@gmail.com>
-Cc:     sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        catalin.marinas@arm.com, mturquette@baylibre.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, manivannan.sadhasivam@linaro.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jeff Chen <jeff.chen@actions-semi.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        Cubietech support <support@cubietech.com>,
-        linux <linux@cubietech.com>
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <8503ae31-aaf3-e4ba-f385-859a6cd3f8d6@suse.de>
-From:   Parthiban Nallathambi <pn@denx.de>
-Organization: DENX Software Engineering GmbH
-Message-ID: <440c9eed-b930-5a4c-4320-11eec682add6@denx.de>
-Date:   Sun, 1 Jul 2018 20:24:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 1 Jul 2018 12:18:37 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF87386A;
+        Sun,  1 Jul 2018 16:18:36 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.4 035/105] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date:   Sun,  1 Jul 2018 18:01:45 +0200
+Message-Id: <20180701153151.781880637@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+References: <20180701153149.382300170@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <8503ae31-aaf3-e4ba-f385-859a6cd3f8d6@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andreas,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On 07/01/2018 08:05 PM, Andreas Färber wrote:
-> Hi Saravannan,
-> 
-> Am 28.06.2018 um 21:18 schrieb Saravanan Sekar:
->> Changelog v2:
->> Fixed 0 day compilation warning
->> Modified existing dts Actions S900 clock bindings common to Actions
->> Soc family
-> 
-> Please post v3 without --in-reply-to. It's becoming messy to read.
-> 
->> This patchset adds clock support for Actions Semi OWL series S700 SoC
->> with relevant clock bindings and device tree info. 
->>
->> Changed the UART clock using CMU instance and changes are tested in
->> cubieboard7
-> 
-> Did you find any better way of testing than my "reboot bootloader" from
-> preinstalled Android?
+------------------
 
-Flashing bootloader.bin and u-boot-dtb.img at below offset trigger the
-automatic boot from SD. But ADFU needs to long pressed before connecting
-the power.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-sudo dd if=bootloader.bin of=/dev/sdX bs=512 seek=4097
-sudo dd if=u-boot-dtb.img of=/dev/sdX bs=1024 seek=3072
+commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
 
-With this is place, u-boot expects GPT layout by default. I am able to boot
-the kernel from FAT/ext by updating the bootcmd/u-boot env accordingly. 
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.
 
-I haven't tried flashing/replacing u-boot in eMMC still.
+Remove support for this rarely-used format, as vsprintf() (and e.g.
+printk()) must be callable from any context.
 
-> 
-> In addition to missing Actions Semi you may want to CC Cubietech.
+Any remaining out-of-tree users will start seeing the clock's name
+printed instead of its rate.
 
-+Added cubitech linux group.
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
+Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.1+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> 
-> Thanks,
-> Andreas
-> 
+---
+ Documentation/printk-formats.txt |    3 +--
+ lib/vsprintf.c                   |    3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
--- 
-Thanks,
-Parthiban N
+--- a/Documentation/printk-formats.txt
++++ b/Documentation/printk-formats.txt
+@@ -273,11 +273,10 @@ struct clk:
+ 
+ 	%pC	pll1
+ 	%pCn	pll1
+-	%pCr	1560000000
+ 
+ 	For printing struct clk structures. '%pC' and '%pCn' print the name
+ 	(Common Clock Framework) or address (legacy clock framework) of the
+-	structure; '%pCr' prints the current clock rate.
++	structure.
+ 
+ 	Passed by reference.
+ 
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1345,9 +1345,6 @@ char *clock(char *buf, char *end, struct
+ 		return string(buf, end, NULL, spec);
+ 
+ 	switch (fmt[1]) {
+-	case 'r':
+-		return number(buf, end, clk_get_rate(clk), spec);
+-
+ 	case 'n':
+ 	default:
+ #ifdef CONFIG_COMMON_CLK
+
+
