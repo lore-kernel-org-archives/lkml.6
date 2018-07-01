@@ -6,87 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4499C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 20:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE2BC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 20:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3129B240C2
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 20:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3129B240C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 52A26258BC
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 20:54:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A26258BC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752559AbeGAUuq (ORCPT
+        id S1752573AbeGAUyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 16:50:46 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:34566 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752356AbeGAUun (ORCPT
+        Sun, 1 Jul 2018 16:54:38 -0400
+Received: from smtprelay0165.hostedemail.com ([216.40.44.165]:41869 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752461AbeGAUyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 16:50:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4FB6060A04C1;
-        Sun,  1 Jul 2018 22:50:42 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id SKXoBf_hrVCQ; Sun,  1 Jul 2018 22:50:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DE32060A04C3;
-        Sun,  1 Jul 2018 22:50:41 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id TM4829nv46gt; Sun,  1 Jul 2018 22:50:41 +0200 (CEST)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id B73CD60A04C1;
-        Sun,  1 Jul 2018 22:50:41 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
+        Sun, 1 Jul 2018 16:54:37 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 60552182CF66C;
+        Sun,  1 Jul 2018 20:54:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: side86_450e51033495f
+X-Filterd-Recvd-Size: 2059
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  1 Jul 2018 20:54:34 +0000 (UTC)
+Message-ID: <cdc8383433a1f67f4d5f5d9c528e116ee10c7466.camel@perches.com>
+Subject: Re: [PATCH v3 2/2] ubi: expose the volume CRC check skip flag
+From:   Joe Perches <joe@perches.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>
 Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, dedekind1@gmail.com,
         dwmw2@infradead.org, computersforpeace@gmail.com,
         marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
         linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v3 2/2] ubi: expose the volume CRC check skip flag
-Date:   Sun, 01 Jul 2018 22:50:41 +0200
-Message-ID: <3709236.JAAyN4mQyL@blindfold>
+Date:   Sun, 01 Jul 2018 13:54:32 -0700
 In-Reply-To: <20180701223347.2cef133b@bbrezillon>
-References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com> <382648641.QZzOm4Mo72@blindfold> <20180701223347.2cef133b@bbrezillon>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com>
+         <0ace6202bddb495ae0e632ae2fd0346f99fcdab4.1530169759.git-series.quentin.schulz@bootlin.com>
+         <382648641.QZzOm4Mo72@blindfold> <20180701223347.2cef133b@bbrezillon>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, 1. Juli 2018, 22:33:47 CEST schrieb Boris Brezillon:
-> On Sun, 01 Jul 2018 21:35:57 +0200
-> Richard Weinberger <richard@nod.at> wrote:
-> 
-> > Quentin,
-> > 
+On Sun, 2018-07-01 at 22:33 +0200, Boris Brezillon wrote:
+> On Sun, 01 Jul 2018 21:35:57 +0200 Richard Weinberger <richard@nod.at> wrote:
 > > Am Donnerstag, 28. Juni 2018, 09:40:53 CEST schrieb Quentin Schulz:
 > > > Now that we have the logic for skipping CRC check for static UBI volumes
 > > > in the core, let's expose it to users.
-> > > 
-> > > This makes use of a padding byte in the volume description data
-> > > structure as a flag. This flag only tell for now whether we should skip
-> > > the CRC check of a volume.
-> > > 
-> > > This checks the UBI volume for which we are trying to skip the CRC check
-> > > is static.
-> > > 
-> > > Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > > Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > ---
-> > >  drivers/mtd/ubi/cdev.c      |  4 ++++
-> > >  drivers/mtd/ubi/vmt.c       |  3 +++
-> > >  include/uapi/mtd/ubi-user.h | 16 ++++++++++++++--
-> > >  3 files changed, 21 insertions(+), 2 deletions(-)
-> > > 
+[]
 > > > diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
-> > > index 45c3296..3eea1df 100644
-> > > --- a/drivers/mtd/ubi/cdev.c
-> > > +++ b/drivers/mtd/ubi/cdev.c
+[]
 > > > @@ -622,6 +622,10 @@ static int verify_mkvol_req(const struct ubi_device *ubi,
 > > >  	    req->vol_type != UBI_STATIC_VOLUME)
 > > >  		goto bad;
@@ -96,24 +73,6 @@ Am Sonntag, 1. Juli 2018, 22:33:47 CEST schrieb Boris Brezillon:
 > Oops, missed that req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG check was
 > missing parens (checkpatch --strict should complain about that).
 
-Latest when building my local branch or in linux-next we had noticed.
-No need to worry.
- 
-> > > +	    req->vol_type != UBI_STATIC_VOLUME)
-> > > +		goto bad;  
-> > 
-> > We should also reject unknown flags here.
-> 
-> I agree. Talking about missing checks, it seems that none of the
-> padding sections are checked (I hope all mkvol users are zero-ing the
-> struct as requested in ubi-user.h). And we should probably also
-> check that vtbl->flags does not contain unknown flags.
+Why should checkpatch complain?
+& has higher precedence than &&.
 
-At least mtd-utils does zeros the request struct before using it.
-So it does the right thing.
-
-Adding checks for non-zero padding and more checking for vtbl->flags
-is a good idea.
-
-Thanks,
-//richard
