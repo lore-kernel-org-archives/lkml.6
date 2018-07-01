@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35335C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACFCC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8CD25773
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8CD25773
+	by mail.kernel.org (Postfix) with ESMTP id 858ED25776
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858ED25776
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753841AbeGARvK (ORCPT
+        id S1753904AbeGARvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:51:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35194 "EHLO
+        Sun, 1 Jul 2018 13:51:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030655AbeGAQcf (ORCPT
+        with ESMTP id S933823AbeGAQcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:35 -0400
+        Sun, 1 Jul 2018 12:32:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 466AB49B;
-        Sun,  1 Jul 2018 16:32:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6515649B;
+        Sun,  1 Jul 2018 16:32:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Haren Myneni <haren@us.ibm.com>,
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 039/157] powerpc/powernv: copy/paste - Mask SO bit in CR
-Date:   Sun,  1 Jul 2018 18:21:51 +0200
-Message-Id: <20180701160854.352189496@linuxfoundation.org>
+Subject: [PATCH 4.14 038/157] powerpc/powernv/ioda2: Remove redundant free of TCE pages
+Date:   Sun,  1 Jul 2018 18:21:50 +0200
+Message-Id: <20180701160854.300786999@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,34 +50,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Haren Myneni <haren@us.ibm.com>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-commit 75743649064ec0cf5ddd69f240ef23af66dde16e upstream.
+commit 98fd72fe82527fd26618062b60cfd329451f2329 upstream.
 
-NX can set the 3rd bit in CR register for XER[SO] (Summary overflow)
-which is not related to paste request. The current paste function
-returns failure for a successful request when this bit is set. So mask
-this bit and check the proper return status.
+When IODA2 creates a PE, it creates an IOMMU table with it_ops::free
+set to pnv_ioda2_table_free() which calls pnv_pci_ioda2_table_free_pages().
 
-Fixes: 2392c8c8c045 ("powerpc/powernv/vas: Define copy/paste interfaces")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Haren Myneni <haren@us.ibm.com>
+Since iommu_tce_table_put() calls it_ops::free when the last reference
+to the table is released, explicit call to pnv_pci_ioda2_table_free_pages()
+is not needed so let's remove it.
+
+This should fix double free in the case of PCI hotuplug as
+pnv_pci_ioda2_table_free_pages() does not reset neither
+iommu_table::it_base nor ::it_size.
+
+This was not exposed by SRIOV as it uses different code path via
+pnv_pcibios_sriov_disable().
+
+IODA1 does not inialize it_ops::free so it does not have this issue.
+
+Fixes: c5f7700bbd2e ("powerpc/powernv: Dynamically release PE")
+Cc: stable@vger.kernel.org # v4.8+
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/copy-paste.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/pci-ioda.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/powerpc/platforms/powernv/copy-paste.h
-+++ b/arch/powerpc/platforms/powernv/copy-paste.h
-@@ -42,5 +42,6 @@ static inline int vas_paste(void *paste_
- 		: "b" (offset), "b" (paste_address)
- 		: "memory", "cr0");
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -3591,7 +3591,6 @@ static void pnv_pci_ioda2_release_pe_dma
+ 		WARN_ON(pe->table_group.group);
+ 	}
  
--	return (cr >> CR0_SHIFT) & CR0_MASK;
-+	/* We mask with 0xE to ignore SO */
-+	return (cr >> CR0_SHIFT) & 0xE;
+-	pnv_pci_ioda2_table_free_pages(tbl);
+ 	iommu_tce_table_put(tbl);
  }
+ 
 
 
