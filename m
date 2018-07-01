@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF85AC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B656C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 685C1251CB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685C1251CB
+	by mail.kernel.org (Postfix) with ESMTP id 54216251CD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54216251CD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeGALKo (ORCPT
+        id S1752634AbeGALK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:10:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47858 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:10:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47946 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752311AbeGALJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:02 -0400
+        id S1752332AbeGALJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C79AAAF62;
-        Sun,  1 Jul 2018 11:09:00 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 44ED3AFA4;
+        Sun,  1 Jul 2018 11:09:02 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -39,9 +39,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC net-next 10/15] net: lora: Add Microchip RN2483
-Date:   Sun,  1 Jul 2018 13:07:59 +0200
-Message-Id: <20180701110804.32415-11-afaerber@suse.de>
+Subject: [RFC net-next 12/15] net: lora: Add USI WM-SG-SM-42
+Date:   Sun,  1 Jul 2018 13:08:01 +0200
+Message-Id: <20180701110804.32415-13-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
 References: <20180701110804.32415-1-afaerber@suse.de>
@@ -53,68 +53,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Microchip RN2483 and RN2903 are UART based modules exposing both
-LoRaWAN and LoRa. The RN2483 supports switching between 433 and 868 MHz.
+The USI WM-SG-SM-42 offers a UART based AT command interface.
 
+Cc: Dollar Chen (陳義元) <dollar.chen@wtmec.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/net/lora/Kconfig      |   7 +
- drivers/net/lora/Makefile     |   4 +
- drivers/net/lora/rn2483.c     | 344 ++++++++++++++++++++++++++++++++++++++++++
- drivers/net/lora/rn2483.h     |  40 +++++
- drivers/net/lora/rn2483_cmd.c | 130 ++++++++++++++++
- 5 files changed, 525 insertions(+)
- create mode 100644 drivers/net/lora/rn2483.c
- create mode 100644 drivers/net/lora/rn2483.h
- create mode 100644 drivers/net/lora/rn2483_cmd.c
+ drivers/net/lora/Kconfig  |   7 +
+ drivers/net/lora/Makefile |   3 +
+ drivers/net/lora/usi.c    | 411 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 421 insertions(+)
+ create mode 100644 drivers/net/lora/usi.c
 
 diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
-index 0436f6b09a1c..940bd2cbe106 100644
+index 2e05caef8645..72a9d2a0f2be 100644
 --- a/drivers/net/lora/Kconfig
 +++ b/drivers/net/lora/Kconfig
-@@ -17,6 +17,13 @@ config LORA_DEV
+@@ -31,6 +31,13 @@ config LORA_SX1276
+ 	help
+ 	  Semtech SX1272/1276/1278
  
- if LORA_DEV
- 
-+config LORA_RN2483
-+	tristate "Microchip RN2483/RN2903 driver"
++config LORA_USI
++	tristate "USI WM-SG-SM-42 driver"
 +	default y
 +	depends on SERIAL_DEV_BUS
 +	help
-+	  Microchip RN2483/2903
++	  USI WM-SG-SM-42
 +
- config LORA_SX1276
- 	tristate "Semtech SX127x SPI driver"
+ config LORA_WIMOD
+ 	tristate "IMST WiMOD driver"
  	default y
 diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
-index 8845542dba50..07839c3ce9f8 100644
+index ecb326c859a5..dfa9a43dcfb3 100644
 --- a/drivers/net/lora/Makefile
 +++ b/drivers/net/lora/Makefile
-@@ -9,5 +9,9 @@ lora-dev-y := dev.o
- # Alphabetically sorted.
- #
- 
-+obj-$(CONFIG_LORA_RN2483) += lora-rn2483.o
-+lora-rn2483-y := rn2483.o
-+lora-rn2483-y += rn2483_cmd.o
-+
+@@ -16,5 +16,8 @@ lora-rn2483-y += rn2483_cmd.o
  obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
  lora-sx1276-y := sx1276.o
-diff --git a/drivers/net/lora/rn2483.c b/drivers/net/lora/rn2483.c
+ 
++obj-$(CONFIG_LORA_USI) += lora-usi.o
++lora-usi-y := usi.o
++
+ obj-$(CONFIG_LORA_WIMOD) += lora-wimod.o
+ lora-wimod-y := wimod.o
+diff --git a/drivers/net/lora/usi.c b/drivers/net/lora/usi.c
 new file mode 100644
-index 000000000000..8b9ec2575ee2
+index 000000000000..f0c697e2cde2
 --- /dev/null
-+++ b/drivers/net/lora/rn2483.c
-@@ -0,0 +1,344 @@
++++ b/drivers/net/lora/usi.c
+@@ -0,0 +1,411 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Microchip RN2483/RN2903
++ * USI WM-SG-SM-42
 + *
 + * Copyright (c) 2017-2018 Andreas Färber
 + */
 +
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
 +#include <linux/lora.h>
 +#include <linux/module.h>
 +#include <linux/netdevice.h>
@@ -122,150 +115,203 @@ index 000000000000..8b9ec2575ee2
 +#include <linux/serdev.h>
 +#include <linux/lora/dev.h>
 +
-+#include "rn2483.h"
++struct usi_device {
++	struct serdev_device *serdev;
 +
-+struct rn2483_priv {
-+	struct lora_priv lora;
++	int mode;
++
++	char rx_buf[4096];
++	int rx_len;
++
++	struct completion prompt_recv_comp;
++	struct completion tx_event_recv_comp;
 +};
 +
-+static netdev_tx_t rn2483_loradev_start_xmit(struct sk_buff *skb, struct net_device *netdev)
++static bool usi_cmd_ok(const char *resp)
 +{
-+	if (skb->protocol != htons(ETH_P_LORA)) {
-+		kfree_skb(skb);
-+		netdev->stats.tx_dropped++;
-+		return NETDEV_TX_OK;
-+	}
++	int len = strlen(resp);
 +
-+	netif_stop_queue(netdev);
-+
-+	/* TODO */
-+	return NETDEV_TX_OK;
++	return (len == 4 && !strcmp(resp, "OK\r\n")) ||
++	       (len >= 6 && !strcmp(resp + len - 6, "\r\nOK\r\n"));
 +}
 +
-+static int rn2483_loradev_open(struct net_device *netdev)
++static int usi_send_command(struct usi_device *usidev, const char *cmd, char **data, unsigned long timeout)
 +{
-+	int ret;
++	struct serdev_device *sdev = usidev->serdev;
++	const char cr = '\r';
++	int cmd_len, resp_len;
++	char *resp;
 +
-+	netdev_dbg(netdev, "%s", __func__);
++	cmd_len = strlen(cmd);
++	serdev_device_write_buf(sdev, cmd, cmd_len);
++	serdev_device_write_buf(sdev, &cr, 1);
 +
-+	ret = open_loradev(netdev);
-+	if (ret)
-+		return ret;
-+
-+	netif_start_queue(netdev);
-+
-+	return 0;
-+}
-+
-+static int rn2483_loradev_stop(struct net_device *netdev)
-+{
-+	netdev_dbg(netdev, "%s", __func__);
-+
-+	netif_stop_queue(netdev);
-+	close_loradev(netdev);
-+
-+	return 0;
-+}
-+
-+static const struct net_device_ops rn2483_net_device_ops = {
-+	.ndo_open = rn2483_loradev_open,
-+	.ndo_stop = rn2483_loradev_stop,
-+	.ndo_start_xmit = rn2483_loradev_start_xmit,
-+};
-+
-+int rn2483_readline_timeout(struct rn2483_device *rndev, char **line, unsigned long timeout)
-+{
-+	timeout = wait_for_completion_timeout(&rndev->line_recv_comp, timeout);
++	timeout = wait_for_completion_timeout(&usidev->prompt_recv_comp, timeout);
 +	if (!timeout)
 +		return -ETIMEDOUT;
 +
-+	*line = devm_kstrdup(&rndev->serdev->dev, rndev->buf, GFP_KERNEL);
-+	complete(&rndev->line_read_comp);
-+	if (!*line)
-+		return -ENOMEM;
++	resp = usidev->rx_buf;
++	resp_len = usidev->rx_len;
++	if (!strncmp(resp, cmd, cmd_len) && resp[cmd_len] == '\r') {
++		dev_dbg(&sdev->dev, "Skipping echo\n");
++		resp += cmd_len + 1;
++		resp_len -= cmd_len + 1;
++	}
++	dev_dbg(&sdev->dev, "Received: '%s'\n", resp);
++	if (data)
++		*data = kstrdup(resp, GFP_KERNEL);
++
++	usidev->rx_len = 0;
++	reinit_completion(&usidev->prompt_recv_comp);
 +
 +	return 0;
 +}
 +
-+static void rn2483_receive_line(struct rn2483_device *rndev, const char *sz, size_t len)
++static int usi_simple_cmd(struct usi_device *usidev, const char *cmd, unsigned long timeout)
 +{
-+	dev_dbg(&rndev->serdev->dev, "Received line '%s' (%d)", sz, (int)len);
++	char *resp;
++	int ret;
 +
-+	reinit_completion(&rndev->line_read_comp);
-+	complete(&rndev->line_recv_comp);
-+	wait_for_completion(&rndev->line_read_comp);
-+	reinit_completion(&rndev->line_recv_comp);
++	ret = usi_send_command(usidev, cmd, &resp, timeout);
++	if (ret)
++		return ret;
++
++	if (strcmp(resp, "OK\r\n") == 0) {
++		kfree(resp);
++		return 0;
++	}
++
++	kfree(resp);
++
++	return -EINVAL;
 +}
 +
-+static int rn2483_receive_buf(struct serdev_device *serdev, const u8 *data, size_t count)
++static int usi_cmd_reset(struct usi_device *usidev)
 +{
-+	struct rn2483_device *rndev = serdev_device_get_drvdata(serdev);
-+	size_t i;
++	int ret;
 +
-+	dev_dbg(&serdev->dev, "Receive (%d)", (int)count);
-+	if (!rndev->buf) {
-+		rndev->buf = devm_kmalloc(&serdev->dev, count, GFP_KERNEL);
-+		if (!rndev->buf)
-+			return 0;
-+		rndev->buflen = 0;
-+	} else {
-+		void *tmp = devm_kmalloc(&serdev->dev, rndev->buflen + count, GFP_KERNEL);
-+		if (!tmp)
-+			return 0;
-+		memcpy(tmp, rndev->buf, rndev->buflen);
-+		devm_kfree(&serdev->dev, rndev->buf);
-+		rndev->buf = tmp;
++	ret = usi_send_command(usidev, "ATZ", NULL, HZ);
++	if (ret)
++		return ret;
++
++	mdelay(1000);
++
++	return 0;
++}
++
++static int usi_cmd_read_reg(struct usi_device *usidev, u8 addr, u8 *val)
++{
++	char *cmd;
++	char *resp;
++	char *sz;
++	int ret;
++
++	cmd = kasprintf(GFP_KERNEL, "AT+RREG=0x%02x", (int)addr);
++	if (!cmd)
++		return -ENOMEM;
++
++	ret = usi_send_command(usidev, cmd, &resp, HZ);
++	if (ret) {
++		kfree(cmd);
++		return ret;
 +	}
++	if (!usi_cmd_ok(resp)) {
++		kfree(resp);
++		kfree(cmd);
++		return -EINVAL;
++	}
++	resp[strlen(resp) - 6] = '\0';
++	sz = resp;
++	if (strstarts(sz, "+Reg="))
++		sz += 5;
++	if (strncasecmp(sz, cmd + 8, 4) == 0 && strstarts(sz + 4, ", "))
++		sz += 6;
++
++	kfree(cmd);
++
++	dev_dbg(&usidev->serdev->dev, "Parsing '%s'\n", sz);
++	ret = kstrtou8(sz, 0, val);
++	if (ret) {
++		kfree(resp);
++		return ret;
++	}
++
++	kfree(resp);
++
++	return 0;
++}
++
++static int usi_receive_buf(struct serdev_device *sdev, const u8 *data, size_t count)
++{
++	struct usi_device *usidev = serdev_device_get_drvdata(sdev);
++	size_t i = 0;
++	int len = 0;
++
++	dev_dbg(&sdev->dev, "Receive (%d)\n", (int)count);
 +
 +	for (i = 0; i < count; i++) {
-+		if (data[i] == '\r') {
-+			rndev->saw_cr = true;
-+		} else if (data[i] == '\n' && rndev->saw_cr) {
-+			if (i > 1)
-+				memcpy(rndev->buf + rndev->buflen, data, i - 1);
-+			((char *)rndev->buf)[rndev->buflen + i - 1] = 0;
-+			rn2483_receive_line(rndev, rndev->buf, rndev->buflen + i - 1);
-+			rndev->saw_cr = false;
-+			devm_kfree(&serdev->dev, rndev->buf);
-+			rndev->buf = NULL;
-+			rndev->buflen = 0;
-+			return i + 1;
-+		} else
-+			rndev->saw_cr = false;
++		dev_dbg(&sdev->dev, "Receive: 0x%02x\n", (int)data[i]);
++	}
++	i = 0;
++
++	if (completion_done(&usidev->prompt_recv_comp) ||
++	    completion_done(&usidev->tx_event_recv_comp)) {
++		dev_info(&sdev->dev, "RX waiting on completion\n");
++		return 0;
++	}
++	if (usidev->rx_len == sizeof(usidev->rx_buf) - 1) {
++		dev_warn(&sdev->dev, "RX buffer full\n");
++		return 0;
 +	}
 +
-+	memcpy(rndev->buf + rndev->buflen, data, count);
-+	rndev->buflen += count;
-+	return count;
++	i = min(count, sizeof(usidev->rx_buf) - 1 - usidev->rx_len);
++	if (i > 0) {
++		memcpy(&usidev->rx_buf[usidev->rx_len], data, i);
++		usidev->rx_len += i;
++		len += i;
++	}
++	if (usidev->rx_len >= 3 && strncmp(&usidev->rx_buf[usidev->rx_len - 3], "\r# ", 3) == 0) {
++		usidev->rx_len -= 3;
++		usidev->rx_buf[usidev->rx_len] = '\0';
++		complete(&usidev->prompt_recv_comp);
++	} else if (usidev->rx_len > 7 && strstarts(usidev->rx_buf, "+RCV") &&
++			strncmp(&usidev->rx_buf[usidev->rx_len - 2], "\r\n", 2) == 0) {
++		usidev->rx_buf[usidev->rx_len - 2] = '\0';
++		dev_info(&sdev->dev, "RCV event: '%s'\n", usidev->rx_buf + 4);
++		usidev->rx_len = 0;
++	} else if (usidev->rx_len > 6 && strstarts(usidev->rx_buf, "+TX: ") &&
++			strncmp(&usidev->rx_buf[usidev->rx_len - 2], "\r\n", 2) == 0) {
++		usidev->rx_buf[usidev->rx_len - 2] = '\0';
++		dev_info(&sdev->dev, "TX event: '%s'\n", usidev->rx_buf + 5);
++		complete(&usidev->tx_event_recv_comp);
++	}
++
++	return len;
 +}
 +
-+static const struct serdev_device_ops rn2483_serdev_client_ops = {
-+	.receive_buf = rn2483_receive_buf,
++static const struct serdev_device_ops usi_serdev_client_ops = {
++	.receive_buf = usi_receive_buf,
 +};
 +
-+static int rn2483_probe(struct serdev_device *sdev)
++static int usi_probe(struct serdev_device *sdev)
 +{
-+	struct rn2483_device *rndev;
-+	char *line, *cmd;
-+	char sz[5];
-+	u32 status;
++	struct usi_device *usidev;
++	//unsigned long timeout;
++	char *resp;
++	u8 val;
 +	int ret;
 +
 +	dev_info(&sdev->dev, "Probing");
 +
-+	rndev = devm_kzalloc(&sdev->dev, sizeof(struct rn2483_device), GFP_KERNEL);
-+	if (!rndev)
++	usidev = devm_kzalloc(&sdev->dev, sizeof(struct usi_device), GFP_KERNEL);
++	if (!usidev)
 +		return -ENOMEM;
 +
-+	rndev->serdev = sdev;
-+	init_completion(&rndev->line_recv_comp);
-+	init_completion(&rndev->line_read_comp);
-+	mutex_init(&rndev->cmd_lock);
-+	serdev_device_set_drvdata(sdev, rndev);
-+
-+	rndev->reset_gpio = devm_gpiod_get_optional(&sdev->dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(rndev->reset_gpio))
-+		return PTR_ERR(rndev->reset_gpio);
++	usidev->serdev = sdev;
++	usidev->mode = -1;
++	init_completion(&usidev->prompt_recv_comp);
++	init_completion(&usidev->tx_event_recv_comp);
++	serdev_device_set_drvdata(sdev, usidev);
 +
 +	ret = serdev_device_open(sdev);
 +	if (ret) {
@@ -273,365 +319,199 @@ index 000000000000..8b9ec2575ee2
 +		return ret;
 +	}
 +
-+	serdev_device_set_baudrate(sdev, 57600);
++	serdev_device_set_baudrate(sdev, 115200);
 +	serdev_device_set_flow_control(sdev, false);
++	serdev_device_set_client_ops(sdev, &usi_serdev_client_ops);
 +
-+	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
-+	msleep(5);
-+	serdev_device_set_client_ops(sdev, &rn2483_serdev_client_ops);
-+	gpiod_set_value_cansleep(rndev->reset_gpio, 1);
-+	msleep(100);
-+
-+	ret = rn2483_readline_timeout(rndev, &line, HZ);
-+	if (ret) {
-+		if (ret != -ENOMEM)
-+			dev_err(&sdev->dev, "Timeout waiting for firmware identification");
-+		goto err_timeout;
-+	}
-+
-+	if (strlen(line) < strlen("RNxxxx X.Y.Z MMM DD YYYY HH:MM:SS") || line[6] != ' ' ||
-+			strncmp(line, "RN", 2) != 0) {
-+		dev_err(&sdev->dev, "Unexpected response '%s'", line);
-+		devm_kfree(&sdev->dev, line);
-+		ret = -EINVAL;
-+		goto err_version;
-+	}
-+	dev_info(&sdev->dev, "Firmware '%s'", line);
-+	strncpy(sz, line + 2, 4);
-+	sz[4] = 0;
-+	devm_kfree(&sdev->dev, line);
-+	ret = kstrtouint(sz, 10, &rndev->model);
++	ret = usi_cmd_reset(usidev);
 +	if (ret)
-+		goto err_model;
-+	if (!(rndev->model == 2483 || rndev->model == 2903)) {
-+		dev_err(&sdev->dev, "Unknown model %u", rndev->model);
-+		ret = -ENOTSUPP;
-+		goto err_model;
-+	}
-+	dev_info(&sdev->dev, "Detected RN%u", rndev->model);
++		dev_warn(&sdev->dev, "Reset failed\n");
 +
-+	ret = rn2483_sys_get_hweui(rndev, &rndev->hweui);
-+	if (ret) {
-+		if (ret != -ENOMEM)
-+			dev_err(&sdev->dev, "Failed to read HWEUI (%d)", ret);
-+		goto err_hweui;
-+	}
-+	dev_info(&sdev->dev, "HWEUI " PRIxLORAEUI, LORA_EUI(rndev->hweui));
++	ret = usi_send_command(usidev, "ATE=0", NULL, HZ);
++	if (ret)
++		dev_warn(&sdev->dev, "ATE failed\n");
 +
-+	switch (rndev->model) {
-+	case 2483:
-+		ret = rn2483_mac_get_band(rndev, &rndev->band);
-+		if (ret) {
-+			dev_err(&sdev->dev, "Failed to read band (%d)", ret);
-+			goto err_band;
-+		}
-+		dev_info(&sdev->dev, "Frequency band %u MHz", rndev->band);
-+
-+		ret = rn2483_mac_reset_band(rndev, 433);
-+		if (ret) {
-+			dev_err(&sdev->dev, "Failed to reset band (%d)", ret);
-+			goto err_band;
-+		}
-+		rndev->band = 433;
-+
-+		ret = rn2483_mac_get_band(rndev, &rndev->band);
-+		if (!ret)
-+			dev_info(&sdev->dev, "New frequency band: %u MHz", rndev->band);
-+		break;
-+	case 2903:
-+		/* No "mac get band" command available */
-+		rndev->band = 915;
-+		break;
-+	}
-+
-+	ret = rn2483_mac_get_status(rndev, &status);
-+	if (!ret)
-+		dev_info(&sdev->dev, "MAC status %08x", status);
-+
-+	if (true) {
-+		u32 pause;
-+		ret = rn2483_mac_pause(rndev, &pause);
-+		if (!ret)
-+			dev_info(&sdev->dev, "MAC pausing (0x%08x)", pause);
-+		ret = rn2483_mac_resume(rndev);
-+		if (!ret)
-+			dev_info(&sdev->dev, "MAC resuming");
-+	}
-+
-+	cmd = "mac get sync";
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, cmd, &line, HZ);
-+	mutex_unlock(&rndev->cmd_lock);
++	/* Dropped in firmware 2.8 */
++	ret = usi_send_command(usidev, "ATI", &resp, HZ);
 +	if (!ret) {
-+		dev_info(&sdev->dev, "%s => '%s'", cmd, line);
-+		devm_kfree(&sdev->dev, line);
++		if (usi_cmd_ok(resp)) {
++			resp[strlen(resp) - 6] = '\0';
++			dev_info(&sdev->dev, "Firmware '%s'\n", resp);
++		}
++		kfree(resp);
 +	}
 +
-+	rndev->netdev = alloc_loradev(sizeof(struct rn2483_priv));
-+	if (!rndev->netdev) {
-+		ret = -ENOMEM;
-+		goto err_alloc_netdev;
++	ret = usi_send_command(usidev, "AT+DEFMODE", &resp, HZ);
++	if (ret) {
++		dev_err(&sdev->dev, "Checking DEFMODE failed (%d)\n", ret);
++		serdev_device_close(sdev);
++		return ret;
++	}
++	if (usi_cmd_ok(resp)) {
++		resp[strlen(resp) - 6] = '\0';
++		dev_info(&sdev->dev, "Default mode '%s'\n", resp);
++		if (!strcmp(resp, "MFG_WAN_MODE"))
++			usidev->mode = 6;
++		else if (!strcmp(resp, "MFG_TEST_IDLE"))
++			usidev->mode = 0;
++		else if (!strcmp(resp, "MFG_TX_TONE"))
++			usidev->mode = 1;
++		else if (!strcmp(resp, "MFG_TX_PACKET"))
++			usidev->mode = 2;
++		else if (!strcmp(resp, "MFG_ERROR_LESS_ARGUMENETS"))
++			usidev->mode = 3;
++		else if (!strcmp(resp, "MFG_TX_TEXT"))
++			usidev->mode = 4;
++		else if (!strcmp(resp, "MFG_TEST_STOP"))
++			usidev->mode = 5;
++	}
++	kfree(resp);
++
++	if (usidev->mode != 3) {
++		ret = usi_simple_cmd(usidev, "AT+DEFMODE=3", HZ);
++		if (ret) {
++			dev_err(&sdev->dev, "Setting DEFMODE failed (%d)\n", ret);
++			serdev_device_close(sdev);
++			return ret;
++		}
++
++#if 1
++		ret = usi_simple_cmd(usidev, "AT+WDCT", 5 * HZ);
++		if (ret) {
++			dev_err(&sdev->dev, "Writing DCT failed (%d)\n", ret);
++			serdev_device_close(sdev);
++			return ret;
++		}
++
++		ret = usi_cmd_reset(usidev);
++		if (ret) {
++			dev_err(&sdev->dev, "Reset failed\n");
++			serdev_device_close(sdev);
++			return ret;
++		}
++
++		ret = usi_send_command(usidev, "ATE=0", NULL, HZ);
++		if (ret)
++			dev_warn(&sdev->dev, "ATE failed\n");
++#endif
++
++		usidev->mode = -1;
++		ret = usi_send_command(usidev, "AT+DEFMODE", &resp, HZ);
++		if (ret) {
++			dev_err(&sdev->dev, "Checking DEFMODE failed (%d)\n", ret);
++			serdev_device_close(sdev);
++			return ret;
++		}
++		if (usi_cmd_ok(resp)) {
++			resp[strlen(resp) - 6] = '\0';
++			dev_info(&sdev->dev, "Default mode '%s'\n", resp);
++			if (!strcmp(resp, "MFG_WAN_MODE")) {
++				usidev->mode = 6;
++			}
++		}
++		kfree(resp);
 +	}
 +
-+	rndev->netdev->netdev_ops = &rn2483_net_device_ops;
-+	SET_NETDEV_DEV(rndev->netdev, &sdev->dev);
++	ret = usi_send_command(usidev, "AT+VER", &resp, HZ);
++	if (!ret) {
++		if (usi_cmd_ok(resp)) {
++			resp[strlen(resp) - 6] = '\0';
++			dev_info(&sdev->dev, "LoRaWAN version '%s'\n",
++				(strstarts(resp, "+VER=")) ? (resp + 5) : resp);
++		}
++		kfree(resp);
++	}
 +
-+	ret = register_loradev(rndev->netdev);
-+	if (ret)
-+		goto err_register_netdev;
++	ret = usi_simple_cmd(usidev, "AT+RF=20,868000000,7,0,1,0,8,0,0,0", HZ);
++	if (ret) {
++		dev_err(&sdev->dev, "AT+RF failed (%d)\n", ret);
++		serdev_device_close(sdev);
++		return ret;
++	}
++
++	/*ret = usi_simple_cmd(usidev, "AT+TXT=1,deadbeef", 2 * HZ);
++	if (ret) {
++		dev_err(&sdev->dev, "TX failed (%d)\n", ret);
++		serdev_device_close(sdev);
++		return ret;
++	}
++
++	timeout = wait_for_completion_timeout(&usidev->tx_event_recv_comp, 5 * HZ);
++	if (!timeout) {
++		serdev_device_close(sdev);
++		return -ETIMEDOUT;
++	}
++	usidev->rx_len = 0;
++	reinit_completion(&usidev->tx_event_recv_comp);*/
++
++	ret = usi_cmd_read_reg(usidev, 0x42, &val);
++	if (!ret) {
++		dev_info(&sdev->dev, "SX1272 VERSION 0x%02x\n", (int)val);
++	}
++
++	ret = usi_cmd_read_reg(usidev, 0x39, &val);
++	if (!ret) {
++		dev_info(&sdev->dev, "SX1272 SyncWord 0x%02x\n", (int)val);
++	}
++
++	ret = usi_cmd_read_reg(usidev, 0x01, &val);
++	if (!ret) {
++		dev_info(&sdev->dev, "SX1272 OpMode 0x%02x\n", (int)val);
++	}
 +
 +	dev_info(&sdev->dev, "Done.");
 +
 +	return 0;
-+
-+err_register_netdev:
-+	free_loradev(rndev->netdev);
-+err_alloc_netdev:
-+err_band:
-+err_hweui:
-+err_model:
-+err_version:
-+err_timeout:
-+	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
-+	return ret;
 +}
 +
-+static void rn2483_remove(struct serdev_device *sdev)
++static void usi_remove(struct serdev_device *sdev)
 +{
-+	struct rn2483_device *rndev = serdev_device_get_drvdata(sdev);
++	struct usi_device *usidev = serdev_device_get_drvdata(sdev);
 +
-+	unregister_loradev(rndev->netdev);
-+	free_loradev(rndev->netdev);
-+
-+	gpiod_set_value_cansleep(rndev->reset_gpio, 0);
-+
-+	complete(&rndev->line_read_comp);
++	usi_send_command(usidev, "ATE=1\r", NULL, HZ);
 +
 +	serdev_device_close(sdev);
 +
-+	dev_info(&sdev->dev, "Removed");
++	dev_info(&sdev->dev, "Removed\n");
 +}
 +
-+static const struct of_device_id rn2483_of_match[] = {
-+	{ .compatible = "microchip,rn2483" },
-+	{ .compatible = "microchip,rn2903" },
++static const struct of_device_id usi_of_match[] = {
++	{ .compatible = "usi,wm-sg-sm-42" },
 +	{}
 +};
-+MODULE_DEVICE_TABLE(of, rn2483_of_match);
++MODULE_DEVICE_TABLE(of, usi_of_match);
 +
-+static struct serdev_device_driver rn2483_serdev_driver = {
-+	.probe = rn2483_probe,
-+	.remove = rn2483_remove,
++static struct serdev_device_driver usi_serdev_driver = {
++	.probe = usi_probe,
++	.remove = usi_remove,
 +	.driver = {
-+		.name = "rn2483",
-+		.of_match_table = rn2483_of_match,
++		.name = "usi",
++		.of_match_table = usi_of_match,
 +	},
 +};
 +
-+static int __init rn2483_init(void)
++static int __init usi_init(void)
 +{
 +	int ret;
 +
-+	ret = serdev_device_driver_register(&rn2483_serdev_driver);
++	ret = serdev_device_driver_register(&usi_serdev_driver);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static void __exit rn2483_exit(void)
++static void __exit usi_exit(void)
 +{
-+	serdev_device_driver_unregister(&rn2483_serdev_driver);
++	serdev_device_driver_unregister(&usi_serdev_driver);
 +}
 +
-+module_init(rn2483_init);
-+module_exit(rn2483_exit);
++module_init(usi_init);
++module_exit(usi_exit);
 +
-+MODULE_DESCRIPTION("RN2483 serdev driver");
++MODULE_DESCRIPTION("USI WM-SG-SM-42 serdev driver");
 +MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
 +MODULE_LICENSE("GPL");
-diff --git a/drivers/net/lora/rn2483.h b/drivers/net/lora/rn2483.h
-new file mode 100644
-index 000000000000..f92660286f15
---- /dev/null
-+++ b/drivers/net/lora/rn2483.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+#ifndef _RN2483_H
-+#define _RN2483_H
-+
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/netdevice.h>
-+#include <linux/serdev.h>
-+#include <linux/lora/dev.h>
-+
-+struct rn2483_device {
-+	struct serdev_device *serdev;
-+	struct gpio_desc *reset_gpio;
-+	struct net_device *netdev;
-+	unsigned model;
-+	lora_eui hweui;
-+	unsigned band;
-+	bool saw_cr;
-+	void *buf;
-+	size_t buflen;
-+	struct completion line_recv_comp;
-+	struct completion line_read_comp;
-+	struct mutex cmd_lock;
-+};
-+
-+int rn2483_readline_timeout(struct rn2483_device *rndev, char **line, unsigned long timeout);
-+int rn2483_send_command_timeout(struct rn2483_device *rndev,
-+	const char *cmd, char **resp, unsigned long timeout);
-+
-+int rn2483_sys_get_hweui(struct rn2483_device *rndev, lora_eui *val);
-+int rn2483_mac_get_band(struct rn2483_device *rndev, uint *val);
-+int rn2483_mac_get_status(struct rn2483_device *rndev, u32 *val);
-+int rn2483_mac_reset_band(struct rn2483_device *rndev, unsigned band);
-+int rn2483_mac_pause(struct rn2483_device *rndev, u32 *max_pause);
-+int rn2483_mac_resume(struct rn2483_device *rndev);
-+
-+#endif
-diff --git a/drivers/net/lora/rn2483_cmd.c b/drivers/net/lora/rn2483_cmd.c
-new file mode 100644
-index 000000000000..6d6fca8fa93c
---- /dev/null
-+++ b/drivers/net/lora/rn2483_cmd.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Microchip RN2483/RN2903 - UART commands
-+ *
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+#include "rn2483.h"
-+
-+#define RN2483_CMD_TIMEOUT HZ
-+
-+int rn2483_send_command_timeout(struct rn2483_device *rndev,
-+	const char *cmd, char **resp, unsigned long timeout)
-+{
-+	int ret;
-+
-+	ret = serdev_device_write_buf(rndev->serdev, cmd, strlen(cmd));
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = serdev_device_write_buf(rndev->serdev, "\r\n", 2);
-+	if (ret < 0)
-+		return ret;
-+
-+	return rn2483_readline_timeout(rndev, resp, timeout);
-+}
-+
-+int rn2483_sys_get_hweui(struct rn2483_device *rndev, lora_eui *val)
-+{
-+	int ret;
-+	char *line;
-+
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, "sys get hweui", &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = lora_strtoeui(line, val);
-+	devm_kfree(&rndev->serdev->dev, line);
-+	return ret;
-+}
-+
-+int rn2483_mac_get_band(struct rn2483_device *rndev, uint *val)
-+{
-+	int ret;
-+	char *line;
-+
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, "mac get band", &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = kstrtouint(line, 10, val);
-+	devm_kfree(&rndev->serdev->dev, line);
-+
-+	return ret;
-+}
-+
-+int rn2483_mac_get_status(struct rn2483_device *rndev, u32 *val)
-+{
-+	int ret;
-+	char *line;
-+
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, "mac get status", &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = kstrtou32(line, 16, val);
-+	devm_kfree(&rndev->serdev->dev, line);
-+	return ret;
-+}
-+
-+int rn2483_mac_reset_band(struct rn2483_device *rndev, unsigned band)
-+{
-+	int ret;
-+	char *line, *cmd;
-+
-+	cmd = devm_kasprintf(&rndev->serdev->dev, GFP_KERNEL, "mac reset %u", band);
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, cmd, &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	devm_kfree(&rndev->serdev->dev, cmd);
-+	if (ret)
-+		return ret;
-+
-+	if (strcmp(line, "ok") == 0)
-+		ret = 0;
-+	else if (strcmp(line, "invalid_param") == 0)
-+		ret = -EINVAL;
-+	else
-+		ret = -EPROTO;
-+
-+	devm_kfree(&rndev->serdev->dev, line);
-+	return ret;
-+}
-+
-+int rn2483_mac_pause(struct rn2483_device *rndev, u32 *max_pause)
-+{
-+	int ret;
-+	char *line;
-+
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, "mac pause", &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = kstrtou32(line, 10, max_pause);
-+	devm_kfree(&rndev->serdev->dev, line);
-+	return ret;
-+}
-+
-+int rn2483_mac_resume(struct rn2483_device *rndev)
-+{
-+	int ret;
-+	char *line;
-+
-+	mutex_lock(&rndev->cmd_lock);
-+	ret = rn2483_send_command_timeout(rndev, "mac resume", &line, RN2483_CMD_TIMEOUT);
-+	mutex_unlock(&rndev->cmd_lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = (strcmp(line, "ok") == 0) ? 0 : -EPROTO;
-+	devm_kfree(&rndev->serdev->dev, line);
-+	return ret;
-+}
 -- 
 2.16.4
 
