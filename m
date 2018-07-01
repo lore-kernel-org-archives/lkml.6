@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56729C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6184C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161E125850
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161E125850
+	by mail.kernel.org (Postfix) with ESMTP id 9427523F57
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9427523F57
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933971AbeGASDS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:03:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34520 "EHLO
+        id S1753493AbeGAQ3Y (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:29:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34448 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965843AbeGAQ3b (ORCPT
+        with ESMTP id S933844AbeGAQ3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:31 -0400
+        Sun, 1 Jul 2018 12:29:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 522C0AA6;
-        Sun,  1 Jul 2018 16:29:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89F4692B;
+        Sun,  1 Jul 2018 16:29:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 013/157] PM / core: Fix supplier device runtime PM usage counter imbalance
-Date:   Sun,  1 Jul 2018 18:21:25 +0200
-Message-Id: <20180701160852.945746975@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.9 083/101] media: dvb_frontend: fix locking issues at dvb_frontend_get_event()
+Date:   Sun,  1 Jul 2018 18:22:09 +0200
+Message-Id: <20180701160800.482347008@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
-References: <20180701160852.287307684@linuxfoundation.org>
+In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
+References: <20180701160757.138608453@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -46,76 +46,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 47e5abfb546a3ace23a77453dc2e9db92704c5ac upstream.
+commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
 
-If a device link is added via device_link_add() by the driver of the
-link's consumer device, the supplier's runtime PM usage counter is
-going to be dropped by the pm_runtime_put_suppliers() call in
-driver_probe_device().  However, in that case it is not incremented
-unless the supplier driver is already present and the link is not
-stateless.  That leads to a runtime PM usage counter imbalance for
-the supplier device in a few cases.
+As warned by smatch:
+	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
+	  Locked on:   line 288
+	               line 295
+	               line 306
+	               line 314
+	  Unlocked on: line 303
 
-To prevent that from happening, bump up the supplier runtime
-PM usage counter in device_link_add() for all links with the
-DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
-time.  Use pm_runtime_get_noresume() for that as the callers of
-device_link_add() who want the supplier to be resumed by it are
-expected to pass DL_FLAG_RPM_ACTIVE in flags to it anyway, but
-additionally resume the supplier if the link is added during
-consumer driver probe to retain the existing behavior for the
-callers depending on it.
+The lock implementation for get event is wrong, as, if an
+interrupt occurs, down_interruptible() will fail, and the
+routine will call up() twice when userspace calls the ioctl
+again.
 
-Fixes: 21d5c57b3726 (PM / runtime: Use device links)
-Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 4.10+ <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The bad code is there since when Linux migrated to git, in
+2005.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/media/dvb-core/dvb_frontend.c |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -217,6 +217,13 @@ struct device_link *device_link_add(stru
- 			link->rpm_active = true;
- 		}
- 		pm_runtime_new_link(consumer);
-+		/*
-+		 * If the link is being added by the consumer driver at probe
-+		 * time, balance the decrementation of the supplier's runtime PM
-+		 * usage counter after consumer probe in driver_probe_device().
-+		 */
-+		if (consumer->links.status == DL_DEV_PROBING)
-+			pm_runtime_get_noresume(supplier);
- 	}
- 	get_device(supplier);
- 	link->supplier = supplier;
-@@ -235,12 +242,12 @@ struct device_link *device_link_add(stru
- 			switch (consumer->links.status) {
- 			case DL_DEV_PROBING:
- 				/*
--				 * Balance the decrementation of the supplier's
--				 * runtime PM usage counter after consumer probe
--				 * in driver_probe_device().
-+				 * Some callers expect the link creation during
-+				 * consumer driver probe to resume the supplier
-+				 * even without DL_FLAG_RPM_ACTIVE.
- 				 */
- 				if (flags & DL_FLAG_PM_RUNTIME)
--					pm_runtime_get_sync(supplier);
-+					pm_runtime_resume(supplier);
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -251,8 +251,20 @@ static void dvb_frontend_add_event(struc
+ 	wake_up_interruptible (&events->wait_queue);
+ }
  
- 				link->status = DL_STATE_CONSUMER_PROBE;
- 				break;
++static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
++				   struct dvb_fe_events *events)
++{
++	int ret;
++
++	up(&fepriv->sem);
++	ret = events->eventw != events->eventr;
++	down(&fepriv->sem);
++
++	return ret;
++}
++
+ static int dvb_frontend_get_event(struct dvb_frontend *fe,
+-			    struct dvb_frontend_event *event, int flags)
++			          struct dvb_frontend_event *event, int flags)
+ {
+ 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+ 	struct dvb_fe_events *events = &fepriv->events;
+@@ -270,13 +282,8 @@ static int dvb_frontend_get_event(struct
+ 		if (flags & O_NONBLOCK)
+ 			return -EWOULDBLOCK;
+ 
+-		up(&fepriv->sem);
+-
+-		ret = wait_event_interruptible (events->wait_queue,
+-						events->eventw != events->eventr);
+-
+-		if (down_interruptible (&fepriv->sem))
+-			return -ERESTARTSYS;
++		ret = wait_event_interruptible(events->wait_queue,
++					       dvb_frontend_test_event(fepriv, events));
+ 
+ 		if (ret < 0)
+ 			return ret;
 
 
