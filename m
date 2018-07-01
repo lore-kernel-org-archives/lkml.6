@@ -6,35 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3A5C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F649C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A503250BC
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A503250BC
+	by mail.kernel.org (Postfix) with ESMTP id DEE41250BE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE41250BE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753287AbeGAQRJ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:17:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60936 "EHLO
+        id S933673AbeGAQRO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:17:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60970 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932920AbeGAQRC (ORCPT
+        with ESMTP id S1753289AbeGAQRL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:02 -0400
+        Sun, 1 Jul 2018 12:17:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E526C92B;
-        Sun,  1 Jul 2018 16:17:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FEF849B;
+        Sun,  1 Jul 2018 16:17:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan M Schaeckeler <sschaeck@cisco.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.4 049/105] of: unittest: for strings, account for trailing \0 in property length field
-Date:   Sun,  1 Jul 2018 18:01:59 +0200
-Message-Id: <20180701153152.927446412@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.4 052/105] mtd: cfi_cmdset_0002: Change write buffer to check correct value
+Date:   Sun,  1 Jul 2018 18:02:02 +0200
+Message-Id: <20180701153153.235749272@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,63 +59,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan M Schaeckeler <sschaeck@cisco.com>
+From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 
-commit 3b9cf7905fe3ab35ab437b5072c883e609d3498d upstream.
+commit dfeae1073583dc35c33b32150e18b7048bbb37e6 upstream.
 
-For strings, account for trailing \0 in property length field:
+For the word write it is checked if the chip has the correct value.
+But it is not checked for the write buffer as only checked if ready.
+To make sure for the write buffer change to check the value.
 
-This is consistent with how dtc builds string properties.
+It is enough as this patch is only checking the last written word.
+Since it is described by data sheets to check the operation status.
 
-Function __of_prop_dup() would misbehave on such properties as it duplicates
-properties based on the property length field creating new string values
-without trailing \0s.
-
-Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-Tested-by: Frank Rowand <frank.rowand@sony.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-mtd@lists.infradead.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/unittest.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -156,20 +156,20 @@ static void __init of_unittest_dynamic(v
- 	/* Add a new property - should pass*/
- 	prop->name = "new-property";
- 	prop->value = "new-property-data";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) == 0, "Adding a new property failed\n");
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1878,7 +1878,7 @@ static int __xipram do_write_buffer(stru
+ 		if (time_after(jiffies, timeo) && !chip_ready(map, adr))
+ 			break;
  
- 	/* Try to add an existing property - should fail */
- 	prop++;
- 	prop->name = "new-property";
- 	prop->value = "new-property-data-should-fail";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) != 0,
- 		 "Adding an existing property should have failed\n");
- 
- 	/* Try to modify an existing property - should pass */
- 	prop->value = "modify-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating an existing property should have passed\n");
- 
-@@ -177,7 +177,7 @@ static void __init of_unittest_dynamic(v
- 	prop++;
- 	prop->name = "modify-property";
- 	prop->value = "modify-missing-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating a missing property should have passed\n");
- 
+-		if (chip_ready(map, adr)) {
++		if (chip_good(map, adr, datum)) {
+ 			xip_enable(map, chip, adr);
+ 			goto op_done;
+ 		}
 
 
