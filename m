@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 989D0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C88FCC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F22251EB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F22251EB
+	by mail.kernel.org (Postfix) with ESMTP id 82434251EC
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82434251EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752810AbeGALNI (ORCPT
+        id S1752756AbeGALM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:13:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47682 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:12:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47740 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751898AbeGALI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752039AbeGALI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 1 Jul 2018 07:08:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7E356AE54;
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7BAEDAE53;
         Sun,  1 Jul 2018 11:08:57 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
@@ -38,10 +38,13 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC net-next 04/15] net: Add lora subsystem
-Date:   Sun,  1 Jul 2018 13:07:53 +0200
-Message-Id: <20180701110804.32415-5-afaerber@suse.de>
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@tycho.nsa.gov
+Subject: [RFC net-next 01/15] net: Reserve protocol numbers for LoRa
+Date:   Sun,  1 Jul 2018 13:07:50 +0200
+Message-Id: <20180701110804.32415-2-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
 References: <20180701110804.32415-1-afaerber@suse.de>
@@ -53,590 +56,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement or stub out PF_LORA net_proto_family and datagram proto_ops.
+LoRa is a long-range, low-power wireless network technology by Semtech.
+It serves as base for LoRaWAN as well as multiple proprietary protocols.
+
+AF_LORA
+PF_LORA
+ARPHRD_LORA
+ETH_P_LORA
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- include/linux/lora/skb.h |  29 +++++
- net/Kconfig              |   1 +
- net/Makefile             |   1 +
- net/lora/Kconfig         |   9 ++
- net/lora/Makefile        |   8 ++
- net/lora/af_lora.c       | 152 ++++++++++++++++++++++++
- net/lora/af_lora.h       |  13 +++
- net/lora/dgram.c         | 293 +++++++++++++++++++++++++++++++++++++++++++++++
- 8 files changed, 506 insertions(+)
- create mode 100644 include/linux/lora/skb.h
- create mode 100644 net/lora/Kconfig
- create mode 100644 net/lora/Makefile
- create mode 100644 net/lora/af_lora.c
- create mode 100644 net/lora/af_lora.h
- create mode 100644 net/lora/dgram.c
+ include/linux/socket.h              | 4 +++-
+ include/uapi/linux/if_arp.h         | 1 +
+ include/uapi/linux/if_ether.h       | 1 +
+ security/selinux/hooks.c            | 4 +++-
+ security/selinux/include/classmap.h | 4 +++-
+ 5 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/lora/skb.h b/include/linux/lora/skb.h
-new file mode 100644
-index 000000000000..8806741464d0
---- /dev/null
-+++ b/include/linux/lora/skb.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * linux/lora/skb.h
-+ *
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+#ifndef _LORA_SKB_H
-+#define _LORA_SKB_H
-+
-+#include <linux/types.h>
-+#include <linux/skbuff.h>
-+
-+struct lora_skb_priv {
-+	int ifindex;
-+};
-+
-+static inline struct lora_skb_priv *lora_skb_prv(struct sk_buff *skb)
-+{
-+	return (struct lora_skb_priv *)(skb->head);
-+}
-+
-+static inline void lora_skb_reserve(struct sk_buff *skb)
-+{
-+	skb_reserve(skb, sizeof(struct lora_skb_priv));
-+}
-+
-+struct sk_buff *alloc_lora_skb(struct net_device *dev, u8 **data);
-+
-+#endif /* _LORA_SKB_H */
-diff --git a/net/Kconfig b/net/Kconfig
-index f738a6f27665..d294ecc50a3b 100644
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@ -223,6 +223,7 @@ source "net/phonet/Kconfig"
- source "net/6lowpan/Kconfig"
- source "net/ieee802154/Kconfig"
- source "net/mac802154/Kconfig"
-+source "net/lora/Kconfig"
- source "net/sched/Kconfig"
- source "net/dcb/Kconfig"
- source "net/dns_resolver/Kconfig"
-diff --git a/net/Makefile b/net/Makefile
-index bdaf53925acd..e80b84313851 100644
---- a/net/Makefile
-+++ b/net/Makefile
-@@ -62,6 +62,7 @@ endif
- obj-$(CONFIG_6LOWPAN)		+= 6lowpan/
- obj-$(CONFIG_IEEE802154)	+= ieee802154/
- obj-$(CONFIG_MAC802154)		+= mac802154/
-+obj-$(CONFIG_LORA)		+= lora/
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 7ed4713d5337..aa1e288b1659 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -208,8 +208,9 @@ struct ucred {
+ 				 * reuses AF_INET address family
+ 				 */
+ #define AF_XDP		44	/* XDP sockets			*/
++#define AF_LORA		45	/* LoRa sockets			*/
  
- ifeq ($(CONFIG_NET),y)
- obj-$(CONFIG_SYSCTL)		+= sysctl_net.o
-diff --git a/net/lora/Kconfig b/net/lora/Kconfig
-new file mode 100644
-index 000000000000..44972ea8769f
---- /dev/null
-+++ b/net/lora/Kconfig
-@@ -0,0 +1,9 @@
-+#
-+# LoRa
-+#
-+
-+menuconfig LORA
-+	depends on NET
-+	tristate "LoRa subsystem support"
-+	help
-+	  LoRa ...
-diff --git a/net/lora/Makefile b/net/lora/Makefile
-new file mode 100644
-index 000000000000..b58675ef7846
---- /dev/null
-+++ b/net/lora/Makefile
-@@ -0,0 +1,8 @@
-+#
-+# LoRa
-+#
-+
-+obj-$(CONFIG_LORA) += lora.o
-+
-+lora-y := af_lora.o
-+lora-y += dgram.o
-diff --git a/net/lora/af_lora.c b/net/lora/af_lora.c
-new file mode 100644
-index 000000000000..662482fe4c9b
---- /dev/null
-+++ b/net/lora/af_lora.c
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+
-+#include <linux/if_arp.h>
-+#include <linux/lora.h>
-+#include <linux/module.h>
-+#include <linux/net.h>
-+#include <linux/socket.h>
-+#include <net/sock.h>
-+
-+#include "af_lora.h"
-+
-+int lora_send(struct sk_buff *skb)
-+{
-+	int ret;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	skb->protocol = htons(ETH_P_LORA);
-+
-+	if (unlikely(skb->len > skb->dev->mtu)) {
-+		ret = -EMSGSIZE;
-+		goto err_skb;
-+	}
-+
-+	if (unlikely(skb->dev->type != ARPHRD_LORA)) {
-+		ret = -EPERM;
-+		goto err_skb;
-+	}
-+
-+	if (unlikely(!(skb->dev->flags & IFF_UP))) {
-+		ret = -ENETDOWN;
-+		goto err_skb;
-+	}
-+
-+	skb->ip_summed = CHECKSUM_UNNECESSARY;
-+
-+	skb_reset_mac_header(skb);
-+	skb_reset_network_header(skb);
-+	skb_reset_transport_header(skb);
-+
-+	if (false) {
-+		skb->pkt_type = PACKET_LOOPBACK;
-+	} else
-+		skb->pkt_type = PACKET_HOST;
-+
-+	ret = dev_queue_xmit(skb);
-+	if (ret > 0)
-+		ret = net_xmit_errno(ret);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+
-+err_skb:
-+	kfree_skb(skb);
-+	return ret;
-+}
-+EXPORT_SYMBOL(lora_send);
-+
-+static void lora_sock_destruct(struct sock *sk)
-+{
-+	pr_debug("lora: %s\n", __func__);
-+
-+	skb_queue_purge(&sk->sk_receive_queue);
-+}
-+
-+static int lora_create(struct net *net, struct socket *sock, int protocol,
-+		       int kern)
-+{
-+	struct sock *sk;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	sock->state = SS_UNCONNECTED;
-+
-+	if (protocol < 0 || protocol > LORA_NPROTO)
-+		return -EINVAL;
-+
-+	/*if (!net_eq(net, &init_net))
-+		return -EAFNOSUPPORT;*/
-+
-+	if (sock->type != SOCK_DGRAM)
-+		return -ESOCKTNOSUPPORT;
-+
-+	sock->ops = &dgram_proto_ops;
-+
-+	sk = sk_alloc(net, PF_LORA, GFP_KERNEL, &dgram_proto, kern);
-+	if (!sk)
-+		return -ENOMEM;
-+
-+	sock_init_data(sock, sk);
-+	sk->sk_family = PF_LORA;
-+	sk->sk_destruct = lora_sock_destruct;
-+
-+	if (sk->sk_prot->init) {
-+		int ret = sk->sk_prot->init(sk);
-+		if (ret) {
-+			sock_orphan(sk);
-+			sock_put(sk);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct net_proto_family lora_net_proto_family = {
-+	.family = PF_LORA,
-+	.owner = THIS_MODULE,
-+	.create = lora_create,
-+};
-+
-+static __init int lora_init(void)
-+{
-+	int ret;
-+
-+	pr_debug("lora: init\n");
-+
-+	ret = proto_register(&dgram_proto, 1);
-+	if (ret)
-+		goto err_dgram;
-+
-+	ret = sock_register(&lora_net_proto_family);
-+	if (ret)
-+		goto err_sock;
-+
-+	return 0;
-+
-+err_sock:
-+	proto_unregister(&dgram_proto);
-+err_dgram:
-+	return ret;
-+}
-+
-+static __exit void lora_exit(void)
-+{
-+	pr_debug("lora: exit\n");
-+
-+	sock_unregister(PF_LORA);
-+	proto_unregister(&dgram_proto);
-+}
-+
-+module_init(lora_init);
-+module_exit(lora_exit);
-+
-+MODULE_DESCRIPTION("LoRa PF_LORA core");
-+MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS_NETPROTO(PF_LORA);
-diff --git a/net/lora/af_lora.h b/net/lora/af_lora.h
-new file mode 100644
-index 000000000000..47dd863531b2
---- /dev/null
-+++ b/net/lora/af_lora.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+#ifndef AF_LORA_H
-+#define AF_LORA_H
-+
-+extern struct proto dgram_proto;
-+extern const struct proto_ops dgram_proto_ops;
-+
-+int lora_send(struct sk_buff *skb);
-+
-+#endif /* AF_LORA_H */
-diff --git a/net/lora/dgram.c b/net/lora/dgram.c
-new file mode 100644
-index 000000000000..4d931fd3778a
---- /dev/null
-+++ b/net/lora/dgram.c
-@@ -0,0 +1,293 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+
-+#include <linux/if_arp.h>
-+#include <linux/if_ether.h>
-+#include <linux/lora.h>
-+#include <linux/module.h>
-+#include <linux/net.h>
-+#include <linux/socket.h>
-+#include <linux/version.h>
-+#include <linux/lora/skb.h>
-+#include <net/sock.h>
-+
-+#include "af_lora.h"
-+
-+struct dgram_sock {
-+	struct sock sk;
-+	int ifindex;
-+	bool bound;
-+	struct notifier_block notifier;
-+};
-+
-+static inline struct dgram_sock *dgram_sk(const struct sock *sk)
-+{
-+	return (struct dgram_sock *)sk;
-+}
-+
-+static int dgram_bind(struct socket *sock, struct sockaddr *uaddr, int len)
-+{
-+	struct sockaddr_lora *addr = (struct sockaddr_lora *)uaddr;
-+	struct sock *sk = sock->sk;
-+	struct dgram_sock *dgram = dgram_sk(sk);
-+	int ifindex;
-+	int ret = 0;
-+	bool notify_enetdown = false;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	if (len < sizeof(*addr))
-+		return -EINVAL;
-+
-+	lock_sock(sk);
-+
-+	if (dgram->bound && addr->lora_ifindex == dgram->ifindex)
-+		goto out;
-+
-+	if (addr->lora_ifindex) {
-+		struct net_device *netdev;
-+
-+		netdev = dev_get_by_index(sock_net(sk), addr->lora_ifindex);
-+		if (!netdev) {
-+			ret = -ENODEV;
-+			goto out;
-+		}
-+		if (netdev->type != ARPHRD_LORA) {
-+			dev_put(netdev);
-+			ret = -ENODEV;
-+			goto out;
-+		}
-+		if (!(netdev->flags & IFF_UP))
-+			notify_enetdown = true;
-+
-+		ifindex = netdev->ifindex;
-+
-+		dev_put(netdev);
-+	} else
-+		ifindex = 0;
-+
-+	dgram->ifindex = ifindex;
-+	dgram->bound = true;
-+
-+out:
-+	release_sock(sk);
-+
-+	if (notify_enetdown) {
-+		sk->sk_err = ENETDOWN;
-+		if (!sock_flag(sk, SOCK_DEAD))
-+			sk->sk_error_report(sk);
-+	}
-+
-+	return ret;
-+}
-+
-+static int dgram_sendmsg(struct socket *sock, struct msghdr *msg, size_t size)
-+{
-+	struct sock *sk = sock->sk;
-+	struct dgram_sock *dgram = dgram_sk(sk);
-+	struct sk_buff *skb;
-+	struct net_device *netdev;
-+	int ifindex;
-+	int ret;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	if (msg->msg_name) {
-+		DECLARE_SOCKADDR(struct sockaddr_lora *, addr, msg->msg_name);
-+
-+		if (msg->msg_namelen < sizeof(*addr))
-+			return -EINVAL;
-+
-+		if (addr->lora_family != AF_LORA)
-+			return -EINVAL;
-+
-+		ifindex = addr->lora_ifindex;
-+	} else
-+		ifindex = dgram->ifindex;
-+
-+	netdev = dev_get_by_index(sock_net(sk), ifindex);
-+	if (!netdev)
-+		return -ENXIO;
-+
-+	skb = sock_alloc_send_skb(sk, size + sizeof(struct lora_skb_priv),
-+				  msg->msg_flags & MSG_DONTWAIT, &ret);
-+	if (!skb)
-+		goto err_sock_alloc_send_skb;
-+
-+	lora_skb_reserve(skb);
-+	lora_skb_prv(skb)->ifindex = netdev->ifindex;
-+
-+	ret = memcpy_from_msg(skb_put(skb, size), msg, size);
-+	if (ret < 0)
-+		goto err_memcpy_from_msg;
-+
-+	sock_tx_timestamp(sk,
-+			  sk->sk_tsflags,
-+			  &skb_shinfo(skb)->tx_flags);
-+
-+	skb->dev = netdev;
-+	skb->sk = sk;
-+	skb->priority = sk->sk_priority;
-+
-+	ret = lora_send(skb);
-+
-+	dev_put(netdev);
-+
-+	if (ret)
-+		return ret;
-+
-+	return size;
-+
-+err_memcpy_from_msg:
-+	kfree_skb(skb);
-+err_sock_alloc_send_skb:
-+	dev_put(netdev);
-+	return ret;
-+}
-+
-+static int dgram_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
-+{
-+	pr_debug("lora: %s\n", __func__);
-+
-+	return -ENOIOCTLCMD;
-+}
-+
-+static int dgram_getname(struct socket *sock, struct sockaddr *uaddr,
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0)
-+			 int *len,
-+#endif
-+			 int peer)
-+{
-+	struct sockaddr_lora *addr = (struct sockaddr_lora *)uaddr;
-+	struct sock *sk = sock->sk;
-+	struct dgram_sock *dgram = dgram_sk(sk);
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	if (peer)
-+		return -EOPNOTSUPP;
-+
-+	memset(addr, 0, sizeof(*addr));
-+	addr->lora_family = AF_LORA;
-+	addr->lora_ifindex = dgram->ifindex;
-+
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 13, 0)
-+	return sizeof(*addr);
-+#else
-+	*len = sizeof(*addr);
-+	return 0;
-+#endif
-+}
-+
-+static int dgram_release(struct socket *sock)
-+{
-+	struct sock *sk = sock->sk;
-+	struct dgram_sock *dgram;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	if (!sk)
-+		return 0;
-+
-+	dgram = dgram_sk(sk);
-+
-+	unregister_netdevice_notifier(&dgram->notifier);
-+
-+	lock_sock(sk);
-+
-+	dgram->ifindex = 0;
-+	dgram->bound = false;
-+
-+	sock_orphan(sk);
-+	sock->sk = NULL;
-+
-+	release_sock(sk);
-+	sock_put(sk);
-+
-+	return 0;
-+}
-+
-+const struct proto_ops dgram_proto_ops = {
-+	.family		= PF_LORA,
-+	.release	= dgram_release,
-+	.bind		= dgram_bind,
-+	.connect	= sock_no_connect,
-+	.socketpair	= sock_no_socketpair,
-+	.accept		= sock_no_accept,
-+	.getname	= dgram_getname,
-+	.poll		= datagram_poll,
-+	.ioctl		= dgram_ioctl,
-+	.listen		= sock_no_listen,
-+	.shutdown	= sock_no_shutdown,
-+	.setsockopt	= sock_no_setsockopt,
-+	.getsockopt	= sock_no_getsockopt,
-+	.sendmsg	= dgram_sendmsg,
-+	.recvmsg	= sock_no_recvmsg,
-+	.mmap		= sock_no_mmap,
-+	.sendpage	= sock_no_sendpage,
-+};
-+
-+static int dgram_notifier(struct notifier_block *nb, unsigned long msg, void *ptr)
-+{
-+	struct net_device *netdev = netdev_notifier_info_to_dev(ptr);
-+	struct dgram_sock *dgram = container_of(nb, struct dgram_sock, notifier);
-+	struct sock *sk = &dgram->sk;
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	if (!net_eq(dev_net(netdev), sock_net(sk)))
-+		return NOTIFY_DONE;
-+
-+	if (netdev->type != ARPHRD_LORA)
-+		return NOTIFY_DONE;
-+
-+	if (dgram->ifindex != netdev->ifindex)
-+		return NOTIFY_DONE;
-+
-+	switch (msg) {
-+	case NETDEV_UNREGISTER:
-+		lock_sock(sk);
-+
-+		dgram->ifindex = 0;
-+		dgram->bound = false;
-+
-+		release_sock(sk);
-+
-+		sk->sk_err = ENODEV;
-+		if (!sock_flag(sk, SOCK_DEAD))
-+			sk->sk_error_report(sk);
-+		break;
-+
-+	case NETDEV_DOWN:
-+		sk->sk_err = ENETDOWN;
-+		if (!sock_flag(sk, SOCK_DEAD))
-+			sk->sk_error_report(sk);
-+		break;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int dgram_init(struct sock *sk)
-+{
-+	struct dgram_sock *dgram = dgram_sk(sk);
-+
-+	pr_debug("lora: %s\n", __func__);
-+
-+	dgram->bound = false;
-+	dgram->ifindex = 0;
-+
-+	dgram->notifier.notifier_call = dgram_notifier;
-+	register_netdevice_notifier(&dgram->notifier);
-+
-+	return 0;
-+}
-+
-+struct proto dgram_proto __read_mostly = {
-+	.name = "LoRa",
-+	.owner = THIS_MODULE,
-+	.obj_size = sizeof(struct dgram_sock),
-+	.init = dgram_init,
-+};
+-#define AF_MAX		45	/* For now.. */
++#define AF_MAX		46	/* For now.. */
+ 
+ /* Protocol families, same as address families. */
+ #define PF_UNSPEC	AF_UNSPEC
+@@ -259,6 +260,7 @@ struct ucred {
+ #define PF_QIPCRTR	AF_QIPCRTR
+ #define PF_SMC		AF_SMC
+ #define PF_XDP		AF_XDP
++#define PF_LORA		AF_LORA
+ #define PF_MAX		AF_MAX
+ 
+ /* Maximum queue length specifiable by listen.  */
+diff --git a/include/uapi/linux/if_arp.h b/include/uapi/linux/if_arp.h
+index 4605527ca41b..1ed7cb3f2129 100644
+--- a/include/uapi/linux/if_arp.h
++++ b/include/uapi/linux/if_arp.h
+@@ -98,6 +98,7 @@
+ #define ARPHRD_NETLINK	824		/* Netlink header		*/
+ #define ARPHRD_6LOWPAN	825		/* IPv6 over LoWPAN             */
+ #define ARPHRD_VSOCKMON	826		/* Vsock monitor header		*/
++#define ARPHRD_LORA	827		/* LoRa				*/
+ 
+ #define ARPHRD_VOID	  0xFFFF	/* Void type, nothing is known */
+ #define ARPHRD_NONE	  0xFFFE	/* zero header length */
+diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ether.h
+index 3a45b4ad71a3..45644dcf5b39 100644
+--- a/include/uapi/linux/if_ether.h
++++ b/include/uapi/linux/if_ether.h
+@@ -147,6 +147,7 @@
+ #define ETH_P_MAP	0x00F9		/* Qualcomm multiplexing and
+ 					 * aggregation protocol
+ 					 */
++#define ETH_P_LORA	0x00FA		/* LoRa				*/
+ 
+ /*
+  *	This is an Ethernet frame header.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 10a5d2ce3870..b62bb0389d70 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1473,7 +1473,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
+ 			return SECCLASS_SMC_SOCKET;
+ 		case PF_XDP:
+ 			return SECCLASS_XDP_SOCKET;
+-#if PF_MAX > 45
++		case PF_LORA:
++			return SECCLASS_LORA_SOCKET;
++#if PF_MAX > 46
+ #error New address family defined, please update this function.
+ #endif
+ 		}
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index bd5fe0d3204a..060d4bf8385e 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -242,9 +242,11 @@ struct security_class_mapping secclass_map[] = {
+ 	  {"map_create", "map_read", "map_write", "prog_load", "prog_run"} },
+ 	{ "xdp_socket",
+ 	  { COMMON_SOCK_PERMS, NULL } },
++	{ "lora_socket",
++	  { COMMON_SOCK_PERMS, NULL } },
+ 	{ NULL }
+   };
+ 
+-#if PF_MAX > 45
++#if PF_MAX > 46
+ #error New address family defined, please update secclass_map.
+ #endif
 -- 
 2.16.4
 
