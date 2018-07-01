@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5588CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01C6C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15902251CD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:11:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15902251CD
+	by mail.kernel.org (Postfix) with ESMTP id B110E251D7
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B110E251D7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752570AbeGALKU (ORCPT
+        id S1752493AbeGALMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:10:20 -0400
+        Sun, 1 Jul 2018 07:12:12 -0400
 Received: from mx2.suse.de ([195.135.220.15]:47814 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752339AbeGALJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:04 -0400
+        id S1752146AbeGALJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:01 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AD20FAFB3;
-        Sun,  1 Jul 2018 11:09:03 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3DA29AE56;
+        Sun,  1 Jul 2018 11:08:58 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -38,13 +38,10 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Steve deRosier <derosier@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [RFC net-next 14/15] net: lora: Prepare Semtech SX1257
-Date:   Sun,  1 Jul 2018 13:08:03 +0200
-Message-Id: <20180701110804.32415-15-afaerber@suse.de>
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [RFC net-next 06/15] net: lora: Prepare for device drivers
+Date:   Sun,  1 Jul 2018 13:07:55 +0200
+Message-Id: <20180701110804.32415-7-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
 References: <20180701110804.32415-1-afaerber@suse.de>
@@ -56,157 +53,248 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Semtech SX1257 and Sx1255 are usually used for radios A/B of SX1301.
-This will not implement a netdev itself, but rather needs to interface
-with SX130x somehow.
+Implement helper functions for use by LoRa device drivers.
 
-Cc: Ben Whitten <ben.whitten@lairdtech.com>
-Cc: Steve deRosier <derosier@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Michael Röder <michael.roeder@avnet.eu>
-Cc: Ken Yu (禹凯) <ken.yu@rakwireless.com>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/net/lora/Kconfig  |  7 ++++
- drivers/net/lora/Makefile |  3 ++
- drivers/net/lora/sx1257.c | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 106 insertions(+)
- create mode 100644 drivers/net/lora/sx1257.c
+ drivers/net/Makefile      |   1 +
+ drivers/net/lora/Kconfig  |  18 +++++++
+ drivers/net/lora/Makefile |  10 ++++
+ drivers/net/lora/dev.c    | 125 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/lora/dev.h  |  23 +++++++++
+ net/lora/Kconfig          |   6 +++
+ 6 files changed, 183 insertions(+)
+ create mode 100644 drivers/net/lora/Kconfig
+ create mode 100644 drivers/net/lora/Makefile
+ create mode 100644 drivers/net/lora/dev.c
+ create mode 100644 include/linux/lora/dev.h
 
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 21cde7e78621..9819bf28633d 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_ETHERNET) += ethernet/
+ obj-$(CONFIG_FDDI) += fddi/
+ obj-$(CONFIG_HIPPI) += hippi/
+ obj-$(CONFIG_HAMRADIO) += hamradio/
++obj-$(CONFIG_LORA) += lora/
+ obj-$(CONFIG_PLIP) += plip/
+ obj-$(CONFIG_PPP) += ppp/
+ obj-$(CONFIG_PPP_ASYNC) += ppp/
 diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
-index 3e384493cbdd..68c7480d7812 100644
---- a/drivers/net/lora/Kconfig
-+++ b/drivers/net/lora/Kconfig
-@@ -31,6 +31,13 @@ config LORA_RN2483
- 	help
- 	  Microchip RN2483/2903
- 
-+config LORA_SX1257
-+	tristate "Semtech SX125x SPI driver"
-+	default y
-+	depends on SPI
-+	help
-+	  Semtech SX1255/1257
-+
- config LORA_SX1276
- 	tristate "Semtech SX127x SPI driver"
- 	default y
-diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
-index 6b6870ffbfd8..44c578bde7d5 100644
---- a/drivers/net/lora/Makefile
-+++ b/drivers/net/lora/Makefile
-@@ -16,6 +16,9 @@ obj-$(CONFIG_LORA_RN2483) += lora-rn2483.o
- lora-rn2483-y := rn2483.o
- lora-rn2483-y += rn2483_cmd.o
- 
-+obj-$(CONFIG_LORA_SX1257) += lora-sx1257.o
-+lora-sx1257-y := sx1257.o
-+
- obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
- lora-sx1276-y := sx1276.o
- 
-diff --git a/drivers/net/lora/sx1257.c b/drivers/net/lora/sx1257.c
 new file mode 100644
-index 000000000000..c4e04ee3ec4b
+index 000000000000..40969b148a50
 --- /dev/null
-+++ b/drivers/net/lora/sx1257.c
-@@ -0,0 +1,96 @@
++++ b/drivers/net/lora/Kconfig
+@@ -0,0 +1,18 @@
++#
++# LoRa
++#
++
++menu "LoRa Device Drivers"
++
++config LORA_DEV
++	tristate "LoRa drivers"
++	default y
++	help
++	  LoRa ...
++	  If unsure, say Y.
++
++#
++# Alphabetically sorted.
++#
++
++endmenu
+diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
+new file mode 100644
+index 000000000000..8f9d25ea4e70
+--- /dev/null
++++ b/drivers/net/lora/Makefile
+@@ -0,0 +1,10 @@
++#
++# LoRa
++#
++
++obj-$(CONFIG_LORA_DEV) += lora-dev.o
++lora-dev-y := dev.o
++
++#
++# Alphabetically sorted.
++#
+diff --git a/drivers/net/lora/dev.c b/drivers/net/lora/dev.c
+new file mode 100644
+index 000000000000..8c01106008be
+--- /dev/null
++++ b/drivers/net/lora/dev.c
+@@ -0,0 +1,125 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Semtech SX1255/SX1257 LoRa transceiver
-+ *
-+ * Copyright (c) 2018 Andreas Färber
-+ *
-+ * Based on SX1301 HAL code:
-+ * Copyright (c) 2013 Semtech-Cycleo
++ * Copyright (c) 2017-2018 Andreas Färber
 + */
 +
++#include <linux/if_arp.h>
++#include <linux/lora.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/spi/spi.h>
++#include <linux/netdevice.h>
++#include <linux/lora/dev.h>
++#include <linux/lora/skb.h>
++#include <net/rtnetlink.h>
 +
-+static int sx1257_write(struct spi_device *spi, u8 reg, u8 val)
++#define LORA_MTU 256 /* XXX */
++
++struct sk_buff *alloc_lora_skb(struct net_device *dev, u8 **data)
 +{
-+	u8 buf[2];
++	struct sk_buff *skb;
 +
-+	buf[0] = reg | BIT(7);
-+	buf[1] = val;
-+	return spi_write(spi, buf, 2);
++	skb = netdev_alloc_skb(dev, sizeof(struct lora_skb_priv) + LORA_MTU);
++	if (unlikely(!skb))
++		return NULL;
++
++	skb->protocol = htons(ETH_P_LORA);
++	skb->pkt_type = PACKET_BROADCAST;
++	skb->ip_summed = CHECKSUM_UNNECESSARY;
++
++	skb_reset_mac_header(skb);
++	skb_reset_network_header(skb);
++	skb_reset_transport_header(skb);
++
++	lora_skb_reserve(skb);
++	lora_skb_prv(skb)->ifindex = dev->ifindex;
++
++	return skb;
 +}
++EXPORT_SYMBOL_GPL(alloc_lora_skb);
 +
-+static int sx1257_read(struct spi_device *spi, u8 reg, u8 *val)
++int open_loradev(struct net_device *dev)
 +{
-+	u8 addr = reg & 0x7f;
-+	return spi_write_then_read(spi, &addr, 1, val, 1);
-+}
-+
-+static int sx1257_probe(struct spi_device *spi)
-+{
-+	u8 val;
-+	int ret;
-+
-+	if (true) {
-+		ret = sx1257_read(spi, 0x07, &val);
-+		if (ret) {
-+			dev_err(&spi->dev, "version read failed\n");
-+			return ret;
-+		}
-+
-+		dev_info(&spi->dev, "SX125x version: %02x\n", (unsigned)val);
-+	}
-+
-+	ret = sx1257_write(spi, 0x10, 1 /* + 2 */);
-+	if (ret) {
-+		dev_err(&spi->dev, "clk write failed\n");
-+		return ret;
-+	}
-+
-+	dev_info(&spi->dev, "clk written\n");
-+
-+	if (true) {
-+		ret = sx1257_write(spi, 0x26, 13 + 2 * 16);
-+		if (ret) {
-+			dev_err(&spi->dev, "xosc write failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	dev_info(&spi->dev, "SX1257 module probed\n");
++	if (!netif_carrier_ok(dev))
++		netif_carrier_on(dev);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(open_loradev);
 +
-+static int sx1257_remove(struct spi_device *spi)
++void close_loradev(struct net_device *dev)
 +{
-+	dev_info(&spi->dev, "SX1257 module removed\n");
++}
++EXPORT_SYMBOL_GPL(close_loradev);
 +
-+	return 0;
++static void lora_setup(struct net_device *dev)
++{
++	dev->type = ARPHRD_LORA;
++	dev->mtu = LORA_MTU;
++	dev->hard_header_len = 0;
++	dev->addr_len = 0;
++	dev->tx_queue_len = 10;
++
++	dev->flags = IFF_NOARP;
++	dev->features = 0;
 +}
 +
-+#ifdef CONFIG_OF
-+static const struct of_device_id sx1257_dt_ids[] = {
-+	{ .compatible = "semtech,sx1255" },
-+	{ .compatible = "semtech,sx1257" },
-+	{}
++struct net_device *alloc_loradev(int sizeof_priv)
++{
++	struct net_device *dev;
++	struct lora_priv *priv;
++
++	dev = alloc_netdev(sizeof_priv, "lora%d", NET_NAME_UNKNOWN, lora_setup);
++	if (!dev)
++		return NULL;
++
++	priv = netdev_priv(dev);
++	priv->dev = dev;
++
++	return dev;
++}
++EXPORT_SYMBOL_GPL(alloc_loradev);
++
++void free_loradev(struct net_device *dev)
++{
++	free_netdev(dev);
++}
++EXPORT_SYMBOL_GPL(free_loradev);
++
++static struct rtnl_link_ops lora_link_ops __read_mostly = {
++	.kind = "lora",
++	.setup = lora_setup,
 +};
-+MODULE_DEVICE_TABLE(of, sx1257_dt_ids);
-+#endif
 +
-+static struct spi_driver sx1257_spi_driver = {
-+	.driver = {
-+		.name = "sx1257",
-+		.of_match_table = of_match_ptr(sx1257_dt_ids),
-+	},
-+	.probe = sx1257_probe,
-+	.remove = sx1257_remove,
-+};
++int register_loradev(struct net_device *dev)
++{
++	dev->rtnl_link_ops = &lora_link_ops;
++	return register_netdev(dev);
++}
++EXPORT_SYMBOL_GPL(register_loradev);
 +
-+module_spi_driver(sx1257_spi_driver);
++void unregister_loradev(struct net_device *dev)
++{
++	unregister_netdev(dev);
++}
++EXPORT_SYMBOL_GPL(unregister_loradev);
 +
-+MODULE_DESCRIPTION("SX1257 SPI driver");
-+MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
++static int __init lora_dev_init(void)
++{
++	printk("lora-dev: init\n");
++
++	return rtnl_link_register(&lora_link_ops);
++}
++
++static void __exit lora_dev_exit(void)
++{
++	printk("lora-dev: exit\n");
++
++	rtnl_link_unregister(&lora_link_ops);
++}
++
++module_init(lora_dev_init);
++module_exit(lora_dev_exit);
++
++MODULE_DESCRIPTION("LoRa device driver interface");
++MODULE_ALIAS_RTNL_LINK("lora");
 +MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Andreas Färber");
+diff --git a/include/linux/lora/dev.h b/include/linux/lora/dev.h
+new file mode 100644
+index 000000000000..531e68f0c9a6
+--- /dev/null
++++ b/include/linux/lora/dev.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * linux/lora/dev.h
++ *
++ * Copyright (c) 2017-2018 Andreas Färber
++ */
++#ifndef _LORA_DEV_H
++#define _LORA_DEV_H
++
++#include <linux/netdevice.h>
++
++struct net_device *alloc_loradev(int sizeof_priv);
++void free_loradev(struct net_device *dev);
++int register_loradev(struct net_device *dev);
++void unregister_loradev(struct net_device *dev);
++int open_loradev(struct net_device *dev);
++void close_loradev(struct net_device *dev);
++
++struct lora_priv {
++	struct net_device *dev;
++};
++
++#endif /* _LORA_DEV_H */
+diff --git a/net/lora/Kconfig b/net/lora/Kconfig
+index 44972ea8769f..20658fea3c7c 100644
+--- a/net/lora/Kconfig
++++ b/net/lora/Kconfig
+@@ -7,3 +7,9 @@ menuconfig LORA
+ 	tristate "LoRa subsystem support"
+ 	help
+ 	  LoRa ...
++
++if LORA
++
++source "drivers/net/lora/Kconfig"
++
++endif
 -- 
 2.16.4
 
