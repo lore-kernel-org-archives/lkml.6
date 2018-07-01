@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5163CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11BEC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18BDA259F8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BDA259F8
+	by mail.kernel.org (Postfix) with ESMTP id 657E625A0A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657E625A0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933856AbeGAS3V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:29:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32816 "EHLO
+        id S933292AbeGAS3q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:29:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964794AbeGAQRb (ORCPT
+        with ESMTP id S964772AbeGAQRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:31 -0400
+        Sun, 1 Jul 2018 12:17:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B213792B;
-        Sun,  1 Jul 2018 16:17:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB91C86A;
+        Sun,  1 Jul 2018 16:17:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.4 058/105] PCI: pciehp: Clear Presence Detect and Data Link Layer Status Changed on resume
-Date:   Sun,  1 Jul 2018 18:02:08 +0200
-Message-Id: <20180701153153.715691394@linuxfoundation.org>
+        Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.4 056/105] mtd: cfi_cmdset_0002: Avoid walking all chips when unlocking.
+Date:   Sun,  1 Jul 2018 18:02:06 +0200
+Message-Id: <20180701153153.586532599@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,83 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit 13c65840feab8109194f9490c9870587173cb29d upstream.
+commit f1ce87f6080b1dda7e7b1eda3da332add19d87b9 upstream.
 
-After a suspend/resume cycle the Presence Detect or Data Link Layer Status
-Changed bits might be set.  If we don't clear them those events will not
-fire anymore and nothing happens for instance when a device is now
-hot-unplugged.
+cfi_ppb_unlock() walks all flash chips when unlocking sectors,
+avoid walking chips unaffected by the unlock operation.
 
-Fix this by clearing those bits in a newly introduced function
-pcie_reenable_notification().  This should be fine because immediately
-after, we check if the adapter is still present by reading directly from
-the status register.
-
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
 Cc: stable@vger.kernel.org
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp.h      |    2 +-
- drivers/pci/hotplug/pciehp_core.c |    2 +-
- drivers/pci/hotplug/pciehp_hpc.c  |   13 ++++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -134,7 +134,7 @@ struct controller *pcie_init(struct pcie
- int pcie_init_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
--void pcie_enable_notification(struct controller *ctrl);
-+void pcie_reenable_notification(struct controller *ctrl);
- int pciehp_power_on_slot(struct slot *slot);
- void pciehp_power_off_slot(struct slot *slot);
- void pciehp_get_power_status(struct slot *slot, u8 *status);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -295,7 +295,7 @@ static int pciehp_resume(struct pcie_dev
- 	ctrl = get_service_data(dev);
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -2683,6 +2683,8 @@ static int __maybe_unused cfi_ppb_unlock
+ 			i++;
  
- 	/* reinitialize the chipset's event detection logic */
--	pcie_enable_notification(ctrl);
-+	pcie_reenable_notification(ctrl);
+ 		if (adr >> cfi->chipshift) {
++			if (offset >= (ofs + len))
++				break;
+ 			adr = 0;
+ 			chipnum++;
  
- 	slot = ctrl->slot;
- 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -628,7 +628,7 @@ static irqreturn_t pcie_isr(int irq, voi
- 	return IRQ_HANDLED;
- }
- 
--void pcie_enable_notification(struct controller *ctrl)
-+static void pcie_enable_notification(struct controller *ctrl)
- {
- 	u16 cmd, mask;
- 
-@@ -666,6 +666,17 @@ void pcie_enable_notification(struct con
- 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
- }
- 
-+void pcie_reenable_notification(struct controller *ctrl)
-+{
-+	/*
-+	 * Clear both Presence and Data Link Layer Changed to make sure
-+	 * those events still fire after we have re-enabled them.
-+	 */
-+	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
-+				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
-+	pcie_enable_notification(ctrl);
-+}
-+
- static void pcie_disable_notification(struct controller *ctrl)
- {
- 	u16 mask;
 
 
