@@ -3,36 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA919C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D83DC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7904B254CD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7904B254CD
+	by mail.kernel.org (Postfix) with ESMTP id 02AC4254DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AC4254DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934075AbeGAQpR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38178 "EHLO
+        id S934122AbeGAQzS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:55:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38168 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932883AbeGAQpM (ORCPT
+        with ESMTP id S934017AbeGAQpJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:12 -0400
+        Sun, 1 Jul 2018 12:45:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68515AA6;
-        Sun,  1 Jul 2018 16:45:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D6C9A73;
+        Sun,  1 Jul 2018 16:45:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, martin bayern <Martinbayern@outlook.com>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Martin Townsend <mtownsend1973@gmail.com>,
         Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.17 153/220] ubi: fastmap: Correctly handle interrupted erasures in EBA
-Date:   Sun,  1 Jul 2018 18:22:57 +0200
-Message-Id: <20180701160914.686011552@linuxfoundation.org>
+Subject: [PATCH 4.17 152/220] ubi: fastmap: Cancel work upon detach
+Date:   Sun,  1 Jul 2018 18:22:56 +0200
+Message-Id: <20180701160914.645275127@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,139 +53,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Weinberger <richard@nod.at>
 
-commit 781932375ffc6411713ee0926ccae8596ed0261c upstream.
+commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
 
-Fastmap cannot track the LEB unmap operation, therefore it can
-happen that after an interrupted erasure the mapping still looks
-good from Fastmap's point of view, while reading from the PEB will
-cause an ECC error and confuses the upper layer.
+Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
+fastmap work on detach") does not really fix the problem, it just
+reduces the risk to hit the race window where fastmap work races against
+free()'ing ubi->volumes[].
 
-Instead of teaching users of UBI how to deal with that, we read back
-the VID header and check for errors. If the PEB is empty or shows ECC
-errors we fixup the mapping and schedule the PEB for erasure.
+The correct approach is making sure that no more fastmap work is in
+progress before we free ubi data structures.
+So we cancel fastmap work right after the ubi background thread is
+stopped.
+By setting ubi->thread_enabled to zero we make sure that no further work
+tries to wake the thread.
 
-Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
-Cc: <stable@vger.kernel.org>
-Reported-by: martin bayern <Martinbayern@outlook.com>
+Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
+Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
+Cc: stable@vger.kernel.org
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Martin Townsend <mtownsend1973@gmail.com>
+
 Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/eba.c |   90 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
+ drivers/mtd/ubi/build.c |    3 +++
+ drivers/mtd/ubi/wl.c    |    4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -490,6 +490,82 @@ out_unlock:
- 	return err;
- }
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1091,6 +1091,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
+ 	if (ubi->bgt_thread)
+ 		kthread_stop(ubi->bgt_thread);
  
 +#ifdef CONFIG_MTD_UBI_FASTMAP
-+/**
-+ * check_mapping - check and fixup a mapping
-+ * @ubi: UBI device description object
-+ * @vol: volume description object
-+ * @lnum: logical eraseblock number
-+ * @pnum: physical eraseblock number
-+ *
-+ * Checks whether a given mapping is valid. Fastmap cannot track LEB unmap
-+ * operations, if such an operation is interrupted the mapping still looks
-+ * good, but upon first read an ECC is reported to the upper layer.
-+ * Normaly during the full-scan at attach time this is fixed, for Fastmap
-+ * we have to deal with it while reading.
-+ * If the PEB behind a LEB shows this symthom we change the mapping to
-+ * %UBI_LEB_UNMAPPED and schedule the PEB for erasure.
-+ *
-+ * Returns 0 on success, negative error code in case of failure.
-+ */
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+			 int *pnum)
-+{
-+	int err;
-+	struct ubi_vid_io_buf *vidb;
-+
-+	if (!ubi->fast_attach)
-+		return 0;
-+
-+	vidb = ubi_alloc_vid_buf(ubi, GFP_NOFS);
-+	if (!vidb)
-+		return -ENOMEM;
-+
-+	err = ubi_io_read_vid_hdr(ubi, *pnum, vidb, 0);
-+	if (err > 0 && err != UBI_IO_BITFLIPS) {
-+		int torture = 0;
-+
-+		switch (err) {
-+			case UBI_IO_FF:
-+			case UBI_IO_FF_BITFLIPS:
-+			case UBI_IO_BAD_HDR:
-+			case UBI_IO_BAD_HDR_EBADMSG:
-+				break;
-+			default:
-+				ubi_assert(0);
-+		}
-+
-+		if (err == UBI_IO_BAD_HDR_EBADMSG || err == UBI_IO_FF_BITFLIPS)
-+			torture = 1;
-+
-+		down_read(&ubi->fm_eba_sem);
-+		vol->eba_tbl->entries[lnum].pnum = UBI_LEB_UNMAPPED;
-+		up_read(&ubi->fm_eba_sem);
-+		ubi_wl_put_peb(ubi, vol->vol_id, lnum, *pnum, torture);
-+
-+		*pnum = UBI_LEB_UNMAPPED;
-+	} else if (err < 0) {
-+		ubi_err(ubi, "unable to read VID header back from PEB %i: %i",
-+			*pnum, err);
-+
-+		goto out_free;
-+	}
-+
-+	err = 0;
-+
-+out_free:
-+	ubi_free_vid_buf(vidb);
-+
-+	return err;
-+}
-+#else
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+		  int *pnum)
-+{
-+	return 0;
-+}
++	cancel_work_sync(&ubi->fm_work);
 +#endif
-+
- /**
-  * ubi_eba_read_leb - read data.
-  * @ubi: UBI device description object
-@@ -522,7 +598,13 @@ int ubi_eba_read_leb(struct ubi_device *
- 		return err;
+ 	ubi_debugfs_exit_dev(ubi);
+ 	uif_close(ubi);
  
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
--	if (pnum < 0) {
-+	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out_unlock;
-+	}
-+
-+	if (pnum == UBI_LEB_UNMAPPED) {
- 		/*
- 		 * The logical eraseblock is not mapped, fill the whole buffer
- 		 * with 0xFF bytes. The exception is static volumes for which
-@@ -931,6 +1013,12 @@ int ubi_eba_write_leb(struct ubi_device
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1505,6 +1505,7 @@ int ubi_thread(void *u)
+ 	}
  
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
- 	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out;
-+	}
-+
-+	if (pnum >= 0) {
- 		dbg_eba("write %d bytes at offset %d of LEB %d:%d, PEB %d",
- 			len, offset, vol_id, lnum, pnum);
+ 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
++	ubi->thread_enabled = 0;
+ 	return 0;
+ }
+ 
+@@ -1514,9 +1515,6 @@ int ubi_thread(void *u)
+  */
+ static void shutdown_work(struct ubi_device *ubi)
+ {
+-#ifdef CONFIG_MTD_UBI_FASTMAP
+-	flush_work(&ubi->fm_work);
+-#endif
+ 	while (!list_empty(&ubi->works)) {
+ 		struct ubi_work *wrk;
  
 
 
