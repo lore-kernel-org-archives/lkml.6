@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75335C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5504C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2F824377
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2F824377
+	by mail.kernel.org (Postfix) with ESMTP id 88C2124377
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C2124377
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932730AbeGAQN6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:13:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60240 "EHLO
+        id S1753065AbeGAQOD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:14:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60254 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752449AbeGAQNz (ORCPT
+        with ESMTP id S932722AbeGAQN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:55 -0400
+        Sun, 1 Jul 2018 12:13:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7448986A;
-        Sun,  1 Jul 2018 16:13:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3766F86A;
+        Sun,  1 Jul 2018 16:13:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 3.18 69/85] PCI: pciehp: Clear Presence Detect and Data Link Layer Status Changed on resume
-Date:   Sun,  1 Jul 2018 18:02:27 +0200
-Message-Id: <20180701153125.125639304@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>
+Subject: [PATCH 3.18 70/85] MIPS: io: Add barrier after register read in inX()
+Date:   Sun,  1 Jul 2018 18:02:28 +0200
+Message-Id: <20180701153125.162697389@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -52,83 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 13c65840feab8109194f9490c9870587173cb29d upstream.
+commit 18f3e95b90b28318ef35910d21c39908de672331 upstream.
 
-After a suspend/resume cycle the Presence Detect or Data Link Layer Status
-Changed bits might be set.  If we don't clear them those events will not
-fire anymore and nothing happens for instance when a device is now
-hot-unplugged.
+While a barrier is present in the outX() functions before the register
+write, a similar barrier is missing in the inX() functions after the
+register read. This could allow memory accesses following inX() to
+observe stale data.
 
-Fix this by clearing those bits in a newly introduced function
-pcie_reenable_notification().  This should be fine because immediately
-after, we check if the adapter is still present by reading directly from
-the status register.
+This patch is very similar to commit a1cc7034e33d12dc1 ("MIPS: io: Add
+barrier after register read in readX()"). Because war_io_reorder_wmb()
+is both used by writeX() and outX(), if readX() need a barrier then so
+does inX().
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19516/
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp.h      |    2 +-
- drivers/pci/hotplug/pciehp_core.c |    2 +-
- drivers/pci/hotplug/pciehp_hpc.c  |   13 ++++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ arch/mips/include/asm/io.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -144,7 +144,7 @@ struct controller *pcie_init(struct pcie
- int pcie_init_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
--void pcie_enable_notification(struct controller *ctrl);
-+void pcie_reenable_notification(struct controller *ctrl);
- int pciehp_power_on_slot(struct slot *slot);
- void pciehp_power_off_slot(struct slot *slot);
- void pciehp_get_power_status(struct slot *slot, u8 *status);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -332,7 +332,7 @@ static int pciehp_resume(struct pcie_dev
- 	ctrl = get_service_data(dev);
- 
- 	/* reinitialize the chipset's event detection logic */
--	pcie_enable_notification(ctrl);
-+	pcie_reenable_notification(ctrl);
- 
- 	slot = ctrl->slot;
- 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -602,7 +602,7 @@ static irqreturn_t pcie_isr(int irq, voi
- 	return IRQ_HANDLED;
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -412,6 +412,8 @@ static inline type pfx##in##bwlq##p(unsi
+ 	__val = *__addr;						\
+ 	slow;								\
+ 									\
++	/* prevent prefetching of coherent DMA data prematurely */	\
++	rmb();								\
+ 	return pfx##ioswab##bwlq(__addr, __val);			\
  }
  
--void pcie_enable_notification(struct controller *ctrl)
-+static void pcie_enable_notification(struct controller *ctrl)
- {
- 	u16 cmd, mask;
- 
-@@ -642,6 +642,17 @@ void pcie_enable_notification(struct con
- 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
- }
- 
-+void pcie_reenable_notification(struct controller *ctrl)
-+{
-+	/*
-+	 * Clear both Presence and Data Link Layer Changed to make sure
-+	 * those events still fire after we have re-enabled them.
-+	 */
-+	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
-+				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
-+	pcie_enable_notification(ctrl);
-+}
-+
- static void pcie_disable_notification(struct controller *ctrl)
- {
- 	u16 mask;
 
 
