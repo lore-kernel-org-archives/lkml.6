@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF1FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2BEC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115332502D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115332502D
+	by mail.kernel.org (Postfix) with ESMTP id 88E3F2540A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E3F2540A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933999AbeGAQpF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38146 "EHLO
+        id S934050AbeGAQpL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:45:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932883AbeGAQpA (ORCPT
+        with ESMTP id S932883AbeGAQpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:00 -0400
+        Sun, 1 Jul 2018 12:45:06 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E639B92B;
-        Sun,  1 Jul 2018 16:44:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1D72A73;
+        Sun,  1 Jul 2018 16:45:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.17 183/220] NFSv4: Fix a typo in nfs41_sequence_process
-Date:   Sun,  1 Jul 2018 18:23:27 +0200
-Message-Id: <20180701160915.858085985@linuxfoundation.org>
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 4.17 151/220] rpmsg: smd: do not use mananged resources for endpoints and channels
+Date:   Sun,  1 Jul 2018 18:22:55 +0200
+Message-Id: <20180701160914.607277239@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,32 +50,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-commit 995891006ccbb73c0c9c3923cf9d25c4d07ec16b upstream.
+commit 4a2e84c6ed85434ce7843e4844b4d3263f7e233b upstream.
 
-We want to compare the slot_id to the highest slot number advertised by the
-server.
+All the managed resources would be freed by the time release function
+is invoked. Handling such memory in qcom_smd_edge_release() would do
+bad things.
 
-Fixes: 3be0f80b5fe9c ("NFSv4.1: Fix up replays of interrupted requests")
-Cc: stable@vger.kernel.org # 4.15+
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Found this issue while testing Audio usecase where the dsp is started up
+and shutdown in a loop.
+
+This patch fixes this issue by using simple kzalloc for allocating
+channel->name and channel which is then freed in qcom_smd_edge_release().
+
+Without this patch restarting a remoteproc would crash the system.
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4proc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/qcom_smd.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -751,7 +751,7 @@ static int nfs41_sequence_process(struct
- 		 * The slot id we used was probably retired. Try again
- 		 * using a different slot id.
- 		 */
--		if (slot->seq_nr < slot->table->target_highest_slotid)
-+		if (slot->slot_nr < slot->table->target_highest_slotid)
- 			goto session_recover;
- 		goto retry_nowait;
- 	case -NFS4ERR_SEQ_MISORDERED:
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1100,12 +1100,12 @@ static struct qcom_smd_channel *qcom_smd
+ 	void *info;
+ 	int ret;
+ 
+-	channel = devm_kzalloc(&edge->dev, sizeof(*channel), GFP_KERNEL);
++	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
+ 	if (!channel)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	channel->edge = edge;
+-	channel->name = devm_kstrdup(&edge->dev, name, GFP_KERNEL);
++	channel->name = kstrdup(name, GFP_KERNEL);
+ 	if (!channel->name)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1156,8 +1156,8 @@ static struct qcom_smd_channel *qcom_smd
+ 	return channel;
+ 
+ free_name_and_channel:
+-	devm_kfree(&edge->dev, channel->name);
+-	devm_kfree(&edge->dev, channel);
++	kfree(channel->name);
++	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
+ }
+@@ -1378,13 +1378,13 @@ static int qcom_smd_parse_edge(struct de
+  */
+ static void qcom_smd_edge_release(struct device *dev)
+ {
+-	struct qcom_smd_channel *channel;
++	struct qcom_smd_channel *channel, *tmp;
+ 	struct qcom_smd_edge *edge = to_smd_edge(dev);
+ 
+-	list_for_each_entry(channel, &edge->channels, list) {
+-		SET_RX_CHANNEL_INFO(channel, state, SMD_CHANNEL_CLOSED);
+-		SET_RX_CHANNEL_INFO(channel, head, 0);
+-		SET_RX_CHANNEL_INFO(channel, tail, 0);
++	list_for_each_entry_safe(channel, tmp, &edge->channels, list) {
++		list_del(&channel->list);
++		kfree(channel->name);
++		kfree(channel);
+ 	}
+ 
+ 	kfree(edge);
 
 
