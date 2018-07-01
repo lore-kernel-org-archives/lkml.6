@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3565C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03B5C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1A325693
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1A325693
+	by mail.kernel.org (Postfix) with ESMTP id 9C6BF2446F
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6BF2446F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965957AbeGAR2S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:28:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36172 "EHLO
+        id S1031441AbeGAR2q (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:28:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36146 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031372AbeGAQhE (ORCPT
+        with ESMTP id S1031061AbeGAQg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:04 -0400
+        Sun, 1 Jul 2018 12:36:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 239CFA73;
-        Sun,  1 Jul 2018 16:37:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E192AD8;
+        Sun,  1 Jul 2018 16:36:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.17 015/220] mtd: spi-nor: intel-spi: Fix atomic sequence handling
-Date:   Sun,  1 Jul 2018 18:20:39 +0200
-Message-Id: <20180701160908.992043064@linuxfoundation.org>
+        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
+        Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 4.17 012/220] m68k/mac: Fix SWIM memory resource end address
+Date:   Sun,  1 Jul 2018 18:20:36 +0200
+Message-Id: <20180701160908.873832509@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,205 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-commit c7d6a82d90e193b1e4daba957e3908f26306d491 upstream.
+commit 3e2816c1078eb2b5a3276eb83d4da156b3e2d04f upstream.
 
-On many older systems using SW sequencer the PREOP_OPTYPE register
-contains two preopcodes as following:
+The resource size is 0x2000 == end - start + 1.
+Therefore end == start + 0x2000 - 1.
 
-  PREOP_OPTYPE=0xf2785006
-
-The last two bytes are the opcodes decoded to:
-
-  0x50 - Write enable for volatile status register
-  0x06 - Write enable
-
-The former is used to modify volatile bits in the status register. For
-non-volatile bits the latter is needed. Preopcodes are used in SW
-sequencer to send one command "atomically" without anything else
-interfering the transfer. The sequence that gets executed is:
-
-  - Send preopcode (write enable) from PREOP_OPTYPE register
-  - Send the actual SPI command
-  - Poll busy bit in the status register (0x05, RDSR)
-
-Commit 8c473dd61bb5 ("spi-nor: intel-spi: Don't assume OPMENU0/1 to be
-programmed by BIOS") enabled atomic sequence handling but because both
-preopcodes are programmed, the following happens:
-
-  if (preop >> 8)
-  	val |= SSFSTS_CTL_SPOP;
-
-Since on these systems preop >> 8 == 0x50 we end up picking volatile
-write enable instead. Because of this the actual write command is pretty
-much NOP unless there is a WREN latched in the chip already.
-
-Furthermore we should not really just assume that WREN was issued in
-previous call to intel_spi_write_reg() because that might not be the
-case.
-
-This updates driver to first check that the opcode is actually available
-in PREOP_OPTYPE register and if not return error back to the spi-nor
-core (if the controller is not locked we program it now). In addition we
-save the opcode to ispi->atomic_preopcode field which is checked in next
-call to intel_spi_sw_cycle() to actually enable atomic sequence using
-the requested preopcode.
-
-Fixes: 8c473dd61bb5 ("spi-nor: intel-spi: Don't assume OPMENU0/1 to be programmed by BIOS")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Laurent Vivier <lvivier@redhat.com>
+Cc: stable@vger.kernel.org # v4.14+
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Acked-by: Laurent Vivier <lvivier@redhat.com>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/spi-nor/intel-spi.c |   76 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 67 insertions(+), 9 deletions(-)
+ arch/m68k/mac/config.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/spi-nor/intel-spi.c
-+++ b/drivers/mtd/spi-nor/intel-spi.c
-@@ -136,6 +136,7 @@
-  * @swseq_reg: Use SW sequencer in register reads/writes
-  * @swseq_erase: Use SW sequencer in erase operation
-  * @erase_64k: 64k erase supported
-+ * @atomic_preopcode: Holds preopcode when atomic sequence is requested
-  * @opcodes: Opcodes which are supported. This are programmed by BIOS
-  *           before it locks down the controller.
-  */
-@@ -153,6 +154,7 @@ struct intel_spi {
- 	bool swseq_reg;
- 	bool swseq_erase;
- 	bool erase_64k;
-+	u8 atomic_preopcode;
- 	u8 opcodes[8];
- };
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -1005,7 +1005,7 @@ int __init mac_platform_init(void)
+ 		struct resource swim_rsrc = {
+ 			.flags = IORESOURCE_MEM,
+ 			.start = (resource_size_t)swim_base,
+-			.end   = (resource_size_t)swim_base + 0x2000,
++			.end   = (resource_size_t)swim_base + 0x1FFF,
+ 		};
  
-@@ -474,7 +476,7 @@ static int intel_spi_sw_cycle(struct int
- 			      int optype)
- {
- 	u32 val = 0, status;
--	u16 preop;
-+	u8 atomic_preopcode;
- 	int ret;
- 
- 	ret = intel_spi_opcode_index(ispi, opcode, optype);
-@@ -484,17 +486,42 @@ static int intel_spi_sw_cycle(struct int
- 	if (len > INTEL_SPI_FIFO_SZ)
- 		return -EINVAL;
- 
-+	/*
-+	 * Always clear it after each SW sequencer operation regardless
-+	 * of whether it is successful or not.
-+	 */
-+	atomic_preopcode = ispi->atomic_preopcode;
-+	ispi->atomic_preopcode = 0;
-+
- 	/* Only mark 'Data Cycle' bit when there is data to be transferred */
- 	if (len > 0)
- 		val = ((len - 1) << SSFSTS_CTL_DBC_SHIFT) | SSFSTS_CTL_DS;
- 	val |= ret << SSFSTS_CTL_COP_SHIFT;
- 	val |= SSFSTS_CTL_FCERR | SSFSTS_CTL_FDONE;
- 	val |= SSFSTS_CTL_SCGO;
--	preop = readw(ispi->sregs + PREOP_OPTYPE);
--	if (preop) {
--		val |= SSFSTS_CTL_ACS;
--		if (preop >> 8)
--			val |= SSFSTS_CTL_SPOP;
-+	if (atomic_preopcode) {
-+		u16 preop;
-+
-+		switch (optype) {
-+		case OPTYPE_WRITE_NO_ADDR:
-+		case OPTYPE_WRITE_WITH_ADDR:
-+			/* Pick matching preopcode for the atomic sequence */
-+			preop = readw(ispi->sregs + PREOP_OPTYPE);
-+			if ((preop & 0xff) == atomic_preopcode)
-+				; /* Do nothing */
-+			else if ((preop >> 8) == atomic_preopcode)
-+				val |= SSFSTS_CTL_SPOP;
-+			else
-+				return -EINVAL;
-+
-+			/* Enable atomic sequence */
-+			val |= SSFSTS_CTL_ACS;
-+			break;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+
- 	}
- 	writel(val, ispi->sregs + SSFSTS_CTL);
- 
-@@ -538,13 +565,31 @@ static int intel_spi_write_reg(struct sp
- 
- 	/*
- 	 * This is handled with atomic operation and preop code in Intel
--	 * controller so skip it here now. If the controller is not locked,
--	 * program the opcode to the PREOP register for later use.
-+	 * controller so we only verify that it is available. If the
-+	 * controller is not locked, program the opcode to the PREOP
-+	 * register for later use.
-+	 *
-+	 * When hardware sequencer is used there is no need to program
-+	 * any opcodes (it handles them automatically as part of a command).
- 	 */
- 	if (opcode == SPINOR_OP_WREN) {
--		if (!ispi->locked)
-+		u16 preop;
-+
-+		if (!ispi->swseq_reg)
-+			return 0;
-+
-+		preop = readw(ispi->sregs + PREOP_OPTYPE);
-+		if ((preop & 0xff) != opcode && (preop >> 8) != opcode) {
-+			if (ispi->locked)
-+				return -EINVAL;
- 			writel(opcode, ispi->sregs + PREOP_OPTYPE);
-+		}
- 
-+		/*
-+		 * This enables atomic sequence on next SW sycle. Will
-+		 * be cleared after next operation.
-+		 */
-+		ispi->atomic_preopcode = opcode;
- 		return 0;
- 	}
- 
-@@ -569,6 +614,13 @@ static ssize_t intel_spi_read(struct spi
- 	u32 val, status;
- 	ssize_t ret;
- 
-+	/*
-+	 * Atomic sequence is not expected with HW sequencer reads. Make
-+	 * sure it is cleared regardless.
-+	 */
-+	if (WARN_ON_ONCE(ispi->atomic_preopcode))
-+		ispi->atomic_preopcode = 0;
-+
- 	switch (nor->read_opcode) {
- 	case SPINOR_OP_READ:
- 	case SPINOR_OP_READ_FAST:
-@@ -627,6 +679,9 @@ static ssize_t intel_spi_write(struct sp
- 	u32 val, status;
- 	ssize_t ret;
- 
-+	/* Not needed with HW sequencer write, make sure it is cleared */
-+	ispi->atomic_preopcode = 0;
-+
- 	while (len > 0) {
- 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
- 
-@@ -707,6 +762,9 @@ static int intel_spi_erase(struct spi_no
- 		return 0;
- 	}
- 
-+	/* Not needed with HW sequencer erase, make sure it is cleared */
-+	ispi->atomic_preopcode = 0;
-+
- 	while (len > 0) {
- 		writel(offs, ispi->base + FADDR);
- 
+ 		platform_device_register_simple("swim", -1, &swim_rsrc, 1);
 
 
