@@ -2,141 +2,214 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D1C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 246D4C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D682625567
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB8E325586
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="bxax1jf1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QJaFb9Rf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D682625567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rbn4yGy1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8E325586
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965199AbeGARFL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:05:11 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:42383 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753592AbeGARFB (ORCPT
+        id S965402AbeGARFX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:05:23 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39862 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965032AbeGARFJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 13:05:01 -0400
-Received: by mail-yb0-f195.google.com with SMTP id i3-v6so4298196ybl.9
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 10:05:01 -0700 (PDT)
+        Sun, 1 Jul 2018 13:05:09 -0400
+Received: by mail-it0-f68.google.com with SMTP id p185-v6so9120158itp.4
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 10:05:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8XFHVqQJumXHMdiabsqInOElStobXUDH3ocPWki42zM=;
-        b=bxax1jf11oeJWP/1EfEBwnZlivmYMa2ZMhHEnKlzDMkzWQdxxhzQkHZII2EJXjlD/w
-         7LzxxwDcbKiMUYRo90EbrBxu73b85IhwfGT+UTxOt3rXMoUc9TawGs9rgw2jEBPRtKpB
-         2JykqPqiYdMl2A/Nvcxj7MnvtMfyMph/SwAB12b6CQ06gGqgFhe/jBfjjsjzcAm7UuFD
-         9wgC/4qFMwcFiW4Fess427ioXQqtzCdAnm6r4a0Nqznn7uD2aIOMiyvTKpEC785leHlV
-         oe+TYIS8HPmhGQgDNqC3zw0UO5zDU85lN9+z2kawktR0T0dqwfhdEk72rGzF6ZuuhBoU
-         ld/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=8XFHVqQJumXHMdiabsqInOElStobXUDH3ocPWki42zM=;
-        b=QJaFb9RfK/IS/T8IpCMEc3LRmBVMS8AFBbyazouRjGGWdOq2Q48vPQAnSiPq5b5FeW
-         by5g9LW7zY7jxsqBEPOYlKXkFi1gHbeRPpftYHbakGRNnihKj9ItVShoJ3HMmb+8tOFD
-         225pc3sMmlNSF/GxauQyNYMlVDzjYDQZ5oSd8=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g2SOw2EVsJ3TU0nt/KFDG85Xt9IbUJukLwPkIVJxNt0=;
+        b=Rbn4yGy1b6sY70CrjPr7O7gSuptx1p0tfq/uYpMjuRdyOuo9Ppo4hRkMP2ymQyGDE7
+         sCxCY6+Try/tiM+azsf4Kxz8veM+Dmo4Q5/nIJ9XYgeNc6Goktf9dgGf7shhrDY9hOm3
+         zqpx9LuXLMxMk4W0kAfRDwWeIJvAiRdKTbmBs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=8XFHVqQJumXHMdiabsqInOElStobXUDH3ocPWki42zM=;
-        b=QHZM9ZT/8m2M1zKLt80JLDkZ9xzlc+jDriZSHLktz4iQixfprqDjUqUgc0+me2+6D1
-         R3knn4UpnDYBh0DB95Oww4EpmKtmYptMjduzPH3DG4WpVFuqeQgmX1ak04dFkbgLueFA
-         2bNHz22rIOtZ4jqjP/ClR8QGK3IVoGZ0uJvnfUPPRp80hYNFFlS7FltjBgOyOInPc+4h
-         aLaC/K7kw+lZzsR9VKPHvl7DtSdyqje9rH2/XhS6wtkxvS9fvYf+qIrC7SQaeMsv4gVc
-         Dbsgo4hb40uoE9h/HK9jmudghmJZcIMOdgpxycyRjflGsB8F4i5UYZHR16eOJAnlCpXc
-         xfKw==
-X-Gm-Message-State: APt69E3Iiy9Zz255W61FgFMoXjh0VM6eD4n9A0dn8WJ4LsLiC8rRPZYd
-        YNCeeU7fANVSlwXCIXxZ19OWqmiwjLHkeUh6bkStYA==
-X-Google-Smtp-Source: AAOMgpdZmSgU/HQltEg8hQtssxUR95s3lKTMsn/6kUCPCudY1G6nyO7knuwS5IFfcVe/AHFq5ELhbBr17Pdy1UEu0rU=
-X-Received: by 2002:a25:ce8e:: with SMTP id x136-v6mr1113299ybe.118.1530464700355;
- Sun, 01 Jul 2018 10:05:00 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g2SOw2EVsJ3TU0nt/KFDG85Xt9IbUJukLwPkIVJxNt0=;
+        b=gF3vsu49EBXzZsgUT61Oa0aF0oeCTYWP2weVf74/bDMTeKLNOUyThiwRtZTjSiWQ2U
+         8xSuAvm4UdBCwNGIQRc8la4wU5pLWdxT68KYeH5N3sIoI0sxiW5CvMs7htVrR3fczIeq
+         TNmrRlH7ACLv93lfqAmo9hBwnUVqKNi98rc/C+ZYQPgyFk4kQoTzmbTEU3x1qX6gcrmQ
+         8sePRqbWG1dduU0fA0ubT84H9YAPkDliFGd9dsqTm+Jzf/VqcqSDbe9escXuj3Rc9oHX
+         /8MkEQdjZjAJUWteNw/RZOzEosszK9IPvGtQ+46cDivXy0tpVgiwt+ej58+MTufiSuQQ
+         L0XQ==
+X-Gm-Message-State: APt69E3p0LtEbhdXRezYWRmDdBFTW0nueYh2+mX+2+61aVSQrxawqSMd
+        KG2pQLW8tXzEYd4yEn8nRiF8A1d/BGvVRm+MXxyU2BuD
+X-Google-Smtp-Source: AAOMgpdG5bs5j0dLslRSEUSrOqbvIX8c+VaPOR0wH6kQb2JP+3X0FPBbMpkE4qKWCnmcfO1mmke1wiz0goPgTXg36hQ=
+X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr2886633itg.1.1530464708016;
+ Sun, 01 Jul 2018 10:05:08 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 10:04:59 -0700 (PDT)
-In-Reply-To: <20180630070301.GA1706@sol.localdomain>
-References: <20180629002843.31095-1-keescook@chromium.org> <20180629002843.31095-10-keescook@chromium.org>
- <20180630070301.GA1706@sol.localdomain>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 1 Jul 2018 10:04:59 -0700
-X-Google-Sender-Auth: wrvIhcpnoHVeAw2bOsB76kMKo1k
-Message-ID: <CAGXu5jJ9eqETPdrvUZrV9bhnNQA6LwBuk+V5MeQrAS_M=_VX+Q@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH v3 9/9] crypto: shash: Remove VLA usage in
- unaligned hashing
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
+References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
+ <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
+ <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
+ <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
+ <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
+ <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
+ <675c0752ea41c9dc52c2a4b69f09fb9746207de3.camel@kernel.crashing.org>
+ <CA+55aFxqUyACDPBL4trTfGyJudg8P7YGazVGUW7-UaNFJiwZRQ@mail.gmail.com> <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+In-Reply-To: <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 1 Jul 2018 10:04:56 -0700
+Message-ID: <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Joel Stanley <joel@jms.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 12:03 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Thu, Jun 28, 2018 at 05:28:43PM -0700, Kees Cook wrote:
->> @@ -88,11 +81,13 @@ static int shash_update_unaligned(struct shash_desc *desc, const u8 *data,
->>       unsigned long alignmask = crypto_shash_alignmask(tfm);
->>       unsigned int unaligned_len = alignmask + 1 -
->>                                    ((unsigned long)data & alignmask);
->> -     u8 ubuf[shash_align_buffer_size(unaligned_len, alignmask)]
->> -             __aligned_largest;
->> +     u8 ubuf[MAX_ALGAPI_ALIGNMASK + 1];
->>       u8 *buf = PTR_ALIGN(&ubuf[0], alignmask + 1);
->>       int err;
->>
->> +     if (WARN_ON(buf + unaligned_len > ubuf + sizeof(ubuf)))
->> +             return -EINVAL;
->> +
+On Sun, Jul 1, 2018 at 12:16 AM Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
 >
-> How is 'ubuf' guaranteed to be large enough?  You removed the __aligned
-> attribute, so 'ubuf' can have any alignment.  So the aligned pointer 'buf' may
-> be as high as '&ubuf[alignmask]'.  Then, up to 'alignmask' bytes of data will be
-> copied into 'buf'... resulting in up to '2 * alignmask' bytes needed in 'ubuf'.
-> But you've only guaranteed 'alignmask + 1' bytes.
+> I suspect you didn't read it my entire argument or I wasn't clear
+> enough :-) This is actually the crux of the problem:
+>
+> Yes the object continues to exist. However, the *last* kobject_put to
+> it will no longer be done under whatever higher level locking the
+> subsystem provides (whatever prevents for example concurrent add and
+> removes).
 
-Hm, good point. Adding __aligned(MAX_ALGAPI_ALIGNMASK + 1) looks to
-fix this, yes?
+Well, yes and no.
 
-Also, if __aligned() is used here, can't PTR_ALIGN() be dropped? (I
-think you pointed this out earlier.)
+Why "no"?
 
-Also, is "unaligned_len" being calculated correctly? Let's say
-alignmask is 63. If data is binary ...111111, then unaligned_len will
-be 64 - 63 == 1, which is fine: we copy 1 byte out, bump the address
-by 1, and we're happily aligned to ...000000. If data is ...000000,
-then unaligned_len will be 64. But it should be 0. Shouldn't this be:
+The last dropping is actually not necessarily that interesting.
+Especially with the sysfs interface, we basically know that you can
+look up the object using RCU (since that's what the filesystem lookup
+does), and that basically means that the refcount is always the final
+serialization mechanism.There is nothing else that can possibly lock
+it.
 
-unsigned int unaligned_len;
+So this is where we disagree:
 
-unaligned_len = (unsigned long)data & alignmask;
-if (unaligned_len)
-    unaligned_len = alignmask + 1 - unaligned_len;
+> Thus in that scenario the "last minute" kobject_release() done by the
+> last kobject_put() will be effectively unprotected from for example the
+> gdp_mutex (in the case of the gluedirs) or whatever other locking the
+> subsystem owning the kobject is using to avoid making that "refount 0"
+> object "discoverable".
 
-And then ubuf only needs to be MAX_ALGAPI_ALIGNMASK, without the +1?
+No. *Fundamentally*, there is only one thing that protects that
+object: the refcount.
 
--Kees
+And my argument is that anything that has this model (which means
+anything that has any sysfs linkage, which pretty much means any
+kobject) absolutely *must* use "kobject_get_unless_zero()" unless it
+had an existing stable pointer and just wants to increase the refcount
+(ie "already got a reference throuigh one of my data structures that
+use the lock")
 
--- 
-Kees Cook
-Pixel Security
+But if you have that model, that means that the "last drop" is
+actually almost totally irrelevant.  Because it doesn't matter if it's
+done inside the lock or not - you know that once it has been done,
+that object is entirely gone. It's not discoverable any more -
+regardless of locking. The discoverability is basically controlled
+entirely by the refcount.
+
+So what happens then?
+
+The locking isn't important for the last release, but it *is*
+important for new object *creation*.
+
+Why?
+
+The refcount means that once an object is gone, it's gone for
+*everyone*. It's a one-way thing, and it's thread-safe. So the code
+that does *creation* can do this:
+
+ - get subsystem lock
+ - look up object (using the "unless_zero()" model)
+ - if you got the object, re-use it, and you're done: drop lock and return
+ - otherwise, you know that nobody else can get it either
+ - create new object and instantiate it
+ - drop lock
+
+and this means that you create a new object IFF the old object had its
+refcount drop to zero. So you always have exactly one copy (or no copy
+at all, in between the last drop and the creation of the new one).
+
+See? The lack of locking at drop time didn't matter.  The refcount
+itself serialized things.
+
+So the above is what I *think* the "glue_dir" logic should be. No need
+for any other count. Just re-use the old glue dir if you can find it,
+and create a new one if you can't.
+
+The one important thing is that the object lookup above needs to use
+the lookup needs to find the object all the way until the refcount has
+become zero. And that actually means that the object MUST NOT be
+removed from the object lists until *after* the refcount has been
+decremented to zero. Which is actually why that "automatic cleanup"
+that you hate is actually an integral and important part of the
+process: removing the object *before* the refcount went to zero is
+broken, because that means that the "look up object" phase can now
+miss an object that still has a non-zero refcount.
+
+> So my patch 1/2 prevents us from finding the old dying object (and thus
+> from crashing) but replaces this with the duplicate name problem.
+
+So I absolutely agree with your patch 1/2. My argument against it is
+actually that I think the "unless_zero" thing needs to be more
+universal.
+
+> My patch 2/2 removes that second problem by ensuring we remove the
+> object from sysfs synchronously in device_del when it no longer
+> contains any children, explicitely rather than implicitely by the
+> virtue of doing the "last" kobject_put.
+
+No. See above. The reason I think your patch 2/2 is wrong is that is
+actually *breaks* the above model, exactly because of that thing that
+you hatre.
+
+The explicit removal is actively wrong for the "I want to reuse the
+object" model, exactly because it happens before the refcount has gone
+to zero.
+
+> > No.  That the zero kobject_get() will not result in a warning. It just
+> > does a kref_get(), no warnings anywhere.
+>
+> It's there but it's in refcount:
+>
+> void refcount_inc(refcount_t *r)
+> {
+>         WARN_ONCE(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-after-free.\n");
+> }
+> EXPORT_SYMBOL(refcount_inc);
+>
+> In fact that's how I started digging into that problem in the first place :-)
+
+Hey, you are again hitting this because of extra config options.
+
+Because the refcount_inc() that I found looks like this:
+
+  static inline void refcount_inc(refcount_t *r)
+  {
+          atomic_inc(&r->refs);
+  }
+
+and has no warning.
+
+I wonder how many people actually run with REFCOUNT_FULL that warns -
+because it's way too expensive. It's not set in the default Fedora
+config, for example, and that's despite how Fedora tends to set all
+the other debug options.
+
+So no, it really doesn't warn normally.
+
+                Linus
