@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFFBC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6194C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26F6D24B03
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:44:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26F6D24B03
+	by mail.kernel.org (Postfix) with ESMTP id 75879256CC
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:45:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75879256CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030601AbeGARoP (ORCPT
+        id S1030923AbeGAQeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:44:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35596 "EHLO
+        Sun, 1 Jul 2018 12:34:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35522 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030952AbeGAQe1 (ORCPT
+        with ESMTP id S1030505AbeGAQeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:27 -0400
+        Sun, 1 Jul 2018 12:34:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1A5F49B;
-        Sun,  1 Jul 2018 16:34:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7FE049B;
+        Sun,  1 Jul 2018 16:34:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 080/157] PCI: Add ACS quirk for Intel 300 series
-Date:   Sun,  1 Jul 2018 18:22:32 +0200
-Message-Id: <20180701160856.588317083@linuxfoundation.org>
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 4.14 108/157] rpmsg: smd: do not use mananged resources for endpoints and channels
+Date:   Sun,  1 Jul 2018 18:23:00 +0200
+Message-Id: <20180701160857.938337328@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,43 +51,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-commit f154a718e6cc0d834f5ac4dc4c3b174e65f3659e upstream.
+commit 4a2e84c6ed85434ce7843e4844b4d3263f7e233b upstream.
 
-Intel 300 series chipset still has the same ACS issue as the previous
-generations so extend the ACS quirk to cover it as well.
+All the managed resources would be freed by the time release function
+is invoked. Handling such memory in qcom_smd_edge_release() would do
+bad things.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org
+Found this issue while testing Audio usecase where the dsp is started up
+and shutdown in a loop.
+
+This patch fixes this issue by using simple kzalloc for allocating
+channel->name and channel which is then freed in qcom_smd_edge_release().
+
+Without this patch restarting a remoteproc would crash the system.
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/rpmsg/qcom_smd.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4388,6 +4388,11 @@ static int pci_quirk_qcom_rp_acs(struct
-  *
-  * 0x9d10-0x9d1b PCI Express Root port #{1-12}
-  *
-+ * The 300 series chipset suffers from the same bug so include those root
-+ * ports here as well.
-+ *
-+ * 0xa32c-0xa343 PCI Express Root port #{0-24}
-+ *
-  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
-  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
-  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
-@@ -4405,6 +4410,7 @@ static bool pci_quirk_intel_spt_pch_acs_
- 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
- 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
- 	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
-+	case 0xa32c ... 0xa343:				/* 300 series */
- 		return true;
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1043,12 +1043,12 @@ static struct qcom_smd_channel *qcom_smd
+ 	void *info;
+ 	int ret;
+ 
+-	channel = devm_kzalloc(&edge->dev, sizeof(*channel), GFP_KERNEL);
++	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
+ 	if (!channel)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	channel->edge = edge;
+-	channel->name = devm_kstrdup(&edge->dev, name, GFP_KERNEL);
++	channel->name = kstrdup(name, GFP_KERNEL);
+ 	if (!channel->name)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1098,8 +1098,8 @@ static struct qcom_smd_channel *qcom_smd
+ 	return channel;
+ 
+ free_name_and_channel:
+-	devm_kfree(&edge->dev, channel->name);
+-	devm_kfree(&edge->dev, channel);
++	kfree(channel->name);
++	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
+ }
+@@ -1320,13 +1320,13 @@ static int qcom_smd_parse_edge(struct de
+  */
+ static void qcom_smd_edge_release(struct device *dev)
+ {
+-	struct qcom_smd_channel *channel;
++	struct qcom_smd_channel *channel, *tmp;
+ 	struct qcom_smd_edge *edge = to_smd_edge(dev);
+ 
+-	list_for_each_entry(channel, &edge->channels, list) {
+-		SET_RX_CHANNEL_INFO(channel, state, SMD_CHANNEL_CLOSED);
+-		SET_RX_CHANNEL_INFO(channel, head, 0);
+-		SET_RX_CHANNEL_INFO(channel, tail, 0);
++	list_for_each_entry_safe(channel, tmp, &edge->channels, list) {
++		list_del(&channel->list);
++		kfree(channel->name);
++		kfree(channel);
  	}
  
+ 	kfree(edge);
 
 
