@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A3AC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49496C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 959A9256CC
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:37:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959A9256CC
+	by mail.kernel.org (Postfix) with ESMTP id 73317256CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:37:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73317256CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031214AbeGAQgF (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:36:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35904 "EHLO
+        id S934239AbeGARh5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:37:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031190AbeGAQgA (ORCPT
+        with ESMTP id S1031215AbeGAQgF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:00 -0400
+        Sun, 1 Jul 2018 12:36:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D90149B;
-        Sun,  1 Jul 2018 16:35:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33CAD49B;
+        Sun,  1 Jul 2018 16:36:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Benjamin Berg <bberg@redhat.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 148/157] ALSA: hda/realtek - Fix pop noise on Lenovo P50 & co
-Date:   Sun,  1 Jul 2018 18:23:40 +0200
-Message-Id: <20180701160900.577158703@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.14 115/157] mfd: intel-lpss: Program REMAP register in PIO mode
+Date:   Sun,  1 Jul 2018 18:23:07 +0200
+Message-Id: <20180701160858.301992590@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,60 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit d5a6cabf02210b896a60eee7c04c670ee9ba6dca upstream.
+commit d28b62520830b2d0bffa2d98e81afc9f5e537e8b upstream.
 
-Some Lenovo laptops, e.g. Lenovo P50, showed the pop noise at resume
-or runtime resume.  It turned out to be reduced by applying
-alc_no_shutup() just like TPT440 quirk does.
+According to documentation REMAP register has to be programmed in
+either DMA or PIO mode of the slice.
 
-Since there are many Lenovo models showing the same behavior, put this
-workaround in ALC269_FIXUP_THINKPAD_ACPI entry so that it's applied
-commonly to all such Lenovo machines.
+Move the DMA capability check below to let REMAP register be programmed
+in PIO mode.
 
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Tested-by: Benjamin Berg <bberg@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org # 4.3+
+Fixes: 4b45efe85263 ("mfd: Add support for Intel Sunrisepoint LPSS devices")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/mfd/intel-lpss.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4844,7 +4844,6 @@ static void alc_fixup_tpt440_dock(struct
- 	struct alc_spec *spec = codec->spec;
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -275,11 +275,11 @@ static void intel_lpss_init_dev(const st
  
- 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
--		spec->shutup = alc_no_shutup; /* reduce click noise */
- 		spec->reboot_notify = alc_d3_at_reboot; /* reduce noise */
- 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
- 		codec->power_save_node = 0; /* avoid click noises */
-@@ -5243,6 +5242,13 @@ static void alc274_fixup_bind_dacs(struc
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
+ 	intel_lpss_deassert_reset(lpss);
  
-+static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
-+				    const struct hda_fixup *fix, int action)
-+{
-+	alc_fixup_no_shutup(codec, fix, action); /* reduce click noise */
-+	hda_fixup_thinkpad_acpi(codec, fix, action);
-+}
++	intel_lpss_set_remap_addr(lpss);
 +
- /* for dell wmi mic mute led */
- #include "dell_wmi_helper.c"
+ 	if (!intel_lpss_has_idma(lpss))
+ 		return;
  
-@@ -5786,7 +5792,7 @@ static const struct hda_fixup alc269_fix
- 	},
- 	[ALC269_FIXUP_THINKPAD_ACPI] = {
- 		.type = HDA_FIXUP_FUNC,
--		.v.func = hda_fixup_thinkpad_acpi,
-+		.v.func = alc_fixup_thinkpad_acpi,
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_SKU_IGNORE,
- 	},
+-	intel_lpss_set_remap_addr(lpss);
+-
+ 	/* Make sure that SPI multiblock DMA transfers are re-enabled */
+ 	if (lpss->type == LPSS_DEV_SPI)
+ 		writel(value, lpss->priv + LPSS_PRIV_SSP_REG);
 
 
