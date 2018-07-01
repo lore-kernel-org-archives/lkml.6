@@ -2,39 +2,37 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FE2C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54234C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4482E25703
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4482E25703
+	by mail.kernel.org (Postfix) with ESMTP id 0F7132570E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7132570E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031165AbeGARlz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:41:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35740 "EHLO
+        id S934116AbeGARmU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:42:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031055AbeGAQfK (ORCPT
+        with ESMTP id S1031032AbeGAQfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:10 -0400
+        Sun, 1 Jul 2018 12:35:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEC5BAA6;
-        Sun,  1 Jul 2018 16:35:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 043A392B;
+        Sun,  1 Jul 2018 16:35:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Wysochanski <dwysocha@redhat.com>,
-        Stephen Johnston <sjohnsto@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.14 131/157] NFSv4: Fix possible 1-byte stack overflow in nfs_idmap_read_and_verify_message
-Date:   Sun,  1 Jul 2018 18:23:23 +0200
-Message-Id: <20180701160859.522691150@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 129/157] media: dvb_frontend: fix locking issues at dvb_frontend_get_event()
+Date:   Sun,  1 Jul 2018 18:23:21 +0200
+Message-Id: <20180701160859.388783549@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,77 +49,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Wysochanski <dwysocha@redhat.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit d68894800ec5712d7ddf042356f11e36f87d7f78 upstream.
+commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
 
-In nfs_idmap_read_and_verify_message there is an incorrect sprintf '%d'
-that converts the __u32 'im_id' from struct idmap_msg to 'id_str', which
-is a stack char array variable of length NFS_UINT_MAXLEN == 11.
-If a uid or gid value is > 2147483647 = 0x7fffffff, the conversion
-overflows into a negative value, for example:
-crash> p (unsigned) (0x80000000)
-$1 = 2147483648
-crash> p (signed) (0x80000000)
-$2 = -2147483648
-The '-' sign is written to the buffer and this causes a 1 byte overflow
-when the NULL byte is written, which corrupts kernel stack memory.  If
-CONFIG_CC_STACKPROTECTOR_STRONG is set we see a stack-protector panic:
+As warned by smatch:
+	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
+	  Locked on:   line 288
+	               line 295
+	               line 306
+	               line 314
+	  Unlocked on: line 303
 
-[11558053.616565] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa05b8a8c
-[11558053.639063] CPU: 6 PID: 9423 Comm: rpc.idmapd Tainted: G        W      ------------ T 3.10.0-514.el7.x86_64 #1
-[11558053.641990] Hardware name: Red Hat OpenStack Compute, BIOS 1.10.2-3.el7_4.1 04/01/2014
-[11558053.644462]  ffffffff818c7bc0 00000000b1f3aec1 ffff880de0f9bd48 ffffffff81685eac
-[11558053.646430]  ffff880de0f9bdc8 ffffffff8167f2b3 ffffffff00000010 ffff880de0f9bdd8
-[11558053.648313]  ffff880de0f9bd78 00000000b1f3aec1 ffffffff811dcb03 ffffffffa05b8a8c
-[11558053.650107] Call Trace:
-[11558053.651347]  [<ffffffff81685eac>] dump_stack+0x19/0x1b
-[11558053.653013]  [<ffffffff8167f2b3>] panic+0xe3/0x1f2
-[11558053.666240]  [<ffffffff811dcb03>] ? kfree+0x103/0x140
-[11558053.682589]  [<ffffffffa05b8a8c>] ? idmap_pipe_downcall+0x1cc/0x1e0 [nfsv4]
-[11558053.689710]  [<ffffffff810855db>] __stack_chk_fail+0x1b/0x30
-[11558053.691619]  [<ffffffffa05b8a8c>] idmap_pipe_downcall+0x1cc/0x1e0 [nfsv4]
-[11558053.693867]  [<ffffffffa00209d6>] rpc_pipe_write+0x56/0x70 [sunrpc]
-[11558053.695763]  [<ffffffff811fe12d>] vfs_write+0xbd/0x1e0
-[11558053.702236]  [<ffffffff810acccc>] ? task_work_run+0xac/0xe0
-[11558053.704215]  [<ffffffff811fec4f>] SyS_write+0x7f/0xe0
-[11558053.709674]  [<ffffffff816964c9>] system_call_fastpath+0x16/0x1b
+The lock implementation for get event is wrong, as, if an
+interrupt occurs, down_interruptible() will fail, and the
+routine will call up() twice when userspace calls the ioctl
+again.
 
-Fix this by calling the internally defined nfs_map_numeric_to_string()
-function which properly uses '%u' to convert this __u32.  For consistency,
-also replace the one other place where snprintf is called.
+The bad code is there since when Linux migrated to git, in
+2005.
 
-Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
-Reported-by: Stephen Johnston <sjohnsto@redhat.com>
-Fixes: cf4ab538f1516 ("NFSv4: Fix the string length returned by the idmapper")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4idmap.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/media/dvb-core/dvb_frontend.c |   23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -343,7 +343,7 @@ static ssize_t nfs_idmap_lookup_name(__u
- 	int id_len;
- 	ssize_t ret;
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -275,8 +275,20 @@ static void dvb_frontend_add_event(struc
+ 	wake_up_interruptible (&events->wait_queue);
+ }
  
--	id_len = snprintf(id_str, sizeof(id_str), "%u", id);
-+	id_len = nfs_map_numeric_to_string(id, id_str, sizeof(id_str));
- 	ret = nfs_idmap_get_key(id_str, id_len, type, buf, buflen, idmap);
- 	if (ret < 0)
- 		return -EINVAL;
-@@ -627,7 +627,8 @@ static int nfs_idmap_read_and_verify_mes
- 		if (strcmp(upcall->im_name, im->im_name) != 0)
- 			break;
- 		/* Note: here we store the NUL terminator too */
--		len = sprintf(id_str, "%d", im->im_id) + 1;
-+		len = 1 + nfs_map_numeric_to_string(im->im_id, id_str,
-+						    sizeof(id_str));
- 		ret = nfs_idmap_instantiate(key, authkey, id_str, len);
- 		break;
- 	case IDMAP_CONV_IDTONAME:
++static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
++				   struct dvb_fe_events *events)
++{
++	int ret;
++
++	up(&fepriv->sem);
++	ret = events->eventw != events->eventr;
++	down(&fepriv->sem);
++
++	return ret;
++}
++
+ static int dvb_frontend_get_event(struct dvb_frontend *fe,
+-			    struct dvb_frontend_event *event, int flags)
++			          struct dvb_frontend_event *event, int flags)
+ {
+ 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+ 	struct dvb_fe_events *events = &fepriv->events;
+@@ -294,13 +306,8 @@ static int dvb_frontend_get_event(struct
+ 		if (flags & O_NONBLOCK)
+ 			return -EWOULDBLOCK;
+ 
+-		up(&fepriv->sem);
+-
+-		ret = wait_event_interruptible (events->wait_queue,
+-						events->eventw != events->eventr);
+-
+-		if (down_interruptible (&fepriv->sem))
+-			return -ERESTARTSYS;
++		ret = wait_event_interruptible(events->wait_queue,
++					       dvb_frontend_test_event(fepriv, events));
+ 
+ 		if (ret < 0)
+ 			return ret;
 
 
