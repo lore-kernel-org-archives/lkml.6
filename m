@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB56C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B42C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92392214DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92392214DA
+	by mail.kernel.org (Postfix) with ESMTP id AF5D52151B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5D52151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030850AbeGAQdz (ORCPT
+        id S1030865AbeGAQeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:33:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35430 "EHLO
+        Sun, 1 Jul 2018 12:34:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35478 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030802AbeGAQdi (ORCPT
+        with ESMTP id S1030847AbeGAQdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:38 -0400
+        Sun, 1 Jul 2018 12:33:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E88049B;
-        Sun,  1 Jul 2018 16:33:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9F0C49B;
+        Sun,  1 Jul 2018 16:33:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
         Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 098/157] scsi: zfcp: fix missing SCSI trace for retry of abort / scsi_eh TMF
-Date:   Sun,  1 Jul 2018 18:22:50 +0200
-Message-Id: <20180701160857.452684923@linuxfoundation.org>
+Subject: [PATCH 4.14 103/157] scsi: zfcp: fix missing REC trigger trace on enqueue without ERP thread
+Date:   Sun,  1 Jul 2018 18:22:55 +0200
+Message-Id: <20180701160857.705492094@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,99 +53,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steffen Maier <maier@linux.ibm.com>
 
-commit 81979ae63e872ef650a7197f6ce6590059d37172 upstream.
+commit 6a76550841d412330bd86aed3238d1888ba70f0e upstream.
 
-We already have a SCSI trace for the end of abort and scsi_eh TMF. Due to
-zfcp_erp_wait() and fc_block_scsi_eh() time can pass between the start of
-our eh callback and an actual send/recv of an abort / TMF request.  In order
-to see the temporal sequence including any abort / TMF send retries, add a
-trace before the above two blocking functions.  This supports problem
-determination with scsi_eh and parallel zfcp ERP.
-
-No need to explicitly trace the beginning of our eh callback, since we
-typically can send an abort / TMF and see its HBA response (in the worst
-case, it's a pseudo response on dismiss all of adapter recovery, e.g. due to
-an FSF request timeout [fsrth_1] of the abort / TMF). If we cannot send, we
-now get a trace record for the first "abrt_wt" or "[lt]r_wait" which denotes
-almost the beginning of the callback.
-
-No need to explicitly trace the wakeup after the above two blocking
-functions because the next retry loop causes another trace in any case and
-that is sufficient.
-
-Example trace records formatted with zfcpdbf from s390-tools:
+Example trace record formatted with zfcpdbf from s390-tools:
 
 Timestamp      : ...
-Area           : SCSI
+Area           : REC
 Subarea        : 00
 Level          : 1
 Exception      : -
 CPU ID         : ..
 Caller         : 0x...
-Record ID      : 1
-Tag            : abrt_wt        abort, before zfcp_erp_wait()
-Request ID     : 0x0000000000000000                     none (invalid)
-SCSI ID        : 0x<scsi_id>
-SCSI LUN       : 0x<scsi_lun>
-SCSI LUN high  : 0x<scsi_lun_high>
-SCSI result    : 0x<scsi_result_of_cmd_to_be_aborted>
-SCSI retries   : 0x<retries_of_cmd_to_be_aborted>
-SCSI allowed   : 0x<allowed_retries_of_cmd_to_be_aborted>
-SCSI scribble  : 0x<req_id_of_cmd_to_be_aborted>
-SCSI opcode    : <CDB_of_cmd_to_be_aborted>
-FCP rsp inf cod: 0x..                                   none (invalid)
-FCP rsp IU     : ...                                    none (invalid)
-
-Timestamp      : ...
-Area           : SCSI
-Subarea        : 00
-Level          : 1
-Exception      : -
-CPU ID         : ..
-Caller         : 0x...
-Record ID      : 1
-Tag            : lr_wait        LUN reset, before zfcp_erp_wait()
-Request ID     : 0x0000000000000000                     none (invalid)
-SCSI ID        : 0x<scsi_id>
-SCSI LUN       : 0x<scsi_lun>
-SCSI LUN high  : 0x<scsi_lun_high>
-SCSI result    : 0x...                                  unrelated
-SCSI retries   : 0x..                                   unrelated
-SCSI allowed   : 0x..                                   unrelated
-SCSI scribble  : 0x...                                  unrelated
-SCSI opcode    : ...                                    unrelated
-FCP rsp inf cod: 0x..                                   none (invalid)
-FCP rsp IU     : ...                                    none (invalid)
+Record ID      : 1                      ZFCP_DBF_REC_TRIG
+Tag            : .......
+LUN            : 0x...
+WWPN           : 0x...
+D_ID           : 0x...
+Adapter status : 0x...
+Port status    : 0x...
+LUN status     : 0x...
+Ready count    : 0x...
+Running count  : 0x...
+ERP want       : 0x0.                   ZFCP_ERP_ACTION_REOPEN_...
+ERP need       : 0xc0                   ZFCP_ERP_ACTION_NONE
 
 Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: 63caf367e1c9 ("[SCSI] zfcp: Improve reliability of SCSI eh handlers in zfcp")
-Fixes: af4de36d911a ("[SCSI] zfcp: Block scsi_eh thread for rport state BLOCKED")
 Cc: <stable@vger.kernel.org> #2.6.38+
 Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_scsi.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/s390/scsi/zfcp_erp.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_scsi.c
-+++ b/drivers/s390/scsi/zfcp_scsi.c
-@@ -181,6 +181,7 @@ static int zfcp_scsi_eh_abort_handler(st
- 		if (abrt_req)
- 			break;
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -315,8 +315,11 @@ static int zfcp_erp_action_enqueue(int w
+ 		goto out;
+ 	}
  
-+		zfcp_dbf_scsi_abort("abrt_wt", scpnt, NULL);
- 		zfcp_erp_wait(adapter);
- 		ret = fc_block_scsi_eh(scpnt);
- 		if (ret) {
-@@ -277,6 +278,7 @@ static int zfcp_task_mgmt_function(struc
- 		if (fsf_req)
- 			break;
+-	if (!adapter->erp_thread)
+-		return -EIO;
++	if (!adapter->erp_thread) {
++		need = ZFCP_ERP_ACTION_NONE; /* marker for trace */
++		retval = -EIO;
++		goto out;
++	}
  
-+		zfcp_dbf_scsi_devreset("wait", scpnt, tm_flags, NULL);
- 		zfcp_erp_wait(adapter);
- 		ret = fc_block_scsi_eh(scpnt);
- 		if (ret) {
+ 	need = zfcp_erp_required_act(want, adapter, port, sdev);
+ 	if (!need)
 
 
