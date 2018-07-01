@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3D2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9785C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A96824FB5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A96824FB5
+	by mail.kernel.org (Postfix) with ESMTP id 6BFE824FBB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFE824FBB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753038AbeGAQMc (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:12:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59938 "EHLO
+        id S932124AbeGAQMi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:12:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932079AbeGAQM1 (ORCPT
+        with ESMTP id S932083AbeGAQMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:27 -0400
+        Sun, 1 Jul 2018 12:12:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8B4B4A3;
-        Sun,  1 Jul 2018 16:12:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85408ACC;
+        Sun,  1 Jul 2018 16:12:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Benjamin Gilbert <benjamin.gilbert@coreos.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3.18 37/85] tcp: do not overshoot window_clamp in tcp_rcv_space_adjust()
-Date:   Sun,  1 Jul 2018 18:01:55 +0200
-Message-Id: <20180701153123.836655020@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Joe Habermann <joe.habermann@quantum.com>
+Subject: [PATCH 3.18 38/85] ext4: update mtime in ext4_punch_hole even if no blocks are released
+Date:   Sun,  1 Jul 2018 18:01:56 +0200
+Message-Id: <20180701153123.872914322@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -55,43 +50,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Lukas Czerner <lczerner@redhat.com>
 
-commit 02db55718d53f9d426cee504c27fb768e9ed4ffe upstream.
+commit eee597ac931305eff3d3fd1d61d6aae553bc0984 upstream.
 
-While rcvbuf is properly clamped by tcp_rmem[2], rcvwin
-is left to a potentially too big value.
+Currently in ext4_punch_hole we're going to skip the mtime update if
+there are no actual blocks to release. However we've actually modified
+the file by zeroing the partial block so the mtime should be updated.
 
-It has no serious effect, since :
-1) tcp_grow_window() has very strict checks.
-2) window_clamp can be mangled by user space to any value anyway.
+Moreover the sync and datasync handling is skipped as well, which is
+also wrong. Fix it.
 
-tcp_init_buffer_space() and companions use tcp_full_space(),
-we use tcp_win_from_space() to avoid reloading sk->sk_rcvbuf
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Benjamin Gilbert <benjamin.gilbert@coreos.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Joe Habermann <joe.habermann@quantum.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/inode.c |   40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -605,7 +605,7 @@ void tcp_rcv_space_adjust(struct sock *s
- 			sk->sk_rcvbuf = rcvbuf;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3531,28 +3531,28 @@ int ext4_punch_hole(struct inode *inode,
+ 		EXT4_BLOCK_SIZE_BITS(sb);
+ 	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
  
- 			/* Make the window clamp follow along.  */
--			tp->window_clamp = rcvwin;
-+			tp->window_clamp = tcp_win_from_space(rcvbuf);
- 		}
- 	}
- 	tp->rcvq_space.space = copied;
+-	/* If there are no blocks to remove, return now */
+-	if (first_block >= stop_block)
+-		goto out_stop;
+-
+-	down_write(&EXT4_I(inode)->i_data_sem);
+-	ext4_discard_preallocations(inode);
+-
+-	ret = ext4_es_remove_extent(inode, first_block,
+-				    stop_block - first_block);
+-	if (ret) {
+-		up_write(&EXT4_I(inode)->i_data_sem);
+-		goto out_stop;
+-	}
++	/* If there are blocks to remove, do it */
++	if (stop_block > first_block) {
++
++		down_write(&EXT4_I(inode)->i_data_sem);
++		ext4_discard_preallocations(inode);
+ 
+-	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+-		ret = ext4_ext_remove_space(inode, first_block,
+-					    stop_block - 1);
+-	else
+-		ret = ext4_ind_remove_space(handle, inode, first_block,
+-					    stop_block);
++		ret = ext4_es_remove_extent(inode, first_block,
++					    stop_block - first_block);
++		if (ret) {
++			up_write(&EXT4_I(inode)->i_data_sem);
++			goto out_stop;
++		}
++
++		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
++			ret = ext4_ext_remove_space(inode, first_block,
++						    stop_block - 1);
++		else
++			ret = ext4_ind_remove_space(handle, inode, first_block,
++						    stop_block);
+ 
+-	up_write(&EXT4_I(inode)->i_data_sem);
++		up_write(&EXT4_I(inode)->i_data_sem);
++	}
+ 	if (IS_SYNC(inode))
+ 		ext4_handle_sync(handle);
+ 
 
 
