@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6493C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C89C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C366253D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C366253D8
+	by mail.kernel.org (Postfix) with ESMTP id A1194253D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1194253D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032260AbeGAQmz (ORCPT
+        id S1032274AbeGAQm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:42:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37692 "EHLO
+        Sun, 1 Jul 2018 12:42:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032060AbeGAQmq (ORCPT
+        with ESMTP id S1032238AbeGAQms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:46 -0400
+        Sun, 1 Jul 2018 12:42:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43524AA6;
-        Sun,  1 Jul 2018 16:42:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB88AAA6;
+        Sun,  1 Jul 2018 16:42:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
+        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
+        Giridhar Malavali <giridhar.malavali@cavium.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Eda Zhou <ezhou@redhat.com>,
         "Ewan D. Milne" <emilne@redhat.com>,
+        Martin Wilck <mwilck@suse.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 135/220] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
-Date:   Sun,  1 Jul 2018 18:22:39 +0200
-Message-Id: <20180701160913.952897399@linuxfoundation.org>
+Subject: [PATCH 4.17 136/220] scsi: qla2xxx: Mask off Scope bits in retry delay
+Date:   Sun,  1 Jul 2018 18:22:40 +0200
+Message-Id: <20180701160913.989046268@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,42 +55,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
 
-commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
+commit 3cedc8797b9c0f2222fd45a01f849c57c088828b upstream.
 
-This patch prevents driver from setting lower default speed of 1 GB/sec,
-if the switch does not support Get Port Speed Capabilities (GPSC)
-command. Setting this default speed results into much lower write
-performance for large sequential WRITE.  This patch modifies driver to
-check for gpsc_supported flags and prevents driver from issuing
-MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
-does not send this mailbox command, firmware assumes maximum supported
-link speed and will operate at the max speed.
+Some newer target uses "Status Qualifier" response in a returned "Busy
+Status". This new response code of 0x4001, which is "Scope" bits,
+translates to "Affects all units accessible by target".  Due to this new
+value returned in the Scope bits, driver was using that value as timeout
+value which resulted into driver waiting for 27min timeout.
 
-Cc: stable@vger.kernel.org
+This patch masks off this Scope bits so that driver does not use this
+value as retry delay time.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+Signed-off-by: Giridhar Malavali <giridhar.malavali@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reported-by: Eda Zhou <ezhou@redhat.com>
 Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Tested-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Martin Wilck <mwilck@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_isr.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -5037,7 +5037,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
- 		return;
- 
- 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
--	    fcport->fp_speed > ha->link_data_rate)
-+	    fcport->fp_speed > ha->link_data_rate ||
-+	    !ha->flags.gpsc_supported)
- 		return;
- 
- 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -2494,8 +2494,12 @@ qla2x00_status_entry(scsi_qla_host_t *vh
+ 		ox_id = le16_to_cpu(sts24->ox_id);
+ 		par_sense_len = sizeof(sts24->data);
+ 		/* Valid values of the retry delay timer are 0x1-0xffef */
+-		if (sts24->retry_delay > 0 && sts24->retry_delay < 0xfff1)
+-			retry_delay = sts24->retry_delay;
++		if (sts24->retry_delay > 0 && sts24->retry_delay < 0xfff1) {
++			retry_delay = sts24->retry_delay & 0x3fff;
++			ql_dbg(ql_dbg_io, sp->vha, 0x3033,
++			    "%s: scope=%#x retry_delay=%#x\n", __func__,
++			    sts24->retry_delay >> 14, retry_delay);
++		}
+ 	} else {
+ 		if (scsi_status & SS_SENSE_LEN_VALID)
+ 			sense_len = le16_to_cpu(sts->req_sense_length);
 
 
