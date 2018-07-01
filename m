@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EE0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815C5C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D7425AF8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:41:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D7425AF8
+	by mail.kernel.org (Postfix) with ESMTP id 3C27C25AFB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C27C25AFB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753183AbeGASln (ORCPT
+        id S1753231AbeGASl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:41:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60216 "EHLO
+        Sun, 1 Jul 2018 14:41:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60206 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932671AbeGAQNt (ORCPT
+        with ESMTP id S932644AbeGAQNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:49 -0400
+        Sun, 1 Jul 2018 12:13:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD7D94A3;
-        Sun,  1 Jul 2018 16:13:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E39F4A3;
+        Sun,  1 Jul 2018 16:13:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Joakim Tjernlund <joakim.tjernlund@infinera.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 3.18 67/85] mtd: cfi_cmdset_0002: Avoid walking all chips when unlocking.
-Date:   Sun,  1 Jul 2018 18:02:25 +0200
-Message-Id: <20180701153125.048815778@linuxfoundation.org>
+Subject: [PATCH 3.18 66/85] mtd: cfi_cmdset_0002: Fix unlocking requests crossing a chip boudary
+Date:   Sun,  1 Jul 2018 18:02:24 +0200
+Message-Id: <20180701153125.012309502@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -53,10 +53,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit f1ce87f6080b1dda7e7b1eda3da332add19d87b9 upstream.
+commit 0cd8116f172eed018907303dbff5c112690eeb91 upstream.
 
-cfi_ppb_unlock() walks all flash chips when unlocking sectors,
-avoid walking chips unaffected by the unlock operation.
+The "sector is in requested range" test used to determine whether
+sectors should be re-locked or not is done on a variable that is reset
+everytime we cross a chip boundary, which can lead to some blocks being
+re-locked while the caller expect them to be unlocked.
+Fix the check to make sure this cannot happen.
 
 Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
 Cc: stable@vger.kernel.org
@@ -65,19 +68,19 @@ Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/mtd/chips/cfi_cmdset_0002.c
 +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2683,6 +2683,8 @@ static int __maybe_unused cfi_ppb_unlock
- 			i++;
- 
- 		if (adr >> cfi->chipshift) {
-+			if (offset >= (ofs + len))
-+				break;
- 			adr = 0;
- 			chipnum++;
- 
+@@ -2667,7 +2667,7 @@ static int __maybe_unused cfi_ppb_unlock
+ 		 * sectors shall be unlocked, so lets keep their locking
+ 		 * status at "unlocked" (locked=0) for the final re-locking.
+ 		 */
+-		if ((adr < ofs) || (adr >= (ofs + len))) {
++		if ((offset < ofs) || (offset >= (ofs + len))) {
+ 			sect[sectors].chip = &cfi->chips[chipnum];
+ 			sect[sectors].adr = adr;
+ 			sect[sectors].locked = do_ppb_xxlock(
 
 
