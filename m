@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80EBC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8623C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E0D8252D0
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E0D8252D0
+	by mail.kernel.org (Postfix) with ESMTP id 6DB19252D2
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB19252D2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031073AbeGAQfP (ORCPT
+        id S1031085AbeGAQfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:35:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35734 "EHLO
+        Sun, 1 Jul 2018 12:35:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030594AbeGAQfH (ORCPT
+        with ESMTP id S1030594AbeGAQfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:07 -0400
+        Sun, 1 Jul 2018 12:35:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2276AA6;
-        Sun,  1 Jul 2018 16:35:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B68DAA6;
+        Sun,  1 Jul 2018 16:35:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 113/157] backlight: max8925_bl: Fix Device Tree node lookup
-Date:   Sun,  1 Jul 2018 18:23:05 +0200
-Message-Id: <20180701160858.185738952@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.14 133/157] NFSv4: Fix a typo in nfs41_sequence_process
+Date:   Sun,  1 Jul 2018 18:23:25 +0200
+Message-Id: <20180701160859.619212599@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,47 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit d1cc0ec3da23e44c23712579515494b374f111c9 upstream.
+commit 995891006ccbb73c0c9c3923cf9d25c4d07ec16b upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+We want to compare the slot_id to the highest slot number advertised by the
+server.
 
-To make things worse, the parent mfd node was also prematurely freed,
-while the child backlight node was leaked.
-
-Cc: stable <stable@vger.kernel.org>     # 3.9
-Fixes: 47ec340cb8e2 ("mfd: max8925: Support dt for backlight")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 3be0f80b5fe9c ("NFSv4.1: Fix up replays of interrupted requests")
+Cc: stable@vger.kernel.org # 4.15+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/backlight/max8925_bl.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4proc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/backlight/max8925_bl.c
-+++ b/drivers/video/backlight/max8925_bl.c
-@@ -116,7 +116,7 @@ static void max8925_backlight_dt_init(st
- 	if (!pdata)
- 		return;
- 
--	np = of_find_node_by_name(nproot, "backlight");
-+	np = of_get_child_by_name(nproot, "backlight");
- 	if (!np) {
- 		dev_err(&pdev->dev, "failed to find backlight node\n");
- 		return;
-@@ -125,6 +125,8 @@ static void max8925_backlight_dt_init(st
- 	if (!of_property_read_u32(np, "maxim,max8925-dual-string", &val))
- 		pdata->dual_string = val;
- 
-+	of_node_put(np);
-+
- 	pdev->dev.platform_data = pdata;
- }
- 
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -750,7 +750,7 @@ static int nfs41_sequence_process(struct
+ 		 * The slot id we used was probably retired. Try again
+ 		 * using a different slot id.
+ 		 */
+-		if (slot->seq_nr < slot->table->target_highest_slotid)
++		if (slot->slot_nr < slot->table->target_highest_slotid)
+ 			goto session_recover;
+ 		goto retry_nowait;
+ 	case -NFS4ERR_SEQ_MISORDERED:
 
 
