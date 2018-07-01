@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F101C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFF7C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2018925446
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2018925446
+	by mail.kernel.org (Postfix) with ESMTP id A39522563B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:18:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39522563B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965927AbeGARRs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:17:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36888 "EHLO
+        id S1030454AbeGARSJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:18:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030773AbeGAQjS (ORCPT
+        with ESMTP id S1031375AbeGAQjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:18 -0400
+        Sun, 1 Jul 2018 12:39:12 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 668F8A73;
-        Sun,  1 Jul 2018 16:39:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 626F2A73;
+        Sun,  1 Jul 2018 16:39:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.17 060/220] cxl: Disable prefault_mode in Radix mode
-Date:   Sun,  1 Jul 2018 18:21:24 +0200
-Message-Id: <20180701160910.881773434@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: [PATCH 4.17 058/220] powerpc/64s: Fix DT CPU features Power9 DD2.1 logic
+Date:   Sun,  1 Jul 2018 18:21:22 +0200
+Message-Id: <20180701160910.776342717@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,100 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit b6c84ba22ff3a198eb8d5552cf9b8fda1d792e54 upstream.
+commit 749a0278c2177b2d16da5d8b135ba7f940bb4199 upstream.
 
-Currently we see a kernel-oops reported on Power-9 while attaching a
-context to an AFU, with radix-mode and sysfs attr 'prefault_mode' set
-to anything other than 'none'. The backtrace of the oops is of this
-form:
+In the device tree CPU features quirk code we want to set
+CPU_FTR_POWER9_DD2_1 on all Power9s that aren't DD2.0 or earlier. But
+we got the logic wrong and instead set it on all CPUs that aren't
+Power9 DD2.0 or earlier, ie. including Power8.
 
-  Unable to handle kernel paging request for data at address 0x00000080
-  Faulting instruction address: 0xc00800000bcf3b20
-  cpu 0x1: Vector: 300 (Data Access) at [c00000037f003800]
-      pc: c00800000bcf3b20: cxl_load_segment+0x178/0x290 [cxl]
-      lr: c00800000bcf39f0: cxl_load_segment+0x48/0x290 [cxl]
-      sp: c00000037f003a80
-     msr: 9000000000009033
-     dar: 80
-   dsisr: 40000000
-    current = 0xc00000037f280000
-    paca    = 0xc0000003ffffe600   softe: 3        irq_happened: 0x01
-      pid   = 3529, comm = afp_no_int
-  <snip>
-  cxl_prefault+0xfc/0x248 [cxl]
-  process_element_entry_psl9+0xd8/0x1a0 [cxl]
-  cxl_attach_dedicated_process_psl9+0x44/0x130 [cxl]
-  native_attach_process+0xc0/0x130 [cxl]
-  afu_ioctl+0x3f4/0x5e0 [cxl]
-  do_vfs_ioctl+0xdc/0x890
-  ksys_ioctl+0x68/0xf0
-  sys_ioctl+0x40/0xa0
-  system_call+0x58/0x6c
+Fix it by making sure we're on a Power9. This isn't a bug in practice
+because the only code that checks the feature is Power9 only to begin
+with. But we'll backport it anyway to avoid confusion.
 
-The issue is caused as on Power-8 the AFU attr 'prefault_mode' was
-used to improve initial storage fault performance by prefaulting
-process segments. However on Power-9 with radix mode we don't have
-Storage-Segments that we can prefault. Also prefaulting process Pages
-will be too costly and fine-grained.
-
-Hence, since the prefaulting mechanism doesn't makes sense of
-radix-mode, this patch updates prefault_mode_store() to not allow any
-other value apart from CXL_PREFAULT_NONE when radix mode is enabled.
-
-Fixes: f24be42aab37 ("cxl: Add psl9 specific code")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Fixes: 9e9626ed3a4a ("powerpc/64s: Fix POWER9 DD2.2 and above in DT CPU features")
+Cc: stable@vger.kernel.org # v4.17+
+Reported-by: Paul Mackerras <paulus@samba.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/ABI/testing/sysfs-class-cxl |    4 +++-
- drivers/misc/cxl/sysfs.c                  |   16 ++++++++++++----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/dt_cpu_ftrs.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/Documentation/ABI/testing/sysfs-class-cxl
-+++ b/Documentation/ABI/testing/sysfs-class-cxl
-@@ -69,7 +69,9 @@ Date:           September 2014
- Contact:        linuxppc-dev@lists.ozlabs.org
- Description:    read/write
-                 Set the mode for prefaulting in segments into the segment table
--                when performing the START_WORK ioctl. Possible values:
-+                when performing the START_WORK ioctl. Only applicable when
-+                running under hashed page table mmu.
-+                Possible values:
-                         none: No prefaulting (default)
-                         work_element_descriptor: Treat the work element
-                                  descriptor as an effective address and
---- a/drivers/misc/cxl/sysfs.c
-+++ b/drivers/misc/cxl/sysfs.c
-@@ -353,12 +353,20 @@ static ssize_t prefault_mode_store(struc
- 	struct cxl_afu *afu = to_cxl_afu(device);
- 	enum prefault_modes mode = -1;
+--- a/arch/powerpc/kernel/dt_cpu_ftrs.c
++++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+@@ -711,7 +711,8 @@ static __init void cpufeatures_cpu_quirk
+ 		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TM_HV_ASSIST;
+ 		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TM_XER_SO_BUG;
+ 		cur_cpu_spec->cpu_features |= CPU_FTR_POWER9_DD2_1;
+-	} else /* DD2.1 and up have DD2_1 */
++	} else if ((version & 0xffff0000) == 0x004e0000)
++		/* DD2.1 and up have DD2_1 */
+ 		cur_cpu_spec->cpu_features |= CPU_FTR_POWER9_DD2_1;
  
--	if (!strncmp(buf, "work_element_descriptor", 23))
--		mode = CXL_PREFAULT_WED;
--	if (!strncmp(buf, "all", 3))
--		mode = CXL_PREFAULT_ALL;
- 	if (!strncmp(buf, "none", 4))
- 		mode = CXL_PREFAULT_NONE;
-+	else {
-+		if (!radix_enabled()) {
-+
-+			/* only allowed when not in radix mode */
-+			if (!strncmp(buf, "work_element_descriptor", 23))
-+				mode = CXL_PREFAULT_WED;
-+			if (!strncmp(buf, "all", 3))
-+				mode = CXL_PREFAULT_ALL;
-+		} else {
-+			dev_err(device, "Cannot prefault with radix enabled\n");
-+		}
-+	}
- 
- 	if (mode == -1)
- 		return -EINVAL;
+ 	if ((version & 0xffff0000) == 0x004e0000) {
 
 
