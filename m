@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02080C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4890AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC58C253D5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC58C253D5
+	by mail.kernel.org (Postfix) with ESMTP id 06D9A253D7
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D9A253D7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032209AbeGAQme (ORCPT
+        id S1032224AbeGAQmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:42:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37636 "EHLO
+        Sun, 1 Jul 2018 12:42:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37652 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031805AbeGAQm3 (ORCPT
+        with ESMTP id S1031805AbeGAQmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:29 -0400
+        Sun, 1 Jul 2018 12:42:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 570D0AA6;
-        Sun,  1 Jul 2018 16:42:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 70B52AA6;
+        Sun,  1 Jul 2018 16:42:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.17 129/220] iio: adc: ad7791: remove sample freq sysfs attributes
-Date:   Sun,  1 Jul 2018 18:22:33 +0200
-Message-Id: <20180701160913.720452388@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.17 131/220] mm: fix __gup_device_huge vs unmap
+Date:   Sun,  1 Jul 2018 18:22:35 +0200
+Message-Id: <20180701160913.799552728@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,93 +50,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 7eb6b35d93c356f1afebbfb808bc296d6351e708 upstream.
+commit a9b6de77b1a3ff729f7bfc54b2e17711776a416c upstream.
 
-In the current state, these attributes are broken, because they are
-registered already, and the kernel throws a warning.
-The first registration happens via the `IIO_CHAN_INFO_SAMP_FREQ` flag from
-the `ad_sigma_delta` driver.
+get_user_pages_fast() for device pages is missing the typical validation
+that all page references have been taken while the mapping was valid.
+Without this validation truncate operations can not reliably coordinate
+against new page reference events like O_DIRECT.
 
-In this commit these attrs are removed, and in the following the
-IIO_CHAN_INFO_SAMP_FREQ behavior will be implemented, which replaces these
-hooks.
-
-This is done to make things a bit easier to review as there is a bit of
-overlap in the patch if it's done all at once.
-
-Fixes: a13e831fcaa7 ("staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ")
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
+Reported-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad7791.c |   49 -----------------------------------------------
- 1 file changed, 49 deletions(-)
+ mm/gup.c |   36 ++++++++++++++++++++++++++----------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
---- a/drivers/iio/adc/ad7791.c
-+++ b/drivers/iio/adc/ad7791.c
-@@ -244,58 +244,9 @@ static int ad7791_read_raw(struct iio_de
- 	return -EINVAL;
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1459,32 +1459,48 @@ static int __gup_device_huge(unsigned lo
+ 	return 1;
  }
  
--static const char * const ad7791_sample_freq_avail[] = {
--	[AD7791_FILTER_RATE_120] = "120",
--	[AD7791_FILTER_RATE_100] = "100",
--	[AD7791_FILTER_RATE_33_3] = "33.3",
--	[AD7791_FILTER_RATE_20] = "20",
--	[AD7791_FILTER_RATE_16_6] = "16.6",
--	[AD7791_FILTER_RATE_16_7] = "16.7",
--	[AD7791_FILTER_RATE_13_3] = "13.3",
--	[AD7791_FILTER_RATE_9_5] = "9.5",
--};
--
--static ssize_t ad7791_read_frequency(struct device *dev,
--	struct device_attribute *attr, char *buf)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7791_state *st = iio_priv(indio_dev);
--	unsigned int rate = st->filter & AD7791_FILTER_RATE_MASK;
--
--	return sprintf(buf, "%s\n", ad7791_sample_freq_avail[rate]);
--}
--
--static ssize_t ad7791_write_frequency(struct device *dev,
--	struct device_attribute *attr, const char *buf, size_t len)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7791_state *st = iio_priv(indio_dev);
--	int i, ret;
--
--	i = sysfs_match_string(ad7791_sample_freq_avail, buf);
--	if (i < 0)
--		return i;
--
--	ret = iio_device_claim_direct_mode(indio_dev);
--	if (ret)
--		return ret;
--	st->filter &= ~AD7791_FILTER_RATE_MASK;
--	st->filter |= i;
--	ad_sd_write_reg(&st->sd, AD7791_REG_FILTER, sizeof(st->filter),
--			st->filter);
--	iio_device_release_direct_mode(indio_dev);
--
--	return len;
--}
--
--static IIO_DEV_ATTR_SAMP_FREQ(S_IWUSR | S_IRUGO,
--		ad7791_read_frequency,
--		ad7791_write_frequency);
--
- static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("120 100 33.3 20 16.7 16.6 13.3 9.5");
+-static int __gup_device_huge_pmd(pmd_t pmd, unsigned long addr,
++static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 		unsigned long end, struct page **pages, int *nr)
+ {
+ 	unsigned long fault_pfn;
++	int nr_start = *nr;
  
- static struct attribute *ad7791_attributes[] = {
--	&iio_dev_attr_sampling_frequency.dev_attr.attr,
- 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
- 	NULL
- };
+-	fault_pfn = pmd_pfn(pmd) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+-	return __gup_device_huge(fault_pfn, addr, end, pages, nr);
++	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
++	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
++		return 0;
++
++	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
++		undo_dev_pagemap(nr, nr_start, pages);
++		return 0;
++	}
++	return 1;
+ }
+ 
+-static int __gup_device_huge_pud(pud_t pud, unsigned long addr,
++static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+ 		unsigned long end, struct page **pages, int *nr)
+ {
+ 	unsigned long fault_pfn;
++	int nr_start = *nr;
+ 
+-	fault_pfn = pud_pfn(pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+-	return __gup_device_huge(fault_pfn, addr, end, pages, nr);
++	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
++	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
++		return 0;
++
++	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
++		undo_dev_pagemap(nr, nr_start, pages);
++		return 0;
++	}
++	return 1;
+ }
+ #else
+-static int __gup_device_huge_pmd(pmd_t pmd, unsigned long addr,
++static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 		unsigned long end, struct page **pages, int *nr)
+ {
+ 	BUILD_BUG();
+ 	return 0;
+ }
+ 
+-static int __gup_device_huge_pud(pud_t pud, unsigned long addr,
++static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
+ 		unsigned long end, struct page **pages, int *nr)
+ {
+ 	BUILD_BUG();
+@@ -1502,7 +1518,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_
+ 		return 0;
+ 
+ 	if (pmd_devmap(orig))
+-		return __gup_device_huge_pmd(orig, addr, end, pages, nr);
++		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
+ 
+ 	refs = 0;
+ 	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
+@@ -1540,7 +1556,7 @@ static int gup_huge_pud(pud_t orig, pud_
+ 		return 0;
+ 
+ 	if (pud_devmap(orig))
+-		return __gup_device_huge_pud(orig, addr, end, pages, nr);
++		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
+ 
+ 	refs = 0;
+ 	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
 
 
