@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38028C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB29C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6FD524F37
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6FD524F37
+	by mail.kernel.org (Postfix) with ESMTP id 8817424F4A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:54:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8817424F4A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934046AbeGAQy0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:54:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38208 "EHLO
+        id S932809AbeGAQyv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:54:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932924AbeGAQpX (ORCPT
+        with ESMTP id S934087AbeGAQpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:23 -0400
+        Sun, 1 Jul 2018 12:45:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E8EDA73;
-        Sun,  1 Jul 2018 16:45:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81A1EA73;
+        Sun,  1 Jul 2018 16:45:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 4.17 147/220] clk: meson: meson8b: mark fclk_div2 gate clocks as CLK_IS_CRITICAL
-Date:   Sun,  1 Jul 2018 18:22:51 +0200
-Message-Id: <20180701160914.456473521@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.17 156/220] backlight: max8925_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:23:00 +0200
+Message-Id: <20180701160914.798316205@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,49 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 72e1f2302040398dafb64bbb93abdde78c1f2267 upstream.
+commit d1cc0ec3da23e44c23712579515494b374f111c9 upstream.
 
-Until commit 05f814402d6174 ("clk: meson: add fdiv clock gates") we
-relied on the bootloader to enable the fclk_div clock gates. It turns
-out that our clock tree is incomplete at least on Meson8b (tested with
-an Odroid-C1, which uses an RGMII PHY) because after the mentioned
-commit Ethernet is not working anymore (no RX/TX activity can be seen).
-At the same time Ethernet was still working on Meson8m2 with a RMII PHY.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Testing has shown that as soon as "fclk_div2" is disabled Ethernet stops
-working on Odroid-C1. Unfortunately it's currently not clear what the
-Ethernet controller IP block uses the fclk_div2 clock for. Mark the
-clock as CLK_IS_CRITICAL to keep it enabled (as it's already enabled by
-most bootloaders by default, which is why we didn't notice it before).
+To make things worse, the parent mfd node was also prematurely freed,
+while the child backlight node was leaked.
 
-Fixes: 05f814402d6174 ("clk: meson: add fdiv clock gates")
-Cc: stable@vger.kernel.org
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: stable <stable@vger.kernel.org>     # 3.9
+Fixes: 47ec340cb8e2 ("mfd: max8925: Support dt for backlight")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/meson/meson8b.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/video/backlight/max8925_bl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -246,6 +246,13 @@ static struct clk_regmap meson8b_fclk_di
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div2_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME: Ethernet with a RGMII PHYs is not working if
-+		 * fclk_div2 is disabled. it is currently unclear why this
-+		 * is. keep it enabled until the Ethernet driver knows how
-+		 * to manage this clock.
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
+--- a/drivers/video/backlight/max8925_bl.c
++++ b/drivers/video/backlight/max8925_bl.c
+@@ -116,7 +116,7 @@ static void max8925_backlight_dt_init(st
+ 	if (!pdata)
+ 		return;
+ 
+-	np = of_find_node_by_name(nproot, "backlight");
++	np = of_get_child_by_name(nproot, "backlight");
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "failed to find backlight node\n");
+ 		return;
+@@ -125,6 +125,8 @@ static void max8925_backlight_dt_init(st
+ 	if (!of_property_read_u32(np, "maxim,max8925-dual-string", &val))
+ 		pdata->dual_string = val;
+ 
++	of_node_put(np);
++
+ 	pdev->dev.platform_data = pdata;
+ }
  
 
 
