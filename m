@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB00C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C40C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8206A25529
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:01:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8206A25529
+	by mail.kernel.org (Postfix) with ESMTP id 1399725533
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:01:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1399725533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753700AbeGARBN (ORCPT
+        id S1753792AbeGARBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:01:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37842 "EHLO
+        Sun, 1 Jul 2018 13:01:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032358AbeGAQna (ORCPT
+        with ESMTP id S1032043AbeGAQnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:30 -0400
+        Sun, 1 Jul 2018 12:43:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB772AA6;
-        Sun,  1 Jul 2018 16:43:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8813EAA6;
+        Sun,  1 Jul 2018 16:43:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.17 116/220] PCI: Account for all bridges on bus when distributing bus numbers
-Date:   Sun,  1 Jul 2018 18:22:20 +0200
-Message-Id: <20180701160913.209172943@linuxfoundation.org>
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.17 114/220] PCI: Add ACS quirk for Intel 300 series
+Date:   Sun,  1 Jul 2018 18:22:18 +0200
+Message-Id: <20180701160913.129033166@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -56,108 +53,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit 3374c545c27c5350b954d1ab03c880d5502e5eba upstream.
+commit f154a718e6cc0d834f5ac4dc4c3b174e65f3659e upstream.
 
-When distributing extra bus number space to hotplug bridges for future
-extension, we don't account for the fact that there might be non-hotplug
-bridges on the bus after the hotplug bridges.  For example:
+Intel 300 series chipset still has the same ACS issue as the previous
+generations so extend the ACS quirk to cover it as well.
 
-  01:00.0 --+- 02:00.0 (HotPlug-) -- Thunderbolt host controller
-            +- 02:01.0 (HotPlug+)
-            \- 02:02.0 (HotPlug-) -- xHCI host controller
-
-pci_scan_child_bus_extend() is supposed to distribute the remaining bus
-numbers to the hotplug bridge at 02:01.0, but only after accounting for all
-bridges on bus 02.  Since we don't check whether there's another
-non-hotplug bridge after the hotplug bridge 02:01.0, it may not leave space
-for the non-hotplug bridge:
-
-  pci 0000:00:1b.0: PCI bridge to [bus 01-39]  (Root Port)
-  pci 0000:01:00.0: PCI bridge to [bus 02-39]
-  ...
-  pci 0000:02:00.0: PCI bridge to [bus 03]
-  pci 0000:02:01.0: PCI bridge to [bus 04]
-  pci_bus 0000:04: [bus 04-39] extended by 0x35
-  pci_bus 0000:04: bus scan returning with max=39
-  pci_bus 0000:04: busn_res: [bus 04-39] end is updated to 39
-  pci 0000:02:02.0: scanning [bus 00-00] behind bridge, pass 1
-  pci_bus 0000:3a: scanning bus
-  pci_bus 0000:3a: bus scan returning with max=3a
-  pci_bus 0000:3a: busn_res: [bus 3a] end is updated to 3a
-  pci_bus 0000:3a: [bus 3a] partially hidden behind bridge 0000:02 [bus 02-39]
-  pci_bus 0000:3a: [bus 3a] partially hidden behind bridge 0000:01 [bus 01-39]
-  pci_bus 0000:02: bus scan returning with max=3a
-  pci_bus 0000:02: busn_res: [bus 02-39] end can not be updated to 3a
-
-The resulting 'lspci -t' output looks like this:
-
-  +-1b.0-[01-39]----00.0-[02-3a]--+-00.0-[03]----00.0
-                             ^^   +-01.0-[04-39]--
-                                  \-02.0-[3a]----00.0
-                                          ^^
-The xHCI host controller behind 02:02.0 is not usable because it would have
-to be assigned bus 3a, which is not accessible through 00:1b.0.
-
-To fix this, reserve at least one bus for each bridge while scanning
-already configured bridges.  Then use this information in the second
-scan to correct the available extra bus space for hotplug bridges.
-
-After this change the 'lspci -t' output is what is expected:
-
-  +-1b.0-[01-39]----00.0-[02-39]--+-00.0-[03]----00.0
-                                  +-01.0-[04-38]--
-                                  \-02.0-[39]----00.0
-
-The xHCI controller is now on bus 39, where it is usable.
-
-Fixes: 1c02ea810065 ("PCI: Distribute available buses to hotplug-capable bridges")
-Reported-by: Mario Limonciello <mario.limonciello@dell.com>
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-[bhelgaas: changelog]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: stable@vger.kernel.org
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/probe.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/pci/quirks.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2638,7 +2638,14 @@ static unsigned int pci_scan_child_bus_e
- 	for_each_pci_bridge(dev, bus) {
- 		cmax = max;
- 		max = pci_scan_bridge_extend(bus, dev, max, 0, 0);
--		used_buses += cmax - max;
-+
-+		/*
-+		 * Reserve one bus for each bridge now to avoid extending
-+		 * hotplug bridges too much during the second scan below.
-+		 */
-+		used_buses++;
-+		if (cmax - max > 1)
-+			used_buses += cmax - max - 1;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4241,6 +4241,11 @@ static int pci_quirk_qcom_rp_acs(struct
+  *
+  * 0x9d10-0x9d1b PCI Express Root port #{1-12}
+  *
++ * The 300 series chipset suffers from the same bug so include those root
++ * ports here as well.
++ *
++ * 0xa32c-0xa343 PCI Express Root port #{0-24}
++ *
+  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
+  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
+  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
+@@ -4258,6 +4263,7 @@ static bool pci_quirk_intel_spt_pch_acs_
+ 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
+ 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
+ 	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
++	case 0xa32c ... 0xa343:				/* 300 series */
+ 		return true;
  	}
  
- 	/* Scan bridges that need to be reconfigured */
-@@ -2661,12 +2668,14 @@ static unsigned int pci_scan_child_bus_e
- 			 * bridges if any.
- 			 */
- 			buses = available_buses / hotplug_bridges;
--			buses = min(buses, available_buses - used_buses);
-+			buses = min(buses, available_buses - used_buses + 1);
- 		}
- 
- 		cmax = max;
- 		max = pci_scan_bridge_extend(bus, dev, cmax, buses, 1);
--		used_buses += max - cmax;
-+		/* One bus is already accounted so don't add it again */
-+		if (max - cmax > 1)
-+			used_buses += max - cmax - 1;
- 	}
- 
- 	/*
 
 
