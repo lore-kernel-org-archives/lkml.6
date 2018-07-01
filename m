@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C4AC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BBCC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E356725763
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E356725763
+	by mail.kernel.org (Postfix) with ESMTP id 8273725719
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8273725719
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030854AbeGARse (ORCPT
+        id S1030810AbeGARtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:48:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35380 "EHLO
+        Sun, 1 Jul 2018 13:49:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35338 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030756AbeGAQdY (ORCPT
+        with ESMTP id S1030732AbeGAQdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:24 -0400
+        Sun, 1 Jul 2018 12:33:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5EA0292B;
-        Sun,  1 Jul 2018 16:33:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CA5249B;
+        Sun,  1 Jul 2018 16:33:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 093/157] mm: fix __gup_device_huge vs unmap
-Date:   Sun,  1 Jul 2018 18:22:45 +0200
-Message-Id: <20180701160857.212121960@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.14 089/157] X.509: unpack RSA signatureValue field from BIT STRING
+Date:   Sun,  1 Jul 2018 18:22:41 +0200
+Message-Id: <20180701160857.013501298@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,102 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-commit a9b6de77b1a3ff729f7bfc54b2e17711776a416c upstream.
+commit b65c32ec5a942ab3ada93a048089a938918aba7f upstream.
 
-get_user_pages_fast() for device pages is missing the typical validation
-that all page references have been taken while the mapping was valid.
-Without this validation truncate operations can not reliably coordinate
-against new page reference events like O_DIRECT.
+The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+For RSA signatures this BIT STRING is of so-called primitive subtype, which
+contains a u8 prefix indicating a count of unused bits in the encoding.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
-Reported-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+We have to strip this prefix from signature data, just as we already do for
+key data in x509_extract_key_data() function.
+
+This wasn't noticed earlier because this prefix byte is zero for RSA key
+sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+prefixes has no bearing on its value.
+
+The signature length, however was incorrect, which is a problem for RSA
+implementations that need it to be exactly correct (like AMD CCP).
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
+Cc: stable@vger.kernel.org
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/gup.c |   36 ++++++++++++++++++++++++++----------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1469,32 +1469,48 @@ static int __gup_device_huge(unsigned lo
- 	return 1;
- }
+--- a/crypto/asymmetric_keys/x509_cert_parser.c
++++ b/crypto/asymmetric_keys/x509_cert_parser.c
+@@ -249,6 +249,15 @@ int x509_note_signature(void *context, s
+ 		return -EINVAL;
+ 	}
  
--static int __gup_device_huge_pmd(pmd_t pmd, unsigned long addr,
-+static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr)
- {
- 	unsigned long fault_pfn;
-+	int nr_start = *nr;
- 
--	fault_pfn = pmd_pfn(pmd) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
--	return __gup_device_huge(fault_pfn, addr, end, pages, nr);
-+	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-+	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+		return 0;
++	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
++		/* Discard the BIT STRING metadata */
++		if (vlen < 1 || *(const u8 *)value != 0)
++			return -EBADMSG;
 +
-+	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-+		undo_dev_pagemap(nr, nr_start, pages);
-+		return 0;
++		value++;
++		vlen--;
 +	}
-+	return 1;
- }
- 
--static int __gup_device_huge_pud(pud_t pud, unsigned long addr,
-+static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr)
- {
- 	unsigned long fault_pfn;
-+	int nr_start = *nr;
- 
--	fault_pfn = pud_pfn(pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--	return __gup_device_huge(fault_pfn, addr, end, pages, nr);
-+	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
-+	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+		return 0;
 +
-+	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-+		undo_dev_pagemap(nr, nr_start, pages);
-+		return 0;
-+	}
-+	return 1;
- }
- #else
--static int __gup_device_huge_pmd(pmd_t pmd, unsigned long addr,
-+static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr)
- {
- 	BUILD_BUG();
+ 	ctx->cert->raw_sig = value;
+ 	ctx->cert->raw_sig_size = vlen;
  	return 0;
- }
- 
--static int __gup_device_huge_pud(pud_t pud, unsigned long addr,
-+static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long addr,
- 		unsigned long end, struct page **pages, int *nr)
- {
- 	BUILD_BUG();
-@@ -1512,7 +1528,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_
- 		return 0;
- 
- 	if (pmd_devmap(orig))
--		return __gup_device_huge_pmd(orig, addr, end, pages, nr);
-+		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
- 
- 	refs = 0;
- 	page = pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-@@ -1550,7 +1566,7 @@ static int gup_huge_pud(pud_t orig, pud_
- 		return 0;
- 
- 	if (pud_devmap(orig))
--		return __gup_device_huge_pud(orig, addr, end, pages, nr);
-+		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
- 
- 	refs = 0;
- 	page = pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
 
 
