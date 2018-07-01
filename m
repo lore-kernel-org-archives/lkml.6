@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B313C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BB8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B913A25068
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B913A25068
+	by mail.kernel.org (Postfix) with ESMTP id 1B30E2506A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B30E2506A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932834AbeGAQOb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60356 "EHLO
+        id S1753159AbeGAQOi (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:14:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60366 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932811AbeGAQO0 (ORCPT
+        with ESMTP id S932811AbeGAQOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:26 -0400
+        Sun, 1 Jul 2018 12:14:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF9C34A3;
-        Sun,  1 Jul 2018 16:14:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 666C94A3;
+        Sun,  1 Jul 2018 16:14:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 3.18 79/85] media: dvb_frontend: fix locking issues at dvb_frontend_get_event()
-Date:   Sun,  1 Jul 2018 18:02:37 +0200
-Message-Id: <20180701153125.518782074@linuxfoundation.org>
+        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 3.18 81/85] video: uvesafb: Fix integer overflow in allocation
+Date:   Sun,  1 Jul 2018 18:02:39 +0200
+Message-Id: <20180701153125.591292918@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -49,73 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
+commit 9f645bcc566a1e9f921bdae7528a01ced5bc3713 upstream.
 
-As warned by smatch:
-	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
-	  Locked on:   line 288
-	               line 295
-	               line 306
-	               line 314
-	  Unlocked on: line 303
+cmap->len can get close to INT_MAX/2, allowing for an integer overflow in
+allocation. This uses kmalloc_array() instead to catch the condition.
 
-The lock implementation for get event is wrong, as, if an
-interrupt occurs, down_interruptible() will fail, and the
-routine will call up() twice when userspace calls the ioctl
-again.
-
-The bad code is there since when Linux migrated to git, in
-2005.
-
+Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
+Fixes: 8bdb3a2d7df48 ("uvesafb: the driver core")
 Cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/dvb-core/dvb_frontend.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/video/fbdev/uvesafb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -224,8 +224,20 @@ static void dvb_frontend_add_event(struc
- 	wake_up_interruptible (&events->wait_queue);
- }
+--- a/drivers/video/fbdev/uvesafb.c
++++ b/drivers/video/fbdev/uvesafb.c
+@@ -1059,7 +1059,8 @@ static int uvesafb_setcmap(struct fb_cma
+ 		    info->cmap.len || cmap->start < info->cmap.start)
+ 			return -EINVAL;
  
-+static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
-+				   struct dvb_fe_events *events)
-+{
-+	int ret;
-+
-+	up(&fepriv->sem);
-+	ret = events->eventw != events->eventr;
-+	down(&fepriv->sem);
-+
-+	return ret;
-+}
-+
- static int dvb_frontend_get_event(struct dvb_frontend *fe,
--			    struct dvb_frontend_event *event, int flags)
-+			          struct dvb_frontend_event *event, int flags)
- {
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
- 	struct dvb_fe_events *events = &fepriv->events;
-@@ -243,13 +255,8 @@ static int dvb_frontend_get_event(struct
- 		if (flags & O_NONBLOCK)
- 			return -EWOULDBLOCK;
+-		entries = kmalloc(sizeof(*entries) * cmap->len, GFP_KERNEL);
++		entries = kmalloc_array(cmap->len, sizeof(*entries),
++					GFP_KERNEL);
+ 		if (!entries)
+ 			return -ENOMEM;
  
--		up(&fepriv->sem);
--
--		ret = wait_event_interruptible (events->wait_queue,
--						events->eventw != events->eventr);
--
--		if (down_interruptible (&fepriv->sem))
--			return -ERESTARTSYS;
-+		ret = wait_event_interruptible(events->wait_queue,
-+					       dvb_frontend_test_event(fepriv, events));
- 
- 		if (ret < 0)
- 			return ret;
 
 
