@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A30FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896E5C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C4223F80
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C4223F80
+	by mail.kernel.org (Postfix) with ESMTP id 40F03247A9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F03247A9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965729AbeGAQ2n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:28:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34342 "EHLO
+        id S965748AbeGAQ2s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:28:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34350 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965671AbeGAQ2d (ORCPT
+        with ESMTP id S965680AbeGAQ2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:33 -0400
+        Sun, 1 Jul 2018 12:28:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B30A6AE0;
-        Sun,  1 Jul 2018 16:28:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B19792B;
+        Sun,  1 Jul 2018 16:28:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 095/101] Input: elantech - enable middle button of touchpads on ThinkPad P52
-Date:   Sun,  1 Jul 2018 18:22:21 +0200
-Message-Id: <20180701160800.955761553@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 078/101] perf intel-pt: Fix MTC timing after overflow
+Date:   Sun,  1 Jul 2018 18:22:04 +0200
+Message-Id: <20180701160800.290908659@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,47 +49,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 24bb555e6e46d96e2a954aa0295029a81cc9bbaa upstream.
+commit dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c upstream.
 
-PNPID is better way to identify the type of touchpads.
-Enable middle button support on 2 types of touchpads on Lenovo P52.
+On some platforms, overflows will clear before MTC wraparound, and there
+is no following TSC/TMA packet. In that case the previous TMA is valid.
+Since there will be a valid TMA either way, stop setting 'have_tma' to
+false upon overflow.
 
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: http://lkml.kernel.org/r/1527762225-26024-4-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1173,6 +1173,12 @@ static const struct dmi_system_id elante
- 	{ }
- };
- 
-+static const char * const middle_button_pnp_ids[] = {
-+	"LEN2131", /* ThinkPad P52 w/ NFC */
-+	"LEN2132", /* ThinkPad P52 */
-+	NULL
-+};
-+
- /*
-  * Set the appropriate event bits for the input subsystem
-  */
-@@ -1192,7 +1198,8 @@ static int elantech_set_input_params(str
- 	__clear_bit(EV_REL, dev->evbit);
- 
- 	__set_bit(BTN_LEFT, dev->keybit);
--	if (dmi_check_system(elantech_dmi_has_middle_button))
-+	if (dmi_check_system(elantech_dmi_has_middle_button) ||
-+			psmouse_matches_pnp_id(psmouse, middle_button_pnp_ids))
- 		__set_bit(BTN_MIDDLE, dev->keybit);
- 	__set_bit(BTN_RIGHT, dev->keybit);
- 
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1298,7 +1298,6 @@ static int intel_pt_overflow(struct inte
+ {
+ 	intel_pt_log("ERROR: Buffer overflow\n");
+ 	intel_pt_clear_tx_flags(decoder);
+-	decoder->have_tma = false;
+ 	decoder->cbr = 0;
+ 	decoder->timestamp_insn_cnt = 0;
+ 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
 
 
