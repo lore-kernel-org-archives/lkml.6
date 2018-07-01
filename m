@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36B4C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFB6C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7B02592C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7B02592C
+	by mail.kernel.org (Postfix) with ESMTP id 2C79325934
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C79325934
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753640AbeGASR7 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:17:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33748 "EHLO
+        id S965323AbeGASSZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:18:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965263AbeGAQZx (ORCPT
+        with ESMTP id S965234AbeGAQZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:53 -0400
+        Sun, 1 Jul 2018 12:25:47 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 009A8ACD;
-        Sun,  1 Jul 2018 16:25:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 186EEACD;
+        Sun,  1 Jul 2018 16:25:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.9 005/101] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
-Date:   Sun,  1 Jul 2018 18:20:51 +0200
-Message-Id: <20180701160757.356266184@linuxfoundation.org>
+        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 036/101] IB/mlx5: Fetch soft WQEs on fatal error state
+Date:   Sun,  1 Jul 2018 18:21:22 +0200
+Message-Id: <20180701160758.608940997@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -51,78 +50,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Erez Shitrit <erezsh@mellanox.com>
 
-commit 1f74c8a64798e2c488f86efc97e308b85fb7d7aa upstream.
+commit 7b74a83cf54a3747e22c57e25712bd70eef8acee upstream.
 
-mce_no_way_out() does a quick check during #MC to see whether some of
-the MCEs logged would require the kernel to panic immediately. And it
-passes a struct mce where MCi_STATUS gets written.
+On fatal error the driver simulates CQE's for ULPs that rely on
+completion of all their posted work-request.
 
-However, after having saved a valid status value, the next iteration
-of the loop which goes over the MCA banks on the CPU, overwrites the
-valid status value because we're using struct mce as storage instead of
-a temporary variable.
+For the GSI traffic, the mlx5 has its own mechanism that sends the
+completions via software CQE's directly to the relevant CQ.
 
-Which leads to MCE records with an empty status value:
+This should be kept in fatal error too, so the driver should simulate
+such CQE's with the specified error state in order to complete GSI QP
+work requests.
 
-  mce: [Hardware Error]: CPU 0: Machine Check Exception: 6 Bank 0: 0000000000000000
-  mce: [Hardware Error]: RIP 10:<ffffffffbd42fbd7> {trigger_mce+0x7/0x10}
+Without the fix the next deadlock might appears:
+        schedule_timeout+0x274/0x350
+        wait_for_common+0xec/0x240
+        mcast_remove_one+0xd0/0x120 [ib_core]
+        ib_unregister_device+0x12c/0x230 [ib_core]
+        mlx5_ib_remove+0xc4/0x270 [mlx5_ib]
+        mlx5_detach_device+0x184/0x1a0 [mlx5_core]
+        mlx5_unload_one+0x308/0x340 [mlx5_core]
+        mlx5_pci_err_detected+0x74/0xe0 [mlx5_core]
 
-In order to prevent the loss of the status register value, return
-immediately when severity is a panic one so that we can panic
-immediately with the first fatal MCE logged. This is also the intention
-of this function and not to noodle over the banks while a fatal MCE is
-already logged.
-
-Tony: read the rest of the MCA bank to populate the struct mce fully.
-
-Suggested-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20180622095428.626-8-bp@alien8.de
+Cc: <stable@vger.kernel.org> # 4.7
+Fixes: 89ea94a7b6c4 ("IB/mlx5: Reset flow support for IB kernel ULPs")
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/mlx5/cq.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -738,23 +738,25 @@ EXPORT_SYMBOL_GPL(machine_check_poll);
- static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
- 			  struct pt_regs *regs)
- {
--	int i, ret = 0;
- 	char *tmp;
-+	int i;
- 
- 	for (i = 0; i < mca_cfg.banks; i++) {
- 		m->status = mce_rdmsrl(msr_ops.status(i));
--		if (m->status & MCI_STATUS_VAL) {
--			__set_bit(i, validp);
--			if (quirk_no_way_out)
--				quirk_no_way_out(i, m, regs);
--		}
-+		if (!(m->status & MCI_STATUS_VAL))
-+			continue;
-+
-+		__set_bit(i, validp);
-+		if (quirk_no_way_out)
-+			quirk_no_way_out(i, m, regs);
- 
- 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
-+			mce_read_aux(m, i);
- 			*msg = tmp;
--			ret = 1;
-+			return 1;
- 		}
- 	}
--	return ret;
-+	return 0;
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -645,7 +645,7 @@ repoll:
  }
  
- /*
+ static int poll_soft_wc(struct mlx5_ib_cq *cq, int num_entries,
+-			struct ib_wc *wc)
++			struct ib_wc *wc, bool is_fatal_err)
+ {
+ 	struct mlx5_ib_dev *dev = to_mdev(cq->ibcq.device);
+ 	struct mlx5_ib_wc *soft_wc, *next;
+@@ -658,6 +658,10 @@ static int poll_soft_wc(struct mlx5_ib_c
+ 		mlx5_ib_dbg(dev, "polled software generated completion on CQ 0x%x\n",
+ 			    cq->mcq.cqn);
+ 
++		if (unlikely(is_fatal_err)) {
++			soft_wc->wc.status = IB_WC_WR_FLUSH_ERR;
++			soft_wc->wc.vendor_err = MLX5_CQE_SYNDROME_WR_FLUSH_ERR;
++		}
+ 		wc[npolled++] = soft_wc->wc;
+ 		list_del(&soft_wc->list);
+ 		kfree(soft_wc);
+@@ -678,12 +682,17 @@ int mlx5_ib_poll_cq(struct ib_cq *ibcq,
+ 
+ 	spin_lock_irqsave(&cq->lock, flags);
+ 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR) {
+-		mlx5_ib_poll_sw_comp(cq, num_entries, wc, &npolled);
++		/* make sure no soft wqe's are waiting */
++		if (unlikely(!list_empty(&cq->wc_list)))
++			soft_polled = poll_soft_wc(cq, num_entries, wc, true);
++
++		mlx5_ib_poll_sw_comp(cq, num_entries - soft_polled,
++				     wc + soft_polled, &npolled);
+ 		goto out;
+ 	}
+ 
+ 	if (unlikely(!list_empty(&cq->wc_list)))
+-		soft_polled = poll_soft_wc(cq, num_entries, wc);
++		soft_polled = poll_soft_wc(cq, num_entries, wc, false);
+ 
+ 	for (npolled = 0; npolled < num_entries - soft_polled; npolled++) {
+ 		if (mlx5_poll_one(cq, &cur_qp, wc + soft_polled + npolled))
 
 
