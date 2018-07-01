@@ -6,43 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA0CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0E3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F7C255B4
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F7C255B4
+	by mail.kernel.org (Postfix) with ESMTP id E8152255B9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8152255B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933982AbeGARKD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:10:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37308 "EHLO
+        id S933171AbeGARKU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:10:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032003AbeGAQlJ (ORCPT
+        with ESMTP id S1031995AbeGAQlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:09 -0400
+        Sun, 1 Jul 2018 12:41:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71F1AAA6;
-        Sun,  1 Jul 2018 16:41:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22CBDAA6;
+        Sun,  1 Jul 2018 16:41:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.17 100/220] mtd: cfi_cmdset_0002: Change write buffer to check correct value
-Date:   Sun,  1 Jul 2018 18:22:04 +0200
-Message-Id: <20180701160912.586493348@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.17 098/220] RDMA/core: Save kernel caller name when creating CQ using ib_create_cq()
+Date:   Sun,  1 Jul 2018 18:22:02 +0200
+Message-Id: <20180701160912.507158106@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -59,45 +51,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+From: Bharat Potnuri <bharat@chelsio.com>
 
-commit dfeae1073583dc35c33b32150e18b7048bbb37e6 upstream.
+commit 7350cdd0257e73a37df57253fb9decd8effacd37 upstream.
 
-For the word write it is checked if the chip has the correct value.
-But it is not checked for the write buffer as only checked if ready.
-To make sure for the write buffer change to check the value.
+Few kernel applications like SCST-iSER create CQ using ib_create_cq(),
+where accessing CQ structures using rdma restrack tool leads to below NULL
+pointer dereference. This patch saves caller kernel module name similar to
+ib_alloc_cq().
 
-It is enough as this patch is only checking the last written word.
-Since it is described by data sheets to check the operation status.
+BUG: unable to handle kernel NULL pointer dereference at           (null)
+IP: [<ffffffff8132ca70>] skip_spaces+0x30/0x30
+PGD 738bac067 PUD 8533f0067 PMD 0
+Oops: 0000 [#1] SMP
+R10: ffff88017fc03300 R11: 0000000000000246 R12: 0000000000000000
+R13: ffff88082fa5a668 R14: ffff88017475a000 R15: 0000000000000000
+FS:  00002b32726582c0(0000) GS:ffff88087fc40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000008491a1000 CR4: 00000000003607e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ [<ffffffffc05af69c>] ? fill_res_name_pid+0x7c/0x90 [ib_core]
+ [<ffffffffc05af79f>] fill_res_cq_entry+0xef/0x170 [ib_core]
+ [<ffffffffc05af4c4>] res_get_common_dumpit+0x3c4/0x480 [ib_core]
+ [<ffffffffc05af5d3>] nldev_res_get_cq_dumpit+0x13/0x20 [ib_core]
+ [<ffffffff815bc1e7>] netlink_dump+0x117/0x2e0
+ [<ffffffff815bcb8b>] __netlink_dump_start+0x1ab/0x230
+ [<ffffffffc059fead>] ibnl_rcv_msg+0x11d/0x1f0 [ib_core]
+ [<ffffffffc05af5c0>] ? nldev_res_get_mr_dumpit+0x20/0x20 [ib_core]
+ [<ffffffffc059fd90>] ? rdma_nl_multicast+0x30/0x30 [ib_core]
+ [<ffffffff815bea49>] netlink_rcv_skb+0xa9/0xc0
+ [<ffffffffc05a0018>] ibnl_rcv+0x98/0xb0 [ib_core]
+ [<ffffffff815be132>] netlink_unicast+0xf2/0x1b0
+ [<ffffffff815be50f>] netlink_sendmsg+0x31f/0x6a0
+ [<ffffffff8156b580>] sock_sendmsg+0xb0/0xf0
+ [<ffffffff816ace9e>] ? _raw_spin_unlock_bh+0x1e/0x20
+ [<ffffffff8156f998>] ? release_sock+0x118/0x170
+ [<ffffffff8156b731>] SYSC_sendto+0x121/0x1c0
+ [<ffffffff81568340>] ? sock_alloc_file+0xa0/0x140
+ [<ffffffff81221265>] ? __fd_install+0x25/0x60
+ [<ffffffff8156c2ce>] SyS_sendto+0xe/0x10
+ [<ffffffff816b6c2a>] system_call_fastpath+0x16/0x1b
+RIP  [<ffffffff8132ca70>] skip_spaces+0x30/0x30
+RSP <ffff88072be97760>
+CR2: 0000000000000000
 
-Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-mtd@lists.infradead.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: <stable@vger.kernel.org>
+Fixes: f66c8ba4c9fa ("RDMA/core: Save kernel caller name when creating PD and CQ objects")
+Reviewed-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/verbs.c |   14 ++++++++------
+ include/rdma/ib_verbs.h         |   13 ++++++++-----
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1880,7 +1880,7 @@ static int __xipram do_write_buffer(stru
- 		if (time_after(jiffies, timeo) && !chip_ready(map, adr))
- 			break;
+--- a/drivers/infiniband/core/verbs.c
++++ b/drivers/infiniband/core/verbs.c
+@@ -1562,11 +1562,12 @@ EXPORT_SYMBOL(ib_destroy_qp);
  
--		if (chip_ready(map, adr)) {
-+		if (chip_good(map, adr, datum)) {
- 			xip_enable(map, chip, adr);
- 			goto op_done;
- 		}
+ /* Completion queues */
+ 
+-struct ib_cq *ib_create_cq(struct ib_device *device,
+-			   ib_comp_handler comp_handler,
+-			   void (*event_handler)(struct ib_event *, void *),
+-			   void *cq_context,
+-			   const struct ib_cq_init_attr *cq_attr)
++struct ib_cq *__ib_create_cq(struct ib_device *device,
++			     ib_comp_handler comp_handler,
++			     void (*event_handler)(struct ib_event *, void *),
++			     void *cq_context,
++			     const struct ib_cq_init_attr *cq_attr,
++			     const char *caller)
+ {
+ 	struct ib_cq *cq;
+ 
+@@ -1580,12 +1581,13 @@ struct ib_cq *ib_create_cq(struct ib_dev
+ 		cq->cq_context    = cq_context;
+ 		atomic_set(&cq->usecnt, 0);
+ 		cq->res.type = RDMA_RESTRACK_CQ;
++		cq->res.kern_name = caller;
+ 		rdma_restrack_add(&cq->res);
+ 	}
+ 
+ 	return cq;
+ }
+-EXPORT_SYMBOL(ib_create_cq);
++EXPORT_SYMBOL(__ib_create_cq);
+ 
+ int rdma_set_cq_moderation(struct ib_cq *cq, u16 cq_count, u16 cq_period)
+ {
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -3310,11 +3310,14 @@ int ib_process_cq_direct(struct ib_cq *c
+  *
+  * Users can examine the cq structure to determine the actual CQ size.
+  */
+-struct ib_cq *ib_create_cq(struct ib_device *device,
+-			   ib_comp_handler comp_handler,
+-			   void (*event_handler)(struct ib_event *, void *),
+-			   void *cq_context,
+-			   const struct ib_cq_init_attr *cq_attr);
++struct ib_cq *__ib_create_cq(struct ib_device *device,
++			     ib_comp_handler comp_handler,
++			     void (*event_handler)(struct ib_event *, void *),
++			     void *cq_context,
++			     const struct ib_cq_init_attr *cq_attr,
++			     const char *caller);
++#define ib_create_cq(device, cmp_hndlr, evt_hndlr, cq_ctxt, cq_attr) \
++	__ib_create_cq((device), (cmp_hndlr), (evt_hndlr), (cq_ctxt), (cq_attr), KBUILD_MODNAME)
+ 
+ /**
+  * ib_resize_cq - Modifies the capacity of the CQ.
 
 
