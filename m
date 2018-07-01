@@ -6,38 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960FCC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE83C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CAE823C13
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:49:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAE823C13
+	by mail.kernel.org (Postfix) with ESMTP id 52EA825B75
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52EA825B75
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752959AbeGAStM (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:49:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59710 "EHLO
+        id S932201AbeGASti (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:49:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59680 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752612AbeGAQL2 (ORCPT
+        with ESMTP id S1752570AbeGAQLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:11:28 -0400
+        Sun, 1 Jul 2018 12:11:18 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18A09AEF;
-        Sun,  1 Jul 2018 16:11:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCB26ACD;
+        Sun,  1 Jul 2018 16:11:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sinan Kaya <okaya@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 05/85] MIPS: io: Add barrier after register read in readX()
-Date:   Sun,  1 Jul 2018 18:01:23 +0200
-Message-Id: <20180701153122.580288823@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>, Borislav Petkov <bp@suse.de>,
+        David Ahern <dsahern@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Michal Marek <mmarek@suse.cz>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 3.18 02/85] tools build: Fix Makefile(s) to properly invoke tools build
+Date:   Sun,  1 Jul 2018 18:01:20 +0200
+Message-Id: <20180701153122.463768891@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -54,39 +58,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sinan Kaya <okaya@codeaurora.org>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit a1cc7034e33d12dc17d13fbcd7d597d552889097 ]
+commit 16671c1e1cac2dbb995feb4bc55082fd939b5c2c upstream.
 
-While a barrier is present in the writeX() functions before the register
-write, a similar barrier is missing in the readX() functions after the
-register read. This could allow memory accesses following readX() to
-observe stale data.
+Several fixes were needed to allow following builds:
+  $ make tools/tmon
+  $ make -C <kernelsrc> tools/perf
+  $ make -C <kernelsrc>/tools perf
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/19069/
-[jhogan@kernel.org: Tidy commit message]
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+ - some of the tools (perf) use same make variables as in
+   kernel build, unsetting srctree and objtree
+ - using original $(O) for O variable
+ - perf build does not follow the descend function setup
+   invoking it via it's own make rule
+
+I tried the rest of the tools/Makefile targets and they
+seem to work now.
+
+Reported-by: Brian Norris <computersforpeace@gmail.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Michal Marek <mmarek@suse.cz>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-kbuild@vger.kernel.org
+Link: http://lkml.kernel.org/r/1429389280-18720-3-git-send-email-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/mips/include/asm/io.h |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -375,6 +375,8 @@ static inline type pfx##read##bwlq(const
- 		BUG();							\
- 	}								\
- 									\
-+	/* prevent prefetching of coherent DMA data prematurely */	\
-+	rmb();								\
- 	return pfx##ioswab##bwlq(__mem, __val);				\
- }
+---
+ Makefile       |    5 ++---
+ tools/Makefile |   12 +++++++++++-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+--- a/Makefile
++++ b/Makefile
+@@ -214,7 +214,6 @@ VPATH		:= $(srctree)$(if $(KBUILD_EXTMOD
  
+ export srctree objtree VPATH
+ 
+-
+ # SUBARCH tells the usermode build what the underlying arch is.  That is set
+ # first, and if a usermode build is happening, the "ARCH=um" on the command
+ # line overrides the setting of ARCH below.  If a native build is happening,
+@@ -1505,11 +1504,11 @@ image_name:
+ # Clear a bunch of variables before executing the submake
+ tools/: FORCE
+ 	$(Q)mkdir -p $(objtree)/tools
+-	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(objtree) subdir=tools -C $(src)/tools/
++	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/
+ 
+ tools/%: FORCE
+ 	$(Q)mkdir -p $(objtree)/tools
+-	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(objtree) subdir=tools -C $(src)/tools/ $*
++	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/ $*
+ 
+ # Single targets
+ # ---------------------------------------------------------------------------
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -1,3 +1,8 @@
++# Some of the tools (perf) use same make variables
++# as in kernel build.
++export srctree=
++export objtree=
++
+ include scripts/Makefile.include
+ 
+ help:
+@@ -54,8 +59,13 @@ liblockdep: FORCE
+ libapi: FORCE
+ 	$(call descend,lib/api)
+ 
++# The perf build does not follow the descend function setup,
++# invoking it via it's own make rule.
++PERF_O   = $(if $(O),$(O)/tools/perf,)
++
+ perf: FORCE
+-	$(call descend,$@)
++	$(Q)mkdir -p $(PERF_O) .
++	$(Q)$(MAKE) --no-print-directory -C perf O=$(PERF_O) subdir=
+ 
+ selftests: FORCE
+ 	$(call descend,testing/$@)
 
 
