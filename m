@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE94CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750FC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B274A252C1
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B274A252C1
+	by mail.kernel.org (Postfix) with ESMTP id ED2892083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2892083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030784AbeGAQd2 (ORCPT
+        id S1030799AbeGAQde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:33:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35368 "EHLO
+        Sun, 1 Jul 2018 12:33:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35400 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030751AbeGAQdV (ORCPT
+        with ESMTP id S1030751AbeGAQd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:21 -0400
+        Sun, 1 Jul 2018 12:33:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A693349B;
-        Sun,  1 Jul 2018 16:33:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0E1F92B;
+        Sun,  1 Jul 2018 16:33:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 092/157] iio: sca3000: Fix an error handling path in sca3000_probe()
-Date:   Sun,  1 Jul 2018 18:22:44 +0200
-Message-Id: <20180701160857.164940769@linuxfoundation.org>
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Eda Zhou <ezhou@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 095/157] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
+Date:   Sun,  1 Jul 2018 18:22:47 +0200
+Message-Id: <20180701160857.299369412@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -52,57 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-commit 4a5b45383ca371e123ba103d34d4b3b87616245c upstream.
+commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
 
-Use 'devm_iio_kfifo_allocate()' instead of 'iio_kfifo_allocate()' in order
-to simplify code and avoid a memory leak in an error path in
-'sca3000_probe()'. A call to 'sca3000_unconfigure_ring()' was missing.
+This patch prevents driver from setting lower default speed of 1 GB/sec,
+if the switch does not support Get Port Speed Capabilities (GPSC)
+command. Setting this default speed results into much lower write
+performance for large sequential WRITE.  This patch modifies driver to
+check for gpsc_supported flags and prevents driver from issuing
+MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
+does not send this mailbox command, firmware assumes maximum supported
+link speed and will operate at the max speed.
 
-Sent via the next merge window as unimportant bug and there are
-other patches dependent on it.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reported-by: Eda Zhou <ezhou@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Tested-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/accel/sca3000.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/accel/sca3000.c
-+++ b/drivers/iio/accel/sca3000.c
-@@ -1277,7 +1277,7 @@ static int sca3000_configure_ring(struct
- {
- 	struct iio_buffer *buffer;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -4627,7 +4627,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
+ 		return;
  
--	buffer = iio_kfifo_allocate();
-+	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
- 	if (!buffer)
- 		return -ENOMEM;
+ 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
+-	    fcport->fp_speed > ha->link_data_rate)
++	    fcport->fp_speed > ha->link_data_rate ||
++	    !ha->flags.gpsc_supported)
+ 		return;
  
-@@ -1287,11 +1287,6 @@ static int sca3000_configure_ring(struct
- 	return 0;
- }
- 
--static void sca3000_unconfigure_ring(struct iio_dev *indio_dev)
--{
--	iio_kfifo_free(indio_dev->buffer);
--}
--
- static inline
- int __sca3000_hw_ring_state_set(struct iio_dev *indio_dev, bool state)
- {
-@@ -1547,8 +1542,6 @@ static int sca3000_remove(struct spi_dev
- 	if (spi->irq)
- 		free_irq(spi->irq, indio_dev);
- 
--	sca3000_unconfigure_ring(indio_dev);
--
- 	return 0;
- }
- 
+ 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
 
 
