@@ -2,90 +2,223 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA982C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B5DC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97C5E256A1
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C5E256A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D7A18256A2
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A18256A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965959AbeGARbg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:31:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35966 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031243AbeGAQgU (ORCPT
+        id S1031122AbeGARbt (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:31:49 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:51296 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965963AbeGARbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:20 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 695CB49B;
-        Sun,  1 Jul 2018 16:36:19 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.14 120/157] perf intel-pt: Fix decoding to accept CBR between FUP and corresponding TIP
-Date:   Sun,  1 Jul 2018 18:23:12 +0200
-Message-Id: <20180701160858.768062679@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
-References: <20180701160852.287307684@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Sun, 1 Jul 2018 13:31:43 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0744162|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e04486;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.CKwkw0._1530466294;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CKwkw0._1530466294)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Mon, 02 Jul 2018 01:31:35 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de
+Cc:     c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
+        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, ren_guo@c-sky.com,
+        green.hu@gmail.com
+Subject: [PATCH V2 09/19] csky: VDSO and rt_sigreturn
+Date:   Mon,  2 Jul 2018 01:30:12 +0800
+Message-Id: <c67d0b5f5515ef0c67c18dae87ba975ecd1cf1e1.1530465326.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1530465325.git.ren_guo@c-sky.com>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
+In-Reply-To: <cover.1530465325.git.ren_guo@c-sky.com>
+References: <cover.1530465325.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Adrian Hunter <adrian.hunter@intel.com>
-
-commit bd2e49ec48feb1855f7624198849eea4610e2286 upstream.
-
-It is possible to have a CBR packet between a FUP packet and
-corresponding TIP packet. Stop treating it as an error.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-3-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/csky/abiv1/inc/abi/vdso.h | 17 ++++++++
+ arch/csky/abiv2/inc/abi/vdso.h | 18 +++++++++
+ arch/csky/include/asm/vdso.h   | 12 ++++++
+ arch/csky/kernel/vdso.c        | 89 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 136 insertions(+)
+ create mode 100644 arch/csky/abiv1/inc/abi/vdso.h
+ create mode 100644 arch/csky/abiv2/inc/abi/vdso.h
+ create mode 100644 arch/csky/include/asm/vdso.h
+ create mode 100644 arch/csky/kernel/vdso.c
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1604,7 +1604,6 @@ static int intel_pt_walk_fup_tip(struct
- 		case INTEL_PT_PSB:
- 		case INTEL_PT_TSC:
- 		case INTEL_PT_TMA:
--		case INTEL_PT_CBR:
- 		case INTEL_PT_MODE_TSX:
- 		case INTEL_PT_BAD:
- 		case INTEL_PT_PSBEND:
-@@ -1620,6 +1619,10 @@ static int intel_pt_walk_fup_tip(struct
- 			decoder->pkt_step = 0;
- 			return -ENOENT;
- 
-+		case INTEL_PT_CBR:
-+			intel_pt_calc_cbr(decoder);
-+			break;
+diff --git a/arch/csky/abiv1/inc/abi/vdso.h b/arch/csky/abiv1/inc/abi/vdso.h
+new file mode 100644
+index 0000000..a99f0e4
+--- /dev/null
++++ b/arch/csky/abiv1/inc/abi/vdso.h
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/uaccess.h>
 +
- 		case INTEL_PT_OVF:
- 			return intel_pt_overflow(decoder);
- 
-
++static inline int setup_vdso_page(unsigned short *ptr)
++{
++	int err = 0;
++
++	/* movi r1, 127 */
++	err |= __put_user(0x67f1, ptr + 0);
++	/* addi r1, (139 - 127) */
++	err |= __put_user(0x20b1, ptr + 1);
++	/* trap 0 */
++	err |= __put_user(0x0008, ptr + 2);
++
++	return err;
++}
+diff --git a/arch/csky/abiv2/inc/abi/vdso.h b/arch/csky/abiv2/inc/abi/vdso.h
+new file mode 100644
+index 0000000..aa2d489
+--- /dev/null
++++ b/arch/csky/abiv2/inc/abi/vdso.h
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/uaccess.h>
++
++static inline int setup_vdso_page(unsigned short *ptr)
++{
++	int err = 0;
++
++	/* movi r7, 173 */
++	err |= __put_user(0xea07, ptr);
++	err |= __put_user(0x008b,      ptr+1);
++
++	/* trap 0 */
++	err |= __put_user(0xc000,   ptr+2);
++	err |= __put_user(0x2020,   ptr+3);
++
++	return err;
++}
+diff --git a/arch/csky/include/asm/vdso.h b/arch/csky/include/asm/vdso.h
+new file mode 100644
+index 0000000..b275440
+--- /dev/null
++++ b/arch/csky/include/asm/vdso.h
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#ifndef __ASM_CSKY_VDSO_H
++#define __ASM_CSKY_VDSO_H
++
++#include <abi/vdso.h>
++
++struct csky_vdso {
++	unsigned short rt_signal_retcode[4];
++};
++
++#endif /* __ASM_CSKY_VDSO_H */
+diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
+new file mode 100644
+index 0000000..dd59aae
+--- /dev/null
++++ b/arch/csky/kernel/vdso.c
+@@ -0,0 +1,89 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/sched.h>
++#include <linux/mm.h>
++#include <linux/init.h>
++#include <linux/binfmts.h>
++#include <linux/elf.h>
++#include <linux/vmalloc.h>
++#include <linux/unistd.h>
++#include <linux/uaccess.h>
++
++#include <asm/vdso.h>
++#include <asm/cacheflush.h>
++
++static struct page *vdso_page;
++
++static int __init init_vdso(void)
++{
++	struct csky_vdso *vdso;
++	int err = 0;
++
++	vdso_page = alloc_page(GFP_KERNEL);
++	if (!vdso_page)
++		panic("Cannot allocate vdso");
++
++	vdso = vmap(&vdso_page, 1, 0, PAGE_KERNEL);
++	if (!vdso)
++		panic("Cannot map vdso");
++
++	clear_page(vdso);
++
++	/*
++	 * __NR_rt_sigreturn must be 173
++	 * Because gcc/config/csky/linux-unwind.h use hard code to parse rt_sigframe.
++	 */
++	err = setup_vdso_page(vdso->rt_signal_retcode);
++	if (err) panic("Cannot set signal return code, err: %x.", err);
++
++	dcache_wb_range((unsigned long)vdso, (unsigned long)vdso + 16);
++
++	vunmap(vdso);
++
++	return 0;
++}
++subsys_initcall(init_vdso);
++
++int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++{
++	int ret;
++	unsigned long addr;
++	struct mm_struct *mm = current->mm;
++
++	down_write(&mm->mmap_sem);
++
++	addr = get_unmapped_area(NULL, STACK_TOP, PAGE_SIZE, 0, 0);
++	if (IS_ERR_VALUE(addr)) {
++		ret = addr;
++		goto up_fail;
++	}
++
++	ret = install_special_mapping(
++			mm,
++			addr,
++			PAGE_SIZE,
++			VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			&vdso_page);
++	if (ret)
++		goto up_fail;
++
++	mm->context.vdso = (void *)addr;
++
++up_fail:
++	up_write(&mm->mmap_sem);
++	return ret;
++}
++
++const char *arch_vma_name(struct vm_area_struct *vma)
++{
++	if (vma->vm_mm == NULL)
++		return NULL;
++
++	if (vma->vm_start == (long)vma->vm_mm->context.vdso)
++		return "[vdso]";
++	else
++		return NULL;
++}
++
+-- 
+2.7.4
 
