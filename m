@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908BEC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E11C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C0625077
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C0625077
+	by mail.kernel.org (Postfix) with ESMTP id B975E2507E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B975E2507E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932302AbeGAQPG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60454 "EHLO
+        id S1753203AbeGAQPK (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60500 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbeGAQO6 (ORCPT
+        with ESMTP id S932926AbeGAQPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:58 -0400
+        Sun, 1 Jul 2018 12:15:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8066B4A3;
-        Sun,  1 Jul 2018 16:14:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62BF3ACC;
+        Sun,  1 Jul 2018 16:15:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 61/85] powerpc/fadump: Unregister fadump on kexec down path.
-Date:   Sun,  1 Jul 2018 18:02:19 +0200
-Message-Id: <20180701153124.792123400@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 3.18 54/85] branch-check: fix long->int truncation when profiling branches
+Date:   Sun,  1 Jul 2018 18:02:12 +0200
+Message-Id: <20180701153124.510326197@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,39 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
+commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
 
-Unregister fadump on kexec down path otherwise the fadump registration
-in new kexec-ed kernel complains that fadump is already registered.
-This makes new kernel to continue using fadump registered by previous
-kernel which may lead to invalid vmcore generation. Hence this patch
-fixes this issue by un-registering fadump in fadump_cleanup() which is
-called during kexec path so that new kernel can register fadump with
-new valid values.
+The function __builtin_expect returns long type (see the gcc
+documentation), and so do macros likely and unlikely. Unfortunatelly, when
+CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
+unlikely expand to __branch_check__ and __branch_check__ truncates the
+long type to int. This unintended truncation may cause bugs in various
+kernel code (we found a bug in dm-writecache because of it), so it's
+better to fix __branch_check__ to return long.
 
-Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
-Cc: stable@vger.kernel.org # v3.4+
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/fadump.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/compiler.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -1025,6 +1025,9 @@ void fadump_cleanup(void)
- 		init_fadump_mem_struct(&fdm,
- 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
- 		fadump_invalidate_dump(&fdm);
-+	} else if (fw_dump.dump_registered) {
-+		/* Un-register Firmware-assisted dump if it was registered. */
-+		fadump_unregister_dump(&fdm);
- 	}
- }
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -105,7 +105,7 @@ void ftrace_likely_update(struct ftrace_
+ #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
  
+ #define __branch_check__(x, expect) ({					\
+-			int ______r;					\
++			long ______r;					\
+ 			static struct ftrace_branch_data		\
+ 				__attribute__((__aligned__(4)))		\
+ 				__attribute__((section("_ftrace_annotated_branch"))) \
 
 
