@@ -2,53 +2,42 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE90C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B740C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D3125335
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D3125335
+	by mail.kernel.org (Postfix) with ESMTP id C6D6825339
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D6825339
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031544AbeGAQiH (ORCPT
+        id S1031557AbeGAQiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:38:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36562 "EHLO
+        Sun, 1 Jul 2018 12:38:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031094AbeGAQh5 (ORCPT
+        with ESMTP id S1031094AbeGAQiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:57 -0400
+        Sun, 1 Jul 2018 12:38:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91ED0AA6;
-        Sun,  1 Jul 2018 16:37:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3F9AA73;
+        Sun,  1 Jul 2018 16:38:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.17 032/220] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date:   Sun,  1 Jul 2018 18:20:56 +0200
-Message-Id: <20180701160909.674646762@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.17 007/220] x86/mce: Check for alternate indication of machine check recovery on Skylake
+Date:   Sun,  1 Jul 2018 18:20:31 +0200
+Message-Id: <20180701160908.617023129@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -65,79 +54,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Tony Luck <tony.luck@intel.com>
 
-commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
+commit 4c5717da1d021cf368eabb3cb1adcaead56c0d1e upstream.
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+Currently we just check the "CAPID0" register to see whether the CPU
+can recover from machine checks.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
+But there are also some special SKUs which do not have all advanced
+RAS features, but do enable machine check recovery for use with NVDIMMs.
 
-Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Add a check for any of bits {8:5} in the "CAPID5" register (each
+reports some NVDIMM mode available, if any of them are set, then
+the system supports memory machine check recovery).
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org # 4.9
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/03cbed6e99ddafb51c2eadf9a3b7c8d7a0cc204e.1527283897.git.tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/kernel/quirks.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -258,8 +258,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
+--- a/arch/x86/kernel/quirks.c
++++ b/arch/x86/kernel/quirks.c
+@@ -645,12 +645,19 @@ static void quirk_intel_brickland_xeon_r
+ /* Skylake */
+ static void quirk_intel_purley_xeon_ras_cap(struct pci_dev *pdev)
+ {
+-	u32 capid0;
++	u32 capid0, capid5;
+ 
+ 	pci_read_config_dword(pdev, 0x84, &capid0);
++	pci_read_config_dword(pdev, 0x98, &capid5);
+ 
+-	if ((capid0 & 0xc0) == 0xc0)
++	/*
++	 * CAPID0{7:6} indicate whether this is an advanced RAS SKU
++	 * CAPID5{8:5} indicate that various NVDIMM usage modes are
++	 * enabled, so memory machine check recovery is also enabled.
++	 */
++	if ((capid0 & 0xc0) == 0xc0 || (capid5 & 0x1e0))
+ 		static_branch_inc(&mcsafe_key);
++
  }
- 
-@@ -326,7 +327,7 @@ static void __init cpg_mssr_register_cor
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
-@@ -392,7 +393,7 @@ static void __init cpg_mssr_register_mod
- 	if (IS_ERR(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	priv->smstpcr_saved[clock->index / 32].mask |= BIT(clock->index % 32);
- 	return;
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0ec3, quirk_intel_brickland_xeon_ras_cap);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2fc0, quirk_intel_brickland_xeon_ras_cap);
 
 
