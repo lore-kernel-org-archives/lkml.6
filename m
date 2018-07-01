@@ -2,87 +2,72 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B388FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0382C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5826121A78
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:14:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u1D8X9FB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5826121A78
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 067E321A78
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067E321A78
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeGAJOq (ORCPT
+        id S1752146AbeGAJQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 05:14:46 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:42034 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeGAJOm (ORCPT
+        Sun, 1 Jul 2018 05:16:15 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:53570 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751504AbeGAJQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 05:14:42 -0400
-Received: by mail-vk0-f66.google.com with SMTP id s187-v6so7623448vke.9
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 02:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nlQU1K3/0xVSOVyZDh3cWkL1gRHgkbrcW5D0QZ1UYAw=;
-        b=u1D8X9FBlx5SoFrIDc5EDKQWfSmRUfIbfbbpqutPB955rOihheqKSTwQL9R/IGfBuA
-         6q3hwfM42R/KcTqrTfSNXaHGv3D7LR1mLH19U9bc7+BIpiltszEEc99fmZOOEUnOuTQ0
-         MUmTlSapr2dGB9Lj949kzM9BwS8Zhjm6VlAp+s0x5y9YyNurSa7t2MMDl+wDHkvkQ9yr
-         S6GmAV6JhoOTmU1X6GyQOybdmEn33uuzF3x2wuco/0ouOweQXVLmSTcMnr4kw8X68rG4
-         SBlGXrAqveKNIpMmAsJqzUU4zDqyklQnVHGFUin0LKPMSDSKVIJvbisEM8cWs+ztDJLp
-         9Pvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nlQU1K3/0xVSOVyZDh3cWkL1gRHgkbrcW5D0QZ1UYAw=;
-        b=NkDh0nkBjwTNS0vkPRI4ltKML2HRITpTSH7dp6v1P3umI09RYidO1AEb3C2D1+RgnR
-         mBf8puxT7aQVnbSRTuFEUfgQ9iudMHMl3V5PZHWV7DCsGrA2g9CXt541hvd2QmYj/2b+
-         0EmWiLhEoT6cHLuoVdaF+IPmaFYlrhJWqRq71xOp/a0k08KbOMp2GfsQkzEvBJnARUYK
-         VyrhqI3MzctIMD9Nzd3YG2BZB/H+mzn/S6HH8j2L8GAbJnlqCqyTnekzklb07ECxDRzX
-         NVJqTgcbwZuLRpBZ20maOBuUYN93cCwW/CthKdjUxzkYaYxlDWigS71eyCNHSCgdRMS1
-         x/2g==
-X-Gm-Message-State: APt69E3np6F1zw9blBkjaTEq7A4zU0ModsaZfB/pLBzIal7ViWKUAAW4
-        3Xmvy7g5EEaRTcnHF9DeT9te9ku6EU1A9q0/FTA=
-X-Google-Smtp-Source: AAOMgpejS87WRLWoe1tzm2NUaCtBgPfhVC5Qb9CixbXcyrik0Xux+wRPTAB/55j7M2Lo/hTICqLtxMcbqnISbcfn2OA=
-X-Received: by 2002:a1f:8e0f:: with SMTP id q15-v6mr13394914vkd.161.1530436482069;
- Sun, 01 Jul 2018 02:14:42 -0700 (PDT)
+        Sun, 1 Jul 2018 05:16:14 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fZYSr-000068-0O; Sun, 01 Jul 2018 17:16:13 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fZYSp-00080J-S1; Sun, 01 Jul 2018 17:16:11 +0800
+Date:   Sun, 1 Jul 2018 17:16:11 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Juan Manuel Torres Palma <j.m.torrespalma@gmail.com>
+Cc:     Eric Biggers <ebiggers3@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, davem@davemloft.net,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] crypto: testmgr: add test vectors for skein
+Message-ID: <20180701091611.z24lln7cyho6ktlb@gondor.apana.org.au>
+References: <20180620105714.18359-1-j.m.torrespalma@gmail.com>
+ <20180620181051.GC76265@gmail.com>
+ <20180620221247.GA25379@randy-betty>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 02:14:41 -0700 (PDT)
-In-Reply-To: <20180630145941.13118-1-straube.linux@gmail.com>
-References: <20180630145941.13118-1-straube.linux@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 1 Jul 2018 12:14:41 +0300
-Message-ID: <CAHp75VcEXHbOAHgf5jTaP9ZP99wGFBVhXkuohsVd-cD6QQWBkQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8188eu: remove rtw_ioctl_rtl.h
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620221247.GA25379@randy-betty>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 5:59 PM, Michael Straube
-<straube.linux@gmail.com> wrote:
-> The header rtw_ioctl_rtl.h is not used anywhere.
-> Running 'grep -r rtw_ioctl_rtl *' from kernel root
-> directory returns nothing, remove the file.
+On Thu, Jun 21, 2018 at 07:12:47AM +0900, Juan Manuel Torres Palma wrote:
+> On Wed, Jun 20, 2018 at 11:10:51AM -0700, Eric Biggers wrote:
+> > Also, can you describe the users of Skein in the kernel?  If there are no users,
+> > there's no need to move it out of staging, or even have it in the kernel at all
+> > anymore.  I say that as someone who has had to volunteer to fix critical bugs
+> > found by fuzzing in crypto algorithms for which it's unclear why they are in the
+> > kernel at all, as there are no apparent users.
+> 
+> To be honest I'm not aware of anyone actually using Skein.
+> 
+> So by this are you suggesting that we drop support? If not removed, I believe
+> it's better to use test vectors as regression tests for further modifications.
 
-Just a side note, using `git grep` is much more efficient against
-kernel source tree.
-Something like `git grep -n rtw_ioctl_rtl.h` in this case.
+Let's just remove skein.  In fact staging should never add generic
+crypto algorithms.
 
+Thanks,
 -- 
-With Best Regards,
-Andy Shevchenko
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
