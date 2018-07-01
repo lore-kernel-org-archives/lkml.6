@@ -3,42 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 009B4C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788D2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A052575E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A052575E
+	by mail.kernel.org (Postfix) with ESMTP id 3562525763
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3562525763
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030689AbeGARr7 (ORCPT
+        id S1030820AbeGARsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:47:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35414 "EHLO
+        Sun, 1 Jul 2018 13:48:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030771AbeGAQdc (ORCPT
+        with ESMTP id S1030769AbeGAQd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:32 -0400
+        Sun, 1 Jul 2018 12:33:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93F5D49B;
-        Sun,  1 Jul 2018 16:33:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1923C49B;
+        Sun,  1 Jul 2018 16:33:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anil Gurumurthy <anil.gurumurthy@cavium.com>,
-        Giridhar Malavali <giridhar.malavali@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Martin Wilck <mwilck@suse.com>,
+        stable@vger.kernel.org, Sinan Kaya <okaya@codeaurora.org>,
+        Ryan Finnie <ryan@finnie.org>,
+        Don Brace <don.brace@microsemi.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 096/157] scsi: qla2xxx: Mask off Scope bits in retry delay
-Date:   Sun,  1 Jul 2018 18:22:48 +0200
-Message-Id: <20180701160857.348757650@linuxfoundation.org>
+Subject: [PATCH 4.14 094/157] scsi: hpsa: disable device during shutdown
+Date:   Sun,  1 Jul 2018 18:22:46 +0200
+Message-Id: <20180701160857.258125665@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -55,48 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+From: Sinan Kaya <okaya@codeaurora.org>
 
-commit 3cedc8797b9c0f2222fd45a01f849c57c088828b upstream.
+commit 0d98ba8d70b0070ac117452ea0b663e26bbf46bf upstream.
 
-Some newer target uses "Status Qualifier" response in a returned "Busy
-Status". This new response code of 0x4001, which is "Scope" bits,
-translates to "Affects all units accessible by target".  Due to this new
-value returned in the Scope bits, driver was using that value as timeout
-value which resulted into driver waiting for 27min timeout.
+'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
+shutdown")' has been added to kernel to shutdown pending PCIe port service
+interrupts during reboot so that a newly started kexec kernel wouldn't
+observe pending interrupts.
 
-This patch masks off this Scope bits so that driver does not use this
-value as retry delay time.
+pcie_port_device_remove() is disabling the root port and switches by
+calling pci_disable_device() after all PCIe service drivers are shutdown.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
-Signed-off-by: Giridhar Malavali <giridhar.malavali@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Martin Wilck <mwilck@suse.com>
+This has been found to cause crashes on HP DL360 Gen9 machines during
+reboot due to hpsa driver not clearing the bus master bit during the
+shutdown procedure by calling pci_disable_device().
+
+Disable device as part of the shutdown sequence.
+
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
+Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
+Cc: stable@vger.kernel.org
+Reported-by: Ryan Finnie <ryan@finnie.org>
+Tested-by: Don Brace <don.brace@microsemi.com>
+Acked-by: Don Brace <don.brace@microsemi.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_isr.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/hpsa.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_isr.c
-+++ b/drivers/scsi/qla2xxx/qla_isr.c
-@@ -2454,8 +2454,12 @@ qla2x00_status_entry(scsi_qla_host_t *vh
- 		ox_id = le16_to_cpu(sts24->ox_id);
- 		par_sense_len = sizeof(sts24->data);
- 		/* Valid values of the retry delay timer are 0x1-0xffef */
--		if (sts24->retry_delay > 0 && sts24->retry_delay < 0xfff1)
--			retry_delay = sts24->retry_delay;
-+		if (sts24->retry_delay > 0 && sts24->retry_delay < 0xfff1) {
-+			retry_delay = sts24->retry_delay & 0x3fff;
-+			ql_dbg(ql_dbg_io, sp->vha, 0x3033,
-+			    "%s: scope=%#x retry_delay=%#x\n", __func__,
-+			    sts24->retry_delay >> 14, retry_delay);
-+		}
- 	} else {
- 		if (scsi_status & SS_SENSE_LEN_VALID)
- 			sense_len = le16_to_cpu(sts->req_sense_length);
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -8638,7 +8638,7 @@ out:
+ 	kfree(options);
+ }
+ 
+-static void hpsa_shutdown(struct pci_dev *pdev)
++static void __hpsa_shutdown(struct pci_dev *pdev)
+ {
+ 	struct ctlr_info *h;
+ 
+@@ -8653,6 +8653,12 @@ static void hpsa_shutdown(struct pci_dev
+ 	hpsa_disable_interrupt_mode(h);		/* pci_init 2 */
+ }
+ 
++static void hpsa_shutdown(struct pci_dev *pdev)
++{
++	__hpsa_shutdown(pdev);
++	pci_disable_device(pdev);
++}
++
+ static void hpsa_free_device_info(struct ctlr_info *h)
+ {
+ 	int i;
+@@ -8696,7 +8702,7 @@ static void hpsa_remove_one(struct pci_d
+ 		scsi_remove_host(h->scsi_host);		/* init_one 8 */
+ 	/* includes hpsa_free_irqs - init_one 4 */
+ 	/* includes hpsa_disable_interrupt_mode - pci_init 2 */
+-	hpsa_shutdown(pdev);
++	__hpsa_shutdown(pdev);
+ 
+ 	hpsa_free_device_info(h);		/* scan */
+ 
 
 
