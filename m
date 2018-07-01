@@ -6,37 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E032C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258FDC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2318E251A4
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2318E251A4
+	by mail.kernel.org (Postfix) with ESMTP id CFD8E251A9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD8E251A9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965348AbeGAQ0b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:26:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33852 "EHLO
+        id S965354AbeGAQ0n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:26:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932678AbeGAQ0V (ORCPT
+        with ESMTP id S932678AbeGAQ0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:21 -0400
+        Sun, 1 Jul 2018 12:26:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80A64ACD;
-        Sun,  1 Jul 2018 16:26:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D09AAEF;
+        Sun,  1 Jul 2018 16:26:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, dvyukov@google.com,
-        syzkaller@googlegroups.com, fengguang.wu@intel.com,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.9 049/101] printk: fix possible reuse of va_list variable
-Date:   Sun,  1 Jul 2018 18:21:35 +0200
-Message-Id: <20180701160759.111046056@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 053/101] Btrfs: fix return value on rename exchange failure
+Date:   Sun,  1 Jul 2018 18:21:39 +0200
+Message-Id: <20180701160759.265134383@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -53,52 +49,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 988a35f8da1dec5a8cd2788054d1e717be61bf25 upstream.
+commit c5b4a50b74018b3677098151ec5f4fce07d5e6a0 upstream.
 
-I noticed that there is a possibility that printk_safe_log_store() causes
-kernel oops because "args" parameter is passed to vsnprintf() again when
-atomic_cmpxchg() detected that we raced. Fix this by using va_copy().
+If we failed during a rename exchange operation after starting/joining a
+transaction, we would end up replacing the return value, stored in the
+local 'ret' variable, with the return value from btrfs_end_transaction().
+So this could end up returning 0 (success) to user space despite the
+operation having failed and aborted the transaction, because if there are
+multiple tasks having a reference on the transaction at the time
+btrfs_end_transaction() is called by the rename exchange, that function
+returns 0 (otherwise it returns -EIO and not the original error value).
+So fix this by not overwriting the return value on error after getting
+a transaction handle.
 
-Link: http://lkml.kernel.org/r/201805112002.GIF21216.OFVHFOMLJtQFSO@I-love.SAKURA.ne.jp
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: dvyukov@google.com
-Cc: syzkaller@googlegroups.com
-Cc: fengguang.wu@intel.com
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Fixes: 42a0bb3f71383b45 ("printk/nmi: generic solution for safe printk in NMI")
-Cc: 4.7+ <stable@vger.kernel.org> # v4.7+
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
+CC: stable@vger.kernel.org # 4.9+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/printk/nmi.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/printk/nmi.c
-+++ b/kernel/printk/nmi.c
-@@ -63,6 +63,7 @@ static int vprintk_nmi(const char *fmt,
- 	struct nmi_seq_buf *s = this_cpu_ptr(&nmi_print_seq);
- 	int add = 0;
- 	size_t len;
-+	va_list ap;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9561,6 +9561,7 @@ static int btrfs_rename_exchange(struct
+ 	u64 new_idx = 0;
+ 	u64 root_objectid;
+ 	int ret;
++	int ret2;
+ 	bool root_log_pinned = false;
+ 	bool dest_log_pinned = false;
  
- again:
- 	len = atomic_read(&s->len);
-@@ -79,7 +80,9 @@ again:
- 	if (!len)
- 		smp_rmb();
- 
--	add = vsnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, args);
-+	va_copy(ap, args);
-+	add = vsnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, ap);
-+	va_end(ap);
- 
- 	/*
- 	 * Do it once again if the buffer has been flushed in the meantime.
+@@ -9751,7 +9752,8 @@ out_fail:
+ 			dest_log_pinned = false;
+ 		}
+ 	}
+-	ret = btrfs_end_transaction(trans, root);
++	ret2 = btrfs_end_transaction(trans, root);
++	ret = ret ? ret : ret2;
+ out_notrans:
+ 	if (new_ino == BTRFS_FIRST_FREE_OBJECTID)
+ 		up_read(&dest->fs_info->subvol_sem);
 
 
