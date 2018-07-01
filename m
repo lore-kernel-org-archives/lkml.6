@@ -2,69 +2,111 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9007BC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EFDC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530C2259B4
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:26:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530C2259B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id F135C259BC
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F135C259BC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965244AbeGAS0n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:26:43 -0400
-Received: from smtprelay0062.hostedemail.com ([216.40.44.62]:37011 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753200AbeGAS0h (ORCPT
+        id S965287AbeGAS1F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:27:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32972 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753026AbeGAQSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 14:26:37 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 8AA6D181D341D;
-        Sun,  1 Jul 2018 18:26:35 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bird78_56799f9de8425
-X-Filterd-Recvd-Size: 1503
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Sun,  1 Jul 2018 18:26:34 +0000 (UTC)
-Message-ID: <653914f26dc8433a3f682b5e7eb850ab94bd431d.camel@perches.com>
-Subject: Re: [PATCH 0/3] cast sizeof to int for comparison
-From:   Joe Perches <joe@perches.com>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>, linux-usb@vger.kernel.org,
-        Chengguang Xu <cgxu519@gmx.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Date:   Sun, 01 Jul 2018 11:26:32 -0700
-In-Reply-To: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1530466325-1678-1-git-send-email-Julia.Lawall@lip6.fr>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 1 Jul 2018 12:18:15 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A58B249B;
+        Sun,  1 Jul 2018 16:18:14 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>, Shaohua Li <shli@fb.com>
+Subject: [PATCH 4.4 072/105] md: fix two problems with setting the "re-add" device state.
+Date:   Sun,  1 Jul 2018 18:02:22 +0200
+Message-Id: <20180701153154.669895647@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+References: <20180701153149.382300170@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-07-01 at 19:32 +0200, Julia Lawall wrote:
-> Comparing an int to a size, which is unsigned, causes the int to become
-> unsigned, giving the wrong result.
-> 
-> The semantic match that finds this problem is as follows:
-> (http://coccinelle.lip6.fr/)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Great, thanks.
+------------------
 
-But what about the ones in net/smc like:
+From: NeilBrown <neilb@suse.com>
 
-> net/smc/smc_clc.c:	
-> 
->         len = kernel_sendmsg(smc->clcsock, &msg, &vec, 1,
->                              sizeof(struct smc_clc_msg_decline));
->         if (len < sizeof(struct smc_clc_msg_decline))
+commit 011abdc9df559ec75779bb7c53a744c69b2a94c6 upstream.
 
-Are those detected by the semantic match and ignored?
+If "re-add" is written to the "state" file for a device
+which is faulty, this has an effect similar to removing
+and re-adding the device.  It should take up the
+same slot in the array that it previously had, and
+an accelerated (e.g. bitmap-based) rebuild should happen.
+
+The slot that "it previously had" is determined by
+rdev->saved_raid_disk.
+However this is not set when a device fails (only when a device
+is added), and it is cleared when resync completes.
+This means that "re-add" will normally work once, but may not work a
+second time.
+
+This patch includes two fixes.
+1/ when a device fails, record the ->raid_disk value in
+    ->saved_raid_disk before clearing ->raid_disk
+2/ when "re-add" is written to a device for which
+    ->saved_raid_disk is not set, fail.
+
+I think this is suitable for stable as it can
+cause re-adding a device to be forced to do a full
+resync which takes a lot longer and so puts data at
+more risk.
+
+Cc: <stable@vger.kernel.org> (v4.1)
+Fixes: 97f6cd39da22 ("md-cluster: re-add capabilities")
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/md/md.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -2690,7 +2690,8 @@ state_store(struct md_rdev *rdev, const
+ 			err = 0;
+ 		}
+ 	} else if (cmd_match(buf, "re-add")) {
+-		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1)) {
++		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
++			rdev->saved_raid_disk >= 0) {
+ 			/* clear_bit is performed _after_ all the devices
+ 			 * have their local Faulty bit cleared. If any writes
+ 			 * happen in the meantime in the local node, they
+@@ -8153,6 +8154,7 @@ static int remove_and_add_spares(struct
+ 			if (mddev->pers->hot_remove_disk(
+ 				    mddev, rdev) == 0) {
+ 				sysfs_unlink_rdev(mddev, rdev);
++				rdev->saved_raid_disk = rdev->raid_disk;
+ 				rdev->raid_disk = -1;
+ 				removed++;
+ 			}
+
+
