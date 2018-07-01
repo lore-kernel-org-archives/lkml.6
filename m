@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F34C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2664C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A14D25A74
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A14D25A74
+	by mail.kernel.org (Postfix) with ESMTP id 97F3F25A78
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F3F25A78
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933652AbeGASet (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:34:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60672 "EHLO
+        id S933423AbeGASfc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:35:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60626 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933048AbeGAQP6 (ORCPT
+        with ESMTP id S933120AbeGAQPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:58 -0400
+        Sun, 1 Jul 2018 12:15:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65D2886D;
-        Sun,  1 Jul 2018 16:15:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE91986D;
+        Sun,  1 Jul 2018 16:15:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 025/105] fs/binfmt_misc.c: do not allow offset overflow
-Date:   Sun,  1 Jul 2018 18:01:35 +0200
-Message-Id: <20180701153151.172458466@linuxfoundation.org>
+        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.4 020/105] cpufreq: Fix new policy initialization during limits updates via sysfs
+Date:   Sun,  1 Jul 2018 18:01:30 +0200
+Message-Id: <20180701153150.870493235@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,80 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+From: Tao Wang <kevin.wangtao@hisilicon.com>
 
-commit 5cc41e099504b77014358b58567c5ea6293dd220 upstream.
+commit c7d1f119c48f64bebf0fa1e326af577c6152fe30 upstream.
 
-WHen registering a new binfmt_misc handler, it is possible to overflow
-the offset to get a negative value, which might crash the system, or
-possibly leak kernel data.
+If the policy limits are updated via cpufreq_update_policy() and
+subsequently via sysfs, the limits stored in user_policy may be
+set incorrectly.
 
-Here is a crash log when 2500000000 was used as an offset:
+For example, if both min and max are set via sysfs to the maximum
+available frequency, user_policy.min and user_policy.max will also
+be the maximum.  If a policy notifier triggered by
+cpufreq_update_policy() lowers both the min and the max at this
+point, that change is not reflected by the user_policy limits, so
+if the max is updated again via sysfs to the same lower value,
+then user_policy.max will be lower than user_policy.min which
+shouldn't happen.  In particular, if one of the policy CPUs is
+then taken offline and back online, cpufreq_set_policy() will
+fail for it due to a failing limits check.
 
-  BUG: unable to handle kernel paging request at ffff989cfd6edca0
-  IP: load_misc_binary+0x22b/0x470 [binfmt_misc]
-  PGD 1ef3e067 P4D 1ef3e067 PUD 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: binfmt_misc kvm_intel ppdev kvm irqbypass joydev input_leds serio_raw mac_hid parport_pc qemu_fw_cfg parpy
-  CPU: 0 PID: 2499 Comm: bash Not tainted 4.15.0-22-generic #24-Ubuntu
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
-  RIP: 0010:load_misc_binary+0x22b/0x470 [binfmt_misc]
-  Call Trace:
-    search_binary_handler+0x97/0x1d0
-    do_execveat_common.isra.34+0x667/0x810
-    SyS_execve+0x31/0x40
-    do_syscall_64+0x73/0x130
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+To prevent that from happening, initialize the min and max fields
+of the new_policy object to the ones stored in user_policy that
+were previously set via sysfs.
 
-Use kstrtoint instead of simple_strtoul.  It will work as the code
-already set the delimiter byte to '\0' and we only do it when the field
-is not empty.
-
-Tested with offsets -1, 2500000000, UINT_MAX and INT_MAX.  Also tested
-with examples documented at Documentation/admin-guide/binfmt-misc.rst
-and other registrations from packages on Ubuntu.
-
-Link: http://lkml.kernel.org/r/20180529135648.14254-1-cascardo@canonical.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kevin Wangtao <kevin.wangtao@hisilicon.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[ rjw: Subject & changelog ]
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/binfmt_misc.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/cpufreq/cpufreq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -369,8 +369,13 @@ static Node *create_entry(const char __u
- 		s = strchr(p, del);
- 		if (!s)
- 			goto einval;
--		*s++ = '\0';
--		e->offset = simple_strtoul(p, &p, 10);
-+		*s = '\0';
-+		if (p != s) {
-+			int r = kstrtoint(p, 10, &e->offset);
-+			if (r != 0 || e->offset < 0)
-+				goto einval;
-+		}
-+		p = s;
- 		if (*p++)
- 			goto einval;
- 		pr_debug("register: offset: %#x\n", e->offset);
-@@ -410,7 +415,8 @@ static Node *create_entry(const char __u
- 		if (e->mask &&
- 		    string_unescape_inplace(e->mask, UNESCAPE_HEX) != e->size)
- 			goto einval;
--		if (e->size + e->offset > BINPRM_BUF_SIZE)
-+		if (e->size > BINPRM_BUF_SIZE ||
-+		    BINPRM_BUF_SIZE - e->size < e->offset)
- 			goto einval;
- 		pr_debug("register: magic/mask length: %i\n", e->size);
- 		if (USE_DEBUG) {
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -603,6 +603,8 @@ static ssize_t store_##file_name					\
+ 	struct cpufreq_policy new_policy;				\
+ 									\
+ 	memcpy(&new_policy, policy, sizeof(*policy));			\
++	new_policy.min = policy->user_policy.min;			\
++	new_policy.max = policy->user_policy.max;			\
+ 									\
+ 	ret = sscanf(buf, "%u", &new_policy.object);			\
+ 	if (ret != 1)							\
 
 
