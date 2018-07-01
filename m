@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F0EC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A22C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C440225B28
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:44:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C440225B28
+	by mail.kernel.org (Postfix) with ESMTP id CFE1825B2D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFE1825B2D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932417AbeGASoh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:44:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60048 "EHLO
+        id S1753111AbeGASpA (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:45:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752564AbeGAQNC (ORCPT
+        with ESMTP id S932218AbeGAQMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:02 -0400
+        Sun, 1 Jul 2018 12:12:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5254DACC;
-        Sun,  1 Jul 2018 16:13:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23CA986A;
+        Sun,  1 Jul 2018 16:12:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 3.18 48/85] signal/xtensa: Consistenly use SIGBUS in do_unaligned_user
-Date:   Sun,  1 Jul 2018 18:02:06 +0200
-Message-Id: <20180701153124.272741302@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>
+Subject: [PATCH 3.18 45/85] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
+Date:   Sun,  1 Jul 2018 18:02:03 +0200
+Message-Id: <20180701153124.155344258@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -51,39 +51,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
 
-commit 7de712ccc096b81d23cc0a941cd9b8cb3956605d upstream.
+commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
 
-While working on changing this code to use force_sig_fault I
-discovered that do_unaliged_user is sets si_signo to SIGBUS and passes
-SIGSEGV to force_sig_info.  Which is just b0rked.
+According to the API, you may only call clk_get_rate() after actually
+enabling it.
 
-The code is reporting a SIGBUS error so replace the SIGSEGV with SIGBUS.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-xtensa@linux-xtensa.org
-Cc: stable@vger.kernel.org
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-Fixes: 5a0015d62668 ("[PATCH] xtensa: Architecture support for Tensilica Xtensa Part 3")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/kernel/traps.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/w1/masters/mxc_w1.c |   20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
---- a/arch/xtensa/kernel/traps.c
-+++ b/arch/xtensa/kernel/traps.c
-@@ -280,7 +280,7 @@ do_unaligned_user (struct pt_regs *regs)
- 	info.si_errno = 0;
- 	info.si_code = BUS_ADRALN;
- 	info.si_addr = (void *) regs->excvaddr;
--	force_sig_info(SIGSEGV, &info, current);
-+	force_sig_info(SIGBUS, &info, current);
+--- a/drivers/w1/masters/mxc_w1.c
++++ b/drivers/w1/masters/mxc_w1.c
+@@ -113,6 +113,10 @@ static int mxc_w1_probe(struct platform_
+ 	if (IS_ERR(mdev->clk))
+ 		return PTR_ERR(mdev->clk);
  
++	err = clk_prepare_enable(mdev->clk);
++	if (err)
++		return err;
++
+ 	clkrate = clk_get_rate(mdev->clk);
+ 	if (clkrate < 10000000)
+ 		dev_warn(&pdev->dev,
+@@ -126,12 +130,10 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(mdev->regs))
+-		return PTR_ERR(mdev->regs);
+-
+-	err = clk_prepare_enable(mdev->clk);
+-	if (err)
+-		return err;
++	if (IS_ERR(mdev->regs)) {
++		err = PTR_ERR(mdev->regs);
++		goto out_disable_clk;
++	}
+ 
+ 	/* Software reset 1-Wire module */
+ 	writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
+@@ -147,8 +149,12 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	err = w1_add_master_device(&mdev->bus_master);
+ 	if (err)
+-		clk_disable_unprepare(mdev->clk);
++		goto out_disable_clk;
++
++	return 0;
+ 
++out_disable_clk:
++	clk_disable_unprepare(mdev->clk);
+ 	return err;
  }
- #endif
+ 
 
 
