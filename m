@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15097C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3F1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C46247F2
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C46247F2
+	by mail.kernel.org (Postfix) with ESMTP id 24CB22578C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:59:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CB22578C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030530AbeGAR7I (ORCPT
+        id S1030183AbeGAQaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:59:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34822 "EHLO
+        Sun, 1 Jul 2018 12:30:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030429AbeGAQam (ORCPT
+        with ESMTP id S965255AbeGAQae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:42 -0400
+        Sun, 1 Jul 2018 12:30:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9DB5AA6;
-        Sun,  1 Jul 2018 16:30:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC00DAA6;
+        Sun,  1 Jul 2018 16:30:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siarhei Liakh <siarhei.liakh@concurrent-rt.com>,
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Borislav Petkov" <bpetkov@suse.de>
-Subject: [PATCH 4.14 007/157] x86: Call fixup_exception() before notify_die() in math_error()
-Date:   Sun,  1 Jul 2018 18:21:19 +0200
-Message-Id: <20180701160852.660457173@linuxfoundation.org>
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.14 004/157] x86/mce: Check for alternate indication of machine check recovery on Skylake
+Date:   Sun,  1 Jul 2018 18:21:16 +0200
+Message-Id: <20180701160852.512866661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -54,58 +54,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siarhei Liakh <Siarhei.Liakh@concurrent-rt.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 3ae6295ccb7cf6d344908209701badbbbb503e40 upstream.
+commit 4c5717da1d021cf368eabb3cb1adcaead56c0d1e upstream.
 
-fpu__drop() has an explicit fwait which under some conditions can trigger a
-fixable FPU exception while in kernel. Thus, we should attempt to fixup the
-exception first, and only call notify_die() if the fixup failed just like
-in do_general_protection(). The original call sequence incorrectly triggers
-KDB entry on debug kernels under particular FPU-intensive workloads.
+Currently we just check the "CAPID0" register to see whether the CPU
+can recover from machine checks.
 
-Andy noted, that this makes the whole conditional irq enable thing even
-more inconsistent, but fixing that it outside the scope of this.
+But there are also some special SKUs which do not have all advanced
+RAS features, but do enable machine check recovery for use with NVDIMMs.
 
-Signed-off-by: Siarhei Liakh <siarhei.liakh@concurrent-rt.com>
+Add a check for any of bits {8:5} in the "CAPID5" register (each
+reports some NVDIMM mode available, if any of them are set, then
+the system supports memory machine check recovery).
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Borislav  Petkov" <bpetkov@suse.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org # 4.9
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/03cbed6e99ddafb51c2eadf9a3b7c8d7a0cc204e.1527283897.git.tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/traps.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/x86/kernel/quirks.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -828,16 +828,18 @@ static void math_error(struct pt_regs *r
- 	char *str = (trapnr == X86_TRAP_MF) ? "fpu exception" :
- 						"simd exception";
+--- a/arch/x86/kernel/quirks.c
++++ b/arch/x86/kernel/quirks.c
+@@ -645,12 +645,19 @@ static void quirk_intel_brickland_xeon_r
+ /* Skylake */
+ static void quirk_intel_purley_xeon_ras_cap(struct pci_dev *pdev)
+ {
+-	u32 capid0;
++	u32 capid0, capid5;
  
--	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, SIGFPE) == NOTIFY_STOP)
--		return;
- 	cond_local_irq_enable(regs);
+ 	pci_read_config_dword(pdev, 0x84, &capid0);
++	pci_read_config_dword(pdev, 0x98, &capid5);
  
- 	if (!user_mode(regs)) {
--		if (!fixup_exception(regs, trapnr)) {
--			task->thread.error_code = error_code;
--			task->thread.trap_nr = trapnr;
-+		if (fixup_exception(regs, trapnr))
-+			return;
+-	if ((capid0 & 0xc0) == 0xc0)
++	/*
++	 * CAPID0{7:6} indicate whether this is an advanced RAS SKU
++	 * CAPID5{8:5} indicate that various NVDIMM usage modes are
++	 * enabled, so memory machine check recovery is also enabled.
++	 */
++	if ((capid0 & 0xc0) == 0xc0 || (capid5 & 0x1e0))
+ 		static_branch_inc(&mcsafe_key);
 +
-+		task->thread.error_code = error_code;
-+		task->thread.trap_nr = trapnr;
-+
-+		if (notify_die(DIE_TRAP, str, regs, error_code,
-+					trapnr, SIGFPE) != NOTIFY_STOP)
- 			die(str, regs, error_code);
--		}
- 		return;
- 	}
- 
+ }
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0ec3, quirk_intel_brickland_xeon_ras_cap);
+ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x2fc0, quirk_intel_brickland_xeon_ras_cap);
 
 
