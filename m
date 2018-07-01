@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13781C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075C5C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C402D25598
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:08:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C402D25598
+	by mail.kernel.org (Postfix) with ESMTP id B3DCE255A0
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:08:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DCE255A0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753775AbeGARID (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:08:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37418 "EHLO
+        id S933952AbeGARIZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:08:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37402 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031508AbeGAQlj (ORCPT
+        with ESMTP id S1032064AbeGAQle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:39 -0400
+        Sun, 1 Jul 2018 12:41:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E31BAA6;
-        Sun,  1 Jul 2018 16:41:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6DD5AA6;
+        Sun,  1 Jul 2018 16:41:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.17 076/220] ARM64: dts: meson: disable sd-uhs modes on the libretech-cc
-Date:   Sun,  1 Jul 2018 18:21:40 +0200
-Message-Id: <20180701160911.625574766@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.17 108/220] mtd: cfi_cmdset_0002: Fix unlocking requests crossing a chip boudary
+Date:   Sun,  1 Jul 2018 18:22:12 +0200
+Message-Id: <20180701160912.891492771@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,44 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit d5b4885b1dff72ac670b518cfeaac719d768bd4d upstream.
+commit 0cd8116f172eed018907303dbff5c112690eeb91 upstream.
 
-There is a problem with the sd-uhs mode when doing a soft reboot.
-Switching back from 1.8v to 3.3v messes with the card, which no longer
-respond (timeout errors). According to the specification, we should
-perform a card reset (power cycling the card) but this is something we
-cannot control on this design.
+The "sector is in requested range" test used to determine whether
+sectors should be re-locked or not is done on a variable that is reset
+everytime we cross a chip boundary, which can lead to some blocks being
+re-locked while the caller expect them to be unlocked.
+Fix the check to make sure this cannot happen.
 
-Then the only solution to restore the communication with the card is an
-"unplug-plug" which is not acceptable
-
-Until we find a solution, if any, disable the sd-uhs modes on this design.
-For the people using uhs at the moment, there will a performance drop as
-a result.
-
-Fixes: 3cde63ebc85c ("ARM64: dts: meson-gxl: libretech-cc: enable high speed modes")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
 Cc: stable@vger.kernel.org
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-@@ -234,9 +234,6 @@
- 
- 	bus-width = <4>;
- 	cap-sd-highspeed;
--	sd-uhs-sdr12;
--	sd-uhs-sdr25;
--	sd-uhs-sdr50;
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -2649,7 +2649,7 @@ static int __maybe_unused cfi_ppb_unlock
+ 		 * sectors shall be unlocked, so lets keep their locking
+ 		 * status at "unlocked" (locked=0) for the final re-locking.
+ 		 */
+-		if ((adr < ofs) || (adr >= (ofs + len))) {
++		if ((offset < ofs) || (offset >= (ofs + len))) {
+ 			sect[sectors].chip = &cfi->chips[chipnum];
+ 			sect[sectors].adr = adr;
+ 			sect[sectors].locked = do_ppb_xxlock(
 
 
