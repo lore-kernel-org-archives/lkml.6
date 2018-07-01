@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B32C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA529C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F81F24E4E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F81F24E4E
+	by mail.kernel.org (Postfix) with ESMTP id 80B31252A9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B31252A9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031737AbeGAQj2 (ORCPT
+        id S1031753AbeGAQjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:39:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36896 "EHLO
+        Sun, 1 Jul 2018 12:39:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36908 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031714AbeGAQjU (ORCPT
+        with ESMTP id S1031725AbeGAQjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:20 -0400
+        Sun, 1 Jul 2018 12:39:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20C9AAA6;
-        Sun,  1 Jul 2018 16:39:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC212A73;
+        Sun,  1 Jul 2018 16:39:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
-        Rabin Vincent <rabin@rab.in>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.17 061/220] ARM: 8764/1: kgdb: fix NUMREGBYTES so that gdb_regs[] is the correct size
-Date:   Sun,  1 Jul 2018 18:21:25 +0200
-Message-Id: <20180701160910.936142562@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 4.17 062/220] ARM: dts: sun8i: h3: fix ALL-H3-CC H3 ver VDD-CPUX voltage
+Date:   Sun,  1 Jul 2018 18:21:26 +0200
+Message-Id: <20180701160910.981987117@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,45 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rivshin <DRivshin@allworx.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit 76ed0b803a2ab793a1b27d1dfe0de7955282cd34 upstream.
+commit e6e7b7c2c81e05c8774193da06348119583d4292 upstream.
 
-NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly
-based on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM
-is the number of total registers, while GDB_MAX_REGS is the number
-of 'unsigned longs' it takes to serialize those registers. Since
-FP registers require 3 'unsigned longs' each, DBG_MAX_REG_NUM is
-smaller than GDB_MAX_REGS.
+The VDD-CPUX voltage of ALL-H3-CC H3 ver should be 1.2V, not the 3.3V
+currently defined in the device tree.
 
-This causes GDB 8.0 give the following error on connect:
-"Truncated register 19 in remote 'g' packet"
+Fix the voltage in the device tree.
 
-This also causes the register serialization/deserialization logic
-to overflow gdb_regs[], overwriting whatever follows.
-
-Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
-Cc: <stable@vger.kernel.org> # 2.6.37+
-Signed-off-by: David Rivshin <drivshin@allworx.com>
-Acked-by: Rabin Vincent <rabin@rab.in>
-Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 6ca358645d4d ("ARM: dts: sun8i: h3: Add dts file for Libre Computer Board ALL-H3-CC H3 ver.")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Cc: <stable@vger.kernel.org> # 4.16.x
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/include/asm/kgdb.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/include/asm/kgdb.h
-+++ b/arch/arm/include/asm/kgdb.h
-@@ -77,7 +77,7 @@ extern int kgdb_fault_expected;
- 
- #define KGDB_MAX_NO_CPUS	1
- #define BUFMAX			400
--#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
-+#define NUMREGBYTES		(GDB_MAX_REGS << 2)
- #define NUMCRITREGBYTES		(32 << 2)
- 
- #define _R0			0
+--- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
+@@ -113,8 +113,8 @@
+ 	reg_vdd_cpux: vdd-cpux {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vdd-cpux";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
+ 		regulator-always-on;
+ 		regulator-boot-on;
+ 		vin-supply = <&reg_vcc5v0>;
 
 
