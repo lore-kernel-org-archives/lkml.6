@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91299C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24394C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2C1250A0
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2C1250A0
+	by mail.kernel.org (Postfix) with ESMTP id D17792509B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17792509B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933317AbeGAQQC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:16:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60666 "EHLO
+        id S933407AbeGAQQH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:16:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60696 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932678AbeGAQPz (ORCPT
+        with ESMTP id S932678AbeGAQQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:55 -0400
+        Sun, 1 Jul 2018 12:16:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B41284A3;
-        Sun,  1 Jul 2018 16:15:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8BCA4A3;
+        Sun,  1 Jul 2018 16:16:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>
-Subject: [PATCH 4.4 024/105] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
-Date:   Sun,  1 Jul 2018 18:01:34 +0200
-Message-Id: <20180701153151.107551839@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 4.4 027/105] m68k/mm: Adjust VM area to be unmapped by gap size for __iounmap()
+Date:   Sun,  1 Jul 2018 18:01:37 +0200
+Message-Id: <20180701153151.280819416@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,68 +49,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+From: Michael Schmitz <schmitzmic@gmail.com>
 
-commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
+commit 3f90f9ef2dda316d64e420d5d51ba369587ccc55 upstream.
 
-According to the API, you may only call clk_get_rate() after actually
-enabling it.
+If 020/030 support is enabled, get_io_area() leaves an IO_SIZE gap
+between mappings which is added to the vm_struct representing the
+mapping.  __ioremap() uses the actual requested size (after alignment),
+while __iounmap() is passed the size from the vm_struct.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+On 020/030, early termination descriptors are used to set up mappings of
+extent 'size', which are validated on unmapping. The unmapped gap of
+size IO_SIZE defeats the sanity check of the pmd tables, causing
+__iounmap() to loop forever on 030.
 
-Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
-Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: stable <stable@vger.kernel.org>
+On 040/060, unmapping of page table entries does not check for a valid
+mapping, so the umapping loop always completes there.
+
+Adjust size to be unmapped by the gap that had been added in the
+vm_struct prior.
+
+This fixes the hang in atari_platform_init() reported a long time ago,
+and a similar one reported by Finn recently (addressed by removing
+ioremap() use from the SWIM driver.
+
+Tested on my Falcon in 030 mode - untested but should work the same on
+040/060 (the extra page tables cleared there would never have been set
+up anyway).
+
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+[geert: Minor commit description improvements]
+[geert: This was fixed in 2.4.23, but not in 2.5.x]
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/w1/masters/mxc_w1.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/m68k/mm/kmap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/w1/masters/mxc_w1.c
-+++ b/drivers/w1/masters/mxc_w1.c
-@@ -113,6 +113,10 @@ static int mxc_w1_probe(struct platform_
- 	if (IS_ERR(mdev->clk))
- 		return PTR_ERR(mdev->clk);
- 
-+	err = clk_prepare_enable(mdev->clk);
-+	if (err)
-+		return err;
-+
- 	clkrate = clk_get_rate(mdev->clk);
- 	if (clkrate < 10000000)
- 		dev_warn(&pdev->dev,
-@@ -126,12 +130,10 @@ static int mxc_w1_probe(struct platform_
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(mdev->regs))
--		return PTR_ERR(mdev->regs);
--
--	err = clk_prepare_enable(mdev->clk);
--	if (err)
--		return err;
-+	if (IS_ERR(mdev->regs)) {
-+		err = PTR_ERR(mdev->regs);
-+		goto out_disable_clk;
-+	}
- 
- 	/* Software reset 1-Wire module */
- 	writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
-@@ -147,8 +149,12 @@ static int mxc_w1_probe(struct platform_
- 
- 	err = w1_add_master_device(&mdev->bus_master);
- 	if (err)
--		clk_disable_unprepare(mdev->clk);
-+		goto out_disable_clk;
-+
-+	return 0;
- 
-+out_disable_clk:
-+	clk_disable_unprepare(mdev->clk);
- 	return err;
- }
- 
+--- a/arch/m68k/mm/kmap.c
++++ b/arch/m68k/mm/kmap.c
+@@ -88,7 +88,8 @@ static inline void free_io_area(void *ad
+ 	for (p = &iolist ; (tmp = *p) ; p = &tmp->next) {
+ 		if (tmp->addr == addr) {
+ 			*p = tmp->next;
+-			__iounmap(tmp->addr, tmp->size);
++			/* remove gap added in get_io_area() */
++			__iounmap(tmp->addr, tmp->size - IO_SIZE);
+ 			kfree(tmp);
+ 			return;
+ 		}
 
 
