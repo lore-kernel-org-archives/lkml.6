@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B55AC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B86C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E15625436
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E15625436
+	by mail.kernel.org (Postfix) with ESMTP id 61CA025439
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CA025439
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753770AbeGAQqf (ORCPT
+        id S1032544AbeGAQql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:46:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38462 "EHLO
+        Sun, 1 Jul 2018 12:46:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753716AbeGAQqc (ORCPT
+        with ESMTP id S1753759AbeGAQqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:32 -0400
+        Sun, 1 Jul 2018 12:46:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1704ACC;
-        Sun,  1 Jul 2018 16:46:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97177ACC;
+        Sun,  1 Jul 2018 16:46:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4.17 188/220] pwm: lpss: platform: Save/restore the ctrl register over a suspend/resume
-Date:   Sun,  1 Jul 2018 18:23:32 +0200
-Message-Id: <20180701160916.057353759@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.17 215/220] selinux: move user accesses in selinuxfs out of locked regions
+Date:   Sun,  1 Jul 2018 18:23:59 +0200
+Message-Id: <20180701160917.128390570@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,135 +51,177 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-commit 1d375b58c12f08d8570b30b865def4734517f04f upstream.
+commit 0da74120c5341389b97c4ee27487a97224999ee1 upstream.
 
-On some devices the contents of the ctrl register get lost over a
-suspend/resume and the PWM comes back up disabled after the resume.
+If a user is accessing a file in selinuxfs with a pointer to a userspace
+buffer that is backed by e.g. a userfaultfd, the userspace access can
+stall indefinitely, which can block fsi->mutex if it is held.
 
-This is seen on some Bay Trail devices with the PWM in ACPI enumerated
-mode, so it shows up as a platform device instead of a PCI device.
+For sel_read_policy(), remove the locking, since this method doesn't seem
+to access anything that requires locking.
 
-If we still think it is enabled and then try to change the duty-cycle
-after this, we end up with a "PWM_SW_UPDATE was not cleared" error and
-the PWM is stuck in that state from then on.
+For sel_read_bool(), move the user access below the locked region.
 
-This commit adds suspend and resume pm callbacks to the pwm-lpss-platform
-code, which save/restore the ctrl register over a suspend/resume, fixing
-this.
-
-Note that:
-
-1) There is no need to do this over a runtime suspend, since we
-only runtime suspend when disabled and then we properly set the enable
-bit and reprogram the timings when we re-enable the PWM.
-
-2) This may be happening on more systems then we realize, but has been
-covered up sofar by a bug in the acpi-lpss.c code which was save/restoring
-the regular device registers instead of the lpss private registers due to
-lpss_device_desc.prv_offset not being set. This is fixed by a later patch
-in this series.
+For sel_write_bool() and sel_commit_bools_write(), move the user access
+up above the locked region.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+[PM: removed an unused variable in sel_read_policy()]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pwm/pwm-lpss-platform.c |    5 +++++
- drivers/pwm/pwm-lpss.c          |   30 ++++++++++++++++++++++++++++++
- drivers/pwm/pwm-lpss.h          |    2 ++
- 3 files changed, 37 insertions(+)
+ security/selinux/selinuxfs.c |   78 ++++++++++++++++++-------------------------
+ 1 file changed, 33 insertions(+), 45 deletions(-)
 
---- a/drivers/pwm/pwm-lpss-platform.c
-+++ b/drivers/pwm/pwm-lpss-platform.c
-@@ -74,6 +74,10 @@ static int pwm_lpss_remove_platform(stru
- 	return pwm_lpss_remove(lpwm);
- }
- 
-+static SIMPLE_DEV_PM_OPS(pwm_lpss_platform_pm_ops,
-+			 pwm_lpss_suspend,
-+			 pwm_lpss_resume);
-+
- static const struct acpi_device_id pwm_lpss_acpi_match[] = {
- 	{ "80860F09", (unsigned long)&pwm_lpss_byt_info },
- 	{ "80862288", (unsigned long)&pwm_lpss_bsw_info },
-@@ -86,6 +90,7 @@ static struct platform_driver pwm_lpss_d
- 	.driver = {
- 		.name = "pwm-lpss",
- 		.acpi_match_table = pwm_lpss_acpi_match,
-+		.pm = &pwm_lpss_platform_pm_ops,
- 	},
- 	.probe = pwm_lpss_probe_platform,
- 	.remove = pwm_lpss_remove_platform,
---- a/drivers/pwm/pwm-lpss.c
-+++ b/drivers/pwm/pwm-lpss.c
-@@ -32,10 +32,13 @@
- /* Size of each PWM register space if multiple */
- #define PWM_SIZE			0x400
- 
-+#define MAX_PWMS			4
-+
- struct pwm_lpss_chip {
- 	struct pwm_chip chip;
- 	void __iomem *regs;
- 	const struct pwm_lpss_boardinfo *info;
-+	u32 saved_ctrl[MAX_PWMS];
- };
- 
- static inline struct pwm_lpss_chip *to_lpwm(struct pwm_chip *chip)
-@@ -177,6 +180,9 @@ struct pwm_lpss_chip *pwm_lpss_probe(str
- 	unsigned long c;
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -435,22 +435,16 @@ static int sel_release_policy(struct ino
+ static ssize_t sel_read_policy(struct file *filp, char __user *buf,
+ 			       size_t count, loff_t *ppos)
+ {
+-	struct selinux_fs_info *fsi = file_inode(filp)->i_sb->s_fs_info;
+ 	struct policy_load_memory *plm = filp->private_data;
  	int ret;
  
-+	if (WARN_ON(info->npwm > MAX_PWMS))
-+		return ERR_PTR(-ENODEV);
-+
- 	lpwm = devm_kzalloc(dev, sizeof(*lpwm), GFP_KERNEL);
- 	if (!lpwm)
- 		return ERR_PTR(-ENOMEM);
-@@ -212,6 +218,30 @@ int pwm_lpss_remove(struct pwm_lpss_chip
+-	mutex_lock(&fsi->mutex);
+-
+ 	ret = avc_has_perm(&selinux_state,
+ 			   current_sid(), SECINITSID_SECURITY,
+ 			  SECCLASS_SECURITY, SECURITY__READ_POLICY, NULL);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 
+-	ret = simple_read_from_buffer(buf, count, ppos, plm->data, plm->len);
+-out:
+-	mutex_unlock(&fsi->mutex);
+-	return ret;
++	return simple_read_from_buffer(buf, count, ppos, plm->data, plm->len);
  }
- EXPORT_SYMBOL_GPL(pwm_lpss_remove);
  
-+int pwm_lpss_suspend(struct device *dev)
-+{
-+	struct pwm_lpss_chip *lpwm = dev_get_drvdata(dev);
-+	int i;
-+
-+	for (i = 0; i < lpwm->info->npwm; i++)
-+		lpwm->saved_ctrl[i] = readl(lpwm->regs + i * PWM_SIZE + PWM);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pwm_lpss_suspend);
-+
-+int pwm_lpss_resume(struct device *dev)
-+{
-+	struct pwm_lpss_chip *lpwm = dev_get_drvdata(dev);
-+	int i;
-+
-+	for (i = 0; i < lpwm->info->npwm; i++)
-+		writel(lpwm->saved_ctrl[i], lpwm->regs + i * PWM_SIZE + PWM);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pwm_lpss_resume);
-+
- MODULE_DESCRIPTION("PWM driver for Intel LPSS");
- MODULE_AUTHOR("Mika Westerberg <mika.westerberg@linux.intel.com>");
- MODULE_LICENSE("GPL v2");
---- a/drivers/pwm/pwm-lpss.h
-+++ b/drivers/pwm/pwm-lpss.h
-@@ -28,5 +28,7 @@ struct pwm_lpss_boardinfo {
- struct pwm_lpss_chip *pwm_lpss_probe(struct device *dev, struct resource *r,
- 				     const struct pwm_lpss_boardinfo *info);
- int pwm_lpss_remove(struct pwm_lpss_chip *lpwm);
-+int pwm_lpss_suspend(struct device *dev);
-+int pwm_lpss_resume(struct device *dev);
+ static int sel_mmap_policy_fault(struct vm_fault *vmf)
+@@ -1182,25 +1176,29 @@ static ssize_t sel_read_bool(struct file
+ 	ret = -EINVAL;
+ 	if (index >= fsi->bool_num || strcmp(name,
+ 					     fsi->bool_pending_names[index]))
+-		goto out;
++		goto out_unlock;
  
- #endif	/* __PWM_LPSS_H */
+ 	ret = -ENOMEM;
+ 	page = (char *)get_zeroed_page(GFP_KERNEL);
+ 	if (!page)
+-		goto out;
++		goto out_unlock;
+ 
+ 	cur_enforcing = security_get_bool_value(fsi->state, index);
+ 	if (cur_enforcing < 0) {
+ 		ret = cur_enforcing;
+-		goto out;
++		goto out_unlock;
+ 	}
+ 	length = scnprintf(page, PAGE_SIZE, "%d %d", cur_enforcing,
+ 			  fsi->bool_pending_values[index]);
+-	ret = simple_read_from_buffer(buf, count, ppos, page, length);
+-out:
+ 	mutex_unlock(&fsi->mutex);
++	ret = simple_read_from_buffer(buf, count, ppos, page, length);
++out_free:
+ 	free_page((unsigned long)page);
+ 	return ret;
++
++out_unlock:
++	mutex_unlock(&fsi->mutex);
++	goto out_free;
+ }
+ 
+ static ssize_t sel_write_bool(struct file *filep, const char __user *buf,
+@@ -1213,6 +1211,17 @@ static ssize_t sel_write_bool(struct fil
+ 	unsigned index = file_inode(filep)->i_ino & SEL_INO_MASK;
+ 	const char *name = filep->f_path.dentry->d_name.name;
+ 
++	if (count >= PAGE_SIZE)
++		return -ENOMEM;
++
++	/* No partial writes. */
++	if (*ppos != 0)
++		return -EINVAL;
++
++	page = memdup_user_nul(buf, count);
++	if (IS_ERR(page))
++		return PTR_ERR(page);
++
+ 	mutex_lock(&fsi->mutex);
+ 
+ 	length = avc_has_perm(&selinux_state,
+@@ -1227,22 +1236,6 @@ static ssize_t sel_write_bool(struct fil
+ 					     fsi->bool_pending_names[index]))
+ 		goto out;
+ 
+-	length = -ENOMEM;
+-	if (count >= PAGE_SIZE)
+-		goto out;
+-
+-	/* No partial writes. */
+-	length = -EINVAL;
+-	if (*ppos != 0)
+-		goto out;
+-
+-	page = memdup_user_nul(buf, count);
+-	if (IS_ERR(page)) {
+-		length = PTR_ERR(page);
+-		page = NULL;
+-		goto out;
+-	}
+-
+ 	length = -EINVAL;
+ 	if (sscanf(page, "%d", &new_value) != 1)
+ 		goto out;
+@@ -1274,6 +1267,17 @@ static ssize_t sel_commit_bools_write(st
+ 	ssize_t length;
+ 	int new_value;
+ 
++	if (count >= PAGE_SIZE)
++		return -ENOMEM;
++
++	/* No partial writes. */
++	if (*ppos != 0)
++		return -EINVAL;
++
++	page = memdup_user_nul(buf, count);
++	if (IS_ERR(page))
++		return PTR_ERR(page);
++
+ 	mutex_lock(&fsi->mutex);
+ 
+ 	length = avc_has_perm(&selinux_state,
+@@ -1283,22 +1287,6 @@ static ssize_t sel_commit_bools_write(st
+ 	if (length)
+ 		goto out;
+ 
+-	length = -ENOMEM;
+-	if (count >= PAGE_SIZE)
+-		goto out;
+-
+-	/* No partial writes. */
+-	length = -EINVAL;
+-	if (*ppos != 0)
+-		goto out;
+-
+-	page = memdup_user_nul(buf, count);
+-	if (IS_ERR(page)) {
+-		length = PTR_ERR(page);
+-		page = NULL;
+-		goto out;
+-	}
+-
+ 	length = -EINVAL;
+ 	if (sscanf(page, "%d", &new_value) != 1)
+ 		goto out;
 
 
