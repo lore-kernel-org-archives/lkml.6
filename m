@@ -2,122 +2,133 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CB9C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEC1C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7D925460
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lakedaemon.net header.i=@lakedaemon.net header.b="JseEuHbD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7D925460
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lakedaemon.net
+	by mail.kernel.org (Postfix) with ESMTP id B697621A79
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:48:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B697621A79
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753835AbeGAQsX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:48:23 -0400
-Received: from outbound1.eu.mailhop.org ([52.28.251.132]:35401 "EHLO
-        outbound1.eu.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753710AbeGAQsR (ORCPT
+        id S933989AbeGAQsl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:48:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38558 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032388AbeGAQqw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:48:17 -0400
-X-MHO-RoutePath: amFjMjk5NzkyNDU4
-X-MHO-User: 4a9b326c-7d4c-11e8-aa1a-954dbaed88ca
-X-Report-Abuse-To: https://support.duocircle.com/support/solutions/articles/5000540958-duocircle-standard-smtp-abuse-information
-X-Originating-IP: 108.39.81.162
-X-Mail-Handler: DuoCircle Outbound SMTP
-Received: from io (unknown [108.39.81.162])
-        by outbound1.eu.mailhop.org (Halon) with ESMTPSA
-        id 4a9b326c-7d4c-11e8-aa1a-954dbaed88ca;
-        Sun, 01 Jul 2018 16:32:08 +0000 (UTC)
-Received: from io.lakedaemon.net (localhost [127.0.0.1])
-        by io (Postfix) with ESMTP id 0A7A38007B;
-        Sun,  1 Jul 2018 16:32:05 +0000 (UTC)
-X-DKIM: OpenDKIM Filter v2.6.8 io 0A7A38007B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lakedaemon.net;
-        s=mail; t=1530462725;
-        bh=ml2d/AVS8vKLhmI8nzKTS0KLbnpnlT+TSRcX/+UR3gY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=JseEuHbDpstExzoaVxSucibFsxmqzBYa1Yev0PccEubRyo2WGKPW/3UOQIpHX+T8E
-         u15aYCzbytLVWXSIfiS6dzjC+UuQvy1LWVKDkV/qW/rUAhxRMM1KVJbaPrUqCpe1sG
-         YXm6a2c+9Rq9l9JMSGCZX15qu+SmjO+JLMfliLlQmfW5xiAe0SXg/na8uvlfChvcOk
-         HlLEvZgrKc32I1swYGHJqQHzEdu0A+D4bWauJpDMtEzACgqk+8k0kwbUdf6n8e70oU
-         b8HZy5EPNluebzhM1bWCquK07X1iKTn3TZ8BfdVA7yecOgACKIDKbMx2AkaW2OF5tr
-         uHW+fEsaFfRCA==
-Date:   Sun, 1 Jul 2018 16:32:04 +0000
-From:   Jason Cooper <jason@lakedaemon.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Juan Manuel Torres Palma <j.m.torrespalma@gmail.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        davem@davemloft.net
-Subject: Re: [PATCH] crypto: testmgr: add test vectors for skein
-Message-ID: <20180701163204.GE26205@io.lakedaemon.net>
-References: <20180620105714.18359-1-j.m.torrespalma@gmail.com>
- <20180620181051.GC76265@gmail.com>
- <20180620221247.GA25379@randy-betty>
- <20180701091611.z24lln7cyho6ktlb@gondor.apana.org.au>
- <20180701094719.GC9956@kroah.com>
+        Sun, 1 Jul 2018 12:46:52 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA56EA73;
+        Sun,  1 Jul 2018 16:46:51 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.17 189/220] rbd: flush rbd_dev->watch_dwork after watch is unregistered
+Date:   Sun,  1 Jul 2018 18:23:33 +0200
+Message-Id: <20180701160916.097423160@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
+References: <20180701160908.272447118@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180701094719.GC9956@kroah.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-On Sun, Jul 01, 2018 at 11:47:19AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Jul 01, 2018 at 05:16:11PM +0800, Herbert Xu wrote:
-> > On Thu, Jun 21, 2018 at 07:12:47AM +0900, Juan Manuel Torres Palma wrote:
-> > > On Wed, Jun 20, 2018 at 11:10:51AM -0700, Eric Biggers wrote:
-> > > > Also, can you describe the users of Skein in the kernel?  If there are no users,
-> > > > there's no need to move it out of staging, or even have it in the kernel at all
-> > > > anymore.  I say that as someone who has had to volunteer to fix critical bugs
-> > > > found by fuzzing in crypto algorithms for which it's unclear why they are in the
-> > > > kernel at all, as there are no apparent users.
-> > > 
-> > > To be honest I'm not aware of anyone actually using Skein.
-> > > 
-> > > So by this are you suggesting that we drop support? If not removed, I believe
-> > > it's better to use test vectors as regression tests for further modifications.
-> > 
-> > Let's just remove skein.  In fact staging should never add generic
-> > crypto algorithms.
+------------------
 
-The original reason was that I was testing an automated method for
-making a massive number of style changes to cryptographic code (convert
-to kernel coding style), while being able to automatically determine
-that no changes had been made to the resulting object code.  The purpose
-being, if you chose to place trust in Werner Dittman's implementation,
-you could programatically prove that the re-styled code in the kernel
-was the exact same when it came to the resulting machine code.  Thus,
-you could extend your trust to the code in the kernel.
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
 
-That's how ./scripts/objdiff.sh came to be.  If you look at the first 20
-- 22 commits in the history of drivers/staging/skein, you can try it
-yourself.
+commit 23edca864951250af845a11da86bb3ea63522ed2 upstream.
 
-> Ok, I'll go drop it.  I forgot why we added it in the first place, it
-> has been there for 4 years and not moved out, so it's not a problem to
-> drop it now.
+There is a problem if we are going to unmap a rbd device and the
+watch_dwork is going to queue delayed work for watch:
 
-Yes, that was me that added it.  In the intervening time, unfortunately,
-Skein / Threefish hasn't picked up adoption anywhere afaict.  For
-example, it's not one of the candidates for replacing SHA1 within git.
-So, as much as I hate to delete it, I agree that it's time to drop it.
+unmap Thread                    watch Thread                  timer
+do_rbd_remove
+  cancel_tasks_sync(rbd_dev)
+                                queue_delayed_work for watch
+  destroy_workqueue(rbd_dev->task_wq)
+    drain_workqueue(wq)
+    destroy other resources in wq
+                                                              call_timer_fn
+                                                                __queue_work()
 
-I'll submit a patch to that effect soon.  Thanks for adding me to the
-Cc.
+Then the delayed work escape the cancel_tasks_sync() and
+destroy_workqueue() and we will get an user-after-free call trace:
 
-Thanks,
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  Modules linked in:
+  CPU: 7 PID: 0 Comm: swapper/7 Tainted: G           OE     4.17.0-rc6+ #13
+  Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+  RIP: 0010:__queue_work+0x6a/0x3b0
+  RSP: 0018:ffff9427df1c3e90 EFLAGS: 00010086
+  RAX: ffff9427deca8400 RBX: 0000000000000000 RCX: 0000000000000000
+  RDX: ffff9427deca8400 RSI: ffff9427df1c3e50 RDI: 0000000000000000
+  RBP: ffff942783e39e00 R08: ffff9427deca8400 R09: ffff9427df1c3f00
+  R10: 0000000000000004 R11: 0000000000000005 R12: ffff9427cfb85970
+  R13: 0000000000002000 R14: 000000000001eca0 R15: 0000000000000007
+  FS:  0000000000000000(0000) GS:ffff9427df1c0000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000000 CR3: 00000004c900a005 CR4: 00000000000206e0
+  Call Trace:
+   <IRQ>
+   ? __queue_work+0x3b0/0x3b0
+   call_timer_fn+0x2d/0x130
+   run_timer_softirq+0x16e/0x430
+   ? tick_sched_timer+0x37/0x70
+   __do_softirq+0xd2/0x280
+   irq_exit+0xd5/0xe0
+   smp_apic_timer_interrupt+0x6c/0x130
+   apic_timer_interrupt+0xf/0x20
 
-Jason.
+[ Move rbd_dev->watch_dwork cancellation so that rbd_reregister_watch()
+  either bails out early because the watch is UNREGISTERED at that point
+  or just gets cancelled. ]
+
+Cc: stable@vger.kernel.org
+Fixes: 99d1694310df ("rbd: retry watch re-registration periodically")
+Signed-off-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/block/rbd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3397,7 +3397,6 @@ static void cancel_tasks_sync(struct rbd
+ {
+ 	dout("%s rbd_dev %p\n", __func__, rbd_dev);
+ 
+-	cancel_delayed_work_sync(&rbd_dev->watch_dwork);
+ 	cancel_work_sync(&rbd_dev->acquired_lock_work);
+ 	cancel_work_sync(&rbd_dev->released_lock_work);
+ 	cancel_delayed_work_sync(&rbd_dev->lock_dwork);
+@@ -3415,6 +3414,7 @@ static void rbd_unregister_watch(struct
+ 	rbd_dev->watch_state = RBD_WATCH_STATE_UNREGISTERED;
+ 	mutex_unlock(&rbd_dev->watch_mutex);
+ 
++	cancel_delayed_work_sync(&rbd_dev->watch_dwork);
+ 	ceph_osdc_flush_notifies(&rbd_dev->rbd_client->client->osdc);
+ }
+ 
+
+
