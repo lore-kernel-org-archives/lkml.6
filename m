@@ -6,34 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81807C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA0CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7B5255AE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:09:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D7B5255AE
+	by mail.kernel.org (Postfix) with ESMTP id 77F7C255B4
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:10:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F7C255B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964910AbeGARJi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:09:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37354 "EHLO
+        id S933982AbeGARKD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:10:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37308 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032018AbeGAQlS (ORCPT
+        with ESMTP id S1032003AbeGAQlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:18 -0400
+        Sun, 1 Jul 2018 12:41:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C48EACD;
-        Sun,  1 Jul 2018 16:41:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71F1AAA6;
+        Sun,  1 Jul 2018 16:41:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Abhishek Sahu <absahu@codeaurora.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
         Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.17 102/220] mtd: rawnand: fix return value check for bad block status
-Date:   Sun,  1 Jul 2018 18:22:06 +0200
-Message-Id: <20180701160912.660607212@linuxfoundation.org>
+Subject: [PATCH 4.17 100/220] mtd: cfi_cmdset_0002: Change write buffer to check correct value
+Date:   Sun,  1 Jul 2018 18:22:04 +0200
+Message-Id: <20180701160912.586493348@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,37 +59,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 
-commit e9893e6fa932f42c90c4ac5849fa9aa0f0f00a34 upstream.
+commit dfeae1073583dc35c33b32150e18b7048bbb37e6 upstream.
 
-Positive return value from read_oob() is making false BAD
-blocks. For some of the NAND controllers, OOB bytes will be
-protected with ECC and read_oob() will return number of bitflips.
-If there is any bitflip in ECC protected OOB bytes for BAD block
-status page, then that block is getting treated as BAD.
+For the word write it is checked if the chip has the correct value.
+But it is not checked for the write buffer as only checked if ready.
+To make sure for the write buffer change to check the value.
 
-Fixes: c120e75e0e7d ("mtd: nand: use read_oob() instead of cmdfunc() for bad block check")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+It is enough as this patch is only checking the last written word.
+Since it is described by data sheets to check the operation status.
+
+Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-mtd@lists.infradead.org
+Cc: stable@vger.kernel.org
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/nand_base.c |    2 +-
+ drivers/mtd/chips/cfi_cmdset_0002.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -440,7 +440,7 @@ static int nand_block_bad(struct mtd_inf
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -1880,7 +1880,7 @@ static int __xipram do_write_buffer(stru
+ 		if (time_after(jiffies, timeo) && !chip_ready(map, adr))
+ 			break;
  
- 	for (; page < page_end; page++) {
- 		res = chip->ecc.read_oob(mtd, chip, page);
--		if (res)
-+		if (res < 0)
- 			return res;
- 
- 		bad = chip->oob_poi[chip->badblockpos];
+-		if (chip_ready(map, adr)) {
++		if (chip_good(map, adr, datum)) {
+ 			xip_enable(map, chip, adr);
+ 			goto op_done;
+ 		}
 
 
