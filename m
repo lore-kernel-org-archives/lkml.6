@@ -6,37 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60C8C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDBAC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD8025474
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD8025474
+	by mail.kernel.org (Postfix) with ESMTP id 1C6C22548B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6C22548B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032529AbeGAQq3 (ORCPT
+        id S1753120AbeGAQu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:46:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38414 "EHLO
+        Sun, 1 Jul 2018 12:50:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032271AbeGAQqY (ORCPT
+        with ESMTP id S1032526AbeGAQqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:24 -0400
+        Sun, 1 Jul 2018 12:46:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA97DA73;
-        Sun,  1 Jul 2018 16:46:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DA3AA73;
+        Sun,  1 Jul 2018 16:46:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 212/220] block: Fix transfer when chunk sectors exceeds max
-Date:   Sun,  1 Jul 2018 18:23:56 +0200
-Message-Id: <20180701160917.011058475@linuxfoundation.org>
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Herton R. Krzesinski" <herton@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 214/220] x86/e820: put !E820_TYPE_RAM regions into memblock.reserved
+Date:   Sun,  1 Jul 2018 18:23:58 +0200
+Message-Id: <20180701160917.089161682@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,38 +59,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keith Busch <keith.busch@intel.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit 15bfd21fbc5d35834b9ea383dc458a1f0c9e3434 upstream.
+commit 124049decbb121ec32742c94fb5d9d6bed8f24d8 upstream.
 
-A device may have boundary restrictions where the number of sectors
-between boundaries exceeds its max transfer size. In this case, we need
-to cap the max size to the smaller of the two limits.
+There is a kernel panic that is triggered when reading /proc/kpageflags
+on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
 
-Reported-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-Tested-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+  BUG: unable to handle kernel paging request at fffffffffffffffe
+  PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+  RIP: 0010:stable_page_flags+0x27/0x3c0
+  Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+  RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+  RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+  RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+  RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+  R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+  R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+  FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+  Call Trace:
+   kpageflags_read+0xc7/0x120
+   proc_reg_read+0x3c/0x60
+   __vfs_read+0x36/0x170
+   vfs_read+0x89/0x130
+   ksys_pread64+0x71/0x90
+   do_syscall_64+0x5b/0x160
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x7efc42e75e23
+  Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+
+According to kernel bisection, this problem became visible due to commit
+f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+which changes how struct pages are initialized.
+
+Memblock layout affects the pfn ranges covered by node/zone.  Consider
+that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+the default (no memmap= given) memblock layout is like below:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x4
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+   memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+If you give memmap=1G!4G (so it just covers memory[0x2]),
+the range [0x100000000-0x13fffffff] is gone:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x3
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+This causes shrinking node 0's pfn range because it is calculated by the
+address range of memblock.memory.  So some of struct pages in the gap
+range are left uninitialized.
+
+We have a function zero_resv_unavail() which does zeroing the struct pages
+within the reserved unavailable range (i.e.  memblock.memory &&
+!memblock.reserved).  This patch utilizes it to cover all unavailable
+ranges by putting them into memblock.reserved.
+
+Link: http://lkml.kernel.org/r/20180615072947.GB23273@hori1.linux.bs1.fc.nec.co.jp
+Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Tested-by: Oscar Salvador <osalvador@suse.de>
+Tested-by: "Herton R. Krzesinski" <herton@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/blkdev.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/e820.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1124,8 +1124,8 @@ static inline unsigned int blk_max_size_
- 	if (!q->limits.chunk_sectors)
- 		return q->limits.max_sectors;
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1246,6 +1246,7 @@ void __init e820__memblock_setup(void)
+ {
+ 	int i;
+ 	u64 end;
++	u64 addr = 0;
  
--	return q->limits.chunk_sectors -
--			(offset & (q->limits.chunk_sectors - 1));
-+	return min(q->limits.max_sectors, (unsigned int)(q->limits.chunk_sectors -
-+			(offset & (q->limits.chunk_sectors - 1))));
- }
+ 	/*
+ 	 * The bootstrap memblock region count maximum is 128 entries
+@@ -1262,13 +1263,21 @@ void __init e820__memblock_setup(void)
+ 		struct e820_entry *entry = &e820_table->entries[i];
  
- static inline unsigned int blk_rq_get_max_sectors(struct request *rq,
+ 		end = entry->addr + entry->size;
++		if (addr < entry->addr)
++			memblock_reserve(addr, entry->addr - addr);
++		addr = end;
+ 		if (end != (resource_size_t)end)
+ 			continue;
+ 
++		/*
++		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
++		 * into memblock.reserved to make sure that struct pages in
++		 * such regions are not left uninitialized after bootup.
++		 */
+ 		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+-			continue;
+-
+-		memblock_add(entry->addr, entry->size);
++			memblock_reserve(entry->addr, entry->size);
++		else
++			memblock_add(entry->addr, entry->size);
+ 	}
+ 
+ 	/* Throw away partial pages: */
 
 
