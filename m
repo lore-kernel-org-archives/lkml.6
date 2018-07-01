@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2882FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403ADC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E274625102
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E274625102
+	by mail.kernel.org (Postfix) with ESMTP id E5B0222A84
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B0222A84
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753351AbeGAQSc (ORCPT
+        id S1753366AbeGAQSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:18:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33014 "EHLO
+        Sun, 1 Jul 2018 12:18:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbeGAQS2 (ORCPT
+        with ESMTP id S1753217AbeGAQSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:28 -0400
+        Sun, 1 Jul 2018 12:18:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9A09E92B;
-        Sun,  1 Jul 2018 16:18:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B86049B;
+        Sun,  1 Jul 2018 16:18:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 042/105] fuse: fix control dir setup and teardown
-Date:   Sun,  1 Jul 2018 18:01:52 +0200
-Message-Id: <20180701153152.262946709@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 044/105] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
+Date:   Sun,  1 Jul 2018 18:01:54 +0200
+Message-Id: <20180701153152.448967347@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,68 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 6becdb601bae2a043d7fb9762c4d48699528ea6e upstream.
+commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
 
-syzbot is reporting NULL pointer dereference at fuse_ctl_remove_conn() [1].
-Since fc->ctl_ndents is incremented by fuse_ctl_add_conn() when new_inode()
-failed, fuse_ctl_remove_conn() reaches an inode-less dentry and tries to
-clear d_inode(dentry)->i_private field.
+In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
+validating DAWR region end") we fixed setting the DAWR end point to
+its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
+PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
 
-Fix by only adding the dentry to the array after being fully set up.
+PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
+zero (memset() in hw_breakpoint_init()). This worked with
+arch_validate_hwbkpt_settings() before the above patch was applied but
+is now broken if the breakpoint is 512byte aligned.
 
-When tearing down the control directory, do d_invalidate() on it to get rid
-of any mounts that might have been added.
+This sets the length of the breakpoint to 8 bytes when using
+PTRACE_SET_DEBUGREG.
 
-[1] https://syzkaller.appspot.com/bug?id=f396d863067238959c91c0b7cfc10b163638cac6
-Reported-by: syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>
-Fixes: bafa96541b25 ("[PATCH] fuse: add control filesystem")
-Cc: <stable@vger.kernel.org> # v2.6.18
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
+Cc: stable@vger.kernel.org # v3.11+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/control.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/ptrace.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -211,10 +211,11 @@ static struct dentry *fuse_ctl_add_dentr
- 	if (!dentry)
- 		return NULL;
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -1004,6 +1004,7 @@ static int ptrace_set_debugreg(struct ta
+ 	/* Create a new breakpoint request if one doesn't exist already */
+ 	hw_breakpoint_init(&attr);
+ 	attr.bp_addr = hw_brk.address;
++	attr.bp_len = 8;
+ 	arch_bp_generic_fields(hw_brk.type,
+ 			       &attr.bp_type);
  
--	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
- 	inode = new_inode(fuse_control_sb);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		return NULL;
-+	}
- 
- 	inode->i_ino = get_next_ino();
- 	inode->i_mode = mode;
-@@ -228,6 +229,9 @@ static struct dentry *fuse_ctl_add_dentr
- 	set_nlink(inode, nlink);
- 	inode->i_private = fc;
- 	d_add(dentry, inode);
-+
-+	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
-+
- 	return dentry;
- }
- 
-@@ -284,7 +288,10 @@ void fuse_ctl_remove_conn(struct fuse_co
- 	for (i = fc->ctl_ndents - 1; i >= 0; i--) {
- 		struct dentry *dentry = fc->ctl_dentry[i];
- 		d_inode(dentry)->i_private = NULL;
--		d_drop(dentry);
-+		if (!i) {
-+			/* Get rid of submounts: */
-+			d_invalidate(dentry);
-+		}
- 		dput(dentry);
- 	}
- 	drop_nlink(d_inode(fuse_control_sb->s_root));
 
 
