@@ -2,124 +2,105 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F359C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE18C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C99425049
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F01A2503E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 15:26:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNjvVBmX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C99425049
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ttudi1rx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F01A2503E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeGAPYn (ORCPT
+        id S1752459AbeGAP0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 11:24:43 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41488 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752275AbeGAPYk (ORCPT
+        Sun, 1 Jul 2018 11:26:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38320 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752217AbeGAP0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 11:24:40 -0400
-Received: by mail-lf0-f65.google.com with SMTP id y127-v6so10122128lfc.8;
-        Sun, 01 Jul 2018 08:24:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TNN/4pmE3Pkkju9Q1Iyqv+0LsPCLRaSkZaD/kV2/RIc=;
-        b=TNjvVBmXUwPOOpUqS3uzSFGLjCetfzzMk5VR0jo+JDv2HzNBBqx6QV0K/MTWjqxVcX
-         Xt/RuH15znn0Uys+w7VO7daCtHnqDkQizuSI2TZ0WFfFLdJxWuTBq/2FqEeKD9QzuRnl
-         PzrzPtHtrTDDaHcbFhujfiZf/FAexjEGa9ktQTr3AskCfiHZ05UhoZGIGLoCOjiGb8GD
-         YfNOYxw5kkibxr7OT55mcz5jdTt8qPGncAptEUSJ8bPEIFNIA9AG4Y29e/JGCGNuUQox
-         WiaajnGyqeNDJtcnsWe7QL0Kn8l3SZr7Qa2s6Q/s1hMZ2wf7/X4ayYZhwH4EqPa4uh6x
-         kj8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TNN/4pmE3Pkkju9Q1Iyqv+0LsPCLRaSkZaD/kV2/RIc=;
-        b=c+C3wJUq39+z0FqxW4tpPSt87QWmGvH8KrxGsTq3xiQh0PaO6f3vBOv3F0isPRM6hi
-         EbVwQz5xXb9Zu1HRy8PYVt4Ta5SRAfOS+7bMwjSEVYIeBD7vzgr0N0tGchlrXvfZZhxL
-         ZfE9Q+bFj+KCNBnP+DjlWHRji5bXsTgaV3qkLNsIxu6Eedzn6uqo/NBok4ySDLLu6AfJ
-         X6dDWj77dSY6oijqFEvRArMZIDStnyftDlvx4WVDwIlfa6yBoZmZq0PDo2JEDit0xqAU
-         7o8DMUocieTLtlrnllV5IWgzH/gaddkGRVEBw2FrgnMKZ+iZZ5Q5iu0wZQL1ODeNjyS0
-         zrkQ==
-X-Gm-Message-State: APt69E14d9M3jUeMAvMltOsX9E3N0Ml7slRGUPofb1P2QqGmJfZJn9dc
-        3SjF4+Z65Zy/BywPDfQ45e1UkNXqpmmCKwqyTi0=
-X-Google-Smtp-Source: AAOMgpdxei6DTQv5LPXkMmxt3fTmrSS1kiZqPf2ljc2k/ZT4g5jHgFrlrQjBDNbWt29A/EPBWuArug6L2bLwbRBPUqA=
-X-Received: by 2002:a19:5418:: with SMTP id i24-v6mr10435882lfb.34.1530458678329;
- Sun, 01 Jul 2018 08:24:38 -0700 (PDT)
+        Sun, 1 Jul 2018 11:26:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vrUq7ECHxFj5AIDsXDE5vC3E+bI/VeHPJfclAyR3o28=; b=ttudi1rxFsrLK6Gx/35U/4458
+        F3souxWNXp4hqlAOrpIRRu0pwJF4TGTBOPTHQWbBdfn6pTMWDjicWWGiC0erslTPfRjbiit3OsFgZ
+        Wa3hQKgibmsGII6fMstLVtmfqjtPbakSAFQv95iTl2rby+aNg78veHQ8i4i+yCRYYUuedv4C3LLo8
+        SXC2moWESO//q/3IXvmJBkO7ZFWTxoQtbAOrXVVm4gzwGExRhH2VJJbVFCeARuCmjOuPsgfU8ZGxc
+        6fR+jadmICent2M9i4NNTB7ygF/biw5PYHZiPSR5ncKQOXIaTqmFbWqbd+giBWj7HrIbv3upGqj5n
+        iQ3GSdaEw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fZeFT-0001cD-Bw; Sun, 01 Jul 2018 15:26:47 +0000
+Subject: Re: [PATCH v2 00/11] docs/mm: add boot time memory management docs
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc <linux-doc@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6c4dbd5e-a7c9-06de-5c9f-1c311b782244@infradead.org>
+Date:   Sun, 1 Jul 2018 08:26:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180507213755.GA32406@avx2> <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
- <1529235613.4572.7.camel@gmx.de> <20180617120012.GB16877@zn.tnic>
- <1529242717.4472.3.camel@gmx.de> <1529244178.4674.1.camel@gmx.de>
- <20180617194747.GA21160@zn.tnic> <1529289279.31745.3.camel@gmx.de>
- <20180623103622.GA2760@zn.tnic> <20180701131941.2dqkzg7az25qpc6b@gondor.apana.org.au>
-In-Reply-To: <20180701131941.2dqkzg7az25qpc6b@gondor.apana.org.au>
-From:   =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= 
-        <omosnacek+linux-crypto@gmail.com>
-Date:   Sun, 1 Jul 2018 17:24:39 +0200
-Message-ID: <CAAUqJDt+DyRj_Q1D05d0D7pJQYjCZas6uz8aZ0xsQVE=vSETxA@mail.gmail.com>
-Subject: Re: [PATCH] x86/crypto: Add missing RETs
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     bp@alien8.de, linux-crypto@vger.kernel.org, efault@gmx.de,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
-        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dvlasenk@redhat.com, h.peter.anvin@intel.com,
-        linux-tip-commits@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ne 1. 7. 2018 o 15:20 Herbert Xu <herbert@gondor.apana.org.au> nap=C3=ADsal=
-(a):
->
-> On Sat, Jun 23, 2018 at 12:36:22PM +0200, Borislav Petkov wrote:
-> > Lemme send a proper patch now...
-> >
-> > ---
-> > From: Borislav Petkov <bp@suse.de>
-> > Date: Sun, 17 Jun 2018 13:57:42 +0200
-> > Subject: [PATCH] x86/crypto: Add missing RETs
-> >
-> > Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithm=
-s
-> > otherwise they run into INT3 padding due to
-> >
-> >   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions=
-")
-> >
-> > leading to spurious debug exceptions.
-> >
-> > Mike Galbraith <efault@gmx.de> took care of all the remaining callsites=
-.
-> >
-> > Signed-off-by: Borislav Petkov <bp@suse.de>
->
-> Patch applied.  Thanks.
+On 06/30/18 07:54, Mike Rapoport wrote:
+> Hi,
+> 
+> Both bootmem and memblock have pretty good documentation coverage. With
+> some fixups and additions we get a nice overall description.
+> 
+> v2 changes:
+> * address Randy's comments
 
-Hi Herbert,
+For the series:
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-I can see you applied this patch to your cryptodev-2.6 tree (which I
-believe is for the next release). Shouldn't this go into the
-crypto-2.6 tree so it gets into 4.18-rcX? I'm not sure, but it seems
-to me that it qualifies as a (potentially serious?) bug fix.
+Thanks.
 
-Also, I think you accidentally extracted the wrong part of the e-mail
-as the commit message...
 
-Thanks,
+> Mike Rapoport (11):
+>   mm/bootmem: drop duplicated kernel-doc comments
+>   docs/mm: nobootmem: fixup kernel-doc comments
+>   docs/mm: bootmem: fix kernel-doc warnings
+>   docs/mm: bootmem: add kernel-doc description of 'struct bootmem_data'
+>   docs/mm: bootmem: add overview documentation
+>   mm/memblock: add a name for memblock flags enumeration
+>   docs/mm: memblock: update kernel-doc comments
+>   docs/mm: memblock: add kernel-doc comments for memblock_add[_node]
+>   docs/mm: memblock: add kernel-doc description for memblock types
+>   docs/mm: memblock: add overview documentation
+>   docs/mm: add description of boot time memory management
+> 
+>  Documentation/core-api/boot-time-mm.rst |  92 +++++++++++++++
+>  Documentation/core-api/index.rst        |   1 +
+>  include/linux/bootmem.h                 |  17 ++-
+>  include/linux/memblock.h                |  76 ++++++++----
+>  mm/bootmem.c                            | 159 +++++++++----------------
+>  mm/memblock.c                           | 203 +++++++++++++++++++++++---------
+>  mm/nobootmem.c                          |  20 +++-
+>  7 files changed, 380 insertions(+), 188 deletions(-)
+>  create mode 100644 Documentation/core-api/boot-time-mm.rst
+> 
 
-Ondrej
+
+-- 
+~Randy
