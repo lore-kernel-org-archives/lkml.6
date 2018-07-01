@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA86C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E304C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB90325081
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB90325081
+	by mail.kernel.org (Postfix) with ESMTP id 5336225083
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5336225083
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932977AbeGAQPZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60534 "EHLO
+        id S933007AbeGAQP2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60554 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeGAQPQ (ORCPT
+        with ESMTP id S1753211AbeGAQPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:16 -0400
+        Sun, 1 Jul 2018 12:15:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A12064A3;
-        Sun,  1 Jul 2018 16:15:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA5474A3;
+        Sun,  1 Jul 2018 16:15:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiangning Yu <yuxiangning@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 011/105] bonding: re-evaluate force_primary when the primary slave name changes
-Date:   Sun,  1 Jul 2018 18:01:21 +0200
-Message-Id: <20180701153150.285695723@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Joe Habermann <joe.habermann@quantum.com>
+Subject: [PATCH 4.4 013/105] ext4: update mtime in ext4_punch_hole even if no blocks are released
+Date:   Sun,  1 Jul 2018 18:01:23 +0200
+Message-Id: <20180701153150.412482422@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -49,32 +50,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiangning Yu <yuxiangning@gmail.com>
+From: Lukas Czerner <lczerner@redhat.com>
 
-[ Upstream commit eb55bbf865d9979098c6a7a17cbdb41237ece951 ]
+commit eee597ac931305eff3d3fd1d61d6aae553bc0984 upstream.
 
-There is a timing issue under active-standy mode, when bond_enslave() is
-called, bond->params.primary might not be initialized yet.
+Currently in ext4_punch_hole we're going to skip the mtime update if
+there are no actual blocks to release. However we've actually modified
+the file by zeroing the partial block so the mtime should be updated.
 
-Any time the primary slave string changes, bond->force_primary should be
-set to true to make sure the primary becomes the active slave.
+Moreover the sync and datasync handling is skipped as well, which is
+also wrong. Fix it.
 
-Signed-off-by: Xiangning Yu <yuxiangning@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Joe Habermann <joe.habermann@quantum.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/bonding/bond_options.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/bonding/bond_options.c
-+++ b/drivers/net/bonding/bond_options.c
-@@ -1115,6 +1115,7 @@ static int bond_option_primary_set(struc
- 				    slave->dev->name);
- 			rcu_assign_pointer(bond->primary_slave, slave);
- 			strcpy(bond->params.primary, slave->dev->name);
-+			bond->force_primary = true;
- 			bond_select_active_slave(bond);
- 			goto out;
- 		}
+---
+ fs/ext4/inode.c |   40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3787,28 +3787,28 @@ int ext4_punch_hole(struct inode *inode,
+ 		EXT4_BLOCK_SIZE_BITS(sb);
+ 	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
+ 
+-	/* If there are no blocks to remove, return now */
+-	if (first_block >= stop_block)
+-		goto out_stop;
+-
+-	down_write(&EXT4_I(inode)->i_data_sem);
+-	ext4_discard_preallocations(inode);
+-
+-	ret = ext4_es_remove_extent(inode, first_block,
+-				    stop_block - first_block);
+-	if (ret) {
+-		up_write(&EXT4_I(inode)->i_data_sem);
+-		goto out_stop;
+-	}
++	/* If there are blocks to remove, do it */
++	if (stop_block > first_block) {
++
++		down_write(&EXT4_I(inode)->i_data_sem);
++		ext4_discard_preallocations(inode);
+ 
+-	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+-		ret = ext4_ext_remove_space(inode, first_block,
+-					    stop_block - 1);
+-	else
+-		ret = ext4_ind_remove_space(handle, inode, first_block,
+-					    stop_block);
++		ret = ext4_es_remove_extent(inode, first_block,
++					    stop_block - first_block);
++		if (ret) {
++			up_write(&EXT4_I(inode)->i_data_sem);
++			goto out_stop;
++		}
++
++		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
++			ret = ext4_ext_remove_space(inode, first_block,
++						    stop_block - 1);
++		else
++			ret = ext4_ind_remove_space(handle, inode, first_block,
++						    stop_block);
+ 
+-	up_write(&EXT4_I(inode)->i_data_sem);
++		up_write(&EXT4_I(inode)->i_data_sem);
++	}
+ 	if (IS_SYNC(inode))
+ 		ext4_handle_sync(handle);
+ 
 
 
