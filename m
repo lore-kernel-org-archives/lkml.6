@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85324C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC5CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9F4257A8
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F9F4257A8
+	by mail.kernel.org (Postfix) with ESMTP id 5E3482084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:53:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3482084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030585AbeGARxF (ORCPT
+        id S1030623AbeGARxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:53:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35118 "EHLO
+        Sun, 1 Jul 2018 13:53:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35086 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965935AbeGAQcK (ORCPT
+        with ESMTP id S965769AbeGAQb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:10 -0400
+        Sun, 1 Jul 2018 12:31:59 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46A2792B;
-        Sun,  1 Jul 2018 16:32:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A01749B;
+        Sun,  1 Jul 2018 16:31:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 066/157] IB/hfi1: Fix fault injection init/exit issues
-Date:   Sun,  1 Jul 2018 18:22:18 +0200
-Message-Id: <20180701160855.922396827@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.14 062/157] IB/core: Make testing MR flags for writability a static inline function
+Date:   Sun,  1 Jul 2018 18:22:14 +0200
+Message-Id: <20180701160855.722992272@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,122 +51,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 8c79d8223bb11b2f005695a32ddd3985de97727c upstream.
+commit 08bb558ac11ab944e0539e78619d7b4c356278bd upstream.
 
-There are config dependent code paths that expose panics in unload
-paths both in this file and in debugfs_remove_recursive() because
-CONFIG_FAULT_INJECTION and CONFIG_FAULT_INJECTION_DEBUG_FS can be
-set independently.
+Make the MR writability flags check, which is performed in umem.c,
+a static inline function in file ib_verbs.h
 
-Having CONFIG_FAULT_INJECTION set and CONFIG_FAULT_INJECTION_DEBUG_FS
-reset causes fault_create_debugfs_attr() to return an error.
+This allows the function to be used by low-level infiniband drivers.
 
-The debugfs.c routines tolerate failures, but the module unload panics
-dereferencing a NULL in the two exit routines.  If that is fixed, the
-dir passed to debugfs_remove_recursive comes from a memory location
-that was freed and potentially reused causing a segfault or corrupting
-memory.
-
-Here is an example of the NULL deref panic:
-
-[66866.286829] BUG: unable to handle kernel NULL pointer dereference at 0000000000000088
-[66866.295602] IP: hfi1_dbg_ibdev_exit+0x2a/0x80 [hfi1]
-[66866.301138] PGD 858496067 P4D 858496067 PUD 8433a7067 PMD 0
-[66866.307452] Oops: 0000 [#1] SMP
-[66866.310953] Modules linked in: hfi1(-) rdmavt rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm iw_cm ib_cm ib_core rpcsec_gss_krb5 nfsv4 dns_resolver nfsv3 nfs fscache sb_edac x86_pkg_temp_thermal intel_powerclamp vfat fat coretemp kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel iTCO_wdt iTCO_vendor_support crypto_simd mei_me glue_helper cryptd mxm_wmi ipmi_si pcspkr lpc_ich sg mei ioatdma ipmi_devintf i2c_i801 mfd_core shpchp ipmi_msghandler wmi acpi_power_meter acpi_cpufreq nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables ext4 mbcache jbd2 sd_mod mgag200 drm_kms_helper syscopyarea sysfillrect sysimgblt igb fb_sys_fops ttm ahci ptp crc32c_intel libahci pps_core drm dca libata i2c_algo_bit i2c_core [last unloaded: opa_vnic]
-[66866.385551] CPU: 8 PID: 7470 Comm: rmmod Not tainted 4.14.0-mam-tid-rdma #2
-[66866.393317] Hardware name: Intel Corporation S2600WT2/S2600WT2, BIOS SE5C610.86B.01.01.0018.C4.072020161249 07/20/2016
-[66866.405252] task: ffff88084f28c380 task.stack: ffffc90008454000
-[66866.411866] RIP: 0010:hfi1_dbg_ibdev_exit+0x2a/0x80 [hfi1]
-[66866.417984] RSP: 0018:ffffc90008457da0 EFLAGS: 00010202
-[66866.423812] RAX: 0000000000000000 RBX: ffff880857de0000 RCX: 0000000180040001
-[66866.431773] RDX: 0000000180040002 RSI: ffffea0021088200 RDI: 0000000040000000
-[66866.439734] RBP: ffffc90008457da8 R08: ffff88084220e000 R09: 0000000180040001
-[66866.447696] R10: 000000004220e001 R11: ffff88084220e000 R12: ffff88085a31c000
-[66866.455657] R13: ffffffffa07c9820 R14: ffffffffa07c9890 R15: ffff881059d78100
-[66866.463618] FS:  00007f6876047740(0000) GS:ffff88085f800000(0000) knlGS:0000000000000000
-[66866.472644] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[66866.479053] CR2: 0000000000000088 CR3: 0000000856357006 CR4: 00000000001606e0
-[66866.487013] Call Trace:
-[66866.489747]  remove_one+0x1f/0x220 [hfi1]
-[66866.494221]  pci_device_remove+0x39/0xc0
-[66866.498596]  device_release_driver_internal+0x141/0x210
-[66866.504424]  driver_detach+0x3f/0x80
-[66866.508409]  bus_remove_driver+0x55/0xd0
-[66866.512784]  driver_unregister+0x2c/0x50
-[66866.517164]  pci_unregister_driver+0x2a/0xa0
-[66866.521934]  hfi1_mod_cleanup+0x10/0xaa2 [hfi1]
-[66866.526988]  SyS_delete_module+0x171/0x250
-[66866.531558]  do_syscall_64+0x67/0x1b0
-[66866.535644]  entry_SYSCALL64_slow_path+0x25/0x25
-[66866.540792] RIP: 0033:0x7f6875525c27
-[66866.544777] RSP: 002b:00007ffd48528e78 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[66866.553224] RAX: ffffffffffffffda RBX: 0000000001cc01d0 RCX: 00007f6875525c27
-[66866.561185] RDX: 00007f6875596000 RSI: 0000000000000800 RDI: 0000000001cc0238
-[66866.569146] RBP: 0000000000000000 R08: 00007f68757e9060 R09: 00007f6875596000
-[66866.577120] R10: 00007ffd48528c00 R11: 0000000000000206 R12: 00007ffd48529db4
-[66866.585080] R13: 0000000000000000 R14: 0000000001cc01d0 R15: 0000000001cc0010
-[66866.593040] Code: 90 0f 1f 44 00 00 48 83 3d a3 8b 03 00 00 55 48 89 e5 53 48 89 fb 74 4e 48 8d bf 18 0c 00 00 e8 9d f2 ff ff 48 8b 83 20 0c 00 00 <48> 8b b8 88 00 00 00 e8 2a 21 b3 e0 48 8b bb 20 0c 00 00 e8 0e
-[66866.614127] RIP: hfi1_dbg_ibdev_exit+0x2a/0x80 [hfi1] RSP: ffffc90008457da0
-[66866.621885] CR2: 0000000000000088
-[66866.625618] ---[ end trace c4817425783fb092 ]---
-
-Fix by insuring that upon failure from fault_create_debugfs_attr() the
-parent pointer for the routines is always set to NULL and guards added
-in the exit routines to insure that debugfs_remove_recursive() is not
-called when when the parent pointer is NULL.
-
-Fixes: 0181ce31b260 ("IB/hfi1: Add receive fault injection feature")
-Cc: <stable@vger.kernel.org> # 4.14.x
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/debugfs.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/umem.c |   11 +----------
+ include/rdma/ib_verbs.h        |   14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/debugfs.c
-+++ b/drivers/infiniband/hw/hfi1/debugfs.c
-@@ -1179,7 +1179,8 @@ DEBUGFS_FILE_OPS(fault_stats);
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,16 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	/*
+-	 * We ask for writable memory if any of the following
+-	 * access flags are set.  "Local write" and "remote write"
+-	 * obviously require write access.  "Remote atomic" can do
+-	 * things like fetch and add, which will modify memory, and
+-	 * "MW bind" can change permissions by binding a window.
+-	 */
+-	umem->writable  = !!(access &
+-		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
+-		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
++	umem->writable   = ib_access_writable(access);
  
- static void fault_exit_opcode_debugfs(struct hfi1_ibdev *ibd)
- {
--	debugfs_remove_recursive(ibd->fault_opcode->dir);
-+	if (ibd->fault_opcode)
-+		debugfs_remove_recursive(ibd->fault_opcode->dir);
- 	kfree(ibd->fault_opcode);
- 	ibd->fault_opcode = NULL;
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+ 		ret = ib_umem_odp_get(context, umem, access);
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -3558,6 +3558,20 @@ static inline int ib_check_mr_access(int
+ 	return 0;
  }
-@@ -1207,6 +1208,7 @@ static int fault_init_opcode_debugfs(str
- 					  &ibd->fault_opcode->attr);
- 	if (IS_ERR(ibd->fault_opcode->dir)) {
- 		kfree(ibd->fault_opcode);
-+		ibd->fault_opcode = NULL;
- 		return -ENOENT;
- 	}
  
-@@ -1230,7 +1232,8 @@ fail:
- 
- static void fault_exit_packet_debugfs(struct hfi1_ibdev *ibd)
- {
--	debugfs_remove_recursive(ibd->fault_packet->dir);
-+	if (ibd->fault_packet)
-+		debugfs_remove_recursive(ibd->fault_packet->dir);
- 	kfree(ibd->fault_packet);
- 	ibd->fault_packet = NULL;
- }
-@@ -1256,6 +1259,7 @@ static int fault_init_packet_debugfs(str
- 					  &ibd->fault_opcode->attr);
- 	if (IS_ERR(ibd->fault_packet->dir)) {
- 		kfree(ibd->fault_packet);
-+		ibd->fault_packet = NULL;
- 		return -ENOENT;
- 	}
- 
++static inline bool ib_access_writable(int access_flags)
++{
++	/*
++	 * We have writable memory backing the MR if any of the following
++	 * access flags are set.  "Local write" and "remote write" obviously
++	 * require write access.  "Remote atomic" can do things like fetch and
++	 * add, which will modify memory, and "MW bind" can change permissions
++	 * by binding a window.
++	 */
++	return access_flags &
++		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
++		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND);
++}
++
+ /**
+  * ib_check_mr_status: lightweight check of MR status.
+  *     This routine may provide status checks on a selected
 
 
