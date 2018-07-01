@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7609CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABA8C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5CB24089
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5CB24089
+	by mail.kernel.org (Postfix) with ESMTP id D07DC24089
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07DC24089
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965816AbeGAQ3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:29:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34420 "EHLO
+        id S965832AbeGAQ3O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:29:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933844AbeGAQ3A (ORCPT
+        with ESMTP id S965794AbeGAQ3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:00 -0400
+        Sun, 1 Jul 2018 12:29:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CC28AD8;
-        Sun,  1 Jul 2018 16:28:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB4E7AD8;
+        Sun,  1 Jul 2018 16:29:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 080/101] perf intel-pt: Fix packet decoding of CYC packets
-Date:   Sun,  1 Jul 2018 18:22:06 +0200
-Message-Id: <20180701160800.372812421@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.9 081/101] media: v4l2-compat-ioctl32: prevent go past max size
+Date:   Sun,  1 Jul 2018 18:22:07 +0200
+Message-Id: <20180701160800.408514509@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,33 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 621a5a327c1e36ffd7bb567f44a559f64f76358f upstream.
+commit ea72fbf588ac9c017224dcdaa2019ff52ca56fee upstream.
 
-Use a 64-bit type so that the cycle count is not limited to 32-bits.
+As warned by smatch:
+	drivers/media/v4l2-core/v4l2-compat-ioctl32.c:879 put_v4l2_ext_controls32() warn: check for integer overflow 'count'
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+The access_ok() logic should check for too big arrays too.
+
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1528371002-8862-1-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c |    2 +-
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-pkt-decoder.c
-@@ -281,7 +281,7 @@ static int intel_pt_get_cyc(unsigned int
- 		if (len < offs)
- 			return INTEL_PT_NEED_MORE_BYTES;
- 		byte = buf[offs++];
--		payload |= (byte >> 1) << shift;
-+		payload |= ((uint64_t)byte >> 1) << shift;
- 	}
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -864,7 +864,7 @@ static int put_v4l2_ext_controls32(struc
+ 	    get_user(kcontrols, &kp->controls))
+ 		return -EFAULT;
  
- 	packet->type = INTEL_PT_CYC;
+-	if (!count)
++	if (!count || count > (U32_MAX/sizeof(*ucontrols)))
+ 		return 0;
+ 	if (get_user(p, &up->controls))
+ 		return -EFAULT;
 
 
