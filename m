@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F38C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1938C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F2F2595B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F2F2595B
+	by mail.kernel.org (Postfix) with ESMTP id 8C0C725969
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0C725969
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934163AbeGASVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:21:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33556 "EHLO
+        id S934211AbeGASVv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:21:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33538 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965205AbeGAQYq (ORCPT
+        with ESMTP id S965203AbeGAQYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:46 -0400
+        Sun, 1 Jul 2018 12:24:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 998D1AF3;
-        Sun,  1 Jul 2018 16:24:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BDD7FAE0;
+        Sun,  1 Jul 2018 16:24:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nordmark Claes <Claes.Nordmark@tieto.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.9 019/101] ipmi:bt: Set the timeout before doing a capabilities check
-Date:   Sun,  1 Jul 2018 18:21:05 +0200
-Message-Id: <20180701160757.909465632@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.9 018/101] branch-check: fix long->int truncation when profiling branches
+Date:   Sun,  1 Jul 2018 18:21:04 +0200
+Message-Id: <20180701160757.866490495@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,42 +50,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit fe50a7d0393a552e4539da2d31261a59d6415950 upstream.
+commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
 
-There was one place where the timeout value for an operation was
-not being set, if a capabilities request was done from idle.  Move
-the timeout value setting to before where that change might be
-requested.
+The function __builtin_expect returns long type (see the gcc
+documentation), and so do macros likely and unlikely. Unfortunatelly, when
+CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
+unlikely expand to __branch_check__ and __branch_check__ truncates the
+long type to int. This unintended truncation may cause bugs in various
+kernel code (we found a bug in dm-writecache because of it), so it's
+better to fix __branch_check__ to return long.
 
-IMHO the cause here is the invisible returns in the macros.  Maybe
-that's a job for later, though.
+Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
 
-Reported-by: Nordmark Claes <Claes.Nordmark@tieto.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: Ingo Molnar <mingo@redhat.com>
 Cc: stable@vger.kernel.org
+Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_bt_sm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/compiler.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_bt_sm.c
-+++ b/drivers/char/ipmi/ipmi_bt_sm.c
-@@ -522,11 +522,12 @@ static enum si_sm_result bt_event(struct
- 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
- 			BT_CONTROL(BT_H_BUSY);
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -113,7 +113,7 @@ void ftrace_likely_update(struct ftrace_
+ #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
  
-+		bt->timeout = bt->BT_CAP_req2rsp;
-+
- 		/* Read BT capabilities if it hasn't been done yet */
- 		if (!bt->BT_CAP_outreqs)
- 			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
- 					SI_SM_CALL_WITHOUT_DELAY);
--		bt->timeout = bt->BT_CAP_req2rsp;
- 		BT_SI_SM_RETURN(SI_SM_IDLE);
- 
- 	case BT_STATE_XACTION_START:
+ #define __branch_check__(x, expect) ({					\
+-			int ______r;					\
++			long ______r;					\
+ 			static struct ftrace_branch_data		\
+ 				__attribute__((__aligned__(4)))		\
+ 				__attribute__((section("_ftrace_annotated_branch"))) \
 
 
