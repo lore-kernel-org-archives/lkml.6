@@ -3,36 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685A3C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BADC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E50E2526C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E50E2526C
+	by mail.kernel.org (Postfix) with ESMTP id 16EBC2527A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EBC2527A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965913AbeGAQcB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:32:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35078 "EHLO
+        id S1030556AbeGAQcH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:32:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965102AbeGAQb4 (ORCPT
+        with ESMTP id S965914AbeGAQcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:56 -0400
+        Sun, 1 Jul 2018 12:32:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 974E292B;
-        Sun,  1 Jul 2018 16:31:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10CA892B;
+        Sun,  1 Jul 2018 16:32:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 035/157] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
-Date:   Sun,  1 Jul 2018 18:21:47 +0200
-Message-Id: <20180701160854.145513593@linuxfoundation.org>
+        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 063/157] IB/mlx5: Fetch soft WQEs on fatal error state
+Date:   Sun,  1 Jul 2018 18:22:15 +0200
+Message-Id: <20180701160855.788599934@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -49,42 +51,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Erez Shitrit <erezsh@mellanox.com>
 
-commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
+commit 7b74a83cf54a3747e22c57e25712bd70eef8acee upstream.
 
-In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
-validating DAWR region end") we fixed setting the DAWR end point to
-its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
-PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
+On fatal error the driver simulates CQE's for ULPs that rely on
+completion of all their posted work-request.
 
-PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
-zero (memset() in hw_breakpoint_init()). This worked with
-arch_validate_hwbkpt_settings() before the above patch was applied but
-is now broken if the breakpoint is 512byte aligned.
+For the GSI traffic, the mlx5 has its own mechanism that sends the
+completions via software CQE's directly to the relevant CQ.
 
-This sets the length of the breakpoint to 8 bytes when using
-PTRACE_SET_DEBUGREG.
+This should be kept in fatal error too, so the driver should simulate
+such CQE's with the specified error state in order to complete GSI QP
+work requests.
 
-Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
-Cc: stable@vger.kernel.org # v3.11+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Without the fix the next deadlock might appears:
+        schedule_timeout+0x274/0x350
+        wait_for_common+0xec/0x240
+        mcast_remove_one+0xd0/0x120 [ib_core]
+        ib_unregister_device+0x12c/0x230 [ib_core]
+        mlx5_ib_remove+0xc4/0x270 [mlx5_ib]
+        mlx5_detach_device+0x184/0x1a0 [mlx5_core]
+        mlx5_unload_one+0x308/0x340 [mlx5_core]
+        mlx5_pci_err_detected+0x74/0xe0 [mlx5_core]
+
+Cc: <stable@vger.kernel.org> # 4.7
+Fixes: 89ea94a7b6c4 ("IB/mlx5: Reset flow support for IB kernel ULPs")
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/ptrace.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx5/cq.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -2362,6 +2362,7 @@ static int ptrace_set_debugreg(struct ta
- 	/* Create a new breakpoint request if one doesn't exist already */
- 	hw_breakpoint_init(&attr);
- 	attr.bp_addr = hw_brk.address;
-+	attr.bp_len = 8;
- 	arch_bp_generic_fields(hw_brk.type,
- 			       &attr.bp_type);
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -646,7 +646,7 @@ repoll:
+ }
  
+ static int poll_soft_wc(struct mlx5_ib_cq *cq, int num_entries,
+-			struct ib_wc *wc)
++			struct ib_wc *wc, bool is_fatal_err)
+ {
+ 	struct mlx5_ib_dev *dev = to_mdev(cq->ibcq.device);
+ 	struct mlx5_ib_wc *soft_wc, *next;
+@@ -659,6 +659,10 @@ static int poll_soft_wc(struct mlx5_ib_c
+ 		mlx5_ib_dbg(dev, "polled software generated completion on CQ 0x%x\n",
+ 			    cq->mcq.cqn);
+ 
++		if (unlikely(is_fatal_err)) {
++			soft_wc->wc.status = IB_WC_WR_FLUSH_ERR;
++			soft_wc->wc.vendor_err = MLX5_CQE_SYNDROME_WR_FLUSH_ERR;
++		}
+ 		wc[npolled++] = soft_wc->wc;
+ 		list_del(&soft_wc->list);
+ 		kfree(soft_wc);
+@@ -679,12 +683,17 @@ int mlx5_ib_poll_cq(struct ib_cq *ibcq,
+ 
+ 	spin_lock_irqsave(&cq->lock, flags);
+ 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR) {
+-		mlx5_ib_poll_sw_comp(cq, num_entries, wc, &npolled);
++		/* make sure no soft wqe's are waiting */
++		if (unlikely(!list_empty(&cq->wc_list)))
++			soft_polled = poll_soft_wc(cq, num_entries, wc, true);
++
++		mlx5_ib_poll_sw_comp(cq, num_entries - soft_polled,
++				     wc + soft_polled, &npolled);
+ 		goto out;
+ 	}
+ 
+ 	if (unlikely(!list_empty(&cq->wc_list)))
+-		soft_polled = poll_soft_wc(cq, num_entries, wc);
++		soft_polled = poll_soft_wc(cq, num_entries, wc, false);
+ 
+ 	for (npolled = 0; npolled < num_entries - soft_polled; npolled++) {
+ 		if (mlx5_poll_one(cq, &cur_qp, wc + soft_polled + npolled))
 
 
