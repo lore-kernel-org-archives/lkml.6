@@ -2,39 +2,38 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B059C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83386C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5692224F9A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:40:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5692224F9A
+	by mail.kernel.org (Postfix) with ESMTP id 3D53124F9A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D53124F9A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeGAIkS (ORCPT
+        id S1752244AbeGAIkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 04:40:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37374 "EHLO
+        Sun, 1 Jul 2018 04:40:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751898AbeGAIkQ (ORCPT
+        with ESMTP id S1752124AbeGAIki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 04:40:16 -0400
+        Sun, 1 Jul 2018 04:40:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A328BD8;
-        Sun,  1 Jul 2018 08:40:16 +0000 (UTC)
-Date:   Sun, 1 Jul 2018 10:40:13 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C41DBD8;
+        Sun,  1 Jul 2018 08:40:37 +0000 (UTC)
+Date:   Sun, 1 Jul 2018 10:40:35 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Slaby <jslaby@suse.cz>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial fixes for 4.18-rc3
-Message-ID: <20180701084013.GA11580@kroah.com>
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
+Subject: [GIT PULL] Staging/IIO driver fixes for 4.18-rc3
+Message-ID: <20180701084035.GA11654@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -50,44 +49,53 @@ The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git/ tags/tty-4.18-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/ tags/staging-4.18-rc3
 
-for you to fetch changes up to 21eff69aaaa0e766ca0ce445b477698dc6a9f55a:
+for you to fetch changes up to ebc2dc5f9b231c1b64047c6717cd464104f086f4:
 
-  vt: prevent leaking uninitialized data to userspace via /dev/vcs* (2018-06-28 21:34:39 +0900)
+  Merge tag 'iio-fixes-4.18a' of git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into staging-linus (2018-06-26 07:45:52 +0800)
 
 ----------------------------------------------------------------
-TTY/Serial fixes for 4.18-rc3
+Staging/IIO fixes for 4.18-rc3
 
-Here are 5 fixes for the tty core and some serial drivers.
+Here are a few small staging and IIO driver fixes for 4.18-rc3.
 
-The tty core one fix some security and other issues reported by the
-syzbot that I have taken too long in responding to (sorry Tetsuo!).  The
-8350 serial driver fix resolves an issue of devices that used to work
-properly stopping working as they shouldn't have been added to a
-blacklist.
-
-All of these have been in linux-next for a few days with no reported
-issues.
+Nothing major or big, all just fixes for reported problems since
+4.18-rc1.  All of these have been in linux-next this week with no
+reported problems.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alexander Potapenko (1):
-      vt: prevent leaking uninitialized data to userspace via /dev/vcs*
+Colin Ian King (1):
+      iio: tsl2x7x/tsl2772: avoid potential division by zero
 
-Andy Shevchenko (1):
-      serial: 8250_pci: Remove stalled entries in blacklist
+Dan Carpenter (1):
+      staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
 
-Johan Hovold (1):
-      serdev: fix memleak on module unload
+Greg Kroah-Hartman (1):
+      Merge tag 'iio-fixes-4.18a' of git://git.kernel.org/.../jic23/iio into staging-linus
 
-Tetsuo Handa (2):
-      n_tty: Fix stall at n_tty_receive_char_special().
-      n_tty: Access echo_* variables carefully.
+Hans de Goede (1):
+      iio: imu: inv_mpu6050: Fix probe() failure on older ACPI based machines
 
- drivers/tty/n_tty.c                | 55 ++++++++++++++++++++++----------------
- drivers/tty/serdev/core.c          |  1 +
- drivers/tty/serial/8250/8250_pci.c |  2 --
- drivers/tty/vt/vt.c                |  4 +--
- 4 files changed, 35 insertions(+), 27 deletions(-)
+Laura Abbott (1):
+      staging: android: ion: Return an ERR_PTR in ion_map_kernel
+
+Leonard Crestez (1):
+      iio: mma8452: Fix ignoring MMA8452_INT_DRDY
+
+Phil Reid (1):
+      iio: buffer: fix the function signature to match implementation
+
+Tomasz Duszynski (1):
+      iio: pressure: bmp280: fix relative humidity unit
+
+ drivers/iio/accel/mma8452.c                      | 2 +-
+ drivers/iio/imu/inv_mpu6050/inv_mpu_core.c       | 2 ++
+ drivers/iio/light/tsl2772.c                      | 2 ++
+ drivers/iio/pressure/bmp280-core.c               | 5 ++---
+ drivers/staging/android/ion/ion_heap.c           | 2 +-
+ drivers/staging/comedi/drivers/quatech_daqp_cs.c | 2 +-
+ include/linux/iio/buffer-dma.h                   | 2 +-
+ 7 files changed, 10 insertions(+), 7 deletions(-)
