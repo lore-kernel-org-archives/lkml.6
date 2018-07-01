@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BD6C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FE0C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CA425739
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CA425739
+	by mail.kernel.org (Postfix) with ESMTP id DEB5B25747
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:46:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB5B25747
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031027AbeGARol (ORCPT
+        id S1753845AbeGARqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:44:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35584 "EHLO
+        Sun, 1 Jul 2018 13:46:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030938AbeGAQeZ (ORCPT
+        with ESMTP id S1030225AbeGAQdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:25 -0400
+        Sun, 1 Jul 2018 12:33:51 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EF2CACC;
-        Sun,  1 Jul 2018 16:34:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2FEC49B;
+        Sun,  1 Jul 2018 16:33:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 079/157] PCI: Add ACS quirk for Intel 7th & 8th Gen mobile
-Date:   Sun,  1 Jul 2018 18:22:31 +0200
-Message-Id: <20180701160856.540746939@linuxfoundation.org>
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 102/157] scsi: zfcp: fix missing REC trigger trace for all objects in ERP_FAILED
+Date:   Sun,  1 Jul 2018 18:22:54 +0200
+Message-Id: <20180701160857.646175521@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,56 +51,184 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit e8440f4bfedc623bee40c84797ac78d9303d0db6 upstream.
+commit 8c3d20aada70042a39c6a6625be037c1472ca610 upstream.
 
-The specification update indicates these have the same errata for
-implementing non-standard ACS capabilities.
+That other commit introduced an inconsistency because it would trace on
+ERP_FAILED for all callers of port forced reopen triggers (not just
+terminate_rport_io), but it would not trace on ERP_FAILED for all callers of
+other ERP triggers such as adapter, port regular, LUN.
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org
+Therefore, generalize that other commit. zfcp_erp_action_enqueue() already
+had two early outs which re-used the one zfcp_dbf_rec_trig() call.  All ERP
+trigger functions finally run through zfcp_erp_action_enqueue().  So move
+the special handling for ZFCP_STATUS_COMMON_ERP_FAILED into
+zfcp_erp_action_enqueue() and add another early out with new trace marker
+for pseudo ERP need in this case. This removes all early returns from all
+ERP trigger functions so we always end up at zfcp_dbf_rec_trig().
+
+Example trace record formatted with zfcpdbf from s390-tools:
+
+Timestamp      : ...
+Area           : REC
+Subarea        : 00
+Level          : 1
+Exception      : -
+CPU ID         : ..
+Caller         : 0x...
+Record ID      : 1                      ZFCP_DBF_REC_TRIG
+Tag            : .......
+LUN            : 0x...
+WWPN           : 0x...
+D_ID           : 0x...
+Adapter status : 0x...
+Port status    : 0x...
+LUN status     : 0x...
+Ready count    : 0x...
+Running count  : 0x...
+ERP want       : 0x0.                   ZFCP_ERP_ACTION_REOPEN_...
+ERP need       : 0xe0                   ZFCP_ERP_ACTION_FAILED
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Cc: <stable@vger.kernel.org> #2.6.38+
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/s390/scsi/zfcp_erp.c |   79 +++++++++++++++++++++++++++----------------
+ 1 file changed, 51 insertions(+), 28 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4377,11 +4377,24 @@ static int pci_quirk_qcom_rp_acs(struct
-  * 0xa290-0xa29f PCI Express Root port #{0-16}
-  * 0xa2e7-0xa2ee PCI Express Root port #{17-24}
-  *
-+ * Mobile chipsets are also affected, 7th & 8th Generation
-+ * Specification update confirms ACS errata 22, status no fix: (7th Generation
-+ * Intel Processor Family I/O for U/Y Platforms and 8th Generation Intel
-+ * Processor Family I/O for U Quad Core Platforms Specification Update,
-+ * August 2017, Revision 002, Document#: 334660-002)[6]
-+ * Device IDs from I/O datasheet: (7th Generation Intel Processor Family I/O
-+ * for U/Y Platforms and 8th Generation Intel ® Processor Family I/O for U
-+ * Quad Core Platforms, Vol 1 of 2, August 2017, Document#: 334658-003)[7]
-+ *
-+ * 0x9d10-0x9d1b PCI Express Root port #{1-12}
-+ *
-  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
-  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
-  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
-  * [4] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-spec-update.html
-  * [5] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-datasheet-vol-1.html
-+ * [6] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-spec-update.html
-+ * [7] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-datasheet-vol-1.html
-  */
- static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
- {
-@@ -4391,6 +4404,7 @@ static bool pci_quirk_intel_spt_pch_acs_
- 	switch (dev->device) {
- 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
- 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
-+	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
- 		return true;
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -143,6 +143,49 @@ static void zfcp_erp_action_dismiss_adap
  	}
+ }
  
++static int zfcp_erp_handle_failed(int want, struct zfcp_adapter *adapter,
++				  struct zfcp_port *port,
++				  struct scsi_device *sdev)
++{
++	int need = want;
++	struct zfcp_scsi_dev *zsdev;
++
++	switch (want) {
++	case ZFCP_ERP_ACTION_REOPEN_LUN:
++		zsdev = sdev_to_zfcp(sdev);
++		if (atomic_read(&zsdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
++			need = 0;
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
++		if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
++			need = 0;
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT:
++		if (atomic_read(&port->status) &
++		    ZFCP_STATUS_COMMON_ERP_FAILED) {
++			need = 0;
++			/* ensure propagation of failed status to new devices */
++			zfcp_erp_set_port_status(
++				port, ZFCP_STATUS_COMMON_ERP_FAILED);
++		}
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
++		if (atomic_read(&adapter->status) &
++		    ZFCP_STATUS_COMMON_ERP_FAILED) {
++			need = 0;
++			/* ensure propagation of failed status to new devices */
++			zfcp_erp_set_adapter_status(
++				adapter, ZFCP_STATUS_COMMON_ERP_FAILED);
++		}
++		break;
++	default:
++		need = 0;
++		break;
++	}
++
++	return need;
++}
++
+ static int zfcp_erp_required_act(int want, struct zfcp_adapter *adapter,
+ 				 struct zfcp_port *port,
+ 				 struct scsi_device *sdev)
+@@ -266,6 +309,12 @@ static int zfcp_erp_action_enqueue(int w
+ 	int retval = 1, need;
+ 	struct zfcp_erp_action *act;
+ 
++	need = zfcp_erp_handle_failed(want, adapter, port, sdev);
++	if (!need) {
++		need = ZFCP_ERP_ACTION_FAILED; /* marker for trace */
++		goto out;
++	}
++
+ 	if (!adapter->erp_thread)
+ 		return -EIO;
+ 
+@@ -314,12 +363,6 @@ static int _zfcp_erp_adapter_reopen(stru
+ 	zfcp_erp_adapter_block(adapter, clear_mask);
+ 	zfcp_scsi_schedule_rports_block(adapter);
+ 
+-	/* ensure propagation of failed status to new devices */
+-	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		zfcp_erp_set_adapter_status(adapter,
+-					    ZFCP_STATUS_COMMON_ERP_FAILED);
+-		return -EIO;
+-	}
+ 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER,
+ 				       adapter, NULL, NULL, id, 0);
+ }
+@@ -338,12 +381,8 @@ void zfcp_erp_adapter_reopen(struct zfcp
+ 	zfcp_scsi_schedule_rports_block(adapter);
+ 
+ 	write_lock_irqsave(&adapter->erp_lock, flags);
+-	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
+-		zfcp_erp_set_adapter_status(adapter,
+-					    ZFCP_STATUS_COMMON_ERP_FAILED);
+-	else
+-		zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
+-					NULL, NULL, id, 0);
++	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
++				NULL, NULL, id, 0);
+ 	write_unlock_irqrestore(&adapter->erp_lock, flags);
+ }
+ 
+@@ -384,13 +423,6 @@ static void _zfcp_erp_port_forced_reopen
+ 	zfcp_erp_port_block(port, clear);
+ 	zfcp_scsi_schedule_rport_block(port);
+ 
+-	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		zfcp_dbf_rec_trig(id, port->adapter, port, NULL,
+-				  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+-				  ZFCP_ERP_ACTION_FAILED);
+-		return;
+-	}
+-
+ 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+ 				port->adapter, port, NULL, id, 0);
+ }
+@@ -416,12 +448,6 @@ static int _zfcp_erp_port_reopen(struct
+ 	zfcp_erp_port_block(port, clear);
+ 	zfcp_scsi_schedule_rport_block(port);
+ 
+-	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		/* ensure propagation of failed status to new devices */
+-		zfcp_erp_set_port_status(port, ZFCP_STATUS_COMMON_ERP_FAILED);
+-		return -EIO;
+-	}
+-
+ 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT,
+ 				       port->adapter, port, NULL, id, 0);
+ }
+@@ -461,9 +487,6 @@ static void _zfcp_erp_lun_reopen(struct
+ 
+ 	zfcp_erp_lun_block(sdev, clear);
+ 
+-	if (atomic_read(&zfcp_sdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
+-		return;
+-
+ 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_LUN, adapter,
+ 				zfcp_sdev->port, sdev, id, act_status);
+ }
 
 
