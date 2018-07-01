@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E8BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D30C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB5FA24F86
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5FA24F86
+	by mail.kernel.org (Postfix) with ESMTP id 73C86250F1
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C86250F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933551AbeGAQT0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:19:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33180 "EHLO
+        id S964958AbeGAQTc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:19:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33208 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753503AbeGAQTS (ORCPT
+        with ESMTP id S933589AbeGAQT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:19:18 -0400
+        Sun, 1 Jul 2018 12:19:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F75B86A;
-        Sun,  1 Jul 2018 16:19:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47E8849B;
+        Sun,  1 Jul 2018 16:19:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.4 095/105] udf: Detect incorrect directory size
-Date:   Sun,  1 Jul 2018 18:02:45 +0200
-Message-Id: <20180701153156.210980281@linuxfoundation.org>
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 098/105] Input: elantech - fix V4 report decoding for module with middle key
+Date:   Sun,  1 Jul 2018 18:02:48 +0200
+Message-Id: <20180701153156.423316964@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,36 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: ??? <kt.liao@emc.com.tw>
 
-commit fa65653e575fbd958bdf5fb9c4a71a324e39510d upstream.
+commit e0ae2519ca004a628fa55aeef969c37edce522d3 upstream.
 
-Detect when a directory entry is (possibly partially) beyond directory
-size and return EIO in that case since it means the filesystem is
-corrupted. Otherwise directory operations can further corrupt the
-directory and possibly also oops the kernel.
+Some touchpad has middle key and it will be indicated in bit 2 of packet[0].
+We need to fix V4 formation's byte mask to prevent error decoding.
 
-CC: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-CC: stable@vger.kernel.org
-Reported-and-tested-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/udf/directory.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/mouse/elantech.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -150,6 +150,9 @@ struct fileIdentDesc *udf_fileident_read
- 			       sizeof(struct fileIdentDesc));
- 		}
- 	}
-+	/* Got last entry outside of dir size - fs is corrupted! */
-+	if (*nf_pos > dir->i_size)
-+		return NULL;
- 	return fi;
- }
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -804,7 +804,7 @@ static int elantech_packet_check_v4(stru
+ 	else if (ic_version == 7 && etd->samples[1] == 0x2A)
+ 		sanity_check = ((packet[3] & 0x1c) == 0x10);
+ 	else
+-		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
++		sanity_check = ((packet[0] & 0x08) == 0x00 &&
+ 				(packet[3] & 0x1c) == 0x10);
  
+ 	if (!sanity_check)
 
 
