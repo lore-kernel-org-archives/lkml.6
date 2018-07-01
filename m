@@ -6,34 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D93EC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3D2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E03C924FAF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03C924FAF
+	by mail.kernel.org (Postfix) with ESMTP id 6A96824FB5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A96824FB5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753025AbeGAQMX (ORCPT
+        id S1753038AbeGAQMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:12:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59918 "EHLO
+        Sun, 1 Jul 2018 12:12:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752452AbeGAQMT (ORCPT
+        with ESMTP id S932079AbeGAQM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:19 -0400
+        Sun, 1 Jul 2018 12:12:27 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 294D94A3;
-        Sun,  1 Jul 2018 16:12:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8B4B4A3;
+        Sun,  1 Jul 2018 16:12:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 35/85] parisc: Move setup_profiling_timer() out of init section
-Date:   Sun,  1 Jul 2018 18:01:53 +0200
-Message-Id: <20180701153123.756542422@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Wei Wang <weiwan@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Gilbert <benjamin.gilbert@coreos.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 3.18 37/85] tcp: do not overshoot window_clamp in tcp_rcv_space_adjust()
+Date:   Sun,  1 Jul 2018 18:01:55 +0200
+Message-Id: <20180701153123.836655020@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,32 +55,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 01f56832cfb6fcc204e7203f46841b6185ebd574 ]
+commit 02db55718d53f9d426cee504c27fb768e9ed4ffe upstream.
 
-No other architecture has setup_profiling_timer() in the init section,
-thus on parisc we face this section mismatch warning:
- Reference from the function devm_device_add_group() to the function .init.text:setup_profiling_timer()
+While rcvbuf is properly clamped by tcp_rmem[2], rcvwin
+is left to a potentially too big value.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+It has no serious effect, since :
+1) tcp_grow_window() has very strict checks.
+2) window_clamp can be mangled by user space to any value anyway.
+
+tcp_init_buffer_space() and companions use tcp_full_space(),
+we use tcp_win_from_space() to avoid reloading sk->sk_rcvbuf
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Wei Wang <weiwan@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Benjamin Gilbert <benjamin.gilbert@coreos.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/parisc/kernel/smp.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/parisc/kernel/smp.c
-+++ b/arch/parisc/kernel/smp.c
-@@ -422,8 +422,7 @@ int __cpu_up(unsigned int cpu, struct ta
- }
+---
+ net/ipv4/tcp_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -605,7 +605,7 @@ void tcp_rcv_space_adjust(struct sock *s
+ 			sk->sk_rcvbuf = rcvbuf;
  
- #ifdef CONFIG_PROC_FS
--int __init
--setup_profiling_timer(unsigned int multiplier)
-+int setup_profiling_timer(unsigned int multiplier)
- {
- 	return -EINVAL;
- }
+ 			/* Make the window clamp follow along.  */
+-			tp->window_clamp = rcvwin;
++			tp->window_clamp = tcp_win_from_space(rcvbuf);
+ 		}
+ 	}
+ 	tp->rcvq_space.space = copied;
 
 
