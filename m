@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8187BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D96D25418
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D96D25418
+	by mail.kernel.org (Postfix) with ESMTP id C1C4525418
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1C4525418
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032512AbeGAQpz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38276 "EHLO
+        id S965951AbeGAQp6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:45:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964886AbeGAQpq (ORCPT
+        with ESMTP id S1032218AbeGAQpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:46 -0400
+        Sun, 1 Jul 2018 12:45:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55E4CAA6;
-        Sun,  1 Jul 2018 16:45:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3EB43ACC;
+        Sun,  1 Jul 2018 16:45:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 201/220] ALSA: timer: Fix UBSAN warning at SNDRV_TIMER_IOCTL_NEXT_DEVICE ioctl
-Date:   Sun,  1 Jul 2018 18:23:45 +0200
-Message-Id: <20180701160916.576499262@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Berg <bberg@redhat.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.17 203/220] ALSA: hda/realtek - Fix pop noise on Lenovo P50 & co
+Date:   Sun,  1 Jul 2018 18:23:47 +0200
+Message-Id: <20180701160916.654275999@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,50 +51,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit b41f794f284966fd6ec634111e3b40d241389f96 upstream.
+commit d5a6cabf02210b896a60eee7c04c670ee9ba6dca upstream.
 
-The kernel may spew a WARNING about UBSAN undefined behavior at
-handling ALSA timer ioctl SNDRV_TIMER_IOCTL_NEXT_DEVICE:
+Some Lenovo laptops, e.g. Lenovo P50, showed the pop noise at resume
+or runtime resume.  It turned out to be reduced by applying
+alc_no_shutup() just like TPT440 quirk does.
 
-UBSAN: Undefined behaviour in sound/core/timer.c:1524:19
-signed integer overflow:
-2147483647 + 1 cannot be represented in type 'int'
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x122/0x1c8 lib/dump_stack.c:113
- ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
- handle_overflow+0x1c2/0x21f lib/ubsan.c:190
- __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
- snd_timer_user_next_device sound/core/timer.c:1524 [inline]
- __snd_timer_user_ioctl+0x204d/0x2520 sound/core/timer.c:1939
- snd_timer_user_ioctl+0x67/0x95 sound/core/timer.c:1994
- ....
+Since there are many Lenovo models showing the same behavior, put this
+workaround in ALC269_FIXUP_THINKPAD_ACPI entry so that it's applied
+commonly to all such Lenovo machines.
 
-It happens only when a value with INT_MAX is passed, as we're
-incrementing it unconditionally.  So the fix is trivial, check the
-value with INT_MAX.  Although the bug itself is fairly harmless, it's
-better to fix it so that fuzzers won't hit this again later.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200213
-Reported-and-tested-by: Team OWL337 <icytxw@gmail.com>
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Tested-by: Benjamin Berg <bberg@redhat.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -1517,7 +1517,7 @@ static int snd_timer_user_next_device(st
- 				} else {
- 					if (id.subdevice < 0)
- 						id.subdevice = 0;
--					else
-+					else if (id.subdevice < INT_MAX)
- 						id.subdevice++;
- 				}
- 			}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4985,7 +4985,6 @@ static void alc_fixup_tpt440_dock(struct
+ 	struct alc_spec *spec = codec->spec;
+ 
+ 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+-		spec->shutup = alc_no_shutup; /* reduce click noise */
+ 		spec->reboot_notify = alc_d3_at_reboot; /* reduce noise */
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+ 		codec->power_save_node = 0; /* avoid click noises */
+@@ -5384,6 +5383,13 @@ static void alc274_fixup_bind_dacs(struc
+ /* for hda_fixup_thinkpad_acpi() */
+ #include "thinkpad_helper.c"
+ 
++static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
++				    const struct hda_fixup *fix, int action)
++{
++	alc_fixup_no_shutup(codec, fix, action); /* reduce click noise */
++	hda_fixup_thinkpad_acpi(codec, fix, action);
++}
++
+ /* for dell wmi mic mute led */
+ #include "dell_wmi_helper.c"
+ 
+@@ -5927,7 +5933,7 @@ static const struct hda_fixup alc269_fix
+ 	},
+ 	[ALC269_FIXUP_THINKPAD_ACPI] = {
+ 		.type = HDA_FIXUP_FUNC,
+-		.v.func = hda_fixup_thinkpad_acpi,
++		.v.func = alc_fixup_thinkpad_acpi,
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_SKU_IGNORE,
+ 	},
 
 
