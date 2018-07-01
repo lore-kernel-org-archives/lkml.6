@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03B5C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D833CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6BF2446F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:28:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6BF2446F
+	by mail.kernel.org (Postfix) with ESMTP id 914AC244E2
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 914AC244E2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031441AbeGAR2q (ORCPT
+        id S1031304AbeGAR2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:28:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36146 "EHLO
+        Sun, 1 Jul 2018 13:28:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36152 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031061AbeGAQg4 (ORCPT
+        with ESMTP id S1031355AbeGAQg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:56 -0400
+        Sun, 1 Jul 2018 12:36:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E192AD8;
-        Sun,  1 Jul 2018 16:36:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0849FACC;
+        Sun,  1 Jul 2018 16:36:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
-        Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 4.17 012/220] m68k/mac: Fix SWIM memory resource end address
-Date:   Sun,  1 Jul 2018 18:20:36 +0200
-Message-Id: <20180701160908.873832509@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH 4.17 013/220] platform/chrome: cros_ec_lpc: do not try DMI match when ACPI device found
+Date:   Sun,  1 Jul 2018 18:20:37 +0200
+Message-Id: <20180701160908.910774417@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,35 +51,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 3e2816c1078eb2b5a3276eb83d4da156b3e2d04f upstream.
+commit b410b1226620b6c959f1e9c87529acd058e90caf upstream.
 
-The resource size is 0x2000 == end - start + 1.
-Therefore end == start + 0x2000 - 1.
+Older models of Chromebooks did not describe the LPC EC in their ACPI
+tables; starting with Strago-based devices Google is using GOOG0004 device
+to describe EC LPC.
 
-Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: stable@vger.kernel.org # v4.14+
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Laurent Vivier <lvivier@redhat.com>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+DMI-based match is fragile and does not work reliably, especially when
+using custom firmware. It is also not needed when we can locate the right
+ACPI device, so let's stop bailing out when DMI does not match but the
+right ACPI device is present.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/m68k/mac/config.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/chrome/cros_ec_lpc.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -1005,7 +1005,7 @@ int __init mac_platform_init(void)
- 		struct resource swim_rsrc = {
- 			.flags = IORESOURCE_MEM,
- 			.start = (resource_size_t)swim_base,
--			.end   = (resource_size_t)swim_base + 0x2000,
-+			.end   = (resource_size_t)swim_base + 0x1FFF,
- 		};
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -435,7 +435,13 @@ static int __init cros_ec_lpc_init(void)
+ 	int ret;
+ 	acpi_status status;
  
- 		platform_device_register_simple("swim", -1, &swim_rsrc, 1);
+-	if (!dmi_check_system(cros_ec_lpc_dmi_table)) {
++	status = acpi_get_devices(ACPI_DRV_NAME, cros_ec_lpc_parse_device,
++				  &cros_ec_lpc_acpi_device_found, NULL);
++	if (ACPI_FAILURE(status))
++		pr_warn(DRV_NAME ": Looking for %s failed\n", ACPI_DRV_NAME);
++
++	if (!cros_ec_lpc_acpi_device_found &&
++	    !dmi_check_system(cros_ec_lpc_dmi_table)) {
+ 		pr_err(DRV_NAME ": unsupported system.\n");
+ 		return -ENODEV;
+ 	}
+@@ -450,11 +456,6 @@ static int __init cros_ec_lpc_init(void)
+ 		return ret;
+ 	}
+ 
+-	status = acpi_get_devices(ACPI_DRV_NAME, cros_ec_lpc_parse_device,
+-				  &cros_ec_lpc_acpi_device_found, NULL);
+-	if (ACPI_FAILURE(status))
+-		pr_warn(DRV_NAME ": Looking for %s failed\n", ACPI_DRV_NAME);
+-
+ 	if (!cros_ec_lpc_acpi_device_found) {
+ 		/* Register the device, and it'll get hooked up automatically */
+ 		ret = platform_device_register(&cros_ec_lpc_device);
 
 
