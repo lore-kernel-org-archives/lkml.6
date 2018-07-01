@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB21CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB93FC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714E7255FE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714E7255FE
+	by mail.kernel.org (Postfix) with ESMTP id 96DC625615
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DC625615
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965944AbeGARPI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:15:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37072 "EHLO
+        id S934120AbeGARPq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:15:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37028 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031835AbeGAQkB (ORCPT
+        with ESMTP id S1031307AbeGAQjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:40:01 -0400
+        Sun, 1 Jul 2018 12:39:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A42CACD;
-        Sun,  1 Jul 2018 16:40:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BF85A73;
+        Sun,  1 Jul 2018 16:39:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Austin <chadaustin@fb.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.17 041/220] fuse: atomic_o_trunc should truncate pagecache
-Date:   Sun,  1 Jul 2018 18:21:05 +0200
-Message-Id: <20180701160910.043200363@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.17 038/220] Bluetooth: hci_qca: Avoid missing rampatch failure with userspace fw loader
+Date:   Sun,  1 Jul 2018 18:21:02 +0200
+Message-Id: <20180701160909.921404607@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,52 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Amit Pundir <amit.pundir@linaro.org>
 
-commit df0e91d488276086bc07da2e389986cae0048c37 upstream.
+commit 7dc5fe0814c35ec4e7d2e8fa30abab72e0e6a172 upstream.
 
-Fuse has an "atomic_o_trunc" mode, where userspace filesystem uses the
-O_TRUNC flag in the OPEN request to truncate the file atomically with the
-open.
+AOSP use userspace firmware loader to load firmwares, which will
+return -EAGAIN in case qca/rampatch_00440302.bin is not found.
+Since there is no rampatch for dragonboard820c QCA controller
+revision, just make it work as is.
 
-In this mode there's no need to send a SETATTR request to userspace after
-the open, so fuse_do_setattr() checks this mode and returns.  But this
-misses the important step of truncating the pagecache.
-
-Add the missing parts of truncation to the ATTR_OPEN branch.
-
-Reported-by: Chad Austin <chadaustin@fb.com>
-Fixes: 6ff958edbf39 ("fuse: add atomic open+truncate support")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: <stable@vger.kernel.org>
+CC: Loic Poulain <loic.poulain@linaro.org>
+CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>
+CC: Johan Hedberg <johan.hedberg@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dir.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_qca.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1629,8 +1629,19 @@ int fuse_do_setattr(struct dentry *dentr
- 		return err;
- 
- 	if (attr->ia_valid & ATTR_OPEN) {
--		if (fc->atomic_o_trunc)
-+		/* This is coming from open(..., ... | O_TRUNC); */
-+		WARN_ON(!(attr->ia_valid & ATTR_SIZE));
-+		WARN_ON(attr->ia_size != 0);
-+		if (fc->atomic_o_trunc) {
-+			/*
-+			 * No need to send request to userspace, since actual
-+			 * truncation has already been done by OPEN.  But still
-+			 * need to truncate page cache.
-+			 */
-+			i_size_write(inode, 0);
-+			truncate_pagecache(inode, 0);
- 			return 0;
-+		}
- 		file = NULL;
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -935,6 +935,12 @@ static int qca_setup(struct hci_uart *hu
+ 	} else if (ret == -ENOENT) {
+ 		/* No patch/nvm-config found, run with original fw/config */
+ 		ret = 0;
++	} else if (ret == -EAGAIN) {
++		/*
++		 * Userspace firmware loader will return -EAGAIN in case no
++		 * patch/nvm-config is found, so run with original fw/config.
++		 */
++		ret = 0;
  	}
  
+ 	/* Setup bdaddr */
 
 
