@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC4FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185C6C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF114259D0
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF114259D0
+	by mail.kernel.org (Postfix) with ESMTP id D0BE7259F5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:28:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BE7259F5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965324AbeGAS1t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:27:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32932 "EHLO
+        id S965342AbeGAS2P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:28:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933719AbeGAQR6 (ORCPT
+        with ESMTP id S933711AbeGAQRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:58 -0400
+        Sun, 1 Jul 2018 12:17:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAD8F49B;
-        Sun,  1 Jul 2018 16:17:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 963EF49B;
+        Sun,  1 Jul 2018 16:17:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
         Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 067/105] scsi: zfcp: fix missing REC trigger trace on terminate_rport_io early return
-Date:   Sun,  1 Jul 2018 18:02:17 +0200
-Message-Id: <20180701153154.300124417@linuxfoundation.org>
+Subject: [PATCH 4.4 065/105] scsi: zfcp: fix missing SCSI trace for retry of abort / scsi_eh TMF
+Date:   Sun,  1 Jul 2018 18:02:15 +0200
+Message-Id: <20180701153154.177529433@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,109 +52,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steffen Maier <maier@linux.ibm.com>
 
-commit 96d9270499471545048ed8a6d7f425a49762283d upstream.
+commit 81979ae63e872ef650a7197f6ce6590059d37172 upstream.
 
-get_device() and its internally used kobject_get() only return NULL if they
-get passed NULL as argument. zfcp_get_port_by_wwpn() loops over
-adapter->port_list so the iteration variable port is always non-NULL.
-Struct device is embedded in struct zfcp_port so &port->dev is always
-non-NULL. This is the argument to get_device().  However, if we get an
-fc_rport in terminate_rport_io() for which we cannot find a match within
-zfcp_get_port_by_wwpn(), the latter can return NULL.  v2.6.30 commit
-70932935b61e ("[SCSI] zfcp: Fix oops when port disappears") introduced an
-early return without adding a trace record for this case.  Even if we don't
-need recovery in this case, for debugging we should still see that our
-callback was invoked originally by scsi_transport_fc.
+We already have a SCSI trace for the end of abort and scsi_eh TMF. Due to
+zfcp_erp_wait() and fc_block_scsi_eh() time can pass between the start of
+our eh callback and an actual send/recv of an abort / TMF request.  In order
+to see the temporal sequence including any abort / TMF send retries, add a
+trace before the above two blocking functions.  This supports problem
+determination with scsi_eh and parallel zfcp ERP.
 
-Example trace record formatted with zfcpdbf from s390-tools:
+No need to explicitly trace the beginning of our eh callback, since we
+typically can send an abort / TMF and see its HBA response (in the worst
+case, it's a pseudo response on dismiss all of adapter recovery, e.g. due to
+an FSF request timeout [fsrth_1] of the abort / TMF). If we cannot send, we
+now get a trace record for the first "abrt_wt" or "[lt]r_wait" which denotes
+almost the beginning of the callback.
+
+No need to explicitly trace the wakeup after the above two blocking
+functions because the next retry loop causes another trace in any case and
+that is sufficient.
+
+Example trace records formatted with zfcpdbf from s390-tools:
 
 Timestamp      : ...
-Area           : REC
+Area           : SCSI
 Subarea        : 00
 Level          : 1
 Exception      : -
 CPU ID         : ..
 Caller         : 0x...
 Record ID      : 1
-Tag            : sctrpin        SCSI terminate rport I/O, no zfcp port
-LUN            : 0xffffffffffffffff                     none (invalid)
-WWPN           : 0x<wwpn>               WWPN
-D_ID           : 0x<n_port_id>          N_Port-ID
-Adapter status : 0x...
-Port status    : 0xffffffff             unknown (-1)
-LUN status     : 0x00000000                             none (invalid)
-Ready count    : 0x...
-Running count  : 0x...
-ERP want       : 0x03                   ZFCP_ERP_ACTION_REOPEN_PORT_FORCED
-ERP need       : 0xc0                   ZFCP_ERP_ACTION_NONE
+Tag            : abrt_wt        abort, before zfcp_erp_wait()
+Request ID     : 0x0000000000000000                     none (invalid)
+SCSI ID        : 0x<scsi_id>
+SCSI LUN       : 0x<scsi_lun>
+SCSI LUN high  : 0x<scsi_lun_high>
+SCSI result    : 0x<scsi_result_of_cmd_to_be_aborted>
+SCSI retries   : 0x<retries_of_cmd_to_be_aborted>
+SCSI allowed   : 0x<allowed_retries_of_cmd_to_be_aborted>
+SCSI scribble  : 0x<req_id_of_cmd_to_be_aborted>
+SCSI opcode    : <CDB_of_cmd_to_be_aborted>
+FCP rsp inf cod: 0x..                                   none (invalid)
+FCP rsp IU     : ...                                    none (invalid)
+
+Timestamp      : ...
+Area           : SCSI
+Subarea        : 00
+Level          : 1
+Exception      : -
+CPU ID         : ..
+Caller         : 0x...
+Record ID      : 1
+Tag            : lr_wait        LUN reset, before zfcp_erp_wait()
+Request ID     : 0x0000000000000000                     none (invalid)
+SCSI ID        : 0x<scsi_id>
+SCSI LUN       : 0x<scsi_lun>
+SCSI LUN high  : 0x<scsi_lun_high>
+SCSI result    : 0x...                                  unrelated
+SCSI retries   : 0x..                                   unrelated
+SCSI allowed   : 0x..                                   unrelated
+SCSI scribble  : 0x...                                  unrelated
+SCSI opcode    : ...                                    unrelated
+FCP rsp inf cod: 0x..                                   none (invalid)
+FCP rsp IU     : ...                                    none (invalid)
 
 Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: 70932935b61e ("[SCSI] zfcp: Fix oops when port disappears")
+Fixes: 63caf367e1c9 ("[SCSI] zfcp: Improve reliability of SCSI eh handlers in zfcp")
+Fixes: af4de36d911a ("[SCSI] zfcp: Block scsi_eh thread for rport state BLOCKED")
 Cc: <stable@vger.kernel.org> #2.6.38+
 Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_erp.c  |   20 ++++++++++++++++++++
- drivers/s390/scsi/zfcp_ext.h  |    3 +++
- drivers/s390/scsi/zfcp_scsi.c |    5 +++++
- 3 files changed, 28 insertions(+)
+ drivers/s390/scsi/zfcp_scsi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -282,6 +282,26 @@ static int zfcp_erp_action_enqueue(int w
- 	return retval;
- }
- 
-+void zfcp_erp_port_forced_no_port_dbf(char *id, struct zfcp_adapter *adapter,
-+				      u64 port_name, u32 port_id)
-+{
-+	unsigned long flags;
-+	static /* don't waste stack */ struct zfcp_port tmpport;
-+
-+	write_lock_irqsave(&adapter->erp_lock, flags);
-+	/* Stand-in zfcp port with fields just good enough for
-+	 * zfcp_dbf_rec_trig() and zfcp_dbf_set_common().
-+	 * Under lock because tmpport is static.
-+	 */
-+	atomic_set(&tmpport.status, -1); /* unknown */
-+	tmpport.wwpn = port_name;
-+	tmpport.d_id = port_id;
-+	zfcp_dbf_rec_trig(id, adapter, &tmpport, NULL,
-+			  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
-+			  ZFCP_ERP_ACTION_NONE);
-+	write_unlock_irqrestore(&adapter->erp_lock, flags);
-+}
-+
- static int _zfcp_erp_adapter_reopen(struct zfcp_adapter *adapter,
- 				    int clear_mask, char *id)
- {
---- a/drivers/s390/scsi/zfcp_ext.h
-+++ b/drivers/s390/scsi/zfcp_ext.h
-@@ -58,6 +58,9 @@ extern void zfcp_dbf_scsi_eh(char *tag,
- /* zfcp_erp.c */
- extern void zfcp_erp_set_adapter_status(struct zfcp_adapter *, u32);
- extern void zfcp_erp_clear_adapter_status(struct zfcp_adapter *, u32);
-+extern void zfcp_erp_port_forced_no_port_dbf(char *id,
-+					     struct zfcp_adapter *adapter,
-+					     u64 port_name, u32 port_id);
- extern void zfcp_erp_adapter_reopen(struct zfcp_adapter *, int, char *);
- extern void zfcp_erp_adapter_shutdown(struct zfcp_adapter *, int, char *);
- extern void zfcp_erp_set_port_status(struct zfcp_port *, u32);
 --- a/drivers/s390/scsi/zfcp_scsi.c
 +++ b/drivers/s390/scsi/zfcp_scsi.c
-@@ -603,6 +603,11 @@ static void zfcp_scsi_terminate_rport_io
- 	if (port) {
- 		zfcp_erp_port_forced_reopen(port, 0, "sctrpi1");
- 		put_device(&port->dev);
-+	} else {
-+		zfcp_erp_port_forced_no_port_dbf(
-+			"sctrpin", adapter,
-+			rport->port_name /* zfcp_scsi_rport_register */,
-+			rport->port_id /* zfcp_scsi_rport_register */);
- 	}
- }
+@@ -180,6 +180,7 @@ static int zfcp_scsi_eh_abort_handler(st
+ 		if (abrt_req)
+ 			break;
  
++		zfcp_dbf_scsi_abort("abrt_wt", scpnt, NULL);
+ 		zfcp_erp_wait(adapter);
+ 		ret = fc_block_scsi_eh(scpnt);
+ 		if (ret) {
+@@ -276,6 +277,7 @@ static int zfcp_task_mgmt_function(struc
+ 		if (fsf_req)
+ 			break;
+ 
++		zfcp_dbf_scsi_devreset("wait", scpnt, tm_flags, NULL);
+ 		zfcp_erp_wait(adapter);
+ 		ret = fc_block_scsi_eh(scpnt);
+ 		if (ret) {
 
 
