@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D093C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80EBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E51252CF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53E51252CF
+	by mail.kernel.org (Postfix) with ESMTP id 9E0D8252D0
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E0D8252D0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031059AbeGAQfL (ORCPT
+        id S1031073AbeGAQfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:35:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35726 "EHLO
+        Sun, 1 Jul 2018 12:35:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753631AbeGAQfF (ORCPT
+        with ESMTP id S1030594AbeGAQfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:05 -0400
+        Sun, 1 Jul 2018 12:35:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2DF6DAA6;
-        Sun,  1 Jul 2018 16:35:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2276AA6;
+        Sun,  1 Jul 2018 16:35:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 130/157] nfsd: restrict rd_maxcount to svc_max_payload in nfsd_encode_readdir
-Date:   Sun,  1 Jul 2018 18:23:22 +0200
-Message-Id: <20180701160859.447212891@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.14 113/157] backlight: max8925_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:23:05 +0200
+Message-Id: <20180701160858.185738952@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,47 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Mayhew <smayhew@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 9c2ece6ef67e9d376f32823086169b489c422ed0 upstream.
+commit d1cc0ec3da23e44c23712579515494b374f111c9 upstream.
 
-nfsd4_readdir_rsize restricts rd_maxcount to svc_max_payload when
-estimating the size of the readdir reply, but nfsd_encode_readdir
-restricts it to INT_MAX when encoding the reply.  This can result in log
-messages like "kernel: RPC request reserved 32896 but used 1049444".
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Restrict rd_dircount similarly (no reason it should be larger than
-svc_max_payload).
+To make things worse, the parent mfd node was also prematurely freed,
+while the child backlight node was leaked.
 
-Signed-off-by: Scott Mayhew <smayhew@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Cc: stable <stable@vger.kernel.org>     # 3.9
+Fixes: 47ec340cb8e2 ("mfd: max8925: Support dt for backlight")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4xdr.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/video/backlight/max8925_bl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -3645,7 +3645,8 @@ nfsd4_encode_readdir(struct nfsd4_compou
- 		nfserr = nfserr_resource;
- 		goto err_no_verf;
- 	}
--	maxcount = min_t(u32, readdir->rd_maxcount, INT_MAX);
-+	maxcount = svc_max_payload(resp->rqstp);
-+	maxcount = min_t(u32, readdir->rd_maxcount, maxcount);
- 	/*
- 	 * Note the rfc defines rd_maxcount as the size of the
- 	 * READDIR4resok structure, which includes the verifier above
-@@ -3659,7 +3660,7 @@ nfsd4_encode_readdir(struct nfsd4_compou
+--- a/drivers/video/backlight/max8925_bl.c
++++ b/drivers/video/backlight/max8925_bl.c
+@@ -116,7 +116,7 @@ static void max8925_backlight_dt_init(st
+ 	if (!pdata)
+ 		return;
  
- 	/* RFC 3530 14.2.24 allows us to ignore dircount when it's 0: */
- 	if (!readdir->rd_dircount)
--		readdir->rd_dircount = INT_MAX;
-+		readdir->rd_dircount = svc_max_payload(resp->rqstp);
+-	np = of_find_node_by_name(nproot, "backlight");
++	np = of_get_child_by_name(nproot, "backlight");
+ 	if (!np) {
+ 		dev_err(&pdev->dev, "failed to find backlight node\n");
+ 		return;
+@@ -125,6 +125,8 @@ static void max8925_backlight_dt_init(st
+ 	if (!of_property_read_u32(np, "maxim,max8925-dual-string", &val))
+ 		pdata->dual_string = val;
  
- 	readdir->xdr = xdr;
- 	readdir->rd_maxcount = maxcount;
++	of_node_put(np);
++
+ 	pdev->dev.platform_data = pdata;
+ }
+ 
 
 
