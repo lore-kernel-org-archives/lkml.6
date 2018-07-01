@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3640C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF88EC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B645252DD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B645252DD
+	by mail.kernel.org (Postfix) with ESMTP id A6A3D252DD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:35:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6A3D252DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031172AbeGAQfv (ORCPT
+        id S1030889AbeGAQfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:35:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35844 "EHLO
+        Sun, 1 Jul 2018 12:35:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031127AbeGAQfk (ORCPT
+        with ESMTP id S1031171AbeGAQfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:40 -0400
+        Sun, 1 Jul 2018 12:35:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 190B3ACC;
-        Sun,  1 Jul 2018 16:35:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D48FACC;
+        Sun,  1 Jul 2018 16:35:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.14 141/157] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
-Date:   Sun,  1 Jul 2018 18:23:33 +0200
-Message-Id: <20180701160900.127266867@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 145/157] Input: elantech - enable middle button of touchpads on ThinkPad P52
+Date:   Sun,  1 Jul 2018 18:23:37 +0200
+Message-Id: <20180701160900.374843715@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -52,40 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit eef04c7b3786ff0c9cb1019278b6c6c2ea0ad4ff upstream.
+commit 24bb555e6e46d96e2a954aa0295029a81cc9bbaa upstream.
 
-Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
-MSIs") fixed a couple of errors in error cleanup path of
-xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
-__unbind_from_irq() with an unbound irq, which would result in
-triggering the BUG_ON there.
+PNPID is better way to identify the type of touchpads.
+Enable middle button support on 2 types of touchpads on Lenovo P52.
 
-Since there is really no reason for the BUG_ON (xen_free_irq() can
-operate on unbound irqs) we can remove it.
-
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/events/events_base.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/input/mouse/elantech.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -628,8 +628,6 @@ static void __unbind_from_irq(unsigned i
- 		xen_irq_info_cleanup(info);
- 	}
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1177,6 +1177,12 @@ static const struct dmi_system_id elante
+ 	{ }
+ };
  
--	BUG_ON(info_for_irq(irq)->type == IRQT_UNBOUND);
--
- 	xen_free_irq(irq);
- }
++static const char * const middle_button_pnp_ids[] = {
++	"LEN2131", /* ThinkPad P52 w/ NFC */
++	"LEN2132", /* ThinkPad P52 */
++	NULL
++};
++
+ /*
+  * Set the appropriate event bits for the input subsystem
+  */
+@@ -1196,7 +1202,8 @@ static int elantech_set_input_params(str
+ 	__clear_bit(EV_REL, dev->evbit);
+ 
+ 	__set_bit(BTN_LEFT, dev->keybit);
+-	if (dmi_check_system(elantech_dmi_has_middle_button))
++	if (dmi_check_system(elantech_dmi_has_middle_button) ||
++			psmouse_matches_pnp_id(psmouse, middle_button_pnp_ids))
+ 		__set_bit(BTN_MIDDLE, dev->keybit);
+ 	__set_bit(BTN_RIGHT, dev->keybit);
  
 
 
