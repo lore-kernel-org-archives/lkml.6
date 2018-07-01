@@ -6,42 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BA2C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60C8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C212F2546C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C212F2546C
+	by mail.kernel.org (Postfix) with ESMTP id 9CD8025474
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD8025474
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030500AbeGAQts (ORCPT
+        id S1032529AbeGAQq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:49:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38518 "EHLO
+        Sun, 1 Jul 2018 12:46:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38414 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032543AbeGAQql (ORCPT
+        with ESMTP id S1032271AbeGAQqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:41 -0400
+        Sun, 1 Jul 2018 12:46:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A19DACC;
-        Sun,  1 Jul 2018 16:46:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA97DA73;
+        Sun,  1 Jul 2018 16:46:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Baoquan He <bhe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 217/220] x86/efi: Fix efi_call_phys_epilog() with CONFIG_X86_5LEVEL=y
-Date:   Sun,  1 Jul 2018 18:24:01 +0200
-Message-Id: <20180701160917.204993240@linuxfoundation.org>
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 212/220] block: Fix transfer when chunk sectors exceeds max
+Date:   Sun,  1 Jul 2018 18:23:56 +0200
+Message-Id: <20180701160917.011058475@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -58,55 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+From: Keith Busch <keith.busch@intel.com>
 
-commit cfe19577047e74cdac5826adbdc2337d8437f8fb upstream.
+commit 15bfd21fbc5d35834b9ea383dc458a1f0c9e3434 upstream.
 
-Open-coded page table entry checks don't work correctly when we fold the
-page table level at runtime.
+A device may have boundary restrictions where the number of sectors
+between boundaries exceeds its max transfer size. In this case, we need
+to cap the max size to the smaller of the two limits.
 
-pgd_present() on 4-level paging machine always returns true, but
-open-coded version of the check may return false-negative result and
-we silently skip the rest of the loop body in efi_call_phys_epilog().
-
-Replace open-coded checks with proper helpers.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org # v4.12+
-Fixes: 94133e46a0f5 ("x86/efi: Correct EFI identity mapping under 'efi=old_map' when KASLR is enabled")
-Link: http://lkml.kernel.org/r/20180625120852.18300-1-kirill.shutemov@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Tested-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/platform/efi/efi_64.c |    4 ++--
+ include/linux/blkdev.h |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/platform/efi/efi_64.c
-+++ b/arch/x86/platform/efi/efi_64.c
-@@ -166,14 +166,14 @@ void __init efi_call_phys_epilog(pgd_t *
- 		pgd = pgd_offset_k(pgd_idx * PGDIR_SIZE);
- 		set_pgd(pgd_offset_k(pgd_idx * PGDIR_SIZE), save_pgd[pgd_idx]);
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1124,8 +1124,8 @@ static inline unsigned int blk_max_size_
+ 	if (!q->limits.chunk_sectors)
+ 		return q->limits.max_sectors;
  
--		if (!(pgd_val(*pgd) & _PAGE_PRESENT))
-+		if (!pgd_present(*pgd))
- 			continue;
+-	return q->limits.chunk_sectors -
+-			(offset & (q->limits.chunk_sectors - 1));
++	return min(q->limits.max_sectors, (unsigned int)(q->limits.chunk_sectors -
++			(offset & (q->limits.chunk_sectors - 1))));
+ }
  
- 		for (i = 0; i < PTRS_PER_P4D; i++) {
- 			p4d = p4d_offset(pgd,
- 					 pgd_idx * PGDIR_SIZE + i * P4D_SIZE);
- 
--			if (!(p4d_val(*p4d) & _PAGE_PRESENT))
-+			if (!p4d_present(*p4d))
- 				continue;
- 
- 			pud = (pud_t *)p4d_page_vaddr(*p4d);
+ static inline unsigned int blk_rq_get_max_sectors(struct request *rq,
 
 
