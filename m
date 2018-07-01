@@ -3,100 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C17C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDF4C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C55251BA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:23:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C55251BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTP id A44CF23C31
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44CF23C31
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeGAJXM (ORCPT
+        id S1752082AbeGAJ2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 05:23:12 -0400
-Received: from mout.web.de ([212.227.15.4]:36363 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751504AbeGAJXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 05:23:09 -0400
-Received: from [192.168.1.3] ([77.181.193.101]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MhDRB-1fn54z0Kzx-00MITK; Sun, 01
- Jul 2018 11:22:40 +0200
-Subject: Re: [PATCH v3 12/16] treewide: Use array_size() for kmalloc()-family
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-Cc:     kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20180601004233.37822-13-keescook@chromium.org>
- <b4c01457-7ea5-e7e3-be8b-f00fba6bac2b@users.sourceforge.net>
- <alpine.DEB.2.20.1807011100110.2748@hadrien>
-From:   SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <a98a68c8-8b08-b3e9-da7b-ff57a2614f96@users.sourceforge.net>
-Date:   Sun, 1 Jul 2018 11:22:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 1 Jul 2018 05:28:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35150 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751504AbeGAJ2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 05:28:15 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w619Nt7R148352
+        for <linux-kernel@vger.kernel.org>; Sun, 1 Jul 2018 05:28:14 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jxq3gpy08-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 05:28:14 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
+        Sun, 1 Jul 2018 10:28:13 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 1 Jul 2018 10:28:09 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w619S8N437486830
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 1 Jul 2018 09:28:08 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B32CE11C052;
+        Sun,  1 Jul 2018 10:27:53 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E67211C04C;
+        Sun,  1 Jul 2018 10:27:53 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.199.32.112])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  1 Jul 2018 10:27:53 +0100 (BST)
+From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     darrick.wong@oracle.com, lkml <linux-kernel@vger.kernel.org>,
+        allison.henderson@oracle.com, hch@lst.de,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-xfs@vger.kernel.org
+Subject: Re: xfs: Deadlock between fs_reclaim and sb_internal
+Date:   Sun, 01 Jul 2018 15:00:01 +0530
+In-Reply-To: <1583499.AKrs7invYa@localhost.localdomain>
+References: <ee795573-6ab3-361a-d076-b464293bdcc4@linux.ibm.com> <1583499.AKrs7invYa@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1807011100110.2748@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:nhphkcdQ4vZGS50OQT1JOSEEpeAuBXy0hOC+wFrNXWn1CKSKUQP
- sU+CUVHX/z5sOG4JiEWt+4BsbY8Bp1fnXUdZz9F53knUsp8+5OQw7r3E60zvDIDwd358yCr
- 9dV+a3iCByIX2HVd8BXxRia/P10oyVHmYYy2HTMBHrpTc4BjvTmQuZPES4wkr201FzeHFzs
- VDNZmX6aHNuFA5noC500w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:N1G1Wk93Sg8=:uo3QLi3cBDf89j1OCISRd4
- k7iGS5cgXCxXh8QkUhaGMPJB7X7h1eSwSO2M43fgVdqfDjambpkGdoSTvuXeJhdLlWSM3OIQY
- SNn2DFNP4wfjIvG2QOjVbjfiG1TzLI1dWhL6uG19Ofrwn+Mpu4WJvamCgKbWXiklM5RfUbgqI
- m4nZJfM/QGWAZbGKaeH+YD9oVt/QKVse5AT5cUgZSZszOxCrlNyhv4z0kdGGJa+1VSlV+tEVc
- uRGwrNW1Qg4WLe6KVw3I6d9XX+OLLff6KT93i8vYI8b8zGJ3WiZjWlZubTwSq7FLubu6GY7lI
- uBLXdjgORzEYkjd6F9S+8OjtGMqRPARJ2aRkXhLm+Ydzw7xTwY5QWGs1+Hp2NB/1XDD1lhxOi
- tAlZ+7FfI7VJbsYl3/s2zWO15r2HfdaQe4EALrOJt2TF0J3SPO9Mz7u+ur2T4tDdMjKyPiKzJ
- KkKdBZqvwcTUtLOXfx5QPzqWRMfepwsvsLQzqeH1f4zIkN1jBZy3he72detWty9KhhW2IbZiB
- 1rIB+zJ5BOJRRnfPrd7YHTit8hryQzGaUa3G5Eo2G167D6UwfmFJw0xEcohU8j2bP932fI3lb
- qgFtB7QxY9rMvdUV9ONP8dOypIjdtWkAgvQ9oAEI1FUc48Nx+Wgn3KXoDyaN3M27PP5l6+wq0
- YnlcfOwFek0ivl6FGFUjINaIHrHiny6Pv+QhbvcEke8VBZyEOr39T4HPYSqa/3kOP3qB7PXJv
- Ldy91LCo3ZuLolwY9yijPh9m08/tDTXCdkBqHHbEsrq9RrcZJpAxtySJSNtUX4nzXwSjjr2cx
- F0g7B2a
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 18070109-4275-0000-0000-00000293DDF1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070109-4276-0000-0000-0000379B53BC
+Message-Id: <1635784.85vFEPy9OU@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-01_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807010113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> * The repetition of such a constraint in subsequent SmPL rules could be avoided
->>   if inheritance will be used for this metavariable.
+On Friday, June 29, 2018 11:48:39 AM IST Chandan Rajendra wrote:
+> On Thursday, June 28, 2018 9:31:32 AM IST Ravi Bangoria wrote:
+> > Hello Darrick,
+> > 
+> > Lockdep is reporting a deadlock with following trace. Saw this on my
+> > powerpc vm with 4GB of ram, running Linus/master kernel. Though, I
+> > don't have exact testcase to reproduce it. Is this something known?
 > 
-> This is quite incorrect.
+> I am able to recreate this issue on a ppc64le guest. I will debug this
+> and provide updates.
+> 
 
-I suggest to consider additional software design options.
+Ravi,
 
+The issue has already been reported earlier. See 
+https://www.spinics.net/lists/linux-xfs/msg20036.html.
+I am not familiar with Lockdep code and hence won't be able to help here.
 
-> Inheritance is only possible when a match of the previous rule has succeeded.
+-- 
+chandan
 
-I agree with this information.
-
-
-> If a rule never applies in a given file, the rules that inherit from it
-> won't apply either.
-
-I would like to point the possibility out to specify a source code search
-which will find interesting function calls at least by an inital SmPL rule.
-
-
-> Furthermore, what is inherited is the value, not the constraint.
-
-This technical detail can be fine.
-
-
-> If the original binding of alloc only ever matches kmalloc,
-> then the inherited references will only match kmalloc too.
-
-Can the desired search pattern be extended in significant ways?
-
-Regards,
-Markus
