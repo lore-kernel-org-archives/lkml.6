@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3983C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F34C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E7123D70
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E7123D70
+	by mail.kernel.org (Postfix) with ESMTP id 0A14D25A74
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A14D25A74
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964794AbeGASeY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:34:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60684 "EHLO
+        id S933652AbeGASet (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:34:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933260AbeGAQQA (ORCPT
+        with ESMTP id S933048AbeGAQP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:16:00 -0400
+        Sun, 1 Jul 2018 12:15:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26390ACC;
-        Sun,  1 Jul 2018 16:16:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65D2886D;
+        Sun,  1 Jul 2018 16:15:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 026/105] x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
-Date:   Sun,  1 Jul 2018 18:01:36 +0200
-Message-Id: <20180701153151.231857764@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 025/105] fs/binfmt_misc.c: do not allow offset overflow
+Date:   Sun,  1 Jul 2018 18:01:35 +0200
+Message-Id: <20180701153151.172458466@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -53,81 +52,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
 
-commit eab6870fee877258122a042bfd99ee7908c40280 upstream.
+commit 5cc41e099504b77014358b58567c5ea6293dd220 upstream.
 
-Mark Rutland noticed that GCC optimization passes have the potential to elide
-necessary invocations of the array_index_mask_nospec() instruction sequence,
-so mark the asm() volatile.
+WHen registering a new binfmt_misc handler, it is possible to overflow
+the offset to get a negative value, which might crash the system, or
+possibly leak kernel data.
 
-Mark explains:
+Here is a crash log when 2500000000 was used as an offset:
 
-"The volatile will inhibit *some* cases where the compiler could lift the
- array_index_nospec() call out of a branch, e.g. where there are multiple
- invocations of array_index_nospec() with the same arguments:
+  BUG: unable to handle kernel paging request at ffff989cfd6edca0
+  IP: load_misc_binary+0x22b/0x470 [binfmt_misc]
+  PGD 1ef3e067 P4D 1ef3e067 PUD 0
+  Oops: 0000 [#1] SMP NOPTI
+  Modules linked in: binfmt_misc kvm_intel ppdev kvm irqbypass joydev input_leds serio_raw mac_hid parport_pc qemu_fw_cfg parpy
+  CPU: 0 PID: 2499 Comm: bash Not tainted 4.15.0-22-generic #24-Ubuntu
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+  RIP: 0010:load_misc_binary+0x22b/0x470 [binfmt_misc]
+  Call Trace:
+    search_binary_handler+0x97/0x1d0
+    do_execveat_common.isra.34+0x667/0x810
+    SyS_execve+0x31/0x40
+    do_syscall_64+0x73/0x130
+    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-        if (idx < foo) {
-                idx1 = array_idx_nospec(idx, foo)
-                do_something(idx1);
-        }
+Use kstrtoint instead of simple_strtoul.  It will work as the code
+already set the delimiter byte to '\0' and we only do it when the field
+is not empty.
 
-        < some other code >
+Tested with offsets -1, 2500000000, UINT_MAX and INT_MAX.  Also tested
+with examples documented at Documentation/admin-guide/binfmt-misc.rst
+and other registrations from packages on Ubuntu.
 
-        if (idx < foo) {
-                idx2 = array_idx_nospec(idx, foo);
-                do_something_else(idx2);
-        }
-
- ... since the compiler can determine that the two invocations yield the same
- result, and reuse the first result (likely the same register as idx was in
- originally) for the second branch, effectively re-writing the above as:
-
-        if (idx < foo) {
-                idx = array_idx_nospec(idx, foo);
-                do_something(idx);
-        }
-
-        < some other code >
-
-        if (idx < foo) {
-                do_something_else(idx);
-        }
-
- ... if we don't take the first branch, then speculatively take the second, we
- lose the nospec protection.
-
- There's more info on volatile asm in the GCC docs:
-
-   https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
- "
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20180529135648.14254-1-cascardo@canonical.com
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: <stable@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: babdde2698d4 ("x86: Implement array_index_mask_nospec")
-Link: https://lkml.kernel.org/lkml/152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/barrier.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/binfmt_misc.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -38,7 +38,7 @@ static inline unsigned long array_index_
- {
- 	unsigned long mask;
- 
--	asm ("cmp %1,%2; sbb %0,%0;"
-+	asm volatile ("cmp %1,%2; sbb %0,%0;"
- 			:"=r" (mask)
- 			:"r"(size),"r" (index)
- 			:"cc");
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -369,8 +369,13 @@ static Node *create_entry(const char __u
+ 		s = strchr(p, del);
+ 		if (!s)
+ 			goto einval;
+-		*s++ = '\0';
+-		e->offset = simple_strtoul(p, &p, 10);
++		*s = '\0';
++		if (p != s) {
++			int r = kstrtoint(p, 10, &e->offset);
++			if (r != 0 || e->offset < 0)
++				goto einval;
++		}
++		p = s;
+ 		if (*p++)
+ 			goto einval;
+ 		pr_debug("register: offset: %#x\n", e->offset);
+@@ -410,7 +415,8 @@ static Node *create_entry(const char __u
+ 		if (e->mask &&
+ 		    string_unescape_inplace(e->mask, UNESCAPE_HEX) != e->size)
+ 			goto einval;
+-		if (e->size + e->offset > BINPRM_BUF_SIZE)
++		if (e->size > BINPRM_BUF_SIZE ||
++		    BINPRM_BUF_SIZE - e->size < e->offset)
+ 			goto einval;
+ 		pr_debug("register: magic/mask length: %i\n", e->size);
+ 		if (USE_DEBUG) {
 
 
