@@ -3,37 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B00CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4810C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB06625B06
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB06625B06
+	by mail.kernel.org (Postfix) with ESMTP id 9316D25B0B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9316D25B0B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932739AbeGASmV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:42:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60188 "EHLO
+        id S932868AbeGASml (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:42:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932553AbeGAQNl (ORCPT
+        with ESMTP id S932441AbeGAQNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:41 -0400
+        Sun, 1 Jul 2018 12:13:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8601E86A;
-        Sun,  1 Jul 2018 16:13:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43EDC86D;
+        Sun,  1 Jul 2018 16:13:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Joakim Tjernlund <joakim.tjernlund@infinera.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 3.18 64/85] mtd: cfi_cmdset_0002: Use right chip in do_ppb_xxlock()
-Date:   Sun,  1 Jul 2018 18:02:22 +0200
-Message-Id: <20180701153124.921979254@linuxfoundation.org>
+        stable@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 23/85] kthread, sched/wait: Fix kthread_parkme() wait-loop
+Date:   Sun,  1 Jul 2018 18:01:41 +0200
+Message-Id: <20180701153123.280903344@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,57 +54,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit f93aa8c4de307069c270b2d81741961162bead6c upstream.
+[ Upstream commit 741a76b350897604c48fb12beff1c9b77724dc96 ]
 
-do_ppb_xxlock() fails to add chip->start when querying for lock status
-(and chip_ready test), which caused false status reports.
-Fix that by adding adr += chip->start and adjust call sites
-accordingly.
+Gaurav reported a problem with __kthread_parkme() where a concurrent
+try_to_wake_up() could result in competing stores to ->state which,
+when the TASK_PARKED store got lost bad things would happen.
 
-Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
-Cc: stable@vger.kernel.org
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+The comment near set_current_state() actually mentions this competing
+store, but only mentions the case against TASK_RUNNING. This same
+store, with different timing, can happen against a subsequent !RUNNING
+store.
+
+This normally is not a problem, because as per that same comment, the
+!RUNNING state store is inside a condition based wait-loop:
+
+  for (;;) {
+    set_current_state(TASK_UNINTERRUPTIBLE);
+    if (!need_sleep)
+      break;
+    schedule();
+  }
+  __set_current_state(TASK_RUNNING);
+
+If we loose the (first) TASK_UNINTERRUPTIBLE store to a previous
+(concurrent) wakeup, the schedule() will NO-OP and we'll go around the
+loop once more.
+
+The problem here is that the TASK_PARKED store is not inside the
+KTHREAD_SHOULD_PARK condition wait-loop.
+
+There is a genuine issue with sleeps that do not have a condition;
+this is addressed in a subsequent patch.
+
+Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/kthread.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2551,8 +2551,9 @@ static int __maybe_unused do_ppb_xxlock(
- 	unsigned long timeo;
- 	int ret;
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -156,12 +156,13 @@ void *probe_kthread_data(struct task_str
  
-+	adr += chip->start;
- 	mutex_lock(&chip->mutex);
--	ret = get_chip(map, chip, adr + chip->start, FL_LOCKING);
-+	ret = get_chip(map, chip, adr, FL_LOCKING);
- 	if (ret) {
- 		mutex_unlock(&chip->mutex);
- 		return ret;
-@@ -2570,8 +2571,8 @@ static int __maybe_unused do_ppb_xxlock(
- 
- 	if (thunk == DO_XXLOCK_ONEBLOCK_LOCK) {
- 		chip->state = FL_LOCKING;
--		map_write(map, CMD(0xA0), chip->start + adr);
--		map_write(map, CMD(0x00), chip->start + adr);
-+		map_write(map, CMD(0xA0), adr);
-+		map_write(map, CMD(0x00), adr);
- 	} else if (thunk == DO_XXLOCK_ONEBLOCK_UNLOCK) {
- 		/*
- 		 * Unlocking of one specific sector is not supported, so we
-@@ -2609,7 +2610,7 @@ static int __maybe_unused do_ppb_xxlock(
- 	map_write(map, CMD(0x00), chip->start);
- 
- 	chip->state = FL_READY;
--	put_chip(map, chip, adr + chip->start);
-+	put_chip(map, chip, adr);
- 	mutex_unlock(&chip->mutex);
- 
- 	return ret;
+ static void __kthread_parkme(struct kthread *self)
+ {
+-	__set_current_state(TASK_PARKED);
+-	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
++	for (;;) {
++		set_current_state(TASK_PARKED);
++		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
++			break;
+ 		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
+ 			complete(&self->parked);
+ 		schedule();
+-		__set_current_state(TASK_PARKED);
+ 	}
+ 	clear_bit(KTHREAD_IS_PARKED, &self->flags);
+ 	__set_current_state(TASK_RUNNING);
 
 
