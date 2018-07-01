@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A36C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D742C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C21825261
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C21825261
+	by mail.kernel.org (Postfix) with ESMTP id DB79125263
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB79125263
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030480AbeGAQbV (ORCPT
+        id S1030500AbeGAQb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:31:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34952 "EHLO
+        Sun, 1 Jul 2018 12:31:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965890AbeGAQbN (ORCPT
+        with ESMTP id S1030481AbeGAQbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:13 -0400
+        Sun, 1 Jul 2018 12:31:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D2C3AD8;
-        Sun,  1 Jul 2018 16:31:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 968CB92B;
+        Sun,  1 Jul 2018 16:31:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 4.14 048/157] ARM: dts: socfpga: Fix NAND controller clock supply
-Date:   Sun,  1 Jul 2018 18:22:00 +0200
-Message-Id: <20180701160855.069034161@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.14 051/157] arm64: kpti: Use early_param for kpti= command-line option
+Date:   Sun,  1 Jul 2018 18:22:03 +0200
+Message-Id: <20180701160855.207884293@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,36 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Vasut <marex@denx.de>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 4eda9b766b042ea38d84df91581b03f6145a2ab0 upstream.
+commit b5b7dd647f2d21b93f734ce890671cd908e69b0a upstream.
 
-The Denali NAND x-clock should be supplied by nand_x_clk, not by
-nand_clk. Fix this, otherwise the Denali driver gets incorrect
-clock frequency information and incorrectly configures the NAND
-timing.
+We inspect __kpti_forced early on as part of the cpufeature enable
+callback which remaps the swapper page table using non-global entries.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Marek Vasut <marex@denx.de>
-Fixes: d837a80d19 ("ARM: dts: socfpga: add nand controller nodes")
-Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Ensure that __kpti_forced has been updated to reflect the kpti=
+command-line option before we start using it.
+
+Fixes: ea1e3de85e94 ("arm64: entry: Add fake CPU feature for unmapping the kernel at EL0")
+Cc: <stable@vger.kernel.org> # 4.16.x-
+Reported-by: Wei Xu <xuwei5@hisilicon.com>
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/socfpga.dtsi |    2 +-
+ arch/arm64/kernel/cpufeature.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -750,7 +750,7 @@
- 			reg-names = "nand_data", "denali_reg";
- 			interrupts = <0x0 0x90 0x4>;
- 			dma-mask = <0xffffffff>;
--			clocks = <&nand_clk>;
-+			clocks = <&nand_x_clk>;
- 			status = "disabled";
- 		};
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -877,7 +877,7 @@ static int __init parse_kpti(char *str)
+ 	__kpti_forced = enabled ? 1 : -1;
+ 	return 0;
+ }
+-__setup("kpti=", parse_kpti);
++early_param("kpti", parse_kpti);
+ #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
+ static const struct arm64_cpu_capabilities arm64_features[] = {
 
 
