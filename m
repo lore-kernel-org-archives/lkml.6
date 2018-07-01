@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 334B8C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB34C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A562553D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A562553D
+	by mail.kernel.org (Postfix) with ESMTP id C258B25538
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C258B25538
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753863AbeGARCY (ORCPT
+        id S1753881AbeGARCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:02:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37782 "EHLO
+        Sun, 1 Jul 2018 13:02:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37776 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032320AbeGAQnN (ORCPT
+        with ESMTP id S1032313AbeGAQnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:13 -0400
+        Sun, 1 Jul 2018 12:43:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 743BEA73;
-        Sun,  1 Jul 2018 16:43:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7CC5A73;
+        Sun,  1 Jul 2018 16:43:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
         Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 144/220] scsi: zfcp: fix missing REC trigger trace on enqueue without ERP thread
-Date:   Sun,  1 Jul 2018 18:22:48 +0200
-Message-Id: <20180701160914.325286045@linuxfoundation.org>
+Subject: [PATCH 4.17 143/220] scsi: zfcp: fix missing REC trigger trace for all objects in ERP_FAILED
+Date:   Sun,  1 Jul 2018 18:22:47 +0200
+Message-Id: <20180701160914.282787623@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,7 +53,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steffen Maier <maier@linux.ibm.com>
 
-commit 6a76550841d412330bd86aed3238d1888ba70f0e upstream.
+commit 8c3d20aada70042a39c6a6625be037c1472ca610 upstream.
+
+That other commit introduced an inconsistency because it would trace on
+ERP_FAILED for all callers of port forced reopen triggers (not just
+terminate_rport_io), but it would not trace on ERP_FAILED for all callers of
+other ERP triggers such as adapter, port regular, LUN.
+
+Therefore, generalize that other commit. zfcp_erp_action_enqueue() already
+had two early outs which re-used the one zfcp_dbf_rec_trig() call.  All ERP
+trigger functions finally run through zfcp_erp_action_enqueue().  So move
+the special handling for ZFCP_STATUS_COMMON_ERP_FAILED into
+zfcp_erp_action_enqueue() and add another early out with new trace marker
+for pseudo ERP need in this case. This removes all early returns from all
+ERP trigger functions so we always end up at zfcp_dbf_rec_trig().
 
 Example trace record formatted with zfcpdbf from s390-tools:
 
@@ -75,7 +88,7 @@ LUN status     : 0x...
 Ready count    : 0x...
 Running count  : 0x...
 ERP want       : 0x0.                   ZFCP_ERP_ACTION_REOPEN_...
-ERP need       : 0xc0                   ZFCP_ERP_ACTION_NONE
+ERP need       : 0xe0                   ZFCP_ERP_ACTION_FAILED
 
 Signed-off-by: Steffen Maier <maier@linux.ibm.com>
 Cc: <stable@vger.kernel.org> #2.6.38+
@@ -84,24 +97,138 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_erp.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/s390/scsi/zfcp_erp.c |   79 +++++++++++++++++++++++++++----------------
+ 1 file changed, 51 insertions(+), 28 deletions(-)
 
 --- a/drivers/s390/scsi/zfcp_erp.c
 +++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -315,8 +315,11 @@ static int zfcp_erp_action_enqueue(int w
- 		goto out;
+@@ -143,6 +143,49 @@ static void zfcp_erp_action_dismiss_adap
  	}
+ }
  
--	if (!adapter->erp_thread)
--		return -EIO;
-+	if (!adapter->erp_thread) {
-+		need = ZFCP_ERP_ACTION_NONE; /* marker for trace */
-+		retval = -EIO;
++static int zfcp_erp_handle_failed(int want, struct zfcp_adapter *adapter,
++				  struct zfcp_port *port,
++				  struct scsi_device *sdev)
++{
++	int need = want;
++	struct zfcp_scsi_dev *zsdev;
++
++	switch (want) {
++	case ZFCP_ERP_ACTION_REOPEN_LUN:
++		zsdev = sdev_to_zfcp(sdev);
++		if (atomic_read(&zsdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
++			need = 0;
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
++		if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
++			need = 0;
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_PORT:
++		if (atomic_read(&port->status) &
++		    ZFCP_STATUS_COMMON_ERP_FAILED) {
++			need = 0;
++			/* ensure propagation of failed status to new devices */
++			zfcp_erp_set_port_status(
++				port, ZFCP_STATUS_COMMON_ERP_FAILED);
++		}
++		break;
++	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
++		if (atomic_read(&adapter->status) &
++		    ZFCP_STATUS_COMMON_ERP_FAILED) {
++			need = 0;
++			/* ensure propagation of failed status to new devices */
++			zfcp_erp_set_adapter_status(
++				adapter, ZFCP_STATUS_COMMON_ERP_FAILED);
++		}
++		break;
++	default:
++		need = 0;
++		break;
++	}
++
++	return need;
++}
++
+ static int zfcp_erp_required_act(int want, struct zfcp_adapter *adapter,
+ 				 struct zfcp_port *port,
+ 				 struct scsi_device *sdev)
+@@ -266,6 +309,12 @@ static int zfcp_erp_action_enqueue(int w
+ 	int retval = 1, need;
+ 	struct zfcp_erp_action *act;
+ 
++	need = zfcp_erp_handle_failed(want, adapter, port, sdev);
++	if (!need) {
++		need = ZFCP_ERP_ACTION_FAILED; /* marker for trace */
 +		goto out;
 +	}
++
+ 	if (!adapter->erp_thread)
+ 		return -EIO;
  
- 	need = zfcp_erp_required_act(want, adapter, port, sdev);
- 	if (!need)
+@@ -314,12 +363,6 @@ static int _zfcp_erp_adapter_reopen(stru
+ 	zfcp_erp_adapter_block(adapter, clear_mask);
+ 	zfcp_scsi_schedule_rports_block(adapter);
+ 
+-	/* ensure propagation of failed status to new devices */
+-	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		zfcp_erp_set_adapter_status(adapter,
+-					    ZFCP_STATUS_COMMON_ERP_FAILED);
+-		return -EIO;
+-	}
+ 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER,
+ 				       adapter, NULL, NULL, id, 0);
+ }
+@@ -338,12 +381,8 @@ void zfcp_erp_adapter_reopen(struct zfcp
+ 	zfcp_scsi_schedule_rports_block(adapter);
+ 
+ 	write_lock_irqsave(&adapter->erp_lock, flags);
+-	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
+-		zfcp_erp_set_adapter_status(adapter,
+-					    ZFCP_STATUS_COMMON_ERP_FAILED);
+-	else
+-		zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
+-					NULL, NULL, id, 0);
++	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
++				NULL, NULL, id, 0);
+ 	write_unlock_irqrestore(&adapter->erp_lock, flags);
+ }
+ 
+@@ -384,13 +423,6 @@ static void _zfcp_erp_port_forced_reopen
+ 	zfcp_erp_port_block(port, clear);
+ 	zfcp_scsi_schedule_rport_block(port);
+ 
+-	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		zfcp_dbf_rec_trig(id, port->adapter, port, NULL,
+-				  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+-				  ZFCP_ERP_ACTION_FAILED);
+-		return;
+-	}
+-
+ 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+ 				port->adapter, port, NULL, id, 0);
+ }
+@@ -416,12 +448,6 @@ static int _zfcp_erp_port_reopen(struct
+ 	zfcp_erp_port_block(port, clear);
+ 	zfcp_scsi_schedule_rport_block(port);
+ 
+-	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
+-		/* ensure propagation of failed status to new devices */
+-		zfcp_erp_set_port_status(port, ZFCP_STATUS_COMMON_ERP_FAILED);
+-		return -EIO;
+-	}
+-
+ 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT,
+ 				       port->adapter, port, NULL, id, 0);
+ }
+@@ -461,9 +487,6 @@ static void _zfcp_erp_lun_reopen(struct
+ 
+ 	zfcp_erp_lun_block(sdev, clear);
+ 
+-	if (atomic_read(&zfcp_sdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
+-		return;
+-
+ 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_LUN, adapter,
+ 				zfcp_sdev->port, sdev, id, act_status);
+ }
 
 
