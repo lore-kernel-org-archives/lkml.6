@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15161C6778C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5839FC6778A
 	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAB162416F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB162416F
+	by mail.kernel.org (Postfix) with ESMTP id 0BB5A242ED
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB5A242ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeGAHDh (ORCPT
+        id S1752174AbeGAHDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 03:03:37 -0400
-Received: from foss.arm.com ([217.140.101.70]:47340 "EHLO foss.arm.com"
+        Sun, 1 Jul 2018 03:03:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:47344 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751997AbeGAHDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 03:03:33 -0400
+        id S1752027AbeGAHDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 03:03:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58B261529;
-        Sun,  1 Jul 2018 00:03:33 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90C8B18A;
+        Sun,  1 Jul 2018 00:03:36 -0700 (PDT)
 Received: from sugar.benyossef.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7629B3F318;
-        Sun,  1 Jul 2018 00:03:31 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B33FF3F318;
+        Sun,  1 Jul 2018 00:03:34 -0700 (PDT)
 From:   Gilad Ben-Yossef <gilad@benyossef.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>
 Cc:     Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
-        stable@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/6] crypto: ccree: fix finup
-Date:   Sun,  1 Jul 2018 08:02:34 +0100
-Message-Id: <1530428560-4440-2-git-send-email-gilad@benyossef.com>
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/6] crypto: testmgr: add hash finup tests
+Date:   Sun,  1 Jul 2018 08:02:35 +0100
+Message-Id: <1530428560-4440-3-git-send-email-gilad@benyossef.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
 References: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
@@ -45,143 +44,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hadar Gat <hadar.gat@arm.com>
+The testmgr hash tests were testing init, digest, update and final
+methods but not the finup method. Add a test for this one too.
 
-finup() operation was incorrect, padding was missing.
-Fix by setting the ccree HW to enable padding.
+While doing this, make sure we only run the partial tests once with
+the digest tests and skip them with the final and finup tests since
+they are the same.
 
-Signed-off-by: Hadar Gat <hadar.gat@arm.com>
-[ gilad@benyossef.com: refactored for better code sharing ]
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: stable@vger.kernel.org
 ---
- drivers/crypto/ccree/cc_hash.c | 81 +++++++++---------------------------------
- 1 file changed, 16 insertions(+), 65 deletions(-)
+ crypto/testmgr.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 46 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
-index 96ff777..e4ebde0 100644
---- a/drivers/crypto/ccree/cc_hash.c
-+++ b/drivers/crypto/ccree/cc_hash.c
-@@ -602,66 +602,7 @@ static int cc_hash_update(struct ahash_request *req)
- 	return rc;
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 11e4535..ca475f6 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -259,9 +259,15 @@ static int ahash_partial_update(struct ahash_request **preq,
+ 	return ret;
  }
  
--static int cc_hash_finup(struct ahash_request *req)
--{
--	struct ahash_req_ctx *state = ahash_request_ctx(req);
--	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
--	struct cc_hash_ctx *ctx = crypto_ahash_ctx(tfm);
--	u32 digestsize = crypto_ahash_digestsize(tfm);
--	struct scatterlist *src = req->src;
--	unsigned int nbytes = req->nbytes;
--	u8 *result = req->result;
--	struct device *dev = drvdata_to_dev(ctx->drvdata);
--	bool is_hmac = ctx->is_hmac;
--	struct cc_crypto_req cc_req = {};
--	struct cc_hw_desc desc[CC_MAX_HASH_SEQ_LEN];
--	unsigned int idx = 0;
--	int rc;
--	gfp_t flags = cc_gfp_flags(&req->base);
--
--	dev_dbg(dev, "===== %s-finup (%d) ====\n", is_hmac ? "hmac" : "hash",
--		nbytes);
--
--	if (cc_map_req(dev, state, ctx)) {
--		dev_err(dev, "map_ahash_source() failed\n");
--		return -EINVAL;
--	}
--
--	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 1,
--				      flags)) {
--		dev_err(dev, "map_ahash_request_final() failed\n");
--		cc_unmap_req(dev, state, ctx);
--		return -ENOMEM;
--	}
--	if (cc_map_result(dev, state, digestsize)) {
--		dev_err(dev, "map_ahash_digest() failed\n");
--		cc_unmap_hash_request(dev, state, src, true);
--		cc_unmap_req(dev, state, ctx);
--		return -ENOMEM;
--	}
--
--	/* Setup request structure */
--	cc_req.user_cb = cc_hash_complete;
--	cc_req.user_arg = req;
--
--	idx = cc_restore_hash(desc, ctx, state, idx);
--
--	if (is_hmac)
--		idx = cc_fin_hmac(desc, req, idx);
--
--	idx = cc_fin_result(desc, req, idx);
--
--	rc = cc_send_request(ctx->drvdata, &cc_req, desc, idx, &req->base);
--	if (rc != -EINPROGRESS && rc != -EBUSY) {
--		dev_err(dev, "send_request() failed (rc=%d)\n", rc);
--		cc_unmap_hash_request(dev, state, src, true);
--		cc_unmap_result(dev, state, digestsize, result);
--		cc_unmap_req(dev, state, ctx);
--	}
--	return rc;
--}
--
--static int cc_hash_final(struct ahash_request *req)
-+static int cc_do_finup(struct ahash_request *req, bool update)
++enum hash_test {
++	HASH_TEST_DIGEST,
++	HASH_TEST_FINAL,
++	HASH_TEST_FINUP
++};
++
+ static int __test_hash(struct crypto_ahash *tfm,
+ 		       const struct hash_testvec *template, unsigned int tcount,
+-		       bool use_digest, const int align_offset)
++		       enum hash_test test_type, const int align_offset)
  {
- 	struct ahash_req_ctx *state = ahash_request_ctx(req);
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-@@ -678,21 +619,20 @@ static int cc_hash_final(struct ahash_request *req)
- 	int rc;
- 	gfp_t flags = cc_gfp_flags(&req->base);
+ 	const char *algo = crypto_tfm_alg_driver_name(crypto_ahash_tfm(tfm));
+ 	size_t digest_size = crypto_ahash_digestsize(tfm);
+@@ -332,14 +338,17 @@ static int __test_hash(struct crypto_ahash *tfm,
+ 		}
  
--	dev_dbg(dev, "===== %s-final (%d) ====\n", is_hmac ? "hmac" : "hash",
--		nbytes);
-+	dev_dbg(dev, "===== %s-%s (%d) ====\n", is_hmac ? "hmac" : "hash",
-+		update ? "finup" : "final", nbytes);
+ 		ahash_request_set_crypt(req, sg, result, template[i].psize);
+-		if (use_digest) {
++		switch (test_type) {
++		case HASH_TEST_DIGEST:
+ 			ret = crypto_wait_req(crypto_ahash_digest(req), &wait);
+ 			if (ret) {
+ 				pr_err("alg: hash: digest failed on test %d "
+ 				       "for %s: ret=%d\n", j, algo, -ret);
+ 				goto out;
+ 			}
+-		} else {
++			break;
++
++		case HASH_TEST_FINAL:
+ 			memset(result, 1, digest_size);
+ 			ret = crypto_wait_req(crypto_ahash_init(req), &wait);
+ 			if (ret) {
+@@ -371,6 +380,29 @@ static int __test_hash(struct crypto_ahash *tfm,
+ 				       "for %s: ret=%d\n", j, algo, -ret);
+ 				goto out;
+ 			}
++			break;
++
++		case HASH_TEST_FINUP:
++			memset(result, 1, digest_size);
++			ret = crypto_wait_req(crypto_ahash_init(req), &wait);
++			if (ret) {
++				pr_err("alg: hash: init failed on test %d "
++				       "for %s: ret=%d\n", j, algo, -ret);
++				goto out;
++			}
++			ret = ahash_guard_result(result, 1, digest_size);
++			if (ret) {
++				pr_err("alg: hash: init failed on test %d "
++				       "for %s: used req->result\n", j, algo);
++				goto out;
++			}
++			ret = crypto_wait_req(crypto_ahash_finup(req), &wait);
++			if (ret) {
++				pr_err("alg: hash: final failed on test %d "
++				       "for %s: ret=%d\n", j, algo, -ret);
++				goto out;
++			}
++			break;
+ 		}
  
- 	if (cc_map_req(dev, state, ctx)) {
- 		dev_err(dev, "map_ahash_source() failed\n");
- 		return -EINVAL;
+ 		if (memcmp(result, template[i].digest,
+@@ -383,6 +415,9 @@ static int __test_hash(struct crypto_ahash *tfm,
+ 		}
  	}
  
--	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, 0,
-+	if (cc_map_hash_request_final(ctx->drvdata, state, src, nbytes, update,
- 				      flags)) {
- 		dev_err(dev, "map_ahash_request_final() failed\n");
- 		cc_unmap_req(dev, state, ctx);
- 		return -ENOMEM;
++	if (test_type)
++		goto out;
++
+ 	j = 0;
+ 	for (i = 0; i < tcount; i++) {
+ 		/* alignment tests are only done with continuous buffers */
+@@ -540,24 +575,24 @@ static int __test_hash(struct crypto_ahash *tfm,
+ 
+ static int test_hash(struct crypto_ahash *tfm,
+ 		     const struct hash_testvec *template,
+-		     unsigned int tcount, bool use_digest)
++		     unsigned int tcount, enum hash_test test_type)
+ {
+ 	unsigned int alignmask;
+ 	int ret;
+ 
+-	ret = __test_hash(tfm, template, tcount, use_digest, 0);
++	ret = __test_hash(tfm, template, tcount, test_type, 0);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* test unaligned buffers, check with one byte offset */
+-	ret = __test_hash(tfm, template, tcount, use_digest, 1);
++	ret = __test_hash(tfm, template, tcount, test_type, 1);
+ 	if (ret)
+ 		return ret;
+ 
+ 	alignmask = crypto_tfm_alg_alignmask(&tfm->base);
+ 	if (alignmask) {
+ 		/* Check if alignment mask for tfm is correctly set. */
+-		ret = __test_hash(tfm, template, tcount, use_digest,
++		ret = __test_hash(tfm, template, tcount, test_type,
+ 				  alignmask + 1);
+ 		if (ret)
+ 			return ret;
+@@ -1803,9 +1838,11 @@ static int __alg_test_hash(const struct hash_testvec *template,
+ 		return PTR_ERR(tfm);
  	}
--
- 	if (cc_map_result(dev, state, digestsize)) {
- 		dev_err(dev, "map_ahash_digest() failed\n");
- 		cc_unmap_hash_request(dev, state, src, true);
-@@ -706,7 +646,7 @@ static int cc_hash_final(struct ahash_request *req)
  
- 	idx = cc_restore_hash(desc, ctx, state, idx);
- 
--	/* "DO-PAD" must be enabled only when writing current length to HW */
-+	/* Pad the hash */
- 	hw_desc_init(&desc[idx]);
- 	set_cipher_do(&desc[idx], DO_PAD);
- 	set_cipher_mode(&desc[idx], ctx->hw_mode);
-@@ -731,6 +671,17 @@ static int cc_hash_final(struct ahash_request *req)
- 	return rc;
+-	err = test_hash(tfm, template, tcount, true);
++	err = test_hash(tfm, template, tcount, HASH_TEST_DIGEST);
++	if (!err)
++		err = test_hash(tfm, template, tcount, HASH_TEST_FINAL);
+ 	if (!err)
+-		err = test_hash(tfm, template, tcount, false);
++		err = test_hash(tfm, template, tcount, HASH_TEST_FINUP);
+ 	crypto_free_ahash(tfm);
+ 	return err;
  }
- 
-+static int cc_hash_finup(struct ahash_request *req)
-+{
-+	return cc_do_finup(req, true);
-+}
-+
-+
-+static int cc_hash_final(struct ahash_request *req)
-+{
-+	return cc_do_finup(req, false);
-+}
-+
- static int cc_hash_init(struct ahash_request *req)
- {
- 	struct ahash_req_ctx *state = ahash_request_ctx(req);
 -- 
 2.7.4
 
