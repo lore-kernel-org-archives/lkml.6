@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE4C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E691AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D5B251DF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:12:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D5B251DF
+	by mail.kernel.org (Postfix) with ESMTP id AB882251EB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:13:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB882251EB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeGALMy (ORCPT
+        id S1752777AbeGALND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:12:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47766 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:13:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47714 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752082AbeGALI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752031AbeGALI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 1 Jul 2018 07:08:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 78657AE0B;
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8B3BCAE55;
         Sun,  1 Jul 2018 11:08:57 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
@@ -39,9 +39,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC net-next 02/15] net: lora: Define sockaddr_lora
-Date:   Sun,  1 Jul 2018 13:07:51 +0200
-Message-Id: <20180701110804.32415-3-afaerber@suse.de>
+Subject: [RFC net-next 05/15] HACK: net: lora: Deal with .poll_mask in 4.18-rc2
+Date:   Sun,  1 Jul 2018 13:07:54 +0200
+Message-Id: <20180701110804.32415-6-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
 References: <20180701110804.32415-1-afaerber@suse.de>
@@ -53,40 +53,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare a uapi linux/lora.h header defining sockaddr_lora for AF_LORA.
+linux-next and 4.18-rc2 both identify as LINUX_VERSION(4,18,0), but
+commit a11e1d432b51f63ba698d044441284a661f01144 (Revert changes to
+convert to ->poll_mask() and aio IOCB_CMD_POLL) reverted .poll_mask
+to .poll again.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- include/uapi/linux/lora.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/uapi/linux/lora.h
+ net/lora/dgram.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/uapi/linux/lora.h b/include/uapi/linux/lora.h
-new file mode 100644
-index 000000000000..9368e8a84f3a
---- /dev/null
-+++ b/include/uapi/linux/lora.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0-or-later WITH Linux-syscall-note) */
-+/*
-+ * linux/lora.h
-+ *
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+#ifndef _UAPI_LINUX_LORA_H
-+#define _UAPI_LINUX_LORA_H
-+
-+#include <linux/types.h>
-+#include <linux/socket.h>
-+
-+struct sockaddr_lora {
-+	__kernel_sa_family_t lora_family;
-+	int lora_ifindex;
-+	union {
-+	} lora_addr;
-+};
-+
-+#endif /* _UAPI_LINUX_LORA_H */
+diff --git a/net/lora/dgram.c b/net/lora/dgram.c
+index 4d931fd3778a..ef56fd90e762 100644
+--- a/net/lora/dgram.c
++++ b/net/lora/dgram.c
+@@ -217,7 +217,11 @@ const struct proto_ops dgram_proto_ops = {
+ 	.socketpair	= sock_no_socketpair,
+ 	.accept		= sock_no_accept,
+ 	.getname	= dgram_getname,
++#if 0 /* LINUX_VERSION_CODE >= LINUX_VERSION(4, 18, 0) */
++	.poll_mask	= datagram_poll_mask,
++#else
+ 	.poll		= datagram_poll,
++#endif
+ 	.ioctl		= dgram_ioctl,
+ 	.listen		= sock_no_listen,
+ 	.shutdown	= sock_no_shutdown,
 -- 
 2.16.4
 
