@@ -3,37 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69128C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55824C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C7225661
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C7225661
+	by mail.kernel.org (Postfix) with ESMTP id 1AE7125661
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE7125661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031362AbeGARaV (ORCPT
+        id S1031337AbeGARai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:30:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36060 "EHLO
+        Sun, 1 Jul 2018 13:30:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36048 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031303AbeGAQgj (ORCPT
+        with ESMTP id S1031294AbeGAQgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:39 -0400
+        Sun, 1 Jul 2018 12:36:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C486BACC;
-        Sun,  1 Jul 2018 16:36:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10497ACC;
+        Sun,  1 Jul 2018 16:36:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dennis Yang <dennisyang@qnap.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 156/157] dm thin: handle running out of data space vs concurrent discard
-Date:   Sun,  1 Jul 2018 18:23:48 +0200
-Message-Id: <20180701160901.075187457@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 155/157] dm zoned: avoid triggering reclaim from inside dmz_map()
+Date:   Sun,  1 Jul 2018 18:23:47 +0200
+Message-Id: <20180701160901.013182718@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,92 +49,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit a685557fbbc3122ed11e8ad3fa63a11ebc5de8c3 upstream.
+commit 2d0b2d64d325e22939d9db3ba784f1236459ed98 upstream.
 
-Discards issued to a DM thin device can complete to userspace (via
-fstrim) _before_ the metadata changes associated with the discards is
-reflected in the thinp superblock (e.g. free blocks).  As such, if a
-user constructs a test that loops repeatedly over these steps, block
-allocation can fail due to discards not having completed yet:
-1) fill thin device via filesystem file
-2) remove file
-3) fstrim
+This patch avoids that lockdep reports the following:
 
->From initial report, here:
-https://www.redhat.com/archives/dm-devel/2018-April/msg00022.html
+======================================================
+WARNING: possible circular locking dependency detected
+4.18.0-rc1 #62 Not tainted
+------------------------------------------------------
+kswapd0/84 is trying to acquire lock:
+00000000c313516d (&xfs_nondir_ilock_class){++++}, at: xfs_free_eofblocks+0xa2/0x1e0
 
-"The root cause of this issue is that dm-thin will first remove
-mapping and increase corresponding blocks' reference count to prevent
-them from being reused before DISCARD bios get processed by the
-underlying layers. However. increasing blocks' reference count could
-also increase the nr_allocated_this_transaction in struct sm_disk
-which makes smd->old_ll.nr_allocated +
-smd->nr_allocated_this_transaction bigger than smd->old_ll.nr_blocks.
-In this case, alloc_data_block() will never commit metadata to reset
-the begin pointer of struct sm_disk, because sm_disk_get_nr_free()
-always return an underflow value."
+but task is already holding lock:
+00000000591c83ae (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x5/0x30
 
-While there is room for improvement to the space-map accounting that
-thinp is making use of: the reality is this test is inherently racey and
-will result in the previous iteration's fstrim's discard(s) completing
-vs concurrent block allocation, via dd, in the next iteration of the
-loop.
+which lock already depends on the new lock.
 
-No amount of space map accounting improvements will be able to allow
-user's to use a block before a discard of that block has completed.
+the existing dependency chain (in reverse order) is:
 
-So the best we can really do is allow DM thinp to gracefully handle such
-aggressive use of all the pool's data by degrading the pool into
-out-of-data-space (OODS) mode.  We _should_ get that behaviour already
-(if space map accounting didn't falsely cause alloc_data_block() to
-believe free space was available).. but short of that we handle the
-current reality that dm_pool_alloc_data_block() can return -ENOSPC.
+-> #2 (fs_reclaim){+.+.}:
+  kmem_cache_alloc+0x2c/0x2b0
+  radix_tree_node_alloc.constprop.19+0x3d/0xc0
+  __radix_tree_create+0x161/0x1c0
+  __radix_tree_insert+0x45/0x210
+  dmz_map+0x245/0x2d0 [dm_zoned]
+  __map_bio+0x40/0x260
+  __split_and_process_non_flush+0x116/0x220
+  __split_and_process_bio+0x81/0x180
+  __dm_make_request.isra.32+0x5a/0x100
+  generic_make_request+0x36e/0x690
+  submit_bio+0x6c/0x140
+  mpage_readpages+0x19e/0x1f0
+  read_pages+0x6d/0x1b0
+  __do_page_cache_readahead+0x21b/0x2d0
+  force_page_cache_readahead+0xc4/0x100
+  generic_file_read_iter+0x7c6/0xd20
+  __vfs_read+0x102/0x180
+  vfs_read+0x9b/0x140
+  ksys_read+0x55/0xc0
+  do_syscall_64+0x5a/0x1f0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Reported-by: Dennis Yang <dennisyang@qnap.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+-> #1 (&dmz->chunk_lock){+.+.}:
+  dmz_map+0x133/0x2d0 [dm_zoned]
+  __map_bio+0x40/0x260
+  __split_and_process_non_flush+0x116/0x220
+  __split_and_process_bio+0x81/0x180
+  __dm_make_request.isra.32+0x5a/0x100
+  generic_make_request+0x36e/0x690
+  submit_bio+0x6c/0x140
+  _xfs_buf_ioapply+0x31c/0x590
+  xfs_buf_submit_wait+0x73/0x520
+  xfs_buf_read_map+0x134/0x2f0
+  xfs_trans_read_buf_map+0xc3/0x580
+  xfs_read_agf+0xa5/0x1e0
+  xfs_alloc_read_agf+0x59/0x2b0
+  xfs_alloc_pagf_init+0x27/0x60
+  xfs_bmap_longest_free_extent+0x43/0xb0
+  xfs_bmap_btalloc_nullfb+0x7f/0xf0
+  xfs_bmap_btalloc+0x428/0x7c0
+  xfs_bmapi_write+0x598/0xcc0
+  xfs_iomap_write_allocate+0x15a/0x330
+  xfs_map_blocks+0x1cf/0x3f0
+  xfs_do_writepage+0x15f/0x7b0
+  write_cache_pages+0x1ca/0x540
+  xfs_vm_writepages+0x65/0xa0
+  do_writepages+0x48/0xf0
+  __writeback_single_inode+0x58/0x730
+  writeback_sb_inodes+0x249/0x5c0
+  wb_writeback+0x11e/0x550
+  wb_workfn+0xa3/0x670
+  process_one_work+0x228/0x670
+  worker_thread+0x3c/0x390
+  kthread+0x11c/0x140
+  ret_from_fork+0x3a/0x50
+
+-> #0 (&xfs_nondir_ilock_class){++++}:
+  down_read_nested+0x43/0x70
+  xfs_free_eofblocks+0xa2/0x1e0
+  xfs_fs_destroy_inode+0xac/0x270
+  dispose_list+0x51/0x80
+  prune_icache_sb+0x52/0x70
+  super_cache_scan+0x127/0x1a0
+  shrink_slab.part.47+0x1bd/0x590
+  shrink_node+0x3b5/0x470
+  balance_pgdat+0x158/0x3b0
+  kswapd+0x1ba/0x600
+  kthread+0x11c/0x140
+  ret_from_fork+0x3a/0x50
+
+other info that might help us debug this:
+
+Chain exists of:
+  &xfs_nondir_ilock_class --> &dmz->chunk_lock --> fs_reclaim
+
+Possible unsafe locking scenario:
+
+     CPU0                    CPU1
+     ----                    ----
+lock(fs_reclaim);
+                             lock(&dmz->chunk_lock);
+                             lock(fs_reclaim);
+lock(&xfs_nondir_ilock_class);
 
 ---
- drivers/md/dm-thin.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/md/dm-zoned-target.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -1380,6 +1380,8 @@ static void schedule_external_copy(struc
+--- a/drivers/md/dm-zoned-target.c
++++ b/drivers/md/dm-zoned-target.c
+@@ -788,7 +788,7 @@ static int dmz_ctr(struct dm_target *ti,
  
- static void set_pool_mode(struct pool *pool, enum pool_mode new_mode);
- 
-+static void requeue_bios(struct pool *pool);
-+
- static void check_for_space(struct pool *pool)
- {
- 	int r;
-@@ -1392,8 +1394,10 @@ static void check_for_space(struct pool
- 	if (r)
- 		return;
- 
--	if (nr_free)
-+	if (nr_free) {
- 		set_pool_mode(pool, PM_WRITE);
-+		requeue_bios(pool);
-+	}
- }
- 
- /*
-@@ -1470,7 +1474,10 @@ static int alloc_data_block(struct thin_
- 
- 	r = dm_pool_alloc_data_block(pool->pmd, result);
- 	if (r) {
--		metadata_operation_failed(pool, "dm_pool_alloc_data_block", r);
-+		if (r == -ENOSPC)
-+			set_pool_mode(pool, PM_OUT_OF_DATA_SPACE);
-+		else
-+			metadata_operation_failed(pool, "dm_pool_alloc_data_block", r);
- 		return r;
- 	}
- 
+ 	/* Chunk BIO work */
+ 	mutex_init(&dmz->chunk_lock);
+-	INIT_RADIX_TREE(&dmz->chunk_rxtree, GFP_KERNEL);
++	INIT_RADIX_TREE(&dmz->chunk_rxtree, GFP_NOIO);
+ 	dmz->chunk_wq = alloc_workqueue("dmz_cwq_%s", WQ_MEM_RECLAIM | WQ_UNBOUND,
+ 					0, dev->name);
+ 	if (!dmz->chunk_wq) {
 
 
