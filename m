@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1781C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CBBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A77253BD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A77253BD
+	by mail.kernel.org (Postfix) with ESMTP id 0DAAF253C3
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAAF253C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032113AbeGAQly (ORCPT
+        id S1032138AbeGAQmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:41:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37444 "EHLO
+        Sun, 1 Jul 2018 12:42:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37462 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031615AbeGAQls (ORCPT
+        with ESMTP id S1032108AbeGAQlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:48 -0400
+        Sun, 1 Jul 2018 12:41:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 566F9ACC;
-        Sun,  1 Jul 2018 16:41:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEF6FAA6;
+        Sun,  1 Jul 2018 16:41:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan M Schaeckeler <sschaeck@cisco.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.17 079/220] of: unittest: for strings, account for trailing \0 in property length field
-Date:   Sun,  1 Jul 2018 18:21:43 +0200
-Message-Id: <20180701160911.740952193@linuxfoundation.org>
+        stable@vger.kernel.org, jia.he@hxt-semitech.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.17 071/220] crypto: arm64/aes-blk - fix and move skcipher_walk_done out of kernel_neon_begin, _end
+Date:   Sun,  1 Jul 2018 18:21:35 +0200
+Message-Id: <20180701160911.392565955@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,63 +52,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan M Schaeckeler <sschaeck@cisco.com>
+From: Jia He <hejianet@gmail.com>
 
-commit 3b9cf7905fe3ab35ab437b5072c883e609d3498d upstream.
+commit 6e88f01206edab0e5bc105d8f35fac10f4ee14c5 upstream.
 
-For strings, account for trailing \0 in property length field:
+In a arm64 server(QDF2400),I met a similar might-sleep warning as [1]:
+[    7.019116] BUG: sleeping function called from invalid context at
+./include/crypto/algapi.h:416
+[    7.027863] in_atomic(): 1, irqs_disabled(): 0, pid: 410, name:
+cryptomgr_test
+[    7.035106] 1 lock held by cryptomgr_test/410:
+[    7.039549]  #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at:
+drbg_instantiate+0x34/0x398
+[    7.048038] CPU: 9 PID: 410 Comm: cryptomgr_test Not tainted
+4.17.0-rc6+ #27
+[    7.068228]  dump_backtrace+0x0/0x1c0
+[    7.071890]  show_stack+0x24/0x30
+[    7.075208]  dump_stack+0xb0/0xec
+[    7.078523]  ___might_sleep+0x160/0x238
+[    7.082360]  skcipher_walk_done+0x118/0x2c8
+[    7.086545]  ctr_encrypt+0x98/0x130
+[    7.090035]  simd_skcipher_encrypt+0x68/0xc0
+[    7.094304]  drbg_kcapi_sym_ctr+0xd4/0x1f8
+[    7.098400]  drbg_ctr_update+0x98/0x330
+[    7.102236]  drbg_seed+0x1b8/0x2f0
+[    7.105637]  drbg_instantiate+0x2ac/0x398
+[    7.109646]  drbg_kcapi_seed+0xbc/0x188
+[    7.113482]  crypto_rng_reset+0x4c/0xb0
+[    7.117319]  alg_test_drbg+0xec/0x330
+[    7.120981]  alg_test.part.6+0x1c8/0x3c8
+[    7.124903]  alg_test+0x58/0xa0
+[    7.128044]  cryptomgr_test+0x50/0x58
+[    7.131708]  kthread+0x134/0x138
+[    7.134936]  ret_from_fork+0x10/0x1c
 
-This is consistent with how dtc builds string properties.
+Seems there is a bug in Ard Biesheuvel's commit.
+Fixes: 683381747270 ("crypto: arm64/aes-blk - move kernel mode neon
+en/disable into loop")
 
-Function __of_prop_dup() would misbehave on such properties as it duplicates
-properties based on the property length field creating new string values
-without trailing \0s.
+[1] https://www.spinics.net/lists/linux-crypto/msg33103.html
 
-Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-Tested-by: Frank Rowand <frank.rowand@sony.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: jia.he@hxt-semitech.com
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: <stable@vger.kernel.org> # 4.17
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/unittest.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/crypto/aes-glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -165,20 +165,20 @@ static void __init of_unittest_dynamic(v
- 	/* Add a new property - should pass*/
- 	prop->name = "new-property";
- 	prop->value = "new-property-data";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) == 0, "Adding a new property failed\n");
- 
- 	/* Try to add an existing property - should fail */
- 	prop++;
- 	prop->name = "new-property";
- 	prop->value = "new-property-data-should-fail";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_add_property(np, prop) != 0,
- 		 "Adding an existing property should have failed\n");
- 
- 	/* Try to modify an existing property - should pass */
- 	prop->value = "modify-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating an existing property should have passed\n");
- 
-@@ -186,7 +186,7 @@ static void __init of_unittest_dynamic(v
- 	prop++;
- 	prop->name = "modify-property";
- 	prop->value = "modify-missing-property-data-should-pass";
--	prop->length = strlen(prop->value);
-+	prop->length = strlen(prop->value) + 1;
- 	unittest(of_update_property(np, prop) == 0,
- 		 "Updating a missing property should have passed\n");
- 
+--- a/arch/arm64/crypto/aes-glue.c
++++ b/arch/arm64/crypto/aes-glue.c
+@@ -223,8 +223,8 @@ static int ctr_encrypt(struct skcipher_r
+ 		kernel_neon_begin();
+ 		aes_ctr_encrypt(walk.dst.virt.addr, walk.src.virt.addr,
+ 				(u8 *)ctx->key_enc, rounds, blocks, walk.iv);
+-		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
+ 		kernel_neon_end();
++		err = skcipher_walk_done(&walk, walk.nbytes % AES_BLOCK_SIZE);
+ 	}
+ 	if (walk.nbytes) {
+ 		u8 __aligned(8) tail[AES_BLOCK_SIZE];
 
 
