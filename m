@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E33C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966A2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB4BE25440
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:47:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB4BE25440
+	by mail.kernel.org (Postfix) with ESMTP id 5DBCD25447
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:47:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DBCD25447
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753815AbeGAQrk (ORCPT
+        id S1032603AbeGAQrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:47:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38614 "EHLO
+        Sun, 1 Jul 2018 12:47:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38586 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032615AbeGAQrH (ORCPT
+        with ESMTP id S1032581AbeGAQq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:47:07 -0400
+        Sun, 1 Jul 2018 12:46:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E52AAA6;
-        Sun,  1 Jul 2018 16:47:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EC5AA73;
+        Sun,  1 Jul 2018 16:46:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 194/220] net: ethernet: fix suspend/resume in davinci_emac
-Date:   Sun,  1 Jul 2018 18:23:38 +0200
-Message-Id: <20180701160916.289679319@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Hussam Al-Tayeb <me@hussam.eu.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 191/220] mm: fix devmem_is_allowed() for sub-page System RAM intersections
+Date:   Sun,  1 Jul 2018 18:23:35 +0200
+Message-Id: <20180701160916.175926902@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,60 +53,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit dc45519eb181b5687ac8382361a8aa085acd1fe1 upstream.
+commit 2bdce74412c249ac01dfe36b6b0043ffd7a5361e upstream.
 
-This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
-Deduplicate bus_find_device() by name matching") and adds a comment
-which should stop anyone from reintroducing the same "fix" in the future.
+Hussam reports:
 
-We can't use bus_find_device_by_name() here because the device name is
-not guaranteed to be 'davinci_mdio'. On some systems it can be
-'davinci_mdio.0' so we need to use strncmp() against the first part of
-the string to correctly match it.
+    I was poking around and for no real reason, I did cat /dev/mem and
+    strings /dev/mem.  Then I saw the following warning in dmesg. I saved it
+    and rebooted immediately.
 
-Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+     memremap attempted on mixed range 0x000000000009c000 size: 0x1000
+     ------------[ cut here ]------------
+     WARNING: CPU: 0 PID: 11810 at kernel/memremap.c:98 memremap+0x104/0x170
+     [..]
+     Call Trace:
+      xlate_dev_mem_ptr+0x25/0x40
+      read_mem+0x89/0x1a0
+      __vfs_read+0x36/0x170
+
+The memremap() implementation checks for attempts to remap System RAM
+with MEMREMAP_WB and instead redirects those mapping attempts to the
+linear map.  However, that only works if the physical address range
+being remapped is page aligned.  In low memory we have situations like
+the following:
+
+    00000000-00000fff : Reserved
+    00001000-0009fbff : System RAM
+    0009fc00-0009ffff : Reserved
+
+...where System RAM intersects Reserved ranges on a sub-page page
+granularity.
+
+Given that devmem_is_allowed() special cases any attempt to map System
+RAM in the first 1MB of memory, replace page_is_ram() with the more
+precise region_intersects() to trap attempts to map disallowed ranges.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199999
+Link: http://lkml.kernel.org/r/152856436164.18127.2847888121707136898.stgit@dwillia2-desk3.amr.corp.intel.com
+Fixes: 92281dee825f ("arch: introduce memremap()")
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reported-by: Hussam Al-Tayeb <me@hussam.eu.org>
+Tested-by: Hussam Al-Tayeb <me@hussam.eu.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/ti/davinci_emac.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/x86/mm/init.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_devi
- 		return -EOPNOTSUPP;
- }
- 
-+static int match_first_device(struct device *dev, void *data)
-+{
-+	return !strncmp(dev_name(dev), "davinci_mdio", 12);
-+}
-+
- /**
-  * emac_dev_open - EMAC device open
-  * @ndev: The DaVinci EMAC network adapter
-@@ -1484,8 +1489,14 @@ static int emac_dev_open(struct net_devi
- 
- 	/* use the first phy on the bus if pdata did not give us a phy id */
- 	if (!phydev && !priv->phy_id) {
--		phy = bus_find_device_by_name(&mdio_bus_type, NULL,
--					      "davinci_mdio");
-+		/* NOTE: we can't use bus_find_device_by_name() here because
-+		 * the device name is not guaranteed to be 'davinci_mdio'. On
-+		 * some systems it can be 'davinci_mdio.0' so we need to use
-+		 * strncmp() against the first part of the string to correctly
-+		 * match it.
-+		 */
-+		phy = bus_find_device(&mdio_bus_type, NULL, NULL,
-+				      match_first_device);
- 		if (phy) {
- 			priv->phy_id = dev_name(phy);
- 			if (!priv->phy_id || !*priv->phy_id)
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -706,7 +706,9 @@ void __init init_mem_mapping(void)
+  */
+ int devmem_is_allowed(unsigned long pagenr)
+ {
+-	if (page_is_ram(pagenr)) {
++	if (region_intersects(PFN_PHYS(pagenr), PAGE_SIZE,
++				IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE)
++			!= REGION_DISJOINT) {
+ 		/*
+ 		 * For disallowed memory regions in the low 1MB range,
+ 		 * request that the page be shown as all zeros.
 
 
