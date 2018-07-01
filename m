@@ -6,63 +6,79 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015BCC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6F1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C632505D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:19:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C632505D
+	by mail.kernel.org (Postfix) with ESMTP id 0EE492505D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 13:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE492505D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752459AbeGANTR (ORCPT
+        id S1752429AbeGANUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 09:19:17 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:53704 "EHLO
+        Sun, 1 Jul 2018 09:20:21 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:53728 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeGANTO (ORCPT
+        with ESMTP id S1752057AbeGANUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 09:19:14 -0400
+        Sun, 1 Jul 2018 09:20:20 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fZcFz-0003XC-D3; Sun, 01 Jul 2018 21:19:11 +0800
+        id 1fZcGY-0003YV-OF; Sun, 01 Jul 2018 21:19:46 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fZcFw-0008Ad-47; Sun, 01 Jul 2018 21:19:08 +0800
-Date:   Sun, 1 Jul 2018 21:19:08 +0800
+        id 1fZcGT-0008CD-RL; Sun, 01 Jul 2018 21:19:41 +0800
+Date:   Sun, 1 Jul 2018 21:19:41 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     efremov@linux.com
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH v2] crypto: skcipher: remove the exporting of
- skcipher_walk_next
-Message-ID: <20180701131908.jl5kg6gosrvkmc4p@gondor.apana.org.au>
-References: <20180617174959.29864-1-efremov@linux.com>
- <20180619202357.10805-1-efremov@linux.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-crypto@vger.kernel.org, Mike Galbraith <efault@gmx.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
+        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>
+Subject: Re: [PATCH] x86/crypto: Add missing RETs
+Message-ID: <20180701131941.2dqkzg7az25qpc6b@gondor.apana.org.au>
+References: <20180507213755.GA32406@avx2>
+ <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
+ <1529235613.4572.7.camel@gmx.de>
+ <20180617120012.GB16877@zn.tnic>
+ <1529242717.4472.3.camel@gmx.de>
+ <1529244178.4674.1.camel@gmx.de>
+ <20180617194747.GA21160@zn.tnic>
+ <1529289279.31745.3.camel@gmx.de>
+ <20180623103622.GA2760@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619202357.10805-1-efremov@linux.com>
+In-Reply-To: <20180623103622.GA2760@zn.tnic>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:23:57PM +0300, efremov@linux.com wrote:
-> The function skcipher_walk_next declared as static and marked as
-> EXPORT_SYMBOL_GPL. It's a bit confusing for internal function to be
-> exported. The area of visibility for such function is its .c file
-> and all other modules. Other *.c files of the same module can't use it,
-> despite all other modules can. Relying on the fact that this is the
-> internal function and it's not a crucial part of the API, the patch
-> just removes the EXPORT_SYMBOL_GPL marking of skcipher_walk_next.
+On Sat, Jun 23, 2018 at 12:36:22PM +0200, Borislav Petkov wrote:
+> Lemme send a proper patch now...
 > 
-> Found by Linux Driver Verification project (linuxtesting.org).
+> ---
+> From: Borislav Petkov <bp@suse.de>
+> Date: Sun, 17 Jun 2018 13:57:42 +0200
+> Subject: [PATCH] x86/crypto: Add missing RETs
 > 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
+> Add explicit RETs to the tail calls of AEGIS and MORUS crypto algorithms
+> otherwise they run into INT3 padding due to
+> 
+>   51bad67ffbce ("x86/asm: Pad assembly functions with INT3 instructions")
+> 
+> leading to spurious debug exceptions.
+> 
+> Mike Galbraith <efault@gmx.de> took care of all the remaining callsites.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
 Patch applied.  Thanks.
 -- 
