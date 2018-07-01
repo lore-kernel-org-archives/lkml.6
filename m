@@ -3,45 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D5FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C2EC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C3825977
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C3825977
+	by mail.kernel.org (Postfix) with ESMTP id 8CF6D2597F
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF6D2597F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753555AbeGAQYZ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:24:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33426 "EHLO
+        id S965173AbeGASXQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:23:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753392AbeGAQYS (ORCPT
+        with ESMTP id S1753558AbeGAQY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:18 -0400
+        Sun, 1 Jul 2018 12:24:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B710BACD;
-        Sun,  1 Jul 2018 16:24:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04E45AEF;
+        Sun,  1 Jul 2018 16:24:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 001/101] x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
-Date:   Sun,  1 Jul 2018 18:20:47 +0200
-Message-Id: <20180701160757.189774422@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 012/101] ASoC: dapm: delete dapm_kcontrol_data paths list before freeing it
+Date:   Sun,  1 Jul 2018 18:20:58 +0200
+Message-Id: <20180701160757.630627041@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,81 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-commit eab6870fee877258122a042bfd99ee7908c40280 upstream.
+commit ff2faf1289c1f81b5b26b9451dd1c2006aac8db8 upstream.
 
-Mark Rutland noticed that GCC optimization passes have the potential to elide
-necessary invocations of the array_index_mask_nospec() instruction sequence,
-so mark the asm() volatile.
+dapm_kcontrol_data is freed as part of dapm_kcontrol_free(), leaving the
+paths pointer dangling in the list.
 
-Mark explains:
+This leads to system crash when we try to unload and reload sound card.
+I hit this bug during ADSP crash/reboot test case on Dragon board DB410c.
 
-"The volatile will inhibit *some* cases where the compiler could lift the
- array_index_nospec() call out of a branch, e.g. where there are multiple
- invocations of array_index_nospec() with the same arguments:
+Without this patch, on SLAB Poisoning enabled build, kernel crashes with
+"BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten"
 
-        if (idx < foo) {
-                idx1 = array_idx_nospec(idx, foo)
-                do_something(idx1);
-        }
-
-        < some other code >
-
-        if (idx < foo) {
-                idx2 = array_idx_nospec(idx, foo);
-                do_something_else(idx2);
-        }
-
- ... since the compiler can determine that the two invocations yield the same
- result, and reuse the first result (likely the same register as idx was in
- originally) for the second branch, effectively re-writing the above as:
-
-        if (idx < foo) {
-                idx = array_idx_nospec(idx, foo);
-                do_something(idx);
-        }
-
-        < some other code >
-
-        if (idx < foo) {
-                do_something_else(idx);
-        }
-
- ... if we don't take the first branch, then speculatively take the second, we
- lose the nospec protection.
-
- There's more info on volatile asm in the GCC docs:
-
-   https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
- "
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <stable@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: babdde2698d4 ("x86: Implement array_index_mask_nospec")
-Link: https://lkml.kernel.org/lkml/152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/barrier.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/soc-dapm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/include/asm/barrier.h
-+++ b/arch/x86/include/asm/barrier.h
-@@ -37,7 +37,7 @@ static inline unsigned long array_index_
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -425,6 +425,8 @@ err_data:
+ static void dapm_kcontrol_free(struct snd_kcontrol *kctl)
  {
- 	unsigned long mask;
- 
--	asm ("cmp %1,%2; sbb %0,%0;"
-+	asm volatile ("cmp %1,%2; sbb %0,%0;"
- 			:"=r" (mask)
- 			:"g"(size),"r" (index)
- 			:"cc");
+ 	struct dapm_kcontrol_data *data = snd_kcontrol_chip(kctl);
++
++	list_del(&data->paths);
+ 	kfree(data->wlist);
+ 	kfree(data);
+ }
 
 
