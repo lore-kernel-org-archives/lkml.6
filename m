@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A17BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAF9C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6B5725842
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:02:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B5725842
+	by mail.kernel.org (Postfix) with ESMTP id B4FF22584D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FF22584D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965840AbeGASCb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:02:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34564 "EHLO
+        id S965860AbeGASDA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:03:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965617AbeGAQ3q (ORCPT
+        with ESMTP id S965850AbeGAQ3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:46 -0400
+        Sun, 1 Jul 2018 12:29:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4CF6092B;
-        Sun,  1 Jul 2018 16:29:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2559B92B;
+        Sun,  1 Jul 2018 16:29:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Handrigan <Paul.Handrigan@cirrus.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 018/157] ASoC: cs35l35: Add use_single_rw to regmap config
-Date:   Sun,  1 Jul 2018 18:21:30 +0200
-Message-Id: <20180701160853.182526017@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 4.14 014/157] PM / OPP: Update voltage in case freq == old_freq
+Date:   Sun,  1 Jul 2018 18:21:26 +0200
+Message-Id: <20180701160853.001765069@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -49,31 +50,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Handrigan <Paul.Handrigan@cirrus.com>
+From: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
 
-commit 6a6ad7face95af0b9e6aaf1eb2261eb70240b89b upstream.
+commit c5c2a97b3ac7d1ec19e7cff9e38caca6afefc3de upstream.
 
-Add the use_single_rw flag to regmap config since the
-device does not support bulk transactions over i2c.
+This commit fixes a rare but possible case when the clk rate is updated
+without update of the regulator voltage.
 
-Signed-off-by: Paul Handrigan <Paul.Handrigan@cirrus.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+At boot up, CPUfreq checks if the system is running at the right freq. This
+is a sanity check in case a bootloader set clk rate that is outside of freq
+table present with cpufreq core. In such cases system can be unstable so
+better to change it to a freq that is preset in freq-table.
+
+The CPUfreq takes next freq that is >= policy->cur and this is our
+target_freq that needs to be set now.
+
+dev_pm_opp_set_rate(dev, target_freq) checks the target_freq and the
+old_freq (a current rate). If these are equal it returns early. If not,
+it searches for OPP (old_opp) that fits best to old_freq (not listed in
+the table) and updates old_freq (!).
+
+Here, we can end up with old_freq = old_opp.rate = target_freq, which
+is not handled in _generic_set_opp_regulator(). It's supposed to update
+voltage only when freq > old_freq  || freq > old_freq.
+
+if (freq > old_freq) {
+		ret = _set_opp_voltage(dev, reg, new_supply);
+[...]
+if (freq < old_freq) {
+		ret = _set_opp_voltage(dev, reg, new_supply);
+		if (ret)
+
+It results in, no voltage update while clk rate is updated.
+
+Example:
+freq-table = {
+	1000MHz   1.15V
+	 666MHZ   1.10V
+	 333MHz   1.05V
+}
+boot-up-freq        = 800MHz   # not listed in freq-table
+freq = target_freq  = 1GHz
+old_freq            = 800Mhz
+old_opp = _find_freq_ceil(opp_table, &old_freq);  #(old_freq is modified!)
+old_freq            = 1GHz
+
+Fixes: 6a0712f6f199 ("PM / OPP: Add dev_pm_opp_set_rate()")
+Cc: 4.6+ <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/cs35l35.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/base/power/opp/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/cs35l35.c
-+++ b/sound/soc/codecs/cs35l35.c
-@@ -1106,6 +1106,7 @@ static struct regmap_config cs35l35_regm
- 	.readable_reg = cs35l35_readable_register,
- 	.precious_reg = cs35l35_precious_register,
- 	.cache_type = REGCACHE_RBTREE,
-+	.use_single_rw = true,
- };
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -552,7 +552,7 @@ static int _generic_set_opp_regulator(co
+ 	}
  
- static irqreturn_t cs35l35_irq(int irq, void *data)
+ 	/* Scaling up? Scale voltage before frequency */
+-	if (freq > old_freq) {
++	if (freq >= old_freq) {
+ 		ret = _set_opp_voltage(dev, reg, new_supply);
+ 		if (ret)
+ 			goto restore_voltage;
 
 
