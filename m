@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819C8C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F82C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44655253E5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44655253E5
+	by mail.kernel.org (Postfix) with ESMTP id 6B742253EA
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B742253EA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032328AbeGAQnQ (ORCPT
+        id S1032344AbeGAQnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:43:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37768 "EHLO
+        Sun, 1 Jul 2018 12:43:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37808 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032261AbeGAQnH (ORCPT
+        with ESMTP id S1032261AbeGAQnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:07 -0400
+        Sun, 1 Jul 2018 12:43:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 211B7A73;
-        Sun,  1 Jul 2018 16:43:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1402BA73;
+        Sun,  1 Jul 2018 16:43:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 142/220] scsi: zfcp: fix missing REC trigger trace on terminate_rport_io for ERP_FAILED
-Date:   Sun,  1 Jul 2018 18:22:46 +0200
-Message-Id: <20180701160914.241138185@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.17 146/220] libnvdimm, pmem: Unconditionally deep flush on *sync
+Date:   Sun,  1 Jul 2018 18:22:50 +0200
+Message-Id: <20180701160914.407149719@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,127 +51,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit d70aab55924b44f213fec2b900b095430b33eec6 upstream.
+commit ce7f11a230d5b7165480b96c0cc7a90358b5b5e2 upstream.
 
-For problem determination we always want to see when we were invoked on the
-terminate_rport_io callback whether we perform something or not.
+Prior to this commit we would only do a "deep flush" (have nvdimm_flush()
+write to each of the flush hints for a region) in response to an
+msync/fsync/sync call if the nvdimm_has_cache() returned true at the time
+we were setting up the request queue.  This happens due to the write cache
+value passed in to blk_queue_write_cache(), which then causes the block
+layer to send down BIOs with REQ_FUA and REQ_PREFLUSH set.  We do have a
+"write_cache" sysfs entry for namespaces, i.e.:
 
-Temporal event sequence of interest with a long fast_io_fail_tmo of 27 sec:
+  /sys/bus/nd/devices/pfn0.1/block/pmem0/dax/write_cache
 
-loose remote port
+which can be used to control whether or not the kernel thinks a given
+namespace has a write cache, but this didn't modify the deep flush behavior
+that we set up when the driver was initialized.  Instead, it only modified
+whether or not DAX would flush CPU caches via dax_flush() in response to
+*sync calls.
 
-t   workqueue
-[s] zfcp_q_<dev>       IRQ                 zfcperp<dev>
+Simplify this by making the *sync deep flush always happen, regardless of
+the write cache setting of a namespace.  The DAX CPU cache flushing will
+still be controlled the write_cache setting of the namespace.
 
-=== ================== =================== ============================
-
-  0                    recv RSCN
-                       q p.test_link_work
-    block rport
-     start fast_io_fail_tmo
-    send ADISC ELS
-  4                    recv ADISC fail
-                       block zfcp_port
-                                           port forced reopen
-                                           send open port
- 12                    recv open port fail
-                                           q p.gid_pn_work
-                                           zfcp_erp_wakeup
-                                           (zfcp_erp_wait would return)
-    GID_PN fail
-
-Before this point, we got a SCSI trace with tag "sctrpi1" on fast_io_fail,
-e.g. with the typical 5 sec setting.
-
-    port.status |= ERP_FAILED
-
-If fast_io_fail_tmo triggers after this point, we missed a SCSI trace.
-
-    workqueue
-    fc_dl_<host>
-    ==================
- 27 fc_timeout_fail_rport_io
-    fc_terminate_rport_io
-    zfcp_scsi_terminate_rport_io
-    zfcp_erp_port_forced_reopen
-    _zfcp_erp_port_forced_reopen
-     if (port.status & ERP_FAILED)
-      return;
-
-Therefore, write a trace before above early return.
-
-Example trace record formatted with zfcpdbf from s390-tools:
-
-Timestamp      : ...
-Area           : REC
-Subarea        : 00
-Level          : 1
-Exception      : -
-CPU ID         : ..
-Caller         : 0x...
-Record ID      : 1                      ZFCP_DBF_REC_TRIG
-Tag            : sctrpi1                SCSI terminate rport I/O
-LUN            : 0xffffffffffffffff                     none (invalid)
-WWPN           : 0x<wwpn>
-D_ID           : 0x<n_port_id>
-Adapter status : 0x...
-Port status    : 0x...
-LUN status     : 0x00000000                             none (invalid)
-Ready count    : 0x...
-Running count  : 0x...
-ERP want       : 0x03                   ZFCP_ERP_ACTION_REOPEN_PORT_FORCED
-ERP need       : 0xe0                   ZFCP_ERP_ACTION_FAILED
-
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Cc: <stable@vger.kernel.org> #2.6.38+
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_erp.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/nvdimm/pmem.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -42,9 +42,13 @@ enum zfcp_erp_steps {
-  * @ZFCP_ERP_ACTION_REOPEN_PORT_FORCED: Forced port recovery.
-  * @ZFCP_ERP_ACTION_REOPEN_ADAPTER: Adapter recovery.
-  * @ZFCP_ERP_ACTION_NONE: Eyecatcher pseudo flag to bitwise or-combine with
-- *			  either of the other enum values.
-+ *			  either of the first four enum values.
-  *			  Used to indicate that an ERP action could not be
-  *			  set up despite a detected need for some recovery.
-+ * @ZFCP_ERP_ACTION_FAILED: Eyecatcher pseudo flag to bitwise or-combine with
-+ *			    either of the first four enum values.
-+ *			    Used to indicate that ERP not needed because
-+ *			    the object has ZFCP_STATUS_COMMON_ERP_FAILED.
-  */
- enum zfcp_erp_act_type {
- 	ZFCP_ERP_ACTION_REOPEN_LUN         = 1,
-@@ -52,6 +56,7 @@ enum zfcp_erp_act_type {
- 	ZFCP_ERP_ACTION_REOPEN_PORT_FORCED = 3,
- 	ZFCP_ERP_ACTION_REOPEN_ADAPTER     = 4,
- 	ZFCP_ERP_ACTION_NONE		   = 0xc0,
-+	ZFCP_ERP_ACTION_FAILED		   = 0xe0,
- };
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -299,7 +299,7 @@ static int pmem_attach_disk(struct devic
+ {
+ 	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+ 	struct nd_region *nd_region = to_nd_region(dev->parent);
+-	int nid = dev_to_node(dev), fua, wbc;
++	int nid = dev_to_node(dev), fua;
+ 	struct resource *res = &nsio->res;
+ 	struct resource bb_res;
+ 	struct nd_pfn *nd_pfn = NULL;
+@@ -335,7 +335,6 @@ static int pmem_attach_disk(struct devic
+ 		dev_warn(dev, "unable to guarantee persistence of writes\n");
+ 		fua = 0;
+ 	}
+-	wbc = nvdimm_has_cache(nd_region);
  
- enum zfcp_erp_act_state {
-@@ -379,8 +384,12 @@ static void _zfcp_erp_port_forced_reopen
- 	zfcp_erp_port_block(port, clear);
- 	zfcp_scsi_schedule_rport_block(port);
+ 	if (!devm_request_mem_region(dev, res->start, resource_size(res),
+ 				dev_name(&ndns->dev))) {
+@@ -382,7 +381,7 @@ static int pmem_attach_disk(struct devic
+ 		return PTR_ERR(addr);
+ 	pmem->virt_addr = addr;
  
--	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
-+	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
-+		zfcp_dbf_rec_trig(id, port->adapter, port, NULL,
-+				  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
-+				  ZFCP_ERP_ACTION_FAILED);
- 		return;
-+	}
+-	blk_queue_write_cache(q, wbc, fua);
++	blk_queue_write_cache(q, true, fua);
+ 	blk_queue_make_request(q, pmem_make_request);
+ 	blk_queue_physical_block_size(q, PAGE_SIZE);
+ 	blk_queue_logical_block_size(q, pmem_sector_size(ndns));
+@@ -413,7 +412,7 @@ static int pmem_attach_disk(struct devic
+ 		put_disk(disk);
+ 		return -ENOMEM;
+ 	}
+-	dax_write_cache(dax_dev, wbc);
++	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+ 	pmem->dax_dev = dax_dev;
  
- 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
- 				port->adapter, port, NULL, id, 0);
+ 	gendev = disk_to_dev(disk);
 
 
