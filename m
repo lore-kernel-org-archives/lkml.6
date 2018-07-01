@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 832FBC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1777BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD31250DC
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD31250DC
+	by mail.kernel.org (Postfix) with ESMTP id C575E250DE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C575E250DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964880AbeGAQRt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:17:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32882 "EHLO
+        id S964892AbeGAQR4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:17:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32906 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752910AbeGAQRp (ORCPT
+        with ESMTP id S933105AbeGAQRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:45 -0400
+        Sun, 1 Jul 2018 12:17:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55C7193C;
-        Sun,  1 Jul 2018 16:17:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D26E486A;
+        Sun,  1 Jul 2018 16:17:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Eda Zhou <ezhou@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.4 063/105] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
-Date:   Sun,  1 Jul 2018 18:02:13 +0200
-Message-Id: <20180701153154.044203296@linuxfoundation.org>
+        stable@vger.kernel.org, Nordmark Claes <Claes.Nordmark@tieto.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.4 038/105] ipmi:bt: Set the timeout before doing a capabilities check
+Date:   Sun,  1 Jul 2018 18:01:48 +0200
+Message-Id: <20180701153151.972694922@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -52,42 +49,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
+commit fe50a7d0393a552e4539da2d31261a59d6415950 upstream.
 
-This patch prevents driver from setting lower default speed of 1 GB/sec,
-if the switch does not support Get Port Speed Capabilities (GPSC)
-command. Setting this default speed results into much lower write
-performance for large sequential WRITE.  This patch modifies driver to
-check for gpsc_supported flags and prevents driver from issuing
-MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
-does not send this mailbox command, firmware assumes maximum supported
-link speed and will operate at the max speed.
+There was one place where the timeout value for an operation was
+not being set, if a capabilities request was done from idle.  Move
+the timeout value setting to before where that change might be
+requested.
 
+IMHO the cause here is the invisible returns in the macros.  Maybe
+that's a job for later, though.
+
+Reported-by: Nordmark Claes <Claes.Nordmark@tieto.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reported-by: Eda Zhou <ezhou@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Tested-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    3 ++-
+ drivers/char/ipmi/ipmi_bt_sm.c |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -3261,7 +3261,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
- 		return;
+--- a/drivers/char/ipmi/ipmi_bt_sm.c
++++ b/drivers/char/ipmi/ipmi_bt_sm.c
+@@ -522,11 +522,12 @@ static enum si_sm_result bt_event(struct
+ 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
+ 			BT_CONTROL(BT_H_BUSY);
  
- 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
--	    fcport->fp_speed > ha->link_data_rate)
-+	    fcport->fp_speed > ha->link_data_rate ||
-+	    !ha->flags.gpsc_supported)
- 		return;
++		bt->timeout = bt->BT_CAP_req2rsp;
++
+ 		/* Read BT capabilities if it hasn't been done yet */
+ 		if (!bt->BT_CAP_outreqs)
+ 			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
+ 					SI_SM_CALL_WITHOUT_DELAY);
+-		bt->timeout = bt->BT_CAP_req2rsp;
+ 		BT_SI_SM_RETURN(SI_SM_IDLE);
  
- 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
+ 	case BT_STATE_XACTION_START:
 
 
