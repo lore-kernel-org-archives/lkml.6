@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0266C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5CEC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A32F23C1E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A32F23C1E
+	by mail.kernel.org (Postfix) with ESMTP id D6F7424C40
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:33:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F7424C40
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030818AbeGAQdj (ORCPT
+        id S1030835AbeGAQdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:33:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35424 "EHLO
+        Sun, 1 Jul 2018 12:33:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35438 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030801AbeGAQdf (ORCPT
+        with ESMTP id S1030819AbeGAQdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:35 -0400
+        Sun, 1 Jul 2018 12:33:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4538649B;
-        Sun,  1 Jul 2018 16:33:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB97892B;
+        Sun,  1 Jul 2018 16:33:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
         Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 097/157] scsi: zfcp: fix missing SCSI trace for result of eh_host_reset_handler
-Date:   Sun,  1 Jul 2018 18:22:49 +0200
-Message-Id: <20180701160857.404982605@linuxfoundation.org>
+Subject: [PATCH 4.14 099/157] scsi: zfcp: fix misleading REC trigger trace where erp_action setup failed
+Date:   Sun,  1 Jul 2018 18:22:51 +0200
+Message-Id: <20180701160857.498723165@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -54,137 +53,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steffen Maier <maier@linux.ibm.com>
 
-commit df30781699f53e4fd4c494c6f7dd16e3d5c21d30 upstream.
+commit 512857a795cbbda5980efa4cdb3c0b6602330408 upstream.
 
-For problem determination we need to see whether and why we were successful
-or not. This allows deduction of scsi_eh escalation.
+If a SCSI device is deleted during scsi_eh host reset, we cannot get a
+reference to the SCSI device anymore since scsi_device_get returns !=0 by
+design. Assuming the recovery of adapter and port(s) was successful,
+zfcp_erp_strategy_followup_success() attempts to trigger a LUN reset for the
+half-gone SCSI device. Unfortunately, it causes the following confusing
+trace record which states that zfcp will do a LUN recovery as "ERP need" is
+ZFCP_ERP_ACTION_REOPEN_LUN == 1 and equals "ERP want".
 
-Example trace record formatted with zfcpdbf from s390-tools:
+Old example trace record formatted with zfcpdbf from s390-tools:
 
-Timestamp      : ...
-Area           : SCSI
-Subarea        : 00
-Level          : 1
-Exception      : -
-CPU ID         : ..
-Caller         : 0x...
-Record ID      : 1
-Tag            : schrh_r        SCSI host reset handler result
-Request ID     : 0x0000000000000000                     none (invalid)
-SCSI ID        : 0xffffffff                             none (invalid)
-SCSI LUN       : 0xffffffff                             none (invalid)
-SCSI LUN high  : 0xffffffff                             none (invalid)
-SCSI result    : 0x00002002     field re-used for midlayer value: SUCCESS
-                                or in other cases: 0x2009 == FAST_IO_FAIL
-SCSI retries   : 0xff                                   none (invalid)
-SCSI allowed   : 0xff                                   none (invalid)
-SCSI scribble  : 0xffffffffffffffff                     none (invalid)
-SCSI opcode    : ffffffff ffffffff ffffffff ffffffff    none (invalid)
-FCP rsp inf cod: 0xff                                   none (invalid)
-FCP rsp IU     : 00000000 00000000 00000000 00000000    none (invalid)
-                 00000000 00000000
+Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
+LUN            : 0x<FCP_LUN>
+WWPN           : 0x<WWPN>
+D_ID           : 0x<N_Port-ID>
+Adapter status : 0x5400050b
+Port status    : 0x54000001
+LUN status     : 0x40000000     ZFCP_STATUS_COMMON_RUNNING
+                                but not ZFCP_STATUS_COMMON_UNBLOCKED as it
+                                was closed on close part of adapter reopen
+ERP want       : 0x01
+ERP need       : 0x01           misleading
 
-v2.6.35 commit a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from
-fc_block_scsi_eh to scsi eh") introduced the first return with something
-other than the previously hardcoded single SUCCESS return path.
+However, zfcp_erp_setup_act() returns NULL as it cannot get the reference.
+Hence, zfcp_erp_action_enqueue() takes an early goto out and _NO_ recovery
+actually happens.
+
+We always do want the recovery trigger trace record even if no erp_action
+could be enqueued as in this case. For other cases where we did not enqueue
+an erp_action, 'need' has always been zero to indicate this. In order to
+indicate above goto out, introduce an eyecatcher "flag" to mark the "ERP
+need" as 'not needed' but still keep the information which erp_action type,
+that zfcp_erp_required_act() had decided upon, is needed.  0xc_ is chosen to
+be visibly different from 0x0_ in "ERP want".
+
+New example trace record formatted with zfcpdbf from s390-tools:
+
+Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
+LUN            : 0x<FCP_LUN>
+WWPN           : 0x<WWPN>
+D_ID           : 0x<N_Port-ID>
+Adapter status : 0x5400050b
+Port status    : 0x54000001
+LUN status     : 0x40000000
+ERP want       : 0x01
+ERP need       : 0xc1           would need LUN ERP, but no action set up
+                   ^
+
+Before v2.6.38 commit ae0904f60fab ("[SCSI] zfcp: Redesign of the debug
+tracing for recovery actions.") we could detect this case because the
+"erp_action" field in the trace was NULL. The rework removed erp_action as
+argument and field from the trace.
+
+This patch here is for tracing. A fix to allow LUN recovery in the case at
+hand is a topic for a separate patch.
+
+See also commit fdbd1c5e27da ("[SCSI] zfcp: Allow running unit/LUN shutdown
+without acquiring reference") for a similar case and background info.
 
 Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from fc_block_scsi_eh to scsi eh")
+Fixes: ae0904f60fab ("[SCSI] zfcp: Redesign of the debug tracing for recovery actions.")
 Cc: <stable@vger.kernel.org> #2.6.38+
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
 Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_dbf.c  |   40 ++++++++++++++++++++++++++++++++++++++++
- drivers/s390/scsi/zfcp_ext.h  |    2 ++
- drivers/s390/scsi/zfcp_scsi.c |   11 ++++++-----
- 3 files changed, 48 insertions(+), 5 deletions(-)
+ drivers/s390/scsi/zfcp_erp.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/s390/scsi/zfcp_dbf.c
-+++ b/drivers/s390/scsi/zfcp_dbf.c
-@@ -664,6 +664,46 @@ void zfcp_dbf_scsi(char *tag, int level,
- 	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
- }
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -35,11 +35,23 @@ enum zfcp_erp_steps {
+ 	ZFCP_ERP_STEP_LUN_OPENING	= 0x2000,
+ };
  
 +/**
-+ * zfcp_dbf_scsi_eh() - Trace event for special cases of scsi_eh callbacks.
-+ * @tag: Identifier for event.
-+ * @adapter: Pointer to zfcp adapter as context for this event.
-+ * @scsi_id: SCSI ID/target to indicate scope of task management function (TMF).
-+ * @ret: Return value of calling function.
-+ *
-+ * This SCSI trace variant does not depend on any of:
-+ * scsi_cmnd, zfcp_fsf_req, scsi_device.
++ * enum zfcp_erp_act_type - Type of ERP action object.
++ * @ZFCP_ERP_ACTION_REOPEN_LUN: LUN recovery.
++ * @ZFCP_ERP_ACTION_REOPEN_PORT: Port recovery.
++ * @ZFCP_ERP_ACTION_REOPEN_PORT_FORCED: Forced port recovery.
++ * @ZFCP_ERP_ACTION_REOPEN_ADAPTER: Adapter recovery.
++ * @ZFCP_ERP_ACTION_NONE: Eyecatcher pseudo flag to bitwise or-combine with
++ *			  either of the other enum values.
++ *			  Used to indicate that an ERP action could not be
++ *			  set up despite a detected need for some recovery.
 + */
-+void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
-+		      unsigned int scsi_id, int ret)
-+{
-+	struct zfcp_dbf *dbf = adapter->dbf;
-+	struct zfcp_dbf_scsi *rec = &dbf->scsi_buf;
-+	unsigned long flags;
-+	static int const level = 1;
-+
-+	if (unlikely(!debug_level_enabled(adapter->dbf->scsi, level)))
-+		return;
-+
-+	spin_lock_irqsave(&dbf->scsi_lock, flags);
-+	memset(rec, 0, sizeof(*rec));
-+
-+	memcpy(rec->tag, tag, ZFCP_DBF_TAG_LEN);
-+	rec->id = ZFCP_DBF_SCSI_CMND;
-+	rec->scsi_result = ret; /* re-use field, int is 4 bytes and fits */
-+	rec->scsi_retries = ~0;
-+	rec->scsi_allowed = ~0;
-+	rec->fcp_rsp_info = ~0;
-+	rec->scsi_id = scsi_id;
-+	rec->scsi_lun = (u32)ZFCP_DBF_INVALID_LUN;
-+	rec->scsi_lun_64_hi = (u32)(ZFCP_DBF_INVALID_LUN >> 32);
-+	rec->host_scribble = ~0;
-+	memset(rec->scsi_opcode, 0xff, ZFCP_DBF_SCSI_OPCODE);
-+
-+	debug_event(dbf->scsi, level, rec, sizeof(*rec));
-+	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
-+}
-+
- static debug_info_t *zfcp_dbf_reg(const char *name, int size, int rec_size)
- {
- 	struct debug_info *d;
---- a/drivers/s390/scsi/zfcp_ext.h
-+++ b/drivers/s390/scsi/zfcp_ext.h
-@@ -52,6 +52,8 @@ extern void zfcp_dbf_san_res(char *, str
- extern void zfcp_dbf_san_in_els(char *, struct zfcp_fsf_req *);
- extern void zfcp_dbf_scsi(char *, int, struct scsi_cmnd *,
- 			  struct zfcp_fsf_req *);
-+extern void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
-+			     unsigned int scsi_id, int ret);
+ enum zfcp_erp_act_type {
+ 	ZFCP_ERP_ACTION_REOPEN_LUN         = 1,
+ 	ZFCP_ERP_ACTION_REOPEN_PORT	   = 2,
+ 	ZFCP_ERP_ACTION_REOPEN_PORT_FORCED = 3,
+ 	ZFCP_ERP_ACTION_REOPEN_ADAPTER     = 4,
++	ZFCP_ERP_ACTION_NONE		   = 0xc0,
+ };
  
- /* zfcp_erp.c */
- extern void zfcp_erp_set_adapter_status(struct zfcp_adapter *, u32);
---- a/drivers/s390/scsi/zfcp_scsi.c
-+++ b/drivers/s390/scsi/zfcp_scsi.c
-@@ -323,15 +323,16 @@ static int zfcp_scsi_eh_host_reset_handl
- {
- 	struct zfcp_scsi_dev *zfcp_sdev = sdev_to_zfcp(scpnt->device);
- 	struct zfcp_adapter *adapter = zfcp_sdev->port->adapter;
--	int ret;
-+	int ret = SUCCESS, fc_ret;
+ enum zfcp_erp_act_state {
+@@ -257,8 +269,10 @@ static int zfcp_erp_action_enqueue(int w
+ 		goto out;
  
- 	zfcp_erp_adapter_reopen(adapter, 0, "schrh_1");
- 	zfcp_erp_wait(adapter);
--	ret = fc_block_scsi_eh(scpnt);
--	if (ret)
--		return ret;
-+	fc_ret = fc_block_scsi_eh(scpnt);
-+	if (fc_ret)
-+		ret = fc_ret;
- 
--	return SUCCESS;
-+	zfcp_dbf_scsi_eh("schrh_r", adapter, ~0, ret);
-+	return ret;
- }
- 
- struct scsi_transport_template *zfcp_scsi_transport_template;
+ 	act = zfcp_erp_setup_act(need, act_status, adapter, port, sdev);
+-	if (!act)
++	if (!act) {
++		need |= ZFCP_ERP_ACTION_NONE; /* marker for trace */
+ 		goto out;
++	}
+ 	atomic_or(ZFCP_STATUS_ADAPTER_ERP_PENDING, &adapter->status);
+ 	++adapter->erp_total_count;
+ 	list_add_tail(&act->list, &adapter->erp_ready_head);
 
 
