@@ -6,32 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80806C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BA2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E6692546A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6692546A
+	by mail.kernel.org (Postfix) with ESMTP id C212F2546C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C212F2546C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933994AbeGAQt3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:49:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38534 "EHLO
+        id S1030500AbeGAQts (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:49:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753728AbeGAQqn (ORCPT
+        with ESMTP id S1032543AbeGAQql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:43 -0400
+        Sun, 1 Jul 2018 12:46:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB077AA6;
-        Sun,  1 Jul 2018 16:46:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A19DACC;
+        Sun,  1 Jul 2018 16:46:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.17 218/220] dm zoned: avoid triggering reclaim from inside dmz_map()
-Date:   Sun,  1 Jul 2018 18:24:02 +0200
-Message-Id: <20180701160917.244819761@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Baoquan He <bhe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 217/220] x86/efi: Fix efi_call_phys_epilog() with CONFIG_X86_5LEVEL=y
+Date:   Sun,  1 Jul 2018 18:24:01 +0200
+Message-Id: <20180701160917.204993240@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -48,125 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-commit 2d0b2d64d325e22939d9db3ba784f1236459ed98 upstream.
+commit cfe19577047e74cdac5826adbdc2337d8437f8fb upstream.
 
-This patch avoids that lockdep reports the following:
+Open-coded page table entry checks don't work correctly when we fold the
+page table level at runtime.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.18.0-rc1 #62 Not tainted
-------------------------------------------------------
-kswapd0/84 is trying to acquire lock:
-00000000c313516d (&xfs_nondir_ilock_class){++++}, at: xfs_free_eofblocks+0xa2/0x1e0
+pgd_present() on 4-level paging machine always returns true, but
+open-coded version of the check may return false-negative result and
+we silently skip the rest of the loop body in efi_call_phys_epilog().
 
-but task is already holding lock:
-00000000591c83ae (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x5/0x30
+Replace open-coded checks with proper helpers.
 
-which lock already depends on the new lock.
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (fs_reclaim){+.+.}:
-  kmem_cache_alloc+0x2c/0x2b0
-  radix_tree_node_alloc.constprop.19+0x3d/0xc0
-  __radix_tree_create+0x161/0x1c0
-  __radix_tree_insert+0x45/0x210
-  dmz_map+0x245/0x2d0 [dm_zoned]
-  __map_bio+0x40/0x260
-  __split_and_process_non_flush+0x116/0x220
-  __split_and_process_bio+0x81/0x180
-  __dm_make_request.isra.32+0x5a/0x100
-  generic_make_request+0x36e/0x690
-  submit_bio+0x6c/0x140
-  mpage_readpages+0x19e/0x1f0
-  read_pages+0x6d/0x1b0
-  __do_page_cache_readahead+0x21b/0x2d0
-  force_page_cache_readahead+0xc4/0x100
-  generic_file_read_iter+0x7c6/0xd20
-  __vfs_read+0x102/0x180
-  vfs_read+0x9b/0x140
-  ksys_read+0x55/0xc0
-  do_syscall_64+0x5a/0x1f0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&dmz->chunk_lock){+.+.}:
-  dmz_map+0x133/0x2d0 [dm_zoned]
-  __map_bio+0x40/0x260
-  __split_and_process_non_flush+0x116/0x220
-  __split_and_process_bio+0x81/0x180
-  __dm_make_request.isra.32+0x5a/0x100
-  generic_make_request+0x36e/0x690
-  submit_bio+0x6c/0x140
-  _xfs_buf_ioapply+0x31c/0x590
-  xfs_buf_submit_wait+0x73/0x520
-  xfs_buf_read_map+0x134/0x2f0
-  xfs_trans_read_buf_map+0xc3/0x580
-  xfs_read_agf+0xa5/0x1e0
-  xfs_alloc_read_agf+0x59/0x2b0
-  xfs_alloc_pagf_init+0x27/0x60
-  xfs_bmap_longest_free_extent+0x43/0xb0
-  xfs_bmap_btalloc_nullfb+0x7f/0xf0
-  xfs_bmap_btalloc+0x428/0x7c0
-  xfs_bmapi_write+0x598/0xcc0
-  xfs_iomap_write_allocate+0x15a/0x330
-  xfs_map_blocks+0x1cf/0x3f0
-  xfs_do_writepage+0x15f/0x7b0
-  write_cache_pages+0x1ca/0x540
-  xfs_vm_writepages+0x65/0xa0
-  do_writepages+0x48/0xf0
-  __writeback_single_inode+0x58/0x730
-  writeback_sb_inodes+0x249/0x5c0
-  wb_writeback+0x11e/0x550
-  wb_workfn+0xa3/0x670
-  process_one_work+0x228/0x670
-  worker_thread+0x3c/0x390
-  kthread+0x11c/0x140
-  ret_from_fork+0x3a/0x50
-
--> #0 (&xfs_nondir_ilock_class){++++}:
-  down_read_nested+0x43/0x70
-  xfs_free_eofblocks+0xa2/0x1e0
-  xfs_fs_destroy_inode+0xac/0x270
-  dispose_list+0x51/0x80
-  prune_icache_sb+0x52/0x70
-  super_cache_scan+0x127/0x1a0
-  shrink_slab.part.47+0x1bd/0x590
-  shrink_node+0x3b5/0x470
-  balance_pgdat+0x158/0x3b0
-  kswapd+0x1ba/0x600
-  kthread+0x11c/0x140
-  ret_from_fork+0x3a/0x50
-
-other info that might help us debug this:
-
-Chain exists of:
-  &xfs_nondir_ilock_class --> &dmz->chunk_lock --> fs_reclaim
-
-Possible unsafe locking scenario:
-
-     CPU0                    CPU1
-     ----                    ----
-lock(fs_reclaim);
-                             lock(&dmz->chunk_lock);
-                             lock(fs_reclaim);
-lock(&xfs_nondir_ilock_class);
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org # v4.12+
+Fixes: 94133e46a0f5 ("x86/efi: Correct EFI identity mapping under 'efi=old_map' when KASLR is enabled")
+Link: http://lkml.kernel.org/r/20180625120852.18300-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-target.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/platform/efi/efi_64.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -788,7 +788,7 @@ static int dmz_ctr(struct dm_target *ti,
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -166,14 +166,14 @@ void __init efi_call_phys_epilog(pgd_t *
+ 		pgd = pgd_offset_k(pgd_idx * PGDIR_SIZE);
+ 		set_pgd(pgd_offset_k(pgd_idx * PGDIR_SIZE), save_pgd[pgd_idx]);
  
- 	/* Chunk BIO work */
- 	mutex_init(&dmz->chunk_lock);
--	INIT_RADIX_TREE(&dmz->chunk_rxtree, GFP_KERNEL);
-+	INIT_RADIX_TREE(&dmz->chunk_rxtree, GFP_NOIO);
- 	dmz->chunk_wq = alloc_workqueue("dmz_cwq_%s", WQ_MEM_RECLAIM | WQ_UNBOUND,
- 					0, dev->name);
- 	if (!dmz->chunk_wq) {
+-		if (!(pgd_val(*pgd) & _PAGE_PRESENT))
++		if (!pgd_present(*pgd))
+ 			continue;
+ 
+ 		for (i = 0; i < PTRS_PER_P4D; i++) {
+ 			p4d = p4d_offset(pgd,
+ 					 pgd_idx * PGDIR_SIZE + i * P4D_SIZE);
+ 
+-			if (!(p4d_val(*p4d) & _PAGE_PRESENT))
++			if (!p4d_present(*p4d))
+ 				continue;
+ 
+ 			pud = (pud_t *)p4d_page_vaddr(*p4d);
 
 
