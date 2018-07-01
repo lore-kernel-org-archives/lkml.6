@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A73C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F974C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537C8254BD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 537C8254BD
+	by mail.kernel.org (Postfix) with ESMTP id 191E3249B0
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191E3249B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeGAQxd (ORCPT
+        id S1753659AbeGAQxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:53:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38240 "EHLO
+        Sun, 1 Jul 2018 12:53:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbeGAQpe (ORCPT
+        with ESMTP id S964788AbeGAQp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:34 -0400
+        Sun, 1 Jul 2018 12:45:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6E6CA73;
-        Sun,  1 Jul 2018 16:45:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E137A73;
+        Sun,  1 Jul 2018 16:45:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.17 197/220] Input: psmouse - fix button reporting for basic protocols
-Date:   Sun,  1 Jul 2018 18:23:41 +0200
-Message-Id: <20180701160916.415186666@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.17 195/220] udf: Detect incorrect directory size
+Date:   Sun,  1 Jul 2018 18:23:39 +0200
+Message-Id: <20180701160916.330434753@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,63 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 03ae3a9caf4a59edd32b65c89c375a98ce3ea1ef upstream.
+commit fa65653e575fbd958bdf5fb9c4a71a324e39510d upstream.
 
-The commit ba667650c568 ("Input: psmouse - clean up code") was pretty
-brain-dead and broke extra buttons reporting for variety of PS/2 mice:
-Genius, Thinkmouse and Intellimouse Explorer. We need to actually inspect
-the data coming from the device when reporting events.
+Detect when a directory entry is (possibly partially) beyond directory
+size and return EIO in that case since it means the filesystem is
+corrupted. Otherwise directory operations can further corrupt the
+directory and possibly also oops the kernel.
 
-Fixes: ba667650c568 ("Input: psmouse - clean up code")
-Reported-by: Jiri Slaby <jslaby@suse.cz>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+CC: stable@vger.kernel.org
+Reported-and-tested-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/psmouse-base.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/udf/directory.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/mouse/psmouse-base.c
-+++ b/drivers/input/mouse/psmouse-base.c
-@@ -192,8 +192,8 @@ psmouse_ret_t psmouse_process_byte(struc
- 			else
- 				input_report_rel(dev, REL_WHEEL, -wheel);
- 
--			input_report_key(dev, BTN_SIDE,  BIT(4));
--			input_report_key(dev, BTN_EXTRA, BIT(5));
-+			input_report_key(dev, BTN_SIDE,  packet[3] & BIT(4));
-+			input_report_key(dev, BTN_EXTRA, packet[3] & BIT(5));
- 			break;
+--- a/fs/udf/directory.c
++++ b/fs/udf/directory.c
+@@ -152,6 +152,9 @@ struct fileIdentDesc *udf_fileident_read
+ 			       sizeof(struct fileIdentDesc));
  		}
- 		break;
-@@ -203,13 +203,13 @@ psmouse_ret_t psmouse_process_byte(struc
- 		input_report_rel(dev, REL_WHEEL, -(s8) packet[3]);
- 
- 		/* Extra buttons on Genius NewNet 3D */
--		input_report_key(dev, BTN_SIDE,  BIT(6));
--		input_report_key(dev, BTN_EXTRA, BIT(7));
-+		input_report_key(dev, BTN_SIDE,  packet[0] & BIT(6));
-+		input_report_key(dev, BTN_EXTRA, packet[0] & BIT(7));
- 		break;
- 
- 	case PSMOUSE_THINKPS:
- 		/* Extra button on ThinkingMouse */
--		input_report_key(dev, BTN_EXTRA, BIT(3));
-+		input_report_key(dev, BTN_EXTRA, packet[0] & BIT(3));
- 
- 		/*
- 		 * Without this bit of weirdness moving up gives wildly
-@@ -223,7 +223,7 @@ psmouse_ret_t psmouse_process_byte(struc
- 		 * Cortron PS2 Trackball reports SIDE button in the
- 		 * 4th bit of the first byte.
- 		 */
--		input_report_key(dev, BTN_SIDE, BIT(3));
-+		input_report_key(dev, BTN_SIDE, packet[0] & BIT(3));
- 		packet[0] |= BIT(3);
- 		break;
+ 	}
++	/* Got last entry outside of dir size - fs is corrupted! */
++	if (*nf_pos > dir->i_size)
++		return NULL;
+ 	return fi;
+ }
  
 
 
