@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 310F0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84137C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5720250C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5720250C4
+	by mail.kernel.org (Postfix) with ESMTP id 4A7A4250CE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:17:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A7A4250CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964802AbeGAQRc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:17:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32770 "EHLO
+        id S964828AbeGAQRi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:17:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932954AbeGAQRT (ORCPT
+        with ESMTP id S932954AbeGAQRe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:19 -0400
+        Sun, 1 Jul 2018 12:17:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CD38692B;
-        Sun,  1 Jul 2018 16:17:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8121593C;
+        Sun,  1 Jul 2018 16:17:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 037/105] branch-check: fix long->int truncation when profiling branches
-Date:   Sun,  1 Jul 2018 18:01:47 +0200
-Message-Id: <20180701153151.900623724@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>
+Subject: [PATCH 4.4 059/105] MIPS: io: Add barrier after register read in inX()
+Date:   Sun,  1 Jul 2018 18:02:09 +0200
+Message-Id: <20180701153153.787462042@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,41 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
+commit 18f3e95b90b28318ef35910d21c39908de672331 upstream.
 
-The function __builtin_expect returns long type (see the gcc
-documentation), and so do macros likely and unlikely. Unfortunatelly, when
-CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
-unlikely expand to __branch_check__ and __branch_check__ truncates the
-long type to int. This unintended truncation may cause bugs in various
-kernel code (we found a bug in dm-writecache because of it), so it's
-better to fix __branch_check__ to return long.
+While a barrier is present in the outX() functions before the register
+write, a similar barrier is missing in the inX() functions after the
+register read. This could allow memory accesses following inX() to
+observe stale data.
 
-Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
+This patch is very similar to commit a1cc7034e33d12dc1 ("MIPS: io: Add
+barrier after register read in readX()"). Because war_io_reorder_wmb()
+is both used by writeX() and outX(), if readX() need a barrier then so
+does inX().
 
-Cc: Ingo Molnar <mingo@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19516/
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/compiler.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/include/asm/io.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -111,7 +111,7 @@ void ftrace_likely_update(struct ftrace_
- #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -411,6 +411,8 @@ static inline type pfx##in##bwlq##p(unsi
+ 	__val = *__addr;						\
+ 	slow;								\
+ 									\
++	/* prevent prefetching of coherent DMA data prematurely */	\
++	rmb();								\
+ 	return pfx##ioswab##bwlq(__addr, __val);			\
+ }
  
- #define __branch_check__(x, expect) ({					\
--			int ______r;					\
-+			long ______r;					\
- 			static struct ftrace_branch_data		\
- 				__attribute__((__aligned__(4)))		\
- 				__attribute__((section("_ftrace_annotated_branch"))) \
 
 
