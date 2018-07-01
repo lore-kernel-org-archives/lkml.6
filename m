@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19228C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C83AC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA65A25765
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:49:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA65A25765
+	by mail.kernel.org (Postfix) with ESMTP id 134292576C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:50:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134292576C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965986AbeGARtj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:49:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35286 "EHLO
+        id S934171AbeGARuM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:50:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35236 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030717AbeGAQdB (ORCPT
+        with ESMTP id S1030320AbeGAQcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:33:01 -0400
+        Sun, 1 Jul 2018 12:32:47 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDF3A49B;
-        Sun,  1 Jul 2018 16:33:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 096B5AA6;
+        Sun,  1 Jul 2018 16:32:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>
-Subject: [PATCH 4.14 086/157] MIPS: io: Add barrier after register read in inX()
-Date:   Sun,  1 Jul 2018 18:22:38 +0200
-Message-Id: <20180701160856.876093337@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 073/157] mtd: cfi_cmdset_0002: Use right chip in do_ppb_xxlock()
+Date:   Sun,  1 Jul 2018 18:22:25 +0200
+Message-Id: <20180701160856.261879258@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,45 +50,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit 18f3e95b90b28318ef35910d21c39908de672331 upstream.
+commit f93aa8c4de307069c270b2d81741961162bead6c upstream.
 
-While a barrier is present in the outX() functions before the register
-write, a similar barrier is missing in the inX() functions after the
-register read. This could allow memory accesses following inX() to
-observe stale data.
+do_ppb_xxlock() fails to add chip->start when querying for lock status
+(and chip_ready test), which caused false status reports.
+Fix that by adding adr += chip->start and adjust call sites
+accordingly.
 
-This patch is very similar to commit a1cc7034e33d12dc1 ("MIPS: io: Add
-barrier after register read in readX()"). Because war_io_reorder_wmb()
-is both used by writeX() and outX(), if readX() need a barrier then so
-does inX().
-
+Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
 Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19516/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <james.hogan@mips.com>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/io.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -414,6 +414,8 @@ static inline type pfx##in##bwlq##p(unsi
- 	__val = *__addr;						\
- 	slow;								\
- 									\
-+	/* prevent prefetching of coherent DMA data prematurely */	\
-+	rmb();								\
- 	return pfx##ioswab##bwlq(__addr, __val);			\
- }
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -2553,8 +2553,9 @@ static int __maybe_unused do_ppb_xxlock(
+ 	unsigned long timeo;
+ 	int ret;
  
++	adr += chip->start;
+ 	mutex_lock(&chip->mutex);
+-	ret = get_chip(map, chip, adr + chip->start, FL_LOCKING);
++	ret = get_chip(map, chip, adr, FL_LOCKING);
+ 	if (ret) {
+ 		mutex_unlock(&chip->mutex);
+ 		return ret;
+@@ -2572,8 +2573,8 @@ static int __maybe_unused do_ppb_xxlock(
+ 
+ 	if (thunk == DO_XXLOCK_ONEBLOCK_LOCK) {
+ 		chip->state = FL_LOCKING;
+-		map_write(map, CMD(0xA0), chip->start + adr);
+-		map_write(map, CMD(0x00), chip->start + adr);
++		map_write(map, CMD(0xA0), adr);
++		map_write(map, CMD(0x00), adr);
+ 	} else if (thunk == DO_XXLOCK_ONEBLOCK_UNLOCK) {
+ 		/*
+ 		 * Unlocking of one specific sector is not supported, so we
+@@ -2611,7 +2612,7 @@ static int __maybe_unused do_ppb_xxlock(
+ 	map_write(map, CMD(0x00), chip->start);
+ 
+ 	chip->state = FL_READY;
+-	put_chip(map, chip, adr + chip->start);
++	put_chip(map, chip, adr);
+ 	mutex_unlock(&chip->mutex);
+ 
+ 	return ret;
 
 
