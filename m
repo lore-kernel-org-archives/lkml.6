@@ -3,37 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4A0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F889C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E1EA250FD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1EA250FD
+	by mail.kernel.org (Postfix) with ESMTP id D76E125103
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76E125103
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964977AbeGAQTh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:19:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33222 "EHLO
+        id S965032AbeGAQTs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:19:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933589AbeGAQTd (ORCPT
+        with ESMTP id S965012AbeGAQTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:19:33 -0400
+        Sun, 1 Jul 2018 12:19:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D0B149B;
-        Sun,  1 Jul 2018 16:19:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E45FB49B;
+        Sun,  1 Jul 2018 16:19:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 100/105] Btrfs: fix unexpected cow in run_delalloc_nocow
-Date:   Sun,  1 Jul 2018 18:02:50 +0200
-Message-Id: <20180701153156.649531319@linuxfoundation.org>
+        stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        Timo Teras <timo.teras@iki.fi>,
+        Christophe Gouault <christophe.gouault@6wind.com>,
+        syzbot 
+        <bot+c028095236fcb6f4348811565b75084c754dc729@syzkaller.appspotmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.4 076/105] xfrm: skip policies marked as dead while rehashing
+Date:   Sun,  1 Jul 2018 18:02:26 +0200
+Message-Id: <20180701153154.914240155@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,92 +55,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 5811375325420052fcadd944792a416a43072b7f upstream.
+commit 862591bf4f519d1b8d859af720fafeaebdd0162a upstream.
 
-Fstests generic/475 provides a way to fail metadata reads while
-checking if checksum exists for the inode inside run_delalloc_nocow(),
-and csum_exist_in_range() interprets error (-EIO) as inode having
-checksum and makes its caller enter the cow path.
+syzkaller triggered following KASAN splat:
 
-In case of free space inode, this ends up with a warning in
-cow_file_range().
+BUG: KASAN: slab-out-of-bounds in xfrm_hash_rebuild+0xdbe/0xf00 net/xfrm/xfrm_policy.c:618
+read of size 2 at addr ffff8801c8e92fe4 by task kworker/1:1/23 [..]
+Workqueue: events xfrm_hash_rebuild [..]
+ __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:428
+ xfrm_hash_rebuild+0xdbe/0xf00 net/xfrm/xfrm_policy.c:618
+ process_one_work+0xbbf/0x1b10 kernel/workqueue.c:2112
+ worker_thread+0x223/0x1990 kernel/workqueue.c:2246 [..]
 
-The same problem applies to btrfs_cross_ref_exist() since it may also
-read metadata in between.
+The reproducer triggers:
+1016                 if (error) {
+1017                         list_move_tail(&walk->walk.all, &x->all);
+1018                         goto out;
+1019                 }
 
-With this, run_delalloc_nocow() bails out when errors occur at the two
-places.
+in xfrm_policy_walk() via pfkey (it sets tiny rcv space, dump
+callback returns -ENOBUFS).
 
-cc: <stable@vger.kernel.org> v2.6.28+
-Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+In this case, *walk is located the pfkey socket struct, so this socket
+becomes visible in the global policy list.
+
+It looks like this is intentional -- phony walker has walk.dead set to 1
+and all other places skip such "policies".
+
+Ccing original authors of the two commits that seem to expose this
+issue (first patch missed ->dead check, second patch adds pfkey
+sockets to policies dumper list).
+
+Fixes: 880a6fab8f6ba5b ("xfrm: configure policy hash table thresholds by netlink")
+Fixes: 12a169e7d8f4b1c ("ipsec: Put dumpers on the dump list")
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Timo Teras <timo.teras@iki.fi>
+Cc: Christophe Gouault <christophe.gouault@6wind.com>
+Reported-by: syzbot <bot+c028095236fcb6f4348811565b75084c754dc729@syzkaller.appspotmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/inode.c |   33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1202,6 +1202,8 @@ static noinline int csum_exist_in_range(
- 		list_del(&sums->list);
- 		kfree(sums);
- 	}
-+	if (ret < 0)
-+		return ret;
- 	return 1;
- }
+---
+ net/xfrm/xfrm_policy.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -626,7 +626,8 @@ static void xfrm_hash_rebuild(struct wor
  
-@@ -1351,10 +1353,23 @@ next_slot:
- 				goto out_check;
- 			if (btrfs_extent_readonly(root, disk_bytenr))
- 				goto out_check;
--			if (btrfs_cross_ref_exist(trans, root, ino,
-+			ret = btrfs_cross_ref_exist(trans, root, ino,
- 						  found_key.offset -
--						  extent_offset, disk_bytenr))
-+						  extent_offset, disk_bytenr);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			disk_bytenr += extent_offset;
- 			disk_bytenr += cur_offset - found_key.offset;
- 			num_bytes = min(end + 1, extent_end) - cur_offset;
-@@ -1372,8 +1387,20 @@ next_slot:
- 			 * this ensure that csum for a given extent are
- 			 * either valid or do not exist.
- 			 */
--			if (csum_exist_in_range(root, disk_bytenr, num_bytes))
-+			ret = csum_exist_in_range(root, disk_bytenr, num_bytes);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			nocow = 1;
- 		} else if (extent_type == BTRFS_FILE_EXTENT_INLINE) {
- 			extent_end = found_key.offset +
+ 	/* re-insert all policies by order of creation */
+ 	list_for_each_entry_reverse(policy, &net->xfrm.policy_all, walk.all) {
+-		if (xfrm_policy_id2dir(policy->index) >= XFRM_POLICY_MAX) {
++		if (policy->walk.dead ||
++		    xfrm_policy_id2dir(policy->index) >= XFRM_POLICY_MAX) {
+ 			/* skip socket policies */
+ 			continue;
+ 		}
 
 
