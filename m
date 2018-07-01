@@ -3,38 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94550C6778D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97713C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0D025333
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:37:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0D025333
+	by mail.kernel.org (Postfix) with ESMTP id 5182625334
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:38:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5182625334
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031504AbeGAQhx (ORCPT
+        id S1031521AbeGAQiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:37:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36422 "EHLO
+        Sun, 1 Jul 2018 12:38:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031397AbeGAQhq (ORCPT
+        with ESMTP id S1031397AbeGAQhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:37:46 -0400
+        Sun, 1 Jul 2018 12:37:55 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74516A73;
-        Sun,  1 Jul 2018 16:37:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E0F46A73;
+        Sun,  1 Jul 2018 16:37:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.17 029/220] ASoC: cirrus: i2s: Fix LRCLK configuration
-Date:   Sun,  1 Jul 2018 18:20:53 +0200
-Message-Id: <20180701160909.555611339@linuxfoundation.org>
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.17 031/220] thermal: bcm2835: Stop using printk format %pCr
+Date:   Sun,  1 Jul 2018 18:20:55 +0200
+Message-Id: <20180701160909.632858221@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,80 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 2d534113be9a2aa532a1ae127a57e83558aed358 upstream.
+commit bd2a07f71a1e2e198f8a30cb551d9defe422d83d upstream.
 
-The bit responsible for LRCLK polarity is i2s_tlrs (0), not i2s_trel (2)
-(refer to "EP93xx User's Guide").
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-Previously card drivers which specified SND_SOC_DAIFMT_NB_IF actually got
-SND_SOC_DAIFMT_NB_NF, an adaptation is necessary to retain the old
-behavior.
+Replace it by printing the variable that already holds the clock rate.
+Note that calling clk_get_rate() is safe here, as the code runs in task
+context.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1527845302-12159-3-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.12+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/cirrus/edb93xx.c     |    2 +-
- sound/soc/cirrus/ep93xx-i2s.c  |    8 ++++----
- sound/soc/cirrus/snappercl15.c |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/thermal/broadcom/bcm2835_thermal.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/cirrus/edb93xx.c
-+++ b/sound/soc/cirrus/edb93xx.c
-@@ -67,7 +67,7 @@ static struct snd_soc_dai_link edb93xx_d
- 	.cpu_dai_name	= "ep93xx-i2s",
- 	.codec_name	= "spi0.0",
- 	.codec_dai_name	= "cs4271-hifi",
--	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
-+	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			  SND_SOC_DAIFMT_CBS_CFS,
- 	.ops		= &edb93xx_ops,
- };
---- a/sound/soc/cirrus/ep93xx-i2s.c
-+++ b/sound/soc/cirrus/ep93xx-i2s.c
-@@ -213,24 +213,24 @@ static int ep93xx_i2s_set_dai_fmt(struct
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_NF:
- 		/* Negative bit clock, lrclk low on left word */
--		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL);
-+		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS);
- 		break;
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct
+ 	rate = clk_get_rate(data->clk);
+ 	if ((rate < 1920000) || (rate > 5000000))
+ 		dev_warn(&pdev->dev,
+-			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
+-			 data->clk, data->clk);
++			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
++			 data->clk, rate);
  
- 	case SND_SOC_DAIFMT_NB_IF:
- 		/* Negative bit clock, lrclk low on right word */
- 		clk_cfg &= ~EP93XX_I2S_CLKCFG_CKP;
--		clk_cfg |= EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg |= EP93XX_I2S_CLKCFG_LRS;
- 		break;
- 
- 	case SND_SOC_DAIFMT_IB_NF:
- 		/* Positive bit clock, lrclk low on left word */
- 		clk_cfg |= EP93XX_I2S_CLKCFG_CKP;
--		clk_cfg &= ~EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg &= ~EP93XX_I2S_CLKCFG_LRS;
- 		break;
- 
- 	case SND_SOC_DAIFMT_IB_IF:
- 		/* Positive bit clock, lrclk low on right word */
--		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS;
- 		break;
- 	}
- 
---- a/sound/soc/cirrus/snappercl15.c
-+++ b/sound/soc/cirrus/snappercl15.c
-@@ -72,7 +72,7 @@ static struct snd_soc_dai_link snappercl
- 	.codec_dai_name	= "tlv320aic23-hifi",
- 	.codec_name	= "tlv320aic23-codec.0-001a",
- 	.platform_name	= "ep93xx-i2s",
--	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
-+	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			  SND_SOC_DAIFMT_CBS_CFS,
- 	.ops		= &snappercl15_ops,
- };
+ 	/* register of thermal sensor and get info from DT */
+ 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
 
 
