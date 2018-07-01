@@ -2,38 +2,39 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C614C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7464C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E30254F6
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:04:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E30254F6
+	by mail.kernel.org (Postfix) with ESMTP id A126025562
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:05:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A126025562
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933609AbeGAREF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:04:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37714 "EHLO
+        id S1032195AbeGAQmc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:42:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032244AbeGAQmv (ORCPT
+        with ESMTP id S1031809AbeGAQm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:51 -0400
+        Sun, 1 Jul 2018 12:42:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF73BACC;
-        Sun,  1 Jul 2018 16:42:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FD55A73;
+        Sun,  1 Jul 2018 16:42:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikhail Malygin <m.malygin@yadro.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 137/220] scsi: qla2xxx: Spinlock recursion in qla_target
-Date:   Sun,  1 Jul 2018 18:22:41 +0200
-Message-Id: <20180701160914.029216622@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.17 111/220] clk:aspeed: Fix reset bits for PCI/VGA and PECI
+Date:   Sun,  1 Jul 2018 18:22:15 +0200
+Message-Id: <20180701160913.007992346@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,59 +51,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikhail Malygin <m.malygin@yadro.com>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 
-commit 49d7bd36813ea8e6b4c97b640d24e7fbd44c84f0 upstream.
+commit e76e56823a318ca580be4cfc5a6a9269bc70abea upstream.
 
-The patch reverts changes done in qlt_schedule_sess_for_deletion() to
-avoid spinlock recursion sess->vha->work_lock should be used instead
-of ha->tgt.sess_lock, that can be locked in callers: qlt_reset() or
-qlt_handle_login()
+This commit fixes incorrect setting of reset bits for PCI/VGA and
+PECI modules.
 
-[mkp: roll in build warning reported by sfr]
+1. Reset bit for PCI/VGA is 8.
+2. PECI reset bit is missing so added bit 10 as its reset bit.
 
-Fixes: 1c6cacf4ea6c04 ("scsi: qla2xxx: Fixup locking for session deletion")
-Cc: <stable@vger.kernel.org> #v4.17
-Signed-off-by: Mikhail Malygin <m.malygin@yadro.com>
-Reported-by: Mikhail Malygin <m.malygin@yadro.com>
-Tested-by: Mikhail Malygin <m.malygin@yadro.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_target.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/clk/clk-aspeed.c                 |    4 ++--
+ include/dt-bindings/clock/aspeed-clock.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1230,7 +1230,6 @@ static void qla24xx_chk_fcp_state(struct
- void qlt_schedule_sess_for_deletion(struct fc_port *sess)
- {
- 	struct qla_tgt *tgt = sess->tgt;
--	struct qla_hw_data *ha = sess->vha->hw;
- 	unsigned long flags;
- 
- 	if (sess->disc_state == DSC_DELETE_PEND)
-@@ -1247,16 +1246,16 @@ void qlt_schedule_sess_for_deletion(stru
- 			return;
- 	}
- 
--	spin_lock_irqsave(&ha->tgt.sess_lock, flags);
- 	if (sess->deleted == QLA_SESS_DELETED)
- 		sess->logout_on_delete = 0;
- 
-+	spin_lock_irqsave(&sess->vha->work_lock, flags);
- 	if (sess->deleted == QLA_SESS_DELETION_IN_PROGRESS) {
--		spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
-+		spin_unlock_irqrestore(&sess->vha->work_lock, flags);
- 		return;
- 	}
- 	sess->deleted = QLA_SESS_DELETION_IN_PROGRESS;
--	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
-+	spin_unlock_irqrestore(&sess->vha->work_lock, flags);
- 
- 	sess->disc_state = DSC_DELETE_PEND;
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -88,7 +88,7 @@ static const struct aspeed_gate_data asp
+ 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
+ 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
+ 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
+-	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
++	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+ 	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
+ 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
+ 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
+@@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
+ 	[ASPEED_RESET_JTAG_MASTER] = 22,
+ 	[ASPEED_RESET_MIC]	= 18,
+ 	[ASPEED_RESET_PWM]	=  9,
+-	[ASPEED_RESET_PCIVGA]	=  8,
++	[ASPEED_RESET_PECI]	= 10,
+ 	[ASPEED_RESET_I2C]	=  2,
+ 	[ASPEED_RESET_AHB]	=  1,
+ };
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -45,7 +45,7 @@
+ #define ASPEED_RESET_JTAG_MASTER	3
+ #define ASPEED_RESET_MIC		4
+ #define ASPEED_RESET_PWM		5
+-#define ASPEED_RESET_PCIVGA		6
++#define ASPEED_RESET_PECI		6
+ #define ASPEED_RESET_I2C		7
+ #define ASPEED_RESET_AHB		8
  
 
 
