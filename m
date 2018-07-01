@@ -3,39 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873E1C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE7AC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43905251AF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43905251AF
+	by mail.kernel.org (Postfix) with ESMTP id 8387B251B4
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8387B251B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965402AbeGAQ0z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:26:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33942 "EHLO
+        id S965440AbeGAQ1F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:27:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965349AbeGAQ0l (ORCPT
+        with ESMTP id S965191AbeGAQ07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:41 -0400
+        Sun, 1 Jul 2018 12:26:59 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE298AD8;
-        Sun,  1 Jul 2018 16:26:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 53C5E92B;
+        Sun,  1 Jul 2018 16:26:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Eda Zhou <ezhou@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Benjamin Block <bblock@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 056/101] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
-Date:   Sun,  1 Jul 2018 18:21:42 +0200
-Message-Id: <20180701160759.390974887@linuxfoundation.org>
+Subject: [PATCH 4.9 061/101] scsi: zfcp: fix missing REC trigger trace on terminate_rport_io for ERP_FAILED
+Date:   Sun,  1 Jul 2018 18:21:47 +0200
+Message-Id: <20180701160759.594259585@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -52,42 +50,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
+commit d70aab55924b44f213fec2b900b095430b33eec6 upstream.
 
-This patch prevents driver from setting lower default speed of 1 GB/sec,
-if the switch does not support Get Port Speed Capabilities (GPSC)
-command. Setting this default speed results into much lower write
-performance for large sequential WRITE.  This patch modifies driver to
-check for gpsc_supported flags and prevents driver from issuing
-MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
-does not send this mailbox command, firmware assumes maximum supported
-link speed and will operate at the max speed.
+For problem determination we always want to see when we were invoked on the
+terminate_rport_io callback whether we perform something or not.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reported-by: Eda Zhou <ezhou@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Tested-by: Ewan D. Milne <emilne@redhat.com>
+Temporal event sequence of interest with a long fast_io_fail_tmo of 27 sec:
+
+loose remote port
+
+t   workqueue
+[s] zfcp_q_<dev>       IRQ                 zfcperp<dev>
+
+=== ================== =================== ============================
+
+  0                    recv RSCN
+                       q p.test_link_work
+    block rport
+     start fast_io_fail_tmo
+    send ADISC ELS
+  4                    recv ADISC fail
+                       block zfcp_port
+                                           port forced reopen
+                                           send open port
+ 12                    recv open port fail
+                                           q p.gid_pn_work
+                                           zfcp_erp_wakeup
+                                           (zfcp_erp_wait would return)
+    GID_PN fail
+
+Before this point, we got a SCSI trace with tag "sctrpi1" on fast_io_fail,
+e.g. with the typical 5 sec setting.
+
+    port.status |= ERP_FAILED
+
+If fast_io_fail_tmo triggers after this point, we missed a SCSI trace.
+
+    workqueue
+    fc_dl_<host>
+    ==================
+ 27 fc_timeout_fail_rport_io
+    fc_terminate_rport_io
+    zfcp_scsi_terminate_rport_io
+    zfcp_erp_port_forced_reopen
+    _zfcp_erp_port_forced_reopen
+     if (port.status & ERP_FAILED)
+      return;
+
+Therefore, write a trace before above early return.
+
+Example trace record formatted with zfcpdbf from s390-tools:
+
+Timestamp      : ...
+Area           : REC
+Subarea        : 00
+Level          : 1
+Exception      : -
+CPU ID         : ..
+Caller         : 0x...
+Record ID      : 1                      ZFCP_DBF_REC_TRIG
+Tag            : sctrpi1                SCSI terminate rport I/O
+LUN            : 0xffffffffffffffff                     none (invalid)
+WWPN           : 0x<wwpn>
+D_ID           : 0x<n_port_id>
+Adapter status : 0x...
+Port status    : 0x...
+LUN status     : 0x00000000                             none (invalid)
+Ready count    : 0x...
+Running count  : 0x...
+ERP want       : 0x03                   ZFCP_ERP_ACTION_REOPEN_PORT_FORCED
+ERP need       : 0xe0                   ZFCP_ERP_ACTION_FAILED
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Cc: <stable@vger.kernel.org> #2.6.38+
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/scsi/zfcp_erp.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -3319,7 +3319,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
- 		return;
+--- a/drivers/s390/scsi/zfcp_erp.c
++++ b/drivers/s390/scsi/zfcp_erp.c
+@@ -41,9 +41,13 @@ enum zfcp_erp_steps {
+  * @ZFCP_ERP_ACTION_REOPEN_PORT_FORCED: Forced port recovery.
+  * @ZFCP_ERP_ACTION_REOPEN_ADAPTER: Adapter recovery.
+  * @ZFCP_ERP_ACTION_NONE: Eyecatcher pseudo flag to bitwise or-combine with
+- *			  either of the other enum values.
++ *			  either of the first four enum values.
+  *			  Used to indicate that an ERP action could not be
+  *			  set up despite a detected need for some recovery.
++ * @ZFCP_ERP_ACTION_FAILED: Eyecatcher pseudo flag to bitwise or-combine with
++ *			    either of the first four enum values.
++ *			    Used to indicate that ERP not needed because
++ *			    the object has ZFCP_STATUS_COMMON_ERP_FAILED.
+  */
+ enum zfcp_erp_act_type {
+ 	ZFCP_ERP_ACTION_REOPEN_LUN         = 1,
+@@ -51,6 +55,7 @@ enum zfcp_erp_act_type {
+ 	ZFCP_ERP_ACTION_REOPEN_PORT_FORCED = 3,
+ 	ZFCP_ERP_ACTION_REOPEN_ADAPTER     = 4,
+ 	ZFCP_ERP_ACTION_NONE		   = 0xc0,
++	ZFCP_ERP_ACTION_FAILED		   = 0xe0,
+ };
  
- 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
--	    fcport->fp_speed > ha->link_data_rate)
-+	    fcport->fp_speed > ha->link_data_rate ||
-+	    !ha->flags.gpsc_supported)
- 		return;
+ enum zfcp_erp_act_state {
+@@ -378,8 +383,12 @@ static void _zfcp_erp_port_forced_reopen
+ 	zfcp_erp_port_block(port, clear);
+ 	zfcp_scsi_schedule_rport_block(port);
  
- 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
+-	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
++	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
++		zfcp_dbf_rec_trig(id, port->adapter, port, NULL,
++				  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
++				  ZFCP_ERP_ACTION_FAILED);
+ 		return;
++	}
+ 
+ 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
+ 				port->adapter, port, NULL, id, 0);
 
 
