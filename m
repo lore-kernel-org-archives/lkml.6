@@ -3,36 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45728C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36B4C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027B72591B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027B72591B
+	by mail.kernel.org (Postfix) with ESMTP id 8A7B02592C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7B02592C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965502AbeGASRk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:17:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33770 "EHLO
+        id S1753640AbeGASR7 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:17:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33748 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933901AbeGAQ0A (ORCPT
+        with ESMTP id S965263AbeGAQZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:00 -0400
+        Sun, 1 Jul 2018 12:25:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 176DEAD8;
-        Sun,  1 Jul 2018 16:25:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 009A8ACD;
+        Sun,  1 Jul 2018 16:25:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 4.9 007/101] m68k/mm: Adjust VM area to be unmapped by gap size for __iounmap()
-Date:   Sun,  1 Jul 2018 18:20:53 +0200
-Message-Id: <20180701160757.432756875@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.9 005/101] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
+Date:   Sun,  1 Jul 2018 18:20:51 +0200
+Message-Id: <20180701160757.356266184@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,56 +51,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit 3f90f9ef2dda316d64e420d5d51ba369587ccc55 upstream.
+commit 1f74c8a64798e2c488f86efc97e308b85fb7d7aa upstream.
 
-If 020/030 support is enabled, get_io_area() leaves an IO_SIZE gap
-between mappings which is added to the vm_struct representing the
-mapping.  __ioremap() uses the actual requested size (after alignment),
-while __iounmap() is passed the size from the vm_struct.
+mce_no_way_out() does a quick check during #MC to see whether some of
+the MCEs logged would require the kernel to panic immediately. And it
+passes a struct mce where MCi_STATUS gets written.
 
-On 020/030, early termination descriptors are used to set up mappings of
-extent 'size', which are validated on unmapping. The unmapped gap of
-size IO_SIZE defeats the sanity check of the pmd tables, causing
-__iounmap() to loop forever on 030.
+However, after having saved a valid status value, the next iteration
+of the loop which goes over the MCA banks on the CPU, overwrites the
+valid status value because we're using struct mce as storage instead of
+a temporary variable.
 
-On 040/060, unmapping of page table entries does not check for a valid
-mapping, so the umapping loop always completes there.
+Which leads to MCE records with an empty status value:
 
-Adjust size to be unmapped by the gap that had been added in the
-vm_struct prior.
+  mce: [Hardware Error]: CPU 0: Machine Check Exception: 6 Bank 0: 0000000000000000
+  mce: [Hardware Error]: RIP 10:<ffffffffbd42fbd7> {trigger_mce+0x7/0x10}
 
-This fixes the hang in atari_platform_init() reported a long time ago,
-and a similar one reported by Finn recently (addressed by removing
-ioremap() use from the SWIM driver.
+In order to prevent the loss of the status register value, return
+immediately when severity is a panic one so that we can panic
+immediately with the first fatal MCE logged. This is also the intention
+of this function and not to noodle over the banks while a fatal MCE is
+already logged.
 
-Tested on my Falcon in 030 mode - untested but should work the same on
-040/060 (the extra page tables cleared there would never have been set
-up anyway).
+Tony: read the rest of the MCA bank to populate the struct mce fully.
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-[geert: Minor commit description improvements]
-[geert: This was fixed in 2.4.23, but not in 2.5.x]
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: stable@vger.kernel.org
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20180622095428.626-8-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/m68k/mm/kmap.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/arch/m68k/mm/kmap.c
-+++ b/arch/m68k/mm/kmap.c
-@@ -88,7 +88,8 @@ static inline void free_io_area(void *ad
- 	for (p = &iolist ; (tmp = *p) ; p = &tmp->next) {
- 		if (tmp->addr == addr) {
- 			*p = tmp->next;
--			__iounmap(tmp->addr, tmp->size);
-+			/* remove gap added in get_io_area() */
-+			__iounmap(tmp->addr, tmp->size - IO_SIZE);
- 			kfree(tmp);
- 			return;
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -738,23 +738,25 @@ EXPORT_SYMBOL_GPL(machine_check_poll);
+ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 			  struct pt_regs *regs)
+ {
+-	int i, ret = 0;
+ 	char *tmp;
++	int i;
+ 
+ 	for (i = 0; i < mca_cfg.banks; i++) {
+ 		m->status = mce_rdmsrl(msr_ops.status(i));
+-		if (m->status & MCI_STATUS_VAL) {
+-			__set_bit(i, validp);
+-			if (quirk_no_way_out)
+-				quirk_no_way_out(i, m, regs);
+-		}
++		if (!(m->status & MCI_STATUS_VAL))
++			continue;
++
++		__set_bit(i, validp);
++		if (quirk_no_way_out)
++			quirk_no_way_out(i, m, regs);
+ 
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
++			mce_read_aux(m, i);
+ 			*msg = tmp;
+-			ret = 1;
++			return 1;
  		}
+ 	}
+-	return ret;
++	return 0;
+ }
+ 
+ /*
 
 
