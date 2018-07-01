@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABA3C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD2AC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 775F6256A6
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775F6256A6
+	by mail.kernel.org (Postfix) with ESMTP id D2B8B256AA
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B8B256AA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965884AbeGARjV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:39:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35862 "EHLO
+        id S1030965AbeGARjj (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:39:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35854 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031144AbeGAQfq (ORCPT
+        with ESMTP id S1031133AbeGAQfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:46 -0400
+        Sun, 1 Jul 2018 12:35:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BC1049B;
-        Sun,  1 Jul 2018 16:35:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DFE7AACD;
+        Sun,  1 Jul 2018 16:35:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Enno Boland <gottox@voidlinux.eu>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 143/157] Input: xpad - fix GPD Win 2 controller name
-Date:   Sun,  1 Jul 2018 18:23:35 +0200
-Message-Id: <20180701160900.264987642@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 142/157] udf: Detect incorrect directory size
+Date:   Sun,  1 Jul 2018 18:23:34 +0200
+Message-Id: <20180701160900.222116355@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -49,40 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enno Boland <gottox@voidlinux.eu>
+From: Jan Kara <jack@suse.cz>
 
-commit dd6bee81c942c0ea01030da9356026afb88f9d18 upstream.
+commit fa65653e575fbd958bdf5fb9c4a71a324e39510d upstream.
 
-This fixes using the controller with SDL2.
+Detect when a directory entry is (possibly partially) beyond directory
+size and return EIO in that case since it means the filesystem is
+corrupted. Otherwise directory operations can further corrupt the
+directory and possibly also oops the kernel.
 
-SDL2 has a naive algorithm to apply the correct settings to a controller.
-For X-Box compatible controllers it expects that the controller name
-contains a variation of a 'XBOX'-string.
-
-This patch changes the identifier to contain "X-Box" as substring.  Tested
-with Steam and C-Dogs-SDL which both detect the controller properly after
-adding this patch.
-
-Fixes: c1ba08390a8b ("Input: xpad - add GPD Win 2 Controller USB IDs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Enno Boland <gottox@voidlinux.eu>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+CC: stable@vger.kernel.org
+Reported-and-tested-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/xpad.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/udf/directory.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -126,7 +126,7 @@ static const struct xpad_device {
- 	u8 mapping;
- 	u8 xtype;
- } xpad_device[] = {
--	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
-+	{ 0x0079, 0x18d4, "GPD Win 2 X-Box Controller", 0, XTYPE_XBOX360 },
- 	{ 0x044f, 0x0f00, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f03, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
+--- a/fs/udf/directory.c
++++ b/fs/udf/directory.c
+@@ -151,6 +151,9 @@ struct fileIdentDesc *udf_fileident_read
+ 			       sizeof(struct fileIdentDesc));
+ 		}
+ 	}
++	/* Got last entry outside of dir size - fs is corrupted! */
++	if (*nf_pos > dir->i_size)
++		return NULL;
+ 	return fi;
+ }
+ 
 
 
