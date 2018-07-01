@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B7FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FABC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4BD525269
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4BD525269
+	by mail.kernel.org (Postfix) with ESMTP id D47EB2526C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47EB2526C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030555AbeGAQbu (ORCPT
+        id S1030570AbeGAQbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:31:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35036 "EHLO
+        Sun, 1 Jul 2018 12:31:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030537AbeGAQbm (ORCPT
+        with ESMTP id S1030556AbeGAQbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:31:42 -0400
+        Sun, 1 Jul 2018 12:31:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB05992B;
-        Sun,  1 Jul 2018 16:31:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D78F49B;
+        Sun,  1 Jul 2018 16:31:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.14 057/157] tpm: fix use after free in tpm2_load_context()
-Date:   Sun,  1 Jul 2018 18:22:09 +0200
-Message-Id: <20180701160855.486914650@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Alex Estrin <alex.estrin@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 060/157] IB/{hfi1, qib}: Add handling of kernel restart
+Date:   Sun,  1 Jul 2018 18:22:12 +0200
+Message-Id: <20180701160855.634384175@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,36 +53,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tadeusz Struk <tadeusz.struk@intel.com>
+From: Alex Estrin <alex.estrin@intel.com>
 
-commit 8c81c24758ffbf17cf06c6835d361ffa57be2f0e upstream.
+commit 8d3e71136a080d007620472f50c7b3e63ba0f5cf upstream.
 
-If load context command returns with TPM2_RC_HANDLE or TPM2_RC_REFERENCE_H0
-then we have use after free in line 114 and double free in 117.
+A warm restart will fail to unload the driver, leaving link state
+potentially flapping up to the point the BIOS resets the adapter.
+Correct the issue by hooking the shutdown pci method,
+which will bring port down.
 
-Fixes: 4d57856a21ed2 ("tpm2: add session handle context saving and restoring to the space code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off--by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: <stable@vger.kernel.org> # 4.9.x
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm2-space.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/hfi.h     |    1 +
+ drivers/infiniband/hw/hfi1/init.c    |   13 +++++++++++++
+ drivers/infiniband/hw/qib/qib.h      |    1 +
+ drivers/infiniband/hw/qib/qib_init.c |   13 +++++++++++++
+ 4 files changed, 28 insertions(+)
 
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -102,8 +102,9 @@ static int tpm2_load_context(struct tpm_
- 		 * TPM_RC_REFERENCE_H0 means the session has been
- 		 * flushed outside the space
- 		 */
--		rc = -ENOENT;
-+		*handle = 0;
- 		tpm_buf_destroy(&tbuf);
-+		return -ENOENT;
- 	} else if (rc > 0) {
- 		dev_warn(&chip->dev, "%s: failed with a TPM error 0x%04X\n",
- 			 __func__, rc);
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -1851,6 +1851,7 @@ struct cc_state *get_cc_state_protected(
+ #define HFI1_HAS_SDMA_TIMEOUT  0x8
+ #define HFI1_HAS_SEND_DMA      0x10   /* Supports Send DMA */
+ #define HFI1_FORCED_FREEZE     0x80   /* driver forced freeze mode */
++#define HFI1_SHUTDOWN          0x100  /* device is shutting down */
+ 
+ /* IB dword length mask in PBC (lower 11 bits); same for all chips */
+ #define HFI1_PBC_LENGTH_MASK                     ((1 << 11) - 1)
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1029,6 +1029,10 @@ static void shutdown_device(struct hfi1_
+ 	unsigned pidx;
+ 	int i;
+ 
++	if (dd->flags & HFI1_SHUTDOWN)
++		return;
++	dd->flags |= HFI1_SHUTDOWN;
++
+ 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
+ 		ppd = dd->pport + pidx;
+ 
+@@ -1353,6 +1357,7 @@ void hfi1_disable_after_error(struct hfi
+ 
+ static void remove_one(struct pci_dev *);
+ static int init_one(struct pci_dev *, const struct pci_device_id *);
++static void shutdown_one(struct pci_dev *);
+ 
+ #define DRIVER_LOAD_MSG "Intel " DRIVER_NAME " loaded: "
+ #define PFX DRIVER_NAME ": "
+@@ -1369,6 +1374,7 @@ static struct pci_driver hfi1_pci_driver
+ 	.name = DRIVER_NAME,
+ 	.probe = init_one,
+ 	.remove = remove_one,
++	.shutdown = shutdown_one,
+ 	.id_table = hfi1_pci_tbl,
+ 	.err_handler = &hfi1_pci_err_handler,
+ };
+@@ -1780,6 +1786,13 @@ static void remove_one(struct pci_dev *p
+ 	postinit_cleanup(dd);
+ }
+ 
++static void shutdown_one(struct pci_dev *pdev)
++{
++	struct hfi1_devdata *dd = pci_get_drvdata(pdev);
++
++	shutdown_device(dd);
++}
++
+ /**
+  * hfi1_create_rcvhdrq - create a receive header queue
+  * @dd: the hfi1_ib device
+--- a/drivers/infiniband/hw/qib/qib.h
++++ b/drivers/infiniband/hw/qib/qib.h
+@@ -1250,6 +1250,7 @@ static inline struct qib_ibport *to_ipor
+ #define QIB_BADINTR           0x8000 /* severe interrupt problems */
+ #define QIB_DCA_ENABLED       0x10000 /* Direct Cache Access enabled */
+ #define QIB_HAS_QSFP          0x20000 /* device (card instance) has QSFP */
++#define QIB_SHUTDOWN          0x40000 /* device is shutting down */
+ 
+ /*
+  * values for ppd->lflags (_ib_port_ related flags)
+--- a/drivers/infiniband/hw/qib/qib_init.c
++++ b/drivers/infiniband/hw/qib/qib_init.c
+@@ -850,6 +850,10 @@ static void qib_shutdown_device(struct q
+ 	struct qib_pportdata *ppd;
+ 	unsigned pidx;
+ 
++	if (dd->flags & QIB_SHUTDOWN)
++		return;
++	dd->flags |= QIB_SHUTDOWN;
++
+ 	for (pidx = 0; pidx < dd->num_pports; ++pidx) {
+ 		ppd = dd->pport + pidx;
+ 
+@@ -1189,6 +1193,7 @@ void qib_disable_after_error(struct qib_
+ 
+ static void qib_remove_one(struct pci_dev *);
+ static int qib_init_one(struct pci_dev *, const struct pci_device_id *);
++static void qib_shutdown_one(struct pci_dev *);
+ 
+ #define DRIVER_LOAD_MSG "Intel " QIB_DRV_NAME " loaded: "
+ #define PFX QIB_DRV_NAME ": "
+@@ -1206,6 +1211,7 @@ static struct pci_driver qib_driver = {
+ 	.name = QIB_DRV_NAME,
+ 	.probe = qib_init_one,
+ 	.remove = qib_remove_one,
++	.shutdown = qib_shutdown_one,
+ 	.id_table = qib_pci_tbl,
+ 	.err_handler = &qib_pci_err_handler,
+ };
+@@ -1556,6 +1562,13 @@ static void qib_remove_one(struct pci_de
+ 	qib_postinit_cleanup(dd);
+ }
+ 
++static void qib_shutdown_one(struct pci_dev *pdev)
++{
++	struct qib_devdata *dd = pci_get_drvdata(pdev);
++
++	qib_shutdown_device(dd);
++}
++
+ /**
+  * qib_create_rcvhdrq - create a receive header queue
+  * @dd: the qlogic_ib device
 
 
