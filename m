@@ -3,40 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E75C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E61C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9DAC2594D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DAC2594D
+	by mail.kernel.org (Postfix) with ESMTP id 7268F25956
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7268F25956
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965260AbeGASU5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:20:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33596 "EHLO
+        id S965272AbeGASVR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:21:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33586 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933850AbeGAQY5 (ORCPT
+        with ESMTP id S933801AbeGAQYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:57 -0400
+        Sun, 1 Jul 2018 12:24:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0332AACD;
-        Sun,  1 Jul 2018 16:24:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E008AD8;
+        Sun,  1 Jul 2018 16:24:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>,
-        John Muir <john@jmuir.com>, Csaba Henk <csaba@gluster.com>,
-        Anand Avati <avati@redhat.com>,
+        stable@vger.kernel.org, Chad Austin <chadaustin@fb.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 022/101] fuse: dont keep dead fuse_conn at fuse_fill_super().
-Date:   Sun,  1 Jul 2018 18:21:08 +0200
-Message-Id: <20180701160758.029963454@linuxfoundation.org>
+Subject: [PATCH 4.9 021/101] fuse: atomic_o_trunc should truncate pagecache
+Date:   Sun,  1 Jul 2018 18:21:07 +0200
+Message-Id: <20180701160757.989301182@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -53,41 +49,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 543b8f8662fe6d21f19958b666ab0051af9db21a upstream.
+commit df0e91d488276086bc07da2e389986cae0048c37 upstream.
 
-syzbot is reporting use-after-free at fuse_kill_sb_blk() [1].
-Since sb->s_fs_info field is not cleared after fc was released by
-fuse_conn_put() when initialization failed, fuse_kill_sb_blk() finds
-already released fc and tries to hold the lock. Fix this by clearing
-sb->s_fs_info field after calling fuse_conn_put().
+Fuse has an "atomic_o_trunc" mode, where userspace filesystem uses the
+O_TRUNC flag in the OPEN request to truncate the file atomically with the
+open.
 
-[1] https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
+In this mode there's no need to send a SETATTR request to userspace after
+the open, so fuse_do_setattr() checks this mode and returns.  But this
+misses the important step of truncating the pagecache.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>
-Fixes: 3b463ae0c626 ("fuse: invalidation reverse calls")
-Cc: John Muir <john@jmuir.com>
-Cc: Csaba Henk <csaba@gluster.com>
-Cc: Anand Avati <avati@redhat.com>
-Cc: <stable@vger.kernel.org> # v2.6.31
+Add the missing parts of truncation to the ATTR_OPEN branch.
+
+Reported-by: Chad Austin <chadaustin@fb.com>
+Fixes: 6ff958edbf39 ("fuse: add atomic open+truncate support")
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/fuse/dir.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1184,6 +1184,7 @@ static int fuse_fill_super(struct super_
-  err_put_conn:
- 	fuse_bdi_destroy(fc);
- 	fuse_conn_put(fc);
-+	sb->s_fs_info = NULL;
-  err_fput:
- 	fput(file);
-  err:
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1633,8 +1633,19 @@ int fuse_do_setattr(struct dentry *dentr
+ 		return err;
+ 
+ 	if (attr->ia_valid & ATTR_OPEN) {
+-		if (fc->atomic_o_trunc)
++		/* This is coming from open(..., ... | O_TRUNC); */
++		WARN_ON(!(attr->ia_valid & ATTR_SIZE));
++		WARN_ON(attr->ia_size != 0);
++		if (fc->atomic_o_trunc) {
++			/*
++			 * No need to send request to userspace, since actual
++			 * truncation has already been done by OPEN.  But still
++			 * need to truncate page cache.
++			 */
++			i_size_write(inode, 0);
++			truncate_pagecache(inode, 0);
+ 			return 0;
++		}
+ 		file = NULL;
+ 	}
+ 
 
 
