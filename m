@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272FEC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE77C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF3F25084
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF3F25084
+	by mail.kernel.org (Postfix) with ESMTP id 92C0925075
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C0925075
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753178AbeGAQOn (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60384 "EHLO
+        id S932841AbeGAQOv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:14:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753161AbeGAQOi (ORCPT
+        with ESMTP id S1752898AbeGAQOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:38 -0400
+        Sun, 1 Jul 2018 12:14:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED87A86A;
-        Sun,  1 Jul 2018 16:14:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A6FF86A;
+        Sun,  1 Jul 2018 16:14:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 3.18 83/85] udf: Detect incorrect directory size
-Date:   Sun,  1 Jul 2018 18:02:41 +0200
-Message-Id: <20180701153125.664588215@linuxfoundation.org>
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 3.18 84/85] block: Fix transfer when chunk sectors exceeds max
+Date:   Sun,  1 Jul 2018 18:02:42 +0200
+Message-Id: <20180701153125.708892298@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -51,36 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Keith Busch <keith.busch@intel.com>
 
-commit fa65653e575fbd958bdf5fb9c4a71a324e39510d upstream.
+commit 15bfd21fbc5d35834b9ea383dc458a1f0c9e3434 upstream.
 
-Detect when a directory entry is (possibly partially) beyond directory
-size and return EIO in that case since it means the filesystem is
-corrupted. Otherwise directory operations can further corrupt the
-directory and possibly also oops the kernel.
+A device may have boundary restrictions where the number of sectors
+between boundaries exceeds its max transfer size. In this case, we need
+to cap the max size to the smaller of the two limits.
 
-CC: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-CC: stable@vger.kernel.org
-Reported-and-tested-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Reported-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Tested-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/udf/directory.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/blkdev.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -151,6 +151,9 @@ struct fileIdentDesc *udf_fileident_read
- 			       sizeof(struct fileIdentDesc));
- 		}
- 	}
-+	/* Got last entry outside of dir size - fs is corrupted! */
-+	if (*nf_pos > dir->i_size)
-+		return NULL;
- 	return fi;
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -919,8 +919,8 @@ static inline unsigned int blk_max_size_
+ 	if (!q->limits.chunk_sectors)
+ 		return q->limits.max_sectors;
+ 
+-	return q->limits.chunk_sectors -
+-			(offset & (q->limits.chunk_sectors - 1));
++	return min(q->limits.max_sectors, (unsigned int)(q->limits.chunk_sectors -
++			(offset & (q->limits.chunk_sectors - 1))));
  }
  
+ static inline unsigned int blk_rq_get_max_sectors(struct request *rq)
 
 
