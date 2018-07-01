@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E811C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164CCC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED7024F83
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED7024F83
+	by mail.kernel.org (Postfix) with ESMTP id C552424F91
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C552424F91
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeGAQLg (ORCPT
+        id S1752739AbeGAQLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:11:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59738 "EHLO
+        Sun, 1 Jul 2018 12:11:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752670AbeGAQLc (ORCPT
+        with ESMTP id S1752670AbeGAQLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:11:32 -0400
+        Sun, 1 Jul 2018 12:11:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4455AF3;
-        Sun,  1 Jul 2018 16:11:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F37FAD8;
+        Sun,  1 Jul 2018 16:11:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
-        Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 07/85] isofs: fix potential memory leak in mount option parsing
-Date:   Sun,  1 Jul 2018 18:01:25 +0200
-Message-Id: <20180701153122.653660284@linuxfoundation.org>
+Subject: [PATCH 3.18 09/85] drm/msm: Fix possible null dereference on failure of get_pages()
+Date:   Sun,  1 Jul 2018 18:01:27 +0200
+Message-Id: <20180701153122.731952098@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -51,36 +53,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chengguang Xu <cgxu519@gmx.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-[ Upstream commit 4f34a5130a471f32f2fe7750769ab4057dc3eaa0 ]
+[ Upstream commit 3976626ea3d2011f8fd3f3a47070a8b792018253 ]
 
-When specifying string type mount option (e.g., iocharset)
-several times in a mount, current option parsing may
-cause memory leak. Hence, call kfree for previous one
-in this case. Meanwhile, check memory allocation result
-for it.
+Commit 62e3a3e342af changed get_pages() to initialise
+msm_gem_object::pages before trying to initialise msm_gem_object::sgt,
+so that put_pages() would properly clean up pages in the failure
+case.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+However, this means that put_pages() now needs to check that
+msm_gem_object::sgt is not null before trying to clean it up, and
+this check was only applied to part of the cleanup code.  Move
+it all into the conditional block.  (Strictly speaking we don't
+need to make the kfree() conditional, but since we can't avoid
+checking for null ourselves we may as well do so.)
+
+Fixes: 62e3a3e342af ("drm/msm: fix leak in failed get_pages")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/isofs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/msm/msm_gem.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -394,7 +394,10 @@ static int parse_options(char *options,
- 			break;
- #ifdef CONFIG_JOLIET
- 		case Opt_iocharset:
-+			kfree(popt->iocharset);
- 			popt->iocharset = match_strdup(&args[0]);
-+			if (!popt->iocharset)
-+				return 0;
- 			break;
- #endif
- 		case Opt_map_a:
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -110,17 +110,19 @@ static void put_pages(struct drm_gem_obj
+ 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
+ 
+ 	if (msm_obj->pages) {
+-		/* For non-cached buffers, ensure the new pages are clean
+-		 * because display controller, GPU, etc. are not coherent:
+-		 */
+-		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+-			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
+-					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++		if (msm_obj->sgt) {
++			/* For non-cached buffers, ensure the new
++			 * pages are clean because display controller,
++			 * GPU, etc. are not coherent:
++			 */
++			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
++				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
++					     msm_obj->sgt->nents,
++					     DMA_BIDIRECTIONAL);
+ 
+-		if (msm_obj->sgt)
+ 			sg_free_table(msm_obj->sgt);
+-
+-		kfree(msm_obj->sgt);
++			kfree(msm_obj->sgt);
++		}
+ 
+ 		if (iommu_present(&platform_bus_type))
+ 			drm_gem_put_pages(obj, msm_obj->pages, true, false);
 
 
