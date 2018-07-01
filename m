@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DD9C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02080C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 314D0253D0
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 314D0253D0
+	by mail.kernel.org (Postfix) with ESMTP id BC58C253D5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:42:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC58C253D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032181AbeGAQmZ (ORCPT
+        id S1032209AbeGAQme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:42:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37602 "EHLO
+        Sun, 1 Jul 2018 12:42:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031929AbeGAQmS (ORCPT
+        with ESMTP id S1031805AbeGAQm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:18 -0400
+        Sun, 1 Jul 2018 12:42:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 573D6ACC;
-        Sun,  1 Jul 2018 16:42:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 570D0AA6;
+        Sun,  1 Jul 2018 16:42:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-nfs@vger.kernel.org
-Subject: [PATCH 4.17 126/220] locking/rwsem: Fix up_read_non_owner() warning with DEBUG_RWSEMS
-Date:   Sun,  1 Jul 2018 18:22:30 +0200
-Message-Id: <20180701160913.605670833@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.17 129/220] iio: adc: ad7791: remove sample freq sysfs attributes
+Date:   Sun,  1 Jul 2018 18:22:33 +0200
+Message-Id: <20180701160913.720452388@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -55,45 +52,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-commit 03eeafdd9ab06a770d42c2b264d50dff7e2f4eee upstream.
+commit 7eb6b35d93c356f1afebbfb808bc296d6351e708 upstream.
 
-It was found that the use of up_read_non_owner() in NFS was causing
-the following warning when DEBUG_RWSEMS was configured.
+In the current state, these attributes are broken, because they are
+registered already, and the kernel throws a warning.
+The first registration happens via the `IIO_CHAN_INFO_SAMP_FREQ` flag from
+the `ad_sigma_delta` driver.
 
-  DEBUG_LOCKS_WARN_ON(sem->owner != ((struct task_struct *)(1UL << 0)))
+In this commit these attrs are removed, and in the following the
+IIO_CHAN_INFO_SAMP_FREQ behavior will be implemented, which replaces these
+hooks.
 
-Looking into the rwsem.c file, it was discovered that the corresponding
-down_read_non_owner() function was not setting the owner field properly.
-This is fixed now, and the warning should be gone.
+This is done to make things a bit easier to review as there is a bit of
+overlap in the patch if it's done all at once.
 
-Fixes: 5149cbac4235 ("locking/rwsem: Add DEBUG_RWSEMS to look for lock/unlock mismatches")
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Gavin Schenk <g.schenk@eckelmann.de>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-nfs@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1527168398-4291-1-git-send-email-longman@redhat.com
+Fixes: a13e831fcaa7 ("staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ")
+
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/locking/rwsem.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/adc/ad7791.c |   49 -----------------------------------------------
+ 1 file changed, 49 deletions(-)
 
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -181,6 +181,7 @@ void down_read_non_owner(struct rw_semap
- 	might_sleep();
- 
- 	__down_read(sem);
-+	rwsem_set_reader_owned(sem);
+--- a/drivers/iio/adc/ad7791.c
++++ b/drivers/iio/adc/ad7791.c
+@@ -244,58 +244,9 @@ static int ad7791_read_raw(struct iio_de
+ 	return -EINVAL;
  }
  
- EXPORT_SYMBOL(down_read_non_owner);
+-static const char * const ad7791_sample_freq_avail[] = {
+-	[AD7791_FILTER_RATE_120] = "120",
+-	[AD7791_FILTER_RATE_100] = "100",
+-	[AD7791_FILTER_RATE_33_3] = "33.3",
+-	[AD7791_FILTER_RATE_20] = "20",
+-	[AD7791_FILTER_RATE_16_6] = "16.6",
+-	[AD7791_FILTER_RATE_16_7] = "16.7",
+-	[AD7791_FILTER_RATE_13_3] = "13.3",
+-	[AD7791_FILTER_RATE_9_5] = "9.5",
+-};
+-
+-static ssize_t ad7791_read_frequency(struct device *dev,
+-	struct device_attribute *attr, char *buf)
+-{
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ad7791_state *st = iio_priv(indio_dev);
+-	unsigned int rate = st->filter & AD7791_FILTER_RATE_MASK;
+-
+-	return sprintf(buf, "%s\n", ad7791_sample_freq_avail[rate]);
+-}
+-
+-static ssize_t ad7791_write_frequency(struct device *dev,
+-	struct device_attribute *attr, const char *buf, size_t len)
+-{
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ad7791_state *st = iio_priv(indio_dev);
+-	int i, ret;
+-
+-	i = sysfs_match_string(ad7791_sample_freq_avail, buf);
+-	if (i < 0)
+-		return i;
+-
+-	ret = iio_device_claim_direct_mode(indio_dev);
+-	if (ret)
+-		return ret;
+-	st->filter &= ~AD7791_FILTER_RATE_MASK;
+-	st->filter |= i;
+-	ad_sd_write_reg(&st->sd, AD7791_REG_FILTER, sizeof(st->filter),
+-			st->filter);
+-	iio_device_release_direct_mode(indio_dev);
+-
+-	return len;
+-}
+-
+-static IIO_DEV_ATTR_SAMP_FREQ(S_IWUSR | S_IRUGO,
+-		ad7791_read_frequency,
+-		ad7791_write_frequency);
+-
+ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("120 100 33.3 20 16.7 16.6 13.3 9.5");
+ 
+ static struct attribute *ad7791_attributes[] = {
+-	&iio_dev_attr_sampling_frequency.dev_attr.attr,
+ 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
+ 	NULL
+ };
 
 
