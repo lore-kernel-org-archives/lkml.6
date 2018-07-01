@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9785C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AA2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFE824FBB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFE824FBB
+	by mail.kernel.org (Postfix) with ESMTP id 3D54324FC7
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D54324FC7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932124AbeGAQMi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:12:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59948 "EHLO
+        id S932164AbeGAQMr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:12:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932083AbeGAQMb (ORCPT
+        with ESMTP id S932126AbeGAQMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:31 -0400
+        Sun, 1 Jul 2018 12:12:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85408ACC;
-        Sun,  1 Jul 2018 16:12:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 239514A3;
+        Sun,  1 Jul 2018 16:12:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Joe Habermann <joe.habermann@quantum.com>
-Subject: [PATCH 3.18 38/85] ext4: update mtime in ext4_punch_hole even if no blocks are released
-Date:   Sun,  1 Jul 2018 18:01:56 +0200
-Message-Id: <20180701153123.872914322@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 3.18 42/85] libata: zpodd: make arrays cdb static, reduces object code size
+Date:   Sun,  1 Jul 2018 18:02:00 +0200
+Message-Id: <20180701153124.042343656@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -50,77 +49,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit eee597ac931305eff3d3fd1d61d6aae553bc0984 upstream.
+commit 795ef788145ed2fa023efdf11e8d5d7bedc21462 upstream.
 
-Currently in ext4_punch_hole we're going to skip the mtime update if
-there are no actual blocks to release. However we've actually modified
-the file by zeroing the partial block so the mtime should be updated.
+Don't populate the arrays cdb on the stack, instead make them static.
+Makes the object code smaller by 230 bytes:
 
-Moreover the sync and datasync handling is skipped as well, which is
-also wrong. Fix it.
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   3797	    240	      0	   4037	    fc5	drivers/ata/libata-zpodd.o
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Joe Habermann <joe.habermann@quantum.com>
-Cc: <stable@vger.kernel.org>
+After:
+   text	   data	    bss	    dec	    hex	filename
+   3407	    400	      0	   3807	    edf	drivers/ata/libata-zpodd.o
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |   40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ drivers/ata/libata-zpodd.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3531,28 +3531,28 @@ int ext4_punch_hole(struct inode *inode,
- 		EXT4_BLOCK_SIZE_BITS(sb);
- 	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
- 
--	/* If there are no blocks to remove, return now */
--	if (first_block >= stop_block)
--		goto out_stop;
--
--	down_write(&EXT4_I(inode)->i_data_sem);
--	ext4_discard_preallocations(inode);
--
--	ret = ext4_es_remove_extent(inode, first_block,
--				    stop_block - first_block);
--	if (ret) {
--		up_write(&EXT4_I(inode)->i_data_sem);
--		goto out_stop;
--	}
-+	/* If there are blocks to remove, do it */
-+	if (stop_block > first_block) {
-+
-+		down_write(&EXT4_I(inode)->i_data_sem);
-+		ext4_discard_preallocations(inode);
- 
--	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
--		ret = ext4_ext_remove_space(inode, first_block,
--					    stop_block - 1);
--	else
--		ret = ext4_ind_remove_space(handle, inode, first_block,
--					    stop_block);
-+		ret = ext4_es_remove_extent(inode, first_block,
-+					    stop_block - first_block);
-+		if (ret) {
-+			up_write(&EXT4_I(inode)->i_data_sem);
-+			goto out_stop;
-+		}
-+
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-+			ret = ext4_ext_remove_space(inode, first_block,
-+						    stop_block - 1);
-+		else
-+			ret = ext4_ind_remove_space(handle, inode, first_block,
-+						    stop_block);
- 
--	up_write(&EXT4_I(inode)->i_data_sem);
-+		up_write(&EXT4_I(inode)->i_data_sem);
-+	}
- 	if (IS_SYNC(inode))
- 		ext4_handle_sync(handle);
- 
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -34,7 +34,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
+@@ -55,7 +55,7 @@ static enum odd_mech_type zpodd_get_mech
+ 	unsigned int ret;
+ 	struct rm_feature_desc *desc = (void *)(buf + 8);
+ 	struct ata_taskfile tf;
+-	char cdb[] = {  GPCMD_GET_CONFIGURATION,
++	static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+ 			2,      /* only 1 feature descriptor requested */
+ 			0, 3,   /* 3, removable medium feature */
+ 			0, 0, 0,/* reserved */
 
 
