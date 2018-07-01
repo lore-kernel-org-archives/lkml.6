@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFB6C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667D7C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C79325934
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C79325934
+	by mail.kernel.org (Postfix) with ESMTP id 24C20258BE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:19:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C20258BE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965323AbeGASSZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:18:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33730 "EHLO
+        id S933982AbeGASTM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:19:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965234AbeGAQZr (ORCPT
+        with ESMTP id S965202AbeGAQZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:47 -0400
+        Sun, 1 Jul 2018 12:25:32 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 186EEACD;
-        Sun,  1 Jul 2018 16:25:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B912EAEF;
+        Sun,  1 Jul 2018 16:25:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 036/101] IB/mlx5: Fetch soft WQEs on fatal error state
-Date:   Sun,  1 Jul 2018 18:21:22 +0200
-Message-Id: <20180701160758.608940997@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 031/101] arm64: kpti: Use early_param for kpti= command-line option
+Date:   Sun,  1 Jul 2018 18:21:17 +0200
+Message-Id: <20180701160758.404235963@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,82 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 7b74a83cf54a3747e22c57e25712bd70eef8acee upstream.
+commit b5b7dd647f2d21b93f734ce890671cd908e69b0a upstream.
 
-On fatal error the driver simulates CQE's for ULPs that rely on
-completion of all their posted work-request.
+We inspect __kpti_forced early on as part of the cpufeature enable
+callback which remaps the swapper page table using non-global entries.
 
-For the GSI traffic, the mlx5 has its own mechanism that sends the
-completions via software CQE's directly to the relevant CQ.
+Ensure that __kpti_forced has been updated to reflect the kpti=
+command-line option before we start using it.
 
-This should be kept in fatal error too, so the driver should simulate
-such CQE's with the specified error state in order to complete GSI QP
-work requests.
-
-Without the fix the next deadlock might appears:
-        schedule_timeout+0x274/0x350
-        wait_for_common+0xec/0x240
-        mcast_remove_one+0xd0/0x120 [ib_core]
-        ib_unregister_device+0x12c/0x230 [ib_core]
-        mlx5_ib_remove+0xc4/0x270 [mlx5_ib]
-        mlx5_detach_device+0x184/0x1a0 [mlx5_core]
-        mlx5_unload_one+0x308/0x340 [mlx5_core]
-        mlx5_pci_err_detected+0x74/0xe0 [mlx5_core]
-
-Cc: <stable@vger.kernel.org> # 4.7
-Fixes: 89ea94a7b6c4 ("IB/mlx5: Reset flow support for IB kernel ULPs")
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: ea1e3de85e94 ("arm64: entry: Add fake CPU feature for unmapping the kernel at EL0")
+Cc: <stable@vger.kernel.org> # 4.16.x-
+Reported-by: Wei Xu <xuwei5@hisilicon.com>
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/cq.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/cpufeature.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/cq.c
-+++ b/drivers/infiniband/hw/mlx5/cq.c
-@@ -645,7 +645,7 @@ repoll:
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -826,7 +826,7 @@ static int __init parse_kpti(char *str)
+ 	__kpti_forced = enabled ? 1 : -1;
+ 	return 0;
  }
+-__setup("kpti=", parse_kpti);
++early_param("kpti", parse_kpti);
+ #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
- static int poll_soft_wc(struct mlx5_ib_cq *cq, int num_entries,
--			struct ib_wc *wc)
-+			struct ib_wc *wc, bool is_fatal_err)
- {
- 	struct mlx5_ib_dev *dev = to_mdev(cq->ibcq.device);
- 	struct mlx5_ib_wc *soft_wc, *next;
-@@ -658,6 +658,10 @@ static int poll_soft_wc(struct mlx5_ib_c
- 		mlx5_ib_dbg(dev, "polled software generated completion on CQ 0x%x\n",
- 			    cq->mcq.cqn);
- 
-+		if (unlikely(is_fatal_err)) {
-+			soft_wc->wc.status = IB_WC_WR_FLUSH_ERR;
-+			soft_wc->wc.vendor_err = MLX5_CQE_SYNDROME_WR_FLUSH_ERR;
-+		}
- 		wc[npolled++] = soft_wc->wc;
- 		list_del(&soft_wc->list);
- 		kfree(soft_wc);
-@@ -678,12 +682,17 @@ int mlx5_ib_poll_cq(struct ib_cq *ibcq,
- 
- 	spin_lock_irqsave(&cq->lock, flags);
- 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR) {
--		mlx5_ib_poll_sw_comp(cq, num_entries, wc, &npolled);
-+		/* make sure no soft wqe's are waiting */
-+		if (unlikely(!list_empty(&cq->wc_list)))
-+			soft_polled = poll_soft_wc(cq, num_entries, wc, true);
-+
-+		mlx5_ib_poll_sw_comp(cq, num_entries - soft_polled,
-+				     wc + soft_polled, &npolled);
- 		goto out;
- 	}
- 
- 	if (unlikely(!list_empty(&cq->wc_list)))
--		soft_polled = poll_soft_wc(cq, num_entries, wc);
-+		soft_polled = poll_soft_wc(cq, num_entries, wc, false);
- 
- 	for (npolled = 0; npolled < num_entries - soft_polled; npolled++) {
- 		if (mlx5_poll_one(cq, &cur_qp, wc + soft_polled + npolled))
+ static const struct arm64_cpu_capabilities arm64_features[] = {
 
 
