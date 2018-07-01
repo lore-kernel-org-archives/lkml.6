@@ -3,36 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43F1C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CBEC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A0E254F2
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:56:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A0E254F2
+	by mail.kernel.org (Postfix) with ESMTP id C50CF254FC
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:57:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50CF254FC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964875AbeGAQ44 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:56:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38112 "EHLO
+        id S933971AbeGAQ5X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:57:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38058 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934033AbeGAQoq (ORCPT
+        with ESMTP id S1032485AbeGAQod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:44:46 -0400
+        Sun, 1 Jul 2018 12:44:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F138D92B;
-        Sun,  1 Jul 2018 16:44:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 735CCA73;
+        Sun,  1 Jul 2018 16:44:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.17 178/220] media: rc: mce_kbd decoder: fix stuck keys
-Date:   Sun,  1 Jul 2018 18:23:22 +0200
-Message-Id: <20180701160915.662882079@linuxfoundation.org>
+        stable@vger.kernel.org, ming_qian <ming_qian@realsil.com.cn>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ana Guerrero Lopez <ana.guerrero@collabora.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.17 174/220] media: uvcvideo: Support realteks UVC 1.5 device
+Date:   Sun,  1 Jul 2018 18:23:18 +0200
+Message-Id: <20180701160915.509719277@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,33 +52,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Young <sean@mess.org>
+From: ming_qian <ming_qian@realsil.com.cn>
 
-commit 63039c29f7a4ce8a8bd165173840543c0098d7b0 upstream.
+commit f620d1d7afc7db57ab59f35000752840c91f67e7 upstream.
 
-The MCE Remote sends a 0 scancode when keys are released. If this is not
-received or decoded, then keys can get "stuck"; the keyup event is not
-sent since the input_sync() is missing from the timeout handler.
+media: uvcvideo: Support UVC 1.5 video probe & commit controls
+
+The length of UVC 1.5 video control is 48, and it is 34 for UVC 1.1.
+Change it to 48 for UVC 1.5 device, and the UVC 1.5 device can be
+recognized.
+
+More changes to the driver are needed for full UVC 1.5 compatibility.
+However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have been
+reported to work well.
+
+[laurent.pinchart@ideasonboard.com: Factor out code to helper function, update size checks]
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Ana Guerrero Lopez <ana.guerrero@collabora.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/rc/ir-mce_kbd-decoder.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/usb/uvc/uvc_video.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/drivers/media/rc/ir-mce_kbd-decoder.c
-+++ b/drivers/media/rc/ir-mce_kbd-decoder.c
-@@ -130,6 +130,8 @@ static void mce_kbd_rx_timeout(struct ti
- 
- 	for (i = 0; i < MCIR2_MASK_KEYS_START; i++)
- 		input_report_key(raw->mce_kbd.idev, kbd_keycodes[i], 0);
-+
-+	input_sync(raw->mce_kbd.idev);
+--- a/drivers/media/usb/uvc/uvc_video.c
++++ b/drivers/media/usb/uvc/uvc_video.c
+@@ -163,14 +163,27 @@ static void uvc_fixup_video_ctrl(struct
+ 	}
  }
  
- static enum mce_kbd_mode mce_kbd_mode(struct mce_kbd_dec *data)
++static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
++{
++	/*
++	 * Return the size of the video probe and commit controls, which depends
++	 * on the protocol version.
++	 */
++	if (stream->dev->uvc_version < 0x0110)
++		return 26;
++	else if (stream->dev->uvc_version < 0x0150)
++		return 34;
++	else
++		return 48;
++}
++
+ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe, u8 query)
+ {
++	u16 size = uvc_video_ctrl_size(stream);
+ 	u8 *data;
+-	u16 size;
+ 	int ret;
+ 
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+ 			query == UVC_GET_DEF)
+ 		return -EIO;
+@@ -225,7 +238,7 @@ static int uvc_get_video_ctrl(struct uvc
+ 	ctrl->dwMaxVideoFrameSize = get_unaligned_le32(&data[18]);
+ 	ctrl->dwMaxPayloadTransferSize = get_unaligned_le32(&data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		ctrl->dwClockFrequency = get_unaligned_le32(&data[26]);
+ 		ctrl->bmFramingInfo = data[30];
+ 		ctrl->bPreferedVersion = data[31];
+@@ -254,11 +267,10 @@ out:
+ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+ 	struct uvc_streaming_control *ctrl, int probe)
+ {
++	u16 size = uvc_video_ctrl_size(stream);
+ 	u8 *data;
+-	u16 size;
+ 	int ret;
+ 
+-	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+ 	data = kzalloc(size, GFP_KERNEL);
+ 	if (data == NULL)
+ 		return -ENOMEM;
+@@ -275,7 +287,7 @@ static int uvc_set_video_ctrl(struct uvc
+ 	put_unaligned_le32(ctrl->dwMaxVideoFrameSize, &data[18]);
+ 	put_unaligned_le32(ctrl->dwMaxPayloadTransferSize, &data[22]);
+ 
+-	if (size == 34) {
++	if (size >= 34) {
+ 		put_unaligned_le32(ctrl->dwClockFrequency, &data[26]);
+ 		data[30] = ctrl->bmFramingInfo;
+ 		data[31] = ctrl->bPreferedVersion;
 
 
