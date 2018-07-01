@@ -2,114 +2,124 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2EC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 22:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7D1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 22:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365AA2583C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 22:07:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYVGd8gI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365AA2583C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.pub.ro
+	by mail.kernel.org (Postfix) with ESMTP id 53B1E250F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 22:10:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B1E250F0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752607AbeGAWH0 (ORCPT
+        id S1752613AbeGAWKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 18:07:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45641 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeGAWHY (ORCPT
+        Sun, 1 Jul 2018 18:10:32 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:48006 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752457AbeGAWK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 18:07:24 -0400
-Received: by mail-ed1-f68.google.com with SMTP id g15-v6so5993942edr.12;
-        Sun, 01 Jul 2018 15:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=TddsCyw25/bvo/HCNN4DeeoMAWbsthu0+peHDNEMYQ8=;
-        b=tYVGd8gI3Bwxu33+aRf0nUT+7YLLmiF8yCYOrOieoqldsv8yBOJg/9QerEqO/lvpVR
-         Eg8oNb2x34+VC24DnvjASfInhJ9oQKNrgiXnKAqn0fOmRf9b9LENePeQ/8HrTTEDAKmz
-         vIsju84Ta2EpNiBN5ERbJtm3x9c9E5rAq6EhH/ubfcPgN0JqNnao4/DRU2LuJ+h+xcma
-         uIxBkmBF6KPkhoPUle3MIZgISYxbI4GPj17Sdj0/Zkd98sOGKzRQ8rcIwlGa8n0evaRP
-         j49Avg1DdAg4JHQgzRyS2ed1SD8zjBOI4YgU3d0rTb4TAjhCNcltzwUZ7jzqZaorHIHA
-         2ZNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=TddsCyw25/bvo/HCNN4DeeoMAWbsthu0+peHDNEMYQ8=;
-        b=EUVO9jfdSUL64zMXOa7aL3+wtC3YzPtouS1sUA/AhlWiR4w8+0ru12TLvCMvV4yL8x
-         INDV5x+fkf0RBW5fCDXhLlVUkNmeC/e6cVd+HsbDFEEyWUv9aeTSgpC9nDP0cXAyLw32
-         KC2bAKmuNzrguAR/k4WGBqVGPbdyxH9OQqY4G00GdbfGQrnivH970pWP8BgxzoS3XOqd
-         VAocmAZb4ifinWiYjqU3XDjOILKQCKnT5xt7wpkcVIQ1FI49rId4b70DZmCP78uJxCum
-         0Chhabb6i+A01kQ9MTH00KUuRVrgHS3TsMWRcZYzzuLrFq7IVnml37T+bH1AWd7cRCLm
-         twqA==
-X-Gm-Message-State: APt69E1jAD4LiOk53dsN7f9Jpz7fnN7u24KC/Mak3/ipQqj9iDFGRfHQ
-        hEP0w+l6VdjpgHoufynwCaRkOBLq/SuHlpkGVaU=
-X-Google-Smtp-Source: AAOMgpci97RYaTf/nt8mWf5EuqrbJUuIhbH7asAUK3EED2wNjYsJLmKwh1/4ODCfLkY+ep/Z/TeMTIt4jjHL3eQWrzM=
-X-Received: by 2002:a50:8f86:: with SMTP id y6-v6mr21682050edy.290.1530482843447;
- Sun, 01 Jul 2018 15:07:23 -0700 (PDT)
+        Sun, 1 Jul 2018 18:10:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id A79B76A56;
+        Mon,  2 Jul 2018 00:10:26 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 15vvNgbouel4; Mon,  2 Jul 2018 00:10:25 +0200 (CEST)
+Received: from var.youpi.perso.aquilenet.fr (static-176-158-111-12.ftth.abo.bbox.fr [176.158.111.12])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id B290E176;
+        Mon,  2 Jul 2018 00:10:25 +0200 (CEST)
+Received: from samy by var.youpi.perso.aquilenet.fr with local (Exim 4.91)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1fZkY3-0001jx-Ts; Mon, 02 Jul 2018 00:10:23 +0200
+Date:   Mon, 2 Jul 2018 00:10:23 +0200
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Chris Brannon <chris@the-brannons.com>, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kirk Reiser <kirk@reisers.ca>, linux-kernel@vger.kernel.org,
+        speakup@linux-speakup.org, William Hubbs <w.d.hubbs@gmail.com>
+Subject: Re: [PATCH] staging: speakup: Replace strncpy with memcpy
+Message-ID: <20180701221023.2fkpyv4jetf2zgjo@var.youpi.perso.aquilenet.fr>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Chris Brannon <chris@the-brannons.com>, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kirk Reiser <kirk@reisers.ca>, linux-kernel@vger.kernel.org,
+        speakup@linux-speakup.org, William Hubbs <w.d.hubbs@gmail.com>
+References: <1530478644-16857-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:aa7:c54a:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 15:07:22 -0700 (PDT)
-In-Reply-To: <20180701154108.13233-1-bigeasy@linutronix.de>
-References: <20180701154108.13233-1-bigeasy@linutronix.de>
-From:   Octavian Purdila <tavi@cs.pub.ro>
-Date:   Mon, 2 Jul 2018 00:07:22 +0200
-X-Google-Sender-Auth: pblH6oEOtxLA2IxX6vOyX5wMNqA
-Message-ID: <CAMoF9u0ZxNqKLV6FEjpHkGGuh8_V7zFQ_VpK-Y-fmbkSwL31Rg@mail.gmail.com>
-Subject: Re: [PATCH REPOST] mfd: dln2: use irqsave() in USB's complete callback
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
-        tglx@linutronix.de, Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1530478644-16857-1-git-send-email-linux@roeck-us.net>
+Organization: I am not organized
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 5:41 PM, Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> The USB completion callback does not disable interrupts while acquiring
-> the lock. We want to remove the local_irq_disable() invocation from
-> __usb_hcd_giveback_urb() and therefore it is required for the callback
-> handler to disable the interrupts while acquiring the lock.
-> The callback may be invoked either in IRQ or BH context depending on the
-> USB host controller.
-> Use the _irqsave() variant of the locking primitives.
->
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Octavian Purdila <octavian.purdila@intel.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Guenter Roeck, le dim. 01 juil. 2018 13:57:24 -0700, a ecrit:
+> gcc 8.1.0 generates the following warnings.
+> 
+> drivers/staging/speakup/kobjects.c: In function 'punc_store':
+> drivers/staging/speakup/kobjects.c:522:2: warning:
+> 	'strncpy' output truncated before terminating nul
+> 	copying as many bytes from a string as its length
+> drivers/staging/speakup/kobjects.c:504:6: note: length computed here
+> 
+> drivers/staging/speakup/kobjects.c: In function 'synth_store':
+> drivers/staging/speakup/kobjects.c:391:2: warning:
+> 	'strncpy' output truncated before terminating nul
+> 	copying as many bytes from a string as its length
+> drivers/staging/speakup/kobjects.c:388:8: note: length computed here
+> 
+> Using strncpy() is indeed less than perfect since the length of data to
+> be copied has already been determined with strlen(). Replace strncpy()
+> with memcpy() to address the warning and optimize the code a little.
+> 
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+
 > ---
->  drivers/mfd/dln2.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> index 704e189ca162..1ef3c92f32e0 100644
-> --- a/drivers/mfd/dln2.c
-> +++ b/drivers/mfd/dln2.c
-> @@ -194,6 +194,7 @@ static bool dln2_transfer_complete(struct dln2_dev *dln2, struct urb *urb,
->         struct device *dev = &dln2->interface->dev;
->         struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
->         struct dln2_rx_context *rxc;
-> +       unsigned long flags;
->         bool valid_slot = false;
->
->         if (rx_slot >= DLN2_MAX_RX_SLOTS)
-> @@ -206,13 +207,13 @@ static bool dln2_transfer_complete(struct dln2_dev *dln2, struct urb *urb,
->          * context elsewhere in this driver. This function (or its callers) are
->          * also not exported to other modules.
->          */
-> -       spin_lock(&rxs->lock);
-> +       spin_lock_irqsave(&rxs->lock, flags);
+>  drivers/staging/speakup/kobjects.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/speakup/kobjects.c b/drivers/staging/speakup/kobjects.c
+> index f1f90222186b..08f11cc17371 100644
+> --- a/drivers/staging/speakup/kobjects.c
+> +++ b/drivers/staging/speakup/kobjects.c
+> @@ -388,7 +388,7 @@ static ssize_t synth_store(struct kobject *kobj, struct kobj_attribute *attr,
+>  	len = strlen(buf);
+>  	if (len < 2 || len > 9)
+>  		return -EINVAL;
+> -	strncpy(new_synth_name, buf, len);
+> +	memcpy(new_synth_name, buf, len);
+>  	if (new_synth_name[len - 1] == '\n')
+>  		len--;
+>  	new_synth_name[len] = '\0';
+> @@ -519,7 +519,7 @@ static ssize_t punc_store(struct kobject *kobj, struct kobj_attribute *attr,
+>  		return -EINVAL;
+>  	}
+>  
+> -	strncpy(punc_buf, buf, x);
+> +	memcpy(punc_buf, buf, x);
+>  
+>  	while (x && punc_buf[x - 1] == '\n')
+>  		x--;
+> -- 
+> 2.7.4
+> 
 
-
-I don't think disabling the IRQ is necessary, please see the comment
-above and also this discussion:
-
-https://www.spinics.net/lists/linux-usb/msg115214.html
+-- 
+Samuel
+Tu as lu les docs. Tu es devenu un informaticien. Que tu le veuilles
+ou non. Lire la doc, c'est le Premier et Unique Commandement de
+l'informaticien.
+-+- TP in: Guide du Linuxien pervers - "L'évangile selon St Thomas"
