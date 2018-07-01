@@ -2,80 +2,93 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96462C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC0EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AEA23D2E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AEA23D2E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 59B6D25260
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B6D25260
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeGAG3i (ORCPT
+        id S1751930AbeGAGfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 02:29:38 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:53508 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751450AbeGAG3g (ORCPT
+        Sun, 1 Jul 2018 02:35:18 -0400
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25329 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751450AbeGAGfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 02:29:36 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fZVrJ-0006Wx-BW; Sun, 01 Jul 2018 14:29:17 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fZVrG-0007rH-PW; Sun, 01 Jul 2018 14:29:14 +0800
-Date:   Sun, 1 Jul 2018 14:29:14 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 4/9] dm integrity: Remove VLA usage
-Message-ID: <20180701062914.nihtpl5ekf7nytat@gondor.apana.org.au>
-References: <20180629002843.31095-1-keescook@chromium.org>
- <20180629002843.31095-5-keescook@chromium.org>
- <CAK8P3a3F2y8B3a5zhYyG2KSMmSx5L3J3C_0sV-Csa0zPOzYJhA@mail.gmail.com>
- <CAGXu5j+MLs-Jj7VCcpKS8Yo6MFAf=Nyf3jYsCbBoXnhtEvn4+g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j+MLs-Jj7VCcpKS8Yo6MFAf=Nyf3jYsCbBoXnhtEvn4+g@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sun, 1 Jul 2018 02:35:16 -0400
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Jul 2018 02:35:16 EDT
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=lxGD/iRtqfWLBDgU6hOsOAMk94+QUcRBPZP46qbQl8sfruoUsal2muMGapcVsfbWc1ps0m2yojBh
+    6j7cn/NXZbQASvpAP2H1+2HwEb8MCVJ9ydikgFS+bXx0zOcgPT7c  
+Received: from YEHS1XR956R00D1.lenovo.com (111.197.253.128 [111.197.253.128]) by mx.zohomail.com
+        with SMTPS id 1530425992341132.68424756262527; Sat, 30 Jun 2018 23:19:52 -0700 (PDT)
+From:   Huaisheng Ye <yehs2007@zoho.com>
+To:     dan.j.williams@intel.com
+Cc:     dave.jiang@intel.com, willy@infradead.org,
+        ross.zwisler@linux.intel.com, vishal.l.verma@intel.com,
+        jack@suse.com, chengnt@lenovo.com, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Huaisheng Ye <yehs1@lenovo.com>
+Subject: [PATCH 3/3] fs/ext2/inode: Optimize the condition for iomap_begin
+Date:   Sun,  1 Jul 2018 14:18:48 +0800
+Message-Id: <20180701061848.7036-3-yehs2007@zoho.com>
+X-Mailer: git-send-email 2.17.0.windows.1
+In-Reply-To: <20180701061848.7036-1-yehs2007@zoho.com>
+References: <20180701061848.7036-1-yehs2007@zoho.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 02:56:37PM -0700, Kees Cook wrote:
->
-> This conversion was following the existing check (PAGE_SIZE / 8), and
-> not via an analysis of alg.digestsize users. Let me double-check. For
-> predefined stuff, it looks like the largest is:
-> 
-> SKEIN1024_DIGEST_BIT_SIZE/8 == 128
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-This should be removed.  We shouldn't allow generic or new crypto
-algorithms in staging.
+If ext2_get_blocks returns negative result, ext2_iomap_begin
+will return for error case.
+Adjust the judging condition of ret value will be useful for
+code simplification.
 
-Thanks,
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+---
+ fs/ext2/inode.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index ca211bd..9b1004d 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -819,15 +819,15 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	iomap->offset = (loff_t)first_block << blkbits;
+ 	iomap->dax_dev = sbi->s_daxdev;
+ 
+-	if (ret == 0) {
+-		iomap->type = IOMAP_HOLE;
+-		iomap->addr = IOMAP_NULL_ADDR;
+-		iomap->length = 1 << blkbits;
+-	} else {
++	if (ret) {
+ 		iomap->type = IOMAP_MAPPED;
+ 		iomap->addr = (u64)bno << blkbits;
+ 		iomap->length = (u64)ret << blkbits;
+ 		iomap->flags |= IOMAP_F_MERGED;
++	} else {
++		iomap->type = IOMAP_HOLE;
++		iomap->addr = IOMAP_NULL_ADDR;
++		iomap->length = 1 << blkbits;
+ 	}
+ 
+ 	if (new)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.8.3.1
+
+
