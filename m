@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C567FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A08C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5A124380
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5A124380
+	by mail.kernel.org (Postfix) with ESMTP id 8F2252504A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2252504A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753099AbeGAQOH (ORCPT
+        id S1753120AbeGAQOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60284 "EHLO
+        Sun, 1 Jul 2018 12:14:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60306 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeGAQOE (ORCPT
+        with ESMTP id S1752922AbeGAQOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:04 -0400
+        Sun, 1 Jul 2018 12:14:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BD15ACD;
-        Sun,  1 Jul 2018 16:14:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03B8F4A3;
+        Sun,  1 Jul 2018 16:14:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Eda Zhou <ezhou@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3.18 72/85] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
-Date:   Sun,  1 Jul 2018 18:02:30 +0200
-Message-Id: <20180701153125.239551386@linuxfoundation.org>
+        stable@vger.kernel.org, Chad Austin <chadaustin@fb.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 3.18 56/85] fuse: atomic_o_trunc should truncate pagecache
+Date:   Sun,  1 Jul 2018 18:02:14 +0200
+Message-Id: <20180701153124.593024681@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -53,42 +50,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
+commit df0e91d488276086bc07da2e389986cae0048c37 upstream.
 
-This patch prevents driver from setting lower default speed of 1 GB/sec,
-if the switch does not support Get Port Speed Capabilities (GPSC)
-command. Setting this default speed results into much lower write
-performance for large sequential WRITE.  This patch modifies driver to
-check for gpsc_supported flags and prevents driver from issuing
-MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
-does not send this mailbox command, firmware assumes maximum supported
-link speed and will operate at the max speed.
+Fuse has an "atomic_o_trunc" mode, where userspace filesystem uses the
+O_TRUNC flag in the OPEN request to truncate the file atomically with the
+open.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Reported-by: Eda Zhou <ezhou@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Tested-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+In this mode there's no need to send a SETATTR request to userspace after
+the open, so fuse_do_setattr() checks this mode and returns.  But this
+misses the important step of truncating the pagecache.
+
+Add the missing parts of truncation to the ATTR_OPEN branch.
+
+Reported-by: Chad Austin <chadaustin@fb.com>
+Fixes: 6ff958edbf39 ("fuse: add atomic open+truncate support")
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/fuse/dir.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -3212,7 +3212,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
- 		return;
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1717,8 +1717,19 @@ int fuse_do_setattr(struct dentry *dentr
+ 		return err;
  
- 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
--	    fcport->fp_speed > ha->link_data_rate)
-+	    fcport->fp_speed > ha->link_data_rate ||
-+	    !ha->flags.gpsc_supported)
- 		return;
+ 	if (attr->ia_valid & ATTR_OPEN) {
+-		if (fc->atomic_o_trunc)
++		/* This is coming from open(..., ... | O_TRUNC); */
++		WARN_ON(!(attr->ia_valid & ATTR_SIZE));
++		WARN_ON(attr->ia_size != 0);
++		if (fc->atomic_o_trunc) {
++			/*
++			 * No need to send request to userspace, since actual
++			 * truncation has already been done by OPEN.  But still
++			 * need to truncate page cache.
++			 */
++			i_size_write(inode, 0);
++			truncate_pagecache(inode, 0);
+ 			return 0;
++		}
+ 		file = NULL;
+ 	}
  
- 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
 
 
