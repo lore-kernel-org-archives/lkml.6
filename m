@@ -2,105 +2,156 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D98EC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACA6C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F721256F5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:09:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F721256F5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 091212589B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:10:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091212589B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030260AbeGASJ4 (ORCPT
+        id S965629AbeGASKG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:09:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34234 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965343AbeGAQ17 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:27:59 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98ABCACD;
-        Sun,  1 Jul 2018 16:27:58 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.9 046/101] PCI: Add ACS quirk for Intel 7th & 8th Gen mobile
-Date:   Sun,  1 Jul 2018 18:21:32 +0200
-Message-Id: <20180701160758.995039117@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Sun, 1 Jul 2018 14:10:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37832 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965343AbeGASKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 14:10:02 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 28548207DA; Sun,  1 Jul 2018 20:10:00 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7BD9B20703;
+        Sun,  1 Jul 2018 20:09:59 +0200 (CEST)
+Date:   Sun, 1 Jul 2018 20:09:59 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Abhishek Sahu <absahu@codeaurora.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v4 00/15] Update for QCOM NAND driver
+Message-ID: <20180701200959.2edb3306@xps13>
+In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hi Abhishek,
 
-------------------
+Abhishek Sahu <absahu@codeaurora.org> wrote on Wed, 20 Jun 2018
+12:57:27 +0530:
 
-From: Alex Williamson <alex.williamson@redhat.com>
+> * v4:
+> 
+> 1. Added patch to make other ECC configurations function static.
+> 2. Clubbed the DT update patches.
+> 3. Removed the bad block related patch. Discussion is going on
+>    related with for proper solution so planning to submit separate
+>    patch series for all bad block related changes.
+> 4. Made the single codeword raw read function and used the same
+>    for raw page read.
+> 5. Changes in erased codeword detection to raw read function.
+> 
+> * v3:
+> 
+> 1. Addressed all review comments in v2.
+> 2. Added patch for removing redundant nand-ecc-step-size DT property.
+> 3. Renamed ECC configuration setup function with minor code changes.
+> 4. Modified comments and commit message for few patches.
+> 
+> * v2:
+> 
+> 1. Addressed all review comments in v1.
+> 1. Make the generic helper function for NAND ECC parameters setup
+>    and used this helper function for QCOM and Denali nand driver
+>    for ECC setup.
+> 2. Modified commit message for some of the patches and added more
+>    comments.
+> 3. Added new patch for fixing ‘return 0’ for raw read.
+> 4. Removed the read last codeword part for nand oob write.
+> 5. Reorganized bad block check function and removed the
+>    read_last_cw function completely.
+> 
+> * v1:
+> 
+> This patch series mainly deals with error handling and erased page
+> bitflip detection for QCOM NAND driver.
+> 
+> 1. The error handling was missing for some of the cases so fixed
+>    the same.
+> 
+> 2. Add the support for taking ECC strength from ONFI parameter.
+>    The earlier QCOM boards were coming with 4-bit ECC chip but
+>    now the same boards are coming with 8-bit ECC chip since the
+>    earlier 4-bit parts are obsolete from some vendors.
+> 
+> 3. We got few issues related with NAND erased page bitflips. The
+>    QCOM NAND controller can’t detect the bitflip in completely erased
+>    page so added the support to detect the same. It implemented the
+>    logic mentioned in patch [1] which didn’t go in mainline and later
+>    the generic functions were provided [2] to count the number of
+>    bitflips and make all 0xff. This patch series did some optimization
+>    logic to prevent the unnecessary full page raw read and data copy
+>    from QCOM NAND controller to DMA.
+> 
+> 4. Following are the testing done for these patches in QCOM IPQ8074
+>    HK01 (4-bit and 8-bit ECC chip) and IPQ806x AP148 boards.
+>     a. Run all mtd test and check if it passes
+>     b. Introduce custom bitflips in erased page and check if it
+>        returns no error/EUCLEAN/EBADMSG depending upon number of
+>        bitflips and position.
+>     c. Introduce failure condition for operational failure and
+>        check if it detects the same.
+> 
+> [1]: https://patchwork.ozlabs.org/patch/328994/
+> [2]: https://patchwork.ozlabs.org/patch/509970/
+> 
+> Abhishek Sahu (15):
+>   mtd: rawnand: helper function for setting up ECC configuration
+>   mtd: rawnand: denali: use helper function for ecc setup
+>   dt-bindings: qcom_nandc: update for ECC strength and step size
+>   mtd: rawnand: qcom: remove dt property nand-ecc-step-size
+>   mtd: rawnand: qcom: use the ecc strength from device parameter
+>   mtd: rawnand: qcom: wait for desc completion in all BAM channels
+>   mtd: rawnand: qcom: erased page detection for uncorrectable errors
+>     only
+>   mtd: rawnand: qcom: fix null pointer access for erased page detection
+>   mtd: rawnand: qcom: parse read errors for read oob also
+>   mtd: rawnand: qcom: modify write_oob to remove read codeword part
+>   mtd: rawnand: qcom: fix return value for raw page read
+>   mtd: rawnand: qcom: check for operation errors in case of raw read
+>   mtd: rawnand: qcom: code reorganization for raw read
+>   mtd: rawnand: qcom: erased page bitflips detection
+>   mtd: rawnand: provide only single helper function for ECC conf
+> 
+>  .../devicetree/bindings/mtd/qcom_nandc.txt         |   7 +-
+>  drivers/mtd/nand/raw/denali.c                      |  30 +-
+>  drivers/mtd/nand/raw/nand_base.c                   |  72 ++-
+>  drivers/mtd/nand/raw/qcom_nandc.c                  | 491 ++++++++++++++-------
+>  include/linux/mtd/rawnand.h                        |  10 +-
+>  5 files changed, 380 insertions(+), 230 deletions(-)
+> 
 
-commit e8440f4bfedc623bee40c84797ac78d9303d0db6 upstream.
+Thank you very much for the series and the changes you have done.
 
-The specification update indicates these have the same errata for
-implementing non-standard ACS capabilities.
+Applied all patches but "erased page bitflips detection" because I'm
+waiting for one small modification on this one.
 
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/pci/quirks.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4225,11 +4225,24 @@ static int pci_quirk_qcom_rp_acs(struct
-  * 0xa290-0xa29f PCI Express Root port #{0-16}
-  * 0xa2e7-0xa2ee PCI Express Root port #{17-24}
-  *
-+ * Mobile chipsets are also affected, 7th & 8th Generation
-+ * Specification update confirms ACS errata 22, status no fix: (7th Generation
-+ * Intel Processor Family I/O for U/Y Platforms and 8th Generation Intel
-+ * Processor Family I/O for U Quad Core Platforms Specification Update,
-+ * August 2017, Revision 002, Document#: 334660-002)[6]
-+ * Device IDs from I/O datasheet: (7th Generation Intel Processor Family I/O
-+ * for U/Y Platforms and 8th Generation Intel ® Processor Family I/O for U
-+ * Quad Core Platforms, Vol 1 of 2, August 2017, Document#: 334658-003)[7]
-+ *
-+ * 0x9d10-0x9d1b PCI Express Root port #{1-12}
-+ *
-  * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
-  * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
-  * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
-  * [4] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-spec-update.html
-  * [5] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-datasheet-vol-1.html
-+ * [6] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-spec-update.html
-+ * [7] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-datasheet-vol-1.html
-  */
- static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
- {
-@@ -4239,6 +4252,7 @@ static bool pci_quirk_intel_spt_pch_acs_
- 	switch (dev->device) {
- 	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
- 	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
-+	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
- 		return true;
- 	}
- 
-
-
+Thanks,
+Miquèl
