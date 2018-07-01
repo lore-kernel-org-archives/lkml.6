@@ -6,34 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD5C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C26C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6BB256CF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6BB256CF
+	by mail.kernel.org (Postfix) with ESMTP id 1650B256DB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1650B256DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031201AbeGAQgB (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:36:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35892 "EHLO
+        id S934251AbeGARic (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:38:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031184AbeGAQfy (ORCPT
+        with ESMTP id S1031186AbeGAQf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:54 -0400
+        Sun, 1 Jul 2018 12:35:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F21EACC;
-        Sun,  1 Jul 2018 16:35:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E86AAACC;
+        Sun,  1 Jul 2018 16:35:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 146/157] Input: elantech - fix V4 report decoding for module with middle key
-Date:   Sun,  1 Jul 2018 18:23:38 +0200
-Message-Id: <20180701160900.448265156@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 147/157] ALSA: timer: Fix UBSAN warning at SNDRV_TIMER_IOCTL_NEXT_DEVICE ioctl
+Date:   Sun,  1 Jul 2018 18:23:39 +0200
+Message-Id: <20180701160900.522711854@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,32 +48,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ??? <kt.liao@emc.com.tw>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e0ae2519ca004a628fa55aeef969c37edce522d3 upstream.
+commit b41f794f284966fd6ec634111e3b40d241389f96 upstream.
 
-Some touchpad has middle key and it will be indicated in bit 2 of packet[0].
-We need to fix V4 formation's byte mask to prevent error decoding.
+The kernel may spew a WARNING about UBSAN undefined behavior at
+handling ALSA timer ioctl SNDRV_TIMER_IOCTL_NEXT_DEVICE:
 
-Signed-off-by: KT Liao <kt.liao@emc.com.tw>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+UBSAN: Undefined behaviour in sound/core/timer.c:1524:19
+signed integer overflow:
+2147483647 + 1 cannot be represented in type 'int'
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x122/0x1c8 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
+ handle_overflow+0x1c2/0x21f lib/ubsan.c:190
+ __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
+ snd_timer_user_next_device sound/core/timer.c:1524 [inline]
+ __snd_timer_user_ioctl+0x204d/0x2520 sound/core/timer.c:1939
+ snd_timer_user_ioctl+0x67/0x95 sound/core/timer.c:1994
+ ....
+
+It happens only when a value with INT_MAX is passed, as we're
+incrementing it unconditionally.  So the fix is trivial, check the
+value with INT_MAX.  Although the bug itself is fairly harmless, it's
+better to fix it so that fuzzers won't hit this again later.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200213
+Reported-and-tested-by: Team OWL337 <icytxw@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |    2 +-
+ sound/core/timer.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -804,7 +804,7 @@ static int elantech_packet_check_v4(stru
- 	else if (ic_version == 7 && etd->samples[1] == 0x2A)
- 		sanity_check = ((packet[3] & 0x1c) == 0x10);
- 	else
--		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
-+		sanity_check = ((packet[0] & 0x08) == 0x00 &&
- 				(packet[3] & 0x1c) == 0x10);
- 
- 	if (!sanity_check)
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -1514,7 +1514,7 @@ static int snd_timer_user_next_device(st
+ 				} else {
+ 					if (id.subdevice < 0)
+ 						id.subdevice = 0;
+-					else
++					else if (id.subdevice < INT_MAX)
+ 						id.subdevice++;
+ 				}
+ 			}
 
 
