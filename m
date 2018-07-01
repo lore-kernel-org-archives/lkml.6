@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2482BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E75C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D24C225945
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24C225945
+	by mail.kernel.org (Postfix) with ESMTP id A9DAC2594D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9DAC2594D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965245AbeGASUd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:20:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33614 "EHLO
+        id S965260AbeGASU5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:20:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33596 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964872AbeGAQZF (ORCPT
+        with ESMTP id S933850AbeGAQY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:05 -0400
+        Sun, 1 Jul 2018 12:24:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F043DAEF;
-        Sun,  1 Jul 2018 16:25:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0332AACD;
+        Sun,  1 Jul 2018 16:24:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 024/101] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
-Date:   Sun,  1 Jul 2018 18:21:10 +0200
-Message-Id: <20180701160758.113610393@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>,
+        John Muir <john@jmuir.com>, Csaba Henk <csaba@gluster.com>,
+        Anand Avati <avati@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 022/101] fuse: dont keep dead fuse_conn at fuse_fill_super().
+Date:   Sun,  1 Jul 2018 18:21:08 +0200
+Message-Id: <20180701160758.029963454@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,63 +53,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 91d06971881f71d945910de128658038513d1b24 upstream.
+commit 543b8f8662fe6d21f19958b666ab0051af9db21a upstream.
 
-Currently we do not have an isync, or any other context synchronizing
-instruction prior to the slbie/slbmte in _switch() that updates the
-SLB entry for the kernel stack.
+syzbot is reporting use-after-free at fuse_kill_sb_blk() [1].
+Since sb->s_fs_info field is not cleared after fc was released by
+fuse_conn_put() when initialization failed, fuse_kill_sb_blk() finds
+already released fc and tries to hold the lock. Fix this by clearing
+sb->s_fs_info field after calling fuse_conn_put().
 
-However that is not correct as outlined in the ISA.
+[1] https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
 
->From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
-
-  "Changing the contents of ... the contents of SLB entries ... can
-   have the side effect of altering the context in which data
-   addresses and instruction addresses are interpreted, and in which
-   instructions are executed and data accesses are performed.
-   ...
-   These side effects need not occur in program order, and therefore
-   may require explicit synchronization by software.
-   ...
-   The synchronizing instruction before the context-altering
-   instruction ensures that all instructions up to and including that
-   synchronizing instruction are fetched and executed in the context
-   that existed before the alteration."
-
-And page 1136:
-
-  "For data accesses, the context synchronizing instruction before the
-   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
-   that all preceding instructions that access data storage have
-   completed to a point at which they have reported all exceptions
-   they will cause."
-
-We're not aware of any bugs caused by this, but it should be fixed
-regardless.
-
-Add the missing isync when updating kernel stack SLB entry.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-[mpe: Flesh out change log with more ISA text & explanation]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>
+Fixes: 3b463ae0c626 ("fuse: invalidation reverse calls")
+Cc: John Muir <john@jmuir.com>
+Cc: Csaba Henk <csaba@gluster.com>
+Cc: Anand Avati <avati@redhat.com>
+Cc: <stable@vger.kernel.org> # v2.6.31
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/entry_64.S |    1 +
+ fs/fuse/inode.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -586,6 +586,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
- 	 * actually hit this code path.
- 	 */
- 
-+	isync
- 	slbie	r6
- 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
- 	slbmte	r7,r0
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1184,6 +1184,7 @@ static int fuse_fill_super(struct super_
+  err_put_conn:
+ 	fuse_bdi_destroy(fc);
+ 	fuse_conn_put(fc);
++	sb->s_fs_info = NULL;
+  err_fput:
+ 	fput(file);
+  err:
 
 
