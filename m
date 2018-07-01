@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A42E8C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 492FFC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A1225076
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A1225076
+	by mail.kernel.org (Postfix) with ESMTP id 04E2225076
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E2225076
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932882AbeGAQO5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60438 "EHLO
+        id S932915AbeGAQPB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:15:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752898AbeGAQOw (ORCPT
+        with ESMTP id S932811AbeGAQOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:52 -0400
+        Sun, 1 Jul 2018 12:14:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D23B986A;
-        Sun,  1 Jul 2018 16:14:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23DCC4A3;
+        Sun,  1 Jul 2018 16:14:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        stable@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 59/85] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
-Date:   Sun,  1 Jul 2018 18:02:17 +0200
-Message-Id: <20180701153124.709389266@linuxfoundation.org>
+Subject: [PATCH 3.18 58/85] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
+Date:   Sun,  1 Jul 2018 18:02:16 +0200
+Message-Id: <20180701153124.670441820@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -49,42 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
+commit 91d06971881f71d945910de128658038513d1b24 upstream.
 
-In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
-validating DAWR region end") we fixed setting the DAWR end point to
-its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
-PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
+Currently we do not have an isync, or any other context synchronizing
+instruction prior to the slbie/slbmte in _switch() that updates the
+SLB entry for the kernel stack.
 
-PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
-zero (memset() in hw_breakpoint_init()). This worked with
-arch_validate_hwbkpt_settings() before the above patch was applied but
-is now broken if the breakpoint is 512byte aligned.
+However that is not correct as outlined in the ISA.
 
-This sets the length of the breakpoint to 8 bytes when using
-PTRACE_SET_DEBUGREG.
+>From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
 
-Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
-Cc: stable@vger.kernel.org # v3.11+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
+  "Changing the contents of ... the contents of SLB entries ... can
+   have the side effect of altering the context in which data
+   addresses and instruction addresses are interpreted, and in which
+   instructions are executed and data accesses are performed.
+   ...
+   These side effects need not occur in program order, and therefore
+   may require explicit synchronization by software.
+   ...
+   The synchronizing instruction before the context-altering
+   instruction ensures that all instructions up to and including that
+   synchronizing instruction are fetched and executed in the context
+   that existed before the alteration."
+
+And page 1136:
+
+  "For data accesses, the context synchronizing instruction before the
+   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
+   that all preceding instructions that access data storage have
+   completed to a point at which they have reported all exceptions
+   they will cause."
+
+We're not aware of any bugs caused by this, but it should be fixed
+regardless.
+
+Add the missing isync when updating kernel stack SLB entry.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+[mpe: Flesh out change log with more ISA text & explanation]
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/ptrace.c |    1 +
+ arch/powerpc/kernel/entry_64.S |    1 +
  1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -1004,6 +1004,7 @@ static int ptrace_set_debugreg(struct ta
- 	/* Create a new breakpoint request if one doesn't exist already */
- 	hw_breakpoint_init(&attr);
- 	attr.bp_addr = hw_brk.address;
-+	attr.bp_len = 8;
- 	arch_bp_generic_fields(hw_brk.type,
- 			       &attr.bp_type);
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -521,6 +521,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
+ 	 * actually hit this code path.
+ 	 */
  
++	isync
+ 	slbie	r6
+ 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
+ 	slbmte	r7,r0
 
 
