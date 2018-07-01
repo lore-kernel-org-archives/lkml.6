@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6EBC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E93CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A449F24FBB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A449F24FBB
+	by mail.kernel.org (Postfix) with ESMTP id D142324FC9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D142324FC9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932198AbeGAQMt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:12:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59980 "EHLO
+        id S932236AbeGAQMy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:12:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59972 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932083AbeGAQMk (ORCPT
+        with ESMTP id S932092AbeGAQMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:40 -0400
+        Sun, 1 Jul 2018 12:12:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5797E86A;
-        Sun,  1 Jul 2018 16:12:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8CE42ACD;
+        Sun,  1 Jul 2018 16:12:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bo Chen <chenbo@pdx.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 41/85] ALSA: hda - Handle kzalloc() failure in snd_hda_attach_pcm_stream()
-Date:   Sun,  1 Jul 2018 18:01:59 +0200
-Message-Id: <20180701153123.997484161@linuxfoundation.org>
+        stable@vger.kernel.org, James Harvey <jamespharvey20@gmail.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 3.18 40/85] btrfs: scrub: Dont use inode pages for device replace
+Date:   Sun,  1 Jul 2018 18:01:58 +0200
+Message-Id: <20180701153123.955693585@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -49,46 +49,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bo Chen <chenbo@pdx.edu>
+From: Qu Wenruo <wqu@suse.com>
 
-commit a3aa60d511746bd6c0d0366d4eb90a7998bcde8b upstream.
+commit ac0b4145d662a3b9e34085dea460fb06ede9b69b upstream.
 
-When 'kzalloc()' fails in 'snd_hda_attach_pcm_stream()', a new pcm instance is
-created without setting its operators via 'snd_pcm_set_ops()'. Following
-operations on the new pcm instance can trigger kernel null pointer dereferences
-and cause kernel oops.
+[BUG]
+Btrfs can create compressed extent without checksum (even though it
+shouldn't), and if we then try to replace device containing such extent,
+the result device will contain all the uncompressed data instead of the
+compressed one.
 
-This bug was found with my work on building a gray-box fault-injection tool for
-linux-kernel-module binaries. A kernel null pointer dereference was confirmed
-from line 'substream->ops->open()' in function 'snd_pcm_open_substream()' in
-file 'sound/core/pcm_native.c'.
+Test case already submitted to fstests:
+https://patchwork.kernel.org/patch/10442353/
 
-This patch fixes the bug by calling 'snd_device_free()' in the error handling
-path of 'kzalloc()', which removes the new pcm instance from the snd card before
-returns with an error code.
+[CAUSE]
+When handling compressed extent without checksum, device replace will
+goe into copy_nocow_pages() function.
 
-Signed-off-by: Bo Chen <chenbo@pdx.edu>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+In that function, btrfs will get all inodes referring to this data
+extents and then use find_or_create_page() to get pages direct from that
+inode.
+
+The problem here is, pages directly from inode are always uncompressed.
+And for compressed data extent, they mismatch with on-disk data.
+Thus this leads to corrupted compressed data extent written to replace
+device.
+
+[FIX]
+In this attempt, we could just remove the "optimization" branch, and let
+unified scrub_pages() to handle it.
+
+Although scrub_pages() won't bother reusing page cache, it will be a
+little slower, but it does the correct csum checking and won't cause
+such data corruption caused by "optimization".
+
+Note about the fix: this is the minimal fix that can be backported to
+older stable trees without conflicts. The whole callchain from
+copy_nocow_pages() can be deleted, and will be in followup patches.
+
+Fixes: ff023aac3119 ("Btrfs: add code to scrub to copy read data to another disk")
+CC: stable@vger.kernel.org # 4.4+
+Reported-by: James Harvey <jamespharvey20@gmail.com>
+Reviewed-by: James Harvey <jamespharvey20@gmail.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+[ remove code removal, add note why ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_controller.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/scrub.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_controller.c
-+++ b/sound/pci/hda/hda_controller.c
-@@ -915,8 +915,10 @@ static int azx_attach_pcm_stream(struct
- 		return err;
- 	strlcpy(pcm->name, cpcm->name, sizeof(pcm->name));
- 	apcm = kzalloc(sizeof(*apcm), GFP_KERNEL);
--	if (apcm == NULL)
-+	if (apcm == NULL) {
-+		snd_device_free(chip->card, pcm);
- 		return -ENOMEM;
-+	}
- 	apcm->chip = chip;
- 	apcm->pcm = pcm;
- 	apcm->codec = codec;
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -2207,7 +2207,7 @@ static int scrub_extent(struct scrub_ctx
+ 			have_csum = scrub_find_csum(sctx, logical, l, csum);
+ 			if (have_csum == 0)
+ 				++sctx->stat.no_csum;
+-			if (sctx->is_dev_replace && !have_csum) {
++			if (0 && sctx->is_dev_replace && !have_csum) {
+ 				ret = copy_nocow_pages(sctx, logical, l,
+ 						       mirror_num,
+ 						      physical_for_dev_replace);
 
 
