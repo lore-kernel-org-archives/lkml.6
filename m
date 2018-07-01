@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B357C6778C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F1DC6778A
 	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2582251FE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2582251FE
+	by mail.kernel.org (Postfix) with ESMTP id 470B6251CF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470B6251CF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965536AbeGAQ1g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:27:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34118 "EHLO
+        id S965338AbeGAQ1m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:27:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965028AbeGAQ1a (ORCPT
+        with ESMTP id S965529AbeGAQ1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:27:30 -0400
+        Sun, 1 Jul 2018 12:27:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EFA092B;
-        Sun,  1 Jul 2018 16:27:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BC8892B;
+        Sun,  1 Jul 2018 16:27:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 071/101] backlight: as3711_bl: Fix Device Tree node lookup
-Date:   Sun,  1 Jul 2018 18:21:57 +0200
-Message-Id: <20180701160800.008732720@linuxfoundation.org>
+Subject: [PATCH 4.9 073/101] backlight: tps65217_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:21:59 +0200
+Message-Id: <20180701160800.085774176@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -52,106 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 4a9c8bb2aca5b5a2a15744333729745dd9903562 upstream.
+commit 2b12dfa124dbadf391cb9a616aaa6b056823bf75 upstream.
 
 Fix child-node lookup during probe, which ended up searching the whole
 device tree depth-first starting at the parent rather than just matching
 on its children.
 
-To make things worse, the parent mfd node was also prematurely freed.
+This would only cause trouble if the child node is missing while there
+is an unrelated node named "backlight" elsewhere in the tree.
 
-Cc: stable <stable@vger.kernel.org>     # 3.10
-Fixes: 59eb2b5e57ea ("drivers/video/backlight/as3711_bl.c: add OF support")
+Cc: stable <stable@vger.kernel.org>     # 3.7
+Fixes: eebfdc17cc6c ("backlight: Add TPS65217 WLED driver")
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/backlight/as3711_bl.c |   33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ drivers/video/backlight/tps65217_bl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/video/backlight/as3711_bl.c
-+++ b/drivers/video/backlight/as3711_bl.c
-@@ -262,10 +262,10 @@ static int as3711_bl_register(struct pla
- static int as3711_backlight_parse_dt(struct device *dev)
+--- a/drivers/video/backlight/tps65217_bl.c
++++ b/drivers/video/backlight/tps65217_bl.c
+@@ -184,11 +184,11 @@ static struct tps65217_bl_pdata *
+ tps65217_bl_parse_dt(struct platform_device *pdev)
  {
- 	struct as3711_bl_pdata *pdata = dev_get_platdata(dev);
--	struct device_node *bl =
--		of_find_node_by_name(dev->parent->of_node, "backlight"), *fb;
-+	struct device_node *bl, *fb;
- 	int ret;
+ 	struct tps65217 *tps = dev_get_drvdata(pdev->dev.parent);
+-	struct device_node *node = of_node_get(tps->dev->of_node);
++	struct device_node *node;
+ 	struct tps65217_bl_pdata *pdata, *err;
+ 	u32 val;
  
-+	bl = of_get_child_by_name(dev->parent->of_node, "backlight");
- 	if (!bl) {
- 		dev_dbg(dev, "backlight node not found\n");
- 		return -ENODEV;
-@@ -279,7 +279,7 @@ static int as3711_backlight_parse_dt(str
- 		if (pdata->su1_max_uA <= 0)
- 			ret = -EINVAL;
- 		if (ret < 0)
--			return ret;
-+			goto err_put_bl;
- 	}
+-	node = of_find_node_by_name(node, "backlight");
++	node = of_get_child_by_name(tps->dev->of_node, "backlight");
+ 	if (!node)
+ 		return ERR_PTR(-ENODEV);
  
- 	fb = of_parse_phandle(bl, "su2-dev", 0);
-@@ -292,7 +292,7 @@ static int as3711_backlight_parse_dt(str
- 		if (pdata->su2_max_uA <= 0)
- 			ret = -EINVAL;
- 		if (ret < 0)
--			return ret;
-+			goto err_put_bl;
- 
- 		if (of_find_property(bl, "su2-feedback-voltage", NULL)) {
- 			pdata->su2_feedback = AS3711_SU2_VOLTAGE;
-@@ -314,8 +314,10 @@ static int as3711_backlight_parse_dt(str
- 			pdata->su2_feedback = AS3711_SU2_CURR_AUTO;
- 			count++;
- 		}
--		if (count != 1)
--			return -EINVAL;
-+		if (count != 1) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 
- 		count = 0;
- 		if (of_find_property(bl, "su2-fbprot-lx-sd4", NULL)) {
-@@ -334,8 +336,10 @@ static int as3711_backlight_parse_dt(str
- 			pdata->su2_fbprot = AS3711_SU2_GPIO4;
- 			count++;
- 		}
--		if (count != 1)
--			return -EINVAL;
-+		if (count != 1) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 
- 		count = 0;
- 		if (of_find_property(bl, "su2-auto-curr1", NULL)) {
-@@ -355,11 +359,20 @@ static int as3711_backlight_parse_dt(str
- 		 * At least one su2-auto-curr* must be specified iff
- 		 * AS3711_SU2_CURR_AUTO is used
- 		 */
--		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO))
--			return -EINVAL;
-+		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO)) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 	}
- 
-+	of_node_put(bl);
-+
- 	return 0;
-+
-+err_put_bl:
-+	of_node_put(bl);
-+
-+	return ret;
- }
- 
- static int as3711_backlight_probe(struct platform_device *pdev)
 
 
