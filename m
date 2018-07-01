@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207CBC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854A6C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D20262513A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20262513A
+	by mail.kernel.org (Postfix) with ESMTP id 3D8752513A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D8752513A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030228AbeGAQ3f (ORCPT
+        id S1030263AbeGAQ3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:29:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34512 "EHLO
+        Sun, 1 Jul 2018 12:29:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34538 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeGAQ32 (ORCPT
+        with ESMTP id S965617AbeGAQ3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:28 -0400
+        Sun, 1 Jul 2018 12:29:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E5F1AD8;
-        Sun,  1 Jul 2018 16:29:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FCD492B;
+        Sun,  1 Jul 2018 16:29:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 012/157] PM / Domains: Fix error path during attach in genpd
-Date:   Sun,  1 Jul 2018 18:21:24 +0200
-Message-Id: <20180701160852.893088349@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>
+Subject: [PATCH 4.14 015/157] usb: do not reset if a low-speed or full-speed device timed out
+Date:   Sun,  1 Jul 2018 18:21:27 +0200
+Message-Id: <20180701160853.044315728@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,45 +50,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>
 
-commit 72038df3c580c4c326b83c86149d7ac34007532a upstream.
+commit 6e01827ed93947895680fbdad68c072a0f4e2450 upstream.
 
-In case the PM domain fails to be powered on in genpd_dev_pm_attach(), it
-returns -EPROBE_DEFER, but keeping the device attached to its PM domain.
-This leads to problems when the next attempt to attach is re-tried. More
-precisely, in that situation an -EEXIST error code is returned, because the
-device already has its PM domain pointer assigned, from the first attempt.
+Some low-speed and full-speed devices (for example, bluetooth)
+do not have time to initialize. For them, ETIMEDOUT is a valid error.
+We need to give them another try. Otherwise, they will
+never be initialized correctly and in dmesg will be messages
+"Bluetooth: hci0 command 0x1002 tx timeout" or similars.
 
-Now, because of the sloppy error handling by the existing callers of
-dev_pm_domain_attach(), probing is allowed to continue when -EEXIST is
-returned. However, in such case there are no guarantees that the PM domain
-is powered on by genpd, which may lead to hangs when buses/drivers tried to
-access their devices.
-
-Let's fix this behaviour, simply by detaching the device when powering on
-fails in genpd_dev_pm_attach().
-
-Cc: v4.11+ <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 264904ccc33c ("usb: retry reset if a device times out")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/domain.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/core/hub.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2162,6 +2162,9 @@ int genpd_dev_pm_attach(struct device *d
- 	genpd_lock(pd);
- 	ret = genpd_power_on(pd, 0);
- 	genpd_unlock(pd);
-+
-+	if (ret)
-+		genpd_remove_device(pd, dev);
- out:
- 	return ret ? -EPROBE_DEFER : 0;
- }
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -4519,7 +4519,9 @@ hub_port_init(struct usb_hub *hub, struc
+ 				 * reset. But only on the first attempt,
+ 				 * lest we get into a time out/reset loop
+ 				 */
+-				if (r == 0  || (r == -ETIMEDOUT && retries == 0))
++				if (r == 0 || (r == -ETIMEDOUT &&
++						retries == 0 &&
++						udev->speed > USB_SPEED_FULL))
+ 					break;
+ 			}
+ 			udev->descriptor.bMaxPacketSize0 =
 
 
