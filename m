@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B206C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B01C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A5B25249
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A5B25249
+	by mail.kernel.org (Postfix) with ESMTP id A635625246
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A635625246
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030392AbeGAQa1 (ORCPT
+        id S1030407AbeGAQab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:30:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34728 "EHLO
+        Sun, 1 Jul 2018 12:30:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030360AbeGAQaS (ORCPT
+        with ESMTP id S1030200AbeGAQaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:18 -0400
+        Sun, 1 Jul 2018 12:30:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF0D492B;
-        Sun,  1 Jul 2018 16:30:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78A7D92B;
+        Sun,  1 Jul 2018 16:30:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.14 028/157] Bluetooth: hci_qca: Avoid missing rampatch failure with userspace fw loader
-Date:   Sun,  1 Jul 2018 18:21:40 +0200
-Message-Id: <20180701160853.714702973@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, dvyukov@google.com,
+        syzkaller@googlegroups.com, fengguang.wu@intel.com,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.14 029/157] printk: fix possible reuse of va_list variable
+Date:   Sun,  1 Jul 2018 18:21:41 +0200
+Message-Id: <20180701160853.768821944@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,42 +54,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amit Pundir <amit.pundir@linaro.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 7dc5fe0814c35ec4e7d2e8fa30abab72e0e6a172 upstream.
+commit 988a35f8da1dec5a8cd2788054d1e717be61bf25 upstream.
 
-AOSP use userspace firmware loader to load firmwares, which will
-return -EAGAIN in case qca/rampatch_00440302.bin is not found.
-Since there is no rampatch for dragonboard820c QCA controller
-revision, just make it work as is.
+I noticed that there is a possibility that printk_safe_log_store() causes
+kernel oops because "args" parameter is passed to vsnprintf() again when
+atomic_cmpxchg() detected that we raced. Fix this by using va_copy().
 
-CC: Loic Poulain <loic.poulain@linaro.org>
-CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>
-CC: Johan Hedberg <johan.hedberg@gmail.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Link: http://lkml.kernel.org/r/201805112002.GIF21216.OFVHFOMLJtQFSO@I-love.SAKURA.ne.jp
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: dvyukov@google.com
+Cc: syzkaller@googlegroups.com
+Cc: fengguang.wu@intel.com
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Fixes: 42a0bb3f71383b45 ("printk/nmi: generic solution for safe printk in NMI")
+Cc: 4.7+ <stable@vger.kernel.org> # v4.7+
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/hci_qca.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/printk/printk_safe.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -936,6 +936,12 @@ static int qca_setup(struct hci_uart *hu
- 	} else if (ret == -ENOENT) {
- 		/* No patch/nvm-config found, run with original fw/config */
- 		ret = 0;
-+	} else if (ret == -EAGAIN) {
-+		/*
-+		 * Userspace firmware loader will return -EAGAIN in case no
-+		 * patch/nvm-config is found, so run with original fw/config.
-+		 */
-+		ret = 0;
- 	}
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -85,6 +85,7 @@ static __printf(2, 0) int printk_safe_lo
+ {
+ 	int add;
+ 	size_t len;
++	va_list ap;
  
- 	/* Setup bdaddr */
+ again:
+ 	len = atomic_read(&s->len);
+@@ -103,7 +104,9 @@ again:
+ 	if (!len)
+ 		smp_rmb();
+ 
+-	add = vscnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, args);
++	va_copy(ap, args);
++	add = vscnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, ap);
++	va_end(ap);
+ 	if (!add)
+ 		return 0;
+ 
 
 
