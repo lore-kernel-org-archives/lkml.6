@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E11C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BEDC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B975E2507E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B975E2507E
+	by mail.kernel.org (Postfix) with ESMTP id D890625082
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D890625082
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753203AbeGAQPK (ORCPT
+        id S1753215AbeGAQPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:15:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60500 "EHLO
+        Sun, 1 Jul 2018 12:15:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932926AbeGAQPH (ORCPT
+        with ESMTP id S1752467AbeGAQPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:07 -0400
+        Sun, 1 Jul 2018 12:15:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62BF3ACC;
-        Sun,  1 Jul 2018 16:15:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEC42ACC;
+        Sun,  1 Jul 2018 16:15:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 3.18 54/85] branch-check: fix long->int truncation when profiling branches
-Date:   Sun,  1 Jul 2018 18:02:12 +0200
-Message-Id: <20180701153124.510326197@linuxfoundation.org>
+        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 012/105] tcp: verify the checksum of the first data segment in a new connection
+Date:   Sun,  1 Jul 2018 18:01:22 +0200
+Message-Id: <20180701153150.356578061@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
-References: <20180701153122.365061142@linuxfoundation.org>
+In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+References: <20180701153149.382300170@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -47,45 +48,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Frank van der Linden <fllinden@amazon.com>
 
-commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
+[ Upstream commit 4fd44a98ffe0d048246efef67ed640fdf2098a62 ]
 
-The function __builtin_expect returns long type (see the gcc
-documentation), and so do macros likely and unlikely. Unfortunatelly, when
-CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
-unlikely expand to __branch_check__ and __branch_check__ truncates the
-long type to int. This unintended truncation may cause bugs in various
-kernel code (we found a bug in dm-writecache because of it), so it's
-better to fix __branch_check__ to return long.
+commit 079096f103fa ("tcp/dccp: install syn_recv requests into ehash
+table") introduced an optimization for the handling of child sockets
+created for a new TCP connection.
 
-Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
+But this optimization passes any data associated with the last ACK of the
+connection handshake up the stack without verifying its checksum, because it
+calls tcp_child_process(), which in turn calls tcp_rcv_state_process()
+directly.  These lower-level processing functions do not do any checksum
+verification.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Insert a tcp_checksum_complete call in the TCP_NEW_SYN_RECEIVE path to
+fix this.
+
+Fixes: 079096f103fa ("tcp/dccp: install syn_recv requests into ehash table")
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Tested-by: Balbir Singh <bsingharora@gmail.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/compiler.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/tcp_ipv4.c |    4 ++++
+ net/ipv6/tcp_ipv6.c |    4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -105,7 +105,7 @@ void ftrace_likely_update(struct ftrace_
- #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
- 
- #define __branch_check__(x, expect) ({					\
--			int ______r;					\
-+			long ______r;					\
- 			static struct ftrace_branch_data		\
- 				__attribute__((__aligned__(4)))		\
- 				__attribute__((section("_ftrace_annotated_branch"))) \
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -1627,6 +1627,10 @@ process:
+ 			reqsk_put(req);
+ 			goto discard_it;
+ 		}
++		if (tcp_checksum_complete(skb)) {
++			reqsk_put(req);
++			goto csum_error;
++		}
+ 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
+ 			inet_csk_reqsk_queue_drop_and_put(sk, req);
+ 			goto lookup;
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -1415,6 +1415,10 @@ process:
+ 			reqsk_put(req);
+ 			goto discard_it;
+ 		}
++		if (tcp_checksum_complete(skb)) {
++			reqsk_put(req);
++			goto csum_error;
++		}
+ 		if (unlikely(sk->sk_state != TCP_LISTEN)) {
+ 			inet_csk_reqsk_queue_drop_and_put(sk, req);
+ 			goto lookup;
 
 
