@@ -3,38 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD01CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD407C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FED425148
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FED425148
+	by mail.kernel.org (Postfix) with ESMTP id 92DF725154
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:22:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92DF725154
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965027AbeGAQWV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:22:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33238 "EHLO
+        id S965101AbeGAQWn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:22:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33216 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964961AbeGAQTg (ORCPT
+        with ESMTP id S933616AbeGAQT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:19:36 -0400
+        Sun, 1 Jul 2018 12:19:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3765849B;
-        Sun,  1 Jul 2018 16:19:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1F4B49B;
+        Sun,  1 Jul 2018 16:19:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 101/105] spi: Fix scatterlist elements size in spi_map_buf
-Date:   Sun,  1 Jul 2018 18:02:51 +0200
-Message-Id: <20180701153156.693937436@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 099/105] ALSA: hda/realtek - Add a quirk for FSC ESPRIMO U9210
+Date:   Sun,  1 Jul 2018 18:02:49 +0200
+Message-Id: <20180701153156.520013924@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,50 +48,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ce99319a182fe766be67f96338386f3ec73e321c upstream.
+commit 275ec0cb946cb75ac8977f662e608fce92f8b8a8 upstream.
 
-When SPI transfers can be offloaded using DMA, the SPI core need to
-build a scatterlist to make sure that the buffer to be transferred is
-dma-able.
+Fujitsu Seimens ESPRIMO Mobile U9210 requires the same fixup as H270
+for the correct pin configs.
 
-This patch fixes the scatterlist entry size computation in the case
-where the maximum acceptable scatterlist entry supported by the DMA
-controller is less than PAGE_SIZE, when the buffer is vmalloced.
-
-For each entry, the actual size is given by the minimum between the
-desc_len (which is the max buffer size supported by the DMA controller)
-and the remaining buffer length until we cross a page boundary.
-
-Fixes: 65598c13fd66 ("spi: Fix per-page mapping of unaligned vmalloc-ed buffer")
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200107
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/spi/spi.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -707,8 +707,14 @@ static int spi_map_buf(struct spi_master
- 	for (i = 0; i < sgs; i++) {
- 
- 		if (vmalloced_buf) {
--			min = min_t(size_t,
--				    len, desc_len - offset_in_page(buf));
-+			/*
-+			 * Next scatterlist entry size is the minimum between
-+			 * the desc_len and the remaining buffer length that
-+			 * fits in a page.
-+			 */
-+			min = min_t(size_t, desc_len,
-+				    min_t(size_t, len,
-+					  PAGE_SIZE - offset_in_page(buf)));
- 			vm_page = vmalloc_to_page(buf);
- 			if (!vm_page) {
- 				sg_free_table(sgt);
+---
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -2447,6 +2447,7 @@ static const struct snd_pci_quirk alc262
+ 	SND_PCI_QUIRK(0x10cf, 0x1397, "Fujitsu Lifebook S7110", ALC262_FIXUP_FSC_S7110),
+ 	SND_PCI_QUIRK(0x10cf, 0x142d, "Fujitsu Lifebook E8410", ALC262_FIXUP_BENQ),
+ 	SND_PCI_QUIRK(0x10f1, 0x2915, "Tyan Thunder n6650W", ALC262_FIXUP_TYAN),
++	SND_PCI_QUIRK(0x1734, 0x1141, "FSC ESPRIMO U9210", ALC262_FIXUP_FSC_H270),
+ 	SND_PCI_QUIRK(0x1734, 0x1147, "FSC Celsius H270", ALC262_FIXUP_FSC_H270),
+ 	SND_PCI_QUIRK(0x17aa, 0x384e, "Lenovo 3000", ALC262_FIXUP_LENOVO_3000),
+ 	SND_PCI_QUIRK(0x17ff, 0x0560, "Benq ED8", ALC262_FIXUP_BENQ),
 
 
