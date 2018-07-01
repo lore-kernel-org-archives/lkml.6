@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB93FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C0DC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DC625615
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DC625615
+	by mail.kernel.org (Postfix) with ESMTP id E9ECF2561A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:16:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9ECF2561A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934120AbeGARPq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:15:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37028 "EHLO
+        id S934137AbeGARQH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:16:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37012 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031307AbeGAQjx (ORCPT
+        with ESMTP id S1031308AbeGAQjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:53 -0400
+        Sun, 1 Jul 2018 12:39:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0BF85A73;
-        Sun,  1 Jul 2018 16:39:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E7DAA73;
+        Sun,  1 Jul 2018 16:39:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.17 038/220] Bluetooth: hci_qca: Avoid missing rampatch failure with userspace fw loader
-Date:   Sun,  1 Jul 2018 18:21:02 +0200
-Message-Id: <20180701160909.921404607@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.17 070/220] arm64: Fix syscall restarting around signal suppressed by tracer
+Date:   Sun,  1 Jul 2018 18:21:34 +0200
+Message-Id: <20180701160911.340143585@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,42 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amit Pundir <amit.pundir@linaro.org>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 7dc5fe0814c35ec4e7d2e8fa30abab72e0e6a172 upstream.
+commit 0fe42512b2f03f9e5a20b9f55ef1013a68b4cd48 upstream.
 
-AOSP use userspace firmware loader to load firmwares, which will
-return -EAGAIN in case qca/rampatch_00440302.bin is not found.
-Since there is no rampatch for dragonboard820c QCA controller
-revision, just make it work as is.
+Commit 17c2895 ("arm64: Abstract syscallno manipulation") abstracts
+out the pt_regs.syscallno value for a syscall cancelled by a tracer
+as NO_SYSCALL, and provides helpers to set and check for this
+condition.  However, the way this was implemented has the
+unintended side-effect of disabling part of the syscall restart
+logic.
 
-CC: Loic Poulain <loic.poulain@linaro.org>
-CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>
-CC: Johan Hedberg <johan.hedberg@gmail.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+This comes about because the second in_syscall() check in
+do_signal() re-evaluates the "in a syscall" condition based on the
+updated pt_regs instead of the original pt_regs.  forget_syscall()
+is explicitly called prior to the second check in order to prevent
+restart logic in the ret_to_user path being spuriously triggered,
+which means that the second in_syscall() check always yields false.
+
+This triggers a failure in
+tools/testing/selftests/seccomp/seccomp_bpf.c, when using ptrace to
+suppress a signal that interrups a nanosleep() syscall.
+
+Misbehaviour of this type is only expected in the case where a
+tracer suppresses a signal and the target process is either being
+single-stepped or the interrupted syscall attempts to restart via
+-ERESTARTBLOCK.
+
+This patch restores the old behaviour by performing the
+in_syscall() check only once at the start of the function.
+
+Fixes: 17c289586009 ("arm64: Abstract syscallno manipulation")
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Reported-by: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: <stable@vger.kernel.org> # 4.14.x-
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/hci_qca.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/kernel/signal.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -935,6 +935,12 @@ static int qca_setup(struct hci_uart *hu
- 	} else if (ret == -ENOENT) {
- 		/* No patch/nvm-config found, run with original fw/config */
- 		ret = 0;
-+	} else if (ret == -EAGAIN) {
-+		/*
-+		 * Userspace firmware loader will return -EAGAIN in case no
-+		 * patch/nvm-config is found, so run with original fw/config.
-+		 */
-+		ret = 0;
- 	}
+--- a/arch/arm64/kernel/signal.c
++++ b/arch/arm64/kernel/signal.c
+@@ -830,11 +830,12 @@ static void do_signal(struct pt_regs *re
+ 	unsigned long continue_addr = 0, restart_addr = 0;
+ 	int retval = 0;
+ 	struct ksignal ksig;
++	bool syscall = in_syscall(regs);
  
- 	/* Setup bdaddr */
+ 	/*
+ 	 * If we were from a system call, check for system call restarting...
+ 	 */
+-	if (in_syscall(regs)) {
++	if (syscall) {
+ 		continue_addr = regs->pc;
+ 		restart_addr = continue_addr - (compat_thumb_mode(regs) ? 2 : 4);
+ 		retval = regs->regs[0];
+@@ -886,7 +887,7 @@ static void do_signal(struct pt_regs *re
+ 	 * Handle restarting a different system call. As above, if a debugger
+ 	 * has chosen to restart at a different PC, ignore the restart.
+ 	 */
+-	if (in_syscall(regs) && regs->pc == restart_addr) {
++	if (syscall && regs->pc == restart_addr) {
+ 		if (retval == -ERESTART_RESTARTBLOCK)
+ 			setup_restart_syscall(regs);
+ 		user_rewind_single_step(current);
 
 
