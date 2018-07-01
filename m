@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B00C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769E1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9890125A86
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9890125A86
+	by mail.kernel.org (Postfix) with ESMTP id 3905925A8B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3905925A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752964AbeGASfv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:35:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60610 "EHLO
+        id S933540AbeGASgK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:36:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60602 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932463AbeGAQPj (ORCPT
+        with ESMTP id S933057AbeGAQPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:15:39 -0400
+        Sun, 1 Jul 2018 12:15:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42E7E4A3;
-        Sun,  1 Jul 2018 16:15:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 852CB4A3;
+        Sun,  1 Jul 2018 16:15:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Dennis Wassenberg <dennis.wassenberg@secunet.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 019/105] ALSA: hda: add dock and led support for HP ProBook 640 G4
-Date:   Sun,  1 Jul 2018 18:01:29 +0200
-Message-Id: <20180701153150.808748390@linuxfoundation.org>
+Subject: [PATCH 4.4 018/105] ALSA: hda: add dock and led support for HP EliteBook 830 G5
+Date:   Sun,  1 Jul 2018 18:01:28 +0200
+Message-Id: <20180701153150.743505578@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -53,11 +52,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-commit 7eef32c1ef895a3a96463f9cbd04203007cd5555 upstream.
+commit 2861751f67b91e1d24e68010ced96614fb3140f4 upstream.
 
 This patch adds missing initialisation for HP 2013 UltraSlim Dock
 Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP ProBook 640 G4
+for HP EliteBook 830 G5
 
 Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Cc: <stable@vger.kernel.org>
@@ -70,11 +69,11 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/sound/pci/hda/patch_conexant.c
 +++ b/sound/pci/hda/patch_conexant.c
-@@ -852,6 +852,7 @@ static const struct snd_pci_quirk cxt506
+@@ -851,6 +851,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
  	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
  	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
  	SND_PCI_QUIRK(0x1043, 0x138d, "Asus", CXT_FIXUP_HEADPHONE_MIC_PIN),
