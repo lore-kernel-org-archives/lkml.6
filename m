@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB34C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E520EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C258B25538
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C258B25538
+	by mail.kernel.org (Postfix) with ESMTP id A823B25545
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A823B25545
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753881AbeGARCh (ORCPT
+        id S1032301AbeGAQnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:02:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37776 "EHLO
+        Sun, 1 Jul 2018 12:43:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032313AbeGAQnK (ORCPT
+        with ESMTP id S1032261AbeGAQm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:10 -0400
+        Sun, 1 Jul 2018 12:42:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7CC5A73;
-        Sun,  1 Jul 2018 16:43:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22920AA6;
+        Sun,  1 Jul 2018 16:42:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 143/220] scsi: zfcp: fix missing REC trigger trace for all objects in ERP_FAILED
-Date:   Sun,  1 Jul 2018 18:22:47 +0200
-Message-Id: <20180701160914.282787623@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sridhar Pitchai <sridhar.pitchai@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.17 112/220] PCI: hv: Make sure the bus domain is really unique
+Date:   Sun,  1 Jul 2018 18:22:16 +0200
+Message-Id: <20180701160913.047981914@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,184 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Sridhar Pitchai <Sridhar.Pitchai@microsoft.com>
 
-commit 8c3d20aada70042a39c6a6625be037c1472ca610 upstream.
+commit 29927dfb7f69bcf2ae7fd1cda10997e646a5189c upstream.
 
-That other commit introduced an inconsistency because it would trace on
-ERP_FAILED for all callers of port forced reopen triggers (not just
-terminate_rport_io), but it would not trace on ERP_FAILED for all callers of
-other ERP triggers such as adapter, port regular, LUN.
+When Linux runs as a guest VM in Hyper-V and Hyper-V adds the virtual PCI
+bus to the guest, Hyper-V always provides unique PCI domain.
 
-Therefore, generalize that other commit. zfcp_erp_action_enqueue() already
-had two early outs which re-used the one zfcp_dbf_rec_trig() call.  All ERP
-trigger functions finally run through zfcp_erp_action_enqueue().  So move
-the special handling for ZFCP_STATUS_COMMON_ERP_FAILED into
-zfcp_erp_action_enqueue() and add another early out with new trace marker
-for pseudo ERP need in this case. This removes all early returns from all
-ERP trigger functions so we always end up at zfcp_dbf_rec_trig().
+commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
+overrode unique domain with the serial number of the first device added to
+the virtual PCI bus.
 
-Example trace record formatted with zfcpdbf from s390-tools:
+The reason for that patch was to have a consistent and short name for the
+device, but Hyper-V doesn't provide unique serial numbers. Using non-unique
+serial numbers as domain IDs leads to duplicate device addresses, which
+causes PCI bus registration to fail.
 
-Timestamp      : ...
-Area           : REC
-Subarea        : 00
-Level          : 1
-Exception      : -
-CPU ID         : ..
-Caller         : 0x...
-Record ID      : 1                      ZFCP_DBF_REC_TRIG
-Tag            : .......
-LUN            : 0x...
-WWPN           : 0x...
-D_ID           : 0x...
-Adapter status : 0x...
-Port status    : 0x...
-LUN status     : 0x...
-Ready count    : 0x...
-Running count  : 0x...
-ERP want       : 0x0.                   ZFCP_ERP_ACTION_REOPEN_...
-ERP need       : 0xe0                   ZFCP_ERP_ACTION_FAILED
+commit 0c195567a8f6 ("netvsc: transparent VF management") avoids the need
+for commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
+domain").  When scripts were used to configure VF devices, the name of
+the VF needed to be consistent and short, but with commit 0c195567a8f6
+("netvsc: transparent VF management") all the setup is done in the kernel,
+and we do not need to maintain consistent name.
 
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Cc: <stable@vger.kernel.org> #2.6.38+
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Revert commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
+domain") so we can reliably support multiple devices being assigned to
+a guest.
+
+Tag the patch for stable kernels containing commit 0c195567a8f6
+("netvsc: transparent VF management").
+
+Fixes: 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
+Signed-off-by: Sridhar Pitchai <sridhar.pitchai@microsoft.com>
+[lorenzo.pieralisi@arm.com: trimmed commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org # v4.14+
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_erp.c |   79 +++++++++++++++++++++++++++----------------
- 1 file changed, 51 insertions(+), 28 deletions(-)
+ drivers/pci/host/pci-hyperv.c |   11 -----------
+ 1 file changed, 11 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -143,6 +143,49 @@ static void zfcp_erp_action_dismiss_adap
- 	}
- }
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1596,17 +1596,6 @@ static struct hv_pci_dev *new_pcichild_d
+ 	get_pcichild(hpdev, hv_pcidev_ref_childlist);
+ 	spin_lock_irqsave(&hbus->device_list_lock, flags);
  
-+static int zfcp_erp_handle_failed(int want, struct zfcp_adapter *adapter,
-+				  struct zfcp_port *port,
-+				  struct scsi_device *sdev)
-+{
-+	int need = want;
-+	struct zfcp_scsi_dev *zsdev;
-+
-+	switch (want) {
-+	case ZFCP_ERP_ACTION_REOPEN_LUN:
-+		zsdev = sdev_to_zfcp(sdev);
-+		if (atomic_read(&zsdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
-+			need = 0;
-+		break;
-+	case ZFCP_ERP_ACTION_REOPEN_PORT_FORCED:
-+		if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
-+			need = 0;
-+		break;
-+	case ZFCP_ERP_ACTION_REOPEN_PORT:
-+		if (atomic_read(&port->status) &
-+		    ZFCP_STATUS_COMMON_ERP_FAILED) {
-+			need = 0;
-+			/* ensure propagation of failed status to new devices */
-+			zfcp_erp_set_port_status(
-+				port, ZFCP_STATUS_COMMON_ERP_FAILED);
-+		}
-+		break;
-+	case ZFCP_ERP_ACTION_REOPEN_ADAPTER:
-+		if (atomic_read(&adapter->status) &
-+		    ZFCP_STATUS_COMMON_ERP_FAILED) {
-+			need = 0;
-+			/* ensure propagation of failed status to new devices */
-+			zfcp_erp_set_adapter_status(
-+				adapter, ZFCP_STATUS_COMMON_ERP_FAILED);
-+		}
-+		break;
-+	default:
-+		need = 0;
-+		break;
-+	}
-+
-+	return need;
-+}
-+
- static int zfcp_erp_required_act(int want, struct zfcp_adapter *adapter,
- 				 struct zfcp_port *port,
- 				 struct scsi_device *sdev)
-@@ -266,6 +309,12 @@ static int zfcp_erp_action_enqueue(int w
- 	int retval = 1, need;
- 	struct zfcp_erp_action *act;
- 
-+	need = zfcp_erp_handle_failed(want, adapter, port, sdev);
-+	if (!need) {
-+		need = ZFCP_ERP_ACTION_FAILED; /* marker for trace */
-+		goto out;
-+	}
-+
- 	if (!adapter->erp_thread)
- 		return -EIO;
- 
-@@ -314,12 +363,6 @@ static int _zfcp_erp_adapter_reopen(stru
- 	zfcp_erp_adapter_block(adapter, clear_mask);
- 	zfcp_scsi_schedule_rports_block(adapter);
- 
--	/* ensure propagation of failed status to new devices */
--	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
--		zfcp_erp_set_adapter_status(adapter,
--					    ZFCP_STATUS_COMMON_ERP_FAILED);
--		return -EIO;
--	}
- 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER,
- 				       adapter, NULL, NULL, id, 0);
- }
-@@ -338,12 +381,8 @@ void zfcp_erp_adapter_reopen(struct zfcp
- 	zfcp_scsi_schedule_rports_block(adapter);
- 
- 	write_lock_irqsave(&adapter->erp_lock, flags);
--	if (atomic_read(&adapter->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
--		zfcp_erp_set_adapter_status(adapter,
--					    ZFCP_STATUS_COMMON_ERP_FAILED);
--	else
--		zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
--					NULL, NULL, id, 0);
-+	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_ADAPTER, adapter,
-+				NULL, NULL, id, 0);
- 	write_unlock_irqrestore(&adapter->erp_lock, flags);
- }
- 
-@@ -384,13 +423,6 @@ static void _zfcp_erp_port_forced_reopen
- 	zfcp_erp_port_block(port, clear);
- 	zfcp_scsi_schedule_rport_block(port);
- 
--	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
--		zfcp_dbf_rec_trig(id, port->adapter, port, NULL,
--				  ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
--				  ZFCP_ERP_ACTION_FAILED);
--		return;
--	}
--
- 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT_FORCED,
- 				port->adapter, port, NULL, id, 0);
- }
-@@ -416,12 +448,6 @@ static int _zfcp_erp_port_reopen(struct
- 	zfcp_erp_port_block(port, clear);
- 	zfcp_scsi_schedule_rport_block(port);
- 
--	if (atomic_read(&port->status) & ZFCP_STATUS_COMMON_ERP_FAILED) {
--		/* ensure propagation of failed status to new devices */
--		zfcp_erp_set_port_status(port, ZFCP_STATUS_COMMON_ERP_FAILED);
--		return -EIO;
--	}
--
- 	return zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_PORT,
- 				       port->adapter, port, NULL, id, 0);
- }
-@@ -461,9 +487,6 @@ static void _zfcp_erp_lun_reopen(struct
- 
- 	zfcp_erp_lun_block(sdev, clear);
- 
--	if (atomic_read(&zfcp_sdev->status) & ZFCP_STATUS_COMMON_ERP_FAILED)
--		return;
--
- 	zfcp_erp_action_enqueue(ZFCP_ERP_ACTION_REOPEN_LUN, adapter,
- 				zfcp_sdev->port, sdev, id, act_status);
- }
+-	/*
+-	 * When a device is being added to the bus, we set the PCI domain
+-	 * number to be the device serial number, which is non-zero and
+-	 * unique on the same VM.  The serial numbers start with 1, and
+-	 * increase by 1 for each device.  So device names including this
+-	 * can have shorter names than based on the bus instance UUID.
+-	 * Only the first device serial number is used for domain, so the
+-	 * domain number will not change after the first device is added.
+-	 */
+-	if (list_empty(&hbus->children))
+-		hbus->sysdata.domain = desc->ser;
+ 	list_add_tail(&hpdev->list_entry, &hbus->children);
+ 	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ 	return hpdev;
 
 
