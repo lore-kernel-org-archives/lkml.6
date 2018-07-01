@@ -3,42 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6184C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5F4C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9427523F57
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9427523F57
+	by mail.kernel.org (Postfix) with ESMTP id 2458323FCF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2458323FCF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeGAQ3Y (ORCPT
+        id S1753614AbeGASD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:29:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34448 "EHLO
+        Sun, 1 Jul 2018 14:03:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34480 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933844AbeGAQ3I (ORCPT
+        with ESMTP id S965629AbeGAQ3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:08 -0400
+        Sun, 1 Jul 2018 12:29:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89F4692B;
-        Sun,  1 Jul 2018 16:29:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5D4192B;
+        Sun,  1 Jul 2018 16:29:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.9 083/101] media: dvb_frontend: fix locking issues at dvb_frontend_get_event()
-Date:   Sun,  1 Jul 2018 18:22:09 +0200
-Message-Id: <20180701160800.482347008@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 001/157] x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
+Date:   Sun,  1 Jul 2018 18:21:13 +0200
+Message-Id: <20180701160852.362158251@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
+References: <20180701160852.287307684@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,77 +49,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 76d81243a487c09619822ef8e7201a756e58a87d upstream.
+commit eab6870fee877258122a042bfd99ee7908c40280 upstream.
 
-As warned by smatch:
-	drivers/media/dvb-core/dvb_frontend.c:314 dvb_frontend_get_event() warn: inconsistent returns 'sem:&fepriv->sem'.
-	  Locked on:   line 288
-	               line 295
-	               line 306
-	               line 314
-	  Unlocked on: line 303
+Mark Rutland noticed that GCC optimization passes have the potential to elide
+necessary invocations of the array_index_mask_nospec() instruction sequence,
+so mark the asm() volatile.
 
-The lock implementation for get event is wrong, as, if an
-interrupt occurs, down_interruptible() will fail, and the
-routine will call up() twice when userspace calls the ioctl
-again.
+Mark explains:
 
-The bad code is there since when Linux migrated to git, in
-2005.
+"The volatile will inhibit *some* cases where the compiler could lift the
+ array_index_nospec() call out of a branch, e.g. where there are multiple
+ invocations of array_index_nospec() with the same arguments:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+        if (idx < foo) {
+                idx1 = array_idx_nospec(idx, foo)
+                do_something(idx1);
+        }
+
+        < some other code >
+
+        if (idx < foo) {
+                idx2 = array_idx_nospec(idx, foo);
+                do_something_else(idx2);
+        }
+
+ ... since the compiler can determine that the two invocations yield the same
+ result, and reuse the first result (likely the same register as idx was in
+ originally) for the second branch, effectively re-writing the above as:
+
+        if (idx < foo) {
+                idx = array_idx_nospec(idx, foo);
+                do_something(idx);
+        }
+
+        < some other code >
+
+        if (idx < foo) {
+                do_something_else(idx);
+        }
+
+ ... if we don't take the first branch, then speculatively take the second, we
+ lose the nospec protection.
+
+ There's more info on volatile asm in the GCC docs:
+
+   https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
+ "
+
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: babdde2698d4 ("x86: Implement array_index_mask_nospec")
+Link: https://lkml.kernel.org/lkml/152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/dvb-core/dvb_frontend.c |   23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/barrier.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -251,8 +251,20 @@ static void dvb_frontend_add_event(struc
- 	wake_up_interruptible (&events->wait_queue);
- }
- 
-+static int dvb_frontend_test_event(struct dvb_frontend_private *fepriv,
-+				   struct dvb_fe_events *events)
-+{
-+	int ret;
-+
-+	up(&fepriv->sem);
-+	ret = events->eventw != events->eventr;
-+	down(&fepriv->sem);
-+
-+	return ret;
-+}
-+
- static int dvb_frontend_get_event(struct dvb_frontend *fe,
--			    struct dvb_frontend_event *event, int flags)
-+			          struct dvb_frontend_event *event, int flags)
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -38,7 +38,7 @@ static inline unsigned long array_index_
  {
- 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
- 	struct dvb_fe_events *events = &fepriv->events;
-@@ -270,13 +282,8 @@ static int dvb_frontend_get_event(struct
- 		if (flags & O_NONBLOCK)
- 			return -EWOULDBLOCK;
+ 	unsigned long mask;
  
--		up(&fepriv->sem);
--
--		ret = wait_event_interruptible (events->wait_queue,
--						events->eventw != events->eventr);
--
--		if (down_interruptible (&fepriv->sem))
--			return -ERESTARTSYS;
-+		ret = wait_event_interruptible(events->wait_queue,
-+					       dvb_frontend_test_event(fepriv, events));
- 
- 		if (ret < 0)
- 			return ret;
+-	asm ("cmp %1,%2; sbb %0,%0;"
++	asm volatile ("cmp %1,%2; sbb %0,%0;"
+ 			:"=r" (mask)
+ 			:"g"(size),"r" (index)
+ 			:"cc");
 
 
