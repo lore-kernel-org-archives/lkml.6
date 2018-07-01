@@ -5,183 +5,144 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A953C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 12:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A9BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 12:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0F923C25
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 12:03:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C0F923C25
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 4675E22516
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 12:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4675E22516
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752217AbeGAMDA (ORCPT
+        id S1752317AbeGAMI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 08:03:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53460 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751899AbeGAMC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 08:02:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6257CAE57;
-        Sun,  1 Jul 2018 12:02:56 +0000 (UTC)
-Subject: Re: [RFC net-next 07/15] net: lora: Add Semtech SX1276
-To:     netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>
-References: <20180701110804.32415-1-afaerber@suse.de>
- <20180701110804.32415-8-afaerber@suse.de>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <d17bd315-a250-6bc5-da4d-f29e8b76cda3@suse.de>
-Date:   Sun, 1 Jul 2018 14:02:55 +0200
+        Sun, 1 Jul 2018 08:08:59 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37097 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752124AbeGAMI4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 08:08:56 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n17-v6so6076460wmh.2
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 05:08:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xQMOTcJmEYaCMQWqm7vvIfPMZUTHX4rIq6Eg8fIL0EI=;
+        b=e0Zq3Mm9BpRBgjRnk6A2bzs3Dvy1mkeIxkEUonPEcS+hINc0Q1wY5+OuqeDZgQ8HLg
+         ECrhFLWBX7jR62q2kOpygSD2Wog0F9Thu/QchFk+r4IDcs3X5E0uZXIKBTH4Ku7cJkZX
+         5xUqlQp1ikQSTpWIUmoJrqXAW1rj9j3wHvNu8mplELi6jw0lqgcq7JPJyDAORKvvnqEx
+         SvgevKuwZDvzMGqwOZGsa1MTTfTlOuzLLVOdtpmSMcDhLi/oNBQ5ujGQ/Zlh9B+0kO5P
+         t5MLudtd7pH6OcKmCtinyvhu6uqxYRV9NdSL+cYlPbPzeGb/6UjY/loHmTmfXVujmR7j
+         eFig==
+X-Gm-Message-State: APt69E2psZea8VK6pH41XFGgg7XAlNVlEsmiP/Z+VjWNdrbMNN+9sbG3
+        JqmIV/BJDK4Grbp5gUuuyKU4YLNOh68=
+X-Google-Smtp-Source: AAOMgpd5maLdXrTVI2dNavLUR846QTYXa8RIX28Du75PZYnSzLISIc7tyuRYtOMW+EBDQuh7ydq7BA==
+X-Received: by 2002:a1c:9042:: with SMTP id s63-v6mr4247240wmd.91.1530446935342;
+        Sun, 01 Jul 2018 05:08:55 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 74-v6sm10474549wmt.31.2018.07.01.05.08.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Jul 2018 05:08:54 -0700 (PDT)
+Subject: Re: [PATCH 0/8] usb: typec: Support for Alternate Modes
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>, Jun Li <jun.li@nxp.com>,
+        Mats Karrman <mats.dev.list@gmail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3941ff88-b929-4aa6-f40a-7c1b511afdd3@redhat.com>
+Date:   Sun, 1 Jul 2018 14:08:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180701110804.32415-8-afaerber@suse.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180627151953.30942-1-heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 01.07.2018 um 13:07 schrieb Andreas Färber:
-> diff --git a/drivers/net/lora/sx1276.c b/drivers/net/lora/sx1276.c
-> new file mode 100644
-> index 000000000000..d6732111247a
-> --- /dev/null
-> +++ b/drivers/net/lora/sx1276.c
-[...]
-> +static int sx1276_probe(struct spi_device *spi)
-> +{
-> +	struct net_device *netdev;
-> +	struct sx1276_priv *priv;
-> +	int rst, dio[6], ret, model, i;
-> +	u32 freq_xosc, freq_band;
-> +	unsigned long long freq_rf;
-> +	u8 val;
-> +
-> +	rst = of_get_named_gpio(spi->dev.of_node, "reset-gpio", 0);
-> +	if (rst == -ENOENT)
-> +		dev_warn(&spi->dev, "no reset GPIO available, ignoring");
-> +
-> +	for (i = 0; i < 6; i++) {
-> +		dio[i] = of_get_named_gpio(spi->dev.of_node, "dio-gpios", i);
-> +		if (dio[i] == -ENOENT)
-> +			dev_dbg(&spi->dev, "DIO%d not available, ignoring", i);
-> +		else {
-> +			ret = gpio_direction_input(dio[i]);
-> +			if (ret)
-> +				dev_err(&spi->dev, "couldn't set DIO%d to input", i);
-> +		}
-> +	}
-> +
-> +	if (gpio_is_valid(rst)) {
-> +		gpio_set_value(rst, 1);
-> +		udelay(100);
-> +		gpio_set_value(rst, 0);
-> +		msleep(5);
-> +	}
-> +
-> +	spi->bits_per_word = 8;
-> +	spi_setup(spi);
-> +
-> +	ret = sx1276_read_single(spi, REG_VERSION, &val);
-> +	if (ret) {
-> +		dev_err(&spi->dev, "version read failed");
-> +		return ret;
-> +	}
-> +
-> +	if (val == 0x22)
-> +		model = 1272;
-> +	else {
-> +		if (gpio_is_valid(rst)) {
-> +			gpio_set_value(rst, 0);
-> +			udelay(100);
-> +			gpio_set_value(rst, 1);
-> +			msleep(5);
-> +		}
-> +
-> +		ret = sx1276_read_single(spi, REG_VERSION, &val);
-> +		if (ret) {
-> +			dev_err(&spi->dev, "version read failed");
-> +			return ret;
-> +		}
-> +
-> +		if (val == 0x12)
-> +			model = 1276;
-> +		else {
-> +			dev_err(&spi->dev, "transceiver not recognized (RegVersion = 0x%02x)", (unsigned)val);
-> +			return -EINVAL;
-> +		}
-> +	}
-[snip]
+Hi,
 
-To counter my own point, this file of course still has leftover model
-detection heuristics; should check for the of_device_id match instead!
-SX1272 vs. SX1276 have the reset pin inverted, so - knowing which model
-it's supposed to be - we can do the right reset from the start and, if
-it doesn't work, report an error to the user.
+On 27-06-18 17:19, Heikki Krogerus wrote:
+> Hi,
+> 
+> Since we now have an implementation for an actual alternate mode (DisplayPort),
+> I guess there is no reason to send another RFC. This series is the same as the
+> last RFC proposal [1] with only minor changes. There were only a few comments.
+> 
+> [1] https://lkml.org/lkml/2018/6/8/225
+> 
+> I've tested these with a platform that has fusb302, and also with UCSI
+> platforms. The UCSI driver will need separate support for alternate modes that
+> I'm not including to this series. I'm still working on it. I've used various
+> DisplayPort to Type-C adapters for testing, both DisplayPort receptacles and
+> connectors.
 
-Also I should update that code to use gpiod, as seen in later patches.
+I've tested that this series does not cause any regression wrt
+PD or susperspeed host and gadget mode on a device with a fusb302 controller:
 
-Cheers,
-Andreas
+Tested-by: Hans de Goede <hdegoede@redhat.com>
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Regards,
+
+Hans
+
+
+
+> 
+> 
+> Heikki Krogerus (8):
+>    usb: pd: include kernel.h
+>    usb: typec: function for checking cable plug orientation
+>    usb: typec: mux: Get the mux identifier from function parameter
+>    usb: typec: Register a device for every mode
+>    usb: typec: Bus type for alternate modes
+>    usb: typec: Add driver for DisplayPort alternate mode
+>    usb: typec: pi3usb30532: Start using generic state values
+>    usb: typec: tcpm: Support for Alternate Modes
+> 
+>   Documentation/ABI/obsolete/sysfs-class-typec  |  48 ++
+>   Documentation/ABI/testing/sysfs-bus-typec     |  51 ++
+>   Documentation/ABI/testing/sysfs-class-typec   |  62 +-
+>   .../testing/sysfs-driver-typec-displayport    |  49 ++
+>   Documentation/driver-api/usb/typec_bus.rst    | 136 +++++
+>   MAINTAINERS                                   |  11 +-
+>   drivers/usb/typec/Kconfig                     |   2 +
+>   drivers/usb/typec/Makefile                    |   3 +-
+>   drivers/usb/typec/altmodes/Kconfig            |  14 +
+>   drivers/usb/typec/altmodes/Makefile           |   2 +
+>   drivers/usb/typec/altmodes/displayport.c      | 578 ++++++++++++++++++
+>   drivers/usb/typec/bus.c                       | 401 ++++++++++++
+>   drivers/usb/typec/bus.h                       |  38 ++
+>   drivers/usb/typec/class.c                     | 486 ++++++++++-----
+>   drivers/usb/typec/mux.c                       |   6 +-
+>   drivers/usb/typec/mux/pi3usb30532.c           |  13 +-
+>   drivers/usb/typec/tcpm.c                      | 188 ++++--
+>   include/linux/mod_devicetable.h               |  15 +
+>   include/linux/usb/pd.h                        |   1 +
+>   include/linux/usb/tcpm.h                      |   9 -
+>   include/linux/usb/typec.h                     |  52 +-
+>   include/linux/usb/typec_altmode.h             | 160 +++++
+>   include/linux/usb/typec_dp.h                  |  95 +++
+>   include/linux/usb/typec_mux.h                 |   2 +-
+>   scripts/mod/devicetable-offsets.c             |   4 +
+>   scripts/mod/file2alias.c                      |  13 +
+>   26 files changed, 2116 insertions(+), 323 deletions(-)
+>   create mode 100644 Documentation/ABI/obsolete/sysfs-class-typec
+>   create mode 100644 Documentation/ABI/testing/sysfs-bus-typec
+>   create mode 100644 Documentation/ABI/testing/sysfs-driver-typec-displayport
+>   create mode 100644 Documentation/driver-api/usb/typec_bus.rst
+>   create mode 100644 drivers/usb/typec/altmodes/Kconfig
+>   create mode 100644 drivers/usb/typec/altmodes/Makefile
+>   create mode 100644 drivers/usb/typec/altmodes/displayport.c
+>   create mode 100644 drivers/usb/typec/bus.c
+>   create mode 100644 drivers/usb/typec/bus.h
+>   create mode 100644 include/linux/usb/typec_altmode.h
+>   create mode 100644 include/linux/usb/typec_dp.h
+> 
