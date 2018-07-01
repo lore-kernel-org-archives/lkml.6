@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8147C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABA1C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FAF24FCA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:13:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FAF24FCA
+	by mail.kernel.org (Postfix) with ESMTP id CF88924FD5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:13:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF88924FD5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932283AbeGAQND (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:13:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60032 "EHLO
+        id S1752592AbeGAQNI (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:13:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752735AbeGAQM4 (ORCPT
+        with ESMTP id S932083AbeGAQM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:12:56 -0400
+        Sun, 1 Jul 2018 12:12:59 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9DDC4A3;
-        Sun,  1 Jul 2018 16:12:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 941F586D;
+        Sun,  1 Jul 2018 16:12:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 46/85] fs/binfmt_misc.c: do not allow offset overflow
-Date:   Sun,  1 Jul 2018 18:02:04 +0200
-Message-Id: <20180701153124.191066805@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 3.18 47/85] m68k/mm: Adjust VM area to be unmapped by gap size for __iounmap()
+Date:   Sun,  1 Jul 2018 18:02:05 +0200
+Message-Id: <20180701153124.232187037@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -52,80 +50,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
+From: Michael Schmitz <schmitzmic@gmail.com>
 
-commit 5cc41e099504b77014358b58567c5ea6293dd220 upstream.
+commit 3f90f9ef2dda316d64e420d5d51ba369587ccc55 upstream.
 
-WHen registering a new binfmt_misc handler, it is possible to overflow
-the offset to get a negative value, which might crash the system, or
-possibly leak kernel data.
+If 020/030 support is enabled, get_io_area() leaves an IO_SIZE gap
+between mappings which is added to the vm_struct representing the
+mapping.  __ioremap() uses the actual requested size (after alignment),
+while __iounmap() is passed the size from the vm_struct.
 
-Here is a crash log when 2500000000 was used as an offset:
+On 020/030, early termination descriptors are used to set up mappings of
+extent 'size', which are validated on unmapping. The unmapped gap of
+size IO_SIZE defeats the sanity check of the pmd tables, causing
+__iounmap() to loop forever on 030.
 
-  BUG: unable to handle kernel paging request at ffff989cfd6edca0
-  IP: load_misc_binary+0x22b/0x470 [binfmt_misc]
-  PGD 1ef3e067 P4D 1ef3e067 PUD 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: binfmt_misc kvm_intel ppdev kvm irqbypass joydev input_leds serio_raw mac_hid parport_pc qemu_fw_cfg parpy
-  CPU: 0 PID: 2499 Comm: bash Not tainted 4.15.0-22-generic #24-Ubuntu
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
-  RIP: 0010:load_misc_binary+0x22b/0x470 [binfmt_misc]
-  Call Trace:
-    search_binary_handler+0x97/0x1d0
-    do_execveat_common.isra.34+0x667/0x810
-    SyS_execve+0x31/0x40
-    do_syscall_64+0x73/0x130
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+On 040/060, unmapping of page table entries does not check for a valid
+mapping, so the umapping loop always completes there.
 
-Use kstrtoint instead of simple_strtoul.  It will work as the code
-already set the delimiter byte to '\0' and we only do it when the field
-is not empty.
+Adjust size to be unmapped by the gap that had been added in the
+vm_struct prior.
 
-Tested with offsets -1, 2500000000, UINT_MAX and INT_MAX.  Also tested
-with examples documented at Documentation/admin-guide/binfmt-misc.rst
-and other registrations from packages on Ubuntu.
+This fixes the hang in atari_platform_init() reported a long time ago,
+and a similar one reported by Finn recently (addressed by removing
+ioremap() use from the SWIM driver.
 
-Link: http://lkml.kernel.org/r/20180529135648.14254-1-cascardo@canonical.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested on my Falcon in 030 mode - untested but should work the same on
+040/060 (the extra page tables cleared there would never have been set
+up anyway).
+
+Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
+[geert: Minor commit description improvements]
+[geert: This was fixed in 2.4.23, but not in 2.5.x]
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/binfmt_misc.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/m68k/mm/kmap.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -334,8 +334,13 @@ static Node *create_entry(const char __u
- 		char *s = strchr(p, del);
- 		if (!s)
- 			goto Einval;
--		*s++ = '\0';
--		e->offset = simple_strtoul(p, &p, 10);
-+		*s = '\0';
-+		if (p != s) {
-+			int r = kstrtoint(p, 10, &e->offset);
-+			if (r != 0 || e->offset < 0)
-+				goto Einval;
-+		}
-+		p = s;
- 		if (*p++)
- 			goto Einval;
- 		e->magic = p;
-@@ -356,7 +361,8 @@ static Node *create_entry(const char __u
- 		if (e->mask &&
- 		    string_unescape_inplace(e->mask, UNESCAPE_HEX) != e->size)
- 			goto Einval;
--		if (e->size + e->offset > BINPRM_BUF_SIZE)
-+		if (e->size > BINPRM_BUF_SIZE ||
-+		    BINPRM_BUF_SIZE - e->size < e->offset)
- 			goto Einval;
- 	} else {
- 		p = strchr(p, del);
+--- a/arch/m68k/mm/kmap.c
++++ b/arch/m68k/mm/kmap.c
+@@ -88,7 +88,8 @@ static inline void free_io_area(void *ad
+ 	for (p = &iolist ; (tmp = *p) ; p = &tmp->next) {
+ 		if (tmp->addr == addr) {
+ 			*p = tmp->next;
+-			__iounmap(tmp->addr, tmp->size);
++			/* remove gap added in get_io_area() */
++			__iounmap(tmp->addr, tmp->size - IO_SIZE);
+ 			kfree(tmp);
+ 			return;
+ 		}
 
 
