@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F109DC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D087C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F462557B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F462557B
+	by mail.kernel.org (Postfix) with ESMTP id 61FE225586
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FE225586
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753697AbeGARGU (ORCPT
+        id S1753674AbeGAREk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:06:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37616 "EHLO
+        Sun, 1 Jul 2018 13:04:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37660 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032159AbeGAQmV (ORCPT
+        with ESMTP id S1032211AbeGAQmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:21 -0400
+        Sun, 1 Jul 2018 12:42:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 394B2A73;
-        Sun,  1 Jul 2018 16:42:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E106AA6;
+        Sun,  1 Jul 2018 16:42:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.17 127/220] X.509: unpack RSA signatureValue field from BIT STRING
-Date:   Sun,  1 Jul 2018 18:22:31 +0200
-Message-Id: <20180701160913.643888802@linuxfoundation.org>
+        stable@vger.kernel.org, Luis Henriques <lhenriques@suse.com>,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.17 132/220] scsi: scsi_debug: Fix memory leak on module unload
+Date:   Sun,  1 Jul 2018 18:22:36 +0200
+Message-Id: <20180701160913.836770119@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,51 +51,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: Luis Henriques <lhenriques@suse.com>
 
-commit b65c32ec5a942ab3ada93a048089a938918aba7f upstream.
+commit 52ab9768f723823a71dc659f0fad803a90f80236 upstream.
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+Since commit 80c49563e250 ("scsi: scsi_debug: implement IMMED bit") there
+are long delays in F_SYNC_DELAY and F_SSU_DELAY.  This can cause a memory
+leak in schedule_resp(), which can be invoked while unloading the
+scsi_debug module: free_all_queued() had already freed all sd_dp and
+schedule_resp will alloc a new one, which will never get freed.  Here's the
+kmemleak report while running xfstests generic/350:
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
+unreferenced object 0xffff88007d752b00 (size 128):
+  comm "rmmod", pid 26940, jiffies 4295816945 (age 7.588s)
+  hex dump (first 32 bytes):
+    00 2b 75 7d 00 88 ff ff 00 00 00 00 00 00 00 00  .+u}............
+    00 00 00 00 00 00 00 00 8e 31 a2 34 5f 03 00 00  .........1.4_...
+  backtrace:
+    [<000000002abd83d0>] 0xffffffffa000705e
+    [<000000004c063fda>] scsi_dispatch_cmd+0xc7/0x1a0
+    [<000000000c119a00>] scsi_request_fn+0x251/0x550
+    [<000000009de0c736>] __blk_run_queue+0x3f/0x60
+    [<000000001c4453c8>] blk_execute_rq_nowait+0x98/0xd0
+    [<00000000d17ec79f>] blk_execute_rq+0x3a/0x50
+    [<00000000a7654b6e>] scsi_execute+0x113/0x250
+    [<00000000fd78f7cd>] sd_sync_cache+0x95/0x160
+    [<0000000024dacb14>] sd_shutdown+0x9b/0xd0
+    [<00000000e9101710>] sd_remove+0x5f/0xb0
+    [<00000000c43f0d63>] device_release_driver_internal+0x13c/0x1f0
+    [<00000000e8ad57b6>] bus_remove_device+0xe9/0x160
+    [<00000000713a7b8a>] device_del+0x120/0x320
+    [<00000000e5db670c>] __scsi_remove_device+0x115/0x150
+    [<00000000eccbef30>] scsi_forget_host+0x20/0x60
+    [<00000000cd5a0738>] scsi_remove_host+0x6d/0x120
 
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
-
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
-Cc: stable@vger.kernel.org
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/asymmetric_keys/x509_cert_parser.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/scsi/scsi_debug.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -249,6 +249,15 @@ int x509_note_signature(void *context, s
- 		return -EINVAL;
- 	}
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -5506,9 +5506,9 @@ static void __exit scsi_debug_exit(void)
+ 	int k = sdebug_add_host;
  
-+	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
-+
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
+ 	stop_all_queued();
+-	free_all_queued();
+ 	for (; k; k--)
+ 		sdebug_remove_adapter();
++	free_all_queued();
+ 	driver_unregister(&sdebug_driverfs_driver);
+ 	bus_unregister(&pseudo_lld_bus);
+ 	root_device_unregister(pseudo_primary);
 
 
