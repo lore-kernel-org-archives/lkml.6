@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46858C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D19C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9CC2540E
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9CC2540E
+	by mail.kernel.org (Postfix) with ESMTP id 2D0B12540E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D0B12540E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032139AbeGAQpa (ORCPT
+        id S1753505AbeGAQph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38216 "EHLO
+        Sun, 1 Jul 2018 12:45:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38232 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934076AbeGAQp0 (ORCPT
+        with ESMTP id S934137AbeGAQpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:26 -0400
+        Sun, 1 Jul 2018 12:45:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9284CA73;
-        Sun,  1 Jul 2018 16:45:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00335A73;
+        Sun,  1 Jul 2018 16:45:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org, Enno Boland <gottox@voidlinux.eu>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.17 186/220] Input: silead - add MSSL0002 ACPI HID
-Date:   Sun,  1 Jul 2018 18:23:30 +0200
-Message-Id: <20180701160915.979020756@linuxfoundation.org>
+Subject: [PATCH 4.17 196/220] Input: xpad - fix GPD Win 2 controller name
+Date:   Sun,  1 Jul 2018 18:23:40 +0200
+Message-Id: <20180701160916.373991151@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,31 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Enno Boland <gottox@voidlinux.eu>
 
-commit fc573af632b44f355f8fa15ab505f5593368078d upstream.
+commit dd6bee81c942c0ea01030da9356026afb88f9d18 upstream.
 
-The Silead touchscreen on the Chuwi Vi8 tablet uses MSSL0002 as ACPI HID,
-rather then the usual MSSL1680 id.
+This fixes using the controller with SDL2.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+SDL2 has a naive algorithm to apply the correct settings to a controller.
+For X-Box compatible controllers it expects that the controller name
+contains a variation of a 'XBOX'-string.
+
+This patch changes the identifier to contain "X-Box" as substring.  Tested
+with Steam and C-Dogs-SDL which both detect the controller properly after
+adding this patch.
+
+Fixes: c1ba08390a8b ("Input: xpad - add GPD Win 2 Controller USB IDs")
 Cc: stable@vger.kernel.org
+Signed-off-by: Enno Boland <gottox@voidlinux.eu>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/silead.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/joystick/xpad.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/touchscreen/silead.c
-+++ b/drivers/input/touchscreen/silead.c
-@@ -603,6 +603,7 @@ static const struct acpi_device_id silea
- 	{ "GSL3692", 0 },
- 	{ "MSSL1680", 0 },
- 	{ "MSSL0001", 0 },
-+	{ "MSSL0002", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, silead_ts_acpi_match);
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -123,7 +123,7 @@ static const struct xpad_device {
+ 	u8 mapping;
+ 	u8 xtype;
+ } xpad_device[] = {
+-	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
++	{ 0x0079, 0x18d4, "GPD Win 2 X-Box Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x044f, 0x0f00, "Thrustmaster Wheel", 0, XTYPE_XBOX },
+ 	{ 0x044f, 0x0f03, "Thrustmaster Wheel", 0, XTYPE_XBOX },
+ 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
 
 
