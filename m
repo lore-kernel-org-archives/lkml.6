@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4493CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36FA6251BF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FA6251BF
+	by mail.kernel.org (Postfix) with ESMTP id DCD7A251C3
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD7A251C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeGALKW (ORCPT
+        id S1752694AbeGALKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:10:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47958 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:10:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47936 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752334AbeGALJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:04 -0400
+        id S1752328AbeGALJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F2471AFA5;
-        Sun,  1 Jul 2018 11:09:02 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 89CB7AFA3;
+        Sun,  1 Jul 2018 11:09:01 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -38,10 +38,11 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC net-next 13/15] net: lora: Prepare RAK RAK811
-Date:   Sun,  1 Jul 2018 13:08:02 +0200
-Message-Id: <20180701110804.32415-14-afaerber@suse.de>
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Jon Ortego <Jon.Ortego@imst.de>
+Subject: [RFC net-next 11/15] net: lora: Add IMST WiMOD
+Date:   Sun,  1 Jul 2018 13:08:00 +0200
+Message-Id: <20180701110804.32415-12-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
 References: <20180701110804.32415-1-afaerber@suse.de>
@@ -53,198 +54,567 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RAK811 and RAK812 offer a UART based AT command interface.
-It allows both LoRaWAN and LoRa modes.
+The IMST WiMOD uses a SLIP based binary UART protocol. Two separate
+firmwares are available. By default it ships with a LoRaWAN firmware.
+The alternative firmware is a custom P2P addressing mode based on LoRa.
 
-Cc: Ken Yu (禹凯) <ken.yu@rakwireless.com>
+Cc: Jon Ortego <Jon.Ortego@imst.de>
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 ---
- drivers/net/lora/Kconfig  |   7 ++
+ drivers/net/lora/Kconfig  |   8 +
  drivers/net/lora/Makefile |   3 +
- drivers/net/lora/rak811.c | 219 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 229 insertions(+)
- create mode 100644 drivers/net/lora/rak811.c
+ drivers/net/lora/wimod.c  | 597 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 608 insertions(+)
+ create mode 100644 drivers/net/lora/wimod.c
 
 diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
-index 72a9d2a0f2be..3e384493cbdd 100644
+index 940bd2cbe106..2e05caef8645 100644
 --- a/drivers/net/lora/Kconfig
 +++ b/drivers/net/lora/Kconfig
-@@ -17,6 +17,13 @@ config LORA_DEV
+@@ -31,6 +31,14 @@ config LORA_SX1276
+ 	help
+ 	  Semtech SX1272/1276/1278
  
- if LORA_DEV
- 
-+config LORA_RAK811
-+	tristate "RAK RAK811 driver"
++config LORA_WIMOD
++	tristate "IMST WiMOD driver"
 +	default y
 +	depends on SERIAL_DEV_BUS
++	select CRC_CCITT
 +	help
-+	  RAK RAK811/RAK812
++	  IMST WiMOD
 +
- config LORA_RN2483
- 	tristate "Microchip RN2483/RN2903 driver"
- 	default y
+ endif
+ 
+ endmenu
 diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
-index dfa9a43dcfb3..6b6870ffbfd8 100644
+index 07839c3ce9f8..ecb326c859a5 100644
 --- a/drivers/net/lora/Makefile
 +++ b/drivers/net/lora/Makefile
-@@ -9,6 +9,9 @@ lora-dev-y := dev.o
- # Alphabetically sorted.
- #
+@@ -15,3 +15,6 @@ lora-rn2483-y += rn2483_cmd.o
  
-+obj-$(CONFIG_LORA_RAK811) += lora-rak811.o
-+lora-rak811-y := rak811.o
+ obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
+ lora-sx1276-y := sx1276.o
 +
- obj-$(CONFIG_LORA_RN2483) += lora-rn2483.o
- lora-rn2483-y := rn2483.o
- lora-rn2483-y += rn2483_cmd.o
-diff --git a/drivers/net/lora/rak811.c b/drivers/net/lora/rak811.c
++obj-$(CONFIG_LORA_WIMOD) += lora-wimod.o
++lora-wimod-y := wimod.o
+diff --git a/drivers/net/lora/wimod.c b/drivers/net/lora/wimod.c
 new file mode 100644
-index 000000000000..ad3d0980c489
+index 000000000000..a70d5a6dc7c4
 --- /dev/null
-+++ b/drivers/net/lora/rak811.c
-@@ -0,0 +1,219 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
++++ b/drivers/net/lora/wimod.c
+@@ -0,0 +1,597 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * RAK RAK811
++ * IMST WiMOD
 + *
 + * Copyright (c) 2017-2018 Andreas Färber
 + */
 +
-+#include <linux/delay.h>
++#include <linux/crc-ccitt.h>
 +#include <linux/lora.h>
 +#include <linux/module.h>
 +#include <linux/netdevice.h>
 +#include <linux/of.h>
++#include <linux/rculist.h>
 +#include <linux/serdev.h>
-+#include <linux/lora/dev.h>
 +
-+struct rak811_device {
++#define WIMOD_HCI_PAYLOAD_MAX	300
++#define WIMOD_HCI_PACKET_MAX	(1 + (2 + WIMOD_HCI_PAYLOAD_MAX + 2) * 2 + 1)
++
++struct wimod_device {
 +	struct serdev_device *serdev;
 +
-+	char rx_buf[4096];
++	u8 rx_buf[WIMOD_HCI_PACKET_MAX];
 +	int rx_len;
-+
-+	struct completion line_recv_comp;
++	bool rx_esc;
++	struct list_head packet_dispatchers;
 +};
 +
-+static int rak811_send_command(struct rak811_device *rakdev, const char *cmd, char **data, unsigned long timeout)
++#define SLIP_END	0300
++#define SLIP_ESC	0333
++#define SLIP_ESC_END	0334
++#define SLIP_ESC_ESC	0335
++
++static inline void slip_print_bytes(const u8* buf, int len)
 +{
-+	struct serdev_device *sdev = rakdev->serdev;
-+	const char *crlf = "\r\n";
-+	char *resp;
++	int i;
 +
-+	serdev_device_write_buf(sdev, cmd, strlen(cmd));
-+	serdev_device_write_buf(sdev, crlf, 2);
++	for (i = 0; i < len; i++)
++		printk("%02x ", buf[i]);
++}
 +
-+	timeout = wait_for_completion_timeout(&rakdev->line_recv_comp, timeout);
++static int slip_send_end(struct serdev_device *sdev, unsigned long timeout)
++{
++	u8 val = SLIP_END;
++
++	return serdev_device_write(sdev, &val, 1, timeout);
++}
++
++#if 0
++static int slip_send_data(struct serdev_device *sdev, const u8 *buf, int len,
++	unsigned long timeout)
++{
++	int last_idx = -1;
++	int i;
++	u8 esc[2] = { SLIP_ESC, 0 };
++	int ret;
++
++	for (i = 0; i < len; i++) {
++		if (buf[i] != SLIP_END &&
++		    buf[i] != SLIP_ESC)
++			continue;
++
++		slip_print_bytes(&buf[last_idx + 1], i - (last_idx + 1));
++
++		ret = serdev_device_write(sdev,
++			&buf[last_idx + 1], i - (last_idx + 1), timeout);
++		if (ret)
++			return ret;
++
++		switch (buf[i]) {
++		case SLIP_END:
++			esc[1] = SLIP_ESC_END;
++			break;
++		case SLIP_ESC:
++			esc[1] = SLIP_ESC_ESC;
++			break;
++		}
++		slip_print_bytes(esc, 2);
++		ret = serdev_device_write(sdev, esc, 2, timeout);
++		if (ret)
++			return ret;
++
++		last_idx = i;
++	}
++
++	slip_print_bytes(&buf[last_idx + 1], len - (last_idx + 1));
++
++	ret = serdev_device_write(sdev,
++		&buf[last_idx + 1], len - (last_idx + 1), timeout);
++
++	return ret;
++}
++#endif
++
++static int slip_write_data(u8 *buf, int buf_len, const u8 *data, int data_len)
++{
++	int last_idx = -1;
++	int i, n;
++	int count = 0;
++
++	for (i = 0; i < data_len; i++) {
++		if (data[i] != SLIP_END &&
++		    data[i] != SLIP_ESC)
++			continue;
++
++		n = i - (last_idx + 1);
++		if (count + n + 2 > buf_len)
++			return -ENOMEM;
++
++		memcpy(buf + count, &data[last_idx + 1], n);
++		count += n;
++
++		buf[count++] = SLIP_ESC;
++		switch (data[i]) {
++		case SLIP_END:
++			buf[count++] = SLIP_ESC_END;
++			break;
++		case SLIP_ESC:
++			buf[count++] = SLIP_ESC_ESC;
++			break;
++		}
++
++		last_idx = i;
++	}
++
++	n = data_len - (last_idx + 1);
++	if (count + n > buf_len)
++		return -ENOMEM;
++
++	memcpy(buf + count, &data[last_idx + 1], n);
++	count += n;
++
++	return count;
++}
++
++#define DEVMGMT_ID	0x01
++
++#define DEVMGMT_MSG_PING_REQ		0x01
++#define DEVMGMT_MSG_PING_RSP		0x02
++#define DEVMGMT_MSG_GET_DEVICE_INFO_REQ	0x03
++#define DEVMGMT_MSG_GET_DEVICE_INFO_RSP	0x04
++#define DEVMGMT_MSG_GET_FW_INFO_REQ	0x05
++#define DEVMGMT_MSG_GET_FW_INFO_RSP	0x06
++
++#define DEVMGMT_STATUS_OK	0x00
++
++struct wimod_hci_packet_dispatcher {
++	struct list_head list;
++	u8 dst_id;
++	u8 msg_id;
++	void (*dispatchee)(const u8*, int, struct wimod_hci_packet_dispatcher *);
++	void *priv;
++};
++
++struct wimod_hci_packet_completion {
++	struct wimod_hci_packet_dispatcher disp;
++	struct completion comp;
++	char *payload;
++	int payload_len;
++};
++
++static void wimod_hci_add_dispatcher(struct wimod_device *wmdev,
++	struct wimod_hci_packet_dispatcher *entry)
++{
++	list_add_tail_rcu(&entry->list, &wmdev->packet_dispatchers);
++}
++
++static void wimod_hci_remove_dispatcher(struct wimod_device *wmdev,
++	struct wimod_hci_packet_dispatcher *entry)
++{
++	list_del_rcu(&entry->list);
++}
++
++static void wimod_hci_packet_dispatch_completion(const u8 *data, int len,
++	struct wimod_hci_packet_dispatcher *d)
++{
++	struct wimod_hci_packet_completion *disp =
++		container_of(d, struct wimod_hci_packet_completion, disp);
++
++	if (completion_done(&disp->comp))
++		return;
++
++	disp->payload_len = len - 2;
++	disp->payload = kzalloc(disp->payload_len, GFP_KERNEL);
++	if (disp->payload)
++		memcpy(disp->payload, data + 2, len - 2);
++
++	complete(&disp->comp);
++}
++
++static int wimod_hci_send(struct serdev_device *sdev,
++	u8 dst_id, u8 msg_id, const u8 *payload, int payload_len,
++	unsigned long timeout)
++{
++	u8 buf[WIMOD_HCI_PACKET_MAX];
++	int buf_len = 0;
++	u16 crc = 0xffff;
++	int ret, i;
++
++	if (payload_len > WIMOD_HCI_PAYLOAD_MAX)
++		return -EINVAL;
++
++	for (i = 0; i < 30; i++) {
++		ret = slip_send_end(sdev, timeout);
++		if (ret) {
++			dev_err(&sdev->dev, "%s: wakeup END %d failed\n", __func__, i);
++			return ret;
++		}
++	}
++
++	crc = crc_ccitt_byte(crc, dst_id);
++	crc = crc_ccitt_byte(crc, msg_id);
++	if (payload_len > 0)
++		crc = crc_ccitt(crc, payload, payload_len);
++	crc = ~crc;
++
++	printk(KERN_INFO "sending: ");
++
++	/*ret = slip_send_end(sdev, timeout);
++	if (ret) {
++		dev_err(&sdev->dev, "%s: initial END failed\n", __func__);
++		return ret;
++	}
++
++	ret = slip_send_data(sdev, &dst_id, 1, timeout);
++	if (ret) {
++		dev_err(&sdev->dev, "%s: dst_id failed\n", __func__);
++		return ret;
++	}
++
++	ret = slip_send_data(sdev, &msg_id, 1, timeout);
++	if (ret) {
++		dev_err(&sdev->dev, "%s: msg_id failed\n", __func__);
++		return ret;
++	}*/
++
++	buf[buf_len++] = SLIP_END;
++
++	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, &dst_id, 1);
++	if (ret < 0)
++		return ret;
++	buf_len += ret;
++
++	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, &msg_id, 1);
++	if (ret < 0)
++		return ret;
++	buf_len += ret;
++
++	if (payload_len > 0) {
++		/*ret = slip_send_data(sdev, payload, payload_len, timeout);
++		if (ret) {
++			dev_err(&sdev->dev, "%s: payload failed\n", __func__);
++			return ret;
++		}*/
++		ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, payload, payload_len);
++		if (ret < 0)
++			return ret;
++		buf_len += ret;
++	}
++
++	cpu_to_le16s(crc);
++	/*ret = slip_send_data(sdev, (u8 *)&crc, 2, timeout);
++	if (ret) {
++		dev_err(&sdev->dev, "%s: FCS failed\n", __func__);
++		return ret;
++	}
++
++	ret = slip_send_end(sdev, timeout);
++	if (ret) {
++		dev_err(&sdev->dev, "%s: trailing END failed\n", __func__);
++		return ret;
++	}*/
++
++	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, (u8 *)&crc, 2);
++	if (ret < 0)
++		return ret;
++	buf_len += ret;
++
++	buf[buf_len++] = SLIP_END;
++
++	slip_print_bytes(buf, buf_len);
++
++	return serdev_device_write(sdev, buf, buf_len, timeout);
++
++	//printk("\n");
++
++	//return 0;
++}
++
++static int wimod_hci_devmgmt_status(u8 status)
++{
++	switch (status) {
++	case DEVMGMT_STATUS_OK:
++		return 0;
++	default:
++		pr_info("DEVMGMT status %u\n", (int)status);
++		return -EINVAL;
++	}
++}
++
++static int wimod_hci_devmgmt_send_sync(struct wimod_device *wmdev,
++	u8 req_msg_id, const u8 *req_payload, int req_payload_len,
++	u8 rsp_msg_id, u8 **rsp_payload, int *rsp_payload_len,
++	unsigned long timeout)
++{
++	struct wimod_hci_packet_completion packet = {0};
++	int ret;
++
++	if (rsp_payload && !rsp_payload_len)
++		return -EINVAL;
++
++	packet.disp.dst_id = DEVMGMT_ID;
++	packet.disp.msg_id = rsp_msg_id;
++	packet.disp.dispatchee = wimod_hci_packet_dispatch_completion;
++	init_completion(&packet.comp);
++
++	wimod_hci_add_dispatcher(wmdev, &packet.disp);
++
++	ret = wimod_hci_send(wmdev->serdev, DEVMGMT_ID, req_msg_id, req_payload, req_payload_len, timeout);
++	if (ret) {
++		wimod_hci_remove_dispatcher(wmdev, &(packet.disp));
++		return ret;
++	}
++
++	timeout = wait_for_completion_timeout(&packet.comp, timeout);
++	wimod_hci_remove_dispatcher(wmdev, &packet.disp);
 +	if (!timeout)
 +		return -ETIMEDOUT;
 +
-+	resp = rakdev->rx_buf;
-+	dev_dbg(&sdev->dev, "Received: '%s'\n", resp);
-+	if (data)
-+		*data = kstrdup(resp, GFP_KERNEL);
++	if (packet.payload_len < 1) {
++		kfree(packet.payload);
++		return -EINVAL;
++	}
 +
-+	rakdev->rx_len = 0;
-+	reinit_completion(&rakdev->line_recv_comp);
++	ret = wimod_hci_devmgmt_status(packet.payload[0]);
++	if (ret || !rsp_payload)
++		kfree(packet.payload);
++	else if (rsp_payload) {
++		*rsp_payload = packet.payload;
++		*rsp_payload_len = packet.payload_len;
++	}
++	return ret;
++}
++
++static int wimod_hci_ping(struct wimod_device *wmdev, unsigned long timeout)
++{
++	return wimod_hci_devmgmt_send_sync(wmdev,
++		DEVMGMT_MSG_PING_REQ, NULL, 0,
++		DEVMGMT_MSG_PING_RSP, NULL, NULL,
++		timeout);
++}
++
++static int wimod_hci_get_device_info(struct wimod_device *wmdev, u8 *buf, unsigned long timeout)
++{
++	u8 *payload;
++	int payload_len;
++	int ret;
++
++	ret = wimod_hci_devmgmt_send_sync(wmdev,
++		DEVMGMT_MSG_GET_DEVICE_INFO_REQ, NULL, 0,
++		DEVMGMT_MSG_GET_DEVICE_INFO_RSP, &payload, &payload_len,
++		timeout);
++	if (ret)
++		return ret;
++
++	if (payload_len < 10) {
++		dev_err(&wmdev->serdev->dev, "get_device_info: payload length (10)\n");
++		kfree(payload);
++		return -EINVAL;
++	}
++
++	if (buf)
++		memcpy(buf, payload + 1, min(payload_len - 1, 9));
++
++	kfree(payload);
++	return 0;
++}
++
++static int wimod_hci_get_fw_info(struct wimod_device *wmdev, u8 **info, int *info_len, unsigned long timeout)
++{
++	u8 *payload;
++	int payload_len;
++	int ret;
++
++	if (info && !info_len)
++		return -EINVAL;
++
++	ret = wimod_hci_devmgmt_send_sync(wmdev,
++		DEVMGMT_MSG_GET_FW_INFO_REQ, NULL, 0,
++		DEVMGMT_MSG_GET_FW_INFO_RSP, &payload, &payload_len,
++		timeout);
++	if (ret)
++		return ret;
++
++	if (info) {
++		*info = payload + 1;
++		*info_len = payload_len - 1;
++	} else
++		kfree(payload);
 +
 +	return 0;
 +}
 +
-+static int rak811_simple_cmd(struct rak811_device *rakdev, const char *cmd, unsigned long timeout)
++static void wimod_hci_get_fw_info_free(u8* info)
 +{
-+	char *resp;
-+	int ret;
++	u8 *payload = info - 1;
 +
-+	ret = rak811_send_command(rakdev, cmd, &resp, timeout);
-+	if (ret)
-+		return ret;
-+
-+	if (strncmp(resp, "OK", 2) == 0) {
-+		kfree(resp);
-+		return 0;
-+	}
-+
-+	kfree(resp);
-+
-+	return -EINVAL;
++	kfree(payload);
 +}
 +
-+static int rak811_get_version(struct rak811_device *rakdev, char **version, unsigned long timeout)
++static void wimod_process_packet(struct serdev_device *sdev, const u8 *data, int len)
 +{
-+	char *resp;
-+	int ret;
++	struct wimod_device *wmdev = serdev_device_get_drvdata(sdev);
++	struct wimod_hci_packet_dispatcher *e;
++	u16 crc;
 +
-+	ret = rak811_send_command(rakdev, "at+version", &resp, timeout);
-+	if (ret)
-+		return ret;
++	dev_info(&sdev->dev, "Processing incoming packet (%d)\n", len);
 +
-+	if (strncmp(resp, "OK", 2) == 0) {
-+		*version = kstrdup(resp + 2, GFP_KERNEL);
-+		kfree(resp);
-+		return 0;
++	if (len < 4) {
++		dev_dbg(&sdev->dev, "Discarding packet of length %d\n", len);
++		return;
 +	}
 +
-+	kfree(resp);
++	crc = ~crc_ccitt(0xffff, data, len);
++	if (crc != 0x0f47) {
++		dev_dbg(&sdev->dev, "Discarding packet with wrong checksum\n");
++		return;
++	}
 +
-+	return -EINVAL;
++	list_for_each_entry(e, &wmdev->packet_dispatchers, list) {
++		if (e->dst_id == data[0] && e->msg_id == data[1]) {
++			e->dispatchee(data, len - 2, e);
++			break;
++		}
++	}
 +}
 +
-+static int rak811_receive_buf(struct serdev_device *sdev, const u8 *data, size_t count)
++static int wimod_receive_buf(struct serdev_device *sdev, const u8 *data, size_t count)
 +{
-+	struct rak811_device *rakdev = serdev_device_get_drvdata(sdev);
++	struct wimod_device *wmdev = serdev_device_get_drvdata(sdev);
 +	size_t i = 0;
 +	int len = 0;
 +
 +	dev_dbg(&sdev->dev, "Receive (%d)\n", (int)count);
 +
-+	for (i = 0; i < count; i++) {
-+		dev_dbg(&sdev->dev, "Receive: 0x%02x\n", (int)data[i]);
++	while (i < min(count, sizeof(wmdev->rx_buf) - wmdev->rx_len)) {
++		if (wmdev->rx_esc) {
++			wmdev->rx_esc = false;
++			switch (data[i]) {
++			case SLIP_ESC_END:
++				wmdev->rx_buf[wmdev->rx_len++] = SLIP_END;
++				break;
++			case SLIP_ESC_ESC:
++				wmdev->rx_buf[wmdev->rx_len++] = SLIP_ESC;
++				break;
++			default:
++				dev_warn(&sdev->dev, "Ignoring unknown escape sequence 0300 0%o\n", data[i]);
++				break;
++			}
++			len += i + 1;
++			data += i + 1;
++			count -= i + 1;
++			i = 0;
++			continue;
++		}
++		if (data[i] != SLIP_END &&
++		    data[i] != SLIP_ESC) {
++			i++;
++			continue;
++		}
++		if (i > 0) {
++			memcpy(&wmdev->rx_buf[wmdev->rx_len], data, i);
++			wmdev->rx_len += i;
++		}
++		if (data[i] == SLIP_END && wmdev->rx_len > 0) {
++			wimod_process_packet(sdev, wmdev->rx_buf, wmdev->rx_len);
++			wmdev->rx_len = 0;
++		} else if (data[i] == SLIP_ESC) {
++			wmdev->rx_esc = true;
++		}
++		len += i + 1;
++		data += i + 1;
++		count -= i + 1;
++		i = 0;
 +	}
 +
-+	if (completion_done(&rakdev->line_recv_comp)) {
-+		dev_info(&sdev->dev, "RX waiting on completion\n");
-+		return 0;
-+	}
-+	if (rakdev->rx_len == sizeof(rakdev->rx_buf) - 1) {
-+		dev_warn(&sdev->dev, "RX buffer full\n");
-+		return 0;
-+	}
-+
-+	i = min(count, sizeof(rakdev->rx_buf) - 1 - rakdev->rx_len);
-+	if (i > 0) {
-+		memcpy(&rakdev->rx_buf[rakdev->rx_len], data, i);
-+		rakdev->rx_len += i;
-+		len += i;
-+	}
-+	if (rakdev->rx_len >= 2 && strncmp(&rakdev->rx_buf[rakdev->rx_len - 2], "\r\n", 2) == 0) {
-+		rakdev->rx_len -= 2;
-+		rakdev->rx_buf[rakdev->rx_len] = '\0';
-+		complete(&rakdev->line_recv_comp);
-+	}
++	dev_dbg(&sdev->dev, "Receive: processed %d\n", len);
 +
 +	return len;
 +}
 +
-+static const struct serdev_device_ops rak811_serdev_client_ops = {
-+	.receive_buf = rak811_receive_buf,
++static const struct serdev_device_ops wimod_serdev_client_ops = {
++	.receive_buf = wimod_receive_buf,
++	.write_wakeup = serdev_device_write_wakeup,
 +};
 +
-+static int rak811_probe(struct serdev_device *sdev)
++static int wimod_probe(struct serdev_device *sdev)
 +{
-+	struct rak811_device *rakdev;
-+	char *sz;
++	struct wimod_device *wmdev;
++	u8 buf[9];
++	u8 *data;
++	int data_len;
 +	int ret;
 +
-+	dev_info(&sdev->dev, "Probing\n");
++	dev_info(&sdev->dev, "Probing");
 +
-+	rakdev = devm_kzalloc(&sdev->dev, sizeof(struct rak811_device), GFP_KERNEL);
-+	if (!rakdev)
++	wmdev = devm_kzalloc(&sdev->dev, sizeof(struct wimod_device), GFP_KERNEL);
++	if (!wmdev)
 +		return -ENOMEM;
 +
-+	rakdev->serdev = sdev;
-+	init_completion(&rakdev->line_recv_comp);
-+	serdev_device_set_drvdata(sdev, rakdev);
++	wmdev->serdev = sdev;
++	INIT_LIST_HEAD(&wmdev->packet_dispatchers);
++	serdev_device_set_drvdata(sdev, wmdev);
 +
 +	ret = serdev_device_open(sdev);
 +	if (ret) {
@@ -254,72 +624,80 @@ index 000000000000..ad3d0980c489
 +
 +	serdev_device_set_baudrate(sdev, 115200);
 +	serdev_device_set_flow_control(sdev, false);
-+	serdev_device_set_client_ops(sdev, &rak811_serdev_client_ops);
++	serdev_device_set_client_ops(sdev, &wimod_serdev_client_ops);
 +
-+	ret = rak811_get_version(rakdev, &sz, HZ);
++	ret = wimod_hci_ping(wmdev, HZ);
 +	if (ret) {
-+		dev_err(&sdev->dev, "Failed to get version (%d)\n", ret);
-+		serdev_device_close(sdev);
-+		return ret;
++		dev_err(&sdev->dev, "Ping failed (%d)\n", ret);
++		goto err;
 +	}
 +
-+	dev_info(&sdev->dev, "firmware version: %s\n", sz);
-+	kfree(sz);
-+
-+	ret = rak811_simple_cmd(rakdev, "at+mode=1", 2 * HZ);
++	ret = wimod_hci_get_device_info(wmdev, buf, HZ);
 +	if (ret) {
-+		dev_err(&sdev->dev, "Failed to set mode to P2P (%d)\n", ret);
-+		serdev_device_close(sdev);
-+		return ret;
++		dev_err(&sdev->dev, "Failed to obtain device info (%d)\n", ret);
++		goto err;
 +	}
++	dev_info(&sdev->dev, "Module type: 0x%02x\n", (int)buf[0]);
++
++	ret = wimod_hci_get_fw_info(wmdev, &data, &data_len, HZ);
++	if (ret) {
++		dev_err(&sdev->dev, "Failed to obtain firmware info (%d)\n", ret);
++		goto err;
++	}
++	dev_info(&sdev->dev, "Firmware: %u.%u build %u '%s'\n",
++		data[1], data[0], ((u16)data[3] << 8) | data[2], data + 4);
++	wimod_hci_get_fw_info_free(data);
 +
 +	dev_info(&sdev->dev, "Done.\n");
 +
 +	return 0;
++err:
++	serdev_device_close(sdev);
++	return ret;
 +}
 +
-+static void rak811_remove(struct serdev_device *sdev)
++static void wimod_remove(struct serdev_device *sdev)
 +{
 +	serdev_device_close(sdev);
 +
 +	dev_info(&sdev->dev, "Removed\n");
 +}
 +
-+static const struct of_device_id rak811_of_match[] = {
-+	{ .compatible = "rakwireless,rak811" },
++static const struct of_device_id wimod_of_match[] = {
++	{ .compatible = "imst,wimod-hci" },
 +	{}
 +};
-+MODULE_DEVICE_TABLE(of, rak811_of_match);
++MODULE_DEVICE_TABLE(of, wimod_of_match);
 +
-+static struct serdev_device_driver rak811_serdev_driver = {
-+	.probe = rak811_probe,
-+	.remove = rak811_remove,
++static struct serdev_device_driver wimod_serdev_driver = {
++	.probe = wimod_probe,
++	.remove = wimod_remove,
 +	.driver = {
-+		.name = "rak811",
-+		.of_match_table = rak811_of_match,
++		.name = "wimod",
++		.of_match_table = wimod_of_match,
 +	},
 +};
 +
-+static int __init rak811_init(void)
++static int __init wimod_init(void)
 +{
 +	int ret;
 +
-+	ret = serdev_device_driver_register(&rak811_serdev_driver);
++	ret = serdev_device_driver_register(&wimod_serdev_driver);
 +	if (ret)
 +		return ret;
 +
 +	return 0;
 +}
 +
-+static void __exit rak811_exit(void)
++static void __exit wimod_exit(void)
 +{
-+	serdev_device_driver_unregister(&rak811_serdev_driver);
++	serdev_device_driver_unregister(&wimod_serdev_driver);
 +}
 +
-+module_init(rak811_init);
-+module_exit(rak811_exit);
++module_init(wimod_init);
++module_exit(wimod_exit);
 +
-+MODULE_DESCRIPTION("RAK811 serdev driver");
++MODULE_DESCRIPTION("WiMOD serdev driver");
 +MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
 +MODULE_LICENSE("GPL");
 -- 
