@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE77C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42E8C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C0925075
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C0925075
+	by mail.kernel.org (Postfix) with ESMTP id 60A1225076
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A1225076
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932841AbeGAQOv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60408 "EHLO
+        id S932882AbeGAQO5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:14:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60438 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752898AbeGAQOo (ORCPT
+        with ESMTP id S1752898AbeGAQOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:14:44 -0400
+        Sun, 1 Jul 2018 12:14:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A6FF86A;
-        Sun,  1 Jul 2018 16:14:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D23B986A;
+        Sun,  1 Jul 2018 16:14:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3.18 84/85] block: Fix transfer when chunk sectors exceeds max
-Date:   Sun,  1 Jul 2018 18:02:42 +0200
-Message-Id: <20180701153125.708892298@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 3.18 59/85] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
+Date:   Sun,  1 Jul 2018 18:02:17 +0200
+Message-Id: <20180701153124.709389266@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -52,38 +49,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keith Busch <keith.busch@intel.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 15bfd21fbc5d35834b9ea383dc458a1f0c9e3434 upstream.
+commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
 
-A device may have boundary restrictions where the number of sectors
-between boundaries exceeds its max transfer size. In this case, we need
-to cap the max size to the smaller of the two limits.
+In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
+validating DAWR region end") we fixed setting the DAWR end point to
+its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
+PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
 
-Reported-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-Tested-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
+zero (memset() in hw_breakpoint_init()). This worked with
+arch_validate_hwbkpt_settings() before the above patch was applied but
+is now broken if the breakpoint is 512byte aligned.
+
+This sets the length of the breakpoint to 8 bytes when using
+PTRACE_SET_DEBUGREG.
+
+Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
+Cc: stable@vger.kernel.org # v3.11+
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/blkdev.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/ptrace.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -919,8 +919,8 @@ static inline unsigned int blk_max_size_
- 	if (!q->limits.chunk_sectors)
- 		return q->limits.max_sectors;
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -1004,6 +1004,7 @@ static int ptrace_set_debugreg(struct ta
+ 	/* Create a new breakpoint request if one doesn't exist already */
+ 	hw_breakpoint_init(&attr);
+ 	attr.bp_addr = hw_brk.address;
++	attr.bp_len = 8;
+ 	arch_bp_generic_fields(hw_brk.type,
+ 			       &attr.bp_type);
  
--	return q->limits.chunk_sectors -
--			(offset & (q->limits.chunk_sectors - 1));
-+	return min(q->limits.max_sectors, (unsigned int)(q->limits.chunk_sectors -
-+			(offset & (q->limits.chunk_sectors - 1))));
- }
- 
- static inline unsigned int blk_rq_get_max_sectors(struct request *rq)
 
 
