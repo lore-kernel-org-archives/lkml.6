@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CFFC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9D4C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F3B25251
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F3B25251
+	by mail.kernel.org (Postfix) with ESMTP id 2FF3B25256
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF3B25256
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030454AbeGAQay (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:30:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34842 "EHLO
+        id S965875AbeGAQbB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:31:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965819AbeGAQas (ORCPT
+        with ESMTP id S1030445AbeGAQay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:48 -0400
+        Sun, 1 Jul 2018 12:30:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45421ACD;
-        Sun,  1 Jul 2018 16:30:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29C6AACD;
+        Sun,  1 Jul 2018 16:30:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>,
-        Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 4.14 009/157] m68k/mac: Fix SWIM memory resource end address
-Date:   Sun,  1 Jul 2018 18:21:21 +0200
-Message-Id: <20180701160852.752166630@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 033/157] fuse: fix control dir setup and teardown
+Date:   Sun,  1 Jul 2018 18:21:45 +0200
+Message-Id: <20180701160854.011683496@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -52,35 +50,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 3e2816c1078eb2b5a3276eb83d4da156b3e2d04f upstream.
+commit 6becdb601bae2a043d7fb9762c4d48699528ea6e upstream.
 
-The resource size is 0x2000 == end - start + 1.
-Therefore end == start + 0x2000 - 1.
+syzbot is reporting NULL pointer dereference at fuse_ctl_remove_conn() [1].
+Since fc->ctl_ndents is incremented by fuse_ctl_add_conn() when new_inode()
+failed, fuse_ctl_remove_conn() reaches an inode-less dentry and tries to
+clear d_inode(dentry)->i_private field.
 
-Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: stable@vger.kernel.org # v4.14+
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Laurent Vivier <lvivier@redhat.com>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Fix by only adding the dentry to the array after being fully set up.
+
+When tearing down the control directory, do d_invalidate() on it to get rid
+of any mounts that might have been added.
+
+[1] https://syzkaller.appspot.com/bug?id=f396d863067238959c91c0b7cfc10b163638cac6
+Reported-by: syzbot <syzbot+32c236387d66c4516827@syzkaller.appspotmail.com>
+Fixes: bafa96541b25 ("[PATCH] fuse: add control filesystem")
+Cc: <stable@vger.kernel.org> # v2.6.18
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/m68k/mac/config.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/control.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -1017,7 +1017,7 @@ int __init mac_platform_init(void)
- 		struct resource swim_rsrc = {
- 			.flags = IORESOURCE_MEM,
- 			.start = (resource_size_t)swim_base,
--			.end   = (resource_size_t)swim_base + 0x2000,
-+			.end   = (resource_size_t)swim_base + 0x1FFF,
- 		};
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -211,10 +211,11 @@ static struct dentry *fuse_ctl_add_dentr
+ 	if (!dentry)
+ 		return NULL;
  
- 		platform_device_register_simple("swim", -1, &swim_rsrc, 1);
+-	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
+ 	inode = new_inode(fuse_control_sb);
+-	if (!inode)
++	if (!inode) {
++		dput(dentry);
+ 		return NULL;
++	}
+ 
+ 	inode->i_ino = get_next_ino();
+ 	inode->i_mode = mode;
+@@ -228,6 +229,9 @@ static struct dentry *fuse_ctl_add_dentr
+ 	set_nlink(inode, nlink);
+ 	inode->i_private = fc;
+ 	d_add(dentry, inode);
++
++	fc->ctl_dentry[fc->ctl_ndents++] = dentry;
++
+ 	return dentry;
+ }
+ 
+@@ -284,7 +288,10 @@ void fuse_ctl_remove_conn(struct fuse_co
+ 	for (i = fc->ctl_ndents - 1; i >= 0; i--) {
+ 		struct dentry *dentry = fc->ctl_dentry[i];
+ 		d_inode(dentry)->i_private = NULL;
+-		d_drop(dentry);
++		if (!i) {
++			/* Get rid of submounts: */
++			d_invalidate(dentry);
++		}
+ 		dput(dentry);
+ 	}
+ 	drop_nlink(d_inode(fuse_control_sb->s_root));
 
 
