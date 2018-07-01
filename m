@@ -2,103 +2,97 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6189C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FCBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F02251EB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F02251EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B3FC625230
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 09:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GploU6wX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FC625230
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeGAJdO (ORCPT
+        id S1752237AbeGAJeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 05:33:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752366AbeGAJc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 05:32:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sun, 1 Jul 2018 05:34:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751533AbeGAJeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 05:34:15 -0400
+Received: from dragon (unknown [45.56.152.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC6E24070489;
-        Sun,  1 Jul 2018 09:32:58 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-57.ams2.redhat.com [10.36.116.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 162C62026D66;
-        Sun,  1 Jul 2018 09:32:57 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: touchscreen_dmi: Add info for the "Connect Tablet 9" tablet
-Date:   Sun,  1 Jul 2018 11:32:56 +0200
-Message-Id: <20180701093256.7043-2-hdegoede@redhat.com>
-In-Reply-To: <20180701093256.7043-1-hdegoede@redhat.com>
-References: <20180701093256.7043-1-hdegoede@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 01 Jul 2018 09:32:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 01 Jul 2018 09:32:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+        by mail.kernel.org (Postfix) with ESMTPSA id A630924FEC;
+        Sun,  1 Jul 2018 09:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530437654;
+        bh=ZQCapGK63rgUclcKXmpYYtkZua1JqOyfYIMjocNZGP4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GploU6wXcHuLZWecYkOm+w8KH0j9XpCE3ry8qG/VOklvSX4JqXKQ+24JMJ7TKLRF4
+         +xI8oLKHXLifSo2TMa++4c36JoiEYs5NPZmIrFgBvF6Nq9FUtZF9jEp4tdJkPkyL0u
+         GX13Dz9ToiJzhQqB/oTiSj97rACqdFmgWeZoCl74=
+Date:   Sun, 1 Jul 2018 17:34:04 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, anson.huang@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: Re: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
+Message-ID: <20180701093402.GN4348@dragon>
+References: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the "Connect Tablet 9" tablet. This appears to be
-a variant of the same hardware as the ITworks TW891 tablet, but it needs
-different firmware for the touchscreen to fonction properly.
+On Mon, Jun 25, 2018 at 08:34:11PM +0800, Robin Gong wrote:
+> SW4 is one power rail for LPDDR2 on i.mx6sl-evk, so it should
+> be kept always on. But it's disabled after switch disabled
+> interface implemented in pfuze driver
+> 'commit 5fe156f1cab4
+> ("regulator: pfuze100: add enable/disable for switch")'.Thus,
+> it breaks kernel bootup. Add 'regulator-always-on' for SW4.
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/touchscreen_dmi.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Does that mean boards with existing DTB installed will stop working with
+new kernel?  That's bad, and the kernel commit should probably be
+reverted.
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 8578f9e28ee0..8086e01e069e 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -119,6 +119,23 @@ static const struct ts_dmi_data chuwi_vi10_data = {
- 	.properties     = chuwi_vi10_props,
- };
- 
-+static const struct property_entry connect_tablet9_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 9),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 878),
-+	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
-+	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-connect-tablet9.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data connect_tablet9_data = {
-+	.acpi_name      = "MSSL1680:00",
-+	.properties     = connect_tablet9_props,
-+};
-+
- static const struct property_entry cube_iwork8_air_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
-@@ -470,6 +487,14 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "S165"),
- 		},
- 	},
-+	{
-+		/* Connect Tablet 9 */
-+		.driver_data = (void *)&connect_tablet9_data,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Connect"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Tablet 9"),
-+		},
-+	},
- 	{
- 		/* CUBE iwork8 Air */
- 		.driver_data = (void *)&cube_iwork8_air_data,
--- 
-2.17.1
+Shawn
 
+> ---
+>  arch/arm/boot/dts/imx6sl-evk.dts | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx6sl-evk.dts b/arch/arm/boot/dts/imx6sl-evk.dts
+> index 37e792f..798df66 100644
+> --- a/arch/arm/boot/dts/imx6sl-evk.dts
+> +++ b/arch/arm/boot/dts/imx6sl-evk.dts
+> @@ -199,6 +199,7 @@
+>  			sw4_reg: sw4 {
+>  				regulator-min-microvolt = <800000>;
+>  				regulator-max-microvolt = <3300000>;
+> +				regulator-always-on;
+>  			};
+>  
+>  			swbst_reg: swbst {
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
