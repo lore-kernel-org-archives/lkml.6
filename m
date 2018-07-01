@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA529C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBFBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B31252A9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B31252A9
+	by mail.kernel.org (Postfix) with ESMTP id 137C825372
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137C825372
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031753AbeGAQjc (ORCPT
+        id S1031765AbeGAQjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:39:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36908 "EHLO
+        Sun, 1 Jul 2018 12:39:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031725AbeGAQjX (ORCPT
+        with ESMTP id S1031726AbeGAQj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:23 -0400
+        Sun, 1 Jul 2018 12:39:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC212A73;
-        Sun,  1 Jul 2018 16:39:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7F6B5A73;
+        Sun,  1 Jul 2018 16:39:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 4.17 062/220] ARM: dts: sun8i: h3: fix ALL-H3-CC H3 ver VDD-CPUX voltage
-Date:   Sun,  1 Jul 2018 18:21:26 +0200
-Message-Id: <20180701160910.981987117@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.17 036/220] branch-check: fix long->int truncation when profiling branches
+Date:   Sun,  1 Jul 2018 18:21:00 +0200
+Message-Id: <20180701160909.841009088@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,38 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit e6e7b7c2c81e05c8774193da06348119583d4292 upstream.
+commit 2026d35741f2c3ece73c11eb7e4a15d7c2df9ebe upstream.
 
-The VDD-CPUX voltage of ALL-H3-CC H3 ver should be 1.2V, not the 3.3V
-currently defined in the device tree.
+The function __builtin_expect returns long type (see the gcc
+documentation), and so do macros likely and unlikely. Unfortunatelly, when
+CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
+unlikely expand to __branch_check__ and __branch_check__ truncates the
+long type to int. This unintended truncation may cause bugs in various
+kernel code (we found a bug in dm-writecache because of it), so it's
+better to fix __branch_check__ to return long.
 
-Fix the voltage in the device tree.
+Link: http://lkml.kernel.org/r/alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com
 
-Fixes: 6ca358645d4d ("ARM: dts: sun8i: h3: Add dts file for Libre Computer Board ALL-H3-CC H3 ver.")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Cc: <stable@vger.kernel.org> # 4.16.x
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 1f0d69a9fc815 ("tracing: profile likely and unlikely annotations")
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/compiler.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-+++ b/arch/arm/boot/dts/sun8i-h3-libretech-all-h3-cc.dts
-@@ -113,8 +113,8 @@
- 	reg_vdd_cpux: vdd-cpux {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vdd-cpux";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
- 		regulator-always-on;
- 		regulator-boot-on;
- 		vin-supply = <&reg_vcc5v0>;
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -21,7 +21,7 @@ void ftrace_likely_update(struct ftrace_
+ #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
+ 
+ #define __branch_check__(x, expect, is_constant) ({			\
+-			int ______r;					\
++			long ______r;					\
+ 			static struct ftrace_likely_data		\
+ 				__attribute__((__aligned__(4)))		\
+ 				__attribute__((section("_ftrace_annotated_branch"))) \
 
 
