@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5D0C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E032C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA6E251A2
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA6E251A2
+	by mail.kernel.org (Postfix) with ESMTP id 2318E251A4
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2318E251A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965330AbeGAQ00 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:26:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33842 "EHLO
+        id S965348AbeGAQ0b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:26:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965293AbeGAQ0S (ORCPT
+        with ESMTP id S932678AbeGAQ0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:18 -0400
+        Sun, 1 Jul 2018 12:26:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A991FACD;
-        Sun,  1 Jul 2018 16:26:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80A64ACD;
+        Sun,  1 Jul 2018 16:26:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.9 048/101] PCI: pciehp: Clear Presence Detect and Data Link Layer Status Changed on resume
-Date:   Sun,  1 Jul 2018 18:21:34 +0200
-Message-Id: <20180701160759.070258006@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, dvyukov@google.com,
+        syzkaller@googlegroups.com, fengguang.wu@intel.com,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.9 049/101] printk: fix possible reuse of va_list variable
+Date:   Sun,  1 Jul 2018 18:21:35 +0200
+Message-Id: <20180701160759.111046056@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -52,83 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 13c65840feab8109194f9490c9870587173cb29d upstream.
+commit 988a35f8da1dec5a8cd2788054d1e717be61bf25 upstream.
 
-After a suspend/resume cycle the Presence Detect or Data Link Layer Status
-Changed bits might be set.  If we don't clear them those events will not
-fire anymore and nothing happens for instance when a device is now
-hot-unplugged.
+I noticed that there is a possibility that printk_safe_log_store() causes
+kernel oops because "args" parameter is passed to vsnprintf() again when
+atomic_cmpxchg() detected that we raced. Fix this by using va_copy().
 
-Fix this by clearing those bits in a newly introduced function
-pcie_reenable_notification().  This should be fine because immediately
-after, we check if the adapter is still present by reading directly from
-the status register.
-
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/201805112002.GIF21216.OFVHFOMLJtQFSO@I-love.SAKURA.ne.jp
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: dvyukov@google.com
+Cc: syzkaller@googlegroups.com
+Cc: fengguang.wu@intel.com
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Fixes: 42a0bb3f71383b45 ("printk/nmi: generic solution for safe printk in NMI")
+Cc: 4.7+ <stable@vger.kernel.org> # v4.7+
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp.h      |    2 +-
- drivers/pci/hotplug/pciehp_core.c |    2 +-
- drivers/pci/hotplug/pciehp_hpc.c  |   13 ++++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ kernel/printk/nmi.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -134,7 +134,7 @@ struct controller *pcie_init(struct pcie
- int pcie_init_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
--void pcie_enable_notification(struct controller *ctrl);
-+void pcie_reenable_notification(struct controller *ctrl);
- int pciehp_power_on_slot(struct slot *slot);
- void pciehp_power_off_slot(struct slot *slot);
- void pciehp_get_power_status(struct slot *slot, u8 *status);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -297,7 +297,7 @@ static int pciehp_resume(struct pcie_dev
- 	ctrl = get_service_data(dev);
+--- a/kernel/printk/nmi.c
++++ b/kernel/printk/nmi.c
+@@ -63,6 +63,7 @@ static int vprintk_nmi(const char *fmt,
+ 	struct nmi_seq_buf *s = this_cpu_ptr(&nmi_print_seq);
+ 	int add = 0;
+ 	size_t len;
++	va_list ap;
  
- 	/* reinitialize the chipset's event detection logic */
--	pcie_enable_notification(ctrl);
-+	pcie_reenable_notification(ctrl);
+ again:
+ 	len = atomic_read(&s->len);
+@@ -79,7 +80,9 @@ again:
+ 	if (!len)
+ 		smp_rmb();
  
- 	slot = ctrl->slot;
+-	add = vsnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, args);
++	va_copy(ap, args);
++	add = vsnprintf(s->buffer + len, sizeof(s->buffer) - len, fmt, ap);
++	va_end(ap);
  
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -673,7 +673,7 @@ static irqreturn_t pcie_isr(int irq, voi
- 	return handled;
- }
- 
--void pcie_enable_notification(struct controller *ctrl)
-+static void pcie_enable_notification(struct controller *ctrl)
- {
- 	u16 cmd, mask;
- 
-@@ -711,6 +711,17 @@ void pcie_enable_notification(struct con
- 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
- }
- 
-+void pcie_reenable_notification(struct controller *ctrl)
-+{
-+	/*
-+	 * Clear both Presence and Data Link Layer Changed to make sure
-+	 * those events still fire after we have re-enabled them.
-+	 */
-+	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
-+				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
-+	pcie_enable_notification(ctrl);
-+}
-+
- static void pcie_disable_notification(struct controller *ctrl)
- {
- 	u16 mask;
+ 	/*
+ 	 * Do it once again if the buffer has been flushed in the meantime.
 
 
