@@ -1,74 +1,92 @@
-Return-Path: <SRS0=GJTC=JQ=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E11C3279B
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 23:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EA2C3279B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 00:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10920253A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 30 Jun 2018 23:16:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10920253A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 28B1C25446
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 00:20:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyxSR1L1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28B1C25446
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeF3XP7 (ORCPT
+        id S1752062AbeGAAT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 30 Jun 2018 19:15:59 -0400
-Received: from mout.gmx.net ([212.227.17.21]:53919 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751973AbeF3XP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 30 Jun 2018 19:15:57 -0400
-Received: from localhost ([123.218.135.145]) by mail.gmx.com (mrgmx101
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0M8IuM-1gMZZR3XtK-00vyg1; Sun, 01
- Jul 2018 01:15:48 +0200
-Date:   Sun, 01 Jul 2018 07:50:41 +0900 (JST)
-Message-Id: <20180701.075041.1838978756168630725.teika@gmx.com>
-To:     rosenp@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com,
-        jan.steffens@gmail.com, waltercool@slash.cl
-Subject: Re: [PATCH] synaptics: Enable RMI4 for Clevo P870DM laptops
-From:   Teika Kazura <teika@gmx.com>
-In-Reply-To: <CAKxU2N8HGcJer5v3vDHMnHH1gAeAhHDdNDZS-yL+a2Ung_PiNg@mail.gmail.com>
-References: <20180617014216.4043-1-rosenp@gmail.com>
-        <20180624.150445.1006140718276550233.teika@gmx.com>
-        <CAKxU2N8HGcJer5v3vDHMnHH1gAeAhHDdNDZS-yL+a2Ung_PiNg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:lGB8e/OKAUxFOgXOmcysOJwIcOqN3siA9t9IlUpL9X5pYaVoMQc
- eqG1PZBHb8Ps01+hMAxjkRlxy+eihiVDONZrtCWrCEg300uvWrfbtyYqE4YZW9445/I3Q7G
- hJtTklWNe6o04ylrp3l8Z4nGuw/Gu0Kigs2dxAfpzoUg6yQCCCmG9QLJJ+KypitFBuVb9PQ
- QAHO+2KXlgqbmvheQLGkQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QQ0b0ICrbH0=:SEAQFisUQEPdxVr+BV8R14
- /rR2IpkabjOvPVukTKmnARWDW1hTZAlHuYO64Sey3MsRQUrAYfYzxKKBHhD/fk1S2NuTwc0dt
- 5QVIDXyHKNirXhEM2ZSJK+uzP7ZW/zcGpUXgz5O1d3D84dDswf+uKiO0JR/aQvWr+igFlgQDJ
- D/yQ0AIj6eoS3bnp4eH6gWBaf8faCOaDvzuCMMys8x80614cdIUEwZ7vltHvAXgLo/FJPo4pF
- 8k2Ndz5Lpbol2v0hmj1gcRP16+gq6LxXzHcgdx2I+9G1jw4INljyPM/2lpq2WWTxYwb2myQun
- 5E+FbLT4mR1e33tFrrYJ7+WuKbwDVmX9wHEEn44aYqPBbxhnfGnKIUUiTdG4b5PTjZC/Qe+vB
- zKdkEvMU/xS6vNcN+zmpXZJoaZzpVb2xMcFlz7soSqJbsMZTArnLPbNujHveNJd2EpyN1wZXA
- owBD6BSE9UYsp9NGy1xG9zG4HKOH0U2mzMCUM3dMKGgH0brKMSjmWn6fqC96Em96jYEBd9cqT
- OM5du8vE9TAJEEsRZeL7NspbarzEs49usCk1eCkjU3wL1BXvqh8Y88MtmfOJF6pBZUvvbaQfx
- DgU2uAgSW7EDXlvv7nl4ECZdGeSXp/71l9CLtnUEjQOPlhhL9icOCbMzMZCc4B7T/WqO7ipDQ
- Zsk2Zudlj6WJgJN8WvUrVegMOSdl1QCu7emt7lhcLHpZQJpZgRxJG2BlYmEViDZyiGvFdiCOD
- mCi4dmcHhZDRMjdDqZ0smRzybS4l58J/KHoYWb8rmaALbgUg6+KrZDP2LBFag7LaVhGY6aQWx
- NDZsE2x
+        Sat, 30 Jun 2018 20:19:59 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44975 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751995AbeGAAT5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 30 Jun 2018 20:19:57 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so6206065pls.11;
+        Sat, 30 Jun 2018 17:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=iVQtEs2wOysfYXXf5UJHXyB4xxh4KdBDZ61+WBU7RHE=;
+        b=DyxSR1L1DxE42mbySpVpIWNJKlSlyllm7XxtMUiMjWNni4hjllnIkSKWt0m297xb6T
+         N5yH3b7zI299cLcLBA/nFpuCvh1PQLzwqlcqELHH/slPzOtMuUZWJI1QjMeBrklvTYhi
+         njSoDbGUT7nb6LgbmwACEAcJTQ3oDu3T90IvqwKUNjBruUSKBpN5bD4riyQ6HyeFaZQQ
+         Svrw+tf6LZZeO6zQba7swL1SETN/vWQaZaM0ChGKLy3VW5QK+fVaM20AmbjUPWcdBpnP
+         DsBKajF1dY+Gx8/twAJT/Zjv/TTdiQPlv7soZjGUZzHoKaYcBrIRbDDnOP+I+Li5nY0n
+         fV8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iVQtEs2wOysfYXXf5UJHXyB4xxh4KdBDZ61+WBU7RHE=;
+        b=SFKr8vmx+KY/1ipD2RfVF3cX6X5TW0DiZ0Dg3EaWM70Jflt1943NMrRj+LNfZxtxSE
+         sdIIVHUdmDiSVz3AlGxa7uhrYgnnaBh63bkic/IMdOKMJtpjuAubYY/dbv0CBgW8lK9r
+         P54rd3Unr1BEwiRqjddLPgOB7NFhixAAs0PWMY9yvLMVtWpX48ehry8TCwXVvJzzBUZq
+         7kWrUTEDe67HSo3OzCO07IR+wfl1qMkDwqmDhQ9oH5wdW6vz6ZQTWhDp/nXp27/9zPIk
+         7lmIhYejCnBAkY+wGeDFGXnv9mmt4GJSk9s6gG6e+mZE5CxGS2li5p4EgiXOis6gyoD6
+         El4A==
+X-Gm-Message-State: APt69E3Q0uilgB1MpJR3JnItkv9g7hF+Zbqzv18EDaA2ChkzEZbUunRi
+        h9cs4ysn52XacRvInm7x76izhA==
+X-Google-Smtp-Source: ADUXVKKmIQn3MeGa9CgvRERUuNKN/HojOkXC6DjkkE/r6/GaWWL6aQ5shVgyEQio9TadWx+KhrfCNg==
+X-Received: by 2002:a17:902:2884:: with SMTP id f4-v6mr20507310plb.204.1530404396861;
+        Sat, 30 Jun 2018 17:19:56 -0700 (PDT)
+Received: from hobbes.alyptik.lan ([2605:e000:1117:c002:2e0:1bff:fe70:ea])
+        by smtp.gmail.com with ESMTPSA id b123-v6sm8424566pfb.156.2018.06.30.17.19.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 30 Jun 2018 17:19:56 -0700 (PDT)
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     linux-input@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Daniel Martin <consume.noise@gmail.com>
+Subject: [PATCH 0/4] reduce Surface Pro 3 multitouch jitter
+Date:   Sat, 30 Jun 2018 14:19:49 -1000
+Message-Id: <cover.1530402641.git.joeypabalinas@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-@Rosen: Ok, then I'll make a patch, and will ask you to test it. Wait for a moment. Thanks for your reply. (It's a burden for me, too. ;-)
+The Surface Pro 3 firmware doesn't reliably send contact lift off
+reports nor handle invalid report values gracefully.
 
-From: Rosen Penev <rosenp@gmail.com>
-Subject: Re: [PATCH] synaptics: Enable RMI4 for Clevo P870DM laptops
-Date: Sat, 30 Jun 2018 11:57:32 -0700
+To reduce touchscreen input jitter:
+  - add MT_QUIRK_NOT_SEEN_MEANS_UP to the MT_CLS_WIN_8
+  - drop invalid report values
 
->> Hi, Rosen. Thank you for your patch. (@Jan Steffens and @Pablo Cholaky: Thanks for your reports.) But I'm afraid some more work is necessary. Let me propose some points.
-> Too much work for me. I'll just use the kernel pareameter.
+Joey Pabalinas (4):
+  HID: multitouch: add MT_QUIRK_NOT_SEEN_MEANS_UP to MT_CLS_WIN_8 quirks
+  HID: multitouch: don't check HID_GROUP_MULTITOUCH_WIN_8 for serial protocol
+  HID: multitouch: drop reports containing invalid values
+  HID: multitouch: remove unneeded else conditional cases
 
-Teika (Teika kazura)
+ drivers/hid/hid-multitouch.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
+
+-- 
+2.18.0
+
