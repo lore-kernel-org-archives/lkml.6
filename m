@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BDBC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C24BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14A72515D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:23:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14A72515D
+	by mail.kernel.org (Postfix) with ESMTP id 2D24425165
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:23:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D24425165
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965106AbeGAQXA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:23:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33200 "EHLO
+        id S965129AbeGAQXV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:23:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753528AbeGAQTY (ORCPT
+        with ESMTP id S1753508AbeGAQTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:19:24 -0400
+        Sun, 1 Jul 2018 12:19:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB80C92B;
-        Sun,  1 Jul 2018 16:19:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DDC5186A;
+        Sun,  1 Jul 2018 16:19:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 097/105] Input: elantech - enable middle button of touchpads on ThinkPad P52
-Date:   Sun,  1 Jul 2018 18:02:47 +0200
-Message-Id: <20180701153156.326931279@linuxfoundation.org>
+Subject: [PATCH 4.4 096/105] Input: elan_i2c_smbus - fix more potential stack buffer overflows
+Date:   Sun,  1 Jul 2018 18:02:46 +0200
+Message-Id: <20180701153156.266092061@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,47 +51,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 24bb555e6e46d96e2a954aa0295029a81cc9bbaa upstream.
+commit 50fc7b61959af4b95fafce7fe5dd565199e0b61a upstream.
 
-PNPID is better way to identify the type of touchpads.
-Enable middle button support on 2 types of touchpads on Lenovo P52.
+Commit 40f7090bb1b4 ("Input: elan_i2c_smbus - fix corrupted stack")
+fixed most of the functions using i2c_smbus_read_block_data() to
+allocate a buffer with the maximum block size.  However three
+functions were left unchanged:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+* In elan_smbus_initialize(), increase the buffer size in the same
+  way.
+* In elan_smbus_calibrate_result(), the buffer is provided by the
+  caller (calibrate_store()), so introduce a bounce buffer.  Also
+  name the result buffer size.
+* In elan_smbus_get_report(), the buffer is provided by the caller
+  but happens to be the right length.  Add a compile-time assertion
+  to ensure this remains the case.
+
+Cc: <stable@vger.kernel.org> # 3.19+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/input/mouse/elan_i2c.h       |    2 ++
+ drivers/input/mouse/elan_i2c_core.c  |    2 +-
+ drivers/input/mouse/elan_i2c_smbus.c |   10 ++++++++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1177,6 +1177,12 @@ static const struct dmi_system_id elante
- 	{ }
- };
+--- a/drivers/input/mouse/elan_i2c.h
++++ b/drivers/input/mouse/elan_i2c.h
+@@ -27,6 +27,8 @@
+ #define ETP_DISABLE_POWER	0x0001
+ #define ETP_PRESSURE_OFFSET	25
  
-+static const char * const middle_button_pnp_ids[] = {
-+	"LEN2131", /* ThinkPad P52 w/ NFC */
-+	"LEN2132", /* ThinkPad P52 */
-+	NULL
-+};
++#define ETP_CALIBRATE_MAX_LEN	3
 +
- /*
-  * Set the appropriate event bits for the input subsystem
-  */
-@@ -1196,7 +1202,8 @@ static int elantech_set_input_params(str
- 	__clear_bit(EV_REL, dev->evbit);
+ /* IAP Firmware handling */
+ #define ETP_PRODUCT_ID_FORMAT_STRING	"%d.0"
+ #define ETP_FW_NAME		"elan_i2c_" ETP_PRODUCT_ID_FORMAT_STRING ".bin"
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -595,7 +595,7 @@ static ssize_t calibrate_store(struct de
+ 	int tries = 20;
+ 	int retval;
+ 	int error;
+-	u8 val[3];
++	u8 val[ETP_CALIBRATE_MAX_LEN];
  
- 	__set_bit(BTN_LEFT, dev->keybit);
--	if (dmi_check_system(elantech_dmi_has_middle_button))
-+	if (dmi_check_system(elantech_dmi_has_middle_button) ||
-+			psmouse_matches_pnp_id(psmouse, middle_button_pnp_ids))
- 		__set_bit(BTN_MIDDLE, dev->keybit);
- 	__set_bit(BTN_RIGHT, dev->keybit);
+ 	retval = mutex_lock_interruptible(&data->sysfs_mutex);
+ 	if (retval)
+--- a/drivers/input/mouse/elan_i2c_smbus.c
++++ b/drivers/input/mouse/elan_i2c_smbus.c
+@@ -56,7 +56,7 @@
+ static int elan_smbus_initialize(struct i2c_client *client)
+ {
+ 	u8 check[ETP_SMBUS_HELLOPACKET_LEN] = { 0x55, 0x55, 0x55, 0x55, 0x55 };
+-	u8 values[ETP_SMBUS_HELLOPACKET_LEN] = { 0, 0, 0, 0, 0 };
++	u8 values[I2C_SMBUS_BLOCK_MAX] = {0};
+ 	int len, error;
  
+ 	/* Get hello packet */
+@@ -117,12 +117,16 @@ static int elan_smbus_calibrate(struct i
+ static int elan_smbus_calibrate_result(struct i2c_client *client, u8 *val)
+ {
+ 	int error;
++	u8 buf[I2C_SMBUS_BLOCK_MAX] = {0};
++
++	BUILD_BUG_ON(ETP_CALIBRATE_MAX_LEN > sizeof(buf));
+ 
+ 	error = i2c_smbus_read_block_data(client,
+-					  ETP_SMBUS_CALIBRATE_QUERY, val);
++					  ETP_SMBUS_CALIBRATE_QUERY, buf);
+ 	if (error < 0)
+ 		return error;
+ 
++	memcpy(val, buf, ETP_CALIBRATE_MAX_LEN);
+ 	return 0;
+ }
+ 
+@@ -466,6 +470,8 @@ static int elan_smbus_get_report(struct
+ {
+ 	int len;
+ 
++	BUILD_BUG_ON(I2C_SMBUS_BLOCK_MAX > ETP_SMBUS_REPORT_LEN);
++
+ 	len = i2c_smbus_read_block_data(client,
+ 					ETP_SMBUS_PACKET_QUERY,
+ 					&report[ETP_SMBUS_REPORT_OFFSET]);
 
 
