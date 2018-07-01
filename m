@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5504C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C567FC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C2124377
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C2124377
+	by mail.kernel.org (Postfix) with ESMTP id 7F5A124380
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5A124380
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753065AbeGAQOD (ORCPT
+        id S1753099AbeGAQOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:14:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60254 "EHLO
+        Sun, 1 Jul 2018 12:14:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932722AbeGAQN5 (ORCPT
+        with ESMTP id S1753068AbeGAQOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:13:57 -0400
+        Sun, 1 Jul 2018 12:14:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3766F86A;
-        Sun,  1 Jul 2018 16:13:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BD15ACD;
+        Sun,  1 Jul 2018 16:14:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>
-Subject: [PATCH 3.18 70/85] MIPS: io: Add barrier after register read in inX()
-Date:   Sun,  1 Jul 2018 18:02:28 +0200
-Message-Id: <20180701153125.162697389@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Eda Zhou <ezhou@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 72/85] scsi: qla2xxx: Fix setting lower transfer speed if GPSC fails
+Date:   Sun,  1 Jul 2018 18:02:30 +0200
+Message-Id: <20180701153125.239551386@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -54,45 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-commit 18f3e95b90b28318ef35910d21c39908de672331 upstream.
+commit 413c2f33489b134e3cc65d9c3ff7861e8fdfe899 upstream.
 
-While a barrier is present in the outX() functions before the register
-write, a similar barrier is missing in the inX() functions after the
-register read. This could allow memory accesses following inX() to
-observe stale data.
-
-This patch is very similar to commit a1cc7034e33d12dc1 ("MIPS: io: Add
-barrier after register read in readX()"). Because war_io_reorder_wmb()
-is both used by writeX() and outX(), if readX() need a barrier then so
-does inX().
+This patch prevents driver from setting lower default speed of 1 GB/sec,
+if the switch does not support Get Port Speed Capabilities (GPSC)
+command. Setting this default speed results into much lower write
+performance for large sequential WRITE.  This patch modifies driver to
+check for gpsc_supported flags and prevents driver from issuing
+MBC_SET_PORT_PARAM (001Ah) to set default speed of 1 GB/sec. If driver
+does not send this mailbox command, firmware assumes maximum supported
+link speed and will operate at the max speed.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19516/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <james.hogan@mips.com>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Reported-by: Eda Zhou <ezhou@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Tested-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/io.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -412,6 +412,8 @@ static inline type pfx##in##bwlq##p(unsi
- 	__val = *__addr;						\
- 	slow;								\
- 									\
-+	/* prevent prefetching of coherent DMA data prematurely */	\
-+	rmb();								\
- 	return pfx##ioswab##bwlq(__addr, __val);			\
- }
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -3212,7 +3212,8 @@ qla2x00_iidma_fcport(scsi_qla_host_t *vh
+ 		return;
  
+ 	if (fcport->fp_speed == PORT_SPEED_UNKNOWN ||
+-	    fcport->fp_speed > ha->link_data_rate)
++	    fcport->fp_speed > ha->link_data_rate ||
++	    !ha->flags.gpsc_supported)
+ 		return;
+ 
+ 	rval = qla2x00_set_idma_speed(vha, fcport->loop_id, fcport->fp_speed,
 
 
