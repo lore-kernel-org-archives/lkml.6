@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3926FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC5DC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9F32581D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:00:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9F32581D
+	by mail.kernel.org (Postfix) with ESMTP id 487F625828
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:01:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487F625828
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965901AbeGASAw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:00:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34704 "EHLO
+        id S1030331AbeGASBJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:01:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030333AbeGAQaJ (ORCPT
+        with ESMTP id S1030321AbeGAQaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:30:09 -0400
+        Sun, 1 Jul 2018 12:30:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2866D92B;
-        Sun,  1 Jul 2018 16:30:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FECF92B;
+        Sun,  1 Jul 2018 16:30:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 4.14 025/157] mips: ftrace: fix static function graph tracing
-Date:   Sun,  1 Jul 2018 18:21:37 +0200
-Message-Id: <20180701160853.523916063@linuxfoundation.org>
+        stable@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 024/157] ftrace/selftest: Have the reset_trigger code be a bit more careful
+Date:   Sun,  1 Jul 2018 18:21:36 +0200
+Message-Id: <20180701160853.468687043@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,80 +51,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 6fb8656646f996d1eef42e6d56203c4915cb9e08 upstream.
+commit 756b56a9e832e063edc83be7c3889e98c536dd2b upstream.
 
-ftrace_graph_caller was never run after calling ftrace_trace_function,
-breaking the function graph tracer. Fix this, bringing it in line with the
-x86 implementation.
+The trigger code is picky in how it can be disabled as there may be
+dependencies between different events and synthetic events. Change the order
+on how triggers are reset.
 
-While we're at it, also streamline the control flow of _mcount a bit to
-reduce the number of branches.
+ 1) Reset triggers of all synthetic events first
+ 2) Remove triggers with actions attached to them
+ 3) Remove all other triggers
 
-This issue was reported before:
-https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
+If this order isn't followed, then some triggers will not be reset, and an
+error may happen because a trigger is busy.
 
-Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/18929/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: stable@vger.kernel.org # v3.17+
+Cc: stable@vger.kernel.org
+Fixes: cfa0963dc474f ("kselftests/ftrace : Add event trigger testcases")
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/mcount.S |   27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ tools/testing/selftests/ftrace/test.d/functions |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/arch/mips/kernel/mcount.S
-+++ b/arch/mips/kernel/mcount.S
-@@ -119,10 +119,20 @@ NESTED(_mcount, PT_SIZE, ra)
- EXPORT_SYMBOL(_mcount)
- 	PTR_LA	t1, ftrace_stub
- 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
--	bne	t1, t2, static_trace
-+	beq	t1, t2, fgraph_trace
- 	 nop
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -15,14 +15,29 @@ reset_tracer() { # reset the current tra
+     echo nop > current_tracer
+ }
  
-+	MCOUNT_SAVE_REGS
-+
-+	move	a0, ra		/* arg1: self return address */
-+	jalr	t2		/* (1) call *ftrace_trace_function */
-+	 move	a1, AT		/* arg2: parent's return address */
-+
-+	MCOUNT_RESTORE_REGS
-+
-+fgraph_trace:
- #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
-+	PTR_LA	t1, ftrace_stub
- 	PTR_L	t3, ftrace_graph_return
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
-@@ -131,24 +141,11 @@ EXPORT_SYMBOL(_mcount)
- 	bne	t1, t3, ftrace_graph_caller
- 	 nop
- #endif
--	b	ftrace_stub
--#ifdef CONFIG_32BIT
--	 addiu sp, sp, 8
--#else
--	 nop
--#endif
--
--static_trace:
--	MCOUNT_SAVE_REGS
--
--	move	a0, ra		/* arg1: self return address */
--	jalr	t2		/* (1) call *ftrace_trace_function */
--	 move	a1, AT		/* arg2: parent's return address */
+-reset_trigger() { # reset all current setting triggers
+-    grep -v ^# events/*/*/trigger |
++reset_trigger_file() {
++    # remove action triggers first
++    grep -H ':on[^:]*(' $@ |
++    while read line; do
++        cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
++	file=`echo $line | cut -f1 -d:`
++	echo "!$cmd" >> $file
++    done
++    grep -Hv ^# $@ |
+     while read line; do
+         cmd=`echo $line | cut -f2- -d: | cut -f1 -d" "`
+-	echo "!$cmd" > `echo $line | cut -f1 -d:`
++	file=`echo $line | cut -f1 -d:`
++	echo "!$cmd" > $file
+     done
+ }
  
--	MCOUNT_RESTORE_REGS
- #ifdef CONFIG_32BIT
- 	addiu sp, sp, 8
- #endif
++reset_trigger() { # reset all current setting triggers
++    if [ -d events/synthetic ]; then
++        reset_trigger_file events/synthetic/*/trigger
++    fi
++    reset_trigger_file events/*/*/trigger
++}
 +
- 	.globl ftrace_stub
- ftrace_stub:
- 	RETURN_BACK
+ reset_events_filter() { # reset all current setting filters
+     grep -v ^none events/*/*/filter |
+     while read line; do
 
 
