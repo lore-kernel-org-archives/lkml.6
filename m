@@ -2,81 +2,74 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2782C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19ECDC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610D725262
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:35:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610D725262
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zoho.com
+	by mail.kernel.org (Postfix) with ESMTP id A758723C39
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 07:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A758723C39
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752146AbeGAGfZ (ORCPT
+        id S1752010AbeGAHDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 02:35:25 -0400
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25333 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751463AbeGAGfW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 02:35:22 -0400
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=fVbwKyfytxdcVSjRkdAi1yC6jFdkgLicWrVmuinO5AkyOGs93PBOT296Xyw9a1tSaJI847crsjGP
-    p5VnYoJto0sLBzYTGwLSKCEp8WT/Viy3kOYm5TIrHpf7yBsNy2VP  
-Received: from YEHS1XR956R00D1.lenovo.com (111.197.253.128 [111.197.253.128]) by mx.zohomail.com
-        with SMTPS id 1530425986938903.8361140701428; Sat, 30 Jun 2018 23:19:46 -0700 (PDT)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     dan.j.williams@intel.com
-Cc:     dave.jiang@intel.com, willy@infradead.org,
-        ross.zwisler@linux.intel.com, vishal.l.verma@intel.com,
-        jack@suse.com, chengnt@lenovo.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH 2/3] fs/ext2/inode: Fix a type cast error for fsdax
-Date:   Sun,  1 Jul 2018 14:18:47 +0800
-Message-Id: <20180701061848.7036-2-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-In-Reply-To: <20180701061848.7036-1-yehs2007@zoho.com>
-References: <20180701061848.7036-1-yehs2007@zoho.com>
-X-ZohoMailClient: External
+        Sun, 1 Jul 2018 03:03:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47326 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751633AbeGAHDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 03:03:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E2BC18A;
+        Sun,  1 Jul 2018 00:03:30 -0700 (PDT)
+Received: from sugar.benyossef.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41EFD3F318;
+        Sun,  1 Jul 2018 00:03:28 -0700 (PDT)
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Ofir Drang <ofir.drang@arm.com>, Hadar Gat <hadar.gat@arm.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] crypto: fixes and cleanups                                 
+Date:   Sun,  1 Jul 2018 08:02:33 +0100
+Message-Id: <1530428560-4440-1-git-send-email-gilad@benyossef.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+The patch set fixes ccree IV handling, finup() operation (provided           
+by Hadar Gat) and CTS-AES mode of operation along a code cleanup.                                             
+                                                                                
+Since our finup() method was obviously broken but was not detected              
+by testmgr, I've added finup() test to testmgr to catch it next                 
+time it happened.
 
-The type of offset within struct iomap is loff_t, which represents
-file offset of mapping.
+Changes from v1:
+- Add missing "static" qualifier reported by kbuild bot
+- Add CTS-AES fix and some more cleanups
 
-In ext2_iomap_begin, iomap->offset shall be given a type cast as
-loff_t instead of u64.
 
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
----
- fs/ext2/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gilad Ben-Yossef (5):
+  crypto: testmgr: add hash finup tests
+  crypto: ccree: fix iv handling
+  crypto: ccree: remove dead legacy code
+  crypto: ccree: use CBC-CS3 CTS mode
+  crypto: ccree: rate limit debug print
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 7163590..ca211bd 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -816,7 +816,7 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 
- 	iomap->flags = 0;
- 	iomap->bdev = inode->i_sb->s_bdev;
--	iomap->offset = (u64)first_block << blkbits;
-+	iomap->offset = (loff_t)first_block << blkbits;
- 	iomap->dax_dev = sbi->s_daxdev;
- 
- 	if (ret == 0) {
+Hadar Gat (1):
+  crypto: ccree: fix finup
+
+ crypto/testmgr.c                 |  55 +++++++++++++---
+ drivers/crypto/ccree/cc_cipher.c | 137 +++++++++++++++++++++++++--------------
+ drivers/crypto/ccree/cc_driver.c |   4 +-
+ drivers/crypto/ccree/cc_hash.c   |  81 +++++------------------
+ 4 files changed, 153 insertions(+), 124 deletions(-)
+
 -- 
-1.8.3.1
-
+2.7.4
 
