@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C781C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688DBC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF2125109
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF2125109
+	by mail.kernel.org (Postfix) with ESMTP id 2BE3E2510F
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:20:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE3E2510F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965117AbeGAQUW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:20:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33348 "EHLO
+        id S965134AbeGAQUk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:20:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965076AbeGAQUQ (ORCPT
+        with ESMTP id S964904AbeGAQUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:20:16 -0400
+        Sun, 1 Jul 2018 12:20:18 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 455F492B;
-        Sun,  1 Jul 2018 16:20:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1491F86A;
+        Sun,  1 Jul 2018 16:20:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.4 082/105] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
-Date:   Sun,  1 Jul 2018 18:02:32 +0200
-Message-Id: <20180701153155.345741421@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Martin Townsend <mtownsend1973@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.4 073/105] ubi: fastmap: Cancel work upon detach
+Date:   Sun,  1 Jul 2018 18:02:23 +0200
+Message-Id: <20180701153154.733540545@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -49,36 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit dbcb82b93f3e8322891e47472c89e63058b81e99 upstream.
+commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
+Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
+fastmap work on detach") does not really fix the problem, it just
+reduces the risk to hit the race window where fastmap work races against
+free()'ing ubi->volumes[].
 
-In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
-transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
-Add it.
+The correct approach is making sure that no more fastmap work is in
+progress before we free ubi data structures.
+So we cancel fastmap work right after the ubi background thread is
+stopped.
+By setting ubi->thread_enabled to zero we make sure that no further work
+tries to wake the thread.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
+Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Martin Townsend <mtownsend1973@gmail.com>
+
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/ubi/build.c |    3 +++
+ drivers/mtd/ubi/wl.c    |    4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1246,6 +1246,7 @@ static int intel_pt_sample(struct intel_
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1132,6 +1132,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
+ 	 */
+ 	get_device(&ubi->dev);
  
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
- 		switch (ptq->switch_state) {
-+		case INTEL_PT_SS_NOT_TRACING:
- 		case INTEL_PT_SS_UNKNOWN:
- 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
- 			err = intel_pt_next_tid(pt, ptq);
++#ifdef CONFIG_MTD_UBI_FASTMAP
++	cancel_work_sync(&ubi->fm_work);
++#endif
+ 	ubi_debugfs_exit_dev(ubi);
+ 	uif_close(ubi);
+ 
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1479,6 +1479,7 @@ int ubi_thread(void *u)
+ 	}
+ 
+ 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
++	ubi->thread_enabled = 0;
+ 	return 0;
+ }
+ 
+@@ -1488,9 +1489,6 @@ int ubi_thread(void *u)
+  */
+ static void shutdown_work(struct ubi_device *ubi)
+ {
+-#ifdef CONFIG_MTD_UBI_FASTMAP
+-	flush_work(&ubi->fm_work);
+-#endif
+ 	while (!list_empty(&ubi->works)) {
+ 		struct ubi_work *wrk;
+ 
 
 
