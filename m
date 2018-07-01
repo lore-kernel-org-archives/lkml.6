@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00169C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90541C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB316252C9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB316252C9
+	by mail.kernel.org (Postfix) with ESMTP id 48D43252C9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D43252C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030994AbeGAQek (ORCPT
+        id S1031012AbeGAQeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:34:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35638 "EHLO
+        Sun, 1 Jul 2018 12:34:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35644 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030953AbeGAQeg (ORCPT
+        with ESMTP id S1030989AbeGAQej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:36 -0400
+        Sun, 1 Jul 2018 12:34:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83B0C92B;
-        Sun,  1 Jul 2018 16:34:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DEE692B;
+        Sun,  1 Jul 2018 16:34:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.14 112/157] backlight: as3711_bl: Fix Device Tree node lookup
-Date:   Sun,  1 Jul 2018 18:23:04 +0200
-Message-Id: <20180701160858.136801426@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 121/157] perf intel-pt: Fix MTC timing after overflow
+Date:   Sun,  1 Jul 2018 18:23:13 +0200
+Message-Id: <20180701160858.878772356@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,108 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 4a9c8bb2aca5b5a2a15744333729745dd9903562 upstream.
+commit dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+On some platforms, overflows will clear before MTC wraparound, and there
+is no following TSC/TMA packet. In that case the previous TMA is valid.
+Since there will be a valid TMA either way, stop setting 'have_tma' to
+false upon overflow.
 
-To make things worse, the parent mfd node was also prematurely freed.
-
-Cc: stable <stable@vger.kernel.org>     # 3.10
-Fixes: 59eb2b5e57ea ("drivers/video/backlight/as3711_bl.c: add OF support")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1527762225-26024-4-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/backlight/as3711_bl.c |   33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/video/backlight/as3711_bl.c
-+++ b/drivers/video/backlight/as3711_bl.c
-@@ -262,10 +262,10 @@ static int as3711_bl_register(struct pla
- static int as3711_backlight_parse_dt(struct device *dev)
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1376,7 +1376,6 @@ static int intel_pt_overflow(struct inte
  {
- 	struct as3711_bl_pdata *pdata = dev_get_platdata(dev);
--	struct device_node *bl =
--		of_find_node_by_name(dev->parent->of_node, "backlight"), *fb;
-+	struct device_node *bl, *fb;
- 	int ret;
- 
-+	bl = of_get_child_by_name(dev->parent->of_node, "backlight");
- 	if (!bl) {
- 		dev_dbg(dev, "backlight node not found\n");
- 		return -ENODEV;
-@@ -279,7 +279,7 @@ static int as3711_backlight_parse_dt(str
- 		if (pdata->su1_max_uA <= 0)
- 			ret = -EINVAL;
- 		if (ret < 0)
--			return ret;
-+			goto err_put_bl;
- 	}
- 
- 	fb = of_parse_phandle(bl, "su2-dev", 0);
-@@ -292,7 +292,7 @@ static int as3711_backlight_parse_dt(str
- 		if (pdata->su2_max_uA <= 0)
- 			ret = -EINVAL;
- 		if (ret < 0)
--			return ret;
-+			goto err_put_bl;
- 
- 		if (of_find_property(bl, "su2-feedback-voltage", NULL)) {
- 			pdata->su2_feedback = AS3711_SU2_VOLTAGE;
-@@ -314,8 +314,10 @@ static int as3711_backlight_parse_dt(str
- 			pdata->su2_feedback = AS3711_SU2_CURR_AUTO;
- 			count++;
- 		}
--		if (count != 1)
--			return -EINVAL;
-+		if (count != 1) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 
- 		count = 0;
- 		if (of_find_property(bl, "su2-fbprot-lx-sd4", NULL)) {
-@@ -334,8 +336,10 @@ static int as3711_backlight_parse_dt(str
- 			pdata->su2_fbprot = AS3711_SU2_GPIO4;
- 			count++;
- 		}
--		if (count != 1)
--			return -EINVAL;
-+		if (count != 1) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 
- 		count = 0;
- 		if (of_find_property(bl, "su2-auto-curr1", NULL)) {
-@@ -355,11 +359,20 @@ static int as3711_backlight_parse_dt(str
- 		 * At least one su2-auto-curr* must be specified iff
- 		 * AS3711_SU2_CURR_AUTO is used
- 		 */
--		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO))
--			return -EINVAL;
-+		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO)) {
-+			ret = -EINVAL;
-+			goto err_put_bl;
-+		}
- 	}
- 
-+	of_node_put(bl);
-+
- 	return 0;
-+
-+err_put_bl:
-+	of_node_put(bl);
-+
-+	return ret;
- }
- 
- static int as3711_backlight_probe(struct platform_device *pdev)
+ 	intel_pt_log("ERROR: Buffer overflow\n");
+ 	intel_pt_clear_tx_flags(decoder);
+-	decoder->have_tma = false;
+ 	decoder->cbr = 0;
+ 	decoder->timestamp_insn_cnt = 0;
+ 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
 
 
