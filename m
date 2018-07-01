@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7920AC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92880C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A7532540D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7532540D
+	by mail.kernel.org (Postfix) with ESMTP id 55F7D2540D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55F7D2540D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934110AbeGAQpV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:45:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38184 "EHLO
+        id S934128AbeGAQpZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:45:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38194 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933644AbeGAQpO (ORCPT
+        with ESMTP id S934076AbeGAQpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:14 -0400
+        Sun, 1 Jul 2018 12:45:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D19DACC;
-        Sun,  1 Jul 2018 16:45:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7019AA6;
+        Sun,  1 Jul 2018 16:45:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Silvio Cesare <silvio.cesare@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.17 154/220] UBIFS: Fix potential integer overflow in allocation
-Date:   Sun,  1 Jul 2018 18:22:58 +0200
-Message-Id: <20180701160914.723817814@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.17 155/220] backlight: as3711_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:22:59 +0200
+Message-Id: <20180701160914.759806210@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,40 +50,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Silvio Cesare <silvio.cesare@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 353748a359f1821ee934afc579cf04572406b420 upstream.
+commit 4a9c8bb2aca5b5a2a15744333729745dd9903562 upstream.
 
-There is potential for the size and len fields in ubifs_data_node to be
-too large causing either a negative value for the length fields or an
-integer overflow leading to an incorrect memory allocation. Likewise,
-when the len field is small, an integer underflow may occur.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+To make things worse, the parent mfd node was also prematurely freed.
+
+Cc: stable <stable@vger.kernel.org>     # 3.10
+Fixes: 59eb2b5e57ea ("drivers/video/backlight/as3711_bl.c: add OF support")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/journal.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/video/backlight/as3711_bl.c |   33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -1283,10 +1283,11 @@ static int truncate_data_node(const stru
- 			      int *new_len)
+--- a/drivers/video/backlight/as3711_bl.c
++++ b/drivers/video/backlight/as3711_bl.c
+@@ -262,10 +262,10 @@ static int as3711_bl_register(struct pla
+ static int as3711_backlight_parse_dt(struct device *dev)
  {
- 	void *buf;
--	int err, dlen, compr_type, out_len, old_dlen;
-+	int err, compr_type;
-+	u32 dlen, out_len, old_dlen;
+ 	struct as3711_bl_pdata *pdata = dev_get_platdata(dev);
+-	struct device_node *bl =
+-		of_find_node_by_name(dev->parent->of_node, "backlight"), *fb;
++	struct device_node *bl, *fb;
+ 	int ret;
  
- 	out_len = le32_to_cpu(dn->size);
--	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
-+	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
- 	if (!buf)
- 		return -ENOMEM;
++	bl = of_get_child_by_name(dev->parent->of_node, "backlight");
+ 	if (!bl) {
+ 		dev_dbg(dev, "backlight node not found\n");
+ 		return -ENODEV;
+@@ -279,7 +279,7 @@ static int as3711_backlight_parse_dt(str
+ 		if (pdata->su1_max_uA <= 0)
+ 			ret = -EINVAL;
+ 		if (ret < 0)
+-			return ret;
++			goto err_put_bl;
+ 	}
  
+ 	fb = of_parse_phandle(bl, "su2-dev", 0);
+@@ -292,7 +292,7 @@ static int as3711_backlight_parse_dt(str
+ 		if (pdata->su2_max_uA <= 0)
+ 			ret = -EINVAL;
+ 		if (ret < 0)
+-			return ret;
++			goto err_put_bl;
+ 
+ 		if (of_find_property(bl, "su2-feedback-voltage", NULL)) {
+ 			pdata->su2_feedback = AS3711_SU2_VOLTAGE;
+@@ -314,8 +314,10 @@ static int as3711_backlight_parse_dt(str
+ 			pdata->su2_feedback = AS3711_SU2_CURR_AUTO;
+ 			count++;
+ 		}
+-		if (count != 1)
+-			return -EINVAL;
++		if (count != 1) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 
+ 		count = 0;
+ 		if (of_find_property(bl, "su2-fbprot-lx-sd4", NULL)) {
+@@ -334,8 +336,10 @@ static int as3711_backlight_parse_dt(str
+ 			pdata->su2_fbprot = AS3711_SU2_GPIO4;
+ 			count++;
+ 		}
+-		if (count != 1)
+-			return -EINVAL;
++		if (count != 1) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 
+ 		count = 0;
+ 		if (of_find_property(bl, "su2-auto-curr1", NULL)) {
+@@ -355,11 +359,20 @@ static int as3711_backlight_parse_dt(str
+ 		 * At least one su2-auto-curr* must be specified iff
+ 		 * AS3711_SU2_CURR_AUTO is used
+ 		 */
+-		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO))
+-			return -EINVAL;
++		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO)) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 	}
+ 
++	of_node_put(bl);
++
+ 	return 0;
++
++err_put_bl:
++	of_node_put(bl);
++
++	return ret;
+ }
+ 
+ static int as3711_backlight_probe(struct platform_device *pdev)
 
 
