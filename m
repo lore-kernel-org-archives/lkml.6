@@ -6,73 +6,69 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4D5C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55A1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5837725218
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:25:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5837725218
+	by mail.kernel.org (Postfix) with ESMTP id 7AC8B2521B
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 06:27:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC8B2521B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeGAGY6 (ORCPT
+        id S1752164AbeGAG1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 02:24:58 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:53472 "EHLO
+        Sun, 1 Jul 2018 02:27:49 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:53486 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751539AbeGAGY4 (ORCPT
+        with ESMTP id S1751576AbeGAG1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 02:24:56 -0400
+        Sun, 1 Jul 2018 02:27:46 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fZVmi-0006S2-Bg; Sun, 01 Jul 2018 14:24:32 +0800
+        id 1fZVpg-0006VZ-Vs; Sun, 01 Jul 2018 14:27:37 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fZVmV-0007oa-HJ; Sun, 01 Jul 2018 14:24:19 +0800
-Date:   Sun, 1 Jul 2018 14:24:19 +0800
+        id 1fZVpe-0007qN-GX; Sun, 01 Jul 2018 14:27:34 +0800
+Date:   Sun, 1 Jul 2018 14:27:34 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, qat-linux@intel.com,
-        dm-devel@redhat.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 11/11] crypto: skcipher: Remove VLA usage for
- SKCIPHER_REQUEST_ON_STACK
-Message-ID: <20180701062419.3opt7mnljf76hi4k@gondor.apana.org.au>
-References: <20180625211026.15819-1-keescook@chromium.org>
- <20180625211026.15819-12-keescook@chromium.org>
- <20180626092041.mxfg4lxcvxfivzc2@gondor.apana.org.au>
- <CAGXu5jKYb-0NNvOcN79hzqU7O6vCFhMTBDGBL8Knuoc-YHamPg@mail.gmail.com>
- <20180627143622.ntksjxsymo4yw6dz@gondor.apana.org.au>
- <CAGXu5jJ2Z=YP+fNsvy+6a_BpC1ibZf6tOzZuPHk=Qx1qNVvOZw@mail.gmail.com>
- <20180627222749.xa5333caq5vaa7st@gondor.apana.org.au>
- <CAGXu5jKas=OyJPsrMthxjEykG=FkHDW84dO4bKGpj-50JjUYwQ@mail.gmail.com>
+To:     Vinod <vkoul@kernel.org>
+Cc:     Timur Tabi <timur@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-crypto@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
+Message-ID: <20180701062734.s6ldsbhi42hnn6x6@gondor.apana.org.au>
+References: <20180618141259.23141-1-vkoul@kernel.org>
+ <20180618141259.23141-4-vkoul@kernel.org>
+ <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
+ <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
+ <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
+ <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
+ <20180621115312.rfmbitrhqi44wu5w@gondor.apana.org.au>
+ <CAOZdJXVO-0JDvX4OdJMNCmY_BXrEenXpoWBf=Ww5uFBtXKN86A@mail.gmail.com>
+ <20180629083732.GB22377@vkoul-mobl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jKas=OyJPsrMthxjEykG=FkHDW84dO4bKGpj-50JjUYwQ@mail.gmail.com>
+In-Reply-To: <20180629083732.GB22377@vkoul-mobl>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 05:10:05PM -0700, Kees Cook wrote:
+On Fri, Jun 29, 2018 at 02:07:32PM +0530, Vinod wrote:
 >
-> In both cases here, what is "cipher"? i.e. what ciphers could lrw be
-> wrapping, and what ciphers could cts be wrapping, so that I can
-> examine the blocksizes, etc?
+> I think Stan did bring this point earlier that PRNG is compliant to
+> FIPS-140-2. So it can be used by rng clients for various purposes but
+> should not be fed to dev/random as the hw_random does.
+> 
+> Herbert, can you please confirm..
 
-A cipher is a simple cipher like aes that operates on a single
-block.
+Yes this is a PRNG.  A hardware RNG should return 1 bit of entropy
+per bit of output.
 
 Cheers,
 -- 
