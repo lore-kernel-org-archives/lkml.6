@@ -6,32 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C26C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65C1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1650B256DB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:38:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1650B256DB
+	by mail.kernel.org (Postfix) with ESMTP id 7A930256A1
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:39:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A930256A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934251AbeGARic (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:38:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35898 "EHLO
+        id S1030276AbeGARjB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:39:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35872 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031186AbeGAQf5 (ORCPT
+        with ESMTP id S1031151AbeGAQft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:35:57 -0400
+        Sun, 1 Jul 2018 12:35:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E86AAACC;
-        Sun,  1 Jul 2018 16:35:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 801A749B;
+        Sun,  1 Jul 2018 16:35:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 147/157] ALSA: timer: Fix UBSAN warning at SNDRV_TIMER_IOCTL_NEXT_DEVICE ioctl
-Date:   Sun,  1 Jul 2018 18:23:39 +0200
-Message-Id: <20180701160900.522711854@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 144/157] Input: elan_i2c_smbus - fix more potential stack buffer overflows
+Date:   Sun,  1 Jul 2018 18:23:36 +0200
+Message-Id: <20180701160900.322145230@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -48,52 +52,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit b41f794f284966fd6ec634111e3b40d241389f96 upstream.
+commit 50fc7b61959af4b95fafce7fe5dd565199e0b61a upstream.
 
-The kernel may spew a WARNING about UBSAN undefined behavior at
-handling ALSA timer ioctl SNDRV_TIMER_IOCTL_NEXT_DEVICE:
+Commit 40f7090bb1b4 ("Input: elan_i2c_smbus - fix corrupted stack")
+fixed most of the functions using i2c_smbus_read_block_data() to
+allocate a buffer with the maximum block size.  However three
+functions were left unchanged:
 
-UBSAN: Undefined behaviour in sound/core/timer.c:1524:19
-signed integer overflow:
-2147483647 + 1 cannot be represented in type 'int'
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x122/0x1c8 lib/dump_stack.c:113
- ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
- handle_overflow+0x1c2/0x21f lib/ubsan.c:190
- __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
- snd_timer_user_next_device sound/core/timer.c:1524 [inline]
- __snd_timer_user_ioctl+0x204d/0x2520 sound/core/timer.c:1939
- snd_timer_user_ioctl+0x67/0x95 sound/core/timer.c:1994
- ....
+* In elan_smbus_initialize(), increase the buffer size in the same
+  way.
+* In elan_smbus_calibrate_result(), the buffer is provided by the
+  caller (calibrate_store()), so introduce a bounce buffer.  Also
+  name the result buffer size.
+* In elan_smbus_get_report(), the buffer is provided by the caller
+  but happens to be the right length.  Add a compile-time assertion
+  to ensure this remains the case.
 
-It happens only when a value with INT_MAX is passed, as we're
-incrementing it unconditionally.  So the fix is trivial, check the
-value with INT_MAX.  Although the bug itself is fairly harmless, it's
-better to fix it so that fuzzers won't hit this again later.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200213
-Reported-and-tested-by: Team OWL337 <icytxw@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: <stable@vger.kernel.org> # 3.19+
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/timer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/elan_i2c.h       |    2 ++
+ drivers/input/mouse/elan_i2c_core.c  |    2 +-
+ drivers/input/mouse/elan_i2c_smbus.c |   10 ++++++++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -1514,7 +1514,7 @@ static int snd_timer_user_next_device(st
- 				} else {
- 					if (id.subdevice < 0)
- 						id.subdevice = 0;
--					else
-+					else if (id.subdevice < INT_MAX)
- 						id.subdevice++;
- 				}
- 			}
+--- a/drivers/input/mouse/elan_i2c.h
++++ b/drivers/input/mouse/elan_i2c.h
+@@ -27,6 +27,8 @@
+ #define ETP_DISABLE_POWER	0x0001
+ #define ETP_PRESSURE_OFFSET	25
+ 
++#define ETP_CALIBRATE_MAX_LEN	3
++
+ /* IAP Firmware handling */
+ #define ETP_PRODUCT_ID_FORMAT_STRING	"%d.0"
+ #define ETP_FW_NAME		"elan_i2c_" ETP_PRODUCT_ID_FORMAT_STRING ".bin"
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -610,7 +610,7 @@ static ssize_t calibrate_store(struct de
+ 	int tries = 20;
+ 	int retval;
+ 	int error;
+-	u8 val[3];
++	u8 val[ETP_CALIBRATE_MAX_LEN];
+ 
+ 	retval = mutex_lock_interruptible(&data->sysfs_mutex);
+ 	if (retval)
+--- a/drivers/input/mouse/elan_i2c_smbus.c
++++ b/drivers/input/mouse/elan_i2c_smbus.c
+@@ -56,7 +56,7 @@
+ static int elan_smbus_initialize(struct i2c_client *client)
+ {
+ 	u8 check[ETP_SMBUS_HELLOPACKET_LEN] = { 0x55, 0x55, 0x55, 0x55, 0x55 };
+-	u8 values[ETP_SMBUS_HELLOPACKET_LEN] = { 0, 0, 0, 0, 0 };
++	u8 values[I2C_SMBUS_BLOCK_MAX] = {0};
+ 	int len, error;
+ 
+ 	/* Get hello packet */
+@@ -117,12 +117,16 @@ static int elan_smbus_calibrate(struct i
+ static int elan_smbus_calibrate_result(struct i2c_client *client, u8 *val)
+ {
+ 	int error;
++	u8 buf[I2C_SMBUS_BLOCK_MAX] = {0};
++
++	BUILD_BUG_ON(ETP_CALIBRATE_MAX_LEN > sizeof(buf));
+ 
+ 	error = i2c_smbus_read_block_data(client,
+-					  ETP_SMBUS_CALIBRATE_QUERY, val);
++					  ETP_SMBUS_CALIBRATE_QUERY, buf);
+ 	if (error < 0)
+ 		return error;
+ 
++	memcpy(val, buf, ETP_CALIBRATE_MAX_LEN);
+ 	return 0;
+ }
+ 
+@@ -472,6 +476,8 @@ static int elan_smbus_get_report(struct
+ {
+ 	int len;
+ 
++	BUILD_BUG_ON(I2C_SMBUS_BLOCK_MAX > ETP_SMBUS_REPORT_LEN);
++
+ 	len = i2c_smbus_read_block_data(client,
+ 					ETP_SMBUS_PACKET_QUERY,
+ 					&report[ETP_SMBUS_REPORT_OFFSET]);
 
 
