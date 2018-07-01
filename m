@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA53C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBD2C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D056225511
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D056225511
+	by mail.kernel.org (Postfix) with ESMTP id E70C325516
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70C325516
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934115AbeGARAD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:00:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37924 "EHLO
+        id S934166AbeGARAe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:00:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032415AbeGAQnw (ORCPT
+        with ESMTP id S1032387AbeGAQnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:52 -0400
+        Sun, 1 Jul 2018 12:43:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8087ACC;
-        Sun,  1 Jul 2018 16:43:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A876CACD;
+        Sun,  1 Jul 2018 16:43:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Capenter <dan.carpenter@oracle.com>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.17 160/220] um: Fix initialization of vector queues
-Date:   Sun,  1 Jul 2018 18:23:04 +0200
-Message-Id: <20180701160914.962882744@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.17 157/220] backlight: tps65217_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:23:01 +0200
+Message-Id: <20180701160914.842386621@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,60 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 4579a1ba692af81da7ea6ce197f8169ddc0c327f upstream.
+commit 2b12dfa124dbadf391cb9a616aaa6b056823bf75 upstream.
 
-UML vector drivers could derefence uninitialized memory
-when cleaning up after a queue allocation failure.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Fixes: 49da7e64f33e ("High Performance UML Vector Network Driver")
-Cc: <stable@vger.kernel.org>
-Reported-by: Dan Capenter <dan.carpenter@oracle.com>
-Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+This would only cause trouble if the child node is missing while there
+is an unrelated node named "backlight" elsewhere in the tree.
+
+Cc: stable <stable@vger.kernel.org>     # 3.7
+Fixes: eebfdc17cc6c ("backlight: Add TPS65217 WLED driver")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/um/drivers/vector_kern.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/video/backlight/tps65217_bl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -504,15 +504,19 @@ static struct vector_queue *create_queue
+--- a/drivers/video/backlight/tps65217_bl.c
++++ b/drivers/video/backlight/tps65217_bl.c
+@@ -184,11 +184,11 @@ static struct tps65217_bl_pdata *
+ tps65217_bl_parse_dt(struct platform_device *pdev)
+ {
+ 	struct tps65217 *tps = dev_get_drvdata(pdev->dev.parent);
+-	struct device_node *node = of_node_get(tps->dev->of_node);
++	struct device_node *node;
+ 	struct tps65217_bl_pdata *pdata, *err;
+ 	u32 val;
  
- 	result = kmalloc(sizeof(struct vector_queue), GFP_KERNEL);
- 	if (result == NULL)
--		goto out_fail;
-+		return NULL;
- 	result->max_depth = max_size;
- 	result->dev = vp->dev;
- 	result->mmsg_vector = kmalloc(
- 		(sizeof(struct mmsghdr) * max_size), GFP_KERNEL);
-+	if (result->mmsg_vector == NULL)
-+		goto out_mmsg_fail;
- 	result->skbuff_vector = kmalloc(
- 		(sizeof(void *) * max_size), GFP_KERNEL);
--	if (result->mmsg_vector == NULL || result->skbuff_vector == NULL)
--		goto out_fail;
-+	if (result->skbuff_vector == NULL)
-+		goto out_skb_fail;
-+
-+	/* further failures can be handled safely by destroy_queue*/
+-	node = of_find_node_by_name(node, "backlight");
++	node = of_get_child_by_name(tps->dev->of_node, "backlight");
+ 	if (!node)
+ 		return ERR_PTR(-ENODEV);
  
- 	mmsg_vector = result->mmsg_vector;
- 	for (i = 0; i < max_size; i++) {
-@@ -563,6 +567,11 @@ static struct vector_queue *create_queue
- 	result->head = 0;
- 	result->tail = 0;
- 	return result;
-+out_skb_fail:
-+	kfree(result->mmsg_vector);
-+out_mmsg_fail:
-+	kfree(result);
-+	return NULL;
- out_fail:
- 	destroy_queue(result);
- 	return NULL;
 
 
