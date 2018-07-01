@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3C5C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2BBC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7210E25335
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7210E25335
+	by mail.kernel.org (Postfix) with ESMTP id 8712624A63
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8712624A63
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032504AbeGAQoe (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:44:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38050 "EHLO
+        id S933929AbeGAQoj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:44:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38072 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753641AbeGAQoa (ORCPT
+        with ESMTP id S1032226AbeGAQof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:44:30 -0400
+        Sun, 1 Jul 2018 12:44:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEE8F92B;
-        Sun,  1 Jul 2018 16:44:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2909192B;
+        Sun,  1 Jul 2018 16:44:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.17 173/220] media: vsp1: Release buffers for each video node
-Date:   Sun,  1 Jul 2018 18:23:17 +0200
-Message-Id: <20180701160915.467611116@linuxfoundation.org>
+Subject: [PATCH 4.17 175/220] media: cx231xx: Ignore an i2c mux adapter
+Date:   Sun,  1 Jul 2018 18:23:19 +0200
+Message-Id: <20180701160915.549663518@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,95 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Brad Love <brad@nextdimension.cc>
 
-commit 83967993f2320575c0ab27a80bf1d7535909c2f4 upstream.
+commit 13a257f8d5a530bd2aa004a067ba1f2b8f5ef76d upstream.
 
-Commit 372b2b0399fc ("media: v4l: vsp1: Release buffers in
-start_streaming error path") introduced a helper to clean up buffers on
-error paths, but inadvertently changed the code such that only the
-output WPF buffers were cleaned, rather than the video node being
-operated on.
+Hauppauge 935C cannot communicate with the si2157
+when using the mux adapter returned by the si2168,
+so disable it to fix the device.
 
-Since then vsp1_video_cleanup_pipeline() has grown to perform both video
-node cleanup, as well as pipeline cleanup. Split the implementation into
-two distinct functions that perform the required work, so that each
-video node can release its buffers correctly on streamoff. The pipe
-cleanup that was performed in the vsp1_video_stop_streaming() (releasing
-the pipe->dl) is moved to the function for clarity.
-
-Fixes: 372b2b0399fc ("media: v4l: vsp1: Release buffers in start_streaming error path")
-
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Cc: stable@vger.kernel.org
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vsp1/vsp1_video.c |   21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-dvb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -849,9 +849,8 @@ static int vsp1_video_setup_pipeline(str
- 	return 0;
- }
+--- a/drivers/media/usb/cx231xx/cx231xx-dvb.c
++++ b/drivers/media/usb/cx231xx/cx231xx-dvb.c
+@@ -1151,7 +1151,7 @@ static int dvb_init(struct cx231xx *dev)
+ 		info.platform_data = &si2157_config;
+ 		request_module("si2157");
  
--static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
-+static void vsp1_video_release_buffers(struct vsp1_video *video)
- {
--	struct vsp1_video *video = pipe->output->video;
- 	struct vsp1_vb2_buffer *buffer;
- 	unsigned long flags;
- 
-@@ -861,12 +860,18 @@ static void vsp1_video_cleanup_pipeline(
- 		vb2_buffer_done(&buffer->buf.vb2_buf, VB2_BUF_STATE_ERROR);
- 	INIT_LIST_HEAD(&video->irqqueue);
- 	spin_unlock_irqrestore(&video->irqlock, flags);
-+}
-+
-+static void vsp1_video_cleanup_pipeline(struct vsp1_pipeline *pipe)
-+{
-+	lockdep_assert_held(&pipe->lock);
- 
- 	/* Release our partition table allocation */
--	mutex_lock(&pipe->lock);
- 	kfree(pipe->part_table);
- 	pipe->part_table = NULL;
--	mutex_unlock(&pipe->lock);
-+
-+	vsp1_dl_list_put(pipe->dl);
-+	pipe->dl = NULL;
- }
- 
- static int vsp1_video_start_streaming(struct vb2_queue *vq, unsigned int count)
-@@ -881,8 +886,9 @@ static int vsp1_video_start_streaming(st
- 	if (pipe->stream_count == pipe->num_inputs) {
- 		ret = vsp1_video_setup_pipeline(pipe);
- 		if (ret < 0) {
--			mutex_unlock(&pipe->lock);
-+			vsp1_video_release_buffers(video);
- 			vsp1_video_cleanup_pipeline(pipe);
-+			mutex_unlock(&pipe->lock);
- 			return ret;
- 		}
- 
-@@ -932,13 +938,12 @@ static void vsp1_video_stop_streaming(st
- 		if (ret == -ETIMEDOUT)
- 			dev_err(video->vsp1->dev, "pipeline stop timeout\n");
- 
--		vsp1_dl_list_put(pipe->dl);
--		pipe->dl = NULL;
-+		vsp1_video_cleanup_pipeline(pipe);
- 	}
- 	mutex_unlock(&pipe->lock);
- 
- 	media_pipeline_stop(&video->video.entity);
--	vsp1_video_cleanup_pipeline(pipe);
-+	vsp1_video_release_buffers(video);
- 	vsp1_video_pipeline_put(pipe);
- }
- 
+-		client = i2c_new_device(adapter, &info);
++		client = i2c_new_device(tuner_i2c, &info);
+ 		if (client == NULL || client->dev.driver == NULL) {
+ 			module_put(dvb->i2c_client_demod[0]->dev.driver->owner);
+ 			i2c_unregister_device(dvb->i2c_client_demod[0]);
 
 
