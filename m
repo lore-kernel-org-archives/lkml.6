@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B8FC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2283EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17966258BC
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:11:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17966258BC
+	by mail.kernel.org (Postfix) with ESMTP id D37FB258B9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37FB258B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030222AbeGASL4 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:11:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34108 "EHLO
+        id S965616AbeGASMR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:12:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34086 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965307AbeGAQ12 (ORCPT
+        with ESMTP id S965345AbeGAQ1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:27:28 -0400
+        Sun, 1 Jul 2018 12:27:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BA48ACD;
-        Sun,  1 Jul 2018 16:27:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BBED1AA6;
+        Sun,  1 Jul 2018 16:27:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Silvio Cesare <silvio.cesare@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 4.9 070/101] UBIFS: Fix potential integer overflow in allocation
-Date:   Sun,  1 Jul 2018 18:21:56 +0200
-Message-Id: <20180701160759.965133430@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Martin Townsend <mtownsend1973@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.9 068/101] ubi: fastmap: Cancel work upon detach
+Date:   Sun,  1 Jul 2018 18:21:54 +0200
+Message-Id: <20180701160759.887412177@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,35 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Silvio Cesare <silvio.cesare@gmail.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 353748a359f1821ee934afc579cf04572406b420 upstream.
+commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
 
-There is potential for the size and len fields in ubifs_data_node to be
-too large causing either a negative value for the length fields or an
-integer overflow leading to an incorrect memory allocation. Likewise,
-when the len field is small, an integer underflow may occur.
+Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
+fastmap work on detach") does not really fix the problem, it just
+reduces the risk to hit the race window where fastmap work races against
+free()'ing ubi->volumes[].
 
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+The correct approach is making sure that no more fastmap work is in
+progress before we free ubi data structures.
+So we cancel fastmap work right after the ubi background thread is
+stopped.
+By setting ubi->thread_enabled to zero we make sure that no further work
+tries to wake the thread.
+
+Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
+Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
 Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Martin Townsend <mtownsend1973@gmail.com>
+
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/ubi/build.c |    3 +++
+ drivers/mtd/ubi/wl.c    |    4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -1265,7 +1265,7 @@ static int recomp_data_node(const struct
- 	int err, len, compr_type, out_len;
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1137,6 +1137,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
+ 	 */
+ 	get_device(&ubi->dev);
  
- 	out_len = le32_to_cpu(dn->size);
--	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
-+	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
- 	if (!buf)
- 		return -ENOMEM;
++#ifdef CONFIG_MTD_UBI_FASTMAP
++	cancel_work_sync(&ubi->fm_work);
++#endif
+ 	ubi_debugfs_exit_dev(ubi);
+ 	uif_close(ubi);
+ 
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1505,6 +1505,7 @@ int ubi_thread(void *u)
+ 	}
+ 
+ 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
++	ubi->thread_enabled = 0;
+ 	return 0;
+ }
+ 
+@@ -1514,9 +1515,6 @@ int ubi_thread(void *u)
+  */
+ static void shutdown_work(struct ubi_device *ubi)
+ {
+-#ifdef CONFIG_MTD_UBI_FASTMAP
+-	flush_work(&ubi->fm_work);
+-#endif
+ 	while (!list_empty(&ubi->works)) {
+ 		struct ubi_work *wrk;
  
 
 
