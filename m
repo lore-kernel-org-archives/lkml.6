@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D60EC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEF1C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5104F254BB
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:52:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5104F254BB
+	by mail.kernel.org (Postfix) with ESMTP id 43441254B5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43441254B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753440AbeGAQwe (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:52:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38300 "EHLO
+        id S933655AbeGAQxI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:53:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965884AbeGAQp4 (ORCPT
+        with ESMTP id S1031846AbeGAQpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:45:56 -0400
+        Sun, 1 Jul 2018 12:45:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC8B1A73;
-        Sun,  1 Jul 2018 16:45:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5E500AA6;
+        Sun,  1 Jul 2018 16:45:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 204/220] ALSA: hda/realtek - Add a quirk for FSC ESPRIMO U9210
-Date:   Sun,  1 Jul 2018 18:23:48 +0200
-Message-Id: <20180701160916.696481812@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.17 199/220] Input: elantech - enable middle button of touchpads on ThinkPad P52
+Date:   Sun,  1 Jul 2018 18:23:43 +0200
+Message-Id: <20180701160916.494222629@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -49,31 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit 275ec0cb946cb75ac8977f662e608fce92f8b8a8 upstream.
+commit 24bb555e6e46d96e2a954aa0295029a81cc9bbaa upstream.
 
-Fujitsu Seimens ESPRIMO Mobile U9210 requires the same fixup as H270
-for the correct pin configs.
+PNPID is better way to identify the type of touchpads.
+Enable middle button support on 2 types of touchpads on Lenovo P52.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200107
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/mouse/elantech.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -2542,6 +2542,7 @@ static const struct snd_pci_quirk alc262
- 	SND_PCI_QUIRK(0x10cf, 0x1397, "Fujitsu Lifebook S7110", ALC262_FIXUP_FSC_S7110),
- 	SND_PCI_QUIRK(0x10cf, 0x142d, "Fujitsu Lifebook E8410", ALC262_FIXUP_BENQ),
- 	SND_PCI_QUIRK(0x10f1, 0x2915, "Tyan Thunder n6650W", ALC262_FIXUP_TYAN),
-+	SND_PCI_QUIRK(0x1734, 0x1141, "FSC ESPRIMO U9210", ALC262_FIXUP_FSC_H270),
- 	SND_PCI_QUIRK(0x1734, 0x1147, "FSC Celsius H270", ALC262_FIXUP_FSC_H270),
- 	SND_PCI_QUIRK(0x17aa, 0x384e, "Lenovo 3000", ALC262_FIXUP_LENOVO_3000),
- 	SND_PCI_QUIRK(0x17ff, 0x0560, "Benq ED8", ALC262_FIXUP_BENQ),
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1169,6 +1169,12 @@ static const struct dmi_system_id elante
+ 	{ }
+ };
+ 
++static const char * const middle_button_pnp_ids[] = {
++	"LEN2131", /* ThinkPad P52 w/ NFC */
++	"LEN2132", /* ThinkPad P52 */
++	NULL
++};
++
+ /*
+  * Set the appropriate event bits for the input subsystem
+  */
+@@ -1188,7 +1194,8 @@ static int elantech_set_input_params(str
+ 	__clear_bit(EV_REL, dev->evbit);
+ 
+ 	__set_bit(BTN_LEFT, dev->keybit);
+-	if (dmi_check_system(elantech_dmi_has_middle_button))
++	if (dmi_check_system(elantech_dmi_has_middle_button) ||
++			psmouse_matches_pnp_id(psmouse, middle_button_pnp_ids))
+ 		__set_bit(BTN_MIDDLE, dev->keybit);
+ 	__set_bit(BTN_RIGHT, dev->keybit);
+ 
 
 
