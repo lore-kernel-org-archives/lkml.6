@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19053C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC94C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C789D2517C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C789D2517C
+	by mail.kernel.org (Postfix) with ESMTP id BBF5A2517D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF5A2517D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753518AbeGAQZf (ORCPT
+        id S1753585AbeGAQZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:25:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33680 "EHLO
+        Sun, 1 Jul 2018 12:25:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932790AbeGAQZ3 (ORCPT
+        with ESMTP id S1753514AbeGAQZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:29 -0400
+        Sun, 1 Jul 2018 12:25:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82B9CAD8;
-        Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FF7EACD;
+        Sun,  1 Jul 2018 16:25:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
-        Rabin Vincent <rabin@rab.in>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.9 030/101] ARM: 8764/1: kgdb: fix NUMREGBYTES so that gdb_regs[] is the correct size
-Date:   Sun,  1 Jul 2018 18:21:16 +0200
-Message-Id: <20180701160758.361937930@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 032/101] arm64: mm: Ensure writes to swapper are ordered wrt subsequent cache maintenance
+Date:   Sun,  1 Jul 2018 18:21:18 +0200
+Message-Id: <20180701160758.445886785@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -52,45 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rivshin <DRivshin@allworx.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 76ed0b803a2ab793a1b27d1dfe0de7955282cd34 upstream.
+commit 71c8fc0c96abf8e53e74ed4d891d671e585f9076 upstream.
 
-NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly
-based on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM
-is the number of total registers, while GDB_MAX_REGS is the number
-of 'unsigned longs' it takes to serialize those registers. Since
-FP registers require 3 'unsigned longs' each, DBG_MAX_REG_NUM is
-smaller than GDB_MAX_REGS.
+When rewriting swapper using nG mappings, we must performance cache
+maintenance around each page table access in order to avoid coherency
+problems with the host's cacheable alias under KVM. To ensure correct
+ordering of the maintenance with respect to Device memory accesses made
+with the Stage-1 MMU disabled, DMBs need to be added between the
+maintenance and the corresponding memory access.
 
-This causes GDB 8.0 give the following error on connect:
-"Truncated register 19 in remote 'g' packet"
+This patch adds a missing DMB between writing a new page table entry and
+performing a clean+invalidate on the same line.
 
-This also causes the register serialization/deserialization logic
-to overflow gdb_regs[], overwriting whatever follows.
-
-Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
-Cc: <stable@vger.kernel.org> # 2.6.37+
-Signed-off-by: David Rivshin <drivshin@allworx.com>
-Acked-by: Rabin Vincent <rabin@rab.in>
-Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: f992b4dfd58b ("arm64: kpti: Add ->enable callback to remap swapper using nG mappings")
+Cc: <stable@vger.kernel.org> # 4.16.x-
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/include/asm/kgdb.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/mm/proc.S |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm/include/asm/kgdb.h
-+++ b/arch/arm/include/asm/kgdb.h
-@@ -76,7 +76,7 @@ extern int kgdb_fault_expected;
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -186,8 +186,9 @@ ENDPROC(idmap_cpu_replace_ttbr1)
  
- #define KGDB_MAX_NO_CPUS	1
- #define BUFMAX			400
--#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
-+#define NUMREGBYTES		(GDB_MAX_REGS << 2)
- #define NUMCRITREGBYTES		(32 << 2)
+ 	.macro __idmap_kpti_put_pgtable_ent_ng, type
+ 	orr	\type, \type, #PTE_NG		// Same bit for blocks and pages
+-	str	\type, [cur_\()\type\()p]	// Update the entry and ensure it
+-	dc	civac, cur_\()\type\()p		// is visible to all CPUs.
++	str	\type, [cur_\()\type\()p]	// Update the entry and ensure
++	dmb	sy				// that it is visible to all
++	dc	civac, cur_\()\type\()p		// CPUs.
+ 	.endm
  
- #define _R0			0
+ /*
 
 
