@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8853DC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B32C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432802487F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432802487F
+	by mail.kernel.org (Postfix) with ESMTP id 4F81F24E4E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F81F24E4E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031724AbeGAQjX (ORCPT
+        id S1031737AbeGAQj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:39:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36878 "EHLO
+        Sun, 1 Jul 2018 12:39:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36896 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031202AbeGAQjO (ORCPT
+        with ESMTP id S1031714AbeGAQjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:39:14 -0400
+        Sun, 1 Jul 2018 12:39:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14945AA6;
-        Sun,  1 Jul 2018 16:39:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20C9AAA6;
+        Sun,  1 Jul 2018 16:39:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Alastair DSilva <alastair@d-silva.org>,
-        Christophe Lombard <clombard@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.17 059/220] cxl: Configure PSL to not use APC virtual machines
-Date:   Sun,  1 Jul 2018 18:21:23 +0200
-Message-Id: <20180701160910.838449918@linuxfoundation.org>
+        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
+        Rabin Vincent <rabin@rab.in>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.17 061/220] ARM: 8764/1: kgdb: fix NUMREGBYTES so that gdb_regs[] is the correct size
+Date:   Sun,  1 Jul 2018 18:21:25 +0200
+Message-Id: <20180701160910.936142562@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,41 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+From: David Rivshin <DRivshin@allworx.com>
 
-commit 9a6d2022bacd8fca0be6297459a02dfd28dad6ba upstream.
+commit 76ed0b803a2ab793a1b27d1dfe0de7955282cd34 upstream.
 
-APC virtual machines arent used on POWER-9 chips and are already
-disabled in on-chip CAPP. They also need to be disabled on the PSL via
-'PSL Data Send Control Register' by setting bit(47). This forces the
-PSL to send commands to CAPP with queue.id == 0.
+NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly
+based on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM
+is the number of total registers, while GDB_MAX_REGS is the number
+of 'unsigned longs' it takes to serialize those registers. Since
+FP registers require 3 'unsigned longs' each, DBG_MAX_REG_NUM is
+smaller than GDB_MAX_REGS.
 
-Fixes: 5632874311db ("cxl: Add support for POWER9 DD2")
-Cc: stable@vger.kernel.org # v4.15+
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Reviewed-by: Alastair D'Silva <alastair@d-silva.org>
-Reviewed-by: Christophe Lombard <clombard@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+This causes GDB 8.0 give the following error on connect:
+"Truncated register 19 in remote 'g' packet"
+
+This also causes the register serialization/deserialization logic
+to overflow gdb_regs[], overwriting whatever follows.
+
+Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
+Cc: <stable@vger.kernel.org> # 2.6.37+
+Signed-off-by: David Rivshin <drivshin@allworx.com>
+Acked-by: Rabin Vincent <rabin@rab.in>
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/cxl/pci.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/include/asm/kgdb.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/cxl/pci.c
-+++ b/drivers/misc/cxl/pci.c
-@@ -514,9 +514,9 @@ static int init_implementation_adapter_r
- 	cxl_p1_write(adapter, CXL_PSL9_FIR_CNTL, psl_fircntl);
+--- a/arch/arm/include/asm/kgdb.h
++++ b/arch/arm/include/asm/kgdb.h
+@@ -77,7 +77,7 @@ extern int kgdb_fault_expected;
  
- 	/* Setup the PSL to transmit packets on the PCIe before the
--	 * CAPP is enabled
-+	 * CAPP is enabled. Make sure that CAPP virtual machines are disabled
- 	 */
--	cxl_p1_write(adapter, CXL_PSL9_DSNDCTL, 0x0001001000002A10ULL);
-+	cxl_p1_write(adapter, CXL_PSL9_DSNDCTL, 0x0001001000012A10ULL);
+ #define KGDB_MAX_NO_CPUS	1
+ #define BUFMAX			400
+-#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
++#define NUMREGBYTES		(GDB_MAX_REGS << 2)
+ #define NUMCRITREGBYTES		(32 << 2)
  
- 	/*
- 	 * A response to an ASB_Notify request is returned by the
+ #define _R0			0
 
 
