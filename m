@@ -2,183 +2,571 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31A2C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F4CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613C825137
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="McfENyoO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613C825137
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AA202514D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA202514D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752492AbeGALJi (ORCPT
+        id S1752534AbeGALJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:09:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54341 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752454AbeGALJb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:31 -0400
-Received: by mail-wm0-f67.google.com with SMTP id i139-v6so6199532wmf.4
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:09:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bEYxk2/Sj8wF7WB1h2C5VHsjJDjktkateFboi+DxH+4=;
-        b=McfENyoOfmpV0g6CkFU28k1mVZ5C4rV0hL4IQM0VicI5M5rgaAQ6L7LvLqyuC3LSgy
-         s+tswJMV7Z++SvOypKjPzYBEXtrsE/GhNtUJaf01dUrbTiC4NIOGLOeV6gUlUf3VwE38
-         Bebssioh8fqr5NNROvHr0e0a2fkQDpWBbbSF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bEYxk2/Sj8wF7WB1h2C5VHsjJDjktkateFboi+DxH+4=;
-        b=FsBd8DW0jvYcEyAUCOWyqS/Kq6wPilvUUwaKbLZXPbOI2hEoVOh/giO5PvoPDcEz2b
-         03DHonroiwUhBZDyvlP9ykF6yiFHhwOdyJUH6C4bPAVdABGHdgvZ0koUEvDyUEM+jM3o
-         HvVCgNZrhMa15xQ/QQgVvbNvTFRtVEgLator5a/oFm6YQwfdyxaoBIlhmJ4SBAz+mb8j
-         iMX8aS2YoGzDqvRoHqNuQPUXMZtBZ5Iq3yz9p1AcDVo+YUzrHiQP5SP6It4IXc/Eb2An
-         WRAHEOgAIiQOkzAL1b04gD65dR31B5fAM09GeGLzpO6bFxTnJoHy+RuDaRahnhO9FsV7
-         jWRg==
-X-Gm-Message-State: APt69E1upRsxFIo9Xd+h3/A+UF3BGGBAxaVS2bF/o+7RqmABGG7XRDD2
-        J7JZRk2IrcfcPeGhC0KUOkrEOg==
-X-Google-Smtp-Source: AAOMgpfb+4G4K0JPcS4kIrYAlydtICyA7z2b9/PDhJIsboL8qMC8CLTPY9W7HBdmyYpUVTgX4oUIZA==
-X-Received: by 2002:a1c:944e:: with SMTP id w75-v6mr5510151wmd.105.1530443370094;
-        Sun, 01 Jul 2018 04:09:30 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id e13-v6sm2367786wrd.9.2018.07.01.04.09.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 04:09:27 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v5 1/8] interconnect: Add generic on-chip interconnect API
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        mturquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        daidavid1@codeaurora.org, Evan Green <evgreen@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        abailon@baylibre.com, linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org
-References: <20180620121141.15403-1-georgi.djakov@linaro.org>
- <20180620121141.15403-2-georgi.djakov@linaro.org>
- <CAKfTPtBApjf9rhJm3paeXdgbVG50ALeun=zMUddc-f+RnrvkqQ@mail.gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <730fac43-e99f-e4bd-bc40-eddeb8338e6e@linaro.org>
-Date:   Sun, 1 Jul 2018 14:09:26 +0300
+        Sun, 1 Jul 2018 07:09:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47812 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752344AbeGALJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 74E4DAFBD;
+        Sun,  1 Jul 2018 11:09:04 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     netdev@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [RFC net-next 15/15] net: lora: Add Semtech SX1301
+Date:   Sun,  1 Jul 2018 13:08:04 +0200
+Message-Id: <20180701110804.32415-16-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
+References: <20180701110804.32415-1-afaerber@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBApjf9rhJm3paeXdgbVG50ALeun=zMUddc-f+RnrvkqQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+The Semtech SX1301 was the first multi-channel LoRa "concentrator".
+It uses a SPI interface to the host as well as a dual SPI interface to
+its radios. These two have been implemented as spi_controller, so that
+the Device Tree can specify whether the respective module uses two
+SX1257, two SX1255 or a combination of these or some unforeseen chipset.
 
-On 27.06.18 г. 9:19, Vincent Guittot wrote:
-> Hi Georgi
-> 
-> On Wed, 20 Jun 2018 at 14:11, Georgi Djakov <georgi.djakov@linaro.org> wrote:
-> 
-> [snip]
-> 
->> +
->> +static struct icc_path *path_allocate(struct icc_node *dst, ssize_t num_nodes)
->> +{
->> +       struct icc_node *node = dst;
->> +       struct icc_path *path;
->> +       size_t i;
->> +
->> +       path = kzalloc(sizeof(*path) + num_nodes * sizeof(*path->reqs),
-> 
-> Should be (num_nodes -1) * sizeof(*path->reqs) as there is already 1
-> icc_req in icc_path struct
+This implementation is the most recent - initialization is not yet
+complete, it will need to load firmware into the two on-chip MCUs.
 
-reqs[] is a flexible array member and it's size is not included in
-sizeof(*path)
+Unfortunately there is no full datasheet with register descriptions,
+only a BSD-licensed userspace HAL implementation using spidev devices.
+Therefore some register names are unknown.
 
-Thanks,
-Georgi
+Cc: Ben Whitten <ben.whitten@lairdtech.com>
+Cc: Steve deRosier <derosier@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Michael Röder <michael.roeder@avnet.eu>
+Cc: Ken Yu (禹凯) <ken.yu@rakwireless.com>
+Cc: linux-spi@vger.kernel.org
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ drivers/net/lora/Kconfig  |   7 +
+ drivers/net/lora/Makefile |   3 +
+ drivers/net/lora/sx1301.c | 446 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 456 insertions(+)
+ create mode 100644 drivers/net/lora/sx1301.c
 
->> +                      GFP_KERNEL);
->> +       if (!path)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       path->num_nodes = num_nodes;
->> +
->> +       for (i = 0; i < num_nodes; i++) {
->> +               hlist_add_head(&path->reqs[i].req_node, &node->req_list);
->> +
->> +               path->reqs[i].node = node;
->> +               /* reference to previous node was saved during path traversal */
->> +               node = node->reverse;
->> +       }
->> +
->> +       return path;
->> +}
->> +
-> 
-> [snip]
-> 
+diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
+index 68c7480d7812..950450e353b4 100644
+--- a/drivers/net/lora/Kconfig
++++ b/drivers/net/lora/Kconfig
+@@ -45,6 +45,13 @@ config LORA_SX1276
+ 	help
+ 	  Semtech SX1272/1276/1278
+ 
++config LORA_SX1301
++	tristate "Semtech SX1301 SPI driver"
++	default y
++	depends on SPI
++	help
++	  Semtech SX1301
++
+ config LORA_USI
+ 	tristate "USI WM-SG-SM-42 driver"
+ 	default y
+diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
+index 44c578bde7d5..1cc1e3aa189b 100644
+--- a/drivers/net/lora/Makefile
++++ b/drivers/net/lora/Makefile
+@@ -22,6 +22,9 @@ lora-sx1257-y := sx1257.o
+ obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
+ lora-sx1276-y := sx1276.o
+ 
++obj-$(CONFIG_LORA_SX1301) += lora-sx1301.o
++lora-sx1301-y := sx1301.o
++
+ obj-$(CONFIG_LORA_USI) += lora-usi.o
+ lora-usi-y := usi.o
+ 
+diff --git a/drivers/net/lora/sx1301.c b/drivers/net/lora/sx1301.c
+new file mode 100644
+index 000000000000..5c936c1116d1
+--- /dev/null
++++ b/drivers/net/lora/sx1301.c
+@@ -0,0 +1,446 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Semtech SX1301 LoRa concentrator
++ *
++ * Copyright (c) 2018 Andreas Färber
++ *
++ * Based on SX1301 HAL code:
++ * Copyright (c) 2013 Semtech-Cycleo
++ */
++
++#include <linux/bitops.h>
++#include <linux/delay.h>
++#include <linux/lora.h>
++#include <linux/module.h>
++#include <linux/netdevice.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
++#include <linux/lora/dev.h>
++#include <linux/spi/spi.h>
++
++#define REG_PAGE_RESET			0
++#define REG_VERSION			1
++#define REG_2_SPI_RADIO_A_DATA		33
++#define REG_2_SPI_RADIO_A_DATA_READBACK	34
++#define REG_2_SPI_RADIO_A_ADDR		35
++#define REG_2_SPI_RADIO_A_CS		37
++#define REG_2_SPI_RADIO_B_DATA		38
++#define REG_2_SPI_RADIO_B_DATA_READBACK	39
++#define REG_2_SPI_RADIO_B_ADDR		40
++#define REG_2_SPI_RADIO_B_CS		42
++
++#define REG_PAGE_RESET_SOFT_RESET	BIT(7)
++
++#define REG_16_GLOBAL_EN		BIT(3)
++
++#define REG_17_CLK32M_EN		BIT(0)
++
++#define REG_2_43_RADIO_A_EN		BIT(0)
++#define REG_2_43_RADIO_B_EN		BIT(1)
++#define REG_2_43_RADIO_RST		BIT(2)
++
++struct spi_sx1301 {
++	struct spi_device *parent;
++	u8 page;
++	u8 regs;
++};
++
++struct sx1301_priv {
++	struct lora_priv lora;
++	struct gpio_desc *rst_gpio;
++	u8 cur_page;
++	struct spi_controller *radio_a_ctrl, *radio_b_ctrl;
++};
++
++static int sx1301_read(struct spi_device *spi, u8 reg, u8 *val)
++{
++	u8 addr = reg & 0x7f;
++	return spi_write_then_read(spi, &addr, 1, val, 1);
++}
++
++static int sx1301_write(struct spi_device *spi, u8 reg, u8 val)
++{
++	u8 buf[2];
++
++	buf[0] = reg | BIT(7);
++	buf[1] = val;
++	return spi_write(spi, buf, 2);
++}
++
++static int sx1301_page_switch(struct spi_device *spi, u8 page)
++{
++	struct sx1301_priv *priv = spi_get_drvdata(spi);
++	int ret;
++
++	if (priv->cur_page == page)
++		return 0;
++
++	dev_dbg(&spi->dev, "switching to page %u\n", (unsigned)page);
++	ret = sx1301_write(spi, REG_PAGE_RESET, page & 0x3);
++	if (ret) {
++		dev_err(&spi->dev, "switching to page %u failed\n", (unsigned)page);
++		return ret;
++	}
++
++	priv->cur_page = page;
++
++	return 0;
++}
++
++static int sx1301_soft_reset(struct spi_device *spi)
++{
++	return sx1301_write(spi, REG_PAGE_RESET, REG_PAGE_RESET_SOFT_RESET);
++}
++
++#define REG_RADIO_X_DATA		0
++#define REG_RADIO_X_DATA_READBACK	1
++#define REG_RADIO_X_ADDR		2
++#define REG_RADIO_X_CS			4
++
++static int sx1301_radio_set_cs(struct spi_controller *ctrl, bool enable)
++{
++	struct spi_sx1301 *ssx = spi_controller_get_devdata(ctrl);
++	u8 cs;
++	int ret;
++
++	dev_dbg(&ctrl->dev, "setting CS to %s\n", enable ? "1" : "0");
++
++	ret = sx1301_page_switch(ssx->parent, ssx->page);
++	if (ret) {
++		dev_warn(&ctrl->dev, "failed to switch page for CS (%d)\n", ret);
++		return ret;
++	}
++
++	ret = sx1301_read(ssx->parent, ssx->regs + REG_RADIO_X_CS, &cs);
++	if (ret) {
++		dev_warn(&ctrl->dev, "failed to read CS (%d)\n", ret);
++		cs = 0;
++	}
++
++	if (enable)
++		cs |= BIT(0);
++	else
++		cs &= ~BIT(0);
++
++	ret = sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_CS, cs);
++	if (ret)
++		dev_warn(&ctrl->dev, "failed to write CS (%d)\n", ret);
++
++	return 0;
++}
++
++static void sx1301_radio_spi_set_cs(struct spi_device *spi, bool enable)
++{
++	int ret;
++
++	dev_dbg(&spi->dev, "setting SPI CS to %s\n", enable ? "1" : "0");
++
++	if (enable)
++		return;
++
++	ret = sx1301_radio_set_cs(spi->controller, enable);
++	if (ret)
++		dev_warn(&spi->dev, "failed to write CS (%d)\n", ret);
++}
++
++static int sx1301_radio_spi_transfer_one(struct spi_controller *ctrl,
++	struct spi_device *spi, struct spi_transfer *xfr)
++{
++	struct spi_sx1301 *ssx = spi_controller_get_devdata(ctrl);
++	const u8 *tx_buf = xfr->tx_buf;
++	u8 *rx_buf = xfr->rx_buf;
++	int ret;
++
++	if (xfr->len == 0 || xfr->len > 3)
++		return -EINVAL;
++
++	dev_dbg(&spi->dev, "transferring one (%u)\n", xfr->len);
++
++	ret = sx1301_page_switch(ssx->parent, ssx->page);
++	if (ret) {
++		dev_err(&spi->dev, "failed to switch page for transfer (%d)\n", ret);
++		return ret;
++	}
++
++	if (tx_buf) {
++		ret = sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_ADDR, tx_buf ? tx_buf[0] : 0);
++		if (ret) {
++			dev_err(&spi->dev, "SPI radio address write failed\n");
++			return ret;
++		}
++
++		ret = sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_DATA, (tx_buf && xfr->len >= 2) ? tx_buf[1] : 0);
++		if (ret) {
++			dev_err(&spi->dev, "SPI radio data write failed\n");
++			return ret;
++		}
++
++		ret = sx1301_radio_set_cs(ctrl, true);
++		if (ret) {
++			dev_err(&spi->dev, "SPI radio CS set failed\n");
++			return ret;
++		}
++
++		ret = sx1301_radio_set_cs(ctrl, false);
++		if (ret) {
++			dev_err(&spi->dev, "SPI radio CS unset failed\n");
++			return ret;
++		}
++	}
++
++	if (rx_buf) {
++		ret = sx1301_read(ssx->parent, ssx->regs + REG_RADIO_X_DATA_READBACK, &rx_buf[xfr->len - 1]);
++		if (ret) {
++			dev_err(&spi->dev, "SPI radio data read failed\n");
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static void sx1301_radio_setup(struct spi_controller *ctrl)
++{
++	ctrl->mode_bits = SPI_CS_HIGH | SPI_NO_CS;
++	ctrl->bits_per_word_mask = SPI_BPW_MASK(8);
++	ctrl->num_chipselect = 1;
++	ctrl->set_cs = sx1301_radio_spi_set_cs;
++	ctrl->transfer_one = sx1301_radio_spi_transfer_one;
++}
++
++static int sx1301_probe(struct spi_device *spi)
++{
++	struct net_device *netdev;
++	struct sx1301_priv *priv;
++	struct spi_sx1301 *radio;
++	struct gpio_desc *rst;
++	int ret;
++	u8 val;
++
++	rst = devm_gpiod_get_optional(&spi->dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(rst))
++		return PTR_ERR(rst);
++
++	gpiod_set_value_cansleep(rst, 1);
++	msleep(100);
++	gpiod_set_value_cansleep(rst, 0);
++	msleep(100);
++
++	spi->bits_per_word = 8;
++	spi_setup(spi);
++
++	ret = sx1301_read(spi, REG_VERSION, &val);
++	if (ret) {
++		dev_err(&spi->dev, "version read failed\n");
++		goto err_version;
++	}
++
++	if (val != 103) {
++		dev_err(&spi->dev, "unexpected version: %u\n", val);
++		ret = -ENXIO;
++		goto err_version;
++	}
++
++	netdev = alloc_loradev(sizeof(*priv));
++	if (!netdev) {
++		ret = -ENOMEM;
++		goto err_alloc_loradev;
++	}
++
++	priv = netdev_priv(netdev);
++	priv->rst_gpio = rst;
++	priv->cur_page = 0xff;
++
++	spi_set_drvdata(spi, netdev);
++	SET_NETDEV_DEV(netdev, &spi->dev);
++
++	ret = sx1301_write(spi, REG_PAGE_RESET, 0);
++	if (ret) {
++		dev_err(&spi->dev, "page/reset write failed\n");
++		return ret;
++	}
++
++	ret = sx1301_soft_reset(spi);
++	if (ret) {
++		dev_err(&spi->dev, "soft reset failed\n");
++		return ret;
++	}
++
++	ret = sx1301_read(spi, 16, &val);
++	if (ret) {
++		dev_err(&spi->dev, "16 read failed\n");
++		return ret;
++	}
++
++	val &= ~REG_16_GLOBAL_EN;
++
++	ret = sx1301_write(spi, 16, val);
++	if (ret) {
++		dev_err(&spi->dev, "16 write failed\n");
++		return ret;
++	}
++
++	ret = sx1301_read(spi, 17, &val);
++	if (ret) {
++		dev_err(&spi->dev, "17 read failed\n");
++		return ret;
++	}
++
++	val &= ~REG_17_CLK32M_EN;
++
++	ret = sx1301_write(spi, 17, val);
++	if (ret) {
++		dev_err(&spi->dev, "17 write failed\n");
++		return ret;
++	}
++
++	ret = sx1301_page_switch(spi, 2);
++	if (ret) {
++		dev_err(&spi->dev, "page 2 switch failed\n");
++		return ret;
++	}
++
++	ret = sx1301_read(spi, 43, &val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 read failed\n");
++		return ret;
++	}
++
++	val |= REG_2_43_RADIO_B_EN | REG_2_43_RADIO_A_EN;
++
++	ret = sx1301_write(spi, 43, val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 write failed\n");
++		return ret;
++	}
++
++	msleep(500);
++
++	ret = sx1301_read(spi, 43, &val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 read failed\n");
++		return ret;
++	}
++
++	val |= REG_2_43_RADIO_RST;
++
++	ret = sx1301_write(spi, 43, val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 write failed\n");
++		return ret;
++	}
++
++	msleep(5);
++
++	ret = sx1301_read(spi, 43, &val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 read failed\n");
++		return ret;
++	}
++
++	val &= ~REG_2_43_RADIO_RST;
++
++	ret = sx1301_write(spi, 43, val);
++	if (ret) {
++		dev_err(&spi->dev, "2|43 write failed\n");
++		return ret;
++	}
++
++	/* radio A */
++
++	priv->radio_a_ctrl = spi_alloc_master(&spi->dev, sizeof(*radio));
++	if (!priv->radio_a_ctrl) {
++		ret = -ENOMEM;
++		goto err_radio_a_alloc;
++	}
++
++	sx1301_radio_setup(priv->radio_a_ctrl);
++	priv->radio_a_ctrl->dev.of_node = of_get_child_by_name(spi->dev.of_node, "radio-a");
++
++	radio = spi_controller_get_devdata(priv->radio_a_ctrl);
++	radio->page = 2;
++	radio->regs = REG_2_SPI_RADIO_A_DATA;
++	radio->parent = spi;
++
++	dev_info(&spi->dev, "registering radio A SPI\n");
++
++	ret = devm_spi_register_controller(&spi->dev, priv->radio_a_ctrl);
++	if (ret) {
++		dev_err(&spi->dev, "radio A SPI register failed\n");
++		goto err_radio_a_register;
++	}
++
++	/* radio B */
++
++	priv->radio_b_ctrl = spi_alloc_master(&spi->dev, sizeof(*radio));
++	if (!priv->radio_b_ctrl) {
++		ret = -ENOMEM;
++		goto err_radio_b_alloc;
++	}
++
++	sx1301_radio_setup(priv->radio_b_ctrl);
++	priv->radio_b_ctrl->dev.of_node = of_get_child_by_name(spi->dev.of_node, "radio-b");
++
++	radio = spi_controller_get_devdata(priv->radio_b_ctrl);
++	radio->page = 2;
++	radio->regs = REG_2_SPI_RADIO_B_DATA;
++	radio->parent = spi;
++
++	dev_info(&spi->dev, "registering radio B SPI\n");
++
++	ret = devm_spi_register_controller(&spi->dev, priv->radio_b_ctrl);
++	if (ret) {
++		dev_err(&spi->dev, "radio B SPI register failed\n");
++		goto err_radio_b_register;
++	}
++
++	dev_info(&spi->dev, "SX1301 module probed\n");
++
++	return 0;
++err_radio_b_register:
++	spi_controller_put(priv->radio_b_ctrl);
++err_radio_b_alloc:
++err_radio_a_register:
++	spi_controller_put(priv->radio_a_ctrl);
++err_radio_a_alloc:
++	free_loradev(netdev);
++err_alloc_loradev:
++err_version:
++	return ret;
++}
++
++static int sx1301_remove(struct spi_device *spi)
++{
++	struct net_device *netdev = spi_get_drvdata(spi);
++
++	//unregister_loradev(netdev);
++	free_loradev(netdev);
++
++	dev_info(&spi->dev, "SX1301 module removed\n");
++
++	return 0;
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id sx1301_dt_ids[] = {
++	{ .compatible = "semtech,sx1301" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, sx1301_dt_ids);
++#endif
++
++static struct spi_driver sx1301_spi_driver = {
++	.driver = {
++		.name = "sx1301",
++		.of_match_table = of_match_ptr(sx1301_dt_ids),
++	},
++	.probe = sx1301_probe,
++	.remove = sx1301_remove,
++};
++
++module_spi_driver(sx1301_spi_driver);
++
++MODULE_DESCRIPTION("SX1301 SPI driver");
++MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
++MODULE_LICENSE("GPL");
+-- 
+2.16.4
 
