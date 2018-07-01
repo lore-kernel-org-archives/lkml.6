@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811DDC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF00C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461212481D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461212481D
+	by mail.kernel.org (Postfix) with ESMTP id 92E932481D
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:44:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E932481D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032482AbeGAQoX (ORCPT
+        id S1032496AbeGAQo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:44:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38002 "EHLO
+        Sun, 1 Jul 2018 12:44:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032052AbeGAQoO (ORCPT
+        with ESMTP id S1032080AbeGAQoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:44:14 -0400
+        Sun, 1 Jul 2018 12:44:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FAF192B;
-        Sun,  1 Jul 2018 16:44:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D842A73;
+        Sun,  1 Jul 2018 16:44:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Wang Nan <wangnan0@huawei.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.17 167/220] perf tools: Fix symbol and object code resolution for vdso32 and vdsox32
-Date:   Sun,  1 Jul 2018 18:23:11 +0200
-Message-Id: <20180701160915.241726443@linuxfoundation.org>
+Subject: [PATCH 4.17 168/220] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
+Date:   Sun,  1 Jul 2018 18:23:12 +0200
+Message-Id: <20180701160915.278913520@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,34 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit aef4feace285f27c8ed35830a5d575bec7f3e90a upstream.
+commit dbcb82b93f3e8322891e47472c89e63058b81e99 upstream.
 
-Fix __kmod_path__parse() so that perf tools does not treat vdso32 and
-vdsox32 as kernel modules and fail to find the object.
+sync_switch is a facility to synchronize decoding more closely with the
+point in the kernel when the context actually switched.
+
+In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
+transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
+Add it.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Wang Nan <wangnan0@huawei.com>
 Cc: stable@vger.kernel.org
-Fixes: 1f121b03d058 ("perf tools: Deal with kernel module names in '[]' correctly")
-Link: http://lkml.kernel.org/r/1528117014-30032-3-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/dso.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/intel-pt.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -354,6 +354,8 @@ int __kmod_path__parse(struct kmod_path
- 		if ((strncmp(name, "[kernel.kallsyms]", 17) == 0) ||
- 		    (strncmp(name, "[guest.kernel.kallsyms", 22) == 0) ||
- 		    (strncmp(name, "[vdso]", 6) == 0) ||
-+		    (strncmp(name, "[vdso32]", 8) == 0) ||
-+		    (strncmp(name, "[vdsox32]", 9) == 0) ||
- 		    (strncmp(name, "[vsyscall]", 10) == 0)) {
- 			m->kmod = false;
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -1523,6 +1523,7 @@ static int intel_pt_sample(struct intel_
  
+ 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
+ 		switch (ptq->switch_state) {
++		case INTEL_PT_SS_NOT_TRACING:
+ 		case INTEL_PT_SS_UNKNOWN:
+ 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
+ 			err = intel_pt_next_tid(pt, ptq);
 
 
