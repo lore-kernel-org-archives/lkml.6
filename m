@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9327C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7C1C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D72B2254D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D72B2254D
+	by mail.kernel.org (Postfix) with ESMTP id E7E0A23C1E
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E0A23C1E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030909AbeGAQeO (ORCPT
+        id S1030936AbeGAQeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:34:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35514 "EHLO
+        Sun, 1 Jul 2018 12:34:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030581AbeGAQeF (ORCPT
+        with ESMTP id S1030893AbeGAQeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:34:05 -0400
+        Sun, 1 Jul 2018 12:34:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D2C949B;
-        Sun,  1 Jul 2018 16:34:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B5CB49B;
+        Sun,  1 Jul 2018 16:34:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>, Shaohua Li <shli@fb.com>
-Subject: [PATCH 4.14 107/157] md: fix two problems with setting the "re-add" device state.
-Date:   Sun,  1 Jul 2018 18:22:59 +0200
-Message-Id: <20180701160857.888172221@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Martin Townsend <mtownsend1973@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 109/157] ubi: fastmap: Cancel work upon detach
+Date:   Sun,  1 Jul 2018 18:23:01 +0200
+Message-Id: <20180701160857.991611035@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,64 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 011abdc9df559ec75779bb7c53a744c69b2a94c6 upstream.
+commit 6e7d80161066c99d12580d1b985cb1408bb58cf1 upstream.
 
-If "re-add" is written to the "state" file for a device
-which is faulty, this has an effect similar to removing
-and re-adding the device.  It should take up the
-same slot in the array that it previously had, and
-an accelerated (e.g. bitmap-based) rebuild should happen.
+Ben Hutchings pointed out that 29b7a6fa1ec0 ("ubi: fastmap: Don't flush
+fastmap work on detach") does not really fix the problem, it just
+reduces the risk to hit the race window where fastmap work races against
+free()'ing ubi->volumes[].
 
-The slot that "it previously had" is determined by
-rdev->saved_raid_disk.
-However this is not set when a device fails (only when a device
-is added), and it is cleared when resync completes.
-This means that "re-add" will normally work once, but may not work a
-second time.
+The correct approach is making sure that no more fastmap work is in
+progress before we free ubi data structures.
+So we cancel fastmap work right after the ubi background thread is
+stopped.
+By setting ubi->thread_enabled to zero we make sure that no further work
+tries to wake the thread.
 
-This patch includes two fixes.
-1/ when a device fails, record the ->raid_disk value in
-    ->saved_raid_disk before clearing ->raid_disk
-2/ when "re-add" is written to a device for which
-    ->saved_raid_disk is not set, fail.
+Fixes: 29b7a6fa1ec0 ("ubi: fastmap: Don't flush fastmap work on detach")
+Fixes: 74cdaf24004a ("UBI: Fastmap: Fix memory leaks while closing the WL sub-system")
+Cc: stable@vger.kernel.org
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Martin Townsend <mtownsend1973@gmail.com>
 
-I think this is suitable for stable as it can
-cause re-adding a device to be forced to do a full
-resync which takes a lot longer and so puts data at
-more risk.
-
-Cc: <stable@vger.kernel.org> (v4.1)
-Fixes: 97f6cd39da22 ("md-cluster: re-add capabilities")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/md.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mtd/ubi/build.c |    3 +++
+ drivers/mtd/ubi/wl.c    |    4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2823,7 +2823,8 @@ state_store(struct md_rdev *rdev, const
- 			err = 0;
- 		}
- 	} else if (cmd_match(buf, "re-add")) {
--		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1)) {
-+		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
-+			rdev->saved_raid_disk >= 0) {
- 			/* clear_bit is performed _after_ all the devices
- 			 * have their local Faulty bit cleared. If any writes
- 			 * happen in the meantime in the local node, they
-@@ -8594,6 +8595,7 @@ static int remove_and_add_spares(struct
- 			if (mddev->pers->hot_remove_disk(
- 				    mddev, rdev) == 0) {
- 				sysfs_unlink_rdev(mddev, rdev);
-+				rdev->saved_raid_disk = rdev->raid_disk;
- 				rdev->raid_disk = -1;
- 				removed++;
- 			}
+--- a/drivers/mtd/ubi/build.c
++++ b/drivers/mtd/ubi/build.c
+@@ -1082,6 +1082,9 @@ int ubi_detach_mtd_dev(int ubi_num, int
+ 	if (ubi->bgt_thread)
+ 		kthread_stop(ubi->bgt_thread);
+ 
++#ifdef CONFIG_MTD_UBI_FASTMAP
++	cancel_work_sync(&ubi->fm_work);
++#endif
+ 	ubi_debugfs_exit_dev(ubi);
+ 	uif_close(ubi);
+ 
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1505,6 +1505,7 @@ int ubi_thread(void *u)
+ 	}
+ 
+ 	dbg_wl("background thread \"%s\" is killed", ubi->bgt_name);
++	ubi->thread_enabled = 0;
+ 	return 0;
+ }
+ 
+@@ -1514,9 +1515,6 @@ int ubi_thread(void *u)
+  */
+ static void shutdown_work(struct ubi_device *ubi)
+ {
+-#ifdef CONFIG_MTD_UBI_FASTMAP
+-	flush_work(&ubi->fm_work);
+-#endif
+ 	while (!list_empty(&ubi->works)) {
+ 		struct ubi_work *wrk;
+ 
 
 
