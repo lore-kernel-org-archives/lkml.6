@@ -3,41 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423A7C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D44C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0575C255E2
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0575C255E2
+	by mail.kernel.org (Postfix) with ESMTP id 3C11E255E3
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C11E255E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031911AbeGAQka (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:40:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37156 "EHLO
+        id S964828AbeGARMh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:12:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37192 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031881AbeGAQkS (ORCPT
+        with ESMTP id S1031912AbeGAQka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:40:18 -0400
+        Sun, 1 Jul 2018 12:40:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 305CCACC;
-        Sun,  1 Jul 2018 16:40:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89985ACD;
+        Sun,  1 Jul 2018 16:40:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.17 083/220] efi/libstub/tpm: Initialize efi_physical_addr_t vars to zero for mixed mode
-Date:   Sun,  1 Jul 2018 18:21:47 +0200
-Message-Id: <20180701160911.897966940@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: [PATCH 4.17 087/220] IB/core: Make testing MR flags for writability a static inline function
+Date:   Sun,  1 Jul 2018 18:21:51 +0200
+Message-Id: <20180701160912.060316245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -54,52 +50,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-commit 52e1cf2d19c2e62e6a81b8de3f7320d033917dd5 upstream.
+commit 08bb558ac11ab944e0539e78619d7b4c356278bd upstream.
 
-Commit:
+Make the MR writability flags check, which is performed in umem.c,
+a static inline function in file ib_verbs.h
 
-  79832f0b5f71 ("efi/libstub/tpm: Initialize pointer variables to zero for mixed mode")
+This allows the function to be used by low-level infiniband drivers.
 
-fixes a problem with the tpm code on mixed mode (64-bit kernel on 32-bit UEFI),
-where 64-bit pointer variables are not fully initialized by the 32-bit EFI code.
-
-A similar problem applies to the efi_physical_addr_t variables which
-are written by the ->get_event_log() EFI call. Even though efi_physical_addr_t
-is 64-bit everywhere, it seems that some 32-bit UEFI implementations only
-fill in the lower 32 bits when passed a pointer to an efi_physical_addr_t
-to fill.
-
-This commit initializes these to 0 to, to ensure the upper 32 bits are
-0 in mixed mode. This fixes recent kernels sometimes hanging during
-early boot on mixed mode UEFI systems.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.16+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180622064222.11633-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/libstub/tpm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/umem.c |   11 +----------
+ include/rdma/ib_verbs.h        |   14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 10 deletions(-)
 
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -64,7 +64,7 @@ void efi_retrieve_tpm2_eventlog_1_2(efi_
- 	efi_guid_t tcg2_guid = EFI_TCG2_PROTOCOL_GUID;
- 	efi_guid_t linux_eventlog_guid = LINUX_EFI_TPM_EVENT_LOG_GUID;
- 	efi_status_t status;
--	efi_physical_addr_t log_location, log_last_entry;
-+	efi_physical_addr_t log_location = 0, log_last_entry = 0;
- 	struct linux_efi_tpm_eventlog *log_tbl = NULL;
- 	unsigned long first_entry_addr, last_entry_addr;
- 	size_t log_size, last_entry_size;
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,16 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_uc
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	/*
+-	 * We ask for writable memory if any of the following
+-	 * access flags are set.  "Local write" and "remote write"
+-	 * obviously require write access.  "Remote atomic" can do
+-	 * things like fetch and add, which will modify memory, and
+-	 * "MW bind" can change permissions by binding a window.
+-	 */
+-	umem->writable  = !!(access &
+-		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
+-		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
++	umem->writable   = ib_access_writable(access);
+ 
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+ 		ret = ib_umem_odp_get(context, umem, access);
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -3734,6 +3734,20 @@ static inline int ib_check_mr_access(int
+ 	return 0;
+ }
+ 
++static inline bool ib_access_writable(int access_flags)
++{
++	/*
++	 * We have writable memory backing the MR if any of the following
++	 * access flags are set.  "Local write" and "remote write" obviously
++	 * require write access.  "Remote atomic" can do things like fetch and
++	 * add, which will modify memory, and "MW bind" can change permissions
++	 * by binding a window.
++	 */
++	return access_flags &
++		(IB_ACCESS_LOCAL_WRITE   | IB_ACCESS_REMOTE_WRITE |
++		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND);
++}
++
+ /**
+  * ib_check_mr_status: lightweight check of MR status.
+  *     This routine may provide status checks on a selected
 
 
