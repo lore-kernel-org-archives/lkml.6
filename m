@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3DDC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2482BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8091B25938
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8091B25938
+	by mail.kernel.org (Postfix) with ESMTP id D24C225945
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:20:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24C225945
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965120AbeGASUL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:20:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33644 "EHLO
+        id S965245AbeGASUd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:20:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33614 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965067AbeGAQZP (ORCPT
+        with ESMTP id S964872AbeGAQZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:15 -0400
+        Sun, 1 Jul 2018 12:25:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 23DBCACD;
-        Sun,  1 Jul 2018 16:25:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F043DAEF;
+        Sun,  1 Jul 2018 16:25:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        stable@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 027/101] powerpc/powernv/ioda2: Remove redundant free of TCE pages
-Date:   Sun,  1 Jul 2018 18:21:13 +0200
-Message-Id: <20180701160758.232618323@linuxfoundation.org>
+Subject: [PATCH 4.9 024/101] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
+Date:   Sun,  1 Jul 2018 18:21:10 +0200
+Message-Id: <20180701160758.113610393@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,45 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-commit 98fd72fe82527fd26618062b60cfd329451f2329 upstream.
+commit 91d06971881f71d945910de128658038513d1b24 upstream.
 
-When IODA2 creates a PE, it creates an IOMMU table with it_ops::free
-set to pnv_ioda2_table_free() which calls pnv_pci_ioda2_table_free_pages().
+Currently we do not have an isync, or any other context synchronizing
+instruction prior to the slbie/slbmte in _switch() that updates the
+SLB entry for the kernel stack.
 
-Since iommu_tce_table_put() calls it_ops::free when the last reference
-to the table is released, explicit call to pnv_pci_ioda2_table_free_pages()
-is not needed so let's remove it.
+However that is not correct as outlined in the ISA.
 
-This should fix double free in the case of PCI hotuplug as
-pnv_pci_ioda2_table_free_pages() does not reset neither
-iommu_table::it_base nor ::it_size.
+>From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
 
-This was not exposed by SRIOV as it uses different code path via
-pnv_pcibios_sriov_disable().
+  "Changing the contents of ... the contents of SLB entries ... can
+   have the side effect of altering the context in which data
+   addresses and instruction addresses are interpreted, and in which
+   instructions are executed and data accesses are performed.
+   ...
+   These side effects need not occur in program order, and therefore
+   may require explicit synchronization by software.
+   ...
+   The synchronizing instruction before the context-altering
+   instruction ensures that all instructions up to and including that
+   synchronizing instruction are fetched and executed in the context
+   that existed before the alteration."
 
-IODA1 does not inialize it_ops::free so it does not have this issue.
+And page 1136:
 
-Fixes: c5f7700bbd2e ("powerpc/powernv: Dynamically release PE")
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+  "For data accesses, the context synchronizing instruction before the
+   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
+   that all preceding instructions that access data storage have
+   completed to a point at which they have reported all exceptions
+   they will cause."
+
+We're not aware of any bugs caused by this, but it should be fixed
+regardless.
+
+Add the missing isync when updating kernel stack SLB entry.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+[mpe: Flesh out change log with more ISA text & explanation]
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |    1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/kernel/entry_64.S |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -3424,7 +3424,6 @@ static void pnv_pci_ioda2_release_pe_dma
- 		WARN_ON(pe->table_group.group);
- 	}
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -586,6 +586,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
+ 	 * actually hit this code path.
+ 	 */
  
--	pnv_pci_ioda2_table_free_pages(tbl);
- 	iommu_free_table(tbl, "pnv");
- }
- 
++	isync
+ 	slbie	r6
+ 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
+ 	slbmte	r7,r0
 
 
