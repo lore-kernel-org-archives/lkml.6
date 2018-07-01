@@ -3,51 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006A8C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F63BC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B606C25997
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B606C25997
+	by mail.kernel.org (Postfix) with ESMTP id 2583C259AB
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:25:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2583C259AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965320AbeGASZe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:25:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33042 "EHLO
+        id S965331AbeGASZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:25:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753225AbeGAQSh (ORCPT
+        with ESMTP id S1753334AbeGAQSb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:37 -0400
+        Sun, 1 Jul 2018 12:18:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF87386A;
-        Sun,  1 Jul 2018 16:18:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E54EB92B;
+        Sun,  1 Jul 2018 16:18:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.4 035/105] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date:   Sun,  1 Jul 2018 18:01:45 +0200
-Message-Id: <20180701153151.781880637@linuxfoundation.org>
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 043/105] powerpc/mm/hash: Add missing isync prior to kernel stack SLB switch
+Date:   Sun,  1 Jul 2018 18:01:53 +0200
+Message-Id: <20180701153152.368272091@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -64,80 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
+commit 91d06971881f71d945910de128658038513d1b24 upstream.
 
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.
+Currently we do not have an isync, or any other context synchronizing
+instruction prior to the slbie/slbmte in _switch() that updates the
+SLB entry for the kernel stack.
 
-Remove support for this rarely-used format, as vsprintf() (and e.g.
-printk()) must be callable from any context.
+However that is not correct as outlined in the ISA.
 
-Any remaining out-of-tree users will start seeing the clock's name
-printed instead of its rate.
+>From Power ISA Version 3.0B, Book III, Chapter 11, page 1133:
 
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
-Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.1+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+  "Changing the contents of ... the contents of SLB entries ... can
+   have the side effect of altering the context in which data
+   addresses and instruction addresses are interpreted, and in which
+   instructions are executed and data accesses are performed.
+   ...
+   These side effects need not occur in program order, and therefore
+   may require explicit synchronization by software.
+   ...
+   The synchronizing instruction before the context-altering
+   instruction ensures that all instructions up to and including that
+   synchronizing instruction are fetched and executed in the context
+   that existed before the alteration."
+
+And page 1136:
+
+  "For data accesses, the context synchronizing instruction before the
+   slbie, slbieg, slbia, slbmte, tlbie, or tlbiel instruction ensures
+   that all preceding instructions that access data storage have
+   completed to a point at which they have reported all exceptions
+   they will cause."
+
+We're not aware of any bugs caused by this, but it should be fixed
+regardless.
+
+Add the missing isync when updating kernel stack SLB entry.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+[mpe: Flesh out change log with more ISA text & explanation]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/printk-formats.txt |    3 +--
- lib/vsprintf.c                   |    3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ arch/powerpc/kernel/entry_64.S |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/printk-formats.txt
-+++ b/Documentation/printk-formats.txt
-@@ -273,11 +273,10 @@ struct clk:
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -574,6 +574,7 @@ END_MMU_FTR_SECTION_IFSET(MMU_FTR_1T_SEG
+ 	 * actually hit this code path.
+ 	 */
  
- 	%pC	pll1
- 	%pCn	pll1
--	%pCr	1560000000
- 
- 	For printing struct clk structures. '%pC' and '%pCn' print the name
- 	(Common Clock Framework) or address (legacy clock framework) of the
--	structure; '%pCr' prints the current clock rate.
-+	structure.
- 
- 	Passed by reference.
- 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1345,9 +1345,6 @@ char *clock(char *buf, char *end, struct
- 		return string(buf, end, NULL, spec);
- 
- 	switch (fmt[1]) {
--	case 'r':
--		return number(buf, end, clk_get_rate(clk), spec);
--
- 	case 'n':
- 	default:
- #ifdef CONFIG_COMMON_CLK
++	isync
+ 	slbie	r6
+ 	slbie	r6		/* Workaround POWER5 < DD2.1 issue */
+ 	slbmte	r7,r0
 
 
