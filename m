@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586DAC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A730DC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0D8253EA
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0D8253EA
+	by mail.kernel.org (Postfix) with ESMTP id 635DE20849
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:43:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 635DE20849
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032372AbeGAQnc (ORCPT
+        id S1032383AbeGAQnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:43:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37832 "EHLO
+        Sun, 1 Jul 2018 12:43:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031970AbeGAQn0 (ORCPT
+        with ESMTP id S1032370AbeGAQnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:43:26 -0400
+        Sun, 1 Jul 2018 12:43:32 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 36B20A73;
-        Sun,  1 Jul 2018 16:43:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90405ACC;
+        Sun,  1 Jul 2018 16:43:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.17 115/220] PCI: pciehp: Clear Presence Detect and Data Link Layer Status Changed on resume
-Date:   Sun,  1 Jul 2018 18:22:19 +0200
-Message-Id: <20180701160913.169471742@linuxfoundation.org>
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH 4.17 117/220] auxdisplay: fix broken menu
+Date:   Sun,  1 Jul 2018 18:22:21 +0200
+Message-Id: <20180701160913.246064102@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,83 +52,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 13c65840feab8109194f9490c9870587173cb29d upstream.
+commit b5b903fba96a4d1771422efd5c713ebb73f7dc82 upstream.
 
-After a suspend/resume cycle the Presence Detect or Data Link Layer Status
-Changed bits might be set.  If we don't clear them those events will not
-fire anymore and nothing happens for instance when a device is now
-hot-unplugged.
+Having the CHARLCD Kconfig symbol between "menuconfig AUXDISPLAY"
+and "if AUXDISPLAY" breaks the AUXDISPLAY submenus, so move the
+CHARLCD Kconfig symbol near the end of the file so that the menu
+display is continuous.
 
-Fix this by clearing those bits in a newly introduced function
-pcie_reenable_notification().  This should be fine because immediately
-after, we check if the adapter is still present by reading directly from
-the status register.
+Also include ARM_CHARLCD inside of the if AUXDISPLAY/endif block.
+Geert says that it should be there.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: stable@vger.kernel.org
+Fixes: 39f8ea46724e ("auxdisplay: charlcd: Extract character LCD core from misc/panel")
+
+Cc: stable@vger.kernel.org # v4.12
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pciehp.h      |    2 +-
- drivers/pci/hotplug/pciehp_core.c |    2 +-
- drivers/pci/hotplug/pciehp_hpc.c  |   13 ++++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/auxdisplay/Kconfig |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -121,7 +121,7 @@ struct controller *pcie_init(struct pcie
- int pcie_init_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
--void pcie_enable_notification(struct controller *ctrl);
-+void pcie_reenable_notification(struct controller *ctrl);
- int pciehp_power_on_slot(struct slot *slot);
- void pciehp_power_off_slot(struct slot *slot);
- void pciehp_get_power_status(struct slot *slot, u8 *status);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -283,7 +283,7 @@ static int pciehp_resume(struct pcie_dev
- 	ctrl = get_service_data(dev);
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -14,9 +14,6 @@ menuconfig AUXDISPLAY
  
- 	/* reinitialize the chipset's event detection logic */
--	pcie_enable_notification(ctrl);
-+	pcie_reenable_notification(ctrl);
+ 	  If you say N, all options in this submenu will be skipped and disabled.
  
- 	slot = ctrl->slot;
+-config CHARLCD
+-	tristate "Character LCD core support" if COMPILE_TEST
+-
+ if AUXDISPLAY
  
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -659,7 +659,7 @@ static irqreturn_t pcie_isr(int irq, voi
- 	return handled;
- }
+ config HD44780
+@@ -157,8 +154,6 @@ config HT16K33
+ 	  Say yes here to add support for Holtek HT16K33, RAM mapping 16*8
+ 	  LED controller driver with keyscan.
  
--void pcie_enable_notification(struct controller *ctrl)
-+static void pcie_enable_notification(struct controller *ctrl)
- {
- 	u16 cmd, mask;
+-endif # AUXDISPLAY
+-
+ config ARM_CHARLCD
+ 	bool "ARM Ltd. Character LCD Driver"
+ 	depends on PLAT_VERSATILE
+@@ -169,6 +164,8 @@ config ARM_CHARLCD
+ 	  line and the Linux version on the second line, but that's
+ 	  still useful.
  
-@@ -697,6 +697,17 @@ void pcie_enable_notification(struct con
- 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
- }
- 
-+void pcie_reenable_notification(struct controller *ctrl)
-+{
-+	/*
-+	 * Clear both Presence and Data Link Layer Changed to make sure
-+	 * those events still fire after we have re-enabled them.
-+	 */
-+	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
-+				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
-+	pcie_enable_notification(ctrl);
-+}
++endif # AUXDISPLAY
 +
- static void pcie_disable_notification(struct controller *ctrl)
- {
- 	u16 mask;
+ config PANEL
+ 	tristate "Parallel port LCD/Keypad Panel support"
+ 	depends on PARPORT
+@@ -448,3 +445,6 @@ config PANEL_BOOT_MESSAGE
+ 	  printf()-formatted message is valid with newline and escape codes.
+ 
+ endif # PANEL
++
++config CHARLCD
++	tristate "Character LCD core support" if COMPILE_TEST
 
 
