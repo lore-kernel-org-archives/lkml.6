@@ -3,36 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D30C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4A0C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73C86250F1
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C86250F1
+	by mail.kernel.org (Postfix) with ESMTP id 7E1EA250FD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:19:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1EA250FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964958AbeGAQTc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:19:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33208 "EHLO
+        id S964977AbeGAQTh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:19:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33222 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933589AbeGAQT0 (ORCPT
+        with ESMTP id S933589AbeGAQTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:19:26 -0400
+        Sun, 1 Jul 2018 12:19:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 47E8849B;
-        Sun,  1 Jul 2018 16:19:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5D0B149B;
+        Sun,  1 Jul 2018 16:19:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 098/105] Input: elantech - fix V4 report decoding for module with middle key
-Date:   Sun,  1 Jul 2018 18:02:48 +0200
-Message-Id: <20180701153156.423316964@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 100/105] Btrfs: fix unexpected cow in run_delalloc_nocow
+Date:   Sun,  1 Jul 2018 18:02:50 +0200
+Message-Id: <20180701153156.649531319@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -49,32 +50,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: ??? <kt.liao@emc.com.tw>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit e0ae2519ca004a628fa55aeef969c37edce522d3 upstream.
+commit 5811375325420052fcadd944792a416a43072b7f upstream.
 
-Some touchpad has middle key and it will be indicated in bit 2 of packet[0].
-We need to fix V4 formation's byte mask to prevent error decoding.
+Fstests generic/475 provides a way to fail metadata reads while
+checking if checksum exists for the inode inside run_delalloc_nocow(),
+and csum_exist_in_range() interprets error (-EIO) as inode having
+checksum and makes its caller enter the cow path.
 
-Signed-off-by: KT Liao <kt.liao@emc.com.tw>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+In case of free space inode, this ends up with a warning in
+cow_file_range().
+
+The same problem applies to btrfs_cross_ref_exist() since it may also
+read metadata in between.
+
+With this, run_delalloc_nocow() bails out when errors occur at the two
+places.
+
+cc: <stable@vger.kernel.org> v2.6.28+
+Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/input/mouse/elantech.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/inode.c |   33 ++++++++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -804,7 +804,7 @@ static int elantech_packet_check_v4(stru
- 	else if (ic_version == 7 && etd->samples[1] == 0x2A)
- 		sanity_check = ((packet[3] & 0x1c) == 0x10);
- 	else
--		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
-+		sanity_check = ((packet[0] & 0x08) == 0x00 &&
- 				(packet[3] & 0x1c) == 0x10);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1202,6 +1202,8 @@ static noinline int csum_exist_in_range(
+ 		list_del(&sums->list);
+ 		kfree(sums);
+ 	}
++	if (ret < 0)
++		return ret;
+ 	return 1;
+ }
  
- 	if (!sanity_check)
+@@ -1351,10 +1353,23 @@ next_slot:
+ 				goto out_check;
+ 			if (btrfs_extent_readonly(root, disk_bytenr))
+ 				goto out_check;
+-			if (btrfs_cross_ref_exist(trans, root, ino,
++			ret = btrfs_cross_ref_exist(trans, root, ino,
+ 						  found_key.offset -
+-						  extent_offset, disk_bytenr))
++						  extent_offset, disk_bytenr);
++			if (ret) {
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
++			}
+ 			disk_bytenr += extent_offset;
+ 			disk_bytenr += cur_offset - found_key.offset;
+ 			num_bytes = min(end + 1, extent_end) - cur_offset;
+@@ -1372,8 +1387,20 @@ next_slot:
+ 			 * this ensure that csum for a given extent are
+ 			 * either valid or do not exist.
+ 			 */
+-			if (csum_exist_in_range(root, disk_bytenr, num_bytes))
++			ret = csum_exist_in_range(root, disk_bytenr, num_bytes);
++			if (ret) {
++				/*
++				 * ret could be -EIO if the above fails to read
++				 * metadata.
++				 */
++				if (ret < 0) {
++					if (cow_start != (u64)-1)
++						cur_offset = cow_start;
++					goto error;
++				}
++				WARN_ON_ONCE(nolock);
+ 				goto out_check;
++			}
+ 			nocow = 1;
+ 		} else if (extent_type == BTRFS_FILE_EXTENT_INLINE) {
+ 			extent_end = found_key.offset +
 
 
