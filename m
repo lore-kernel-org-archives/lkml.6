@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3381FC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C51C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED8FC21531
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8FC21531
+	by mail.kernel.org (Postfix) with ESMTP id DF6E524079
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6E524079
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965785AbeGAQ2z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:28:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34394 "EHLO
+        id S965800AbeGAQ3C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:29:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965757AbeGAQ2v (ORCPT
+        with ESMTP id S933823AbeGAQ25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:51 -0400
+        Sun, 1 Jul 2018 12:28:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCCCF92B;
-        Sun,  1 Jul 2018 16:28:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64F8EAD8;
+        Sun,  1 Jul 2018 16:28:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dennis Yang <dennisyang@qnap.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 100/101] dm thin: handle running out of data space vs concurrent discard
-Date:   Sun,  1 Jul 2018 18:22:26 +0200
-Message-Id: <20180701160801.145614656@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 079/101] perf intel-pt: Fix "Unexpected indirect branch" error
+Date:   Sun,  1 Jul 2018 18:22:05 +0200
+Message-Id: <20180701160800.332053955@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,92 +49,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit a685557fbbc3122ed11e8ad3fa63a11ebc5de8c3 upstream.
+commit 9fb523363f6e3984457fee95bb7019395384ffa7 upstream.
 
-Discards issued to a DM thin device can complete to userspace (via
-fstrim) _before_ the metadata changes associated with the discards is
-reflected in the thinp superblock (e.g. free blocks).  As such, if a
-user constructs a test that loops repeatedly over these steps, block
-allocation can fail due to discards not having completed yet:
-1) fill thin device via filesystem file
-2) remove file
-3) fstrim
+Some Atom CPUs can produce FUP packets that contain NLIP (next linear
+instruction pointer) instead of CLIP (current linear instruction
+pointer).  That will result in "Unexpected indirect branch" errors. Fix
+by comparing IP to NLIP in that case.
 
->From initial report, here:
-https://www.redhat.com/archives/dm-devel/2018-April/msg00022.html
-
-"The root cause of this issue is that dm-thin will first remove
-mapping and increase corresponding blocks' reference count to prevent
-them from being reused before DISCARD bios get processed by the
-underlying layers. However. increasing blocks' reference count could
-also increase the nr_allocated_this_transaction in struct sm_disk
-which makes smd->old_ll.nr_allocated +
-smd->nr_allocated_this_transaction bigger than smd->old_ll.nr_blocks.
-In this case, alloc_data_block() will never commit metadata to reset
-the begin pointer of struct sm_disk, because sm_disk_get_nr_free()
-always return an underflow value."
-
-While there is room for improvement to the space-map accounting that
-thinp is making use of: the reality is this test is inherently racey and
-will result in the previous iteration's fstrim's discard(s) completing
-vs concurrent block allocation, via dd, in the next iteration of the
-loop.
-
-No amount of space map accounting improvements will be able to allow
-user's to use a block before a discard of that block has completed.
-
-So the best we can really do is allow DM thinp to gracefully handle such
-aggressive use of all the pool's data by degrading the pool into
-out-of-data-space (OODS) mode.  We _should_ get that behaviour already
-(if space map accounting didn't falsely cause alloc_data_block() to
-believe free space was available).. but short of that we handle the
-current reality that dm_pool_alloc_data_block() can return -ENOSPC.
-
-Reported-by: Dennis Yang <dennisyang@qnap.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Link: http://lkml.kernel.org/r/1527762225-26024-5-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   17 +++++++++++++++--
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    9 +++++++++
+ tools/perf/util/intel-pt.c                          |    4 ++++
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -1384,6 +1384,8 @@ static void schedule_external_copy(struc
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -112,6 +112,7 @@ struct intel_pt_decoder {
+ 	bool have_cyc;
+ 	bool fixup_last_mtc;
+ 	bool have_last_ip;
++	enum intel_pt_param_flags flags;
+ 	uint64_t pos;
+ 	uint64_t last_ip;
+ 	uint64_t ip;
+@@ -215,6 +216,8 @@ struct intel_pt_decoder *intel_pt_decode
+ 	decoder->data               = params->data;
+ 	decoder->return_compression = params->return_compression;
  
- static void set_pool_mode(struct pool *pool, enum pool_mode new_mode);
- 
-+static void requeue_bios(struct pool *pool);
++	decoder->flags              = params->flags;
 +
- static void check_for_space(struct pool *pool)
- {
- 	int r;
-@@ -1396,8 +1398,10 @@ static void check_for_space(struct pool
- 	if (r)
- 		return;
+ 	decoder->period             = params->period;
+ 	decoder->period_type        = params->period_type;
  
--	if (nr_free)
-+	if (nr_free) {
- 		set_pool_mode(pool, PM_WRITE);
-+		requeue_bios(pool);
-+	}
+@@ -1012,6 +1015,15 @@ out_no_progress:
+ 	return err;
  }
  
- /*
-@@ -1474,7 +1478,10 @@ static int alloc_data_block(struct thin_
++static inline bool intel_pt_fup_with_nlip(struct intel_pt_decoder *decoder,
++					  struct intel_pt_insn *intel_pt_insn,
++					  uint64_t ip, int err)
++{
++	return decoder->flags & INTEL_PT_FUP_WITH_NLIP && !err &&
++	       intel_pt_insn->branch == INTEL_PT_BR_INDIRECT &&
++	       ip == decoder->ip + intel_pt_insn->length;
++}
++
+ static int intel_pt_walk_fup(struct intel_pt_decoder *decoder)
+ {
+ 	struct intel_pt_insn intel_pt_insn;
+@@ -1024,7 +1036,8 @@ static int intel_pt_walk_fup(struct inte
+ 		err = intel_pt_walk_insn(decoder, &intel_pt_insn, ip);
+ 		if (err == INTEL_PT_RETURN)
+ 			return 0;
+-		if (err == -EAGAIN) {
++		if (err == -EAGAIN ||
++		    intel_pt_fup_with_nlip(decoder, &intel_pt_insn, ip, err)) {
+ 			if (decoder->set_fup_tx_flags) {
+ 				decoder->set_fup_tx_flags = false;
+ 				decoder->tx_flags = decoder->fup_tx_flags;
+@@ -1034,7 +1047,7 @@ static int intel_pt_walk_fup(struct inte
+ 				decoder->state.flags = decoder->fup_tx_flags;
+ 				return 0;
+ 			}
+-			return err;
++			return -EAGAIN;
+ 		}
+ 		decoder->set_fup_tx_flags = false;
+ 		if (err)
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+@@ -53,6 +53,14 @@ enum {
+ 	INTEL_PT_ERR_MAX,
+ };
  
- 	r = dm_pool_alloc_data_block(pool->pmd, result);
- 	if (r) {
--		metadata_operation_failed(pool, "dm_pool_alloc_data_block", r);
-+		if (r == -ENOSPC)
-+			set_pool_mode(pool, PM_OUT_OF_DATA_SPACE);
-+		else
-+			metadata_operation_failed(pool, "dm_pool_alloc_data_block", r);
- 		return r;
++enum intel_pt_param_flags {
++	/*
++	 * FUP packet can contain next linear instruction pointer instead of
++	 * current linear instruction pointer.
++	 */
++	INTEL_PT_FUP_WITH_NLIP	= 1 << 0,
++};
++
+ struct intel_pt_state {
+ 	enum intel_pt_sample_type type;
+ 	int err;
+@@ -92,6 +100,7 @@ struct intel_pt_params {
+ 	unsigned int mtc_period;
+ 	uint32_t tsc_ctc_ratio_n;
+ 	uint32_t tsc_ctc_ratio_d;
++	enum intel_pt_param_flags flags;
+ };
+ 
+ struct intel_pt_decoder;
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -752,6 +752,7 @@ static struct intel_pt_queue *intel_pt_a
+ 						   unsigned int queue_nr)
+ {
+ 	struct intel_pt_params params = { .get_trace = 0, };
++	struct perf_env *env = pt->machine->env;
+ 	struct intel_pt_queue *ptq;
+ 
+ 	ptq = zalloc(sizeof(struct intel_pt_queue));
+@@ -832,6 +833,9 @@ static struct intel_pt_queue *intel_pt_a
+ 		}
  	}
  
++	if (env->cpuid && !strncmp(env->cpuid, "GenuineIntel,6,92,", 18))
++		params.flags |= INTEL_PT_FUP_WITH_NLIP;
++
+ 	ptq->decoder = intel_pt_decoder_new(&params);
+ 	if (!ptq->decoder)
+ 		goto out_free;
 
 
