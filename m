@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04214C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1781C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE191253B5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE191253B5
+	by mail.kernel.org (Postfix) with ESMTP id B8A77253BD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:41:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A77253BD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031708AbeGAQln (ORCPT
+        id S1032113AbeGAQly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:41:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37412 "EHLO
+        Sun, 1 Jul 2018 12:41:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031666AbeGAQlh (ORCPT
+        with ESMTP id S1031615AbeGAQls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:41:37 -0400
+        Sun, 1 Jul 2018 12:41:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E87AAA6;
-        Sun,  1 Jul 2018 16:41:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 566F9ACC;
+        Sun,  1 Jul 2018 16:41:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.17 075/220] arm64: dts: stratix10: Fix SPI nodes for Stratix10
-Date:   Sun,  1 Jul 2018 18:21:39 +0200
-Message-Id: <20180701160911.588673023@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan M Schaeckeler <sschaeck@cisco.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.17 079/220] of: unittest: for strings, account for trailing \0 in property length field
+Date:   Sun,  1 Jul 2018 18:21:43 +0200
+Message-Id: <20180701160911.740952193@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,45 +51,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Stefan M Schaeckeler <sschaeck@cisco.com>
 
-commit 4595299c5eaebbec0ca5822214ad1925a10b3876 upstream.
+commit 3b9cf7905fe3ab35ab437b5072c883e609d3498d upstream.
 
-Remove the unused bus-num node and change num-chipselect
-to num-cs to match SPI bindings.
+For strings, account for trailing \0 in property length field:
 
-Cc: stable@vger.kernel.org
-Fixes: 78cd6a9d8e154 ("arm64: dts: Add base stratix 10 dtsi")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+This is consistent with how dtc builds string properties.
+
+Function __of_prop_dup() would misbehave on such properties as it duplicates
+properties based on the property length field creating new string values
+without trailing \0s.
+
+Signed-off-by: Stefan M Schaeckeler <sschaeck@cisco.com>
+Reviewed-by: Frank Rowand <frank.rowand@sony.com>
+Tested-by: Frank Rowand <frank.rowand@sony.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/of/unittest.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -252,8 +252,7 @@
- 			interrupts = <0 99 4>;
- 			resets = <&rst SPIM0_RESET>;
- 			reg-io-width = <4>;
--			num-chipselect = <4>;
--			bus-num = <0>;
-+			num-cs = <4>;
- 			status = "disabled";
- 		};
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -165,20 +165,20 @@ static void __init of_unittest_dynamic(v
+ 	/* Add a new property - should pass*/
+ 	prop->name = "new-property";
+ 	prop->value = "new-property-data";
+-	prop->length = strlen(prop->value);
++	prop->length = strlen(prop->value) + 1;
+ 	unittest(of_add_property(np, prop) == 0, "Adding a new property failed\n");
  
-@@ -265,8 +264,7 @@
- 			interrupts = <0 100 4>;
- 			resets = <&rst SPIM1_RESET>;
- 			reg-io-width = <4>;
--			num-chipselect = <4>;
--			bus-num = <0>;
-+			num-cs = <4>;
- 			status = "disabled";
- 		};
+ 	/* Try to add an existing property - should fail */
+ 	prop++;
+ 	prop->name = "new-property";
+ 	prop->value = "new-property-data-should-fail";
+-	prop->length = strlen(prop->value);
++	prop->length = strlen(prop->value) + 1;
+ 	unittest(of_add_property(np, prop) != 0,
+ 		 "Adding an existing property should have failed\n");
+ 
+ 	/* Try to modify an existing property - should pass */
+ 	prop->value = "modify-property-data-should-pass";
+-	prop->length = strlen(prop->value);
++	prop->length = strlen(prop->value) + 1;
+ 	unittest(of_update_property(np, prop) == 0,
+ 		 "Updating an existing property should have passed\n");
+ 
+@@ -186,7 +186,7 @@ static void __init of_unittest_dynamic(v
+ 	prop++;
+ 	prop->name = "modify-property";
+ 	prop->value = "modify-missing-property-data-should-pass";
+-	prop->length = strlen(prop->value);
++	prop->length = strlen(prop->value) + 1;
+ 	unittest(of_update_property(np, prop) == 0,
+ 		 "Updating a missing property should have passed\n");
  
 
 
