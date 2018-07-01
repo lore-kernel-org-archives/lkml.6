@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAF9C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56729C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4FF22584D
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FF22584D
+	by mail.kernel.org (Postfix) with ESMTP id 161E125850
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:03:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161E125850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965860AbeGASDA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:03:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34530 "EHLO
+        id S933971AbeGASDS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:03:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965850AbeGAQ3d (ORCPT
+        with ESMTP id S965843AbeGAQ3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:29:33 -0400
+        Sun, 1 Jul 2018 12:29:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2559B92B;
-        Sun,  1 Jul 2018 16:29:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 522C0AA6;
+        Sun,  1 Jul 2018 16:29:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.14 014/157] PM / OPP: Update voltage in case freq == old_freq
-Date:   Sun,  1 Jul 2018 18:21:26 +0200
-Message-Id: <20180701160853.001765069@linuxfoundation.org>
+        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 013/157] PM / core: Fix supplier device runtime PM usage counter imbalance
+Date:   Sun,  1 Jul 2018 18:21:25 +0200
+Message-Id: <20180701160852.945746975@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,71 +50,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit c5c2a97b3ac7d1ec19e7cff9e38caca6afefc3de upstream.
+commit 47e5abfb546a3ace23a77453dc2e9db92704c5ac upstream.
 
-This commit fixes a rare but possible case when the clk rate is updated
-without update of the regulator voltage.
+If a device link is added via device_link_add() by the driver of the
+link's consumer device, the supplier's runtime PM usage counter is
+going to be dropped by the pm_runtime_put_suppliers() call in
+driver_probe_device().  However, in that case it is not incremented
+unless the supplier driver is already present and the link is not
+stateless.  That leads to a runtime PM usage counter imbalance for
+the supplier device in a few cases.
 
-At boot up, CPUfreq checks if the system is running at the right freq. This
-is a sanity check in case a bootloader set clk rate that is outside of freq
-table present with cpufreq core. In such cases system can be unstable so
-better to change it to a freq that is preset in freq-table.
+To prevent that from happening, bump up the supplier runtime
+PM usage counter in device_link_add() for all links with the
+DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
+time.  Use pm_runtime_get_noresume() for that as the callers of
+device_link_add() who want the supplier to be resumed by it are
+expected to pass DL_FLAG_RPM_ACTIVE in flags to it anyway, but
+additionally resume the supplier if the link is added during
+consumer driver probe to retain the existing behavior for the
+callers depending on it.
 
-The CPUfreq takes next freq that is >= policy->cur and this is our
-target_freq that needs to be set now.
-
-dev_pm_opp_set_rate(dev, target_freq) checks the target_freq and the
-old_freq (a current rate). If these are equal it returns early. If not,
-it searches for OPP (old_opp) that fits best to old_freq (not listed in
-the table) and updates old_freq (!).
-
-Here, we can end up with old_freq = old_opp.rate = target_freq, which
-is not handled in _generic_set_opp_regulator(). It's supposed to update
-voltage only when freq > old_freq  || freq > old_freq.
-
-if (freq > old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-[...]
-if (freq < old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-		if (ret)
-
-It results in, no voltage update while clk rate is updated.
-
-Example:
-freq-table = {
-	1000MHz   1.15V
-	 666MHZ   1.10V
-	 333MHz   1.05V
-}
-boot-up-freq        = 800MHz   # not listed in freq-table
-freq = target_freq  = 1GHz
-old_freq            = 800Mhz
-old_opp = _find_freq_ceil(opp_table, &old_freq);  #(old_freq is modified!)
-old_freq            = 1GHz
-
-Fixes: 6a0712f6f199 ("PM / OPP: Add dev_pm_opp_set_rate()")
-Cc: 4.6+ <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: 21d5c57b3726 (PM / runtime: Use device links)
+Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 4.10+ <stable@vger.kernel.org> # 4.10+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/power/opp/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -552,7 +552,7 @@ static int _generic_set_opp_regulator(co
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -217,6 +217,13 @@ struct device_link *device_link_add(stru
+ 			link->rpm_active = true;
+ 		}
+ 		pm_runtime_new_link(consumer);
++		/*
++		 * If the link is being added by the consumer driver at probe
++		 * time, balance the decrementation of the supplier's runtime PM
++		 * usage counter after consumer probe in driver_probe_device().
++		 */
++		if (consumer->links.status == DL_DEV_PROBING)
++			pm_runtime_get_noresume(supplier);
  	}
+ 	get_device(supplier);
+ 	link->supplier = supplier;
+@@ -235,12 +242,12 @@ struct device_link *device_link_add(stru
+ 			switch (consumer->links.status) {
+ 			case DL_DEV_PROBING:
+ 				/*
+-				 * Balance the decrementation of the supplier's
+-				 * runtime PM usage counter after consumer probe
+-				 * in driver_probe_device().
++				 * Some callers expect the link creation during
++				 * consumer driver probe to resume the supplier
++				 * even without DL_FLAG_RPM_ACTIVE.
+ 				 */
+ 				if (flags & DL_FLAG_PM_RUNTIME)
+-					pm_runtime_get_sync(supplier);
++					pm_runtime_resume(supplier);
  
- 	/* Scaling up? Scale voltage before frequency */
--	if (freq > old_freq) {
-+	if (freq >= old_freq) {
- 		ret = _set_opp_voltage(dev, reg, new_supply);
- 		if (ret)
- 			goto restore_voltage;
+ 				link->status = DL_STATE_CONSUMER_PROBE;
+ 				break;
 
 
