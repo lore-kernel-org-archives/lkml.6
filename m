@@ -3,83 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C67C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E49C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CF6240C5
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:16:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4CF6240C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+	by mail.kernel.org (Postfix) with ESMTP id CED91255DD
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 21:21:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED91255DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeGAVQ2 (ORCPT
+        id S1752584AbeGAVVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 17:16:28 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:58681 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752407AbeGAVQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 17:16:26 -0400
-Received: from localhost.localdomain (unknown [62.214.191.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id B13BE2012BA066;
-        Sun,  1 Jul 2018 23:16:23 +0200 (CEST)
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>, linux-usb@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] usb/host/pci-quirks: Only reset USB bus on NVIDIA devices
-Date:   Sun,  1 Jul 2018 23:16:07 +0200
-Message-Id: <20180701211607.7833-1-pmenzel@molgen.mpg.de>
-X-Mailer: git-send-email 2.17.1
+        Sun, 1 Jul 2018 17:21:09 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:54132 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbeGAVVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 17:21:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id 269D81818141E;
+        Sun,  1 Jul 2018 23:21:03 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Kees Cook <keescook@chromium.org>,
+        Silvio Cesare <silvio.cesare@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] Revert "UBIFS: Fix potential integer overflow in allocation"
+Date:   Sun,  1 Jul 2018 23:20:50 +0200
+Message-Id: <20180701212051.29486-1-richard@nod.at>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, on the AMD board Asus F2A85-M Pro there is a 100 ms delay as
-the USB bus of each of the two OHCI PCI devices is reset. As a 50 ms
-delay is done per the USB specification.
+This reverts commit 353748a359f1821ee934afc579cf04572406b420.
+It bypassed the linux-mtd review process and fixes the issue not as it
+should.
 
-Commit c6187597 (OHCI: final fix for NVIDIA problems (I hope))
-unconditionally does the bus reset for
- all chipsets, while it was only doen for NVIDIA chipsets before.
-
-As it should not be needed for non-NVIDIA chipsets, only do the reset
-for Nvidia devices.
-
-Tested on Asus F2A85-M PRO and ASRock E350M1. The USB keyboard works and
-the LUKS passphrase can be e
-ntered.
-
-Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-kernel@vger.kernel.org
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Silvio Cesare <silvio.cesare@gmail.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Richard Weinberger <richard@nod.at>
 ---
- drivers/usb/host/pci-quirks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ubifs/journal.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/pci-quirks.c b/drivers/usb/host/pci-quirks.c
-index 3625a5c1a41b..f6b1a9bbe301 100644
---- a/drivers/usb/host/pci-quirks.c
-+++ b/drivers/usb/host/pci-quirks.c
-@@ -784,7 +784,7 @@ static void quirk_usb_handoff_ohci(struct pci_dev *pdev)
- 	writel((u32) ~0, base + OHCI_INTRDISABLE);
+diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
+index 07b4956e0425..da8afdfccaa6 100644
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1282,11 +1282,10 @@ static int truncate_data_node(const struct ubifs_info *c, const struct inode *in
+ 			      int *new_len)
+ {
+ 	void *buf;
+-	int err, compr_type;
+-	u32 dlen, out_len, old_dlen;
++	int err, dlen, compr_type, out_len, old_dlen;
  
- 	/* Reset the USB bus, if the controller isn't already in RESET */
--	if (control & OHCI_HCFS) {
-+	if ((pdev->vendor == PCI_VENDOR_ID_NVIDIA) && (control & OHCI_HCFS)) {
- 		/* Go into RESET, preserving RWC (and possibly IR) */
- 		writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
- 		readl(base + OHCI_CONTROL);
+ 	out_len = le32_to_cpu(dn->size);
+-	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
++	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
 -- 
-2.17.1
+2.18.0
 
