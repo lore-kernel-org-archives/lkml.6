@@ -6,35 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B86C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7E1C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CA025439
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CA025439
+	by mail.kernel.org (Postfix) with ESMTP id 1B6972543A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6972543A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032544AbeGAQql (ORCPT
+        id S1032555AbeGAQqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:46:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38470 "EHLO
+        Sun, 1 Jul 2018 12:46:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753759AbeGAQqf (ORCPT
+        with ESMTP id S1753780AbeGAQqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:35 -0400
+        Sun, 1 Jul 2018 12:46:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97177ACC;
-        Sun,  1 Jul 2018 16:46:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D31CACD;
+        Sun,  1 Jul 2018 16:46:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.17 215/220] selinux: move user accesses in selinuxfs out of locked regions
-Date:   Sun,  1 Jul 2018 18:23:59 +0200
-Message-Id: <20180701160917.128390570@linuxfoundation.org>
+        stable@vger.kernel.org, zhijianx.li@intel.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.17 216/220] x86/entry/64/compat: Fix "x86/entry/64/compat: Preserve r8-r11 in int $0x80"
+Date:   Sun,  1 Jul 2018 18:24:00 +0200
+Message-Id: <20180701160917.167286801@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -51,177 +60,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 0da74120c5341389b97c4ee27487a97224999ee1 upstream.
+commit 22cd978e598618e82c3c3348d2069184f6884182 upstream.
 
-If a user is accessing a file in selinuxfs with a pointer to a userspace
-buffer that is backed by e.g. a userfaultfd, the userspace access can
-stall indefinitely, which can block fsi->mutex if it is held.
+Commit:
 
-For sel_read_policy(), remove the locking, since this method doesn't seem
-to access anything that requires locking.
+  8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int $0x80")
 
-For sel_read_bool(), move the user access below the locked region.
+was busted: my original patch had a minor conflict with
+some of the nospec changes, but "git apply" is very clever
+and silently accepted the patch by making the same changes
+to a different function in the same file.  There was obviously
+a huge offset, but "git apply" for some reason doesn't feel
+any need to say so.
 
-For sel_write_bool() and sel_commit_bools_write(), move the user access
-up above the locked region.
+Move the changes to the correct function.  Now the
+test_syscall_vdso_32 selftests passes.
 
-Cc: stable@vger.kernel.org
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-[PM: removed an unused variable in sel_read_policy()]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+If anyone cares to observe the original problem, try applying the
+patch at:
+
+  https://lore.kernel.org/lkml/d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org/raw
+
+to the kernel at 316d097c4cd4e7f2ef50c40cff2db266593c4ec4:
+
+ - "git am" and "git apply" accept the patch without any complaints at all
+ - "patch -p1" at least prints out a message about the huge offset.
+
+Reported-by: zhijianx.li@intel.com
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org #v4.17+
+Fixes: 8bb2610bc496 ("x86/entry/64/compat: Preserve r8-r11 in int $0x80")
+Link: http://lkml.kernel.org/r/6012b922485401bc42676e804171ded262fc2ef2.1530078306.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/selinuxfs.c |   78 ++++++++++++++++++-------------------------
- 1 file changed, 33 insertions(+), 45 deletions(-)
+ arch/x86/entry/entry_64_compat.S |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -435,22 +435,16 @@ static int sel_release_policy(struct ino
- static ssize_t sel_read_policy(struct file *filp, char __user *buf,
- 			       size_t count, loff_t *ppos)
- {
--	struct selinux_fs_info *fsi = file_inode(filp)->i_sb->s_fs_info;
- 	struct policy_load_memory *plm = filp->private_data;
- 	int ret;
- 
--	mutex_lock(&fsi->mutex);
--
- 	ret = avc_has_perm(&selinux_state,
- 			   current_sid(), SECINITSID_SECURITY,
- 			  SECCLASS_SECURITY, SECURITY__READ_POLICY, NULL);
- 	if (ret)
--		goto out;
-+		return ret;
- 
--	ret = simple_read_from_buffer(buf, count, ppos, plm->data, plm->len);
--out:
--	mutex_unlock(&fsi->mutex);
--	return ret;
-+	return simple_read_from_buffer(buf, count, ppos, plm->data, plm->len);
- }
- 
- static int sel_mmap_policy_fault(struct vm_fault *vmf)
-@@ -1182,25 +1176,29 @@ static ssize_t sel_read_bool(struct file
- 	ret = -EINVAL;
- 	if (index >= fsi->bool_num || strcmp(name,
- 					     fsi->bool_pending_names[index]))
--		goto out;
-+		goto out_unlock;
- 
- 	ret = -ENOMEM;
- 	page = (char *)get_zeroed_page(GFP_KERNEL);
- 	if (!page)
--		goto out;
-+		goto out_unlock;
- 
- 	cur_enforcing = security_get_bool_value(fsi->state, index);
- 	if (cur_enforcing < 0) {
- 		ret = cur_enforcing;
--		goto out;
-+		goto out_unlock;
- 	}
- 	length = scnprintf(page, PAGE_SIZE, "%d %d", cur_enforcing,
- 			  fsi->bool_pending_values[index]);
--	ret = simple_read_from_buffer(buf, count, ppos, page, length);
--out:
- 	mutex_unlock(&fsi->mutex);
-+	ret = simple_read_from_buffer(buf, count, ppos, page, length);
-+out_free:
- 	free_page((unsigned long)page);
- 	return ret;
-+
-+out_unlock:
-+	mutex_unlock(&fsi->mutex);
-+	goto out_free;
- }
- 
- static ssize_t sel_write_bool(struct file *filep, const char __user *buf,
-@@ -1213,6 +1211,17 @@ static ssize_t sel_write_bool(struct fil
- 	unsigned index = file_inode(filep)->i_ino & SEL_INO_MASK;
- 	const char *name = filep->f_path.dentry->d_name.name;
- 
-+	if (count >= PAGE_SIZE)
-+		return -ENOMEM;
-+
-+	/* No partial writes. */
-+	if (*ppos != 0)
-+		return -EINVAL;
-+
-+	page = memdup_user_nul(buf, count);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+
- 	mutex_lock(&fsi->mutex);
- 
- 	length = avc_has_perm(&selinux_state,
-@@ -1227,22 +1236,6 @@ static ssize_t sel_write_bool(struct fil
- 					     fsi->bool_pending_names[index]))
- 		goto out;
- 
--	length = -ENOMEM;
--	if (count >= PAGE_SIZE)
--		goto out;
--
--	/* No partial writes. */
--	length = -EINVAL;
--	if (*ppos != 0)
--		goto out;
--
--	page = memdup_user_nul(buf, count);
--	if (IS_ERR(page)) {
--		length = PTR_ERR(page);
--		page = NULL;
--		goto out;
--	}
--
- 	length = -EINVAL;
- 	if (sscanf(page, "%d", &new_value) != 1)
- 		goto out;
-@@ -1274,6 +1267,17 @@ static ssize_t sel_commit_bools_write(st
- 	ssize_t length;
- 	int new_value;
- 
-+	if (count >= PAGE_SIZE)
-+		return -ENOMEM;
-+
-+	/* No partial writes. */
-+	if (*ppos != 0)
-+		return -EINVAL;
-+
-+	page = memdup_user_nul(buf, count);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+
- 	mutex_lock(&fsi->mutex);
- 
- 	length = avc_has_perm(&selinux_state,
-@@ -1283,22 +1287,6 @@ static ssize_t sel_commit_bools_write(st
- 	if (length)
- 		goto out;
- 
--	length = -ENOMEM;
--	if (count >= PAGE_SIZE)
--		goto out;
--
--	/* No partial writes. */
--	length = -EINVAL;
--	if (*ppos != 0)
--		goto out;
--
--	page = memdup_user_nul(buf, count);
--	if (IS_ERR(page)) {
--		length = PTR_ERR(page);
--		page = NULL;
--		goto out;
--	}
--
- 	length = -EINVAL;
- 	if (sscanf(page, "%d", &new_value) != 1)
- 		goto out;
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -84,13 +84,13 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   %r8			/* pt_regs->r8 */
++	pushq   $0			/* pt_regs->r8  = 0 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   %r9			/* pt_regs->r9 */
++	pushq   $0			/* pt_regs->r9  = 0 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   %r10			/* pt_regs->r10 */
++	pushq   $0			/* pt_regs->r10 = 0 */
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   %r11			/* pt_regs->r11 */
++	pushq   $0			/* pt_regs->r11 = 0 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+@@ -374,13 +374,13 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	xorl	%ecx, %ecx		/* nospec   cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   $0			/* pt_regs->r8  = 0 */
++	pushq   %r8			/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   $0			/* pt_regs->r9  = 0 */
++	pushq   %r9			/* pt_regs->r9 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   $0			/* pt_regs->r10 = 0 */
++	pushq   %r10			/* pt_regs->r10*/
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   $0			/* pt_regs->r11 = 0 */
++	pushq   %r11			/* pt_regs->r11 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
 
 
