@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896E5C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE80C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F03247A9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F03247A9
+	by mail.kernel.org (Postfix) with ESMTP id 02F612512C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F612512C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965748AbeGAQ2s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:28:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34350 "EHLO
+        id S965770AbeGAQ2w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:28:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34382 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965680AbeGAQ2g (ORCPT
+        with ESMTP id S965745AbeGAQ2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:28:36 -0400
+        Sun, 1 Jul 2018 12:28:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B19792B;
-        Sun,  1 Jul 2018 16:28:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74C3C92B;
+        Sun,  1 Jul 2018 16:28:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 078/101] perf intel-pt: Fix MTC timing after overflow
-Date:   Sun,  1 Jul 2018 18:22:04 +0200
-Message-Id: <20180701160800.290908659@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 099/101] block: Fix transfer when chunk sectors exceeds max
+Date:   Sun,  1 Jul 2018 18:22:25 +0200
+Message-Id: <20180701160801.109042949@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,34 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Keith Busch <keith.busch@intel.com>
 
-commit dd27b87ab5fcf3ea1c060b5e3ab5d31cc78e9f4c upstream.
+commit 15bfd21fbc5d35834b9ea383dc458a1f0c9e3434 upstream.
 
-On some platforms, overflows will clear before MTC wraparound, and there
-is no following TSC/TMA packet. In that case the previous TMA is valid.
-Since there will be a valid TMA either way, stop setting 'have_tma' to
-false upon overflow.
+A device may have boundary restrictions where the number of sectors
+between boundaries exceeds its max transfer size. In this case, we need
+to cap the max size to the smaller of the two limits.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-4-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Tested-by: Jitendra Bhivare <jitendra.bhivare@broadcom.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 -
- 1 file changed, 1 deletion(-)
+ include/linux/blkdev.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1298,7 +1298,6 @@ static int intel_pt_overflow(struct inte
- {
- 	intel_pt_log("ERROR: Buffer overflow\n");
- 	intel_pt_clear_tx_flags(decoder);
--	decoder->have_tma = false;
- 	decoder->cbr = 0;
- 	decoder->timestamp_insn_cnt = 0;
- 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -901,8 +901,8 @@ static inline unsigned int blk_max_size_
+ 	if (!q->limits.chunk_sectors)
+ 		return q->limits.max_sectors;
+ 
+-	return q->limits.chunk_sectors -
+-			(offset & (q->limits.chunk_sectors - 1));
++	return min(q->limits.max_sectors, (unsigned int)(q->limits.chunk_sectors -
++			(offset & (q->limits.chunk_sectors - 1))));
+ }
+ 
+ static inline unsigned int blk_rq_get_max_sectors(struct request *rq,
 
 
