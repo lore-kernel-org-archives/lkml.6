@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4493CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A847C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD7A251C3
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD7A251C3
+	by mail.kernel.org (Postfix) with ESMTP id DEE4B251C9
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE4B251C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752694AbeGALKe (ORCPT
+        id S1752710AbeGALKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:10:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47936 "EHLO mx1.suse.de"
+        Sun, 1 Jul 2018 07:10:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47866 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752328AbeGALJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752296AbeGALJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 1 Jul 2018 07:09:03 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 89CB7AFA3;
-        Sun,  1 Jul 2018 11:09:01 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A4438AF5B;
+        Sun,  1 Jul 2018 11:09:00 +0000 (UTC)
 From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 To:     netdev@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -39,13 +39,20 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Dollar Chen <dollar.chen@wtmec.com>,
         Ken Yu <ken.yu@rakwireless.com>,
         =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Jon Ortego <Jon.Ortego@imst.de>
-Subject: [RFC net-next 11/15] net: lora: Add IMST WiMOD
-Date:   Sun,  1 Jul 2018 13:08:00 +0200
-Message-Id: <20180701110804.32415-12-afaerber@suse.de>
+        =?UTF-8?q?Konstantin=20B=C3=B6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        Jon Ortego <Jon.Ortego@imst.de>, contact@snootlab.com,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
+        lora@radioshuttle.de, Alexander Graf <agraf@suse.de>,
+        =?UTF-8?q?Michal=20Kube=C4=8Dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: [RFC net-next 00/15] net: A socket API for LoRa
+Date:   Sun,  1 Jul 2018 13:07:49 +0200
+Message-Id: <20180701110804.32415-1-afaerber@suse.de>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
-References: <20180701110804.32415-1-afaerber@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,652 +61,218 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IMST WiMOD uses a SLIP based binary UART protocol. Two separate
-firmwares are available. By default it ships with a LoRaWAN firmware.
-The alternative firmware is a custom P2P addressing mode based on LoRa.
+Hello,
 
+LoRa is a long-range, low-power wireless technology by Semtech.
+Unlike other LPWAN technologies, users don't need to rely on infrastructure
+providers and SIM cards and expensive subscription plans, they can set up
+their own gateways. Modules, adapters and evaluation boards are available
+from a large number of vendors.
+
+Many vendors also make available Open Source software examples on GitHub.
+But when taking a closer look, many of them combine licenses in ways that are
+not redistributable. My reports have remained without response or solution.
+
+https://github.com/ernstdevreede/lmic_pi/issues/2
+https://github.com/Snootlab/lmic_chisterapi/issues/2
+https://github.com/Snootlab/lora_chisterapi/issues/2
+
+Another issue was that most such projects around the Raspberry Pi make use of
+spidev to communicate with the Semtech chipsets from userspace. The Linux spi
+maintainers have chosen to greet any such users of spidev with a friendly
+WARN_ON(), preferring in-kernel spi drivers and white-listing individual
+devices only.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/spi/spidev.c?h=v4.17#n722
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/spi/spidev.c?h=v4.17#n667
+
+Also I don't quite see the point in having userspace probe what SPI devices
+are connected to a generic spidev driver when we have an easy Device Tree
+hardware description on arm/arm64 that could give us that info.
+
+I raised the topic during Q&A of a FOSDEM 2017 talk (cut off at the end
+of the video) but unfortunately found no one to collaborate on this.
+
+https://archive.fosdem.org/2017/schedule/event/lorawan/
+
+Instead of porting from wiringPi to a differently licensed GPIO library
+and dealing with seemingly unmaintained LoRaWAN code dumps, I started a
+spi kernel driver for SX1276 back in 2016. But obviously a kernel driver
+isn't too helpful without a userspace API to send and receive packets.
+
+This patchset, updated from 2017 and extended, is implementing kernel drivers
+for various LoRa chipsets and modules. As API I'm proposing a PF_LORA socket
+implementation. Why? LoRa uses data packets with headers and checksums
+and differing MTUs and multiple protocols layered on top of it. Apart from
+simple headers for addressing used by RadioHead library and IMST's LoRa P2P
+protocol, the main use case (not implemented in this patchset) is expected
+to be LoRaWAN. And LoRaWAN has competing proprietary protocols, such as
+Link Labs' Symphony Link or GlobalSat M.O.S.T. or RadioShuttle, that might
+at some point want to adopt a standard API for their implementations, too.
+
+Ready-made LoRa hardware modules come in three flavors,
+a) with SPI access to the underlying Semtech chipsets, needing a software
+   implementation of e.g. LoRaWAN protocol stack (i.e., a soft MAC),
+b) with a custom, often UART based interface and a pre-certified LoRaWAN
+   protocol stack already integrated (i.e., hard/full MAC), and
+c) with a microcontroller that serves not only for the protocol stack but
+   also as application processor, not offering a ready-made interface.
+
+This patchset focuses on option a). An SX1276 based LoRaWAN stack appeared
+to be the project of Jian-Hong Pan and is not included here.
+This patchset also includes drivers for b), from text based AT commands to
+a binary SLIP based HCI protocol.
+Hardware examples for c) are Murata CMWX1ZZABZ-078 and RAK813.
+
+This patchset is clearly not ready for merging, but is being submitted for
+discussion, as requested by Jiri, in particular of the design choices:
+
+1) PF_LORA/AF_LORA and associated identifiers are proposed to represent
+   this technology. While for an SX1276 - case a) above - it might work to
+   layer LoRaWAN as a protocol option for PF_LORA and add LoRaWAN address
+   fields to the union in my sockaddr_lora, how would that work for devices
+   that only support LoRaWAN but not pure LoRa? Do we need both AF_LORA and
+   AF_LORAWAN, or just a separate ETH_P_LORAWAN or ARPHRD_LORAWAN?
+
+2) PF_LORA is used with SOCK_DGRAM here. The assumption is that RAW mode
+   would be DGRAM plus preamble plus optional checksum.
+
+3) Only the transmit path is partially implemented already. The assumption
+   is that the devices should go into receive mode by default and only
+   interrupt that when asked to transmit.
+
+4) Some hardware settings need to be supplied externally, such as the radio
+   frequency for some modules, but many others can be runtime-configured,
+   such as Spreading Factor, Bandwidth, Sync Word, or which antenna to use.
+   What settings should be implemented as socket option vs. netlink layer
+   vs. ioctl vs. sysfs? What are the criteria to apply?
+
+5) Many of the modules support multiple modes, such as LoRa, LoRaWAN and FSK.
+   Lacking a LoRaWAN implementation, I am currently switching them into LoRa
+   mode at probe time wherever possible. How do we deal with that properly?
+
+  a) Is there any precedence from the Wifi world for dynamically selecting
+     between our own trusted Open Source implementation vs. hardware/firmware
+     accelerated and/or certified implementations?
+
+  b) Would a proof of concept for FSK (non-LoRa) modes be required for
+     merging any LoRa driver for chipsets that support both? Or is there any
+     facility or design guidelines that would allow us to focus on LoRa and
+     LoRaWAN and leave non-LoRa radio modes to later contributors?
+
+As evident by the many questions, this is my first deep dive into the Linux
+net subsystem. It's also my first experiments with the new serdev subsystem,
+so in particular the receive paths will need some review and optimizations.
+
+This patchset was developed and tested mainly as KMP, originally at
+https://github.com/afaerber/lora-modules. It was recently transformed into a
+linux-next based tree, still mostly tested on our openSUSE Tumbleweed kernel
+with a differing AF_LORA value below current AF_MAX limit.
+
+Some corresponding Device Tree Overlays have been collected here:
+https://github.com/afaerber/dt-overlays
+
+Only European models for 868 MHz and 433 MHz could be tested when available.
+Thanks to all companies and people that have supported this project so far.
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+Cc: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Matthias Brugger <mbrugger@suse.com>
+Cc: Konstantin Böhm <konstantin.boehm@ancud.de>
+Cc: Jan Jongboom <jan.jongboom@arm.com>
+Cc: Janus Piwek <jpiwek@arroweurope.com>
+Cc: Michael Röder <michael.roeder@avnet.eu>
+Cc: Dollar Chen (陳義元) <dollar.chen@wtmec.com>
+Cc: Ken Yu (禹凯) <ken.yu@rakwireless.com>
 Cc: Jon Ortego <Jon.Ortego@imst.de>
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- drivers/net/lora/Kconfig  |   8 +
- drivers/net/lora/Makefile |   3 +
- drivers/net/lora/wimod.c  | 597 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 608 insertions(+)
- create mode 100644 drivers/net/lora/wimod.c
+Cc: contact@snootlab.com
+Cc: Ben Whitten <ben.whitten@lairdtech.com>
+Cc: Brian Ray <brian.ray@link-labs.com>
+Cc: lora@globalsat.com.tw
+Cc: lora@radioshuttle.de
+Cc: Alexander Graf <agraf@suse.de>
+Cc: Michal Kubeček <mkubecek@suse.cz>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Steve deRosier <derosier@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
 
-diff --git a/drivers/net/lora/Kconfig b/drivers/net/lora/Kconfig
-index 940bd2cbe106..2e05caef8645 100644
---- a/drivers/net/lora/Kconfig
-+++ b/drivers/net/lora/Kconfig
-@@ -31,6 +31,14 @@ config LORA_SX1276
- 	help
- 	  Semtech SX1272/1276/1278
- 
-+config LORA_WIMOD
-+	tristate "IMST WiMOD driver"
-+	default y
-+	depends on SERIAL_DEV_BUS
-+	select CRC_CCITT
-+	help
-+	  IMST WiMOD
-+
- endif
- 
- endmenu
-diff --git a/drivers/net/lora/Makefile b/drivers/net/lora/Makefile
-index 07839c3ce9f8..ecb326c859a5 100644
---- a/drivers/net/lora/Makefile
-+++ b/drivers/net/lora/Makefile
-@@ -15,3 +15,6 @@ lora-rn2483-y += rn2483_cmd.o
- 
- obj-$(CONFIG_LORA_SX1276) += lora-sx1276.o
- lora-sx1276-y := sx1276.o
-+
-+obj-$(CONFIG_LORA_WIMOD) += lora-wimod.o
-+lora-wimod-y := wimod.o
-diff --git a/drivers/net/lora/wimod.c b/drivers/net/lora/wimod.c
-new file mode 100644
-index 000000000000..a70d5a6dc7c4
---- /dev/null
-+++ b/drivers/net/lora/wimod.c
-@@ -0,0 +1,597 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * IMST WiMOD
-+ *
-+ * Copyright (c) 2017-2018 Andreas Färber
-+ */
-+
-+#include <linux/crc-ccitt.h>
-+#include <linux/lora.h>
-+#include <linux/module.h>
-+#include <linux/netdevice.h>
-+#include <linux/of.h>
-+#include <linux/rculist.h>
-+#include <linux/serdev.h>
-+
-+#define WIMOD_HCI_PAYLOAD_MAX	300
-+#define WIMOD_HCI_PACKET_MAX	(1 + (2 + WIMOD_HCI_PAYLOAD_MAX + 2) * 2 + 1)
-+
-+struct wimod_device {
-+	struct serdev_device *serdev;
-+
-+	u8 rx_buf[WIMOD_HCI_PACKET_MAX];
-+	int rx_len;
-+	bool rx_esc;
-+	struct list_head packet_dispatchers;
-+};
-+
-+#define SLIP_END	0300
-+#define SLIP_ESC	0333
-+#define SLIP_ESC_END	0334
-+#define SLIP_ESC_ESC	0335
-+
-+static inline void slip_print_bytes(const u8* buf, int len)
-+{
-+	int i;
-+
-+	for (i = 0; i < len; i++)
-+		printk("%02x ", buf[i]);
-+}
-+
-+static int slip_send_end(struct serdev_device *sdev, unsigned long timeout)
-+{
-+	u8 val = SLIP_END;
-+
-+	return serdev_device_write(sdev, &val, 1, timeout);
-+}
-+
-+#if 0
-+static int slip_send_data(struct serdev_device *sdev, const u8 *buf, int len,
-+	unsigned long timeout)
-+{
-+	int last_idx = -1;
-+	int i;
-+	u8 esc[2] = { SLIP_ESC, 0 };
-+	int ret;
-+
-+	for (i = 0; i < len; i++) {
-+		if (buf[i] != SLIP_END &&
-+		    buf[i] != SLIP_ESC)
-+			continue;
-+
-+		slip_print_bytes(&buf[last_idx + 1], i - (last_idx + 1));
-+
-+		ret = serdev_device_write(sdev,
-+			&buf[last_idx + 1], i - (last_idx + 1), timeout);
-+		if (ret)
-+			return ret;
-+
-+		switch (buf[i]) {
-+		case SLIP_END:
-+			esc[1] = SLIP_ESC_END;
-+			break;
-+		case SLIP_ESC:
-+			esc[1] = SLIP_ESC_ESC;
-+			break;
-+		}
-+		slip_print_bytes(esc, 2);
-+		ret = serdev_device_write(sdev, esc, 2, timeout);
-+		if (ret)
-+			return ret;
-+
-+		last_idx = i;
-+	}
-+
-+	slip_print_bytes(&buf[last_idx + 1], len - (last_idx + 1));
-+
-+	ret = serdev_device_write(sdev,
-+		&buf[last_idx + 1], len - (last_idx + 1), timeout);
-+
-+	return ret;
-+}
-+#endif
-+
-+static int slip_write_data(u8 *buf, int buf_len, const u8 *data, int data_len)
-+{
-+	int last_idx = -1;
-+	int i, n;
-+	int count = 0;
-+
-+	for (i = 0; i < data_len; i++) {
-+		if (data[i] != SLIP_END &&
-+		    data[i] != SLIP_ESC)
-+			continue;
-+
-+		n = i - (last_idx + 1);
-+		if (count + n + 2 > buf_len)
-+			return -ENOMEM;
-+
-+		memcpy(buf + count, &data[last_idx + 1], n);
-+		count += n;
-+
-+		buf[count++] = SLIP_ESC;
-+		switch (data[i]) {
-+		case SLIP_END:
-+			buf[count++] = SLIP_ESC_END;
-+			break;
-+		case SLIP_ESC:
-+			buf[count++] = SLIP_ESC_ESC;
-+			break;
-+		}
-+
-+		last_idx = i;
-+	}
-+
-+	n = data_len - (last_idx + 1);
-+	if (count + n > buf_len)
-+		return -ENOMEM;
-+
-+	memcpy(buf + count, &data[last_idx + 1], n);
-+	count += n;
-+
-+	return count;
-+}
-+
-+#define DEVMGMT_ID	0x01
-+
-+#define DEVMGMT_MSG_PING_REQ		0x01
-+#define DEVMGMT_MSG_PING_RSP		0x02
-+#define DEVMGMT_MSG_GET_DEVICE_INFO_REQ	0x03
-+#define DEVMGMT_MSG_GET_DEVICE_INFO_RSP	0x04
-+#define DEVMGMT_MSG_GET_FW_INFO_REQ	0x05
-+#define DEVMGMT_MSG_GET_FW_INFO_RSP	0x06
-+
-+#define DEVMGMT_STATUS_OK	0x00
-+
-+struct wimod_hci_packet_dispatcher {
-+	struct list_head list;
-+	u8 dst_id;
-+	u8 msg_id;
-+	void (*dispatchee)(const u8*, int, struct wimod_hci_packet_dispatcher *);
-+	void *priv;
-+};
-+
-+struct wimod_hci_packet_completion {
-+	struct wimod_hci_packet_dispatcher disp;
-+	struct completion comp;
-+	char *payload;
-+	int payload_len;
-+};
-+
-+static void wimod_hci_add_dispatcher(struct wimod_device *wmdev,
-+	struct wimod_hci_packet_dispatcher *entry)
-+{
-+	list_add_tail_rcu(&entry->list, &wmdev->packet_dispatchers);
-+}
-+
-+static void wimod_hci_remove_dispatcher(struct wimod_device *wmdev,
-+	struct wimod_hci_packet_dispatcher *entry)
-+{
-+	list_del_rcu(&entry->list);
-+}
-+
-+static void wimod_hci_packet_dispatch_completion(const u8 *data, int len,
-+	struct wimod_hci_packet_dispatcher *d)
-+{
-+	struct wimod_hci_packet_completion *disp =
-+		container_of(d, struct wimod_hci_packet_completion, disp);
-+
-+	if (completion_done(&disp->comp))
-+		return;
-+
-+	disp->payload_len = len - 2;
-+	disp->payload = kzalloc(disp->payload_len, GFP_KERNEL);
-+	if (disp->payload)
-+		memcpy(disp->payload, data + 2, len - 2);
-+
-+	complete(&disp->comp);
-+}
-+
-+static int wimod_hci_send(struct serdev_device *sdev,
-+	u8 dst_id, u8 msg_id, const u8 *payload, int payload_len,
-+	unsigned long timeout)
-+{
-+	u8 buf[WIMOD_HCI_PACKET_MAX];
-+	int buf_len = 0;
-+	u16 crc = 0xffff;
-+	int ret, i;
-+
-+	if (payload_len > WIMOD_HCI_PAYLOAD_MAX)
-+		return -EINVAL;
-+
-+	for (i = 0; i < 30; i++) {
-+		ret = slip_send_end(sdev, timeout);
-+		if (ret) {
-+			dev_err(&sdev->dev, "%s: wakeup END %d failed\n", __func__, i);
-+			return ret;
-+		}
-+	}
-+
-+	crc = crc_ccitt_byte(crc, dst_id);
-+	crc = crc_ccitt_byte(crc, msg_id);
-+	if (payload_len > 0)
-+		crc = crc_ccitt(crc, payload, payload_len);
-+	crc = ~crc;
-+
-+	printk(KERN_INFO "sending: ");
-+
-+	/*ret = slip_send_end(sdev, timeout);
-+	if (ret) {
-+		dev_err(&sdev->dev, "%s: initial END failed\n", __func__);
-+		return ret;
-+	}
-+
-+	ret = slip_send_data(sdev, &dst_id, 1, timeout);
-+	if (ret) {
-+		dev_err(&sdev->dev, "%s: dst_id failed\n", __func__);
-+		return ret;
-+	}
-+
-+	ret = slip_send_data(sdev, &msg_id, 1, timeout);
-+	if (ret) {
-+		dev_err(&sdev->dev, "%s: msg_id failed\n", __func__);
-+		return ret;
-+	}*/
-+
-+	buf[buf_len++] = SLIP_END;
-+
-+	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, &dst_id, 1);
-+	if (ret < 0)
-+		return ret;
-+	buf_len += ret;
-+
-+	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, &msg_id, 1);
-+	if (ret < 0)
-+		return ret;
-+	buf_len += ret;
-+
-+	if (payload_len > 0) {
-+		/*ret = slip_send_data(sdev, payload, payload_len, timeout);
-+		if (ret) {
-+			dev_err(&sdev->dev, "%s: payload failed\n", __func__);
-+			return ret;
-+		}*/
-+		ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, payload, payload_len);
-+		if (ret < 0)
-+			return ret;
-+		buf_len += ret;
-+	}
-+
-+	cpu_to_le16s(crc);
-+	/*ret = slip_send_data(sdev, (u8 *)&crc, 2, timeout);
-+	if (ret) {
-+		dev_err(&sdev->dev, "%s: FCS failed\n", __func__);
-+		return ret;
-+	}
-+
-+	ret = slip_send_end(sdev, timeout);
-+	if (ret) {
-+		dev_err(&sdev->dev, "%s: trailing END failed\n", __func__);
-+		return ret;
-+	}*/
-+
-+	ret = slip_write_data(buf + buf_len, sizeof(buf) - buf_len, (u8 *)&crc, 2);
-+	if (ret < 0)
-+		return ret;
-+	buf_len += ret;
-+
-+	buf[buf_len++] = SLIP_END;
-+
-+	slip_print_bytes(buf, buf_len);
-+
-+	return serdev_device_write(sdev, buf, buf_len, timeout);
-+
-+	//printk("\n");
-+
-+	//return 0;
-+}
-+
-+static int wimod_hci_devmgmt_status(u8 status)
-+{
-+	switch (status) {
-+	case DEVMGMT_STATUS_OK:
-+		return 0;
-+	default:
-+		pr_info("DEVMGMT status %u\n", (int)status);
-+		return -EINVAL;
-+	}
-+}
-+
-+static int wimod_hci_devmgmt_send_sync(struct wimod_device *wmdev,
-+	u8 req_msg_id, const u8 *req_payload, int req_payload_len,
-+	u8 rsp_msg_id, u8 **rsp_payload, int *rsp_payload_len,
-+	unsigned long timeout)
-+{
-+	struct wimod_hci_packet_completion packet = {0};
-+	int ret;
-+
-+	if (rsp_payload && !rsp_payload_len)
-+		return -EINVAL;
-+
-+	packet.disp.dst_id = DEVMGMT_ID;
-+	packet.disp.msg_id = rsp_msg_id;
-+	packet.disp.dispatchee = wimod_hci_packet_dispatch_completion;
-+	init_completion(&packet.comp);
-+
-+	wimod_hci_add_dispatcher(wmdev, &packet.disp);
-+
-+	ret = wimod_hci_send(wmdev->serdev, DEVMGMT_ID, req_msg_id, req_payload, req_payload_len, timeout);
-+	if (ret) {
-+		wimod_hci_remove_dispatcher(wmdev, &(packet.disp));
-+		return ret;
-+	}
-+
-+	timeout = wait_for_completion_timeout(&packet.comp, timeout);
-+	wimod_hci_remove_dispatcher(wmdev, &packet.disp);
-+	if (!timeout)
-+		return -ETIMEDOUT;
-+
-+	if (packet.payload_len < 1) {
-+		kfree(packet.payload);
-+		return -EINVAL;
-+	}
-+
-+	ret = wimod_hci_devmgmt_status(packet.payload[0]);
-+	if (ret || !rsp_payload)
-+		kfree(packet.payload);
-+	else if (rsp_payload) {
-+		*rsp_payload = packet.payload;
-+		*rsp_payload_len = packet.payload_len;
-+	}
-+	return ret;
-+}
-+
-+static int wimod_hci_ping(struct wimod_device *wmdev, unsigned long timeout)
-+{
-+	return wimod_hci_devmgmt_send_sync(wmdev,
-+		DEVMGMT_MSG_PING_REQ, NULL, 0,
-+		DEVMGMT_MSG_PING_RSP, NULL, NULL,
-+		timeout);
-+}
-+
-+static int wimod_hci_get_device_info(struct wimod_device *wmdev, u8 *buf, unsigned long timeout)
-+{
-+	u8 *payload;
-+	int payload_len;
-+	int ret;
-+
-+	ret = wimod_hci_devmgmt_send_sync(wmdev,
-+		DEVMGMT_MSG_GET_DEVICE_INFO_REQ, NULL, 0,
-+		DEVMGMT_MSG_GET_DEVICE_INFO_RSP, &payload, &payload_len,
-+		timeout);
-+	if (ret)
-+		return ret;
-+
-+	if (payload_len < 10) {
-+		dev_err(&wmdev->serdev->dev, "get_device_info: payload length (10)\n");
-+		kfree(payload);
-+		return -EINVAL;
-+	}
-+
-+	if (buf)
-+		memcpy(buf, payload + 1, min(payload_len - 1, 9));
-+
-+	kfree(payload);
-+	return 0;
-+}
-+
-+static int wimod_hci_get_fw_info(struct wimod_device *wmdev, u8 **info, int *info_len, unsigned long timeout)
-+{
-+	u8 *payload;
-+	int payload_len;
-+	int ret;
-+
-+	if (info && !info_len)
-+		return -EINVAL;
-+
-+	ret = wimod_hci_devmgmt_send_sync(wmdev,
-+		DEVMGMT_MSG_GET_FW_INFO_REQ, NULL, 0,
-+		DEVMGMT_MSG_GET_FW_INFO_RSP, &payload, &payload_len,
-+		timeout);
-+	if (ret)
-+		return ret;
-+
-+	if (info) {
-+		*info = payload + 1;
-+		*info_len = payload_len - 1;
-+	} else
-+		kfree(payload);
-+
-+	return 0;
-+}
-+
-+static void wimod_hci_get_fw_info_free(u8* info)
-+{
-+	u8 *payload = info - 1;
-+
-+	kfree(payload);
-+}
-+
-+static void wimod_process_packet(struct serdev_device *sdev, const u8 *data, int len)
-+{
-+	struct wimod_device *wmdev = serdev_device_get_drvdata(sdev);
-+	struct wimod_hci_packet_dispatcher *e;
-+	u16 crc;
-+
-+	dev_info(&sdev->dev, "Processing incoming packet (%d)\n", len);
-+
-+	if (len < 4) {
-+		dev_dbg(&sdev->dev, "Discarding packet of length %d\n", len);
-+		return;
-+	}
-+
-+	crc = ~crc_ccitt(0xffff, data, len);
-+	if (crc != 0x0f47) {
-+		dev_dbg(&sdev->dev, "Discarding packet with wrong checksum\n");
-+		return;
-+	}
-+
-+	list_for_each_entry(e, &wmdev->packet_dispatchers, list) {
-+		if (e->dst_id == data[0] && e->msg_id == data[1]) {
-+			e->dispatchee(data, len - 2, e);
-+			break;
-+		}
-+	}
-+}
-+
-+static int wimod_receive_buf(struct serdev_device *sdev, const u8 *data, size_t count)
-+{
-+	struct wimod_device *wmdev = serdev_device_get_drvdata(sdev);
-+	size_t i = 0;
-+	int len = 0;
-+
-+	dev_dbg(&sdev->dev, "Receive (%d)\n", (int)count);
-+
-+	while (i < min(count, sizeof(wmdev->rx_buf) - wmdev->rx_len)) {
-+		if (wmdev->rx_esc) {
-+			wmdev->rx_esc = false;
-+			switch (data[i]) {
-+			case SLIP_ESC_END:
-+				wmdev->rx_buf[wmdev->rx_len++] = SLIP_END;
-+				break;
-+			case SLIP_ESC_ESC:
-+				wmdev->rx_buf[wmdev->rx_len++] = SLIP_ESC;
-+				break;
-+			default:
-+				dev_warn(&sdev->dev, "Ignoring unknown escape sequence 0300 0%o\n", data[i]);
-+				break;
-+			}
-+			len += i + 1;
-+			data += i + 1;
-+			count -= i + 1;
-+			i = 0;
-+			continue;
-+		}
-+		if (data[i] != SLIP_END &&
-+		    data[i] != SLIP_ESC) {
-+			i++;
-+			continue;
-+		}
-+		if (i > 0) {
-+			memcpy(&wmdev->rx_buf[wmdev->rx_len], data, i);
-+			wmdev->rx_len += i;
-+		}
-+		if (data[i] == SLIP_END && wmdev->rx_len > 0) {
-+			wimod_process_packet(sdev, wmdev->rx_buf, wmdev->rx_len);
-+			wmdev->rx_len = 0;
-+		} else if (data[i] == SLIP_ESC) {
-+			wmdev->rx_esc = true;
-+		}
-+		len += i + 1;
-+		data += i + 1;
-+		count -= i + 1;
-+		i = 0;
-+	}
-+
-+	dev_dbg(&sdev->dev, "Receive: processed %d\n", len);
-+
-+	return len;
-+}
-+
-+static const struct serdev_device_ops wimod_serdev_client_ops = {
-+	.receive_buf = wimod_receive_buf,
-+	.write_wakeup = serdev_device_write_wakeup,
-+};
-+
-+static int wimod_probe(struct serdev_device *sdev)
-+{
-+	struct wimod_device *wmdev;
-+	u8 buf[9];
-+	u8 *data;
-+	int data_len;
-+	int ret;
-+
-+	dev_info(&sdev->dev, "Probing");
-+
-+	wmdev = devm_kzalloc(&sdev->dev, sizeof(struct wimod_device), GFP_KERNEL);
-+	if (!wmdev)
-+		return -ENOMEM;
-+
-+	wmdev->serdev = sdev;
-+	INIT_LIST_HEAD(&wmdev->packet_dispatchers);
-+	serdev_device_set_drvdata(sdev, wmdev);
-+
-+	ret = serdev_device_open(sdev);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Failed to open (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	serdev_device_set_baudrate(sdev, 115200);
-+	serdev_device_set_flow_control(sdev, false);
-+	serdev_device_set_client_ops(sdev, &wimod_serdev_client_ops);
-+
-+	ret = wimod_hci_ping(wmdev, HZ);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Ping failed (%d)\n", ret);
-+		goto err;
-+	}
-+
-+	ret = wimod_hci_get_device_info(wmdev, buf, HZ);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Failed to obtain device info (%d)\n", ret);
-+		goto err;
-+	}
-+	dev_info(&sdev->dev, "Module type: 0x%02x\n", (int)buf[0]);
-+
-+	ret = wimod_hci_get_fw_info(wmdev, &data, &data_len, HZ);
-+	if (ret) {
-+		dev_err(&sdev->dev, "Failed to obtain firmware info (%d)\n", ret);
-+		goto err;
-+	}
-+	dev_info(&sdev->dev, "Firmware: %u.%u build %u '%s'\n",
-+		data[1], data[0], ((u16)data[3] << 8) | data[2], data + 4);
-+	wimod_hci_get_fw_info_free(data);
-+
-+	dev_info(&sdev->dev, "Done.\n");
-+
-+	return 0;
-+err:
-+	serdev_device_close(sdev);
-+	return ret;
-+}
-+
-+static void wimod_remove(struct serdev_device *sdev)
-+{
-+	serdev_device_close(sdev);
-+
-+	dev_info(&sdev->dev, "Removed\n");
-+}
-+
-+static const struct of_device_id wimod_of_match[] = {
-+	{ .compatible = "imst,wimod-hci" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, wimod_of_match);
-+
-+static struct serdev_device_driver wimod_serdev_driver = {
-+	.probe = wimod_probe,
-+	.remove = wimod_remove,
-+	.driver = {
-+		.name = "wimod",
-+		.of_match_table = wimod_of_match,
-+	},
-+};
-+
-+static int __init wimod_init(void)
-+{
-+	int ret;
-+
-+	ret = serdev_device_driver_register(&wimod_serdev_driver);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void __exit wimod_exit(void)
-+{
-+	serdev_device_driver_unregister(&wimod_serdev_driver);
-+}
-+
-+module_init(wimod_init);
-+module_exit(wimod_exit);
-+
-+MODULE_DESCRIPTION("WiMOD serdev driver");
-+MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
-+MODULE_LICENSE("GPL");
+Andreas Färber (15):
+  net: Reserve protocol numbers for LoRa
+  net: lora: Define sockaddr_lora
+  net: lora: Add protocol numbers
+  net: Add lora subsystem
+  HACK: net: lora: Deal with .poll_mask in 4.18-rc2
+  net: lora: Prepare for device drivers
+  net: lora: Add Semtech SX1276
+  net: lora: sx1276: Add debugfs
+  net: lora: Prepare EUI helpers
+  net: lora: Add Microchip RN2483
+  net: lora: Add IMST WiMOD
+  net: lora: Add USI WM-SG-SM-42
+  net: lora: Prepare RAK RAK811
+  net: lora: Prepare Semtech SX1257
+  net: lora: Add Semtech SX1301
+
+ drivers/net/Makefile                |   1 +
+ drivers/net/lora/Kconfig            |  72 ++++
+ drivers/net/lora/Makefile           |  32 ++
+ drivers/net/lora/dev.c              | 125 ++++++
+ drivers/net/lora/rak811.c           | 219 +++++++++++
+ drivers/net/lora/rn2483.c           | 344 +++++++++++++++++
+ drivers/net/lora/rn2483.h           |  40 ++
+ drivers/net/lora/rn2483_cmd.c       | 130 +++++++
+ drivers/net/lora/sx1257.c           |  96 +++++
+ drivers/net/lora/sx1276.c           | 740 ++++++++++++++++++++++++++++++++++++
+ drivers/net/lora/sx1301.c           | 446 ++++++++++++++++++++++
+ drivers/net/lora/usi.c              | 411 ++++++++++++++++++++
+ drivers/net/lora/wimod.c            | 597 +++++++++++++++++++++++++++++
+ include/linux/lora/dev.h            |  44 +++
+ include/linux/lora/skb.h            |  29 ++
+ include/linux/socket.h              |   4 +-
+ include/uapi/linux/if_arp.h         |   1 +
+ include/uapi/linux/if_ether.h       |   1 +
+ include/uapi/linux/lora.h           |  24 ++
+ net/Kconfig                         |   1 +
+ net/Makefile                        |   1 +
+ net/lora/Kconfig                    |  15 +
+ net/lora/Makefile                   |   8 +
+ net/lora/af_lora.c                  | 152 ++++++++
+ net/lora/af_lora.h                  |  13 +
+ net/lora/dgram.c                    | 297 +++++++++++++++
+ security/selinux/hooks.c            |   4 +-
+ security/selinux/include/classmap.h |   4 +-
+ 28 files changed, 3848 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/lora/Kconfig
+ create mode 100644 drivers/net/lora/Makefile
+ create mode 100644 drivers/net/lora/dev.c
+ create mode 100644 drivers/net/lora/rak811.c
+ create mode 100644 drivers/net/lora/rn2483.c
+ create mode 100644 drivers/net/lora/rn2483.h
+ create mode 100644 drivers/net/lora/rn2483_cmd.c
+ create mode 100644 drivers/net/lora/sx1257.c
+ create mode 100644 drivers/net/lora/sx1276.c
+ create mode 100644 drivers/net/lora/sx1301.c
+ create mode 100644 drivers/net/lora/usi.c
+ create mode 100644 drivers/net/lora/wimod.c
+ create mode 100644 include/linux/lora/dev.h
+ create mode 100644 include/linux/lora/skb.h
+ create mode 100644 include/uapi/linux/lora.h
+ create mode 100644 net/lora/Kconfig
+ create mode 100644 net/lora/Makefile
+ create mode 100644 net/lora/af_lora.c
+ create mode 100644 net/lora/af_lora.h
+ create mode 100644 net/lora/dgram.c
+
 -- 
 2.16.4
 
