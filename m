@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA18C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D8CC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA85251AD
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA85251AD
+	by mail.kernel.org (Postfix) with ESMTP id ECCAB251AE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:26:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCAB251AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965368AbeGAQ0q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:26:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33920 "EHLO
+        id S965389AbeGAQ0v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:26:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33934 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965127AbeGAQ0g (ORCPT
+        with ESMTP id S933572AbeGAQ0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:26:36 -0400
+        Sun, 1 Jul 2018 12:26:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E41EACD;
-        Sun,  1 Jul 2018 16:26:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 02347ACD;
+        Sun,  1 Jul 2018 16:26:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 054/101] Btrfs: fix unexpected cow in run_delalloc_nocow
-Date:   Sun,  1 Jul 2018 18:21:40 +0200
-Message-Id: <20180701160759.300817208@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 055/101] iio:buffer: make length types match kfifo types
+Date:   Sun,  1 Jul 2018 18:21:41 +0200
+Message-Id: <20180701160759.341694677@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,94 +51,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.li.liu@oracle.com>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 5811375325420052fcadd944792a416a43072b7f upstream.
+commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
 
-Fstests generic/475 provides a way to fail metadata reads while
-checking if checksum exists for the inode inside run_delalloc_nocow(),
-and csum_exist_in_range() interprets error (-EIO) as inode having
-checksum and makes its caller enter the cow path.
+Currently, we use int for buffer length and bytes_per_datum. However,
+kfifo uses unsigned int for length and size_t for element size. We need
+to make sure these matches or we will have bugs related to overflow (in
+the range between INT_MAX and UINT_MAX for length, for example).
 
-In case of free space inode, this ends up with a warning in
-cow_file_range().
+In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
+int, which would cause bugs for large values of bytes_per_datum.
 
-The same problem applies to btrfs_cross_ref_exist() since it may also
-read metadata in between.
+Change buffer length to use unsigned int and bytes_per_datum to use
+size_t.
 
-With this, run_delalloc_nocow() bails out when errors occur at the two
-places.
-
-cc: <stable@vger.kernel.org> v2.6.28+
-Fixes: 17d217fe970d ("Btrfs: fix nodatasum handling in balancing code")
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[bwh: Backported to 4.9:
+ - Drop change to iio_dma_buffer_set_length()
+ - Adjust filename, context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- fs/btrfs/inode.c |   33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ drivers/iio/buffer/kfifo_buf.c |    4 ++--
+ include/linux/iio/buffer.h     |    6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1230,6 +1230,8 @@ static noinline int csum_exist_in_range(
- 		list_del(&sums->list);
- 		kfree(sums);
- 	}
-+	if (ret < 0)
-+		return ret;
- 	return 1;
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -19,7 +19,7 @@ struct iio_kfifo {
+ #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
+ 
+ static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
+-				int bytes_per_datum, int length)
++			size_t bytes_per_datum, unsigned int length)
+ {
+ 	if ((length == 0) || (bytes_per_datum == 0))
+ 		return -EINVAL;
+@@ -71,7 +71,7 @@ static int iio_set_bytes_per_datum_kfifo
+ 	return 0;
  }
  
-@@ -1381,10 +1383,23 @@ next_slot:
- 				goto out_check;
- 			if (btrfs_extent_readonly(root, disk_bytenr))
- 				goto out_check;
--			if (btrfs_cross_ref_exist(trans, root, ino,
-+			ret = btrfs_cross_ref_exist(trans, root, ino,
- 						  found_key.offset -
--						  extent_offset, disk_bytenr))
-+						  extent_offset, disk_bytenr);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			disk_bytenr += extent_offset;
- 			disk_bytenr += cur_offset - found_key.offset;
- 			num_bytes = min(end + 1, extent_end) - cur_offset;
-@@ -1402,8 +1417,20 @@ next_slot:
- 			 * this ensure that csum for a given extent are
- 			 * either valid or do not exist.
- 			 */
--			if (csum_exist_in_range(root, disk_bytenr, num_bytes))
-+			ret = csum_exist_in_range(root, disk_bytenr, num_bytes);
-+			if (ret) {
-+				/*
-+				 * ret could be -EIO if the above fails to read
-+				 * metadata.
-+				 */
-+				if (ret < 0) {
-+					if (cow_start != (u64)-1)
-+						cur_offset = cow_start;
-+					goto error;
-+				}
-+				WARN_ON_ONCE(nolock);
- 				goto out_check;
-+			}
- 			if (!btrfs_inc_nocow_writers(root->fs_info,
- 						     disk_bytenr))
- 				goto out_check;
+-static int iio_set_length_kfifo(struct iio_buffer *r, int length)
++static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
+ {
+ 	/* Avoid an invalid state */
+ 	if (length < 2)
+--- a/include/linux/iio/buffer.h
++++ b/include/linux/iio/buffer.h
+@@ -61,7 +61,7 @@ struct iio_buffer_access_funcs {
+ 	int (*request_update)(struct iio_buffer *buffer);
+ 
+ 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
+-	int (*set_length)(struct iio_buffer *buffer, int length);
++	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
+ 
+ 	int (*enable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+ 	int (*disable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+@@ -96,8 +96,8 @@ struct iio_buffer_access_funcs {
+  * @watermark:		[INTERN] number of datums to wait for poll/read.
+  */
+ struct iio_buffer {
+-	int					length;
+-	int					bytes_per_datum;
++	unsigned int				length;
++	size_t					bytes_per_datum;
+ 	struct attribute_group			*scan_el_attrs;
+ 	long					*scan_mask;
+ 	bool					scan_timestamp;
 
 
