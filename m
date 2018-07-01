@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403ADC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1083AC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B0222A84
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B0222A84
+	by mail.kernel.org (Postfix) with ESMTP id AA66724F16
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA66724F16
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753366AbeGAQSk (ORCPT
+        id S1753399AbeGAQSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:18:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33034 "EHLO
+        Sun, 1 Jul 2018 12:18:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33074 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbeGAQSe (ORCPT
+        with ESMTP id S1753217AbeGAQSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:34 -0400
+        Sun, 1 Jul 2018 12:18:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B86049B;
-        Sun,  1 Jul 2018 16:18:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FD0C49B;
+        Sun,  1 Jul 2018 16:18:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 044/105] powerpc/ptrace: Fix setting 512B aligned breakpoints with PTRACE_SET_DEBUGREG
-Date:   Sun,  1 Jul 2018 18:01:54 +0200
-Message-Id: <20180701153152.448967347@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 083/105] perf intel-pt: Fix decoding to accept CBR between FUP and corresponding TIP
+Date:   Sun,  1 Jul 2018 18:02:33 +0200
+Message-Id: <20180701153155.402706615@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,42 +50,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 4f7c06e26ec9cf7fe9f0c54dc90079b6a4f4b2c3 upstream.
+commit bd2e49ec48feb1855f7624198849eea4610e2286 upstream.
 
-In commit e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when
-validating DAWR region end") we fixed setting the DAWR end point to
-its max value via PPC_PTRACE_SETHWDEBUG. Unfortunately we broke
-PTRACE_SET_DEBUGREG when setting a 512 byte aligned breakpoint.
+It is possible to have a CBR packet between a FUP packet and
+corresponding TIP packet. Stop treating it as an error.
 
-PTRACE_SET_DEBUGREG currently sets the length of the breakpoint to
-zero (memset() in hw_breakpoint_init()). This worked with
-arch_validate_hwbkpt_settings() before the above patch was applied but
-is now broken if the breakpoint is 512byte aligned.
-
-This sets the length of the breakpoint to 8 bytes when using
-PTRACE_SET_DEBUGREG.
-
-Fixes: e2a800beaca1 ("powerpc/hw_brk: Fix off by one error when validating DAWR region end")
-Cc: stable@vger.kernel.org # v3.11+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1527762225-26024-3-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/ptrace.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -1004,6 +1004,7 @@ static int ptrace_set_debugreg(struct ta
- 	/* Create a new breakpoint request if one doesn't exist already */
- 	hw_breakpoint_init(&attr);
- 	attr.bp_addr = hw_brk.address;
-+	attr.bp_len = 8;
- 	arch_bp_generic_fields(hw_brk.type,
- 			       &attr.bp_type);
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1487,7 +1487,6 @@ static int intel_pt_walk_fup_tip(struct
+ 		case INTEL_PT_PSB:
+ 		case INTEL_PT_TSC:
+ 		case INTEL_PT_TMA:
+-		case INTEL_PT_CBR:
+ 		case INTEL_PT_MODE_TSX:
+ 		case INTEL_PT_BAD:
+ 		case INTEL_PT_PSBEND:
+@@ -1496,6 +1495,10 @@ static int intel_pt_walk_fup_tip(struct
+ 			decoder->pkt_step = 0;
+ 			return -ENOENT;
+ 
++		case INTEL_PT_CBR:
++			intel_pt_calc_cbr(decoder);
++			break;
++
+ 		case INTEL_PT_OVF:
+ 			return intel_pt_overflow(decoder);
  
 
 
