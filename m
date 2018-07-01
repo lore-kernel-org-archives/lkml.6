@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A3CC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE0EC6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519E125586
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:06:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519E125586
+	by mail.kernel.org (Postfix) with ESMTP id 058A32558C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:07:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058A32558C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933891AbeGARGl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:06:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37546 "EHLO
+        id S933933AbeGARHA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:07:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37536 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1032142AbeGAQmK (ORCPT
+        with ESMTP id S1031607AbeGAQmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:42:10 -0400
+        Sun, 1 Jul 2018 12:42:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60FBAACC;
-        Sun,  1 Jul 2018 16:42:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A554BAA6;
+        Sun,  1 Jul 2018 16:42:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        stable@vger.kernel.org, Simon Guinot <simon.guinot@sequanux.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Paul Burton <paul.burton@mips.com>,
-        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>
-Subject: [PATCH 4.17 123/220] MIPS: io: Add barrier after register read in inX()
-Date:   Sun,  1 Jul 2018 18:22:27 +0200
-Message-Id: <20180701160913.484857102@linuxfoundation.org>
+        Ralf Baechle <ralf@linux-mips.org>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.17 122/220] MIPS: pb44: Fix i2c-gpio GPIO descriptor table
+Date:   Sun,  1 Jul 2018 18:22:26 +0200
+Message-Id: <20180701160913.445786757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -53,45 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 18f3e95b90b28318ef35910d21c39908de672331 upstream.
+commit 326345f995a83e326fa2e01d54bfa9a6a307bd4d upstream.
 
-While a barrier is present in the outX() functions before the register
-write, a similar barrier is missing in the inX() functions after the
-register read. This could allow memory accesses following inX() to
-observe stale data.
+I used bad names in my clumsiness when rewriting many board
+files to use GPIO descriptors instead of platform data. A few
+had the platform_device ID set to -1 which would indeed give
+the device name "i2c-gpio".
 
-This patch is very similar to commit a1cc7034e33d12dc1 ("MIPS: io: Add
-barrier after register read in readX()"). Because war_io_reorder_wmb()
-is both used by writeX() and outX(), if readX() need a barrier then so
-does inX().
+But several had it set to >=0 which gives the names
+"i2c-gpio.0", "i2c-gpio.1" ...
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19516/
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <james.hogan@mips.com>
+Fix the one affected board in the MIPS tree. Sorry.
+
+Fixes: b2e63555592f ("i2c: gpio: Convert to use descriptors")
+Reported-by: Simon Guinot <simon.guinot@sequanux.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Simon Guinot <simon.guinot@sequanux.org>
 Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
+Cc: <stable@vger.kernel.org> # 4.15+
+Patchwork: https://patchwork.linux-mips.org/patch/19387/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/include/asm/io.h |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/ath79/mach-pb44.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -414,6 +414,8 @@ static inline type pfx##in##bwlq##p(unsi
- 	__val = *__addr;						\
- 	slow;								\
- 									\
-+	/* prevent prefetching of coherent DMA data prematurely */	\
-+	rmb();								\
- 	return pfx##ioswab##bwlq(__addr, __val);			\
- }
+--- a/arch/mips/ath79/mach-pb44.c
++++ b/arch/mips/ath79/mach-pb44.c
+@@ -34,7 +34,7 @@
+ #define PB44_KEYS_DEBOUNCE_INTERVAL	(3 * PB44_KEYS_POLL_INTERVAL)
  
+ static struct gpiod_lookup_table pb44_i2c_gpiod_table = {
+-	.dev_id = "i2c-gpio",
++	.dev_id = "i2c-gpio.0",
+ 	.table = {
+ 		GPIO_LOOKUP_IDX("ath79-gpio", PB44_GPIO_I2C_SDA,
+ 				NULL, 0, GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN),
 
 
