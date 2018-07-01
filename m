@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A2CC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5163CC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77962259E7
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77962259E7
+	by mail.kernel.org (Postfix) with ESMTP id 18BDA259F8
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:29:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18BDA259F8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965010AbeGAS24 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:28:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32868 "EHLO
+        id S933856AbeGAS3V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:29:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:32816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964838AbeGAQRm (ORCPT
+        with ESMTP id S964794AbeGAQRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:17:42 -0400
+        Sun, 1 Jul 2018 12:17:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A022849B;
-        Sun,  1 Jul 2018 16:17:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B213792B;
+        Sun,  1 Jul 2018 16:17:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 062/105] iio:buffer: make length types match kfifo types
-Date:   Sun,  1 Jul 2018 18:02:12 +0200
-Message-Id: <20180701153153.976273127@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.4 058/105] PCI: pciehp: Clear Presence Detect and Data Link Layer Status Changed on resume
+Date:   Sun,  1 Jul 2018 18:02:08 +0200
+Message-Id: <20180701153153.715691394@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -51,75 +52,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
+commit 13c65840feab8109194f9490c9870587173cb29d upstream.
 
-Currently, we use int for buffer length and bytes_per_datum. However,
-kfifo uses unsigned int for length and size_t for element size. We need
-to make sure these matches or we will have bugs related to overflow (in
-the range between INT_MAX and UINT_MAX for length, for example).
+After a suspend/resume cycle the Presence Detect or Data Link Layer Status
+Changed bits might be set.  If we don't clear them those events will not
+fire anymore and nothing happens for instance when a device is now
+hot-unplugged.
 
-In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
-int, which would cause bugs for large values of bytes_per_datum.
+Fix this by clearing those bits in a newly introduced function
+pcie_reenable_notification().  This should be fine because immediately
+after, we check if the adapter is still present by reading directly from
+the status register.
 
-Change buffer length to use unsigned int and bytes_per_datum to use
-size_t.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-[bwh: Backported to 4.4:
- - Drop change to iio_dma_buffer_set_length()
- - Adjust filename, context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/iio/buffer/kfifo_buf.c |    4 ++--
- include/linux/iio/buffer.h     |    6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -19,7 +19,7 @@ struct iio_kfifo {
- #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
+---
+ drivers/pci/hotplug/pciehp.h      |    2 +-
+ drivers/pci/hotplug/pciehp_core.c |    2 +-
+ drivers/pci/hotplug/pciehp_hpc.c  |   13 ++++++++++++-
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -134,7 +134,7 @@ struct controller *pcie_init(struct pcie
+ int pcie_init_notification(struct controller *ctrl);
+ int pciehp_enable_slot(struct slot *p_slot);
+ int pciehp_disable_slot(struct slot *p_slot);
+-void pcie_enable_notification(struct controller *ctrl);
++void pcie_reenable_notification(struct controller *ctrl);
+ int pciehp_power_on_slot(struct slot *slot);
+ void pciehp_power_off_slot(struct slot *slot);
+ void pciehp_get_power_status(struct slot *slot, u8 *status);
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -295,7 +295,7 @@ static int pciehp_resume(struct pcie_dev
+ 	ctrl = get_service_data(dev);
  
- static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
--				int bytes_per_datum, int length)
-+			size_t bytes_per_datum, unsigned int length)
- {
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
-@@ -71,7 +71,7 @@ static int iio_set_bytes_per_datum_kfifo
- 	return 0;
+ 	/* reinitialize the chipset's event detection logic */
+-	pcie_enable_notification(ctrl);
++	pcie_reenable_notification(ctrl);
+ 
+ 	slot = ctrl->slot;
+ 
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -628,7 +628,7 @@ static irqreturn_t pcie_isr(int irq, voi
+ 	return IRQ_HANDLED;
  }
  
--static int iio_set_length_kfifo(struct iio_buffer *r, int length)
-+static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
+-void pcie_enable_notification(struct controller *ctrl)
++static void pcie_enable_notification(struct controller *ctrl)
  {
- 	/* Avoid an invalid state */
- 	if (length < 2)
---- a/include/linux/iio/buffer.h
-+++ b/include/linux/iio/buffer.h
-@@ -49,7 +49,7 @@ struct iio_buffer_access_funcs {
- 	int (*request_update)(struct iio_buffer *buffer);
+ 	u16 cmd, mask;
  
- 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
--	int (*set_length)(struct iio_buffer *buffer, int length);
-+	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
+@@ -666,6 +666,17 @@ void pcie_enable_notification(struct con
+ 		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
+ }
  
- 	void (*release)(struct iio_buffer *buffer);
- 
-@@ -78,8 +78,8 @@ struct iio_buffer_access_funcs {
-  * @watermark:		[INTERN] number of datums to wait for poll/read.
-  */
- struct iio_buffer {
--	int					length;
--	int					bytes_per_datum;
-+	unsigned int				length;
-+	size_t					bytes_per_datum;
- 	struct attribute_group			*scan_el_attrs;
- 	long					*scan_mask;
- 	bool					scan_timestamp;
++void pcie_reenable_notification(struct controller *ctrl)
++{
++	/*
++	 * Clear both Presence and Data Link Layer Changed to make sure
++	 * those events still fire after we have re-enabled them.
++	 */
++	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
++				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
++	pcie_enable_notification(ctrl);
++}
++
+ static void pcie_disable_notification(struct controller *ctrl)
+ {
+ 	u16 mask;
 
 
