@@ -2,108 +2,173 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1096C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3B7C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B32F25B65
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:48:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPBxQAmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B32F25B65
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F172A25B65
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 18:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F172A25B65
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932178AbeGASsO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 14:48:14 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46136 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932093AbeGASsJ (ORCPT
+        id S932219AbeGASsQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 14:48:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59742 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752677AbeGAQLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 14:48:09 -0400
-Received: by mail-wr0-f195.google.com with SMTP id s11-v6so4121483wra.13;
-        Sun, 01 Jul 2018 11:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=X8dhn6dNj1jyb6xmkUVr+jL+mGI6H9EgdPgJYxlWWYI=;
-        b=bPBxQAmfdnsLmWGdHhZza0Y3ZIlCNituFqGcOW52mmTDfzG/OahZdwlPCkmR0QSj/U
-         lYdOi1VnN5FogqTiOCpZY5lIW6Wm3Odp0Cll5cjfqSi+ib4oCDwFjv4d8wkzTkkenw+u
-         PT/z6Jrm9KKH1EqkNLgWCzkuFMaYF69h4eDyokp/eV3/LLZ0ZXgtEtTwU6k0VKDKWX6m
-         CpMbPNEHxt1GlrzKYC92kzPmQRCAYbRP7PbZ12f8KNtLureipP8U9NWZkFBb49/FlPGA
-         ajUHp64QJcbW7rRuvdYVYepkIbpRNqPztGmWBO05AsLrIS9pT4k/5u5boERi2Y8452r0
-         H+Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=X8dhn6dNj1jyb6xmkUVr+jL+mGI6H9EgdPgJYxlWWYI=;
-        b=T1/W/nB0g9RqL4+mbk9rThu/R0CXVO4MgbTICizlLuRyB38tGP1y70Ded6/bdONFEy
-         0pru5jx2ltO6PQ026Xy9kRkltOe1R846qMg2lvb9adEFzuTXlwsqjpUv5myepsXORvwC
-         NsLng7B9PQaxdmyEMs31EhqSHRv6AgUxuc2/RwtpOhOg1LrPzveig9CwUTWLlX5KsAMV
-         bqbf6VOSRJAdsCs7b3yavF8PsElqBavWX1GfvcVn3aIOWk7kJltenoPXqKe9UHHDpbSY
-         duPS0BuSIaaeoVWpt5VFeHurMJbpjsd5+79RJ56IRyPhYeiznyZzOflka7zYZZtotF5/
-         C1EA==
-X-Gm-Message-State: APt69E1b2lD/ZpwJWl7tHI2pnDnZni6TlGiWnUx6tLu/q+bspeAKFPzV
-        /8uQAzZcIkj3jYoqJHrobDDZSde2ZwZLYQgy+xk=
-X-Google-Smtp-Source: AAOMgpf3sL9UeuW9o5ZJGlSsHfmrMqE+iJfPmUgO8hCZzsFX6SBnjM+KfV0O9iZpWUVGFvsPlQ0sBbGzCeMw1veQJbc=
-X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr9664681wri.199.1530470888313;
- Sun, 01 Jul 2018 11:48:08 -0700 (PDT)
+        Sun, 1 Jul 2018 12:11:35 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 756A0ACD;
+        Sun,  1 Jul 2018 16:11:34 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chris Leech <cleech@redhat.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 08/85] scsi: iscsi: respond to netlink with unicast when appropriate
+Date:   Sun,  1 Jul 2018 18:01:26 +0200
+Message-Id: <20180701153122.691303897@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
+References: <20180701153122.365061142@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a5d:480b:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 11:48:07 -0700 (PDT)
-In-Reply-To: <20180701160914.723817814@linuxfoundation.org>
-References: <20180701160908.272447118@linuxfoundation.org> <20180701160914.723817814@linuxfoundation.org>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Sun, 1 Jul 2018 20:48:07 +0200
-Message-ID: <CAFLxGvwxDRMUoJH-3NKefXS6YxL62DjxRDd-5e_ui5jjJAJiJQ@mail.gmail.com>
-Subject: Re: [PATCH 4.17 154/220] UBIFS: Fix potential integer overflow in allocation
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Silvio Cesare <silvio.cesare@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 6:22 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> 4.17-stable review patch.  If anyone has any objections, please let me know.
->
-> ------------------
->
-> From: Silvio Cesare <silvio.cesare@gmail.com>
->
-> commit 353748a359f1821ee934afc579cf04572406b420 upstream.
->
-> There is potential for the size and len fields in ubifs_data_node to be
-> too large causing either a negative value for the length fields or an
-> integer overflow leading to an incorrect memory allocation. Likewise,
-> when the len field is small, an integer underflow may occur.
->
-> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-> Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Guys, this patch was never on linux-mtd nor was I CC'ed.
-I don't see it so super security critical which argues to bypass the
-whole community review process.
+------------------
 
-Anyway, I don't like this patch for two reasons.
-1. Instead of doing the kmalloc_array() dance, just check whether size
-is 0 > and <= UBIFS_BLOCK_SIZE, in the caller.
-2. It will not apply to most stable kernels since it targets the code
-path with UBIFS encryption available.
+From: Chris Leech <cleech@redhat.com>
 
--- 
-Thanks,
-//richard
+[ Upstream commit af17092810a887178195276255b7b31f8fbe7dbe ]
+
+Instead of always multicasting responses, send a unicast netlink message
+directed at the correct pid.  This will be needed if we ever want to
+support multiple userspace processes interacting with the kernel over
+iSCSI netlink simultaneously.  Limitations can currently be seen if you
+attempt to run multiple iscsistart commands in parallel.
+
+We've fixed up the userspace issues in iscsistart that prevented
+multiple instances from running, so now attempts to speed up booting by
+bringing up multiple iscsi sessions at once in the initramfs are just
+running into misrouted responses that this fixes.
+
+Signed-off-by: Chris Leech <cleech@redhat.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/scsi_transport_iscsi.c |   29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -2343,6 +2343,12 @@ iscsi_multicast_skb(struct sk_buff *skb,
+ 	return nlmsg_multicast(nls, skb, 0, group, gfp);
+ }
+ 
++static int
++iscsi_unicast_skb(struct sk_buff *skb, u32 portid)
++{
++	return nlmsg_unicast(nls, skb, portid);
++}
++
+ int iscsi_recv_pdu(struct iscsi_cls_conn *conn, struct iscsi_hdr *hdr,
+ 		   char *data, uint32_t data_size)
+ {
+@@ -2545,14 +2551,11 @@ void iscsi_ping_comp_event(uint32_t host
+ EXPORT_SYMBOL_GPL(iscsi_ping_comp_event);
+ 
+ static int
+-iscsi_if_send_reply(uint32_t group, int seq, int type, int done, int multi,
+-		    void *payload, int size)
++iscsi_if_send_reply(u32 portid, int type, void *payload, int size)
+ {
+ 	struct sk_buff	*skb;
+ 	struct nlmsghdr	*nlh;
+ 	int len = nlmsg_total_size(size);
+-	int flags = multi ? NLM_F_MULTI : 0;
+-	int t = done ? NLMSG_DONE : type;
+ 
+ 	skb = alloc_skb(len, GFP_ATOMIC);
+ 	if (!skb) {
+@@ -2560,10 +2563,9 @@ iscsi_if_send_reply(uint32_t group, int
+ 		return -ENOMEM;
+ 	}
+ 
+-	nlh = __nlmsg_put(skb, 0, 0, t, (len - sizeof(*nlh)), 0);
+-	nlh->nlmsg_flags = flags;
++	nlh = __nlmsg_put(skb, 0, 0, type, (len - sizeof(*nlh)), 0);
+ 	memcpy(nlmsg_data(nlh), payload, size);
+-	return iscsi_multicast_skb(skb, group, GFP_ATOMIC);
++	return iscsi_unicast_skb(skb, portid);
+ }
+ 
+ static int
+@@ -3490,6 +3492,7 @@ static int
+ iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
+ {
+ 	int err = 0;
++	u32 portid;
+ 	struct iscsi_uevent *ev = nlmsg_data(nlh);
+ 	struct iscsi_transport *transport = NULL;
+ 	struct iscsi_internal *priv;
+@@ -3510,10 +3513,12 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
+ 	if (!try_module_get(transport->owner))
+ 		return -EINVAL;
+ 
++	portid = NETLINK_CB(skb).portid;
++
+ 	switch (nlh->nlmsg_type) {
+ 	case ISCSI_UEVENT_CREATE_SESSION:
+ 		err = iscsi_if_create_session(priv, ep, ev,
+-					      NETLINK_CB(skb).portid,
++					      portid,
+ 					      ev->u.c_session.initial_cmdsn,
+ 					      ev->u.c_session.cmds_max,
+ 					      ev->u.c_session.queue_depth);
+@@ -3526,7 +3531,7 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
+ 		}
+ 
+ 		err = iscsi_if_create_session(priv, ep, ev,
+-					NETLINK_CB(skb).portid,
++					portid,
+ 					ev->u.c_bound_session.initial_cmdsn,
+ 					ev->u.c_bound_session.cmds_max,
+ 					ev->u.c_bound_session.queue_depth);
+@@ -3684,6 +3689,8 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
+ static void
+ iscsi_if_rx(struct sk_buff *skb)
+ {
++	u32 portid = NETLINK_CB(skb).portid;
++
+ 	mutex_lock(&rx_queue_mutex);
+ 	while (skb->len >= NLMSG_HDRLEN) {
+ 		int err;
+@@ -3719,8 +3726,8 @@ iscsi_if_rx(struct sk_buff *skb)
+ 				break;
+ 			if (ev->type == ISCSI_UEVENT_GET_CHAP && !err)
+ 				break;
+-			err = iscsi_if_send_reply(group, nlh->nlmsg_seq,
+-				nlh->nlmsg_type, 0, 0, ev, sizeof(*ev));
++			err = iscsi_if_send_reply(portid, nlh->nlmsg_type,
++						  ev, sizeof(*ev));
+ 		} while (err < 0 && err != -ECONNREFUSED && err != -ESRCH);
+ 		skb_pull(skb, rlen);
+ 	}
+
+
