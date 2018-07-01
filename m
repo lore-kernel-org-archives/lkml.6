@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237D6C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC67C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D073B24E64
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D073B24E64
+	by mail.kernel.org (Postfix) with ESMTP id 6882724F35
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6882724F35
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752579AbeGAQLT (ORCPT
+        id S1752367AbeGAQLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:11:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59620 "EHLO
+        Sun, 1 Jul 2018 12:11:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752520AbeGAQLH (ORCPT
+        with ESMTP id S1752526AbeGAQLJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:11:07 -0400
+        Sun, 1 Jul 2018 12:11:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8D6EDAD8;
-        Sun,  1 Jul 2018 16:11:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A3FCAEF;
+        Sun,  1 Jul 2018 16:11:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 11/85] scsi: isci: Fix infinite loop in while loop
-Date:   Sun,  1 Jul 2018 18:01:29 +0200
-Message-Id: <20180701153122.808899386@linuxfoundation.org>
+Subject: [PATCH 3.18 12/85] net: phy: marvell: clear wol event before setting it
+Date:   Sun,  1 Jul 2018 18:01:30 +0200
+Message-Id: <20180701153122.845508836@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -51,42 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Jingju Hou <Jingju.Hou@synaptics.com>
 
-[ Upstream commit 4bc83b3f272fe8f36450f9c003df49cf07ffe5fd ]
+[ Upstream commit b6a930fa88083b41d26ddf1cab95cbd740936c22 ]
 
-In the case when the phy_mask is bitwise anded with the phy_index bit is
-zero the continue statement currently jumps to the next iteration of the
-while loop and phy_index is never actually incremented, potentially
-causing an infinite loop if phy_index is less than SCI_MAX_PHS. Fix this
-by turning the while loop into a for loop.
+If WOL event happened once, the LED[2] interrupt pin will not be
+cleared unless we read the CSISR register. If interrupts are in use,
+the normal interrupt handling will clear the WOL event. Let's clear the
+WOL event before enabling it if !phy_interrupt_is_valid().
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/isci/port_config.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/phy/marvell.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/scsi/isci/port_config.c
-+++ b/drivers/scsi/isci/port_config.c
-@@ -291,7 +291,7 @@ sci_mpc_agent_validate_phy_configuration
- 		 * Note: We have not moved the current phy_index so we will actually
- 		 *       compare the startting phy with itself.
- 		 *       This is expected and required to add the phy to the port. */
--		while (phy_index < SCI_MAX_PHYS) {
-+		for (; phy_index < SCI_MAX_PHYS; phy_index++) {
- 			if ((phy_mask & (1 << phy_index)) == 0)
- 				continue;
- 			sci_phy_get_sas_address(&ihost->phys[phy_index],
-@@ -311,7 +311,6 @@ sci_mpc_agent_validate_phy_configuration
- 					      &ihost->phys[phy_index]);
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -828,6 +828,15 @@ static int m88e1318_set_wol(struct phy_d
+ 		if (err < 0)
+ 			return err;
  
- 			assigned_phy_mask |= (1 << phy_index);
--			phy_index++;
- 		}
- 
- 	}
++		/* If WOL event happened once, the LED[2] interrupt pin
++		 * will not be cleared unless we reading the interrupt status
++		 * register. If interrupts are in use, the normal interrupt
++		 * handling will clear the WOL event. Clear the WOL event
++		 * before enabling it if !phy_interrupt_is_valid()
++		 */
++		if (!phy_interrupt_is_valid(phydev))
++			phy_read(phydev, MII_M1011_IEVENT);
++
+ 		/* Enable the WOL interrupt */
+ 		temp = phy_read(phydev, MII_88E1318S_PHY_CSIER);
+ 		temp |= MII_88E1318S_PHY_CSIER_WOL_EIE;
 
 
