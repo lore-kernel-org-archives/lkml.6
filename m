@@ -2,235 +2,183 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17F8C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31A2C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46762502F
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46762502F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 613C825137
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:09:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="McfENyoO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613C825137
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752433AbeGALJN (ORCPT
+        id S1752492AbeGALJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:09:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47844 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752293AbeGALJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:09:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77AE8AF53;
-        Sun,  1 Jul 2018 11:08:59 +0000 (UTC)
-From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To:     netdev@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        =?UTF-8?q?Michael=20R=C3=B6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC net-next 08/15] net: lora: sx1276: Add debugfs
-Date:   Sun,  1 Jul 2018 13:07:57 +0200
-Message-Id: <20180701110804.32415-9-afaerber@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180701110804.32415-1-afaerber@suse.de>
-References: <20180701110804.32415-1-afaerber@suse.de>
+        Sun, 1 Jul 2018 07:09:38 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54341 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752454AbeGALJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 07:09:31 -0400
+Received: by mail-wm0-f67.google.com with SMTP id i139-v6so6199532wmf.4
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bEYxk2/Sj8wF7WB1h2C5VHsjJDjktkateFboi+DxH+4=;
+        b=McfENyoOfmpV0g6CkFU28k1mVZ5C4rV0hL4IQM0VicI5M5rgaAQ6L7LvLqyuC3LSgy
+         s+tswJMV7Z++SvOypKjPzYBEXtrsE/GhNtUJaf01dUrbTiC4NIOGLOeV6gUlUf3VwE38
+         Bebssioh8fqr5NNROvHr0e0a2fkQDpWBbbSF0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bEYxk2/Sj8wF7WB1h2C5VHsjJDjktkateFboi+DxH+4=;
+        b=FsBd8DW0jvYcEyAUCOWyqS/Kq6wPilvUUwaKbLZXPbOI2hEoVOh/giO5PvoPDcEz2b
+         03DHonroiwUhBZDyvlP9ykF6yiFHhwOdyJUH6C4bPAVdABGHdgvZ0koUEvDyUEM+jM3o
+         HvVCgNZrhMa15xQ/QQgVvbNvTFRtVEgLator5a/oFm6YQwfdyxaoBIlhmJ4SBAz+mb8j
+         iMX8aS2YoGzDqvRoHqNuQPUXMZtBZ5Iq3yz9p1AcDVo+YUzrHiQP5SP6It4IXc/Eb2An
+         WRAHEOgAIiQOkzAL1b04gD65dR31B5fAM09GeGLzpO6bFxTnJoHy+RuDaRahnhO9FsV7
+         jWRg==
+X-Gm-Message-State: APt69E1upRsxFIo9Xd+h3/A+UF3BGGBAxaVS2bF/o+7RqmABGG7XRDD2
+        J7JZRk2IrcfcPeGhC0KUOkrEOg==
+X-Google-Smtp-Source: AAOMgpfb+4G4K0JPcS4kIrYAlydtICyA7z2b9/PDhJIsboL8qMC8CLTPY9W7HBdmyYpUVTgX4oUIZA==
+X-Received: by 2002:a1c:944e:: with SMTP id w75-v6mr5510151wmd.105.1530443370094;
+        Sun, 01 Jul 2018 04:09:30 -0700 (PDT)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id e13-v6sm2367786wrd.9.2018.07.01.04.09.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Jul 2018 04:09:27 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH v5 1/8] interconnect: Add generic on-chip interconnect API
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        mturquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        daidavid1@codeaurora.org, Evan Green <evgreen@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        abailon@baylibre.com, linux-kernel <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org
+References: <20180620121141.15403-1-georgi.djakov@linaro.org>
+ <20180620121141.15403-2-georgi.djakov@linaro.org>
+ <CAKfTPtBApjf9rhJm3paeXdgbVG50ALeun=zMUddc-f+RnrvkqQ@mail.gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <730fac43-e99f-e4bd-bc40-eddeb8338e6e@linaro.org>
+Date:   Sun, 1 Jul 2018 14:09:26 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAKfTPtBApjf9rhJm3paeXdgbVG50ALeun=zMUddc-f+RnrvkqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow some interactive inspection at runtime via debugfs.
+Hi Vincent,
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- drivers/net/lora/sx1276.c | 132 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+On 27.06.18 г. 9:19, Vincent Guittot wrote:
+> Hi Georgi
+> 
+> On Wed, 20 Jun 2018 at 14:11, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> 
+> [snip]
+> 
+>> +
+>> +static struct icc_path *path_allocate(struct icc_node *dst, ssize_t num_nodes)
+>> +{
+>> +       struct icc_node *node = dst;
+>> +       struct icc_path *path;
+>> +       size_t i;
+>> +
+>> +       path = kzalloc(sizeof(*path) + num_nodes * sizeof(*path->reqs),
+> 
+> Should be (num_nodes -1) * sizeof(*path->reqs) as there is already 1
+> icc_req in icc_path struct
 
-diff --git a/drivers/net/lora/sx1276.c b/drivers/net/lora/sx1276.c
-index d6732111247a..1072019cfcc1 100644
---- a/drivers/net/lora/sx1276.c
-+++ b/drivers/net/lora/sx1276.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2016-2018 Andreas Färber
-  */
- 
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/lora.h>
- #include <linux/module.h>
-@@ -61,6 +62,8 @@ struct sx1276_priv {
- 
- 	struct workqueue_struct *wq;
- 	struct work_struct tx_work;
-+
-+	struct dentry *debugfs;
- };
- 
- static int sx1276_read_single(struct spi_device *spi, u8 reg, u8 *val)
-@@ -416,6 +419,128 @@ static const struct net_device_ops sx1276_netdev_ops =  {
- 	.ndo_start_xmit = sx1276_loradev_start_xmit,
- };
- 
-+static ssize_t sx1276_freq_read(struct file *file, char __user *user_buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	struct net_device *netdev = file->private_data;
-+	struct sx1276_priv *priv = netdev_priv(netdev);
-+	struct spi_device *spi = priv->spi;
-+	ssize_t size;
-+	char *buf;
-+	int ret;
-+	u8 msb, mid, lsb;
-+	u32 freq_xosc;
-+	unsigned long long frf;
-+
-+	ret = of_property_read_u32(spi->dev.of_node, "clock-frequency", &freq_xosc);
-+	if (ret)
-+		return 0;
-+
-+	mutex_lock(&priv->spi_lock);
-+
-+	ret = sx1276_read_single(spi, REG_FRF_MSB, &msb);
-+	if (!ret)
-+		ret = sx1276_read_single(spi, REG_FRF_MID, &mid);
-+	if (!ret)
-+		ret = sx1276_read_single(spi, REG_FRF_LSB, &lsb);
-+
-+	mutex_unlock(&priv->spi_lock);
-+
-+	if (ret)
-+		return 0;
-+
-+	frf = freq_xosc;
-+	frf *= ((ulong)msb << 16) | ((ulong)mid << 8) | lsb;
-+	frf /= (1 << 19);
-+
-+	buf = kasprintf(GFP_KERNEL, "%llu\n", frf);
-+	if (!buf)
-+		return 0;
-+
-+	size = simple_read_from_buffer(user_buf, count, ppos, buf, strlen(buf));
-+	kfree(buf);
-+
-+	return size;
-+}
-+
-+static const struct file_operations sx1276_freq_fops = {
-+	.owner = THIS_MODULE,
-+	.open = simple_open,
-+	.read = sx1276_freq_read,
-+};
-+
-+static ssize_t sx1276_state_read(struct file *file, char __user *user_buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	struct net_device *netdev = file->private_data;
-+	struct sx1276_priv *priv = netdev_priv(netdev);
-+	struct spi_device *spi = priv->spi;
-+	ssize_t size;
-+	char *buf;
-+	int len = 0;
-+	int ret;
-+	u8 val;
-+	bool lora_mode = true;
-+	const int max_len = 4096;
-+
-+	buf = kzalloc(max_len, GFP_KERNEL);
-+	if (!buf)
-+		return 0;
-+
-+	mutex_lock(&priv->spi_lock);
-+
-+	ret = sx1276_read_single(spi, REG_OPMODE, &val);
-+	if (!ret) {
-+		len += snprintf(buf + len, max_len - len, "RegOpMode = 0x%02x\n", val);
-+		lora_mode = (val & REG_OPMODE_LONG_RANGE_MODE) != 0;
-+	}
-+
-+	ret = sx1276_read_single(spi, REG_FRF_MSB, &val);
-+	if (!ret)
-+		len += snprintf(buf + len, max_len - len, "RegFrMsb = 0x%02x\n", val);
-+	ret = sx1276_read_single(spi, REG_FRF_MID, &val);
-+	if (!ret)
-+		len += snprintf(buf + len, max_len - len, "RegFrMid = 0x%02x\n", val);
-+	ret = sx1276_read_single(spi, REG_FRF_LSB, &val);
-+	if (!ret)
-+		len += snprintf(buf + len, max_len - len, "RegFrLsb = 0x%02x\n", val);
-+
-+	ret = sx1276_read_single(spi, REG_PA_CONFIG, &val);
-+	if (!ret)
-+		len += snprintf(buf + len, max_len - len, "RegPaConfig = 0x%02x\n", val);
-+
-+	if (lora_mode) {
-+		ret = sx1276_read_single(spi, LORA_REG_IRQ_FLAGS_MASK, &val);
-+		if (!ret)
-+			len += snprintf(buf + len, max_len - len, "RegIrqFlagsMask = 0x%02x\n", val);
-+
-+		ret = sx1276_read_single(spi, LORA_REG_IRQ_FLAGS, &val);
-+		if (!ret)
-+			len += snprintf(buf + len, max_len - len, "RegIrqFlags = 0x%02x\n", val);
-+
-+		ret = sx1276_read_single(spi, LORA_REG_SYNC_WORD, &val);
-+		if (!ret)
-+			len += snprintf(buf + len, max_len - len, "RegSyncWord = 0x%02x\n", val);
-+	}
-+
-+	ret = sx1276_read_single(spi, REG_PA_DAC, &val);
-+	if (!ret)
-+		len += snprintf(buf + len, max_len - len, "RegPaDac = 0x%02x\n", val);
-+
-+	mutex_unlock(&priv->spi_lock);
-+
-+	size = simple_read_from_buffer(user_buf, count, ppos, buf, len);
-+	kfree(buf);
-+
-+	return size;
-+}
-+
-+static const struct file_operations sx1276_state_fops = {
-+	.owner = THIS_MODULE,
-+	.open = simple_open,
-+	.read = sx1276_state_read,
-+};
-+
- static int sx1276_probe(struct spi_device *spi)
- {
- 	struct net_device *netdev;
-@@ -566,6 +691,10 @@ static int sx1276_probe(struct spi_device *spi)
- 		return ret;
- 	}
- 
-+	priv->debugfs = debugfs_create_dir(dev_name(&spi->dev), NULL);
-+	debugfs_create_file("state", S_IRUGO, priv->debugfs, netdev, &sx1276_state_fops);
-+	debugfs_create_file("frequency", S_IRUGO, priv->debugfs, netdev, &sx1276_freq_fops);
-+
- 	dev_info(&spi->dev, "SX1276 module probed (SX%d)", model);
- 
- 	return 0;
-@@ -574,6 +703,9 @@ static int sx1276_probe(struct spi_device *spi)
- static int sx1276_remove(struct spi_device *spi)
- {
- 	struct net_device *netdev = spi_get_drvdata(spi);
-+	struct sx1276_priv *priv = netdev_priv(netdev);
-+
-+	debugfs_remove_recursive(priv->debugfs);
- 
- 	unregister_loradev(netdev);
- 	free_loradev(netdev);
--- 
-2.16.4
+reqs[] is a flexible array member and it's size is not included in
+sizeof(*path)
+
+Thanks,
+Georgi
+
+>> +                      GFP_KERNEL);
+>> +       if (!path)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       path->num_nodes = num_nodes;
+>> +
+>> +       for (i = 0; i < num_nodes; i++) {
+>> +               hlist_add_head(&path->reqs[i].req_node, &node->req_list);
+>> +
+>> +               path->reqs[i].node = node;
+>> +               /* reference to previous node was saved during path traversal */
+>> +               node = node->reverse;
+>> +       }
+>> +
+>> +       return path;
+>> +}
+>> +
+> 
+> [snip]
+> 
 
