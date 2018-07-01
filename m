@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBBEC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8C4C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8130124F91
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:11:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8130124F91
+	by mail.kernel.org (Postfix) with ESMTP id 2528E24FA5
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:12:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2528E24FA5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752771AbeGAQLu (ORCPT
+        id S1752826AbeGAQL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:11:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59786 "EHLO
+        Sun, 1 Jul 2018 12:11:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752734AbeGAQLn (ORCPT
+        with ESMTP id S1752734AbeGAQLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:11:43 -0400
+        Sun, 1 Jul 2018 12:11:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E907AEF;
-        Sun,  1 Jul 2018 16:11:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9DC786D;
+        Sun,  1 Jul 2018 16:11:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacek Tomaka <jacek.tomaka@poczta.fm>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org,
+        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
+        linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 16/85] x86/cpu/intel: Add missing TLB cpuid values
-Date:   Sun,  1 Jul 2018 18:01:34 +0200
-Message-Id: <20180701153122.999005905@linuxfoundation.org>
+Subject: [PATCH 3.18 27/85] can: dev: increase bus-off message severity
+Date:   Sun,  1 Jul 2018 18:01:45 +0200
+Message-Id: <20180701153123.451550070@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153122.365061142@linuxfoundation.org>
 References: <20180701153122.365061142@linuxfoundation.org>
@@ -51,42 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "jacek.tomaka@poczta.fm" <jacek.tomaka@poczta.fm>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
 
-[ Upstream commit b837913fc2d9061bf9b8c0dd6bf2d24e2f98b84a ]
+[ Upstream commit 71c23a821c6bcacba71a094efe49ee689605906b ]
 
-Make kernel print the correct number of TLB entries on Intel Xeon Phi 7210
-(and others)
+bus-off is usually caused by hardware malfunction or configuration error
+(baud rate mismatch) and causes a complete loss of communication.
 
-Before:
-[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
-After:
-[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
+Increase the "bus-off" message's severity from netdev_dbg() to
+netdev_info() to make it visible to the user.
 
-The entries do exist in the official Intel SMD but the type column there is
-incorrect (states "Cache" where it should read "TLB"), but the entries for
-the values 0x6B, 0x6C and 0x6D are correctly described as 'Data TLB'.
+A can interface going into bus-off is similar in severity to ethernet's
+"Link is Down" message, which is also printed at info level.
 
-Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20180423161425.24366-1-jacekt@dugeo.com
+It is debatable whether the the "restarted" message should also be
+changed to netdev_info() to make the interface state changes
+comprehensible from the kernel log. I have chosen to keep the
+"restarted" message at dbg for now as the "bus-off" message should be
+enough for the user to notice and investigate the problem.
+
+Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/intel.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/can/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -561,6 +561,9 @@ static const struct _tlb_table intel_tlb
- 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
- 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
- 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
-+	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
-+	{ 0x6c, TLB_DATA_2M_4M,		128,	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
-+	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
- 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
- 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
- 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -471,7 +471,7 @@ void can_bus_off(struct net_device *dev)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+ 
+-	netdev_dbg(dev, "bus-off\n");
++	netdev_info(dev, "bus-off\n");
+ 
+ 	netif_carrier_off(dev);
+ 	priv->can_stats.bus_off++;
 
 
