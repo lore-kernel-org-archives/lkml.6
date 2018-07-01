@@ -6,73 +6,71 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88908C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2E9C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F934224BE
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13FFD23FDF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 11:06:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G3l4isAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F934224BE
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kfrr42Jx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13FFD23FDF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeGALDl (ORCPT
+        id S1752239AbeGALG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 07:03:41 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56256 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751898AbeGALDf (ORCPT
+        Sun, 1 Jul 2018 07:06:26 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36066 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeGALGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 07:03:35 -0400
-Received: by mail-wm0-f67.google.com with SMTP id v16-v6so6215359wmv.5
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:03:34 -0700 (PDT)
+        Sun, 1 Jul 2018 07:06:23 -0400
+Received: by mail-wr0-f194.google.com with SMTP id f16-v6so12754383wrm.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 04:06:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wNO1iYcC3jHlCRNPYU+bxs5qdUvnsEO2PB3LDglSrsA=;
-        b=G3l4isAlN8eaV7JCvwKx+6CWyoLuBP2NufpQlVJywGNuUZ5UMj2YJLMKngjlp9qRVy
-         kNIQBLioEtjjGzp9sKGI7KxLhnh33vD+x5qMEs3z41LoTrRH2HDXk5V24pTqqGARJtKu
-         X4jusX6xOnLhwAB2al1EcPrmK3h62HvJ8mxIU=
+        bh=CLP/KKVFFp2FTMGRhrgcns4AGOYTBWZfsdsyTXwXp1o=;
+        b=kfrr42JxpMbR+IwbHVpQM9ofqErwGhMQs7qKkQSkkV35tYDAB9X4mU+JFX7r5dui9X
+         ykPE7shsVSWFftJJU9GvBLKMIR6guvB+v0K+wm4bfS3nXf6Ij8lHP8h2ZxIv97NZNh+6
+         R1vitoVAkFELI0PF1NrXy+bPDyLoSbLwb/vwc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
          :message-id:date:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wNO1iYcC3jHlCRNPYU+bxs5qdUvnsEO2PB3LDglSrsA=;
-        b=sL/JZ3nGPNlWGjF50Iv08uPIEKB+fGe55Ak2ixLLDAeyB4xF32tNfGHZnuqC2kQbN5
-         +Ko3QC6g4dPSPN6V+REANuSNDAmr2GsBcZuzj+ag7vb25X4g8RzN4Lw+WjuoJeMjpxZY
-         JOCb/WbY5euHx0aZNDnJN+VXIaNkz/E5Xq02MqW5QFnLfHKdYUJC9S+CEhxB4XZXYZh+
-         J6fH3SVEHucBKOFi3ratJdLNuUo7TH8KXjXn4uuvyIUDwraPJfxpfasujC7ECfQUwTM1
-         Kl4UBeh+SIu+E5ENr+7xalEQgJDhyCpqdO9vvkJCXVFwUSnUlEigCdZH2qSHcAMgMFD4
-         WGHw==
-X-Gm-Message-State: APt69E0s8Z0M0DFT/re/R4/wMs9tc3RmKMUyA+bCv1jP2S2OeGzSHkhl
-        wCpA7iUmYNrMwfkTEI/BsRnm1WLdlFo=
-X-Google-Smtp-Source: AAOMgpesxt6nXtqMCpScqtQXwkwO8GAuPdyvLjZMxUizFGJ9zMld0MI+H6pxZOjhq1iw8QJi7mYmpQ==
-X-Received: by 2002:a1c:5cd:: with SMTP id 196-v6mr1091698wmf.114.1530443014096;
-        Sun, 01 Jul 2018 04:03:34 -0700 (PDT)
+        bh=CLP/KKVFFp2FTMGRhrgcns4AGOYTBWZfsdsyTXwXp1o=;
+        b=SajlP19aK4WT7r9FxdV6rPEuSls2pdnEg59D/oS9WgXs2A2AxBYc4Df3FYZFA4JDQS
+         52MebzUx7LW5ulWp/0zFIaHo3x6t+jAcC4tvyiBqTKkLOV0pfGzLyKj5aAVw2T9rRwVo
+         UO0JlHmGygp3Ibv9OwuW7Jz+8qx53h0QDV6dW4lQtG0e5UXq+JGZKfXYVnpUDtFNa+MV
+         a6jIOMQiAPEh55LUEt8k9ZrocNERP8WTWLKcicEg9bxXVhGZf4aUZITdDEvcyCh5nsvL
+         dhKpWCdhLnNRIAH2lBc54K8cHCvxw1fVfWZdq/Ta5ve2jQYK2AP9yIDDttPsQkdmKF7c
+         jdOw==
+X-Gm-Message-State: APt69E1uJsOyDwu2MD00C34AvIxbppQJ/0Sx+sDSP6wk4NcVQC/ypbWB
+        i0e4+67OmEh8wAZrsYx26qH/uQ==
+X-Google-Smtp-Source: AAOMgpdsggB2CdmpGZFL55nVknVfHPCxnKMGXpRW468/VYCeArjhvAXktsq/1GPEwSU1NqqbYdimFA==
+X-Received: by 2002:adf:9736:: with SMTP id r51-v6mr16424536wrb.5.1530443182547;
+        Sun, 01 Jul 2018 04:06:22 -0700 (PDT)
 Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id c7-v6sm11514269wre.73.2018.07.01.04.03.32
+        by smtp.googlemail.com with ESMTPSA id y13-v6sm9148278wrc.55.2018.07.01.04.06.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 04:03:33 -0700 (PDT)
+        Sun, 01 Jul 2018 04:06:21 -0700 (PDT)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 Subject: Re: [PATCH v5 1/8] interconnect: Add generic on-chip interconnect API
-To:     Evan Green <evgreen@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        khilman@baylibre.com, Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org, bjorn.andersson@linaro.org,
         amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, abailon@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
+        daidavid1@codeaurora.org, evgreen@chromium.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        abailon@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 References: <20180620121141.15403-1-georgi.djakov@linaro.org>
  <20180620121141.15403-2-georgi.djakov@linaro.org>
- <CAE=gft4sSdFL7J27WdTuYCtfLPAyv8xOAizYhmtfK5UkTbP5-A@mail.gmail.com>
+ <20180626233427.GR129942@google.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
@@ -117,10 +115,10 @@ Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
  7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
  E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
  KEmKjLDvB0pePJkdTw==
-Message-ID: <891a2332-8744-bd64-4a0b-047e8a71ab38@linaro.org>
-Date:   Sun, 1 Jul 2018 14:03:32 +0300
+Message-ID: <d52877d2-359f-6c79-01b9-739d0b2733ef@linaro.org>
+Date:   Sun, 1 Jul 2018 14:06:21 +0300
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft4sSdFL7J27WdTuYCtfLPAyv8xOAizYhmtfK5UkTbP5-A@mail.gmail.com>
+In-Reply-To: <20180626233427.GR129942@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -129,311 +127,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+Hi Matthias,
 
 Thanks for reviewing!
 
-On 06/26/2018 11:57 PM, Evan Green wrote:
-> Hi Georgi. Thanks for the new spin of this.
+On 06/27/2018 02:34 AM, Matthias Kaehlcke wrote:
+> Hi Georgi,
 > 
-> On Wed, Jun 20, 2018 at 5:11 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->>
+> On Wed, Jun 20, 2018 at 03:11:34PM +0300, Georgi Djakov wrote:
 >> This patch introduce a new API to get requirements and configure the
->> interconnect buses across the entire chipset to fit with the current
->> demand.
->>
->> The API is using a consumer/provider-based model, where the providers are
->> the interconnect buses and the consumers could be various drivers.
->> The consumers request interconnect resources (path) between endpoints and
->> set the desired constraints on this data flow path. The providers receive
->> requests from consumers and aggregate these requests for all master-slave
->> pairs on that path. Then the providers configure each participating in the
->> topology node according to the requested data flow path, physical links and
->> constraints. The topology could be complicated and multi-tiered and is SoC
->> specific.
+> 
+> nit: s/introduce/introduces/
+
+Thanks!
 
 [..]
 
+>> +	if (found) {
+>> +		struct icc_path *path = path_allocate(dst, depth);
 >> +
->> +static struct icc_node *node_find(const int id)
+>> +		if (IS_ERR(path))
+>> +			return path;
+>> +
+>> +		/* initialize the path */
+>> +		for (i = 0; i < path->num_nodes; i++) {
+>> +			node = path->reqs[i].node;
+>> +			path->reqs[i].dev = dev;
+>> +			node->provider->users++;
+> 
+> nit: doing the assignment of path->reqs[i].dev before assiging 'node'
+> or after incrementing the 'users' would slightly improve readability.
+
+Ok, will re-factor this a bit.
+
+>> +static int apply_constraints(struct icc_path *path)
 >> +{
->> +       struct icc_node *node;
+>> +	struct icc_node *next, *prev = NULL;
+>> +	int ret = 0;
+>> +	int i;
 >> +
->> +       mutex_lock(&icc_lock);
->> +       node = idr_find(&icc_idr, id);
->> +       mutex_unlock(&icc_lock);
+>> +	for (i = 0; i < path->num_nodes; i++, prev = next) {
+>> +		struct icc_provider *p;
+>> +
+>> +		next = path->reqs[i].node;
+>> +		/*
+>> +		 * Both endpoints should be valid master-slave pairs of the
+>> +		 * same interconnect provider that will be configured.
+>> +		 */
+>> +		if (!prev || next->provider != prev->provider)
+>> +			continue;
+>> +
+>> +		p = next->provider;
+>> +
+>> +		aggregate_provider(p);
+>> +
+>> +		if (p->set) {
+>> +			/* set the constraints */
+>> +			ret = p->set(prev, next, p->avg_bw, p->peak_bw);
+>> +		}
 > 
-> I wonder if this is too low of a level to be dealing with the lock. I
-> notice that everywhere you use this function, you afterwards
-> immediately grab the lock and do more stuff. Maybe this function
-> should have a comment saying it assumes the lock is already held, and
-> then you can grab the lock in the callers, since you're doing that
-> anyway.
+> remove curly brackets
+> 
+> EDIT: actually the condition can be removed, icc_provider_add() fails
+> when p->set is NULL.
 
-Ok, will try to do better next time.
+Agree!
 
->> +
->> +       return node;
->> +}
->> +
->> +static struct icc_path *path_allocate(struct icc_node *dst, ssize_t num_nodes)
+> 
+>> +int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
 >> +{
->> +       struct icc_node *node = dst;
->> +       struct icc_path *path;
->> +       size_t i;
->> +
->> +       path = kzalloc(sizeof(*path) + num_nodes * sizeof(*path->reqs),
->> +                      GFP_KERNEL);
->> +       if (!path)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       path->num_nodes = num_nodes;
->> +
->> +       for (i = 0; i < num_nodes; i++) {
->> +               hlist_add_head(&path->reqs[i].req_node, &node->req_list);
->> +
->> +               path->reqs[i].node = node;
->> +               /* reference to previous node was saved during path traversal */
->> +               node = node->reverse;
->> +       }
->> +
->> +       return path;
->> +}
->> +
->> +static struct icc_path *path_find(struct device *dev, struct icc_node *src,
->> +                                 struct icc_node *dst)
->> +{
+>> +	struct icc_node *node;
+>> +	struct icc_provider *p;
+>> +	size_t i;
+>> +	int ret = 0;
 > 
-> I personally prefer a comment somewhere indicating that this function
-> assumes icc_lock is already held. Not sure if that's conventional or
-> not.
+> initialization is not necessary
 > 
-
-Right, Rob and Matthias have also provided useful feedback on this! Thanks!
-
-[..]
-
->> +       /* reset the traversed state */
->> +       list_for_each_entry(provider, &icc_provider_list, provider_list) {
->> +               list_for_each_entry(n, &provider->nodes, node_list)
->> +                       if (n->is_traversed)
->> +                               n->is_traversed = false;
-> 
-> Remove the conditional, just set is_traversed to false.
-> 
-
-Agree.
-
->> +       }
->> +
->> +       if (found) {
->> +               struct icc_path *path = path_allocate(dst, depth);
-> 
-> Is the path supposed to include the source? For instance, if the dst
-> were a neighbor, depth would be one, so only dst would be in the path.
-> It seems like it might be worthwhile to have the source in there too.
-
-Agree that it would be logical to include the complete path. Will fix
-the depth.
-
->> +
->> +               if (IS_ERR(path))
->> +                       return path;
->> +
->> +               /* initialize the path */
->> +               for (i = 0; i < path->num_nodes; i++) {
->> +                       node = path->reqs[i].node;
->> +                       path->reqs[i].dev = dev;
->> +                       node->provider->users++;
-> 
-> Should this loop live inside path_allocate? I'm unsure, but maybe at
-> least path->reqs[i].dev = dev, since it feels like standard
-> initialization of the path.
-> 
-
-Ok, will move it and also change the function name from path_allocate()
-to path_init().
-
->> +
->> +/**
->> + * icc_put() - release the reference to the icc_path
->> + * @path: interconnect path
->> + *
->> + * Use this function to release the constraints on a path when the path is
->> + * no longer needed. The constraints will be re-aggregated.
->> + */
->> +void icc_put(struct icc_path *path)
->> +{
->> +       struct icc_node *node;
->> +       size_t i;
->> +       int ret;
->> +
->> +       if (!path || WARN_ON_ONCE(IS_ERR(path)))
-> 
-> Why only once?
-> 
-
-Will change to WARN_ON.
-
-[..]
-
->> +void icc_node_remove(int id)
->> +{
->> +       struct icc_node *node;
->> +
->> +       node = node_find(id);
->> +       if (node) {
->> +               mutex_lock(&icc_lock);
->> +               idr_remove(&icc_idr, node->id);
-> 
-> Should we throw a warning if there are any paths that go through this
-> node (ie req_list is non-empty)?
-> 
-
-Sounds good, will do it.
->> +               mutex_unlock(&icc_lock);
->> +       }
->> +
->> +       kfree(node);
->> +}
->> +EXPORT_SYMBOL_GPL(icc_node_remove);
-
-[..]
-
->> +/**
->> + * icc_link_remove() - remove a link between two nodes
->> + * @src: pointer to source node
->> + * @dst: pointer to destination node
->> + *
->> + * Return: 0 on success, or an error code otherwise
->> + */
->> +int icc_link_remove(struct icc_node *src, struct icc_node *dst)
->> +{
->> +       struct icc_node **new;
->> +       int ret = 0;
->> +       int i, j;
->> +
->> +       if (IS_ERR_OR_NULL(src))
->> +               return PTR_ERR(src);
->> +
->> +       if (IS_ERR_OR_NULL(dst))
->> +               return PTR_ERR(dst);
-> 
-> I wonder if we should return a fixed error in these cases like
-> -EINVAL, rather than handing through whatever crazy value is in
-> src/dst.
-
-Ok, agree.
-
->> +
->> +       mutex_lock(&icc_lock);
->> +
->> +       new = krealloc(src->links,
->> +                      (src->num_links - 1) * sizeof(*src->links),
->> +                      GFP_KERNEL);
->> +       if (!new) {
->> +               ret = -ENOMEM;
->> +               goto out;
->> +       }
->> +
->> +       for (i = 0, j = 0; j < src->num_links; j++) {
->> +               if (src->links[j] == dst)
->> +                       continue;
->> +
->> +               new[i++] = src->links[j];
->> +       }
->> +
->> +       src->links = new;
->> +       src->num_links--;
-> 
-> My understanding is that once you call realloc and it succeeds, you
-> must assume your old memory is gone and your new memory is only as big
-> as the new size you request. So you shouldn't call krealloc until
-> you've fixed the array up. Is the order of the links array important?
-> If not, you could just take the element at the end and stick it in the
-> slot that's being deleted. Then decrease the size and do your realloc.
-
-Sorry, this was obviously untested. Your suggestions is good.
-
-[..]
-
->> +
->> +/**
->> + * icc_provider_del() - delete previously added interconnect provider
->> + * @icc_provider: the interconnect provider that will be removed from topology
->> + *
->> + * Return: 0 on success, or an error code otherwise
->> + */
->> +int icc_provider_del(struct icc_provider *provider)
->> +{
->> +       mutex_lock(&icc_lock);
->> +       if (provider->users) {
->> +               pr_warn("interconnect provider still has %d users\n",
->> +                       provider->users);
->> +               mutex_unlock(&icc_lock);
->> +               return -EBUSY;
->> +       }
->> +
->> +       if (!list_empty_careful(&provider->nodes)) {
->> +               pr_warn("interconnect provider still has nodes\n");
->> +               mutex_unlock(&icc_lock);
->> +               return -EEXIST;
-> 
-> How come you're returning different error codes for these two cases?
-> The error in both cases is effectively "you failed to clean up after
-> yourself", so maybe EBUSY makes sense for both of them. The pr_warn
-> helps to differentiate between the two for debugging.
 
 Ok.
 
->> +       }
->> +
->> +       list_del(&provider->provider_list);
->> +       mutex_unlock(&icc_lock);
->> +
->> +       return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(icc_provider_del);
->> +
-
-[..]
-
->> +struct icc_node {
->> +       int                     id;
->> +       const char              *name;
->> +       struct icc_node         **links;
->> +       size_t                  num_links;
->> +
->> +       struct icc_provider     *provider;
->> +       struct list_head        node_list;
->> +       struct list_head        orphan_list;
-> 
-> Is this used?
-
-Ah, I thought I had already removed it!
-
->> +       struct list_head        search_list;
->> +       struct icc_node         *reverse;
->> +       bool                    is_traversed;
->> +       struct hlist_head       req_list;
->> +       u32                     avg_bw;
->> +       u32                     peak_bw;
->> +       void                    *data;
->> +};
->> +
-
-[..]
-
->> +static inline int icc_set(struct icc_path *path, u32 avg_bw, u32 peak_bw)
+>> +struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
 >> +{
->> +       return 0;
+>> +	struct icc_node *src, *dst;
+>> +	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
+>> +
+>> +	src = node_find(src_id);
+>> +	if (!src) {
+>> +		dev_err(dev, "%s: invalid src=%d\n", __func__, src_id);
+>> +		goto out;
+>> +	}
+>> +
+>> +	dst = node_find(dst_id);
+>> +	if (!dst) {
+>> +		dev_err(dev, "%s: invalid dst=%d\n", __func__, dst_id);
+>> +		goto out;
+>> +	}
+>> +
+>> +	mutex_lock(&icc_lock);
+>> +	path = path_find(dev, src, dst);
+>> +	mutex_unlock(&icc_lock);
+>> +	if (IS_ERR(path)) {
+>> +		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
+>> +		goto out;
 > 
-> I was originally going to suggest that this should return a failure.
-> Then I talked myself out of it, saying that if the interconnect
-> framework is not compiled in, then clients should assume all their bus
-> needs are already met. I guess this is the correct assumption?
+> this goto isn't really needed
 
-Yes, exactly!
+Ok.
+
+>> +struct icc_node *icc_node_create(int id)
+>> +{
+>> +	struct icc_node *node;
+>> +
+>> +	/* check if node already exists */
+>> +	node = node_find(id);
+>> +	if (node)
+>> +		goto out;
+>> +
+>> +	node = kzalloc(sizeof(*node), GFP_KERNEL);
+>> +	if (!node) {
+>> +		node = ERR_PTR(-ENOMEM);
+>> +		goto out;
+>> +	}
+>> +
+>> +	mutex_lock(&icc_lock);
+>> +
+>> +	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
+>> +	if (WARN(id < 0, "couldn't get idr")) {
+> 
+> kfree(node);
+
+Thanks!
+
+>> +int icc_node_add(struct icc_node *node, struct icc_provider *provider)
+>> +{
+>> +	mutex_lock(&icc_lock);
+>> +
+>> +	node->provider = provider;
+>> +	list_add(&node->node_list, &provider->nodes);
+>> +
+>> +	mutex_unlock(&icc_lock);
+>> +
+>> +	return 0;
+>> +}
+> 
+> The function returns always 0. Should probably be void so callers
+> don't add pointless checks of the return value.
+
+Agree, will change it!
+
+>> +int icc_provider_add(struct icc_provider *provider)
+>> +{
+>> +	if (WARN_ON(!provider->set))
+>> +		return -EINVAL;
+>> +
+>> +	mutex_init(&icc_lock);
+> 
+> Shouldn't this be mutex_lock()?
+
+Yes, right!
+
+>> +int icc_provider_del(struct icc_provider *provider)
+>> +{
+>> +	mutex_lock(&icc_lock);
+>> +	if (provider->users) {
+>> +		pr_warn("interconnect provider still has %d users\n",
+>> +			provider->users);
+>> +		mutex_unlock(&icc_lock);
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	if (!list_empty_careful(&provider->nodes)) {
+>> +		pr_warn("interconnect provider still has nodes\n");
+>> +		mutex_unlock(&icc_lock);
+>> +		return -EEXIST;
+>> +	}
+> 
+> Could this be just list_empty()? If I didn't miss something icc_lock
+> is held in all paths that change p->nodes (assuming that all changes
+> should be done through the interfaces in this file).
+
+It could be. Will update it. I just always want to be careful!
+
+> Actually this check will always fail if icc_node_add() was called for
+> this provider, it doesn't seem nodes are ever removed.
+> 
+
+The provider driver is responsible for the node removal.
 
 Thanks,
 Georgi
