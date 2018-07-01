@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9EEC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D639C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0521252F9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0521252F9
+	by mail.kernel.org (Postfix) with ESMTP id 34B68252FF
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B68252FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031253AbeGAQgV (ORCPT
+        id S1031267AbeGAQg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:36:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35958 "EHLO
+        Sun, 1 Jul 2018 12:36:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031237AbeGAQgR (ORCPT
+        with ESMTP id S1031237AbeGAQgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:36:17 -0400
+        Sun, 1 Jul 2018 12:36:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9E7C49B;
-        Sun,  1 Jul 2018 16:36:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2735249B;
+        Sun,  1 Jul 2018 16:36:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.14 119/157] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
-Date:   Sun,  1 Jul 2018 18:23:11 +0200
-Message-Id: <20180701160858.677214225@linuxfoundation.org>
+        stable@vger.kernel.org, Silvio Cesare <silvio.cesare@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 4.14 111/157] UBIFS: Fix potential integer overflow in allocation
+Date:   Sun,  1 Jul 2018 18:23:03 +0200
+Message-Id: <20180701160858.086745919@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,36 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Silvio Cesare <silvio.cesare@gmail.com>
 
-commit dbcb82b93f3e8322891e47472c89e63058b81e99 upstream.
+commit 353748a359f1821ee934afc579cf04572406b420 upstream.
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
+There is potential for the size and len fields in ubifs_data_node to be
+too large causing either a negative value for the length fields or an
+integer overflow leading to an incorrect memory allocation. Likewise,
+when the len field is small, an integer underflow may occur.
 
-In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
-transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
-Add it.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ubifs/journal.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1560,6 +1560,7 @@ static int intel_pt_sample(struct intel_
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -1283,10 +1283,11 @@ static int truncate_data_node(const stru
+ 			      int *new_len)
+ {
+ 	void *buf;
+-	int err, dlen, compr_type, out_len, old_dlen;
++	int err, compr_type;
++	u32 dlen, out_len, old_dlen;
  
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
- 		switch (ptq->switch_state) {
-+		case INTEL_PT_SS_NOT_TRACING:
- 		case INTEL_PT_SS_UNKNOWN:
- 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
- 			err = intel_pt_next_tid(pt, ptq);
+ 	out_len = le32_to_cpu(dn->size);
+-	buf = kmalloc(out_len * WORST_COMPR_FACTOR, GFP_NOFS);
++	buf = kmalloc_array(out_len, WORST_COMPR_FACTOR, GFP_NOFS);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
 
 
