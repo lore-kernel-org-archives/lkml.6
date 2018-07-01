@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2975BC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB226C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C2225386
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C2225386
+	by mail.kernel.org (Postfix) with ESMTP id 820D525386
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820D525386
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1031880AbeGAQkP (ORCPT
+        id S1031898AbeGAQkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:40:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37124 "EHLO
+        Sun, 1 Jul 2018 12:40:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1031867AbeGAQkK (ORCPT
+        with ESMTP id S1031867AbeGAQkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:40:10 -0400
+        Sun, 1 Jul 2018 12:40:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A368AD8;
-        Sun,  1 Jul 2018 16:40:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7842FAA6;
+        Sun,  1 Jul 2018 16:40:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.17 072/220] arm64: kpti: Use early_param for kpti= command-line option
-Date:   Sun,  1 Jul 2018 18:21:36 +0200
-Message-Id: <20180701160911.443276759@linuxfoundation.org>
+        stable@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.17 082/220] tpm: fix race condition in tpm_common_write()
+Date:   Sun,  1 Jul 2018 18:21:46 +0200
+Message-Id: <20180701160911.860229040@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -52,39 +50,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Tadeusz Struk <tadeusz.struk@intel.com>
 
-commit b5b7dd647f2d21b93f734ce890671cd908e69b0a upstream.
+commit 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df upstream.
 
-We inspect __kpti_forced early on as part of the cpufeature enable
-callback which remaps the swapper page table using non-global entries.
+There is a race condition in tpm_common_write function allowing
+two threads on the same /dev/tpm<N>, or two different applications
+on the same /dev/tpmrm<N> to overwrite each other commands/responses.
+Fixed this by taking the priv->buffer_mutex early in the function.
 
-Ensure that __kpti_forced has been updated to reflect the kpti=
-command-line option before we start using it.
+Also converted the priv->data_pending from atomic to a regular size_t
+type. There is no need for it to be atomic since it is only touched
+under the protection of the priv->buffer_mutex.
 
-Fixes: ea1e3de85e94 ("arm64: entry: Add fake CPU feature for unmapping the kernel at EL0")
-Cc: <stable@vger.kernel.org> # 4.16.x-
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/cpufeature.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm-dev-common.c |   40 +++++++++++++++++---------------------
+ drivers/char/tpm/tpm-dev.h        |    2 -
+ 2 files changed, 19 insertions(+), 23 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -937,7 +937,7 @@ static int __init parse_kpti(char *str)
- 	__kpti_forced = enabled ? 1 : -1;
- 	return 0;
- }
--__setup("kpti=", parse_kpti);
-+early_param("kpti", parse_kpti);
- #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -37,7 +37,7 @@ static void timeout_work(struct work_str
+ 	struct file_priv *priv = container_of(work, struct file_priv, work);
  
- #ifdef CONFIG_ARM64_HW_AFDBM
+ 	mutex_lock(&priv->buffer_mutex);
+-	atomic_set(&priv->data_pending, 0);
++	priv->data_pending = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ }
+@@ -46,7 +46,6 @@ void tpm_common_open(struct file *file,
+ 		     struct file_priv *priv)
+ {
+ 	priv->chip = chip;
+-	atomic_set(&priv->data_pending, 0);
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+ 	INIT_WORK(&priv->work, timeout_work);
+@@ -58,29 +57,24 @@ ssize_t tpm_common_read(struct file *fil
+ 			size_t size, loff_t *off)
+ {
+ 	struct file_priv *priv = file->private_data;
+-	ssize_t ret_size;
+-	ssize_t orig_ret_size;
++	ssize_t ret_size = 0;
+ 	int rc;
+ 
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->work);
+-	ret_size = atomic_read(&priv->data_pending);
+-	if (ret_size > 0) {	/* relay data */
+-		orig_ret_size = ret_size;
+-		if (size < ret_size)
+-			ret_size = size;
++	mutex_lock(&priv->buffer_mutex);
+ 
+-		mutex_lock(&priv->buffer_mutex);
++	if (priv->data_pending) {
++		ret_size = min_t(ssize_t, size, priv->data_pending);
+ 		rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-		memset(priv->data_buffer, 0, orig_ret_size);
++		memset(priv->data_buffer, 0, priv->data_pending);
+ 		if (rc)
+ 			ret_size = -EFAULT;
+ 
+-		mutex_unlock(&priv->buffer_mutex);
++		priv->data_pending = 0;
+ 	}
+ 
+-	atomic_set(&priv->data_pending, 0);
+-
++	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
+ }
+ 
+@@ -91,17 +85,19 @@ ssize_t tpm_common_write(struct file *fi
+ 	size_t in_size = size;
+ 	ssize_t out_size;
+ 
++	if (in_size > TPM_BUFSIZE)
++		return -E2BIG;
++
++	mutex_lock(&priv->buffer_mutex);
++
+ 	/* Cannot perform a write until the read has cleared either via
+ 	 * tpm_read or a user_read_timer timeout. This also prevents split
+ 	 * buffered writes from blocking here.
+ 	 */
+-	if (atomic_read(&priv->data_pending) != 0)
++	if (priv->data_pending != 0) {
++		mutex_unlock(&priv->buffer_mutex);
+ 		return -EBUSY;
+-
+-	if (in_size > TPM_BUFSIZE)
+-		return -E2BIG;
+-
+-	mutex_lock(&priv->buffer_mutex);
++	}
+ 
+ 	if (copy_from_user
+ 	    (priv->data_buffer, (void __user *) buf, in_size)) {
+@@ -132,7 +128,7 @@ ssize_t tpm_common_write(struct file *fi
+ 		return out_size;
+ 	}
+ 
+-	atomic_set(&priv->data_pending, out_size);
++	priv->data_pending = out_size;
+ 	mutex_unlock(&priv->buffer_mutex);
+ 
+ 	/* Set a timeout by which the reader must come claim the result */
+@@ -149,5 +145,5 @@ void tpm_common_release(struct file *fil
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->work);
+ 	file->private_data = NULL;
+-	atomic_set(&priv->data_pending, 0);
++	priv->data_pending = 0;
+ }
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -8,7 +8,7 @@ struct file_priv {
+ 	struct tpm_chip *chip;
+ 
+ 	/* Data passed to and from the tpm via the read/write calls */
+-	atomic_t data_pending;
++	size_t data_pending;
+ 	struct mutex buffer_mutex;
+ 
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
 
 
