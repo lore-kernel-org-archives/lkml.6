@@ -2,129 +2,305 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5F4C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 463F3C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5BC25039
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:43:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0048D240E4
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 08:44:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Q0N0Pa8H";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Sca7W9sD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5BC25039
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnU+Ih+m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0048D240E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752217AbeGAInw (ORCPT
+        id S1752275AbeGAIoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 04:43:52 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:57177 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752062AbeGAInr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 04:43:47 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 283BF218B4;
-        Sun,  1 Jul 2018 04:43:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 01 Jul 2018 04:43:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=JBg6plJDIozzDp5xops7guJI+B8W2AdPmTKimEtU+kg=; b=Q0N0Pa8H
-        zxnaAK/Qor/HlTKxsw5sbG4RNcrdjQjvztk2BNsT5Tnkc9A61uMfzH3CQ/qYf7kW
-        cvhK+ui+c/L/OnkxPu8VeztUKH0ixP9pLIml40/imdCXLi9dzAXKhBpaojByXios
-        WZDCD+sIfWPmCc6yAixiVziRU20+cJBMTmf+dTISuEiLi+RQTFx8k8Isv5+1t/15
-        vpNLCI/DWXimdwAYzJSu2n1xh+SAx9lQuvsb7HLO5Ne/UmkuanoGcgXrWj3S/PZ2
-        dzLKiWtQpE9r69XYBUIv/GlGXEZQKD6HRZ9DPGIgZcY20MeIjkD+fKU5rk1l0nJa
-        W46Pb4lKQWwXyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=JBg6plJDIozzDp5xops7guJI+B8W2
-        AdPmTKimEtU+kg=; b=Sca7W9sDVEfoxbESZhMdL6ZQeb3n1vYjkm+vNm2jfkpOR
-        A57VHq261kt+/CFskv0j8GDCe/0eQ6BSSwjSR3s7ULOH+08kD/yDhO69lBYTUqFo
-        u27OJGhOdTYYdLJtonY3YVu7Q/GCW71+aOdkxVLx122/mOHZZxXNdkLhtyjurJtY
-        w0wCaOJMjVbBqAher34KvS4k3I1t/gwLVeNESaf4TaEjdW6o4v1KXDSUBFyEU1YE
-        ak7bTMLrBdlg52OO4kwnL1kAVCDn8Ac3t7E6YFMtcggsfosqqJJj9RtvxjmkyDCM
-        x5p75G2ctB+kehk7id+OPbM63FbnykpiC1sEpgZqw==
-X-ME-Proxy: <xmx:QJQ4W3HY13lKXNmCPGYTW_mZHYfJ0b4RtVo7ZR5UKy00wU_uj58_qQ>
-    <xmx:QJQ4WydYevc8cB1lwMxnQWJa8K0Q4FsaL9c44W7Abb1M21w-td1Qnw>
-    <xmx:QJQ4WzvqNRgFsLK5IoNoC__OQp1aFm2PZS-SwwnF44UDaMtACUFmeA>
-    <xmx:QJQ4W5nTbWEUTE_aTRVT7kiua6DbHZr87PigcBHR3ISfpdPZcxIJhQ>
-    <xmx:QJQ4W-CXmzbTze4Om02C5QtmQoBTo65rfhMFla-tcftHxgi-B18u5A>
-    <xmx:QZQ4WwNzs68lZqyrsSG_g2nOPESWR9_R_yCyVHxVA9C0dolMs0UukQ>
-X-ME-Sender: <xms:QJQ4WyyI9ipEiRcBmLuY1nivLSRyJ-GXhINrZrhPOFePBocQClYtqA>
-Received: from localhost (lfbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 95108E425A;
-        Sun,  1 Jul 2018 04:43:44 -0400 (EDT)
-Date:   Sun, 1 Jul 2018 10:43:43 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>, Li Jun <jun.li@nxp.com>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Message-ID: <20180701084343.GA12939@kroah.com>
-References: <20180629145719.0d7b8fe7@canb.auug.org.au>
+        Sun, 1 Jul 2018 04:44:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58632 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752010AbeGAIoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 04:44:20 -0400
+Received: from dragon (unknown [45.56.152.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A59DE22439;
+        Sun,  1 Jul 2018 08:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530434659;
+        bh=YESRxHyyWNCgiFHC81/ePGyYVgLW6UUUXSqxPjlIQ2I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FnU+Ih+mmYPlsC9kpxFWPI71gv0w3iqpu9s21WLMjU9LhUxqS9rT+5rP0QdZwFQ7y
+         3H/BJyfS+gz+cibAyBwUnl/AydNODVYvaPaSxFFrumrjQc0MX/esEoajStLpuMM35J
+         fexQNZyft4T9OoPxExKBtOI8TxTxucBwlaA0VcbA=
+Date:   Sun, 1 Jul 2018 16:44:05 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, cphealy@gmail.com,
+        andrew.smirnov@gmail.com, l.stach@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: dts: imx: add ZII SCU2 Mezz board
+Message-ID: <20180701084404.GJ4348@dragon>
+References: <1529603100-31958-1-git-send-email-andrey.gusakov@cogentembedded.com>
+ <1529603100-31958-4-git-send-email-andrey.gusakov@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629145719.0d7b8fe7@canb.auug.org.au>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1529603100-31958-4-git-send-email-andrey.gusakov@cogentembedded.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 02:57:19PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Thu, Jun 21, 2018 at 08:45:00PM +0300, Andrey Gusakov wrote:
+> This adds support for the Zodiac Inflight Innovations SCU2 Mezz
+> board, which is based on the i.MX51.
 > 
-> Today's linux-next merge of the usb tree got a conflict in:
-> 
->   drivers/staging/typec/Kconfig
-> 
-> between commit:
-> 
->   e16711c32bca ("staging/typec: fix tcpci_rt1711h build errors")
-> 
-> from the usb.current tree and commit:
-> 
->   990da41530b3 ("staging: typec: tcpci: move tcpci drivers out of staging")
-> 
-> from the usb tree.
-> 
-> I fixed it up (I removed the file and allpied the patch below) and can
-> carry the fix as necessary. This is now fixed as far as linux-next is
-> concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 29 Jun 2018 14:54:04 +1000
-> Subject: [PATCH] usb: update for tcpci drivers moving out of staging
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
 > ---
->  drivers/usb/typec/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/Makefile                |   3 +-
+>  arch/arm/boot/dts/imx51-zii-scu2-mezz.dts | 190 ++++++++++++++++++++++++++++++
+>  2 files changed, 192 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
 > 
-> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-> index 972fd1911045..ee808903983f 100644
-> --- a/drivers/usb/typec/Kconfig
-> +++ b/drivers/usb/typec/Kconfig
-> @@ -65,6 +65,7 @@ config TYPEC_TCPCI
->  
->  config TYPEC_RT1711H
->  	tristate "Richtek RT1711H Type-C chip driver"
-> +	depends on I2C
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index d8900f4..e0dc187 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -359,7 +359,8 @@ dtb-$(CONFIG_SOC_IMX51) += \
+>  	imx51-eukrea-mbimxsd51-baseboard.dtb \
+>  	imx51-ts4800.dtb \
+>  	imx51-zii-rdu1.dtb \
+> -	imx51-zii-scu2-esb.dtb
+> +	imx51-zii-scu2-esb.dtb \
+> +	imx51-zii-scu2-mezz.dtb
+>  dtb-$(CONFIG_SOC_IMX53) += \
+>  	imx53-ard.dtb \
+>  	imx53-cx9020.dtb \
+> diff --git a/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts b/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
+> new file mode 100644
+> index 0000000..f58572a
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
+> @@ -0,0 +1,190 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +// Copyright (C) 2018 Zodiac Inflight Innovations
+> +
+> +/dts-v1/;
+> +#include "imx51-zii-common.dtsi"
+> +
+> +/ {
+> +	model = "ZII SCU2 Mezz Board";
+> +	compatible = "zii,imx51-scu2-mezz", "fsl,imx51";
+> +
+> +	aliases {
+> +		mdio-gpio0 = &mdio_gpio;
+> +	};
+> +
+> +	mdio_gpio: mdio-gpio {
+> +		compatible = "virtual,mdio-gpio";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_swmdio>;
+> +		gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>, /* mdc */
+> +			<&gpio2 6 GPIO_ACTIVE_HIGH>; /* mdio */
+> +
 
-Thanks for this, I'll apply this to my tree when I merge these together
-in a few days.
+The newline in middle of property list is not really necessary.
 
-greg k-h
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		switch@0 {
+> +			compatible = "marvell,mv88e6085";
+> +			reg = <0>;
+> +			dsa,member = <0 0>;
+> +			eeprom-length = <512>;
+> +			interrupt-parent = <&gpio1>;
+> +			interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					label = "port4";
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +					label = "port5";
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +					label = "port6";
+> +				};
+> +
+> +				port@3 {
+> +					reg = <3>;
+> +					label = "port7";
+> +				};
+> +
+> +				port@4 {
+> +					reg = <4>;
+> +					label = "cpu";
+> +					ethernet = <&fec>;
+> +
+> +					fixed-link {
+> +						speed = <100>;
+> +						full-duplex;
+> +					};
+> +				};
+> +
+> +				port@5 {
+> +					reg = <5>;
+> +					label = "mezz2esb";
+> +					phy-mode = "sgmii";
+
+Please have a newline between property list and child node.
+
+> +					fixed-link {
+> +						speed = <1000>;
+> +						full-duplex;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&usb_vbus {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usb_mmc_reset>;
+> +	gpio = <&gpio3 13 GPIO_ACTIVE_LOW>;
+> +	startup-delay-us = <150000>;
+> +};
+
+Please sort these labelled nodes alphabetically in label name.  &iomuxc
+can be an exception though.
+
+> +
+> +&esdhc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_esdhc1_4bit &pinctrl_esdhc1_8bit>;
+> +	bus-width = <8>;
+> +};
+> +
+> +&fec {
+> +	phy-reset-gpios = <&gpio2 14 GPIO_ACTIVE_LOW>;
+> +	phy-reset-duration = <1>;
+> +	phy-supply = <&vgen3_reg>;
+> +	phy-handle = <&ethphy>;
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy: ethernet-phy@0 {
+> +			reg = <0>;
+> +			max-speed = <100>;
+> +		};
+> +	};
+> +};
+> +
+> +
+> +&i2c_gpio {
+> +	gpios = <&gpio3 2 GPIO_ACTIVE_HIGH>, /* sda */
+> +		<&gpio3 1 GPIO_ACTIVE_HIGH>; /* scl */
+> +};
+> +
+> +&uart2 {
+> +	status = "disabled";
+> +};
+> +
+> +&vsd_reg {
+> +	regulator-always-on;
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_fec: fecgrp {
+> +		fsl,pins = <
+> +			MX51_PAD_DISP2_DAT15__FEC_TDATA0	0x2004
+> +			MX51_PAD_DISP2_DAT6__FEC_TDATA1		0x2004
+> +			MX51_PAD_DISP2_DAT7__FEC_TDATA2		0x2004
+> +			MX51_PAD_DISP2_DAT8__FEC_TDATA3		0x2004
+> +			MX51_PAD_DISP2_DAT9__FEC_TX_EN		0x2004
+> +			MX51_PAD_DISP2_DAT10__FEC_COL		0x0180
+> +			MX51_PAD_DISP2_DAT11__FEC_RX_CLK	0x0180
+> +			MX51_PAD_DISP2_DAT12__FEC_RX_DV		0x20a4
+> +			MX51_PAD_DISP2_DAT1__FEC_RX_ER		0x20a4
+> +			MX51_PAD_DISP2_DAT13__FEC_TX_CLK	0x2180
+> +			MX51_PAD_DI_GP3__FEC_TX_ER		0x2004
+> +			MX51_PAD_DISP2_DAT14__FEC_RDATA0	0x2180
+> +			MX51_PAD_DI2_DISP_CLK__FEC_RDATA1	0x0085
+> +			MX51_PAD_DI_GP4__FEC_RDATA2		0x0085
+> +			MX51_PAD_DISP2_DAT0__FEC_RDATA3		0x0085
+> +			MX51_PAD_DI2_PIN2__FEC_MDC		0x2004
+> +			MX51_PAD_DI2_PIN3__FEC_MDIO		0x01f5
+> +			MX51_PAD_DI2_PIN4__FEC_CRS		0x0180
+> +			MX51_PAD_EIM_A20__GPIO2_14		0x0085
+> +			MX51_PAD_EIM_A21__GPIO2_15		0x00e5
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins = <
+> +			MX51_PAD_UART1_RXD__UART1_RXD		0x1c5
+> +			MX51_PAD_UART1_TXD__UART1_TXD		0x1c5
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2: uart2grp {
+> +	};
+
+Why this empty pinctrl?
+
+> +
+> +	pinctrl_uart3: uart3grp {
+> +		fsl,pins = <
+> +			MX51_PAD_UART3_RXD__UART3_RXD		0x1c5
+> +			MX51_PAD_UART3_TXD__UART3_TXD		0x1c5
+> +		>;
+> +	};
+> +
+> +	pinctrl_usb_mmc_reset: usbmmcgrp {
+> +		fsl,pins = <
+> +			MX51_PAD_CSI1_D9__GPIO3_13		0x85
+> +		>;
+> +	};
+> +
+> +	pinctrl_swmdio: swmdiogrp {
+> +		fsl,pins = <
+> +			MX51_PAD_EIM_D22__GPIO2_6		0x100
+> +			MX51_PAD_EIM_D23__GPIO2_7		0x100
+> +		>;
+> +	};
+> +
+> +	pinctrl_swi2c: swi2cgrp {
+> +		fsl,pins = <
+> +			MX51_PAD_DI1_PIN12__GPIO3_1		0x100
+> +			MX51_PAD_DI1_PIN13__GPIO3_2		0x100
+> +		>;
+> +	};
+
+Please sort these pinctrl nodes alphabetically as well.
+
+Shawn
+
+> +};
+> -- 
+> 1.9.1
+> 
