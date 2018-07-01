@@ -2,52 +2,39 @@ Return-Path: <SRS0=zLEl=JR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE0AC6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADACAC6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E14125178
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E14125178
+	by mail.kernel.org (Postfix) with ESMTP id 6A63025171
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A63025171
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965155AbeGAQYl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:24:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33494 "EHLO
+        id S965084AbeGAQYs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:24:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33526 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933640AbeGAQYf (ORCPT
+        with ESMTP id S965131AbeGAQYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:24:35 -0400
+        Sun, 1 Jul 2018 12:24:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A606AD8;
-        Sun,  1 Jul 2018 16:24:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA9E4AE0;
+        Sun,  1 Jul 2018 16:24:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 015/101] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date:   Sun,  1 Jul 2018 18:21:01 +0200
-Message-Id: <20180701160757.744559346@linuxfoundation.org>
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Paul Burton <paul.burton@mips.com>
+Subject: [PATCH 4.9 017/101] mips: ftrace: fix static function graph tracing
+Date:   Sun,  1 Jul 2018 18:21:03 +0200
+Message-Id: <20180701160757.823536881@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -64,79 +51,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Matthias Schiffer <mschiffer@universe-factory.net>
 
-commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
+commit 6fb8656646f996d1eef42e6d56203c4915cb9e08 upstream.
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+ftrace_graph_caller was never run after calling ftrace_trace_function,
+breaking the function graph tracer. Fix this, bringing it in line with the
+x86 implementation.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
+While we're at it, also streamline the control flow of _mcount a bit to
+reduce the number of branches.
 
-Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+This issue was reported before:
+https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Tested-by: Matt Redfearn <matt.redfearn@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/18929/
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: stable@vger.kernel.org # v3.17+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/mips/kernel/mcount.S |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -243,8 +243,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
- }
+--- a/arch/mips/kernel/mcount.S
++++ b/arch/mips/kernel/mcount.S
+@@ -116,10 +116,20 @@ ftrace_stub:
+ NESTED(_mcount, PT_SIZE, ra)
+ 	PTR_LA	t1, ftrace_stub
+ 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
+-	bne	t1, t2, static_trace
++	beq	t1, t2, fgraph_trace
+ 	 nop
  
-@@ -304,7 +305,7 @@ static void __init cpg_mssr_register_cor
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
++	MCOUNT_SAVE_REGS
++
++	move	a0, ra		/* arg1: self return address */
++	jalr	t2		/* (1) call *ftrace_trace_function */
++	 move	a1, AT		/* arg2: parent's return address */
++
++	MCOUNT_RESTORE_REGS
++
++fgraph_trace:
+ #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
++	PTR_LA	t1, ftrace_stub
+ 	PTR_L	t3, ftrace_graph_return
+ 	bne	t1, t3, ftrace_graph_caller
+ 	 nop
+@@ -128,24 +138,11 @@ NESTED(_mcount, PT_SIZE, ra)
+ 	bne	t1, t3, ftrace_graph_caller
+ 	 nop
+ #endif
+-	b	ftrace_stub
+-#ifdef CONFIG_32BIT
+-	 addiu sp, sp, 8
+-#else
+-	 nop
+-#endif
+-
+-static_trace:
+-	MCOUNT_SAVE_REGS
+-
+-	move	a0, ra		/* arg1: self return address */
+-	jalr	t2		/* (1) call *ftrace_trace_function */
+-	 move	a1, AT		/* arg2: parent's return address */
  
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
-@@ -372,7 +373,7 @@ static void __init cpg_mssr_register_mod
- 	if (IS_ERR(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
+-	MCOUNT_RESTORE_REGS
+ #ifdef CONFIG_32BIT
+ 	addiu sp, sp, 8
+ #endif
++
+ 	.globl ftrace_stub
+ ftrace_stub:
+ 	RETURN_BACK
 
 
