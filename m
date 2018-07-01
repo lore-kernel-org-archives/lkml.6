@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE38C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92831C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6135F2578C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6135F2578C
+	by mail.kernel.org (Postfix) with ESMTP id 57FC725796
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57FC725796
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030620AbeGAQcW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:32:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35142 "EHLO
+        id S934128AbeGARw0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 13:52:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030601AbeGAQcT (ORCPT
+        with ESMTP id S1030585AbeGAQcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:19 -0400
+        Sun, 1 Jul 2018 12:32:15 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A38449B;
-        Sun,  1 Jul 2018 16:32:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1017349B;
+        Sun,  1 Jul 2018 16:32:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
         Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Sebastian Sanchez <sebastian.sanchez@intel.com>,
         Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 069/157] IB/hfi1: Fix user context tail allocation for DMA_RTAIL
-Date:   Sun,  1 Jul 2018 18:22:21 +0200
-Message-Id: <20180701160856.064769213@linuxfoundation.org>
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 068/157] IB/hfi1: Optimize kthread pointer locking when queuing CQ entries
+Date:   Sun,  1 Jul 2018 18:22:20 +0200
+Message-Id: <20180701160856.016169974@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -53,123 +52,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Sebastian Sanchez <sebastian.sanchez@intel.com>
 
-commit 1bc0299d976e000ececc6acd76e33b4582646cb7 upstream.
+commit af8aab71370a692eaf7e7969ba5b1a455ac20113 upstream.
 
-The following code fails to allocate a buffer for the
-tail address that the hardware DMAs into when the user
-context DMA_RTAIL is set.
+All threads queuing CQ entries on different CQs are unnecessarily
+synchronized by a spin lock to check if the CQ kthread worker hasn't
+been destroyed before queuing an CQ entry.
 
-if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
-	rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
-		&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
-                gfp_flags);
-	if (!rcd->rcvhdrtail_kvaddr)
-		goto bail_free;
-	rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
-}
+The lock used in 6efaf10f163d ("IB/rdmavt: Avoid queuing work into a
+destroyed cq kthread worker") is a device global lock and will have
+poor performance at scale as completions are entered from a large
+number of CPUs.
 
-So the rcvhdrtail_kvaddr would then be NULL.
+Convert to use RCU where the read side of RCU is rvt_cq_enter() to
+determine that the worker is alive prior to triggering the
+completion event.
+Apply write side RCU semantics in rvt_driver_cq_init() and
+rvt_cq_exit().
 
-The mmap logic fails to check for a NULL rcvhdrtail_kvaddr.
-
-The fix is to test for both user and kernel DMA_TAIL options
-during the allocation as well as testing for a NULL
-rcvhdrtail_kvaddr during the mmap processing.
-
-Additionally, all downstream testing of the capmask for DMA_RTAIL
-have been eliminated in favor of testing rcvhdrtail_kvaddr.
-
-Cc: <stable@vger.kernel.org> # 4.9.x
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Fixes: 6efaf10f163d ("IB/rdmavt: Avoid queuing work into a destroyed cq kthread worker")
+Cc: <stable@vger.kernel.org> # 4.14.x
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
 Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/chip.c     |    8 ++++----
- drivers/infiniband/hw/hfi1/file_ops.c |    2 +-
- drivers/infiniband/hw/hfi1/init.c     |    9 ++++-----
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/infiniband/sw/rdmavt/cq.c |   31 +++++++++++++++++++------------
+ include/rdma/rdma_vt.h            |    2 +-
+ 2 files changed, 20 insertions(+), 13 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/chip.c
-+++ b/drivers/infiniband/hw/hfi1/chip.c
-@@ -6829,7 +6829,7 @@ static void rxe_kernel_unfreeze(struct h
- 		}
- 		rcvmask = HFI1_RCVCTRL_CTXT_ENB;
- 		/* HFI1_RCVCTRL_TAILUPD_[ENB|DIS] needs to be set explicitly */
--		rcvmask |= HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL) ?
-+		rcvmask |= rcd->rcvhdrtail_kvaddr ?
- 			HFI1_RCVCTRL_TAILUPD_ENB : HFI1_RCVCTRL_TAILUPD_DIS;
- 		hfi1_rcvctrl(dd, rcvmask, rcd);
- 		hfi1_rcd_put(rcd);
-@@ -8341,7 +8341,7 @@ static inline int check_packet_present(s
- 	u32 tail;
- 	int present;
- 
--	if (!HFI1_CAP_IS_KSET(DMA_RTAIL))
-+	if (!rcd->rcvhdrtail_kvaddr)
- 		present = (rcd->seq_cnt ==
- 				rhf_rcv_seq(rhf_to_cpu(get_rhf_addr(rcd))));
- 	else /* is RDMA rtail */
-@@ -11813,7 +11813,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
- 		/* reset the tail and hdr addresses, and sequence count */
- 		write_kctxt_csr(dd, ctxt, RCV_HDR_ADDR,
- 				rcd->rcvhdrq_dma);
--		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL))
-+		if (rcd->rcvhdrtail_kvaddr)
- 			write_kctxt_csr(dd, ctxt, RCV_HDR_TAIL_ADDR,
- 					rcd->rcvhdrqtailaddr_dma);
- 		rcd->seq_cnt = 1;
-@@ -11893,7 +11893,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
- 		rcvctrl |= RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
- 	if (op & HFI1_RCVCTRL_INTRAVAIL_DIS)
- 		rcvctrl &= ~RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
--	if (op & HFI1_RCVCTRL_TAILUPD_ENB && rcd->rcvhdrqtailaddr_dma)
-+	if ((op & HFI1_RCVCTRL_TAILUPD_ENB) && rcd->rcvhdrtail_kvaddr)
- 		rcvctrl |= RCV_CTXT_CTRL_TAIL_UPD_SMASK;
- 	if (op & HFI1_RCVCTRL_TAILUPD_DIS) {
- 		/* See comment on RcvCtxtCtrl.TailUpd above */
---- a/drivers/infiniband/hw/hfi1/file_ops.c
-+++ b/drivers/infiniband/hw/hfi1/file_ops.c
-@@ -622,7 +622,7 @@ static int hfi1_file_mmap(struct file *f
- 			ret = -EINVAL;
- 			goto done;
- 		}
--		if (flags & VM_WRITE) {
-+		if ((flags & VM_WRITE) || !uctxt->rcvhdrtail_kvaddr) {
- 			ret = -EPERM;
- 			goto done;
- 		}
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -1808,7 +1808,6 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
- 	u64 reg;
- 
- 	if (!rcd->rcvhdrq) {
--		dma_addr_t dma_hdrqtail;
- 		gfp_t gfp_flags;
- 
+--- a/drivers/infiniband/sw/rdmavt/cq.c
++++ b/drivers/infiniband/sw/rdmavt/cq.c
+@@ -121,17 +121,20 @@ void rvt_cq_enter(struct rvt_cq *cq, str
+ 	if (cq->notify == IB_CQ_NEXT_COMP ||
+ 	    (cq->notify == IB_CQ_SOLICITED &&
+ 	     (solicited || entry->status != IB_WC_SUCCESS))) {
++		struct kthread_worker *worker;
++
  		/*
-@@ -1834,13 +1833,13 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
- 			goto bail;
+ 		 * This will cause send_complete() to be called in
+ 		 * another thread.
+ 		 */
+-		spin_lock(&cq->rdi->n_cqs_lock);
+-		if (likely(cq->rdi->worker)) {
++		rcu_read_lock();
++		worker = rcu_dereference(cq->rdi->worker);
++		if (likely(worker)) {
+ 			cq->notify = RVT_CQ_NONE;
+ 			cq->triggered++;
+-			kthread_queue_work(cq->rdi->worker, &cq->comptask);
++			kthread_queue_work(worker, &cq->comptask);
  		}
+-		spin_unlock(&cq->rdi->n_cqs_lock);
++		rcu_read_unlock();
+ 	}
  
--		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
-+		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL) ||
-+		    HFI1_CAP_UGET_MASK(rcd->flags, DMA_RTAIL)) {
- 			rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
--				&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
--				gfp_flags);
-+				&dd->pcidev->dev, PAGE_SIZE,
-+				&rcd->rcvhdrqtailaddr_dma, gfp_flags);
- 			if (!rcd->rcvhdrtail_kvaddr)
- 				goto bail_free;
--			rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
- 		}
+ 	spin_unlock_irqrestore(&cq->lock, flags);
+@@ -513,7 +516,7 @@ int rvt_driver_cq_init(struct rvt_dev_in
+ 	int cpu;
+ 	struct kthread_worker *worker;
  
- 		rcd->rcvhdrq_size = amt;
+-	if (rdi->worker)
++	if (rcu_access_pointer(rdi->worker))
+ 		return 0;
+ 
+ 	spin_lock_init(&rdi->n_cqs_lock);
+@@ -525,7 +528,7 @@ int rvt_driver_cq_init(struct rvt_dev_in
+ 		return PTR_ERR(worker);
+ 
+ 	set_user_nice(worker->task, MIN_NICE);
+-	rdi->worker = worker;
++	RCU_INIT_POINTER(rdi->worker, worker);
+ 	return 0;
+ }
+ 
+@@ -537,15 +540,19 @@ void rvt_cq_exit(struct rvt_dev_info *rd
+ {
+ 	struct kthread_worker *worker;
+ 
+-	/* block future queuing from send_complete() */
+-	spin_lock_irq(&rdi->n_cqs_lock);
+-	worker = rdi->worker;
++	if (!rcu_access_pointer(rdi->worker))
++		return;
++
++	spin_lock(&rdi->n_cqs_lock);
++	worker = rcu_dereference_protected(rdi->worker,
++					   lockdep_is_held(&rdi->n_cqs_lock));
+ 	if (!worker) {
+-		spin_unlock_irq(&rdi->n_cqs_lock);
++		spin_unlock(&rdi->n_cqs_lock);
+ 		return;
+ 	}
+-	rdi->worker = NULL;
+-	spin_unlock_irq(&rdi->n_cqs_lock);
++	RCU_INIT_POINTER(rdi->worker, NULL);
++	spin_unlock(&rdi->n_cqs_lock);
++	synchronize_rcu();
+ 
+ 	kthread_destroy_worker(worker);
+ }
+--- a/include/rdma/rdma_vt.h
++++ b/include/rdma/rdma_vt.h
+@@ -409,7 +409,7 @@ struct rvt_dev_info {
+ 	spinlock_t pending_lock; /* protect pending mmap list */
+ 
+ 	/* CQ */
+-	struct kthread_worker *worker; /* per device cq worker */
++	struct kthread_worker __rcu *worker; /* per device cq worker */
+ 	u32 n_cqs_allocated;    /* number of CQs allocated for device */
+ 	spinlock_t n_cqs_lock; /* protect count of in use cqs */
+ 
 
 
