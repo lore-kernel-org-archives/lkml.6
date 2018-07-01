@@ -3,37 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39122C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE70C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B7A250E9
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B7A250E9
+	by mail.kernel.org (Postfix) with ESMTP id 35D89250F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:18:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D89250F0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753313AbeGAQS1 (ORCPT
+        id S1753332AbeGAQSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:18:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32992 "EHLO
+        Sun, 1 Jul 2018 12:18:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbeGAQSW (ORCPT
+        with ESMTP id S964950AbeGAQSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:18:22 -0400
+        Sun, 1 Jul 2018 12:18:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8237449B;
-        Sun,  1 Jul 2018 16:18:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6761C49B;
+        Sun,  1 Jul 2018 16:18:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chad Austin <chadaustin@fb.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>,
+        John Muir <john@jmuir.com>, Csaba Henk <csaba@gluster.com>,
+        Anand Avati <avati@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 040/105] fuse: atomic_o_trunc should truncate pagecache
-Date:   Sun,  1 Jul 2018 18:01:50 +0200
-Message-Id: <20180701153152.113133078@linuxfoundation.org>
+Subject: [PATCH 4.4 041/105] fuse: dont keep dead fuse_conn at fuse_fill_super().
+Date:   Sun,  1 Jul 2018 18:01:51 +0200
+Message-Id: <20180701153152.186327132@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
 References: <20180701153149.382300170@linuxfoundation.org>
@@ -50,52 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit df0e91d488276086bc07da2e389986cae0048c37 upstream.
+commit 543b8f8662fe6d21f19958b666ab0051af9db21a upstream.
 
-Fuse has an "atomic_o_trunc" mode, where userspace filesystem uses the
-O_TRUNC flag in the OPEN request to truncate the file atomically with the
-open.
+syzbot is reporting use-after-free at fuse_kill_sb_blk() [1].
+Since sb->s_fs_info field is not cleared after fc was released by
+fuse_conn_put() when initialization failed, fuse_kill_sb_blk() finds
+already released fc and tries to hold the lock. Fix this by clearing
+sb->s_fs_info field after calling fuse_conn_put().
 
-In this mode there's no need to send a SETATTR request to userspace after
-the open, so fuse_do_setattr() checks this mode and returns.  But this
-misses the important step of truncating the pagecache.
+[1] https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
 
-Add the missing parts of truncation to the ATTR_OPEN branch.
-
-Reported-by: Chad Austin <chadaustin@fb.com>
-Fixes: 6ff958edbf39 ("fuse: add atomic open+truncate support")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+ec3986119086fe4eec97@syzkaller.appspotmail.com>
+Fixes: 3b463ae0c626 ("fuse: invalidation reverse calls")
+Cc: John Muir <john@jmuir.com>
+Cc: Csaba Henk <csaba@gluster.com>
+Cc: Anand Avati <avati@redhat.com>
+Cc: <stable@vger.kernel.org> # v2.6.31
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dir.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/fuse/inode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1609,8 +1609,19 @@ int fuse_do_setattr(struct inode *inode,
- 		return err;
- 
- 	if (attr->ia_valid & ATTR_OPEN) {
--		if (fc->atomic_o_trunc)
-+		/* This is coming from open(..., ... | O_TRUNC); */
-+		WARN_ON(!(attr->ia_valid & ATTR_SIZE));
-+		WARN_ON(attr->ia_size != 0);
-+		if (fc->atomic_o_trunc) {
-+			/*
-+			 * No need to send request to userspace, since actual
-+			 * truncation has already been done by OPEN.  But still
-+			 * need to truncate page cache.
-+			 */
-+			i_size_write(inode, 0);
-+			truncate_pagecache(inode, 0);
- 			return 0;
-+		}
- 		file = NULL;
- 	}
- 
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1158,6 +1158,7 @@ static int fuse_fill_super(struct super_
+  err_put_conn:
+ 	fuse_bdi_destroy(fc);
+ 	fuse_conn_put(fc);
++	sb->s_fs_info = NULL;
+  err_fput:
+ 	fput(file);
+  err:
 
 
