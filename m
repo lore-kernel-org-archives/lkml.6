@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6F9C6778A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B357C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3092E251BF
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3092E251BF
+	by mail.kernel.org (Postfix) with ESMTP id E2582251FE
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2582251FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965518AbeGAQ13 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:27:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34102 "EHLO
+        id S965536AbeGAQ1g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:27:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34118 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965028AbeGAQ1Z (ORCPT
+        with ESMTP id S965028AbeGAQ1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:27:25 -0400
+        Sun, 1 Jul 2018 12:27:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7523DACD;
-        Sun,  1 Jul 2018 16:27:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EFA092B;
+        Sun,  1 Jul 2018 16:27:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, martin bayern <Martinbayern@outlook.com>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4.9 069/101] ubi: fastmap: Correctly handle interrupted erasures in EBA
-Date:   Sun,  1 Jul 2018 18:21:55 +0200
-Message-Id: <20180701160759.928145668@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 4.9 071/101] backlight: as3711_bl: Fix Device Tree node lookup
+Date:   Sun,  1 Jul 2018 18:21:57 +0200
+Message-Id: <20180701160800.008732720@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -49,141 +50,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Weinberger <richard@nod.at>
+From: Johan Hovold <johan@kernel.org>
 
-commit 781932375ffc6411713ee0926ccae8596ed0261c upstream.
+commit 4a9c8bb2aca5b5a2a15744333729745dd9903562 upstream.
 
-Fastmap cannot track the LEB unmap operation, therefore it can
-happen that after an interrupted erasure the mapping still looks
-good from Fastmap's point of view, while reading from the PEB will
-cause an ECC error and confuses the upper layer.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Instead of teaching users of UBI how to deal with that, we read back
-the VID header and check for errors. If the PEB is empty or shows ECC
-errors we fixup the mapping and schedule the PEB for erasure.
+To make things worse, the parent mfd node was also prematurely freed.
 
-Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
-Cc: <stable@vger.kernel.org>
-Reported-by: martin bayern <Martinbayern@outlook.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Cc: stable <stable@vger.kernel.org>     # 3.10
+Fixes: 59eb2b5e57ea ("drivers/video/backlight/as3711_bl.c: add OF support")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/ubi/eba.c |   90 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 1 deletion(-)
+ drivers/video/backlight/as3711_bl.c |   33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -490,6 +490,82 @@ out_unlock:
- 	return err;
+--- a/drivers/video/backlight/as3711_bl.c
++++ b/drivers/video/backlight/as3711_bl.c
+@@ -262,10 +262,10 @@ static int as3711_bl_register(struct pla
+ static int as3711_backlight_parse_dt(struct device *dev)
+ {
+ 	struct as3711_bl_pdata *pdata = dev_get_platdata(dev);
+-	struct device_node *bl =
+-		of_find_node_by_name(dev->parent->of_node, "backlight"), *fb;
++	struct device_node *bl, *fb;
+ 	int ret;
+ 
++	bl = of_get_child_by_name(dev->parent->of_node, "backlight");
+ 	if (!bl) {
+ 		dev_dbg(dev, "backlight node not found\n");
+ 		return -ENODEV;
+@@ -279,7 +279,7 @@ static int as3711_backlight_parse_dt(str
+ 		if (pdata->su1_max_uA <= 0)
+ 			ret = -EINVAL;
+ 		if (ret < 0)
+-			return ret;
++			goto err_put_bl;
+ 	}
+ 
+ 	fb = of_parse_phandle(bl, "su2-dev", 0);
+@@ -292,7 +292,7 @@ static int as3711_backlight_parse_dt(str
+ 		if (pdata->su2_max_uA <= 0)
+ 			ret = -EINVAL;
+ 		if (ret < 0)
+-			return ret;
++			goto err_put_bl;
+ 
+ 		if (of_find_property(bl, "su2-feedback-voltage", NULL)) {
+ 			pdata->su2_feedback = AS3711_SU2_VOLTAGE;
+@@ -314,8 +314,10 @@ static int as3711_backlight_parse_dt(str
+ 			pdata->su2_feedback = AS3711_SU2_CURR_AUTO;
+ 			count++;
+ 		}
+-		if (count != 1)
+-			return -EINVAL;
++		if (count != 1) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 
+ 		count = 0;
+ 		if (of_find_property(bl, "su2-fbprot-lx-sd4", NULL)) {
+@@ -334,8 +336,10 @@ static int as3711_backlight_parse_dt(str
+ 			pdata->su2_fbprot = AS3711_SU2_GPIO4;
+ 			count++;
+ 		}
+-		if (count != 1)
+-			return -EINVAL;
++		if (count != 1) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 
+ 		count = 0;
+ 		if (of_find_property(bl, "su2-auto-curr1", NULL)) {
+@@ -355,11 +359,20 @@ static int as3711_backlight_parse_dt(str
+ 		 * At least one su2-auto-curr* must be specified iff
+ 		 * AS3711_SU2_CURR_AUTO is used
+ 		 */
+-		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO))
+-			return -EINVAL;
++		if (!count ^ (pdata->su2_feedback != AS3711_SU2_CURR_AUTO)) {
++			ret = -EINVAL;
++			goto err_put_bl;
++		}
+ 	}
+ 
++	of_node_put(bl);
++
+ 	return 0;
++
++err_put_bl:
++	of_node_put(bl);
++
++	return ret;
  }
  
-+#ifdef CONFIG_MTD_UBI_FASTMAP
-+/**
-+ * check_mapping - check and fixup a mapping
-+ * @ubi: UBI device description object
-+ * @vol: volume description object
-+ * @lnum: logical eraseblock number
-+ * @pnum: physical eraseblock number
-+ *
-+ * Checks whether a given mapping is valid. Fastmap cannot track LEB unmap
-+ * operations, if such an operation is interrupted the mapping still looks
-+ * good, but upon first read an ECC is reported to the upper layer.
-+ * Normaly during the full-scan at attach time this is fixed, for Fastmap
-+ * we have to deal with it while reading.
-+ * If the PEB behind a LEB shows this symthom we change the mapping to
-+ * %UBI_LEB_UNMAPPED and schedule the PEB for erasure.
-+ *
-+ * Returns 0 on success, negative error code in case of failure.
-+ */
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+			 int *pnum)
-+{
-+	int err;
-+	struct ubi_vid_io_buf *vidb;
-+
-+	if (!ubi->fast_attach)
-+		return 0;
-+
-+	vidb = ubi_alloc_vid_buf(ubi, GFP_NOFS);
-+	if (!vidb)
-+		return -ENOMEM;
-+
-+	err = ubi_io_read_vid_hdr(ubi, *pnum, vidb, 0);
-+	if (err > 0 && err != UBI_IO_BITFLIPS) {
-+		int torture = 0;
-+
-+		switch (err) {
-+			case UBI_IO_FF:
-+			case UBI_IO_FF_BITFLIPS:
-+			case UBI_IO_BAD_HDR:
-+			case UBI_IO_BAD_HDR_EBADMSG:
-+				break;
-+			default:
-+				ubi_assert(0);
-+		}
-+
-+		if (err == UBI_IO_BAD_HDR_EBADMSG || err == UBI_IO_FF_BITFLIPS)
-+			torture = 1;
-+
-+		down_read(&ubi->fm_eba_sem);
-+		vol->eba_tbl->entries[lnum].pnum = UBI_LEB_UNMAPPED;
-+		up_read(&ubi->fm_eba_sem);
-+		ubi_wl_put_peb(ubi, vol->vol_id, lnum, *pnum, torture);
-+
-+		*pnum = UBI_LEB_UNMAPPED;
-+	} else if (err < 0) {
-+		ubi_err(ubi, "unable to read VID header back from PEB %i: %i",
-+			*pnum, err);
-+
-+		goto out_free;
-+	}
-+
-+	err = 0;
-+
-+out_free:
-+	ubi_free_vid_buf(vidb);
-+
-+	return err;
-+}
-+#else
-+static int check_mapping(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-+		  int *pnum)
-+{
-+	return 0;
-+}
-+#endif
-+
- /**
-  * ubi_eba_read_leb - read data.
-  * @ubi: UBI device description object
-@@ -522,7 +598,13 @@ int ubi_eba_read_leb(struct ubi_device *
- 		return err;
- 
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
--	if (pnum < 0) {
-+	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out_unlock;
-+	}
-+
-+	if (pnum == UBI_LEB_UNMAPPED) {
- 		/*
- 		 * The logical eraseblock is not mapped, fill the whole buffer
- 		 * with 0xFF bytes. The exception is static volumes for which
-@@ -931,6 +1013,12 @@ int ubi_eba_write_leb(struct ubi_device
- 
- 	pnum = vol->eba_tbl->entries[lnum].pnum;
- 	if (pnum >= 0) {
-+		err = check_mapping(ubi, vol, lnum, &pnum);
-+		if (err < 0)
-+			goto out;
-+	}
-+
-+	if (pnum >= 0) {
- 		dbg_eba("write %d bytes at offset %d of LEB %d:%d, PEB %d",
- 			len, offset, vol_id, lnum, pnum);
- 
+ static int as3711_backlight_probe(struct platform_device *pdev)
 
 
