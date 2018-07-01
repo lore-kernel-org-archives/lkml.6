@@ -3,38 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BADC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F34C6778A
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16EBC2527A
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16EBC2527A
+	by mail.kernel.org (Postfix) with ESMTP id 8554525273
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:32:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8554525273
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030556AbeGAQcH (ORCPT
+        id S1030577AbeGAQcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:32:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35094 "EHLO
+        Sun, 1 Jul 2018 12:32:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35098 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965914AbeGAQcC (ORCPT
+        with ESMTP id S965102AbeGAQcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:02 -0400
+        Sun, 1 Jul 2018 12:32:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10CA892B;
-        Sun,  1 Jul 2018 16:32:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7CCB49B;
+        Sun,  1 Jul 2018 16:32:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 063/157] IB/mlx5: Fetch soft WQEs on fatal error state
-Date:   Sun,  1 Jul 2018 18:22:15 +0200
-Message-Id: <20180701160855.788599934@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Don Dutile <ddutile@redhat.com>,
+        Alex Estrin <alex.estrin@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 064/157] IB/isert: Fix for lib/dma_debug check_sync warning
+Date:   Sun,  1 Jul 2018 18:22:16 +0200
+Message-Id: <20180701160855.828821702@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -51,82 +54,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Alex Estrin <alex.estrin@intel.com>
 
-commit 7b74a83cf54a3747e22c57e25712bd70eef8acee upstream.
+commit 763b69654bfb88ea3230d015e7d755ee8339f8ee upstream.
 
-On fatal error the driver simulates CQE's for ULPs that rely on
-completion of all their posted work-request.
+The following error message occurs on a target host in a debug build
+during session login:
 
-For the GSI traffic, the mlx5 has its own mechanism that sends the
-completions via software CQE's directly to the relevant CQ.
+[ 3524.411874] WARNING: CPU: 5 PID: 12063 at lib/dma-debug.c:1207 check_sync+0x4ec/0x5b0
+[ 3524.421057] infiniband hfi1_0: DMA-API: device driver tries to sync DMA memory it has not allocated [device address=0x0000000000000000] [size=76 bytes]
+......snip .....
 
-This should be kept in fatal error too, so the driver should simulate
-such CQE's with the specified error state in order to complete GSI QP
-work requests.
+[ 3524.535846] CPU: 5 PID: 12063 Comm: iscsi_np Kdump: loaded Not tainted 3.10.0-862.el7.x86_64.debug #1
+[ 3524.546764] Hardware name: Dell Inc. PowerEdge R430/03XKDV, BIOS 1.2.6 06/08/2015
+[ 3524.555740] Call Trace:
+[ 3524.559102]  [<ffffffffa5fe915b>] dump_stack+0x19/0x1b
+[ 3524.565477]  [<ffffffffa58a2f58>] __warn+0xd8/0x100
+[ 3524.571557]  [<ffffffffa58a2fdf>] warn_slowpath_fmt+0x5f/0x80
+[ 3524.578610]  [<ffffffffa5bf5b8c>] check_sync+0x4ec/0x5b0
+[ 3524.585177]  [<ffffffffa58efc3f>] ? set_cpus_allowed_ptr+0x5f/0x1c0
+[ 3524.592812]  [<ffffffffa5bf5cd0>] debug_dma_sync_single_for_cpu+0x80/0x90
+[ 3524.601029]  [<ffffffffa586add3>] ? x2apic_send_IPI_mask+0x13/0x20
+[ 3524.608574]  [<ffffffffa585ee1b>] ? native_smp_send_reschedule+0x5b/0x80
+[ 3524.616699]  [<ffffffffa58e9b76>] ? resched_curr+0xf6/0x140
+[ 3524.623567]  [<ffffffffc0879af0>] isert_create_send_desc.isra.26+0xe0/0x110 [ib_isert]
+[ 3524.633060]  [<ffffffffc087af95>] isert_put_login_tx+0x55/0x8b0 [ib_isert]
+[ 3524.641383]  [<ffffffffa58ef114>] ? try_to_wake_up+0x1a4/0x430
+[ 3524.648561]  [<ffffffffc098cfed>] iscsi_target_do_tx_login_io+0xdd/0x230 [iscsi_target_mod]
+[ 3524.658557]  [<ffffffffc098d827>] iscsi_target_do_login+0x1a7/0x600 [iscsi_target_mod]
+[ 3524.668084]  [<ffffffffa59f9bc9>] ? kstrdup+0x49/0x60
+[ 3524.674420]  [<ffffffffc098e976>] iscsi_target_start_negotiation+0x56/0xc0 [iscsi_target_mod]
+[ 3524.684656]  [<ffffffffc098c2ee>] __iscsi_target_login_thread+0x90e/0x1070 [iscsi_target_mod]
+[ 3524.694901]  [<ffffffffc098ca50>] ? __iscsi_target_login_thread+0x1070/0x1070 [iscsi_target_mod]
+[ 3524.705446]  [<ffffffffc098ca50>] ? __iscsi_target_login_thread+0x1070/0x1070 [iscsi_target_mod]
+[ 3524.715976]  [<ffffffffc098ca78>] iscsi_target_login_thread+0x28/0x60 [iscsi_target_mod]
+[ 3524.725739]  [<ffffffffa58d60ff>] kthread+0xef/0x100
+[ 3524.732007]  [<ffffffffa58d6010>] ? insert_kthread_work+0x80/0x80
+[ 3524.739540]  [<ffffffffa5fff1b7>] ret_from_fork_nospec_begin+0x21/0x21
+[ 3524.747558]  [<ffffffffa58d6010>] ? insert_kthread_work+0x80/0x80
+[ 3524.755088] ---[ end trace 23f8bf9238bd1ed8 ]---
+[ 3595.510822] iSCSI/iqn.1994-05.com.redhat:537fa56299: Unsupported SCSI Opcode 0xa3, sending CHECK_CONDITION.
 
-Without the fix the next deadlock might appears:
-        schedule_timeout+0x274/0x350
-        wait_for_common+0xec/0x240
-        mcast_remove_one+0xd0/0x120 [ib_core]
-        ib_unregister_device+0x12c/0x230 [ib_core]
-        mlx5_ib_remove+0xc4/0x270 [mlx5_ib]
-        mlx5_detach_device+0x184/0x1a0 [mlx5_core]
-        mlx5_unload_one+0x308/0x340 [mlx5_core]
-        mlx5_pci_err_detected+0x74/0xe0 [mlx5_core]
+The code calls dma_sync on login_tx_desc->dma_addr prior to initializing it
+with dma-mapped address.
+login_tx_desc is a part of iser_conn structure and is used only once
+during login negotiation, so the issue is fixed by eliminating
+dma_sync call for this buffer using a special case routine.
 
-Cc: <stable@vger.kernel.org> # 4.7
-Fixes: 89ea94a7b6c4 ("IB/mlx5: Reset flow support for IB kernel ULPs")
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Don Dutile <ddutile@redhat.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/cq.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/isert/ib_isert.c |   26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/cq.c
-+++ b/drivers/infiniband/hw/mlx5/cq.c
-@@ -646,7 +646,7 @@ repoll:
+--- a/drivers/infiniband/ulp/isert/ib_isert.c
++++ b/drivers/infiniband/ulp/isert/ib_isert.c
+@@ -885,15 +885,9 @@ isert_login_post_send(struct isert_conn
  }
  
- static int poll_soft_wc(struct mlx5_ib_cq *cq, int num_entries,
--			struct ib_wc *wc)
-+			struct ib_wc *wc, bool is_fatal_err)
+ static void
+-isert_create_send_desc(struct isert_conn *isert_conn,
+-		       struct isert_cmd *isert_cmd,
+-		       struct iser_tx_desc *tx_desc)
++__isert_create_send_desc(struct isert_device *device,
++			 struct iser_tx_desc *tx_desc)
  {
- 	struct mlx5_ib_dev *dev = to_mdev(cq->ibcq.device);
- 	struct mlx5_ib_wc *soft_wc, *next;
-@@ -659,6 +659,10 @@ static int poll_soft_wc(struct mlx5_ib_c
- 		mlx5_ib_dbg(dev, "polled software generated completion on CQ 0x%x\n",
- 			    cq->mcq.cqn);
+-	struct isert_device *device = isert_conn->device;
+-	struct ib_device *ib_dev = device->ib_device;
+-
+-	ib_dma_sync_single_for_cpu(ib_dev, tx_desc->dma_addr,
+-				   ISER_HEADERS_LEN, DMA_TO_DEVICE);
  
-+		if (unlikely(is_fatal_err)) {
-+			soft_wc->wc.status = IB_WC_WR_FLUSH_ERR;
-+			soft_wc->wc.vendor_err = MLX5_CQE_SYNDROME_WR_FLUSH_ERR;
-+		}
- 		wc[npolled++] = soft_wc->wc;
- 		list_del(&soft_wc->list);
- 		kfree(soft_wc);
-@@ -679,12 +683,17 @@ int mlx5_ib_poll_cq(struct ib_cq *ibcq,
- 
- 	spin_lock_irqsave(&cq->lock, flags);
- 	if (mdev->state == MLX5_DEVICE_STATE_INTERNAL_ERROR) {
--		mlx5_ib_poll_sw_comp(cq, num_entries, wc, &npolled);
-+		/* make sure no soft wqe's are waiting */
-+		if (unlikely(!list_empty(&cq->wc_list)))
-+			soft_polled = poll_soft_wc(cq, num_entries, wc, true);
-+
-+		mlx5_ib_poll_sw_comp(cq, num_entries - soft_polled,
-+				     wc + soft_polled, &npolled);
- 		goto out;
+ 	memset(&tx_desc->iser_header, 0, sizeof(struct iser_ctrl));
+ 	tx_desc->iser_header.flags = ISCSI_CTRL;
+@@ -906,6 +900,20 @@ isert_create_send_desc(struct isert_conn
  	}
+ }
  
- 	if (unlikely(!list_empty(&cq->wc_list)))
--		soft_polled = poll_soft_wc(cq, num_entries, wc);
-+		soft_polled = poll_soft_wc(cq, num_entries, wc, false);
++static void
++isert_create_send_desc(struct isert_conn *isert_conn,
++		       struct isert_cmd *isert_cmd,
++		       struct iser_tx_desc *tx_desc)
++{
++	struct isert_device *device = isert_conn->device;
++	struct ib_device *ib_dev = device->ib_device;
++
++	ib_dma_sync_single_for_cpu(ib_dev, tx_desc->dma_addr,
++				   ISER_HEADERS_LEN, DMA_TO_DEVICE);
++
++	__isert_create_send_desc(device, tx_desc);
++}
++
+ static int
+ isert_init_tx_hdrs(struct isert_conn *isert_conn,
+ 		   struct iser_tx_desc *tx_desc)
+@@ -993,7 +1001,7 @@ isert_put_login_tx(struct iscsi_conn *co
+ 	struct iser_tx_desc *tx_desc = &isert_conn->login_tx_desc;
+ 	int ret;
  
- 	for (npolled = 0; npolled < num_entries - soft_polled; npolled++) {
- 		if (mlx5_poll_one(cq, &cur_qp, wc + soft_polled + npolled))
+-	isert_create_send_desc(isert_conn, NULL, tx_desc);
++	__isert_create_send_desc(device, tx_desc);
+ 
+ 	memcpy(&tx_desc->iscsi_header, &login->rsp[0],
+ 	       sizeof(struct iscsi_hdr));
 
 
