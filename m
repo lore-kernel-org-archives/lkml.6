@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04904C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4927C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BB22517B
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BB22517B
+	by mail.kernel.org (Postfix) with ESMTP id 5D9472517C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D9472517C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeGAQZV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:25:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33638 "EHLO
+        id S965199AbeGAQZ0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 12:25:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33660 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933428AbeGAQZM (ORCPT
+        with ESMTP id S932790AbeGAQZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:25:12 -0400
+        Sun, 1 Jul 2018 12:25:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD737AD8;
-        Sun,  1 Jul 2018 16:25:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF859ACD;
+        Sun,  1 Jul 2018 16:25:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        stable@vger.kernel.org,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 026/101] powerpc/ptrace: Fix enforcement of DAWR constraints
-Date:   Sun,  1 Jul 2018 18:21:12 +0200
-Message-Id: <20180701160758.190665542@linuxfoundation.org>
+Subject: [PATCH 4.9 029/101] powerpc/fadump: Unregister fadump on kexec down path.
+Date:   Sun,  1 Jul 2018 18:21:15 +0200
+Message-Id: <20180701160758.311820750@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 References: <20180701160757.138608453@linuxfoundation.org>
@@ -50,41 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit cd6ef7eebf171bfcba7dc2df719c2a4958775040 upstream.
+commit 722cde76d68e8cc4f3de42e71c82fd40dea4f7b9 upstream.
 
-Back when we first introduced the DAWR, in commit 4ae7ebe9522a
-("powerpc: Change hardware breakpoint to allow longer ranges"), we
-screwed up the constraint making it a 1024 byte boundary rather than a
-512. This makes the check overly permissive. Fortunately GDB is the
-only real user and it always did they right thing, so we never
-noticed.
+Unregister fadump on kexec down path otherwise the fadump registration
+in new kexec-ed kernel complains that fadump is already registered.
+This makes new kernel to continue using fadump registered by previous
+kernel which may lead to invalid vmcore generation. Hence this patch
+fixes this issue by un-registering fadump in fadump_cleanup() which is
+called during kexec path so that new kernel can register fadump with
+new valid values.
 
-This fixes the constraint to 512 bytes.
-
-Fixes: 4ae7ebe9522a ("powerpc: Change hardware breakpoint to allow longer ranges")
-Cc: stable@vger.kernel.org # v3.9+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
+Fixes: b500afff11f6 ("fadump: Invalidate registration and release reserved memory for general use.")
+Cc: stable@vger.kernel.org # v3.4+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/hw_breakpoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/fadump.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -175,8 +175,8 @@ int arch_validate_hwbkpt_settings(struct
- 	if (cpu_has_feature(CPU_FTR_DAWR)) {
- 		length_max = 512 ; /* 64 doublewords */
- 		/* DAWR region can't cross 512 boundary */
--		if ((bp->attr.bp_addr >> 10) != 
--		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
-+		if ((bp->attr.bp_addr >> 9) !=
-+		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 9))
- 			return -EINVAL;
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -1033,6 +1033,9 @@ void fadump_cleanup(void)
+ 		init_fadump_mem_struct(&fdm,
+ 			be64_to_cpu(fdm_active->cpu_state_data.destination_address));
+ 		fadump_invalidate_dump(&fdm);
++	} else if (fw_dump.dump_registered) {
++		/* Un-register Firmware-assisted dump if it was registered. */
++		fadump_unregister_dump(&fdm);
  	}
- 	if (info->len >
+ }
+ 
 
 
