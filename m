@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACFCC6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE38C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858ED25776
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858ED25776
+	by mail.kernel.org (Postfix) with ESMTP id 6135F2578C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 17:51:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6135F2578C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753904AbeGARvb (ORCPT
+        id S1030620AbeGAQcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 13:51:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35186 "EHLO
+        Sun, 1 Jul 2018 12:32:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933823AbeGAQcd (ORCPT
+        with ESMTP id S1030601AbeGAQcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:32:33 -0400
+        Sun, 1 Jul 2018 12:32:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6515649B;
-        Sun,  1 Jul 2018 16:32:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A38449B;
+        Sun,  1 Jul 2018 16:32:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 038/157] powerpc/powernv/ioda2: Remove redundant free of TCE pages
-Date:   Sun,  1 Jul 2018 18:21:50 +0200
-Message-Id: <20180701160854.300786999@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 069/157] IB/hfi1: Fix user context tail allocation for DMA_RTAIL
+Date:   Sun,  1 Jul 2018 18:22:21 +0200
+Message-Id: <20180701160856.064769213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
 References: <20180701160852.287307684@linuxfoundation.org>
@@ -50,45 +53,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit 98fd72fe82527fd26618062b60cfd329451f2329 upstream.
+commit 1bc0299d976e000ececc6acd76e33b4582646cb7 upstream.
 
-When IODA2 creates a PE, it creates an IOMMU table with it_ops::free
-set to pnv_ioda2_table_free() which calls pnv_pci_ioda2_table_free_pages().
+The following code fails to allocate a buffer for the
+tail address that the hardware DMAs into when the user
+context DMA_RTAIL is set.
 
-Since iommu_tce_table_put() calls it_ops::free when the last reference
-to the table is released, explicit call to pnv_pci_ioda2_table_free_pages()
-is not needed so let's remove it.
+if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
+	rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
+		&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
+                gfp_flags);
+	if (!rcd->rcvhdrtail_kvaddr)
+		goto bail_free;
+	rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
+}
 
-This should fix double free in the case of PCI hotuplug as
-pnv_pci_ioda2_table_free_pages() does not reset neither
-iommu_table::it_base nor ::it_size.
+So the rcvhdrtail_kvaddr would then be NULL.
 
-This was not exposed by SRIOV as it uses different code path via
-pnv_pcibios_sriov_disable().
+The mmap logic fails to check for a NULL rcvhdrtail_kvaddr.
 
-IODA1 does not inialize it_ops::free so it does not have this issue.
+The fix is to test for both user and kernel DMA_TAIL options
+during the allocation as well as testing for a NULL
+rcvhdrtail_kvaddr during the mmap processing.
 
-Fixes: c5f7700bbd2e ("powerpc/powernv: Dynamically release PE")
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Additionally, all downstream testing of the capmask for DMA_RTAIL
+have been eliminated in favor of testing rcvhdrtail_kvaddr.
+
+Cc: <stable@vger.kernel.org> # 4.9.x
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/infiniband/hw/hfi1/chip.c     |    8 ++++----
+ drivers/infiniband/hw/hfi1/file_ops.c |    2 +-
+ drivers/infiniband/hw/hfi1/init.c     |    9 ++++-----
+ 3 files changed, 9 insertions(+), 10 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -3591,7 +3591,6 @@ static void pnv_pci_ioda2_release_pe_dma
- 		WARN_ON(pe->table_group.group);
- 	}
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -6829,7 +6829,7 @@ static void rxe_kernel_unfreeze(struct h
+ 		}
+ 		rcvmask = HFI1_RCVCTRL_CTXT_ENB;
+ 		/* HFI1_RCVCTRL_TAILUPD_[ENB|DIS] needs to be set explicitly */
+-		rcvmask |= HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL) ?
++		rcvmask |= rcd->rcvhdrtail_kvaddr ?
+ 			HFI1_RCVCTRL_TAILUPD_ENB : HFI1_RCVCTRL_TAILUPD_DIS;
+ 		hfi1_rcvctrl(dd, rcvmask, rcd);
+ 		hfi1_rcd_put(rcd);
+@@ -8341,7 +8341,7 @@ static inline int check_packet_present(s
+ 	u32 tail;
+ 	int present;
  
--	pnv_pci_ioda2_table_free_pages(tbl);
- 	iommu_tce_table_put(tbl);
- }
+-	if (!HFI1_CAP_IS_KSET(DMA_RTAIL))
++	if (!rcd->rcvhdrtail_kvaddr)
+ 		present = (rcd->seq_cnt ==
+ 				rhf_rcv_seq(rhf_to_cpu(get_rhf_addr(rcd))));
+ 	else /* is RDMA rtail */
+@@ -11813,7 +11813,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
+ 		/* reset the tail and hdr addresses, and sequence count */
+ 		write_kctxt_csr(dd, ctxt, RCV_HDR_ADDR,
+ 				rcd->rcvhdrq_dma);
+-		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL))
++		if (rcd->rcvhdrtail_kvaddr)
+ 			write_kctxt_csr(dd, ctxt, RCV_HDR_TAIL_ADDR,
+ 					rcd->rcvhdrqtailaddr_dma);
+ 		rcd->seq_cnt = 1;
+@@ -11893,7 +11893,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
+ 		rcvctrl |= RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
+ 	if (op & HFI1_RCVCTRL_INTRAVAIL_DIS)
+ 		rcvctrl &= ~RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
+-	if (op & HFI1_RCVCTRL_TAILUPD_ENB && rcd->rcvhdrqtailaddr_dma)
++	if ((op & HFI1_RCVCTRL_TAILUPD_ENB) && rcd->rcvhdrtail_kvaddr)
+ 		rcvctrl |= RCV_CTXT_CTRL_TAIL_UPD_SMASK;
+ 	if (op & HFI1_RCVCTRL_TAILUPD_DIS) {
+ 		/* See comment on RcvCtxtCtrl.TailUpd above */
+--- a/drivers/infiniband/hw/hfi1/file_ops.c
++++ b/drivers/infiniband/hw/hfi1/file_ops.c
+@@ -622,7 +622,7 @@ static int hfi1_file_mmap(struct file *f
+ 			ret = -EINVAL;
+ 			goto done;
+ 		}
+-		if (flags & VM_WRITE) {
++		if ((flags & VM_WRITE) || !uctxt->rcvhdrtail_kvaddr) {
+ 			ret = -EPERM;
+ 			goto done;
+ 		}
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1808,7 +1808,6 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
+ 	u64 reg;
  
+ 	if (!rcd->rcvhdrq) {
+-		dma_addr_t dma_hdrqtail;
+ 		gfp_t gfp_flags;
+ 
+ 		/*
+@@ -1834,13 +1833,13 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
+ 			goto bail;
+ 		}
+ 
+-		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
++		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL) ||
++		    HFI1_CAP_UGET_MASK(rcd->flags, DMA_RTAIL)) {
+ 			rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
+-				&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
+-				gfp_flags);
++				&dd->pcidev->dev, PAGE_SIZE,
++				&rcd->rcvhdrqtailaddr_dma, gfp_flags);
+ 			if (!rcd->rcvhdrtail_kvaddr)
+ 				goto bail_free;
+-			rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
+ 		}
+ 
+ 		rcd->rcvhdrq_size = amt;
 
 
