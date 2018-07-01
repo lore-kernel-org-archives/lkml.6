@@ -3,37 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E153C6778C
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5710C6778C
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83F925429
-	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83F925429
+	by mail.kernel.org (Postfix) with ESMTP id 7BB4525436
+	for <linux-kernel@archiver.kernel.org>; Sun,  1 Jul 2018 16:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB4525436
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1032514AbeGAQqY (ORCPT
+        id S1753721AbeGAQqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 12:46:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38394 "EHLO
+        Sun, 1 Jul 2018 12:46:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965956AbeGAQqS (ORCPT
+        with ESMTP id S1032475AbeGAQq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 12:46:18 -0400
+        Sun, 1 Jul 2018 12:46:27 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CBE6AA6;
-        Sun,  1 Jul 2018 16:46:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 713F5AA6;
+        Sun,  1 Jul 2018 16:46:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        NeilBrown <neilb@suse.com>, Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.17 210/220] dm: use bio_split() when splitting out the already processed bio
-Date:   Sun,  1 Jul 2018 18:23:54 +0200
-Message-Id: <20180701160916.931066645@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.17 213/220] block: Fix cloning of requests with a special payload
+Date:   Sun,  1 Jul 2018 18:23:57 +0200
+Message-Id: <20180701160917.051703066@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
 References: <20180701160908.272447118@linuxfoundation.org>
@@ -50,45 +55,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit f21c601a2bb319ec19eb4562eadc7797d90fd90e upstream.
+commit 297ba57dcdec7ea37e702bcf1a577ac32a034e21 upstream.
 
-Use of bio_clone_bioset() is inefficient if there is no need to clone
-the original bio's bio_vec array.  Best to use the bio_clone_fast()
-variant.  Also, just using bio_advance() is only part of what is needed
-to properly setup the clone -- it doesn't account for the various
-bio_integrity() related work that also needs to be performed (see
-bio_split).
+This patch avoids that removing a path controlled by the dm-mpath driver
+while mkfs is running triggers the following kernel bug:
 
-Address both of these issues by switching from bio_clone_bioset() to
-bio_split().
+    kernel BUG at block/blk-core.c:3347!
+    invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+    CPU: 20 PID: 24369 Comm: mkfs.ext4 Not tainted 4.18.0-rc1-dbg+ #2
+    RIP: 0010:blk_end_request_all+0x68/0x70
+    Call Trace:
+     <IRQ>
+     dm_softirq_done+0x326/0x3d0 [dm_mod]
+     blk_done_softirq+0x19b/0x1e0
+     __do_softirq+0x128/0x60d
+     irq_exit+0x100/0x110
+     smp_call_function_single_interrupt+0x90/0x330
+     call_function_single_interrupt+0xf/0x20
+     </IRQ>
 
-Fixes: 18a25da8 ("dm: ensure bio submission follows a depth-first tree walk")
-Cc: stable@vger.kernel.org # 4.15+, requires removal of '&' before md->queue->bio_split
-Reported-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: f9d03f96b988 ("block: improve handling of the magic discard payload")
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ block/blk-core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1582,10 +1582,9 @@ static blk_qc_t __split_and_process_bio(
- 				 * the usage of io->orig_bio in dm_remap_zone_report()
- 				 * won't be affected by this reassignment.
- 				 */
--				struct bio *b = bio_clone_bioset(bio, GFP_NOIO,
--								 md->queue->bio_split);
-+				struct bio *b = bio_split(bio, bio_sectors(bio) - ci.sector_count,
-+							  GFP_NOIO, md->queue->bio_split);
- 				ci.io->orig_bio = b;
--				bio_advance(bio, (bio_sectors(bio) - ci.sector_count) << 9);
- 				bio_chain(b, bio);
- 				ret = generic_make_request(bio);
- 				break;
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -3487,6 +3487,10 @@ static void __blk_rq_prep_clone(struct r
+ 	dst->cpu = src->cpu;
+ 	dst->__sector = blk_rq_pos(src);
+ 	dst->__data_len = blk_rq_bytes(src);
++	if (src->rq_flags & RQF_SPECIAL_PAYLOAD) {
++		dst->rq_flags |= RQF_SPECIAL_PAYLOAD;
++		dst->special_vec = src->special_vec;
++	}
+ 	dst->nr_phys_segments = src->nr_phys_segments;
+ 	dst->ioprio = src->ioprio;
+ 	dst->extra_len = src->extra_len;
 
 
