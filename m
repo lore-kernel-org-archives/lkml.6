@@ -2,102 +2,105 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F79C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D0EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8789B2540A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:57:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8789B2540A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 574182542D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574182542D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754017AbeGBH5b (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:57:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40536 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752183AbeGBH5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:57:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 04943AD3A;
-        Mon,  2 Jul 2018 07:57:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CCEEE1E3BDF; Mon,  2 Jul 2018 09:57:27 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 09:57:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Huaisheng Ye <yehs2007@zoho.com>
-Cc:     dan.j.williams@intel.com, dave.jiang@intel.com,
-        willy@infradead.org, ross.zwisler@linux.intel.com,
-        vishal.l.verma@intel.com, jack@suse.com, chengnt@lenovo.com,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
-Subject: Re: [PATCH 3/3] fs/ext2/inode: Optimize the condition for iomap_begin
-Message-ID: <20180702075727.3s7yymczrmm4xiox@quack2.suse.cz>
-References: <20180701061848.7036-1-yehs2007@zoho.com>
- <20180701061848.7036-3-yehs2007@zoho.com>
+        id S964803AbeGBH6V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:58:21 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39234 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933455AbeGBH6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 03:58:17 -0400
+X-UUID: 373d27461cd34a17824d6ca4512c22cf-20180702
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 973608446; Mon, 02 Jul 2018 15:58:13 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 2 Jul 2018 15:58:10 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 2 Jul 2018 15:58:09 +0800
+From:   <honghui.zhang@mediatek.com>
+To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>
+CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
+Subject: [PATCH v3 0/4] PCI: mediatek: fixup find_port, enable_msi and add pm, module support
+Date:   Mon, 2 Jul 2018 15:57:40 +0800
+Message-ID: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180701061848.7036-3-yehs2007@zoho.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 01-07-18 14:18:48, Huaisheng Ye wrote:
-> From: Huaisheng Ye <yehs1@lenovo.com>
-> 
-> If ext2_get_blocks returns negative result, ext2_iomap_begin
-> will return for error case.
-> Adjust the judging condition of ret value will be useful for
-> code simplification.
-> 
-> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-I'm sorry but how exactly is this simpler?
+This patchset includes misc patchs:
 
-								Honza
+The first patch fixup the mtk_pcie_find_port logical which will cause system
+could not touch the EP's configuration space which was connected to PCIe slot 1.
 
-> ---
->  fs/ext2/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-> index ca211bd..9b1004d 100644
-> --- a/fs/ext2/inode.c
-> +++ b/fs/ext2/inode.c
-> @@ -819,15 +819,15 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  	iomap->offset = (loff_t)first_block << blkbits;
->  	iomap->dax_dev = sbi->s_daxdev;
->  
-> -	if (ret == 0) {
-> -		iomap->type = IOMAP_HOLE;
-> -		iomap->addr = IOMAP_NULL_ADDR;
-> -		iomap->length = 1 << blkbits;
-> -	} else {
-> +	if (ret) {
->  		iomap->type = IOMAP_MAPPED;
->  		iomap->addr = (u64)bno << blkbits;
->  		iomap->length = (u64)ret << blkbits;
->  		iomap->flags |= IOMAP_F_MERGED;
-> +	} else {
-> +		iomap->type = IOMAP_HOLE;
-> +		iomap->addr = IOMAP_NULL_ADDR;
-> +		iomap->length = 1 << blkbits;
->  	}
->  
->  	if (new)
-> -- 
-> 1.8.3.1
-> 
-> 
-> 
+The second patch fixup the enable msi logical, the operation to enable msi
+should be after system clock is enabled. The function of mtk_pcie_startup_port_v2's
+define location is re-arranged to avoid mtk_pcie_enable_msi's forward declaration.
+And call mtk_pcie_enable_msi in mtk_pcie_startup_port_v2 since the clock was all
+enabled at that time.
+
+The third patch was rebased and refactor of the v4 patch[1], changes are:
+ -Add PM support for MT7622.
+ -Using mtk_pcie_enable_port to re-establish the link when resumed.
+ -Rebase on the previous two patches.
+
+The fourth patch add loadable kernel module support.
+
+Some of those patches was already reviewed-by Ryder Lee <ryder.lee@mediatek.com>,
+so I just add the Reviewed-by tags in those patches.
+
+[1] https://patchwork.kernel.org/patch/10479079
+
+Change since v2:
+ - Fix the list_for_each_entry_safe parameter error.
+ - Add Ryder's Acked-by flag.
+
+Change since v1:
+ - A bit of code refact of the first patch suggested by Andy Shevchenko, and
+   commit message updated.
+ - Using __maybe_unused.
+ - Remove the redundant list_empty check of the fourth patch.
+
+Honghui Zhang (4):
+  PCI: mediatek: fixup mtk_pcie_find_port logical
+  PCI: mediatek: enable msi after clock enabled
+  PCI: mediatek: Add system pm support for MT2712 and MT7622
+  PCI: mediatek: Add loadable kernel module support
+
+ drivers/pci/controller/Kconfig         |   2 +-
+ drivers/pci/controller/pcie-mediatek.c | 289 ++++++++++++++++++++++++---------
+ 2 files changed, 213 insertions(+), 78 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.6.4
+
