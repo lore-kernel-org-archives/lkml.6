@@ -2,227 +2,146 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3A3C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8A2C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90EA253F2
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13DC123C68
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSlkAecA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90EA253F2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vKPUZSM0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13DC123C68
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752670AbeGBNTj (ORCPT
+        id S1752298AbeGBNUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:19:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752610AbeGBNTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:19:30 -0400
-Received: from [192.168.1.24] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F199C24EDC;
-        Mon,  2 Jul 2018 13:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530537570;
-        bh=EZrBnXM9vDoOUbG0QTnHyJOxUxrGREqJCdwYFMYyYt4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=kSlkAecAOCnJIIY1RXGxBXnR8BvZTgRqxV3BIeZYeWuXL2UCNnwGMtnC15H4gCC06
-         UIU+y0KUiD95VZJhiESkmd0+YcYMZRxU16obO2DwPvlnqrL6dP3bUvXMp5fcmPIEaP
-         DZbx/obzIosPL/nxzbPgjVSvBIlXgAnGkXVa0DP4=
-Subject: Re: [PATCH] arm: dts: socfpga: denali needs nand_x_clk too
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
-        =?UTF-8?Q?Marek_Va=c5=a1ut?= <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20180619120719.26921-1-richard@nod.at>
- <CAK7LNASgPa4D0Siyo3mvK_AJ2zaECDXGaMEn-iNzQ9PFXFir+w@mail.gmail.com>
- <3320422.EJ8D6C0VHL@blindfold>
- <d4fdcd1d-db20-1837-a037-0982a042d357@kernel.org>
- <20180625165506.484e025f@bbrezillon>
- <CAK7LNATyo+7gauyQcRmNfCs8CagU1XdpHHgREMeTvf4rqxpeNQ@mail.gmail.com>
- <20180626200928.29aca979@xps13>
- <CAK7LNATbmNadK=xPcaQ+seRS_YvH5ZP5SX8z74iOyYcJ0Soicw@mail.gmail.com>
- <333ae81b-af62-ec2e-3311-5487b1cc90c1@kernel.org>
- <CAK7LNATuCqs5ofKnNCSEYhWanD+u2+5NzB7asaYhqb7BVUW_Fw@mail.gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ff8ad078-1e98-9e4f-0f9c-64981caad8c9@kernel.org>
-Date:   Mon, 2 Jul 2018 08:19:26 -0500
+        Mon, 2 Jul 2018 09:20:47 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42836 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeGBNUp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:20:45 -0400
+Received: by mail-pl0-f65.google.com with SMTP id y15-v6so6087177pll.9;
+        Mon, 02 Jul 2018 06:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ir3ChEr0HqTxoel/nevm50n8yWXff+Sn6IeCX3ujf1I=;
+        b=vKPUZSM0lahoTUWYepkJZxlGyKNBtPLnYW3r5z/0keQv5U4ADzj7Cl/ZI5mDdxO/oa
+         AZYYvFNHPhIvbuDITVR1q6klp5dH2Y/bPushK4lKnNOPkIWY9HEu3nYeVl7wrwZeKhCi
+         5css5MHYf25Npj0s8qxuTfFV+n/GtViWphk1deEvPUTBbTNBE70PkbynoOIIzuQ5YoZ4
+         POO8aPZ9oHbK3RTI+ajx/GyuGZ95KhLrlcDufw/tximqRgfZUEFYW2tQyTXVXO2b+2Zt
+         +/spbPy9AcL3sIIsglhAmXbtZ6M7F++BPQNslZL3lZtSs7R4dF11wOguQAn+Lg4B4q97
+         QpDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ir3ChEr0HqTxoel/nevm50n8yWXff+Sn6IeCX3ujf1I=;
+        b=UzeuVaO2Op0o4SBDcCjGc9lIydKKDUKGb+/BXvTqe2blI5AfJHqhw5w//ikXcxFi9l
+         gC884Uf7I9W55btDvQFD+W1Dx5Lnt5xUwK4smwMVQrBYLayDML1lZqRFyRgL5RCjFjbA
+         E6kD6eQmC2pVDvwJ+FfXzZkTsxrDtRbK3opgygXLV5pi7ef42Mc/iZIEQvH0w+wAtm67
+         IvQ9KYCR7M/bQk7WeMPnAUhxregkSS5zTkMqDhmQxDkaGmas1N8YjOV4TPuj/8A6SWdC
+         q/UzyquPEq4b5kXH9vU8npWYoQWR3GSgbAd6Pw2A6szuDpoxOvcpxaGBGlT737Q8il9Z
+         VorA==
+X-Gm-Message-State: APt69E15/lGQBWOLVoHrDGPrUIIZiO8GHPr5bgjSVsKLpzGxTD7BH9YW
+        fSyO/Ld8TOCSgcD4m66q8OaQGA==
+X-Google-Smtp-Source: ADUXVKIiOxo+/DwXHlAGBs2GGSw2naRJ5jixQiwU0fgI4pVqfox4SDBO3+l5sdzOF0he8puEuZrZAQ==
+X-Received: by 2002:a17:902:780e:: with SMTP id p14-v6mr25677239pll.239.1530537644992;
+        Mon, 02 Jul 2018 06:20:44 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id j133-v6sm32946655pgc.75.2018.07.02.06.20.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 06:20:44 -0700 (PDT)
+Subject: Re: [PATCH] watchdog: add module parameter "force_no_reboot" for iTCO
+To:     "Tian, Baofeng" <baofeng.tian@intel.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <0038B620BAC72941BCBF48AEB892976C02CADE1E@shsmsx102.ccr.corp.intel.com>
+ <EEBA739CCF11FE49B73E1FB4690F5EE649E1BFEB@shsmsx102.ccr.corp.intel.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <140371d6-4bbb-6377-a570-5253c5f98e0e@roeck-us.net>
+Date:   Mon, 2 Jul 2018 06:20:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATuCqs5ofKnNCSEYhWanD+u2+5NzB7asaYhqb7BVUW_Fw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <EEBA739CCF11FE49B73E1FB4690F5EE649E1BFEB@shsmsx102.ccr.corp.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/01/2018 08:35 PM, Masahiro Yamada wrote:
-> Hi Dinh,
+On 07/02/2018 12:30 AM, Tian, Baofeng wrote:
+> From: "Tian, Baofeng" <baofeng.tian@intel.com <mailto:baofeng.tian@intel.com>>
+> Subject: [PATCH] watchdog: add module parameter "force_no_reboot" for iTCO
 > 
-> 2018-06-27 23:55 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
->> Hi Masahiro,
->>
->> On 06/26/2018 09:52 PM, Masahiro Yamada wrote:
->>> 2018-06-27 3:09 GMT+09:00 Miquel Raynal <miquel.raynal@bootlin.com>:
->>>> Hi Masahiro,
->>>>
->>>> On Tue, 26 Jun 2018 11:38:21 +0900, Masahiro Yamada
->>>> <yamada.masahiro@socionext.com> wrote:
->>>>
->>>>> 2018-06-25 23:55 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
->>>>>> On Mon, 25 Jun 2018 09:50:18 -0500
->>>>>> Dinh Nguyen <dinguyen@kernel.org> wrote:
->>>>>>
->>>>>>> On 06/22/2018 10:58 AM, Richard Weinberger wrote:
->>>>>>>> Masahiro,
->>>>>>>>
->>>>>>>> Am Freitag, 22. Juni 2018, 16:37:21 CEST schrieb Masahiro Yamada:
->>>>>>>>> Hi Richard,
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> 2018-06-19 21:07 GMT+09:00 Richard Weinberger <richard@nod.at>:
->>>>>>>>>> The denali NAND flash controller needs at least two clocks to operate,
->>>>>>>>>> nand_clk and nand_x_clk.
->>>>>>>>>> Since 1bb88666775e ("mtd: nand: denali: handle timing parameters by
->>>>>>>>>> setup_data_interface()") nand_x_clk is used to derive timing settings.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Richard Weinberger <richard@nod.at>
->>>>>>>>>> ---
->>>>>>>>>> Strictly speaking denali needs a ecc_clk too, but AFAIK such a clock
->>>>>>>>>> is not present on this SoC.
->>>>>>>>>> But my SoCFPGA knowledge is very limited.
->>>>>>>>>>
->>>>>>>>>> Thanks,
->>>>>>>>>> //richard
->>>>>>>>>> ---
->>>>>>>>>>  arch/arm/boot/dts/socfpga.dtsi | 3 ++-
->>>>>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
->>>>>>>>>> index 486d4e7433ed..562f7b375bbd 100644
->>>>>>>>>> --- a/arch/arm/boot/dts/socfpga.dtsi
->>>>>>>>>> +++ b/arch/arm/boot/dts/socfpga.dtsi
->>>>>>>>>> @@ -754,7 +754,8 @@
->>>>>>>>>>                         reg-names = "nand_data", "denali_reg";
->>>>>>>>>>                         interrupts = <0x0 0x90 0x4>;
->>>>>>>>>>                         dma-mask = <0xffffffff>;
->>>>>>>>>> -                       clocks = <&nand_clk>;
->>>>>>>>>> +                       clocks = <&nand_clk>, <&nand_x_clk>;
->>>>>>>>>> +                       clock-names = "nand", "nand_x";
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> IMHO, this should be
->>>>>>>>>
->>>>>>>>>                           clocks = <&nand_clk>, <&nand_x_clk>, <&nand_x_clk>;
->>>>>>>>>                           clock-names = "nand", "nand_x", "ecc";
->>>>>>>
->>>>>>> No, it should be just the nand_x and ecc.
->>>>>>>
->>>>>>> There's already a patch to use the nand_x_clk and not the nand_clk.
->>>>>
->>>>>
->>>>> Different people try to fix the problem in different ways.
->>>>>
->>>>> I think it is due to miscommunication across sub-systems.
->>>>
->>>> Is the series named
->>>>
->>>>         mtd: rawnand: denali: add new clocks and improve
->>>>                               setup_data_interface
->>>>
->>>> still valid?
->>>
->>> Yes.
->>> I believe V4 is valid.
->>>
->>>
->>> Information for Dinh Nguyen:
->>>
->>> http://patchwork.ozlabs.org/patch/933507/
->>> http://patchwork.ozlabs.org/patch/933487/
->>> http://patchwork.ozlabs.org/patch/933494/
->>> http://patchwork.ozlabs.org/patch/933506/
->>>
->>>
->>> If he is not convinced, I am open to discussion, though.
->>
->> I wasn't aware of these patches. This patch is staged to go into
->> v4.17-rc3 through the arm-soc:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/arch/arm/boot/dts/socfpga.dtsi?h=fixes&id=4eda9b766b042ea38d84df91581b03f6145a2ab0
->>
->> I think your patch will handle a case where only 1 clock is passed in,
->> so it should be okay right?
->>
+> Setting "force_no_reboot" parameter to true (y/Y/1) will have
+> the effect to prevent to reset the NO_REBOOT flag thus
+> preventing the iTCO to reboot the platform, if not set
+> or set to false, then system will reboot after about 30s.
 > 
-> I should be OK,
-> but please consider the proper fix for v4.19
-> as Boris suggested.
+> Signed-off-by: Tian, Baofeng <baofeng.tian@intel.com <mailto:baofeng.tian@intel.com>>
+
+Your e-mail address is messed up.
+
+> ---
+>   drivers/watchdog/iTCO_wdt.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+> index 347f038..255318b 100644
+> --- a/drivers/watchdog/iTCO_wdt.c
+> +++ b/drivers/watchdog/iTCO_wdt.c
+> @@ -131,6 +131,11 @@ module_param(turn_SMI_watchdog_clear_off, int, 0);
+>   MODULE_PARM_DESC(turn_SMI_watchdog_clear_off,
+>        "Turn off SMI clearing watchdog (depends on TCO-version)(default=1)");
+> 
+> +static bool force_no_reboot;
+> +module_param(force_no_reboot, bool, 0);
+> +MODULE_PARM_DESC(force_no_reboot,
+> +           "Prevents the watchdog rebooting the platform (default=0)");
+> +
+>   /*
+>    * Some TCO specific functions
+>    */
+> @@ -243,6 +248,10 @@ static int iTCO_wdt_start(struct watchdog_device *wd_dev)
+>        struct iTCO_wdt_private *p = watchdog_get_drvdata(wd_dev);
+>        unsigned int val;
+> 
+> +     /* force_no_reboot will prevent to unset NO_REBOOT bit */
+> +     if (force_no_reboot)
+> +           return -EIO;
+> +
+It seems to me that this flag prevents the watchdog from being started,
+and on top it would return an unreasonable error (-EIO).
+
+I don't see the point of this patch, sorry.
+
+Guenter
+
+>        spin_lock(&p->io_lock);
+> 
+>        iTCO_vendor_pre_start(p->smi_res, wd_dev->timeout);
+> @@ -250,7 +259,7 @@ static int iTCO_wdt_start(struct watchdog_device *wd_dev)
+>        /* disable chipset's NO_REBOOT bit */
+>        if (p->update_no_reboot_bit(p->no_reboot_priv, false)) {
+>              spin_unlock(&p->io_lock);
+> -           pr_err("failed to reset NO_REBOOT flag, reboot disabled by hardware/BIOS\n");
+> +           pr_err("failed to reset NO_REBOOT flag, reboot disabled by hardware/BIOS/rc_cmd\n");
+>              return -EIO;
+>        }
+> 
+> -- 
+> 2.7.4
 > 
 
-Yes, I will spin up a patch.
-
-Dinh
