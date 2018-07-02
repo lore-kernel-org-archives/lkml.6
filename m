@@ -2,134 +2,105 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875E4C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E20C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396822124D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:02:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396822124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id D13C625475
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:04:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJ4UcaBx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13C625475
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753643AbeGBHCa (ORCPT
+        id S1753684AbeGBHEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:02:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60136 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752406AbeGBHC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:02:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 791EFAD36;
-        Mon,  2 Jul 2018 07:02:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4D4971E3C25; Mon,  2 Jul 2018 09:02:27 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 09:02:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Leon Romanovsky <leon@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180702070227.jj5udrdk3rxzjj4t@quack2.suse.cz>
-References: <20180627113221.GO32348@dhcp22.suse.cz>
- <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
- <20180627115927.GQ32348@dhcp22.suse.cz>
- <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
- <20180627145718.GB20171@ziepe.ca>
- <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
- <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
- <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
- <20180702055251.GV3014@mtr-leonro.mtl.com>
- <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
+        Mon, 2 Jul 2018 03:04:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34876 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753092AbeGBHER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 03:04:17 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i125-v6so11691549lji.2;
+        Mon, 02 Jul 2018 00:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0r3B2TrzDpZ9ziRkX5skhp/Llmo6Bo0BJKaeWhPKbNY=;
+        b=LJ4UcaBx+rTF9qZB6GEOwQ6Js68f31sSdPIafvahzu7J6lyPZMOkez6ZYf2Khg8Te1
+         CLElRCeVdXN+IX+iJKYIy1iwYTkOUtPNzhuvyroAsj3d069Jfp73DmO3+EtW5ESjaEX1
+         JSVcfoElFKBD3TDRb+YMnwH7+dBP0swC9QBFGRBMl1jeAIbIL66wPQVxv8JEeLjE4y+a
+         FTuUw/+eUtbrpFyr0Nyyc7bKwRDxs/phmfzlUh7TAn+kqeRcC4n5DDxk00+kVo86QT+E
+         ODx0Fq3K1Bg2rZfZkxw9KUgbQKZX5XSThMs4wKtVdkvmBYJNvSq0aAHcS7IFOOgv5dQ8
+         endQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0r3B2TrzDpZ9ziRkX5skhp/Llmo6Bo0BJKaeWhPKbNY=;
+        b=J2i164r1E2qGWciMPmHbgwdbpvVk7x7kt/S8aSgq1Esi0XjUO19tQoCbq7uAQwW9l2
+         06ZTgUJ04PIPQZia46NY8/O/snQUeMSKeCNB6lKG0vUOyC4UvEyH2balOCxl80VGAkQs
+         QsvrHjHWBlG40NIDry90E9j/SEar/Pi9PrYBFn1Ioqb5dMrhv0DZtsTzmf5u3pvVywF/
+         Wwqk2ph/BjA0LGmckBwAD8mEKqTFpkgdXzUbuWPhHnm0HF09k6Oi4zpE9epkmHJpCcHz
+         XpezN4VdoUsxG0q9plEdK2cTNfThTeZYKeySsb1xDsZblPnlQHQbmixhey/1KVRalwhX
+         Tf4Q==
+X-Gm-Message-State: APt69E1gBtg5yoHS9qVDLk0sXk42+upQXMsV9qr2Th4C26OOWL8Ra2cF
+        NndRyqBjjQbqOH6Cyyq5ie4=
+X-Google-Smtp-Source: AAOMgpei9boRUSIVqmxHLwnP3uLi8JaFPg/ZnGDMR5M0TcSm1dx5RmmeBt7pfM4/yDfsdng+IRh0Yg==
+X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr15620811ljj.49.1530515055456;
+        Mon, 02 Jul 2018 00:04:15 -0700 (PDT)
+Received: from [10.17.182.9] (ll-53.209.223.85.sovam.net.ua. [85.223.209.53])
+        by smtp.gmail.com with ESMTPSA id o34-v6sm1592386lfg.12.2018.07.02.00.04.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 00:04:14 -0700 (PDT)
+Subject: Re: [PATCH v4 8/9] xen/gntdev: Implement dma-buf export functionality
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180615062753.9229-1-andr2000@gmail.com>
+ <20180615062753.9229-9-andr2000@gmail.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <31fdf7cc-6c57-6216-06b6-54471d873178@gmail.com>
+Date:   Mon, 2 Jul 2018 10:04:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180615062753.9229-9-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 01-07-18 23:10:04, John Hubbard wrote:
-> On 07/01/2018 10:52 PM, Leon Romanovsky wrote:
-> > On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
-> >> On Wed 27-06-18 19:42:01, John Hubbard wrote:
-> >>> On 06/27/2018 10:02 AM, Jan Kara wrote:
-> >>>> On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
-> >>>>> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
-> >>>>>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
-> >>>>>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
-> >>>>>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
-> >>>>>>> [...]
-> >>> One question though: I'm still vague on the best actions to take in the
-> >>> following functions:
-> >>>
-> >>>     page_mkclean_one
-> >>>     try_to_unmap_one
-> >>>
-> >>> At the moment, they are both just doing an evil little early-out:
-> >>>
-> >>> 	if (PageDmaPinned(page))
-> >>> 		return false;
-> >>>
-> >>> ...but we talked about maybe waiting for the condition to clear, instead?
-> >>> Thoughts?
-> >>
-> >> What needs to happen in page_mkclean() depends on the caller. Most of the
-> >> callers really need to be sure the page is write-protected once
-> >> page_mkclean() returns. Those are:
-> >>
-> >>   pagecache_isize_extended()
-> >>   fb_deferred_io_work()
-> >>   clear_page_dirty_for_io() if called for data-integrity writeback - which
-> >>     is currently known only in its caller (e.g. write_cache_pages()) where
-> >>     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
-> >>     information into page_mkclean() will require some plumbing and
-> >>     clear_page_dirty_for_io() has some 50 callers but it's doable.
-> >>
-> >> clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
-> >> WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
-> >> otherwise memory cleaning would get stuck on pinned pages until RDMA
-> >> drivers release its pins.
-> > 
-> > Sorry for naive question, but won't it create too much dirty pages
-> > so writeback will be called "non-stop" to rebalance watermarks without
-> > ability to progress?
-> > 
-> 
-> That is an interesting point. 
-> 
-> Holding off page writeback of this region does seem like it could cause
-> problems under memory pressure. Maybe adjusting the watermarks so that we
-> tell the writeback  system, "all is well, just ignore this region until
-> we're done with it" might help? Any ideas here are welcome...
-> 
-> Longer term, maybe some additional work could allow the kernel to be able
-> to writeback the gup-pinned pages (while DMA is happening--snapshots), but
-> that seems like a pretty big overhaul.
++
+> +static const struct dma_buf_ops dmabuf_exp_ops =  {
+> +	.attach = dmabuf_exp_ops_attach,
+> +	.detach = dmabuf_exp_ops_detach,
+> +	.map_dma_buf = dmabuf_exp_ops_map_dma_buf,
+> +	.unmap_dma_buf = dmabuf_exp_ops_unmap_dma_buf,
+> +	.release = dmabuf_exp_ops_release,
+> +	.map = dmabuf_exp_ops_kmap,
+> +	.map_atomic = dmabuf_exp_ops_kmap_atomic,
+> +	.unmap = dmabuf_exp_ops_kunmap,
+> +	.unmap_atomic = dmabuf_exp_ops_kunmap_atomic,
+> +	.mmap = dmabuf_exp_ops_mmap,
+> +};
+> +
+>
+Due to upcoming API change [1] the atomic ops need to be removed before
+merging into the mainline
 
-We could use bounce pages to safely writeback pinned pages. However I don't
-think it would buy us anything. From MM point of view these pages are
-impossible-to-get-rid-of (page refcount is increased) and pernamently-dirty
-when GUP was for write (we don't know when dirty data arrives there). So
-let's not just fool MM by pretending we can make them clean. That's going
-to lead to just more problems down the road.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] 
+https://cgit.freedesktop.org/drm/drm-misc/commit/include/linux/dma-buf.h?id=f664a52695429b68afb4e130a0f69cd5fd1fec86
