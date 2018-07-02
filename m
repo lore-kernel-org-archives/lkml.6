@@ -2,125 +2,108 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A2EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC76C6778C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE9424F34
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE9424F34
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DAAA24F3C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:57:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAAA24F3C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933034AbeGBC4m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 22:56:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37194 "EHLO mx1.redhat.com"
+        id S933120AbeGBC5p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 22:57:45 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9187 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753046AbeGBC4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 22:56:37 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D336A401EF02;
-        Mon,  2 Jul 2018 02:56:36 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F20732156880;
-        Mon,  2 Jul 2018 02:56:35 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 10:56:32 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
-Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
-Message-ID: <20180702025632.GO3223@MiWiFi-R3L-srv>
-References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
- <20180702020417.21281-2-pasha.tatashin@oracle.com>
+        id S932468AbeGBC5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 22:57:44 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BECCABAE6383E;
+        Mon,  2 Jul 2018 10:57:28 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
+ 10:57:29 +0800
+Subject: Re: [PATCH] f2fs: Replace strncpy with memcpy
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1530478626-15753-1-git-send-email-linux@roeck-us.net>
+ <0250de00-adf7-7b43-5f7c-44704119e2f9@huawei.com>
+ <367fb12b-3ae0-4a6a-b59e-31d3a360bf05@roeck-us.net>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <ecb4f083-1d61-d882-c85c-53cb33fa793e@huawei.com>
+Date:   Mon, 2 Jul 2018 10:57:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702020417.21281-2-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 02:56:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 02:56:37 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <367fb12b-3ae0-4a6a-b59e-31d3a360bf05@roeck-us.net>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/18 at 10:04pm, Pavel Tatashin wrote:
-> +/*
-> + * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
-> + * And number of present sections in this node is map_count.
-> + */
-> +void __init sparse_init_nid(int nid, unsigned long pnum_begin,
-> +				   unsigned long pnum_end,
-> +				   unsigned long map_count)
-> +{
-> +	unsigned long pnum, usemap_longs, *usemap, map_index;
-> +	struct page *map, *map_base;
-> +
-> +	usemap_longs = BITS_TO_LONGS(SECTION_BLOCKFLAGS_BITS);
-> +	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nid),
-> +							  usemap_size() *
-> +							  map_count);
-> +	if (!usemap) {
-> +		pr_err("%s: usemap allocation failed", __func__);
-
-Wondering if we can provide more useful information for better debugging
-if failed. E.g here tell on what nid the usemap allocation failed.
-
-> +		goto failed;
-> +	}
-> +	map_base = sparse_populate_node(pnum_begin, pnum_end,
-> +					map_count, nid);
-> +	map_index = 0;
-> +	for_each_present_section_nr(pnum_begin, pnum) {
-> +		if (pnum >= pnum_end)
-> +			break;
-> +
-> +		BUG_ON(map_index == map_count);
-> +		map = sparse_populate_node_section(map_base, map_index,
-> +						   pnum, nid);
-> +		if (!map) {
-> +			pr_err("%s: memory map backing failed. Some memory will not be available.",
-> +			       __func__);
-And here tell nid and the memory section nr failed.
-
-> +			pnum_begin = pnum;
-> +			goto failed;
-> +		}
-> +		check_usemap_section_nr(nid, usemap);
-> +		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
-> +					usemap);
-> +		map_index++;
-> +		usemap += usemap_longs;
-> +	}
-> +	return;
-> +failed:
-> +	/* We failed to allocate, mark all the following pnums as not present */
-> +	for_each_present_section_nr(pnum_begin, pnum) {
-> +		struct mem_section *ms;
-> +
-> +		if (pnum >= pnum_end)
-> +			break;
-> +		ms = __nr_to_section(pnum);
-> +		ms->section_mem_map = 0;
-> +	}
-> +}
-> +
->  /*
->   * Allocate the accumulated non-linear sections, allocate a mem_map
->   * for each and record the physical to section mapping.
-> -- 
-> 2.18.0
+On 2018/7/2 10:16, Guenter Roeck wrote:
+> On 07/01/2018 06:53 PM, Chao Yu wrote:
+>> On 2018/7/2 4:57, Guenter Roeck wrote:
+>>> gcc 8.1.0 complains:
+>>>
+>>> fs/f2fs/namei.c: In function 'f2fs_update_extension_list':
+>>> fs/f2fs/namei.c:257:3: warning:
+>>> 	'strncpy' output truncated before terminating nul copying
+>>> 	as many bytes from a string as its length
+>>> fs/f2fs/namei.c:249:3: warning:
+>>> 	'strncpy' output truncated before terminating nul copying
+>>> 	as many bytes from a string as its length
+>>>
+>>> Using strncpy() is indeed less than perfect since the length of data to
+>>> be copied has already been determined with strlen(). Replace strncpy()
+>>> with memcpy() to address the warning and optimize the code a little.
+>>>
+>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>>> ---
+>>>   fs/f2fs/namei.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+>>> index 231b7f3ea7d3..e75607544f7c 100644
+>>> --- a/fs/f2fs/namei.c
+>>> +++ b/fs/f2fs/namei.c
+>>> @@ -246,7 +246,7 @@ int f2fs_update_extension_list(struct f2fs_sb_info *sbi, const char *name,
+>>>   		return -EINVAL;
+>>>   
+>>>   	if (hot) {
+>>> -		strncpy(extlist[count], name, strlen(name));
+>>> +		memcpy(extlist[count], name, strlen(name));
+>>
+>> How about replacing with strcpy(extlist[count], name)? Because name length has
+>> already been checked before f2fs_update_extension_list, it should be valid, and
+>> will not cause overflow during copying.
+>>
 > 
+> Your call; feel free to submit an alternative. Since it is different files, static
+> analysis might not know and complain, though. You might want to make sure that this
+> doesn't happen, and also add a comment explaining the reason for using strcpy().
+
+Yeah, that could be changed in another patch, but it will be trivial. Anyway, to
+fix this gcc complaint, this patch looks good to me, thanks for the patch. :)
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
+> 
+> Thanks,
+> Guenter
+> 
+> 
+
