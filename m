@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2573DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4B5C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD71C254E1
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD71C254E1
+	by mail.kernel.org (Postfix) with ESMTP id D410C25561
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D410C25561
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754515AbeGBJok (ORCPT
+        id S1754572AbeGBJoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:44:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50823 "EHLO mail.bootlin.com"
+        Mon, 2 Jul 2018 05:44:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50829 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752893AbeGBJoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753183AbeGBJoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Jul 2018 05:44:37 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3B394207DA; Mon,  2 Jul 2018 11:44:35 +0200 (CEST)
+        id 74768207D4; Mon,  2 Jul 2018 11:44:35 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EC001206ED;
-        Mon,  2 Jul 2018 11:44:24 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2E0BF20741;
+        Mon,  2 Jul 2018 11:44:25 +0200 (CEST)
 From:   Quentin Schulz <quentin.schulz@bootlin.com>
 To:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
         computersforpeace@gmail.com, boris.brezillon@bootlin.com,
@@ -34,61 +34,139 @@ To:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
 Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         thomas.petazzoni@bootlin.com,
         Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH v5 0/2] ubi: add possibility to skip CRC check for static UBI volumes
-Date:   Mon,  2 Jul 2018 11:43:49 +0200
-Message-Id: <cover.ab725a3c64626915f8184e28937870f36684db61.1530524405.git-series.quentin.schulz@bootlin.com>
+Subject: [PATCH v5 1/2] ubi: provide a way to skip CRC checks
+Date:   Mon,  2 Jul 2018 11:43:50 +0200
+Message-Id: <328390941d1e1d3cbd94a9a36622809f8ab4d483.1530524405.git-series.quentin.schulz@bootlin.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.ab725a3c64626915f8184e28937870f36684db61.1530524405.git-series.quentin.schulz@bootlin.com>
+References: <cover.ab725a3c64626915f8184e28937870f36684db61.1530524405.git-series.quentin.schulz@bootlin.com>
+In-Reply-To: <cover.ab725a3c64626915f8184e28937870f36684db61.1530524405.git-series.quentin.schulz@bootlin.com>
+References: <cover.ab725a3c64626915f8184e28937870f36684db61.1530524405.git-series.quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some users of static UBI volumes implement their own integrity check, thus
-making the volume CRC check done at open time useless. For instance, this
-is the case when one use the ubiblock + dm-verity + squashfs combination,
-where dm-verity already checks integrity of the block device but this time
-at the block granularity instead of verifying the whole volume.
+Some users of static UBI volumes implement their own integrity check,
+thus making the volume CRC check done at open time useless. For
+instance, this is the case when one use the ubiblock + dm-verity +
+squashfs combination, where dm-verity already checks integrity of the
+block device but this time at the block granularity instead of verifying
+the whole volume.
 
 Skipping this test drastically improves the boot-time.
 
-mtd-utils patches are already merged. See:
-http://git.infradead.org/mtd-utils.git/commit/9095d213f536aec0f3c37f6666177f3b907afde7
-http://git.infradead.org/mtd-utils.git/commit/7b4a65a27d2621b58c634d02c6a068ed9562383c
-http://git.infradead.org/mtd-utils.git/commit/5e9bc0daa41d84ce5de81c4a1665d65f51893c10
-http://git.infradead.org/mtd-utils.git/commit/8ba21ab75b41a1f9a6e27eed3ea80c9829669c5a
-
-I forgot to address Artem's comment in v4, sorry for the noise.
-
-Thanks,
-Quentin
-
-v5:
-  - add comment for vol_cdev_write ignoring skip_check flag,
-
-v4:
-  - add a valid flags mask and check the given volume flag is valid when
-  doing verify_mkvol_req(),
-
-v3:
-  - fix a few typos,
-
-v2:
-  - use volume flags instead of arguments on the kernel command line as
-  suggested by Richard,
-
-Quentin Schulz (2):
-  ubi: provide a way to skip CRC checks
-  ubi: expose the volume CRC check skip flag
-
- drivers/mtd/ubi/cdev.c      | 11 +++++++++++
+Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+---
  drivers/mtd/ubi/kapi.c      |  2 +-
  drivers/mtd/ubi/ubi-media.h |  6 ++++++
  drivers/mtd/ubi/ubi.h       |  4 ++++
- drivers/mtd/ubi/vmt.c       | 12 ++++++++++++
+ drivers/mtd/ubi/vmt.c       |  9 +++++++++
  drivers/mtd/ubi/vtbl.c      |  3 +++
- include/uapi/mtd/ubi-user.h | 18 ++++++++++++++++--
- 7 files changed, 53 insertions(+), 3 deletions(-)
+ 5 files changed, 23 insertions(+), 1 deletion(-)
 
-base-commit: 69877f06915f1c7a9f1704442993bcc12c13ace2
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index d4b2e87..e9e9ecb 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+ 	desc->mode = mode;
+ 
+ 	mutex_lock(&ubi->ckvol_mutex);
+-	if (!vol->checked) {
++	if (!vol->checked && !vol->skip_check) {
+ 		/* This is the first open - check the volume */
+ 		err = ubi_check_volume(ubi, vol_id);
+ 		if (err < 0) {
+diff --git a/drivers/mtd/ubi/ubi-media.h b/drivers/mtd/ubi/ubi-media.h
+index 195ff8c..b5fe8f8 100644
+--- a/drivers/mtd/ubi/ubi-media.h
++++ b/drivers/mtd/ubi/ubi-media.h
+@@ -45,6 +45,11 @@ enum {
+  * Volume flags used in the volume table record.
+  *
+  * @UBI_VTBL_AUTORESIZE_FLG: auto-resize this volume
++ * @UBI_VTBL_SKIP_CRC_CHECK_FLG: skip the CRC check done on a static volume at
++ *				 open time. Should only be set on volumes that
++ *				 are used by upper layers doing this kind of
++ *				 check. Main use-case for this flag is
++ *				 boot-time reduction
+  *
+  * %UBI_VTBL_AUTORESIZE_FLG flag can be set only for one volume in the volume
+  * table. UBI automatically re-sizes the volume which has this flag and makes
+@@ -76,6 +81,7 @@ enum {
+  */
+ enum {
+ 	UBI_VTBL_AUTORESIZE_FLG = 0x01,
++	UBI_VTBL_SKIP_CRC_CHECK_FLG = 0x02,
+ };
+ 
+ /*
+diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+index f5ba97c..d47b9e4 100644
+--- a/drivers/mtd/ubi/ubi.h
++++ b/drivers/mtd/ubi/ubi.h
+@@ -327,6 +327,9 @@ struct ubi_eba_leb_desc {
+  *           atomic LEB change
+  *
+  * @eba_tbl: EBA table of this volume (LEB->PEB mapping)
++ * @skip_check: %1 if CRC check of this static volume should be skipped.
++ *		Directly reflects the presence of the
++ *		%UBI_VTBL_SKIP_CRC_CHECK_FLG flag in the vtbl entry
+  * @checked: %1 if this static volume was checked
+  * @corrupted: %1 if the volume is corrupted (static volumes only)
+  * @upd_marker: %1 if the update marker is set for this volume
+@@ -374,6 +377,7 @@ struct ubi_volume {
+ 	void *upd_buf;
+ 
+ 	struct ubi_eba_table *eba_tbl;
++	unsigned int skip_check:1;
+ 	unsigned int checked:1;
+ 	unsigned int corrupted:1;
+ 	unsigned int upd_marker:1;
+diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+index 0be5167..e2606a4 100644
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -299,6 +299,10 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+ 		vtbl_rec.vol_type = UBI_VID_DYNAMIC;
+ 	else
+ 		vtbl_rec.vol_type = UBI_VID_STATIC;
++
++	if (vol->skip_check)
++		vtbl_rec.flags |= UBI_VTBL_SKIP_CRC_CHECK_FLG;
++
+ 	memcpy(vtbl_rec.name, vol->name, vol->name_len);
+ 
+ 	err = ubi_change_vtbl_record(ubi, vol_id, &vtbl_rec);
+@@ -733,6 +737,11 @@ static int self_check_volume(struct ubi_device *ubi, int vol_id)
+ 			ubi_err(ubi, "bad used_bytes");
+ 			goto fail;
+ 		}
++
++		if (vol->skip_check) {
++			ubi_err(ubi, "bad skip_check");
++			goto fail;
++		}
+ 	} else {
+ 		if (vol->used_ebs < 0 || vol->used_ebs > vol->reserved_pebs) {
+ 			ubi_err(ubi, "bad used_ebs");
+diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+index 94d7a86..2c133cd 100644
+--- a/drivers/mtd/ubi/vtbl.c
++++ b/drivers/mtd/ubi/vtbl.c
+@@ -560,6 +560,9 @@ static int init_volumes(struct ubi_device *ubi,
+ 		vol->name[vol->name_len] = '\0';
+ 		vol->vol_id = i;
+ 
++		if (vtbl[i].flags & UBI_VTBL_SKIP_CRC_CHECK_FLG)
++			vol->skip_check = 1;
++
+ 		if (vtbl[i].flags & UBI_VTBL_AUTORESIZE_FLG) {
+ 			/* Auto re-size flag may be set only for one volume */
+ 			if (ubi->autoresize_vol_id != -1) {
 -- 
 git-series 0.9.1
