@@ -2,114 +2,120 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D09C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95F6C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC44523BF3
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:30:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC44523BF3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9108224EAA
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:31:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GzY4oOwL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9108224EAA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753672AbeGBWaU (ORCPT
+        id S1753722AbeGBWbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:30:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:40556 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753587AbeGBWaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:30:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07F8618A;
-        Mon,  2 Jul 2018 15:30:19 -0700 (PDT)
-Received: from [192.168.100.244] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F3513F2EA;
-        Mon,  2 Jul 2018 15:30:18 -0700 (PDT)
-Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
- continue loading table after error"
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
- <CAJZ5v0h5+O8xf_EqRPfdvtjQ7BvxLp8veaxB-7WsD8wq7RUFpA@mail.gmail.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <9a9ef2bc-a66f-2af7-8766-b74426f062a6@arm.com>
-Date:   Mon, 2 Jul 2018 17:30:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 2 Jul 2018 18:31:44 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38658 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753430AbeGBWbm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 18:31:42 -0400
+Received: by mail-io0-f194.google.com with SMTP id v26-v6so3845683iog.5;
+        Mon, 02 Jul 2018 15:31:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VxuOOo5zUkTbayrosmqKUE7pcu6gkpIE5u8eRz8+XhQ=;
+        b=GzY4oOwLF6TEWsVIvd4TSS8AGdnvLJWHOwon9lFbGjdQe3+9oq8hLnXDERoOeXuKDr
+         ReqXTY0IgYjd+0egzXpAwd4jZwQ67z6z7CbOlZScfZ0cdYs5KQ3Fz3DclXglQLwq/X9d
+         gwlMs3G02Oza7diW01XKrEJsm2Wa0hfBJFfAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VxuOOo5zUkTbayrosmqKUE7pcu6gkpIE5u8eRz8+XhQ=;
+        b=qKIoncQPQ89txDuGuYcZKrhuAX8jZ2cbQiP2jvEOASvKBr2Z/7DlLPO/6gsrSMwUWv
+         7DY/Stt4XcV7PFN8JLtFNh+8uoOlEXKDJqGUQtGWU8OqrbL7YXtQBk5V1k0ohN4dYBxF
+         AFwCBTaXKqLu+3OFBz+J1GTmr0yz95qwCone+URoi813Oae/P/40wSYtw4Uw+wGciHJd
+         BL7PAZKdTi4XRyvpbVoANR1I0xxMzzZNIzoSjmhAnlw5hNZjaHldq0/cu9nm+SYhEa2M
+         ERM1xfmoqvhTqqZH386AINf41HRlLg42V2gnQHyqJnfpZV7CfONCQkbojLi2rCF5p09e
+         6aeg==
+X-Gm-Message-State: APt69E0561L7XHn+xsldpCgRISe5x71Aeetf1fmAv188zH4w8Kt/nzrI
+        pHPESH4FrtMYYd4oMwtfPTV4zBu/Bu5m1aLtWM4=
+X-Google-Smtp-Source: AAOMgpecvBql5JT+ZWp+9YYT8K3HbSwzL6EqHPu0MAkPn5LsPAQnFRWj30xHKS4WqVveYcWLDek0TAZj6+dHinQgM0U=
+X-Received: by 2002:a6b:980e:: with SMTP id a14-v6mr18281856ioe.238.1530570701497;
+ Mon, 02 Jul 2018 15:31:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h5+O8xf_EqRPfdvtjQ7BvxLp8veaxB-7WsD8wq7RUFpA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1530510723-24814-1-git-send-email-longman@redhat.com>
+ <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
+ <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org> <20180702222105.GA2438@bombadil.infradead.org>
+In-Reply-To: <20180702222105.GA2438@bombadil.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 15:31:30 -0700
+Message-ID: <CA+55aFxcNUGJoe17YsCAgQE-42UDFKLuXg=Wox7SRzR2=xx3GA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jul 2, 2018 at 3:21 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Jul 02, 2018 at 02:18:11PM -0700, Andrew Morton wrote:
+> >
+> > Dumb question: do we know that negative dentries are actually
+> > worthwhile?  Has anyone checked in the past couple of decades?  Perhaps
+> > our lookups are so whizzy nowadays that we don't need them?
+>
+> I can't believe that's true.
 
-On 07/02/2018 04:52 PM, Rafael J. Wysocki wrote:
-> On Mon, Jul 2, 2018 at 11:41 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
->> Hi,
->>
->> I'm experiencing two problems with commit 5088814a6e931 which is "ACPICA:
->> AML parser: attempt to continue loading table after error"
->>
->> The first is this boot failure on a thunderX2:
->>
->> [   10.770098] ACPI Error: Ignore error and continue table load
->> (20180531/psobject-604)
->>      [   10.777926] Unable to handle kernel NULL pointer dereference at
->>      [   10.950199] Call trace:
->>      [   10.952663]  acpi_ps_peek_opcode+0x1c/0x40
->>      [   10.956797]  acpi_ps_create_op+0x54/0x278
->>      [   10.960842]  acpi_ps_parse_loop+0x1b4/0x6c8
->>      [   10.965063]  acpi_ps_parse_aml+0xe0/0x2b4
->>      [   10.969108]  acpi_ps_execute_table+0xa0/0x104
->>      [   10.973505]  acpi_ns_execute_table+0x120/0x194
->>      [   10.977989]  acpi_ns_parse_table+0x34/0x68
->>      [   10.982122]  acpi_ns_load_table+0x4c/0xbc
->>      [   10.986169]  acpi_tb_load_namespace+0x1d4/0x240
->>      [   10.990744]  acpi_load_tables+0x50/0xbc
->>      [   10.994614]  acpi_init+0xb8/0x374
->>      [   10.997959]  do_one_initcall+0x54/0x208
->>      [   11.001829]  kernel_init_freeable+0x224/0x300
->>      [   11.006229]  kernel_init+0x18/0x118
->>      [   11.009747]  ret_from_fork+0x10/0x18
->>      [   11.013354] Code: aa0003f3 aa1e03e0 d503201f f9400661 (39400020)
->>      [   11.019535] ---[ end trace 2bd8068593cf8acc ]---
->>      [   11.024195] Kernel panic - not syncing: Fatal exception
->>      [   11.029488] SMP: stopping secondary CPUs
->>      [   11.033480] ---[ end Kernel panic - not syncing: Fatal exception ]---
->>
->> Which does appear to be the result of some bad data in the table, but it was
->> working with 4.17, and reverting this commit solves the problem.
-> 
-> But this commit fixes another regression which was more widespread.
-> 
-> Apparently, we can't work around all of the errors in the tables out
-> there at the same time. :-/
+Yeah, I'm with Matthew.
 
-NP, Let me see if I can come up with a way to harden the 
-parse_loop/create_op code enough that it doesn't crash the machine.
+Negative dentries are absolutely *critical*. We have a shit-ton of
+stuff that walks various PATH-like things, trying to open a file in
+one directory after another.
 
-> 
->> Also the messages now newly being prefixed with '\n' are slightly corrupted
->> like:
->>
->> "3ACPI BIOS Error (bug):"
->>
->> because the KERN_XXX macro is being encoded after the CR which keeps it from
->> being processed correctly.
-> 
-> Yes, that's a known issue which should be fixed in -rc4.
+They also happen to be really fundamental to how the dentry cache
+itself works, with operations like "rename()" fundamentally depending
+on negative dentries.
 
-Oh.. Yes I see that now, thanks.
+Sure, that "fundamental to rename()" could still be something that
+isn't actually ever *cached*, but the thing about many filesystems is
+that it's actually much more expensive to look up a file that doesn't
+exist than it is to look up one that does.
+
+That can be true even with things like hashed lookups, although it's
+more obviously true with legacy filesystems.
+
+Calling down to the filesystem every time you wonder "do I have a
+/usr/local/bin/cat" binary would be absolutely horrid.
+
+Also, honestly, I think the oom-killing thing says more about the
+issues we've had with the memory freeing code than about negative
+dentries. But the one problem with negative dentries is that it's
+fairly easy to create a shit-ton of them, so while we absolutely don't
+want to get rid of the concept, I do agree that having a limiter is a
+fine fine idea.
+
+                Linus
