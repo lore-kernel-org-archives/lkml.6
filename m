@@ -5,32 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D71F4C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF27C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824F622497
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824F622497
+	by mail.kernel.org (Postfix) with ESMTP id 163B222497
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163B222497
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeGBUAI (ORCPT
+        id S1752366AbeGBUAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:00:08 -0400
-Received: from mga12.intel.com ([192.55.52.136]:56008 "EHLO mga12.intel.com"
+        Mon, 2 Jul 2018 16:00:48 -0400
+Received: from mga01.intel.com ([192.55.52.88]:9662 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752839AbeGBUAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:00:06 -0400
+        id S1752069AbeGBUAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 16:00:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 13:00:06 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 13:00:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,300,1526367600"; 
-   d="scan'208";a="212889506"
+   d="scan'208";a="212889792"
 Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2018 12:59:42 -0700
-Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
+  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2018 13:00:45 -0700
+Subject: Re: [PATCH v3 2/2] mm/sparse: start using sparse_init_nid(), and
+ remove old code
 To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
         steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
@@ -41,7 +42,9 @@ To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
         richard.weiyang@gmail.com, rientjes@google.com, mingo@kernel.org,
         osalvador@techadventures.net
 References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
- <20180702020417.21281-2-pasha.tatashin@oracle.com>
+ <20180702020417.21281-3-pasha.tatashin@oracle.com>
+ <552d5a9b-0ca9-cc30-d8c2-33dc1cde917f@intel.com>
+ <b227cf00-a1dd-5371-aafd-9feb332e9d02@oracle.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -87,173 +90,65 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <ba037a25-eef0-c2b1-91f2-5db5588b2881@intel.com>
-Date:   Mon, 2 Jul 2018 12:59:41 -0700
+Message-ID: <38a2629d-689c-4592-9bd7-a77ab1b2045c@intel.com>
+Date:   Mon, 2 Jul 2018 13:00:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180702020417.21281-2-pasha.tatashin@oracle.com>
+In-Reply-To: <b227cf00-a1dd-5371-aafd-9feb332e9d02@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
->  				   unsigned long pnum_end,
->  				   unsigned long map_count,
->  				   int nodeid);
-> +struct page * sparse_populate_node(unsigned long pnum_begin,
+On 07/02/2018 12:54 PM, Pavel Tatashin wrote:
+> 
+> 
+> On 07/02/2018 03:47 PM, Dave Hansen wrote:
+>> On 07/01/2018 07:04 PM, Pavel Tatashin wrote:
+>>> +	for_each_present_section_nr(pnum_begin + 1, pnum_end) {
+>>> +		int nid = sparse_early_nid(__nr_to_section(pnum_end));
+>>>  
+>>> +		if (nid == nid_begin) {
+>>> +			map_count++;
+>>>  			continue;
+>>>  		}
+>>
+>>> +		sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
+>>> +		nid_begin = nid;
+>>> +		pnum_begin = pnum_end;
+>>> +		map_count = 1;
+>>>  	}
+>>
+>> Ugh, this is really hard to read.  Especially because the pnum "counter"
+>> is called "pnum_end".
+> 
+> I called it pnum_end, because that is what is passed to
+> sparse_init_nid(), but I see your point, and I can rename pnum_end to
+> simply pnum if that will make things look better.
 
-CodingStyle: put the "*" next to the function name, no space, please.
+Could you just make it a helper that takes a beginning pnum and returns
+the number of consecutive sections?
 
-> +				   unsigned long pnum_end,
-> +				   unsigned long map_count,
-> +				   int nid);
-> +struct page * sparse_populate_node_section(struct page *map_base,
-> +				   unsigned long map_index,
-> +				   unsigned long pnum,
-> +				   int nid);
+>> So, this is basically a loop that collects all of the adjacent sections
+>> in a given single nid and then calls sparse_init_nid().  pnum_end in
+>> this case is non-inclusive, so the sparse_init_nid() call is actually
+>> for the *previous* nid that pnum_end is pointing _past_.
+>>
+>> This *really* needs commenting.
+> 
+> There is a comment before sparse_init_nid() about inclusiveness:
+> 
+> 434 /*
+> 435  * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
+> 436  * And number of present sections in this node is map_count.
+> 437  */
+> 438 static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
+> 439                                    unsigned long pnum_end,
+> 440                                    unsigned long map_count)
 
-These two functions are named in very similar ways.  Do they do similar
-things?
+Which I totally missed.  Could you comment the code, please?
 
->  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
->  		struct vmem_altmap *altmap);
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index e1a54ba411ec..b3e325962306 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		vmemmap_buf_end = NULL;
->  	}
->  }
-> +
-> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> +					  unsigned long pnum_end,
-> +					  unsigned long map_count,
-> +					  int nid)
-> +{
-
-Could you comment what the function is doing, please?
-
-> +	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
-> +	unsigned long pnum, map_index = 0;
-> +	void *vmemmap_buf_start;
-> +
-> +	size = ALIGN(size, PMD_SIZE) * map_count;
-> +	vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
-> +						      PMD_SIZE,
-> +						      __pa(MAX_DMA_ADDRESS));
-
-Let's not repeat the mistakes of the previous version of the code.
-Please explain why we are aligning this.  Also,
-__earlyonly_bootmem_alloc()->memblock_virt_alloc_try_nid_raw() claims to
-be aligning the size.  Do we also need to do it here?
-
-Yes, I know the old code did this, but this is the cost of doing a
-rewrite. :)
-
-> +	if (vmemmap_buf_start) {
-> +		vmemmap_buf = vmemmap_buf_start;
-> +		vmemmap_buf_end = vmemmap_buf_start + size;
-> +	}
-
-It would be nice to call out that these are globals that other code
-picks up.
-
-> +	for (pnum = pnum_begin; map_index < map_count; pnum++) {
-> +		if (!present_section_nr(pnum))
-> +			continue;
-> +		if (!sparse_mem_map_populate(pnum, nid, NULL))
-> +			break;
-
-^ This consumes "vmemmap_buf", right?  That seems like a really nice
-thing to point out here if so.
-
-> +		map_index++;
-> +		BUG_ON(pnum >= pnum_end);
-> +	}
-> +
-> +	if (vmemmap_buf_start) {
-> +		/* need to free left buf */
-> +		memblock_free_early(__pa(vmemmap_buf),
-> +				    vmemmap_buf_end - vmemmap_buf);
-> +		vmemmap_buf = NULL;
-> +		vmemmap_buf_end = NULL;
-> +	}
-> +	return pfn_to_page(section_nr_to_pfn(pnum_begin));
-> +}
-> +
-> +/*
-> + * Return map for pnum section. sparse_populate_node() has populated memory map
-> + * in this node, we simply do pnum to struct page conversion.
-> + */
-> +struct page * __init sparse_populate_node_section(struct page *map_base,
-> +						  unsigned long map_index,
-> +						  unsigned long pnum,
-> +						  int nid)
-> +{
-> +	return pfn_to_page(section_nr_to_pfn(pnum));
-> +}
-
-What is up with all of the unused arguments to this function?
-
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index d18e2697a781..c18d92b8ab9b 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
->  		       __func__);
->  	}
->  }
-> +
-> +static unsigned long section_map_size(void)
-> +{
-> +	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
-> +}
-
-Seems like if we have this, we should use it wherever possible, like
-sparse_populate_node().
-
-
-> +/*
-> + * Try to allocate all struct pages for this node, if this fails, we will
-> + * be allocating one section at a time in sparse_populate_node_section().
-> + */
-> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
-> +					  unsigned long pnum_end,
-> +					  unsigned long map_count,
-> +					  int nid)
-> +{
-> +	return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
-> +					       PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-> +					       BOOTMEM_ALLOC_ACCESSIBLE, nid);
-> +}
-> +
-> +/*
-> + * Return map for pnum section. map_base is not NULL if we could allocate map
-> + * for this node together. Otherwise we allocate one section at a time.
-> + * map_index is the index of pnum in this node counting only present sections.
-> + */
-> +struct page * __init sparse_populate_node_section(struct page *map_base,
-> +						  unsigned long map_index,
-> +						  unsigned long pnum,
-> +						  int nid)
-> +{
-> +	if (map_base) {
-> +		unsigned long offset = section_map_size() * map_index;
-> +
-> +		return (struct page *)((char *)map_base + offset);
-> +	}
-> +	return sparse_mem_map_populate(pnum, nid, NULL);
-
-Oh, you have a vmemmap and non-vmemmap version.
-
-BTW, can't the whole map base calculation just be replaced with:
-
-	return &map_base[PAGES_PER_SECTION * map_index];
-
-?
