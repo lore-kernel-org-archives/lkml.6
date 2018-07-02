@@ -2,112 +2,212 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EA9C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680CDC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19F125429
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:52:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19F125429
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 195E825421
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:52:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V2mgs3Mf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195E825421
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeGBMwa (ORCPT
+        id S1752488AbeGBMwt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:52:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:59778 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751544AbeGBMw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:52:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC7418A;
-        Mon,  2 Jul 2018 05:52:29 -0700 (PDT)
-Received: from [10.1.210.28] (e107155-lin.cambridge.arm.com [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 004B73F5AD;
-        Mon,  2 Jul 2018 05:52:25 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] ACPI/PPTT: use ACPI ID whenever
- ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1530289077-2444-1-git-send-email-sudeep.holla@arm.com>
- <CAJZ5v0gnspK3soa5j8iqU9QDM78MMBbz8YC9s7TOJ5Qwh7=mZg@mail.gmail.com>
- <3895a0d8-9cca-2512-a06e-0ee2ac7db773@arm.com>
- <CAJZ5v0gh0-psU7bbLf5zDGW5adQNALSdWdedbCgDoh1F-peh0g@mail.gmail.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <8fe4ee5c-23b8-12bb-3f2e-5589ca4de24b@arm.com>
-Date:   Mon, 2 Jul 2018 13:52:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 08:52:49 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:36041 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752055AbeGBMwr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 08:52:47 -0400
+Received: by mail-yb0-f195.google.com with SMTP id s1-v6so5054256ybk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 05:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MVsneobB1lxMJvVArWZrZDl8K1tFgDtXE39PLGNJqfo=;
+        b=V2mgs3Mf/SKRfvUNgHDNE6yFqw4YigWKTu8h0eJsiQPf56LcGyYQoBqFZ97TIB0Zx+
+         IDZt+/33dQGjEWmbIir0K1dS1tuQ1DbzWEZY3ZufhKgVIbvIAztgajb6mOxrDvcplf/I
+         1EMoJH7br79PHMENfhD1Dd/h5okWo6kfsy33M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MVsneobB1lxMJvVArWZrZDl8K1tFgDtXE39PLGNJqfo=;
+        b=uIIsYqoib9IeP+gsENmr0rhEkSKhw9lhSzX26dlIF8zS1KL2APrMpzglW1tbZjyVl3
+         oGHpTHXJLdK/XpGAuZ8pvSmT5rZFkkfKCH1Enm2BfLCn5FPI7UkoC1pK3moe9o257yxH
+         BCX0IBq2jX2uXFb0bA/O/ucOPjJOhIAINteX5NxGItOcFKS9mNm2pzssSaZCNa6v6UNZ
+         MrTyuvPMVDtfOrP9XxBQGQuZRPubPN0QAFxvT/CeLrjwUUMNjHedtn93mG0RIpjfMvtQ
+         jATFM+8EYU4LBqitUglbIcnaIhaiuke5TP7Q7l2zPyP+Uj36EnIGnBY2FjipbUj1yz9c
+         GAHA==
+X-Gm-Message-State: APt69E3AaTV6zbjkKk4HAMB6J+szKf8ZPRZYolJoo6rpoRijTT7MikFm
+        PjbemfF2o12e3xsxvhc32joFDJmWEuw=
+X-Google-Smtp-Source: ADUXVKI40JIas1ndEWbWM78ngQJWXFfEX4sKSnuofRkbixCLa8rv8qDu+8FQJ65EkoOj8jWQh5wgFA==
+X-Received: by 2002:a25:9d92:: with SMTP id v18-v6mr13448029ybp.363.1530535966993;
+        Mon, 02 Jul 2018 05:52:46 -0700 (PDT)
+Received: from mail-yw0-f170.google.com (mail-yw0-f170.google.com. [209.85.161.170])
+        by smtp.gmail.com with ESMTPSA id p134-v6sm618811ywe.30.2018.07.02.05.52.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 05:52:46 -0700 (PDT)
+Received: by mail-yw0-f170.google.com with SMTP id 81-v6so6620834ywb.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 05:52:45 -0700 (PDT)
+X-Received: by 2002:a0d:ddc8:: with SMTP id g191-v6mr6103477ywe.145.1530535965420;
+ Mon, 02 Jul 2018 05:52:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gh0-psU7bbLf5zDGW5adQNALSdWdedbCgDoh1F-peh0g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-28-stanimir.varbanov@linaro.org> <CAAFQd5Cyk2=YG+LVGt0qEcrRGdarpHJDJ73AzG1iWBbyhr+nAA@mail.gmail.com>
+ <394e5547-9b85-604f-ee9e-fdb5ea2f4237@linaro.org>
+In-Reply-To: <394e5547-9b85-604f-ee9e-fdb5ea2f4237@linaro.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 2 Jul 2018 21:52:33 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AWEL9jQu=wh_uYFSGu+re-8ZrFZx4ftKDxbpb6mMNP2g@mail.gmail.com>
+Message-ID: <CAAFQd5AWEL9jQu=wh_uYFSGu+re-8ZrFZx4ftKDxbpb6mMNP2g@mail.gmail.com>
+Subject: Re: [PATCH v2 27/29] venus: implementing multi-stream support
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 2, 2018 at 9:43 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Hi Tomasz,
+>
+> On 05/31/2018 12:51 PM, Tomasz Figa wrote:
+> > On Tue, May 15, 2018 at 5:00 PM Stanimir Varbanov
+> > <stanimir.varbanov@linaro.org> wrote:
+> >>
+> >> This is implementing a multi-stream decoder support. The multi
+> >> stream gives an option to use the secondary decoder output
+> >> with different raw format (or the same in case of crop).
+> >>
+> >> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> >> ---
+> >>  drivers/media/platform/qcom/venus/core.h    |   1 +
+> >>  drivers/media/platform/qcom/venus/helpers.c | 204 +++++++++++++++++++++++++++-
+> >>  drivers/media/platform/qcom/venus/helpers.h |   6 +
+> >>  drivers/media/platform/qcom/venus/vdec.c    |  91 ++++++++++++-
+> >>  drivers/media/platform/qcom/venus/venc.c    |   1 +
+> >>  5 files changed, 299 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> >> index 4d6c05f156c4..85e66e2dd672 100644
+> >> --- a/drivers/media/platform/qcom/venus/core.h
+> >> +++ b/drivers/media/platform/qcom/venus/core.h
+> >> @@ -259,6 +259,7 @@ struct venus_inst {
+> >>         struct list_head list;
+> >>         struct mutex lock;
+> >>         struct venus_core *core;
+> >> +       struct list_head dpbbufs;
+> >>         struct list_head internalbufs;
+> >>         struct list_head registeredbufs;
+> >>         struct list_head delayed_process;
+> >> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> >> index ed569705ecac..87dcf9973e6f 100644
+> >> --- a/drivers/media/platform/qcom/venus/helpers.c
+> >> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> >> @@ -85,6 +85,112 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(venus_helper_check_codec);
+> >>
+> >> +static int venus_helper_queue_dpb_bufs(struct venus_inst *inst)
+> >> +{
+> >> +       struct intbuf *buf;
+> >> +       int ret = 0;
+> >> +
+> >> +       if (list_empty(&inst->dpbbufs))
+> >> +               return 0;
+> >
+> > Does this special case give us anything other than few more source lines?
+>
+> yes, thanks for spotting, will drop above lines here and below.
+>
+> >
+> >> +
+> >> +       list_for_each_entry(buf, &inst->dpbbufs, list) {
+> >> +               struct hfi_frame_data fdata;
+> >> +
+> >> +               memset(&fdata, 0, sizeof(fdata));
+> >> +               fdata.alloc_len = buf->size;
+> >> +               fdata.device_addr = buf->da;
+> >> +               fdata.buffer_type = buf->type;
+> >> +
+> >> +               ret = hfi_session_process_buf(inst, &fdata);
+> >> +               if (ret)
+> >> +                       goto fail;
+> >> +       }
+> >> +
+> >> +fail:
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +int venus_helper_free_dpb_bufs(struct venus_inst *inst)
+> >> +{
+> >> +       struct intbuf *buf, *n;
+> >> +
+> >> +       if (list_empty(&inst->dpbbufs))
+> >> +               return 0;
+> >
+> > Ditto.
+> >
+> >> +
+> >> +       list_for_each_entry_safe(buf, n, &inst->dpbbufs, list) {
+> >> +               list_del_init(&buf->list);
+> >> +               dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
+> >> +                              buf->attrs);
+> >> +               kfree(buf);
+> >> +       }
+> >> +
+> >> +       INIT_LIST_HEAD(&inst->dpbbufs);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(venus_helper_free_dpb_bufs);
+> > [snip]
+> >> +int venus_helper_get_out_fmts(struct venus_inst *inst, u32 v4l2_fmt,
+> >> +                             u32 *out_fmt, u32 *out2_fmt, bool ubwc)
+> >> +{
+> >> +       struct venus_core *core = inst->core;
+> >> +       struct venus_caps *caps;
+> >> +       u32 ubwc_fmt, fmt = to_hfi_raw_fmt(v4l2_fmt);
+> >> +       bool found, found_ubwc;
+> >> +
+> >> +       *out_fmt = *out2_fmt = 0;
+> >> +
+> >> +       if (!fmt)
+> >> +               return -EINVAL;
+> >> +
+> >> +       caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
+> >> +       if (!caps)
+> >> +               return -EINVAL;
+> >> +
+> >> +       if (ubwc) {
+> >> +               ubwc_fmt = fmt | HFI_COLOR_FORMAT_UBWC_BASE;
+> >
+> > Does the UBWC base format have to be the same as fmt? Looking at
+> > HFI_COLOR_FORMAT_* macros, UBWC variants seem to exist only for few
+> > selected raw formats, for example there is none for NV21.
+>
+> I think any raw format can have its UBWC variant. And yes we have only
+> one macro but we are checking against parsed capabilities from firmware
+> where the supported formats are stored.
 
+Okay, thanks.
 
-On 02/07/18 12:01, Rafael J. Wysocki wrote:
-> On Mon, Jul 2, 2018 at 11:57 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>
->>
->> On 02/07/18 10:06, Rafael J. Wysocki wrote:
->>> On Fri, Jun 29, 2018 at 6:17 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>> Currently we use the ACPI processor ID only for the leaf/processor nodes
->>>> as the specification states it must match the value of ACPI processor ID
->>>> field in the processor’s entry in the MADT.
->>>>
->>>> However, if a PPTT structure represents processors group, it match a
->>>> processor container UID in the namespace and ACPI_PPTT_ACPI_PROCESSOR_ID_VALID
->>>> flag describe whether the ACPI processor ID is valid.
->>>>
->>>> Lets use UID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set to be
->>>> consistent instead of using table offset as it's currently done for non
->>>> leaf nodes.
->>>>
->>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>>> ---
->>>>  drivers/acpi/pptt.c | 10 ++++++++--
->>>>  1 file changed, 8 insertions(+), 2 deletions(-)
->>>>
->>>> Hi,
->>>>
->>>> There's ongoing discussion on assigning ID based in OS using simple
->>>> counters. It can never be consistent with firmware's view. So if the
->>>> firmware provides valid UID for non-processors node, we must use it.
->>>
->>> OK
->>>
->>> Do you regard this as a fix for the recently merged PPTT material?  If
->>> so, I should apply it as a fix for 4.18.
->>>
->>
->> Yes, it should be considered as fix IMO.
-> 
-> So any chance to provide a Fixes: tag?
-
-Sure, since it was in the same release, I didn't add it.
-
-Fixes: 2bd00bcd73e5 ("ACPI/PPTT: Add Processor Properties Topology Table
-parsing")
-
--- 
-Regards,
-Sudeep
+Best regards,
+Tomasz
