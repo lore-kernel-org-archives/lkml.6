@@ -2,189 +2,117 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11505C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CC5C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BADC2259E3
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADC2259E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AE2C24187
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:30:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="xbetqVK5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE2C24187
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752282AbeGBNZt (ORCPT
+        id S1752130AbeGBNaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:25:49 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:40922 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751922AbeGBNZr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:25:47 -0400
-X-Greylist: delayed 1467 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 09:25:47 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 2346216322
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 08:01:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZyRmfqb3LbXuJZyS3f1Cm4; Mon, 02 Jul 2018 08:01:19 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=35476 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fZyRm-003baJ-0B; Mon, 02 Jul 2018 08:00:50 -0500
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180628184030.GA23656@embeddedor.com>
- <20180702085100.GF9802@localhost>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] USB: serial: io_edgeport: mark expected switch
- fall-throughs
-Message-ID: <3a1b5c84-091d-7f7d-2fcf-206ccd4f91af@embeddedor.com>
-Date:   Mon, 2 Jul 2018 08:00:43 -0500
+        Mon, 2 Jul 2018 09:30:16 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:56697 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbeGBNaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:30:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi; s=20161220;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=SueobPzIV2TcShSVr14Hvt2CHFUARLFKcuiuNkePW04=;
+        b=xbetqVK57mKIQe5HTeks8Ly1n0jtW3pDoJm7or/FakvUwSBjXg0sXrWiesmNNleigIDo+x2cDdaT9nB93HF/243Xga9xyS7CARCQaNDMLTUF+Sj7Zq1J4nqVZNkrT8RPpMEY20dkGG61eLfCwdTzw+ngI9kkXoVI3etsLC2Ei4c4GW8/Z5BytbmHU9g+3v28Yj9QjAcjRlWxS5bm/0XdZTdoiDnVg5wGQ3eOdvcZAi84Z0c09EaY39QhHBs83Sq3BWLL8n3yDrbsfA1UWQhsFxTaeX10DI8CGtX6imuSQ95eM7V6OBTdNGJJP6ueQ+ChFxxpi2WPgPMSPgucM0wIUg==;
+Received: from [193.209.96.43] (helo=[10.21.26.144])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fZyu8-0004jJ-77; Mon, 02 Jul 2018 16:30:08 +0300
+Subject: Re: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     jassisinghbrar@gmail.com, gregkh@linuxfoundation.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-7-mperttunen@nvidia.com> <20180702131851.GH13096@ulmo>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <50c4702b-3d59-e443-5075-c888f83a2615@kapsi.fi>
+Date:   Mon, 2 Jul 2018 16:30:07 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180702085100.GF9802@localhost>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180702131851.GH13096@ulmo>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fZyRm-003baJ-0B
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:35476
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 193.209.96.43
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
-
-On 07/02/2018 03:51 AM, Johan Hovold wrote:
-> On Thu, Jun 28, 2018 at 01:40:30PM -0500, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
+On 02.07.2018 16:18, Thierry Reding wrote:
+> On Mon, Jul 02, 2018 at 02:40:31PM +0300, Mikko Perttunen wrote:
+>> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+>> multiplexing multiple "virtual UARTs" into a single hardware serial
+>> port. The TCU is the primary serial port on Tegra194 devices.
 >>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+>> are part of Tegra HSP blocks that are already controlled by the Tegra
+>> HSP mailbox driver.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 >> ---
->>  drivers/usb/serial/io_edgeport.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
->> index 97c69d3..441dab6 100644
->> --- a/drivers/usb/serial/io_edgeport.c
->> +++ b/drivers/usb/serial/io_edgeport.c
->> @@ -1760,7 +1760,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->>  				edge_serial->rxState = EXPECT_HDR2;
->>  				break;
->>  			}
->> -			/* otherwise, drop on through */
->> +			/* else: fall through */
+>> Notes:
+>>      v2:
+>>      - Removed (void) casts for unused variables.
+>>      - Changed the uart_set_options() call to be on one line, even if its
+>>        over 80 characters.
+>>      - Added defines for magic numbers.
+>>      - Style fixes.
+>>      - Changed Kconfig entry to depend on the Tegra HSP driver instead of
+>>        just the mailbox framework.
+>>      
+>>      v3:
+>>      - Removed FLUSH bit, as it's unnecessary and slows down printing
+>>      - Removed call to uart_set_options
+>>      - Added mbox_free_channel calls to remove()
+>>
+>>   drivers/tty/serial/Kconfig       |   9 ++
+>>   drivers/tty/serial/Makefile      |   1 +
+>>   drivers/tty/serial/tegra-tcu.c   | 291 +++++++++++++++++++++++++++++++++++++++
+>>   include/uapi/linux/serial_core.h |   3 +
+>>   4 files changed, 304 insertions(+)
+>>   create mode 100644 drivers/tty/serial/tegra-tcu.c
 > 
-> This doesn't silence the compiler warning with gcc 7.2.0 as the "else: "
-> pattern isn't recognised.
+> The driver looks good to me. But for my own understanding, is there some
+> way we can make use of the multiplexing? That is, could we add a
+> mechanism to have the driver filter out only a specific stream? Could we
+> also specify which stream to send data back to? What happens by default?
+> Which stream is data sent to?
+
+There is no multiplexing on the producer/device side (i.e. what this 
+driver does). The mailbox specified in device tree specifies the stream 
+we send stuff to. The mailboxes are per-CPU (we use the CCPLEX mailbox 
+here), so it cannot really be changed.
+
+The consumer then sees the multiplexing in that it can receive from and 
+transmit to all of the various CPUs in the system at the same time. AIUI 
+there is also a secondary form of multiplexing where the outputs of 
+different VMs can be multiplexed by the hypervisor, but I'm not very 
+familiar with that.
+
+Mikko
+
 > 
-
-I'm using level 2:
-
--Wimplicit-fallthrough=2
-
-The thing here is that some people have pointed out that it can be misleading to
-place a plain fall-through comment after an if-else code block containing a "break".
-So, the solution above has proved to be a good one.
-
->>  		case EXPECT_HDR2:
->>  			edge_serial->rxHeader2 = *buffer;
->>  			++buffer;
->> @@ -1820,7 +1820,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->>  					edge_serial->rxState = EXPECT_DATA;
->>  					break;
->>  				}
->> -				/* Else, drop through */
->> +				/* else: fall through */
->>  			}
+> Thierry
 > 
-> And this doesn't work either due to the "else: " as well as the fact
-> that the compiler expects the fallthrough comment to precede the case
-> statement directly (e.g. it would need to be moved out of the else
-> block, but that isn't necessarily desirable as we discussed last year: 
-> 
-> 	lkml.kernel.org/r/20171027203906.GA7054@embeddedor.com
-> 
-
-Yes. I'm aware of that. This certainly is still triggering a warning, so I just consider this
-as a temporal approach. I still need to define how are we going to manage cases like this.
-
-> )
-> 
->>  		case EXPECT_DATA: /* Expect data */
->>  			if (bufferLength < edge_serial->rxBytesRemaining) {
-> 
-> How do you compile test these these patches?
->
-
-I already explained this above.
-
-Thanks for your comments.
---
-Gustavo
