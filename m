@@ -2,142 +2,100 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930D2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935EEC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5678D208B9
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:30:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5678D208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 452FD22B45
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:32:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KlkgnNws"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452FD22B45
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753164AbeGBUa1 (ORCPT
+        id S1752961AbeGBUca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:30:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33896 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752537AbeGBUaY (ORCPT
+        Mon, 2 Jul 2018 16:32:30 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:43368 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752580AbeGBUc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:30:24 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B25A8D8B;
-        Mon,  2 Jul 2018 20:30:22 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 13:30:21 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Evgenii Stepanov <eugenis@google.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
+        Mon, 2 Jul 2018 16:32:26 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62KSbes113472
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 20:32:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=hKz8wFeSDXWEQ8Unk01ap3CKQcncs6OoZfU/bdAVC6o=;
+ b=KlkgnNwsXcCA8btEdc+lPDwOVFTzIdqCsNyLAUPXHyxPV4o+suOsHPfutrBlZZVDLOw4
+ 4DIAv39lZTM2SU0Yu9J8eFugeFzIlUCZjKgaPEyN5ZlPGx9syRvNoEckt1Ltas9Xrixp
+ YVoNjlXZzHBnpX8DTjKP/avoMxYw2O+DjVlIaNJmOW4mPo7GIBOBZwUWqbZSFfJfHnY2
+ TiBw9pLg1bKYgDcuLOXUrlBlzTSFvZq7YyN3kDvFJhXXF9RF5bVBUmci0b1gQ/HKqVOS
+ oiFwQkLe3OM7JRkGMuf6TwelTJ+VfwN1lYMYrLrdRFKTSygtDCoquQz03+REzzV6Ybeb 1g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2jwyccp475-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 20:32:25 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w62KWOf7014801
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 20:32:24 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w62KWOZB028230
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 20:32:24 GMT
+Received: from mail-oi0-f45.google.com (/209.85.218.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Jul 2018 13:32:24 -0700
+Received: by mail-oi0-f45.google.com with SMTP id b15-v6so4664835oib.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:32:24 -0700 (PDT)
+X-Gm-Message-State: APt69E2nh7UZLWGW/43Cu+VKwFNuTCIRRaPNWr+UAGS621x1r1joxCJf
+        D5cOMlPgByYGkpTb8YNzWE90+gsrraVehEMje9g=
+X-Google-Smtp-Source: AAOMgpdpDc+oGac7ltfTN4iDhgn0eiILF8x+WlzIwX5vCGtEgKiqHRiet/y/bzS0G1O8t3qBwfFsC2a/1qLFJ0MwVA8=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr3570493oiy.191.1530563544478;
+ Mon, 02 Jul 2018 13:32:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp> <20180613090700.GG13364@dhcp22.suse.cz>
+ <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp> <20180614053859.GA9863@techadventures.net>
+ <20180614063454.GA32419@hori1.linux.bs1.fc.nec.co.jp> <20180614213033.GA19374@techadventures.net>
+ <20180615010927.GC1196@hori1.linux.bs1.fc.nec.co.jp> <20180615072947.GB23273@hori1.linux.bs1.fc.nec.co.jp>
+ <20180615084142.GE24039@dhcp22.suse.cz> <20180615140000.44tht4f3ek3lh2u2@xakep.localdomain>
+ <20180618163616.52645949a8e4a0f73819fd62@linux-foundation.org>
+ <CAGM2reZ6PTYw3NivSCO5WMCrYGJH_-piz8TtYgpwLWT=SnBGYA@mail.gmail.com> <20180702132830.9ee21727cae72a5d52e3052d@linux-foundation.org>
+In-Reply-To: <20180702132830.9ee21727cae72a5d52e3052d@linux-foundation.org>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Mon, 2 Jul 2018 16:31:48 -0400
+X-Gmail-Original-Message-ID: <CAGM2reaUHFX63ZKiiDhXriUmtLAxH3QOePbm7mGkRMgjNXtTXQ@mail.gmail.com>
+Message-ID: <CAGM2reaUHFX63ZKiiDhXriUmtLAxH3QOePbm7mGkRMgjNXtTXQ@mail.gmail.com>
+Subject: Re: [PATCH v3] x86/e820: put !E820_TYPE_RAM regions into memblock.reserved
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@kernel.org, n-horiguchi@ah.jp.nec.com,
         Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-Id: <20180702133021.3016ad80fbdea8d2e984147c@linux-foundation.org>
-In-Reply-To: <CAFKCwri_W8qEw-qMs+gXGqMGdZO82WpCiVpzcG4kinEyL7+zGg@mail.gmail.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
-        <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
-        <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
-        <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
-        <CAAeHK+xsBOKghUp9XhpfXGqU=gjSYuy3G2GH14zWNEmaLPy8_w@mail.gmail.com>
-        <20180629194117.01b2d31e805808eee5c97b4d@linux-foundation.org>
-        <CAFKCwrjxGEa6CLJnjmNy+92d2GSUkoymQ6Sm91CDpMZcJCcWCA@mail.gmail.com>
-        <20180702122112.267261b1e1609cf522753cf3@linux-foundation.org>
-        <CAFKCwri_W8qEw-qMs+gXGqMGdZO82WpCiVpzcG4kinEyL7+zGg@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        osalvador@techadventures.net, osalvador@suse.de,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        willy@infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@kernel.org, dan.j.williams@intel.com, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=233
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020229
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 13:22:23 -0700 Evgenii Stepanov <eugenis@google.com> wrote:
+> http://ozlabs.org/~akpm/mmots/broken-out/mm-skip-invalid-pages-block-at-a-time-in-zero_resv_unresv.patch
+> has been in -mm since Jun 18, so all is well.
 
-> On Mon, Jul 2, 2018 at 12:21 PM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> > On Mon, 2 Jul 2018 12:16:42 -0700 Evgenii Stepanov <eugenis@google.com> wrote:
-> >
-> >> On Fri, Jun 29, 2018 at 7:41 PM, Andrew Morton
-> >> <akpm@linux-foundation.org> wrote:
-> >> > On Fri, 29 Jun 2018 14:45:08 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
-> >> >
-> >> >> >> What kind of memory consumption testing would you like to see?
-> >> >> >
-> >> >> > Well, 100kb or so is a teeny amount on virtually any machine.  I'm
-> >> >> > assuming the savings are (much) more significant once the machine gets
-> >> >> > loaded up and doing work?
-> >> >>
-> >> >> So with clean kernel after boot we get 40 kb memory usage. With KASAN
-> >> >> it is ~120 kb, which is 200% overhead. With KHWASAN it's 50 kb, which
-> >> >> is 25% overhead. This should approximately scale to any amounts of
-> >> >> used slab memory. For example with 100 mb memory usage we would get
-> >> >> +200 mb for KASAN and +25 mb with KHWASAN. (And KASAN also requires
-> >> >> quarantine for better use-after-free detection). I can explicitly
-> >> >> mention the overhead in %s in the changelog.
-> >> >>
-> >> >> If you think it makes sense, I can also make separate measurements
-> >> >> with some workload. What kind of workload should I use?
-> >> >
-> >> > Whatever workload people were running when they encountered problems
-> >> > with KASAN memory consumption ;)
-> >> >
-> >> > I dunno, something simple.  `find / > /dev/null'?
-> >> >
-> >>
-> >> Looking at a live Android device under load, slab (according to
-> >> /proc/meminfo) + kernel stack take 8-10% available RAM (~350MB).
-> >> Kasan's overhead of 2x - 3x on top of it is not insignificant.
-> >>
-> >
-> > (top-posting repaired.  Please don't)
-> >
-> > For a debugging, not-for-production-use feature, that overhead sounds
-> > quite acceptable to me.  What problems is it known to cause?
-> 
-> Not having this overhead enables near-production use - ex. running
-> kasan/khasan kernel on a personal, daily-use device to catch bugs that
-> do not reproduce in test configuration. These are the ones that often
-> cost the most engineering time to track down.
-> 
-> CPU overhead is bad, but generally tolerable. RAM is critical, in our
-> experience. Once it gets low enough, OOM-killer makes your life
-> miserable.
+Ah missed it. Thank you.
 
-OK, anecdotal experience works for me.  But this is all stuff that
-should have been in the changelog from day zero, please.  It describes
-the reason for the patchset's existence!
-
+Pavel
