@@ -2,46 +2,79 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205E8C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9733C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9046254C5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:13:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9046254C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 62ABC24DFC
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:14:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ABC24DFC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeGBNNu (ORCPT
+        id S1752646AbeGBNOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:13:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:38511 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeGBNNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:13:49 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 72C0868D41; Mon,  2 Jul 2018 15:14:20 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 15:14:20 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christoph Hellwig <hch@lst.de>, Joel Becker <jlbec@evilplan.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] configfs: Replace strncpy with memcpy
-Message-ID: <20180702131420.GD4624@lst.de>
-References: <1530478614-11341-1-git-send-email-linux@roeck-us.net>
+        Mon, 2 Jul 2018 09:14:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60098 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751626AbeGBNOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:14:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83FA618A;
+        Mon,  2 Jul 2018 06:14:03 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF6533F5AD;
+        Mon,  2 Jul 2018 06:14:00 -0700 (PDT)
+Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
+ address size for VM
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org,
+        Peter Maydel <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <f7715da8-73ea-28fb-9883-8d0c048e0792@arm.com>
+Date:   Mon, 2 Jul 2018 14:13:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530478614-11341-1-git-send-email-linux@roeck-us.net>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Guenter,
+On 29/06/18 12:15, Suzuki K Poulose wrote:
+> Allow specifying the physical address size for a new VM via
+> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
+> us to finalise the stage2 page table format as early as possible
+> and hence perform the right checks on the memory slots without
+> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
+> of the type field and can encode more information in the future if
+> required. The IPA size is still capped at 40bits.
 
-applied to the configfs tree for 4.19.
+Can't we relax this? There is no technical reason (AFAICS) not to allow
+going down to 36bit IPA if the user has requested it.
+
+If we run on a 36bit IPA system, the default would fail. But if the user
+specified "please give me a 36bit IPA VM", we could satisfy that
+requirement and allow them to run their stupidly small guest!
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
