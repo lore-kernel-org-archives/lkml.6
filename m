@@ -2,95 +2,109 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B608AC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACBBC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB3625EAD
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB3625EAD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 82C3123DE6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lA0FbKLH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C3123DE6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeGBOsf (ORCPT
+        id S1752774AbeGBOsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:48:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34850 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752390AbeGBOsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:48:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A09E6AFAD;
-        Mon,  2 Jul 2018 14:48:31 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 16:48:27 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180702144827.GC19043@dhcp22.suse.cz>
-References: <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
- <20180627115927.GQ32348@dhcp22.suse.cz>
- <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
- <20180627145718.GB20171@ziepe.ca>
- <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
- <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
- <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
- <20180702055251.GV3014@mtr-leonro.mtl.com>
- <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
- <20180702070227.jj5udrdk3rxzjj4t@quack2.suse.cz>
+        Mon, 2 Jul 2018 10:48:42 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43961 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752185AbeGBOsj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 10:48:39 -0400
+Received: by mail-lf0-f68.google.com with SMTP id m12-v6so11689324lfc.10;
+        Mon, 02 Jul 2018 07:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WTHQDLVi6dKQz3GlkDB1pFF37+DXeW7OEAhd9Iap5ak=;
+        b=lA0FbKLHM94Plq182uzrWn+uhmulSi7HAGOA6yLUSXMmRJDJyWSLFSXL8khuqgAJvr
+         RyMlNwzlfWKBfdokFxRDPKDMKGxAXWAGfFcDOGD/47vAMg11IsQYkB2WCYpc7uYS4fkB
+         Q/6p8Gw5kJO+OvVSDGoNMG9fYqQShJ2etJvnGhRvtfX1x+NP9ioQVJP04KkqJ7eZsbgk
+         wLNs/0xwP/3jgzN+/H9XTfTFKzEQjoZ8Vb/F5Ikc9o6w3ySOGQN+I2KyNwLQHxS4iap+
+         qrjMlU38ct8W/ATgbKJUW2Ye2eGeBlIgsZil9S4Ui97TQ5ok6scdrChQ1jhMaOeAtn2/
+         ptcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WTHQDLVi6dKQz3GlkDB1pFF37+DXeW7OEAhd9Iap5ak=;
+        b=KjtZgPZ7Vksll3VLjGslh0k9DljCWsOccixS6ueBTWsshIG7yvF/O9xl0emu/rgUfU
+         A7SqvUuH6Kewq3zSG3MqMHv8m+5YDITWsONb5Lfy3JlsIyh9vjbmTEEFqvxBLKoQ08KZ
+         aN3uX4AFqn8SP68HRAx40FbqUnKVk3cqtuo1vyiaxsZGER7oHpCF1K6PUb7SuSza1Xq+
+         /ovH7ZxnoOj6BtfZAZ2CRAaycm1ZK+H6ObyoWA1PJiQAEr9Iate12A0H/bygZLEfrYjo
+         9m1ztTiDK64nsyE7148k210/Ru4CH5x02hhjG4i3Yb2xjeP52BI8E4A898Wrt4+YmoqV
+         LmcQ==
+X-Gm-Message-State: APt69E3KvvQqAQ5XJqDVqG/+0WXh69niLAZlJCI0k75W9rKXO2ZQ1z8Y
+        5KWAt7lin+nn27dp0WaJ1iY=
+X-Google-Smtp-Source: AAOMgpf3IBVQxwrukcl1aPLTlrAT+TQgjwtQgMG5YRY+7+4qXititxPB+d9B5veW95cXDyzmnUlLeA==
+X-Received: by 2002:a19:dedb:: with SMTP id i88-v6mr17821901lfl.26.1530542917687;
+        Mon, 02 Jul 2018 07:48:37 -0700 (PDT)
+Received: from dimapc.localnet ([109.252.91.84])
+        by smtp.gmail.com with ESMTPSA id d75-v6sm3221072lfg.76.2018.07.02.07.48.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 07:48:37 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+Date:   Mon, 02 Jul 2018 17:48:36 +0300
+Message-ID: <11534185.70fb5jbPr6@dimapc>
+In-Reply-To: <d99935be-797d-4676-c186-a045a590f01b@gmail.com>
+References: <20180619110027.16935-1-digetx@gmail.com> <d99935be-797d-4676-c186-a045a590f01b@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702070227.jj5udrdk3rxzjj4t@quack2.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02-07-18 09:02:27, Jan Kara wrote:
-> On Sun 01-07-18 23:10:04, John Hubbard wrote:
-[...]
-> > That is an interesting point. 
-> > 
-> > Holding off page writeback of this region does seem like it could cause
-> > problems under memory pressure. Maybe adjusting the watermarks so that we
-> > tell the writeback  system, "all is well, just ignore this region until
-> > we're done with it" might help? Any ideas here are welcome...
-> > 
-> > Longer term, maybe some additional work could allow the kernel to be able
-> > to writeback the gup-pinned pages (while DMA is happening--snapshots), but
-> > that seems like a pretty big overhaul.
+On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
+> Good Afternoon,
 > 
-> We could use bounce pages to safely writeback pinned pages. However I don't
-> think it would buy us anything. From MM point of view these pages are
-> impossible-to-get-rid-of (page refcount is increased) and pernamently-dirty
-> when GUP was for write (we don't know when dirty data arrives there). So
-> let's not just fool MM by pretending we can make them clean. That's going
-> to lead to just more problems down the road.
+> I have tested these patches on the Ouya T3 device.
+> They work great to enable the L2 cache controller, however they do not
+> respect explicitly disabling the L2 cache controller via the kernel
+> config nor device tree.
+> 
+> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
+> the L2 cache controller is silently enabled and allows all four cores to
+> boot.
+> 
 
-Absolutely agreed! We really need to have means to identify those pages
-first. Only then we can make an educated guess what to do about them.
-Adding kludges here and there is a wrong way about dealing with this
-whole problem. So try to focus on a) a reliable way to detect a longterm
-pin and b) provide an API that would tell the page to be released by its
-current owner (ideally in two modes, async to kick the process in the
-background and continue with something else and sync if there is no
-other way than waiting for the pin.
+I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled, there 
+is no code to do that. Could you elaborate please?
 
--- 
-Michal Hocko
-SUSE Labs
+Secondary cores do not depend on the cache state, disabled cache shouldn't 
+prevent them to boot.
+
+> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
+> controller from spinning up.
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> 
+
+
+
+
