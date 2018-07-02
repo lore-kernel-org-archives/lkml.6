@@ -2,92 +2,92 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0581DC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE9E248EC
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:15:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE9E248EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A088248F1
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:16:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A088248F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753474AbeGBSPh (ORCPT
+        id S1753363AbeGBSQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:15:37 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.212]:15512 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753250AbeGBSPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:15:35 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id DD3C418357
-        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 13:15:34 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id a3M1fE6Gx79N3a3MEfdNJw; Mon, 02 Jul 2018 13:15:34 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=36512 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fa3M0-002VOa-Fh; Mon, 02 Jul 2018 13:15:12 -0500
-Date:   Mon, 2 Jul 2018 13:15:11 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Peter Jones <pjones@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] iscsi_ibft: Mark expected switch fall-through
-Message-ID: <20180702181511.GA16890@embeddedor.com>
+        Mon, 2 Jul 2018 14:16:46 -0400
+Received: from sauhun.de ([88.99.104.3]:43920 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752672AbeGBSQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 14:16:44 -0400
+Received: from localhost (p54B33579.dip0.t-ipconnect.de [84.179.53.121])
+        by pokefinder.org (Postfix) with ESMTPSA id C0C2456A485;
+        Mon,  2 Jul 2018 20:16:42 +0200 (CEST)
+Date:   Mon, 2 Jul 2018 20:16:42 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Eddie James <eajames@linux.vnet.ibm.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        benh@kernel.crashing.org, joel@jms.id.au, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, rdunlap@infradead.org,
+        andy.shevchenko@gmail.com, peda@axentia.se
+Subject: Re: [PATCH v10 7/7] i2c: fsi: Add bus recovery
+Message-ID: <20180702181642.aa6yjecsavv47zd6@ninjato>
+References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1528918579-27602-8-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180626023833.iwjz7pqnhf4jd3w5@ninjato>
+ <c9d0b0c8-268f-04af-7c43-6fec0e272a9d@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u2q4ccg7tyhlb6wv"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fa3M0-002VOa-Fh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:36512
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <c9d0b0c8-268f-04af-7c43-6fec0e272a9d@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/firmware/iscsi_ibft.c | 1 +
- 1 file changed, 1 insertion(+)
+--u2q4ccg7tyhlb6wv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index 6bc8e66..ba64568 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -542,6 +542,7 @@ static umode_t __init ibft_check_tgt_for(void *data, int type)
- 	case ISCSI_BOOT_TGT_NIC_ASSOC:
- 	case ISCSI_BOOT_TGT_CHAP_TYPE:
- 		rc = S_IRUGO;
-+		/* fall through */
- 	case ISCSI_BOOT_TGT_NAME:
- 		if (tgt->tgt_name_len)
- 			rc = S_IRUGO;
--- 
-2.7.4
 
+> > This all won't have any effect since you never call i2c_recover_bus
+> > which calls back into i2c_bus_recovery_info callbacks.
+>=20
+> Ah, I thought there would be some use of this in the core or in client
+> drivers, or some ioctl interface. Would there be any outside users of the=
+se
+> callbacks in the future?
+
+No. i2c_recover_bus() is only to recover from stalled SDA and the only
+place where this can be detected is inside the I2C master driver. It is
+not an event which can be controlled by a user.
+
+
+--u2q4ccg7tyhlb6wv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAls6bAoACgkQFA3kzBSg
+KbbXnA//eo8DSb11K6+Z925m4DH1eqinQ+inYTF94j3RBKFDHHFqB4AEvrSKzPzP
+PIE2v6AnNs02djJE54McVadbWHF65ya9Esbi5t9JgniaXbIPZOQyIV25JNfOfZTG
+AGLY/NKWV96RmQKTXCmDM+YY1C5GdSgeGIlVsBcfovu0QXMMAXMQsYQpAmP7FbG4
+AJwQKyGSJJO4fSIf32MJ/iSo7PwshHe2zD0X8zrsQa2EQeZT9k2Y/jtyNAZJ4ale
+Zzjrx5WyRaItUw/MKtaBMGNY0HlTrY3DX3dWuMSQZPnSFiTzjCQnJ8q/4w7N+xTM
+1dfQoFkLqm36TNvco8nJ4cLQv/zOdwYyVf2D9+VveMiXkmNp2XBYGnyo5x5rRRON
+m6p1FG86wGD9V/sQqREcDwbzr5El5UWGYnULVR45GnC/+VcLtGKGfoliQy+obBJ7
+ZjKdMUiPPVuWhaUJ7Ms+dtbZKeLLjEmEc+eUmKVYXXnj2KIxWbsbOnEN5Cly1giv
+pMqVoeQAT3HQshcuMlIJ3g8BKfX8GsQ+O85nR1oBQyAkafQtXJKkmoi4nw9BfGjF
+TiNVz0KIsRypYoNzu79BNx6t44rmo+e+ZNrKn7+ReSFaZjQwpkhz9ATFAzBmBOUC
+siQVAq3S3chZ7ATsGkAgLW0XN9znYZKVuUix8Snm5++xv//u/eY=
+=llkO
+-----END PGP SIGNATURE-----
+
+--u2q4ccg7tyhlb6wv--
