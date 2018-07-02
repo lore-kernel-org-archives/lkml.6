@@ -2,208 +2,129 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A71C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D289C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E17124E8A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0C56208C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:54:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="KIRpm+W0";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BuMHB58i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E17124E8A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KqA/37ud"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C56208C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753139AbeGBTxt (ORCPT
+        id S1753411AbeGBTy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:53:49 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34848 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752876AbeGBTxr (ORCPT
+        Mon, 2 Jul 2018 15:54:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51418 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753365AbeGBTyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:53:47 -0400
-Received: by mail-vk0-f65.google.com with SMTP id o202-v6so9826131vko.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=qcHEuX7FKaKZcVGpK9KgfRsvXpi/zWmXp/QFrcZOjS0=;
-        b=KIRpm+W0WXffzBTHO8vxqBM+r9Mbm4/Vf0ooOqVueKdF6rSHDX5qmrWgKHWbnwfBGE
-         R/+NQXu2fmHC71BwfV4YjRh8gkVBa2kKw57Alx80Wemil5QP/I1uF47LBgN4IhhukESH
-         xLYwInmTJ1Vgu/7ZVGGPaOJgJG2sKNhpTTEMcSiAiSwUIwTrIOSdykiRcIj/n8NbPE5L
-         D2DyHNosTxACa9wt5SVTvA0v2zNLVH/AZDrbBgotEo6nvmNFXqZf05nHPYXaV+wHXoxU
-         GK/mPJNTD58sbk0Q+CV3rgCDs7oh1HqIk+WC+y3Jks8KFQ0Xq3uFD0iH/JD2cocrdfZm
-         1Mhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=qcHEuX7FKaKZcVGpK9KgfRsvXpi/zWmXp/QFrcZOjS0=;
-        b=BuMHB58ih+rVVfudJk6GOIbwzx2hQYEBhto0QP2gP1zWhhc5Pe/w7JuCaBuxhfBwtO
-         NRtVqz9pATmb8hwy77eBwSl1Sq+kz3F1mnPD5K8raEZXhV1JCw7yw+nw6oWoulHnxgpH
-         v8r52OxxjbJHzPD2AT5wom9hGORPfshg4nRtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=qcHEuX7FKaKZcVGpK9KgfRsvXpi/zWmXp/QFrcZOjS0=;
-        b=MiItITBYW6CpHa7DM9rAz0s8Xno3kNb+h0gB5gBeMNAxjYwv93KHcgkfyQrv3Em1kK
-         r9hxdRsfwYc4hmaUzUjP7hLRVnKz/0cpCqkTpEnALXluoeOV3LSaLKZSXV9/GmmoKbFu
-         EAYM+xaesAa2/vJqSiojGz1+DcumEBuKnOpW+scpY5HM2GPeJM5msSyL/EIXbs+kVbnA
-         jGnrF+F0G7ynD01uoeLO07zp+/1Pbeqr4SI5oGwgZj9tkKnL5sggHqe9zGmj7M/XIEsR
-         q9RXR58HeV2v45K5fm41seTrHWFgtq+pA0EV5+YP9gpAOKIzpxXQ7l/LP/88Q9FHqgb6
-         uwZQ==
-X-Gm-Message-State: APt69E366ZnV6q65XanP5HUkgHUk1VwjUKXgGtTq6FflR6nrdYxOkXe0
-        wS+B25tUQOr7lbQNMhw/8sllQ8+IlX7/hMN8z0S9uw==
-X-Google-Smtp-Source: AAOMgpdG32DLfvl7P2OJvR7lVnmyD+cjceyxgUIb4SiAqDg4gQqrIjJT6py0QnptFzCiTJ2ks5Bl7QeV3YESN+77cX8=
-X-Received: by 2002:a1f:18cc:: with SMTP id 195-v6mr11922345vky.117.1530561225480;
- Mon, 02 Jul 2018 12:53:45 -0700 (PDT)
+        Mon, 2 Jul 2018 15:54:55 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62JsQp7054146;
+        Mon, 2 Jul 2018 19:54:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=Aph7wy/2jJBdEm68+lX0P9wqZYlnzuuxGjOOCwNELi4=;
+ b=KqA/37udbmVUbTyfaWS6KfqgaCrXS7okp/cmSx0WmGuxxIfgY30sWcgiuUJxXIut+/LP
+ O9Xa8PMVRBGjRsvY9EI1K3C0SpFHznJ8fzEplt6Ot9qFtqpn39dW+aW3712Q07P1x5iL
+ z7nPxQNj3JMOPyeceuSOzo/mD9TMtJ6cXT+ttXojBMCpIczHGkHCKjArnXET0NjWqrY7
+ EmIOjROV4QsuZKvO3L6DZyp/monIAe95v0zKSeO+ADcXBngp8Hj4Fy1CXkzXRG4F5kS6
+ ihyUqf/8TysLPbPJ9CWh9g8crVgdrPJmDIAhEwGmb54Ve4TV3/Za5hJjfniwJFT/ZoLO Mg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jx19snwfg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Jul 2018 19:54:26 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w62JsPbE017832
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Jul 2018 19:54:25 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w62JsNiB014330;
+        Mon, 2 Jul 2018 19:54:23 GMT
+Received: from [192.168.1.10] (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Jul 2018 12:54:23 -0700
+Subject: Re: [PATCH v3 2/2] mm/sparse: start using sparse_init_nid(), and
+ remove old code
+To:     Dave Hansen <dave.hansen@intel.com>, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, linux-mm@kvack.org, dan.j.williams@intel.com,
+        jack@suse.cz, jglisse@redhat.com, jrdr.linux@gmail.com,
+        bhe@redhat.com, gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, rientjes@google.com, mingo@kernel.org,
+        osalvador@techadventures.net
+References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
+ <20180702020417.21281-3-pasha.tatashin@oracle.com>
+ <552d5a9b-0ca9-cc30-d8c2-33dc1cde917f@intel.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Message-ID: <b227cf00-a1dd-5371-aafd-9feb332e9d02@oracle.com>
+Date:   Mon, 2 Jul 2018 15:54:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 12:53:44 -0700 (PDT)
-In-Reply-To: <20180702181005.18247-2-mka@chromium.org>
-References: <20180702181005.18247-1-mka@chromium.org> <20180702181005.18247-2-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 2 Jul 2018 12:53:44 -0700
-X-Google-Sender-Auth: BQSmLQIg-4BhNhTSjsn4Tkdme2E
-Message-ID: <CAD=FV=WH8q-3Rt89Get0N357+hWmKiEsruaKtWzo_JoE6gd_3g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <552d5a9b-0ca9-cc30-d8c2-33dc1cde917f@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020222
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Jul 2, 2018 at 11:10 AM, Matthias Kaehlcke <mka@chromium.org> wrote=
-:
-> The thermal zone uses spmi-temp-alarm as sensor. If the sensor is
-> configured without an IIO input it always reports 37=C2=B0C for temperatu=
-res
-> below the first hardware trip point at 105=C2=B0C. This hardware trip poi=
-nt
-> is configured as critical trip point, to initiate a system shutdown
-> before the temperature reaches the next hardware trip point at 125=C2=B0C=
-,
-> where the PMIC performs a partial shutdown.
->
-> The temperature of the critical trip point can be raised after adding
-> the die temperature ADC as IIO input for spmi-temp-alarm, which
-> significantly increases the precision of the temperature measurements.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in v2:
-> - defined 'thermal-zones' node in pm8998.dtsi instead of using a label
->   to refer to it
-> - use 105=C2=B0C hardware trip point as critical trip point
-
-I'm not sure this was right.  I guess you're trying to avoid
-Temperature Stage 2?  From Davi'd email in response to v1:
-
-> The PMIC TEMP_ALARM hardware peripheral will perform an automatic partial
-> PMIC shutdown upon hitting over-temperature stage 2 (125 C).  This turns
-> off peripherals within the PMIC that are expected to draw significant
-> current.  The set of peripherals included varies between PMICs.  This
-> partial shutdown will occur simultaneously with the triggering of an
-> interrupt to the APPS processor that informs the qcom-spmi-temp-alarm
-> driver that an over-temperature threshold has been crossed.
-
-I think it's actually OK to use Temperature Stage 2 as the "critical"
-point, which is why it still interrupts the CPU.  At "critical" the
-system will shut down, right?  ...so presumably it's OK if the drivers
-can't recover from having the power yanked out from underneath them as
-long as they don't hang/crash the system in this case.  If I had to
-guess the whole point of this stage is to give the system shutdown a
-better chance of succeeding without getting to stage 3.
 
 
-I do agree, however, that removing the "145" from the device tree was
-the right thing to do since software will never see that.  The system
-will just shut down.
+On 07/02/2018 03:47 PM, Dave Hansen wrote:
+> On 07/01/2018 07:04 PM, Pavel Tatashin wrote:
+>> +	for_each_present_section_nr(pnum_begin + 1, pnum_end) {
+>> +		int nid = sparse_early_nid(__nr_to_section(pnum_end));
+>>  
+>> +		if (nid == nid_begin) {
+>> +			map_count++;
+>>  			continue;
+>>  		}
+> 
+>> +		sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
+>> +		nid_begin = nid;
+>> +		pnum_begin = pnum_end;
+>> +		map_count = 1;
+>>  	}
+> 
+> Ugh, this is really hard to read.  Especially because the pnum "counter"
+> is called "pnum_end".
+
+I called it pnum_end, because that is what is passed to sparse_init_nid(), but I see your point, and I can rename pnum_end to simply pnum if that will make things look better.
+
+> 
+> So, this is basically a loop that collects all of the adjacent sections
+> in a given single nid and then calls sparse_init_nid().  pnum_end in
+> this case is non-inclusive, so the sparse_init_nid() call is actually
+> for the *previous* nid that pnum_end is pointing _past_.
+> 
+> This *really* needs commenting.
+
+There is a comment before sparse_init_nid() about inclusiveness:
+
+434 /*
+435  * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
+436  * And number of present sections in this node is map_count.
+437  */
+438 static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
+439                                    unsigned long pnum_end,
+440                                    unsigned long map_count)
 
 
-> - reduced number of trip points to 2
-> - lowered temperature of passive trip point
-
-This won't actually do anything until the ADC gets hooked up, right?
-
-I guess I would have expected:
-- 105: passive
-- 125: critical
-
-...and then we could add (if we wanted) a "hot" between passive and
-critical once we have the ADC hooked up?
-
-
-
-> - updated trip point names and added labels
-> - updated commit message
->
->  arch/arm64/boot/dts/qcom/pm8998.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/q=
-com/pm8998.dtsi
-> index 2f4989e7ef68..e7caa334e6c7 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> @@ -3,6 +3,7 @@
->
->  #include <dt-bindings/spmi/spmi.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/thermal/thermal.h>
->
->  &spmi_bus {
->         pm8998_lsid0: pmic@0 {
-> @@ -60,3 +61,27 @@
->                 #size-cells =3D <0>;
->         };
->  };
-> +
-> +/ {
-> +       thermal-zones {
-> +               pm8998 {
-> +                       polling-delay-passive =3D <250>;
-> +                       polling-delay =3D <1000>;
-> +
-> +                       thermal-sensors =3D <&pm8998_temp>;
-> +
-> +                       trips {
-> +                               pm8998_alert0: pm8998-alert0 {
-> +                                       temperature =3D <95000>;
-> +                                       hysteresis =3D <2000>;
-> +                                       type =3D "passive";
-> +                               };
-> +                               pm8998_crit: pm8998-crit {
-> +                                       temperature =3D <105000>;
-> +                                       hysteresis =3D <2000>;
-> +                                       type =3D "critical";
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +};
-
-A nit, but I think convention is to actually put additions straight to
-the root node before reference to phandles, so I would have put this
-above the "&spmi_bus" part.
+Thank you,
+Pavel
