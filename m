@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D09ECC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4865C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84FA125A60
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D94D25AC5
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oo0hEAiW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84FA125A60
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ3/XPQ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D94D25AC5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753300AbeGBUWh (ORCPT
+        id S1753366AbeGBUWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:22:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40280 "EHLO mail.kernel.org"
+        Mon, 2 Jul 2018 16:22:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752684AbeGBUWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:22:34 -0400
+        id S1752684AbeGBUWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 16:22:38 -0400
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CA09208A4;
-        Mon,  2 Jul 2018 20:22:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6267725A24;
+        Mon,  2 Jul 2018 20:22:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530562954;
-        bh=ZMOcXJtQ5dfBxNV5eRIfoYzWlENYOdjRU9oJkO2miW8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Oo0hEAiWIRaSxGVqVYorkkliOmopPvvj7vuwb1AbEkVVsOf6cYboZjNUgCwltO4JC
-         8Dk65jfUknbiA9u1ENHO1RS+S2LyeQbaoE7SklByj9UIhEkdGuoKt1/VPspMZROsdA
-         YwQ2XjiguIr1w4EMNbHY8wlAWlhqCE5fnpS3/+xo=
+        s=default; t=1530562958;
+        bh=6jjjX9HpmRGs3oPkv10BQAd0icGg/6jsu1sm1o6LmQQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=DZ3/XPQ6pB+XnJQaJ86H47Os5nAO5FMPMLchTfboJiTwVBPKPLw0qe6DnssL5+k5+
+         AdRV1Ap056zeE5j4ThQIwff7EffFYQWcNrGi7HrgQO/X8bENsvP+1ztqW6uNEaGlX7
+         0+NzP3PvEK/5uxwp1cCjxOelm+OpZo7OuhOFPBFU=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -44,10 +45,14 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v2 0/7] tracing: Hist trigger snapshot and onchange additions
-Date:   Mon,  2 Jul 2018 15:22:19 -0500
-Message-Id: <cover.1530561352.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v2 2/7] tracing: Split up onmatch action data
+Date:   Mon,  2 Jul 2018 15:22:21 -0500
+Message-Id: <e91d2a84759a037eec8253f5234d90cbb3fe220a.1530561352.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.1530561352.git.tom.zanussi@linux.intel.com>
+References: <cover.1530561352.git.tom.zanussi@linux.intel.com>
+In-Reply-To: <cover.1530561352.git.tom.zanussi@linux.intel.com>
+References: <cover.1530561352.git.tom.zanussi@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,72 +60,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Hi,
+Currently, the onmatch action data binds the onmatch action to data
+related to synthetic event generation.  Since we want to allow the
+onmatch handler to potentially invoke a different action, and because
+we expect other handlers to generate synthetic events, we need to
+separate the data related to these two functions.
 
-This is v2 of the hist trigger snapshot and onchange additions
-patchset.  It adds a couple fixes to problems flagged by the kbuild
-test robot, but is otherwise the same as v1.
+Also rename the onmatch data to something more descriptive.
 
-Changes since v1:
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+---
+ kernel/trace/trace_events_hist.c | 59 ++++++++++++++++++++--------------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
-  - added missing tracing_cond_snapshot_data() definition for when
-    CONFIG_TRACER_SNAPSHOT not defined
-  - removed an unnecessary WARN_ON() in track_data_snapshot_print()
-
-
-Original text:
-
-This patchset adds some useful new functions to the hist
-trigger code: a snapshot action and an onchange handler.
-
-In order to make it easier to add these and in the process make the
-code more generic, I separated the code into explicit 'handlers' and
-'actions', handlers being things like 'onmax' and 'onchange', and
-'actions' being things like 'take a snapshot' or 'save some fields'.
-
-The first few patches do that basic refactoring, which make it easier
-to add the subsequent changes that arbitrarily combine actions and
-handlers.
-
-The fourth patch adds a 'conditional snapshot' capability that via a
-new tracing_snaphot_cond() function extends the existing snapshot
-code.  It allows the caller to associate some user data with the
-snapshot that can be checked and saved in an update() callback whose
-return value determines whether the snapshot should be taken or not.
-
-The remaining patches finally add the new snapshot action and onchange
-handler functionality - please see those patches for details and some
-examples.
-
-Thanks,
-
-Tom
-
-The following changes since commit 591a033dc17ff6f684b6b6d1d7426e22d178194f:
-
-  tracing: Use match_string() instead of open coding it in trace_set_options() (2018-06-05 16:19:39 -0400)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v2
-
-Tom Zanussi (7):
-  tracing: Refactor hist trigger action code
-  tracing: Split up onmatch action data
-  tracing: Generalize hist trigger onmax and save action
-  tracing: Add conditional snapshot
-  tracing: Move hist trigger key printing into a separate function
-  tracing: Add snapshot action
-  tracing: Add hist trigger onchange() handler
-
- Documentation/trace/histogram.txt   | 206 ++++++++
- kernel/trace/trace.c                | 162 +++++-
- kernel/trace/trace.h                |  58 ++-
- kernel/trace/trace_events_hist.c    | 982 ++++++++++++++++++++++++++----------
- kernel/trace/trace_events_trigger.c |   2 +-
- kernel/trace/trace_sched_wakeup.c   |   2 +-
- 6 files changed, 1140 insertions(+), 272 deletions(-)
-
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index ede7a27fa52b..61a3a8ca2f76 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -347,13 +347,14 @@ struct action_data {
+ 	unsigned int		n_params;
+ 	char			*params[SYNTH_FIELDS_MAX];
+ 
++	unsigned int		var_ref_idx;
++	struct synth_event	*synth_event;
++
+ 	union {
+ 		struct {
+-			unsigned int		var_ref_idx;
+-			char			*match_event;
+-			char			*match_event_system;
+-			struct synth_event	*synth_event;
+-		} onmatch;
++			char			*event;
++			char			*event_system;
++		} match_data;
+ 
+ 		struct {
+ 			char			*var_str;
+@@ -1001,9 +1002,9 @@ static void action_trace(struct hist_trigger_data *hist_data,
+ 			 struct ring_buffer_event *rbe,
+ 			 struct action_data *data, u64 *var_ref_vals)
+ {
+-	struct synth_event *event = data->onmatch.synth_event;
++	struct synth_event *event = data->synth_event;
+ 
+-	trace_synth(event, var_ref_vals, data->onmatch.var_ref_idx);
++	trace_synth(event, var_ref_vals, data->var_ref_idx);
+ }
+ 
+ struct hist_var_data {
+@@ -1573,8 +1574,8 @@ find_match_var(struct hist_trigger_data *hist_data, char *var_name)
+ 		struct action_data *data = hist_data->actions[i];
+ 
+ 		if (data->handler == HANDLER_ONMATCH) {
+-			char *system = data->onmatch.match_event_system;
+-			char *event_name = data->onmatch.match_event;
++			char *system = data->match_data.event_system;
++			char *event_name = data->match_data.event;
+ 
+ 			file = find_var_file(tr, system, event_name, var_name);
+ 			if (!file)
+@@ -3521,15 +3522,15 @@ static void onmatch_destroy(struct action_data *data)
+ 
+ 	mutex_lock(&synth_event_mutex);
+ 
+-	kfree(data->onmatch.match_event);
+-	kfree(data->onmatch.match_event_system);
++	kfree(data->match_data.event);
++	kfree(data->match_data.event_system);
+ 	kfree(data->action_name);
+ 
+ 	for (i = 0; i < data->n_params; i++)
+ 		kfree(data->params[i]);
+ 
+-	if (data->onmatch.synth_event)
+-		data->onmatch.synth_event->ref--;
++	if (data->synth_event)
++		data->synth_event->ref--;
+ 
+ 	kfree(data);
+ 
+@@ -3611,8 +3612,8 @@ trace_action_find_var(struct hist_trigger_data *hist_data,
+ 	hist_field = find_target_event_var(hist_data, system, event, var);
+ 	if (!hist_field) {
+ 		if (!system && data->handler == HANDLER_ONMATCH) {
+-			system = data->onmatch.match_event_system;
+-			event = data->onmatch.match_event;
++			system = data->match_data.event_system;
++			event = data->match_data.event;
+ 		}
+ 
+ 		hist_field = find_event_var(hist_data, system, event, var);
+@@ -3651,8 +3652,8 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
+ 		 * event.
+ 		 */
+ 		if (!system && data->handler == HANDLER_ONMATCH) {
+-			system = data->onmatch.match_event_system;
+-			event = data->onmatch.match_event;
++			system = data->match_data.event_system;
++			event = data->match_data.event;
+ 		}
+ 
+ 		/*
+@@ -3764,8 +3765,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
+ 		goto err;
+ 	}
+ 
+-	data->onmatch.synth_event = event;
+-	data->onmatch.var_ref_idx = var_ref_idx;
++	data->synth_event = event;
++	data->var_ref_idx = var_ref_idx;
+  out:
+ 	return ret;
+  err:
+@@ -3855,14 +3856,14 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
+ 		goto free;
+ 	}
+ 
+-	data->onmatch.match_event = kstrdup(match_event, GFP_KERNEL);
+-	if (!data->onmatch.match_event) {
++	data->match_data.event = kstrdup(match_event, GFP_KERNEL);
++	if (!data->match_data.event) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+ 
+-	data->onmatch.match_event_system = kstrdup(match_event_system, GFP_KERNEL);
+-	if (!data->onmatch.match_event_system) {
++	data->match_data.event_system = kstrdup(match_event_system, GFP_KERNEL);
++	if (!data->match_data.event_system) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+@@ -4424,8 +4425,8 @@ static void print_onmatch_spec(struct seq_file *m,
+ {
+ 	unsigned int i;
+ 
+-	seq_printf(m, ":onmatch(%s.%s).", data->onmatch.match_event_system,
+-		   data->onmatch.match_event);
++	seq_printf(m, ":onmatch(%s.%s).", data->match_data.event_system,
++		   data->match_data.event);
+ 
+ 	seq_printf(m, "%s(", data->action_name);
+ 
+@@ -4469,11 +4470,11 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 			return false;
+ 
+ 		if (data->handler == HANDLER_ONMATCH) {
+-			if (strcmp(data->onmatch.match_event_system,
+-				   data_test->onmatch.match_event_system) != 0)
++			if (strcmp(data->match_data.event_system,
++				   data_test->match_data.event_system) != 0)
+ 				return false;
+-			if (strcmp(data->onmatch.match_event,
+-				   data_test->onmatch.match_event) != 0)
++			if (strcmp(data->match_data.event,
++				   data_test->match_data.event) != 0)
+ 				return false;
+ 		} else if (data->handler == HANDLER_ONMAX) {
+ 			if (strcmp(data->onmax.var_str,
 -- 
 2.14.1
 
