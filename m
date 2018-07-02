@@ -2,124 +2,171 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B859C6778C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BECC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1061624FCD
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1061624FCD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DBD124C44
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DBD124C44
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeGBBjW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 21:39:22 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31835 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752843AbeGBBjU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 21:39:20 -0400
-X-UUID: e14748dceaec43bc83aa98db0f0c58b8-20180702
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 701489952; Mon, 02 Jul 2018 09:39:13 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 2 Jul 2018 09:39:10 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 2 Jul 2018 09:39:10 +0800
-Message-ID: <1530495550.4568.2.camel@mtksdaap41>
-Subject: Re: [PATCH v7 00/29] Add support for mediatek SOC MT2712
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Mon, 2 Jul 2018 09:39:10 +0800
-In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S932889AbeGBBj3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 21:39:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56914 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932839AbeGBBjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 21:39:24 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BAC0168801;
+        Mon,  2 Jul 2018 01:39:23 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD08B2026D66;
+        Mon,  2 Jul 2018 01:39:22 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 09:39:18 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
+Subject: Re: [PATCH v2 2/2] mm/sparse: start using sparse_init_nid(), and
+ remove old code
+Message-ID: <20180702013918.GJ3223@MiWiFi-R3L-srv>
+References: <20180630030944.9335-1-pasha.tatashin@oracle.com>
+ <20180630030944.9335-3-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180630030944.9335-3-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 01:39:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 01:39:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
-
-On Wed, 2018-06-20 at 16:19 +0800, Stu Hsieh wrote:
-> This patch add support for the Mediatek MT2712 DISP subsystem.
-> MT2712 is base on MT8173, there are some difference as following:
-> MT2712 support three disp output(two ovl and one rdma)
+On 06/29/18 at 11:09pm, Pavel Tatashin wrote:
+> Change sprase_init() to only find the pnum ranges that belong to a specific
+> node and call sprase_init_nid() for that range from sparse_init().
 > 
+> Delete all the code that became obsolete with this change.
+>  void __init sparse_init(void)
+>  {
+> -	unsigned long pnum;
+> -	struct page *map;
+> -	struct page **map_map;
+> -	unsigned long *usemap;
+> -	unsigned long **usemap_map;
+> -	int size, size2;
+> -	int nr_consumed_maps = 0;
+> -
+> -	/* see include/linux/mmzone.h 'struct mem_section' definition */
+> -	BUILD_BUG_ON(!is_power_of_2(sizeof(struct mem_section)));
+> +	unsigned long pnum_begin = first_present_section_nr();
+> +	int nid_begin = sparse_early_nid(__nr_to_section(pnum_begin));
+> +	unsigned long pnum_end, map_count = 1;
+>  
+> -	/* Setup pageblock_order for HUGETLB_PAGE_SIZE_VARIABLE */
+> -	set_pageblock_order();
+> +	for_each_present_section_nr(pnum_begin + 1, pnum_end) {
+> +		int nid = sparse_early_nid(__nr_to_section(pnum_end));
+>  
+> -	/*
+> -	 * map is using big page (aka 2M in x86 64 bit)
+> -	 * usemap is less one page (aka 24 bytes)
+> -	 * so alloc 2M (with 2M align) and 24 bytes in turn will
+> -	 * make next 2M slip to one more 2M later.
+> -	 * then in big system, the memory will have a lot of holes...
+> -	 * here try to allocate 2M pages continuously.
+> -	 *
+> -	 * powerpc need to call sparse_init_one_section right after each
+> -	 * sparse_early_mem_map_alloc, so allocate usemap_map at first.
+> -	 */
+> -	size = sizeof(unsigned long *) * nr_present_sections;
+> -	usemap_map = memblock_virt_alloc(size, 0);
+> -	if (!usemap_map)
+> -		panic("can not allocate usemap_map\n");
+> -	alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
+> -				(void *)usemap_map,
+> -				sizeof(usemap_map[0]));
+> -
+> -	size2 = sizeof(struct page *) * nr_present_sections;
+> -	map_map = memblock_virt_alloc(size2, 0);
+> -	if (!map_map)
+> -		panic("can not allocate map_map\n");
+> -	alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
+> -				(void *)map_map,
+> -				sizeof(map_map[0]));
+> -
+> -	/* The numner of present sections stored in nr_present_sections
+> -	 * are kept the same since mem sections are marked as present in
+> -	 * memory_present(). In this for loop, we need check which sections
+> -	 * failed to allocate memmap or usemap, then clear its
+> -	 * ->section_mem_map accordingly. During this process, we need
+> -	 * increase 'nr_consumed_maps' whether its allocation of memmap
+> -	 * or usemap failed or not, so that after we handle the i-th
+> -	 * memory section, can get memmap and usemap of (i+1)-th section
+> -	 * correctly. */
+> -	for_each_present_section_nr(0, pnum) {
+> -		struct mem_section *ms;
+> -
+> -		if (nr_consumed_maps >= nr_present_sections) {
+> -			pr_err("nr_consumed_maps goes beyond nr_present_sections\n");
+> -			break;
+> -		}
+> -		ms = __nr_to_section(pnum);
+> -		usemap = usemap_map[nr_consumed_maps];
+> -		if (!usemap) {
+> -			ms->section_mem_map = 0;
+> -			nr_consumed_maps++;
+> -			continue;
+> -		}
+> -
+> -		map = map_map[nr_consumed_maps];
+> -		if (!map) {
+> -			ms->section_mem_map = 0;
+> -			nr_consumed_maps++;
+> +		if (nid == nid_begin) {
+> +			map_count++;
+>  			continue;
+>  		}
+> -
+> -		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
+> -								usemap);
+> -		nr_consumed_maps++;
+> +		sparse_init_nid(nid, pnum_begin, pnum_end, map_count);
+				~~~
+Here, node id passed to sparse_init_nid() should be 'nid_begin', but not
+'nid'. When you found out the current section's 'nid' is diferent than
+'nid_begin', handle node 'nid_begin', then start to next node 'nid'.
 
-For the series, applied to mediatek-drm-next-4.19 [1], the patch
-'drm/mediatek: Add support for mediatek SOC MT2712' has line over 80
-character, so I've modified it.
 
-[1]
-https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-next-4.19
-
-Regards,
-CK
-
-> Change in v6:
-> - Update commit message for the patch
->   "drm/mediatek: Update the definition of connection from RDMA1 to DPI0"
+> +		nid_begin = nid;
+> +		pnum_begin = pnum_end;
+> +		map_count = 1;
+>  	}
+> -
+> +	sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
+>  	vmemmap_populate_print_last();
+> -
+> -	memblock_free_early(__pa(map_map), size2);
+> -	memblock_free_early(__pa(usemap_map), size);
+>  }
+>  
+>  #ifdef CONFIG_MEMORY_HOTPLUG
+> -- 
+> 2.18.0
 > 
-> Stu Hsieh (29):
->   drm/mediatek: update dt-bindings for mt2712
->   drm/mediatek: support maximum 64 mutex mod
->   drm/mediatek: add ddp component AAL1
->   drm/mediatek: add ddp component OD1
->   drm/mediatek: add ddp component PWM1
->   drm/mediatek: add ddp component PWM2
->   drm/mediatek: add component DPI1
->   drm/mediatek: add component DSI2
->   drm/mediatek: add component DSI3
->   drm/mediatek: add the DSI1 for component init condition
->   drm/mediatek: add connection from OD1 to RDMA1
->   drm/mediatek: Update the definition of connection from RDMA1 to DPI0
->   drm/mediatek: add connection from RDMA0 to DPI0
->   drm/mediatek: add connection from RDMA0 to DSI2
->   drm/mediatek: add connection from RDMA0 to DSI3
->   drm/mediatek: add connection from RDMA1 to DPI1
->   drm/mediatek: add connection from RDMA1 to DSI1
->   drm/mediatek: add connection from RDMA1 to DSI2
->   drm/mediatek: add connection from RDMA1 to DSI3
->   drm/mediatek: add connection from RDMA2 to DPI0
->   drm/mediatek: add connection from RDMA2 to DPI1
->   drm/mediatek: add connection from RDMA2 to DSI1
->   drm/mediatek: add connection from RDMA2 to DSI2
->   drm/mediatek: add connection from RDMA2 to DSI3
->   drm/mediatek: add DPI1 support for mutex
->   drm/mediatek: add DSI2 support for mutex
->   drm/mediatek: add DSI3 support for mutex
->   drm/mediatek: add third ddp path
->   drm/mediatek: Add support for mediatek SOC MT2712
-> 
->  .../bindings/display/mediatek/mediatek,disp.txt    |   2 +-
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |   3 +
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 235 ++++++++++++++++++---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c        |  15 +-
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  10 +-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  47 ++++-
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h             |   5 +-
->  7 files changed, 274 insertions(+), 43 deletions(-)
-> 
-
-
