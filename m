@@ -2,164 +2,180 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C35C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B396C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE75425032
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB2F24E71
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o2v1CrLF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE75425032
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e+U/q/sk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB2F24E71
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753780AbeGBVs2 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:48:28 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35639 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753470AbeGBVsY (ORCPT
+        id S932238AbeGBVtD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 17:49:03 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:46124 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932178AbeGBVtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:48:24 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z137-v6so229277wmc.0;
-        Mon, 02 Jul 2018 14:48:24 -0700 (PDT)
+        Mon, 2 Jul 2018 17:49:01 -0400
+Received: by mail-vk0-f67.google.com with SMTP id b14-v6so4338946vke.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lnDoJf+9j4VKmIjBJPRULv9+pzzH/07WoCB9OCK34oU=;
-        b=o2v1CrLFJJ4h40cl8fR0DGwN+IKs10M6ha34NCY6x8Cyoe2MIKPlCCxz3C6SPcVrsC
-         LH2x73YR0UbIwOFNlniJnsjNK3OE5QR96rBl8zylDphY5R4dHgiK9oGw+4/fEotMrP2M
-         eYefzYMznOupua0faomrfhakmdjbV+iC22jfngoGi4M3mocjJXo7nvUXsTwr6+odBhxX
-         IuRtFlvearYmrZ4s/rr2FwlxgPzwMC3D7DcL9fo+e7S9khlWVSuw1o/J82Pv7BgORxPn
-         X9bOs1P3gBo6TS+4uw8PbiYxtyDpXVMlWjBSOtbWHeXAVJM0OEo42LLLh86zJ0TFLvuf
-         EgTQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cNtzpMnfBRjdhczbeJw43TOZUK9hYvRZt+mnAsZA7Fw=;
+        b=e+U/q/skESd3rLJ6Gowv4C3tnribQJCJh3MJyJwzxQVHzx3Lia9a0kaHcag0xD2JFa
+         sqkBGZ2iZvazMn8P+quz0e1PIDb01IHQNDZ3qftS8Qse0+nMDMWaYZIQjdiLkSlLsH3x
+         QEn8FjKDOXocWtUUuUEz4dBQggCDXhWaU0eRQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lnDoJf+9j4VKmIjBJPRULv9+pzzH/07WoCB9OCK34oU=;
-        b=JbqKsCQ/kO2xC9w80zh4CAwo39U0UIODCdrkDKiSXjBLh6ETjLrH33mI6eKdvBLSXJ
-         Yh8DfpvnHXnhXmVDEwCBqmb7Y98+6IPtUlfZjRchHGWIGxxwQgpjaE1E2JhGKbfXQknB
-         JGeJYHepMgAJxymEja7UURyf8YFDl/3jm1VeObqKB2wm9//B7aKGZv8wJGwL+uKFiVSo
-         bYmTZABsZy9aGHDDVDfCKoXiuKI2vKCcbdiW2uil6IdhpP548GDGZaV1E0LETSm9eO5o
-         4Yncpx9vmvzmq2l4lyh0Sc8rzTcE2D51i/RWXcBRtpoNVHCn9alf3wVi4OzHKtfWSsOR
-         26Vg==
-X-Gm-Message-State: APt69E3BNpJPv5q1iIk577joVn5u8hpSw32OwFoEtDB1apm21VMm9BAF
-        eJO5tgSLzLq9gwtdWBT1Qa8=
-X-Google-Smtp-Source: AAOMgpfmq2dxGb4Q2sgnn7HuGfYdS3vSGAiwtr9oYwnDrnuM6E+pCGmwSfIDBeUGwgmZqPZdaLlu9w==
-X-Received: by 2002:a1c:9e8a:: with SMTP id h132-v6mr8764627wme.48.1530568103583;
-        Mon, 02 Jul 2018 14:48:23 -0700 (PDT)
-Received: from localhost.localdomain (ipb218f5b0.dynamic.kabel-deutschland.de. [178.24.245.176])
-        by smtp.gmail.com with ESMTPSA id l7-v6sm1349821wrg.95.2018.07.02.14.48.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 14:48:22 -0700 (PDT)
-From:   Eugeniu Rosca <roscaeugeniu@gmail.com>
-X-Google-Original-From: Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Vincent Pelletier <plr.vincent@gmail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [PATCH] usb: gadget: f_uac2: fix endianness of 'struct cntrl_*_lay3'
-Date:   Mon,  2 Jul 2018 23:46:47 +0200
-Message-Id: <20180702214647.1574-1-erosca@de.adit-jv.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cNtzpMnfBRjdhczbeJw43TOZUK9hYvRZt+mnAsZA7Fw=;
+        b=SCwgwjp71VX6ZC2dvwkRU5foQxjdS35fx9SL9w3t/nkox1xkZkhDP+PxgGRF4cca70
+         3trM3akW0cvOtqgXyrADkXLeb5w8Eb95HJdbey80nFqYtYTZ8j0/vIiARgFuB67Pmf2k
+         9ehDxNYptfTS2oaaUbmDX72GCSlki3xrKYkt7XTJYz4z3XBY8Iaxu5XqFSyc5yVlrRV2
+         Q2sEdmNySIRZfG3wyDcWkvV6W2B+2geIGckeIyGvOPgM2ZUZaAOjYYbwYriIoxN4NJ6z
+         TDyCu5ZZ2WlK9MXXIiow8APXi5gkSZjBu4dfGOvRvz6JzaEqfm0wKd0DQsl85CmN65oF
+         ajvA==
+X-Gm-Message-State: APt69E21vRY9wXFd3TCNQ5HUA49Mbg458oYgZQlmasRr/sk6WqQnH1HZ
+        WZZEfarAHBL8H6mXl4rO/8jB7IMvC49N08DcKpd4TQ==
+X-Google-Smtp-Source: AAOMgpdTZSV3FtzeaM9lm8+7dYBY+4aVLdTXU5qd+y9bjn/CoN0zMzqkwy4EITD0fwRiIOcWSiyLZQ/k++4HuFidFg8=
+X-Received: by 2002:a1f:ee85:: with SMTP id m127-v6mr15855233vkh.46.1530568140137;
+ Mon, 02 Jul 2018 14:49:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180413161601.109431-1-djkurtz@chromium.org> <6e46904a-d721-d583-8ab5-82cb07df7934@amd.com>
+In-Reply-To: <6e46904a-d721-d583-8ab5-82cb07df7934@amd.com>
+From:   Daniel Kurtz <djkurtz@chromium.org>
+Date:   Mon, 2 Jul 2018 15:48:48 -0600
+Message-ID: <CAGS+omATU0gus_EvbHtegGK1ZkaKVmSOr1E6QLQjd+LA_tC_LA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/acp: Fix slab-out-of-bounds in mfd_add_device
+ in acp_hw_init
+To:     alexander.deucher@amd.com
+Cc:     christian.koenig@amd.com, Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        David Airlie <airlied@linux.ie>, Vijendar.Mukunda@amd.com,
+        jclinton@chromium.org, amd-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The list [1] of commits doing endianness fixes in USB subsystem is long
-due to below quote from USB spec Revision 2.0 from April 27, 2000:
+Hi Alex,
 
-------------
-8.1 Byte/Bit Ordering
+On Sun, Apr 15, 2018 at 9:48 PM Agrawal, Akshu <Akshu.Agrawal@amd.com> wrote:
+>
+>
+>
+> On 4/13/2018 9:45 PM, Daniel Kurtz wrote:
+> > Commit 51f7415039d4 ("drm/amd/amdgpu: creating two I2S instances for
+> > stoney/cz") added support for the "BT_I2S" ACP i2s channel.  As part of
+> > this change, one additional acp resource was added, but the "num_resource"
+> > count was accidentally incremented by 2.
+> >
+> > This incorrect count eventually causes mfd_add_device() to try to access
+> > an invalid memory address (the location of non-existent resource 5.
+> >
+> > This fault was detected by running a KASAN enabled kernel, which produced
+> > the following splat at boot:
+> >
+> > [    6.612987] ==================================================================
+> > [    6.613509] BUG: KASAN: slab-out-of-bounds in mfd_add_device+0x4bc/0x7a7
+> > [    6.613509] Read of size 8 at addr ffff880107d4dc58 by task swapper/0/1
+> > [    6.613509]
+> > [    6.613509] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.33 #349
+> > [    6.613509] Hardware name: Google Grunt/Grunt, BIOS Google_Grunt.10543.0.2018_04_03_1812 04/02/2018
+> > [    6.613509] Call Trace:
+> > [    6.613509]  dump_stack+0x4d/0x63
+> > [    6.613509]  print_address_description+0x80/0x2d6
+> > [    6.613509]  ? mfd_add_device+0x4bc/0x7a7
+> > [    6.613509]  kasan_report+0x255/0x295
+> > [    6.613509]  mfd_add_device+0x4bc/0x7a7
+> > [    6.613509]  ? kasan_kmalloc+0x99/0xa8
+> > [    6.613509]  ? mfd_add_devices+0x58/0xe4
+> > [    6.613509]  ? __kmalloc+0x154/0x178
+> > [    6.613509]  mfd_add_devices+0xa5/0xe4
+> > [    6.613509]  acp_hw_init+0x92e/0xc4a
+> > [    6.613509]  amdgpu_device_init+0x1dfb/0x22a2
+> > [    6.613509]  ? kmalloc_order+0x53/0x5d
+> > [    6.613509]  ? kmalloc_order_trace+0x23/0xb3
+> > [    6.613509]  amdgpu_driver_load_kms+0xce/0x267
+> > [    6.613509]  drm_dev_register+0x169/0x2fb
+> > [    6.613509]  amdgpu_pci_probe+0x217/0x242
+> > [    6.613509]  pci_device_probe+0x101/0x18e
+> > [    6.613509]  driver_probe_device+0x1dd/0x419
+> > [    6.613509]  ? ___might_sleep+0x80/0x1b6
+> > [    6.613509]  __driver_attach+0x9f/0xc9
+> > [    6.613509]  ? driver_probe_device+0x419/0x419
+> > [    6.613509]  bus_for_each_dev+0xbc/0xe1
+> > [    6.613509]  bus_add_driver+0x189/0x2c0
+> > [    6.613509]  driver_register+0x108/0x156
+> > [    6.613509]  ? ttm_init+0x67/0x67
+> > [    6.613509]  do_one_initcall+0xb2/0x161
+> > [    6.613509]  kernel_init_freeable+0x25a/0x308
+> > [    6.613509]  ? rest_init+0xcc/0xcc
+> > [    6.613509]  kernel_init+0x11/0x10d
+> > [    6.613509]  ? rest_init+0xcc/0xcc
+> > [    6.613509]  ret_from_fork+0x22/0x40
+> > [    6.613509]
+> > [    6.613509] Allocated by task 1:
+> > [    6.613509]  save_stack+0x46/0xce
+> > [    6.613509]  kasan_kmalloc+0x99/0xa8
+> > [    6.613509]  kmem_cache_alloc_trace+0x11a/0x13e
+> > [    6.613509]  acp_hw_init+0x210/0xc4a
+> > [    6.613509]  amdgpu_device_init+0x1dfb/0x22a2
+> > [    6.613509]  amdgpu_driver_load_kms+0xce/0x267
+> > [    6.613509]  drm_dev_register+0x169/0x2fb
+> > [    6.613509]  amdgpu_pci_probe+0x217/0x242
+> > [    6.613509]  pci_device_probe+0x101/0x18e
+> > [    6.613509]  driver_probe_device+0x1dd/0x419
+> > [    6.613509]  __driver_attach+0x9f/0xc9
+> > [    6.613509]  bus_for_each_dev+0xbc/0xe1
+> > [    6.613509]  bus_add_driver+0x189/0x2c0
+> > [    6.613509]  driver_register+0x108/0x156
+> > [    6.613509]  do_one_initcall+0xb2/0x161
+> > [    6.613509]  kernel_init_freeable+0x25a/0x308
+> > [    6.613509]  kernel_init+0x11/0x10d
+> > [    6.613509]  ret_from_fork+0x22/0x40
+> > [    6.613509]
+> > [    6.613509] Freed by task 0:
+> > [    6.613509] (stack is not available)
+> > [    6.613509]
+> > [    6.613509] The buggy address belongs to the object at ffff880107d4db08
+> > [    6.613509]  which belongs to the cache kmalloc-512 of size 512
+> > [    6.613509] The buggy address is located 336 bytes inside of
+> > [    6.613509]  512-byte region [ffff880107d4db08, ffff880107d4dd08)
+> > [    6.613509] The buggy address belongs to the page:
+> > [    6.613509] page:ffffea00041f5300 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
+> > [    6.613509] flags: 0x8000000000008100(slab|head)
+> > [    6.613509] raw: 8000000000008100 0000000000000000 0000000000000000 0000000100120012
+> > [    6.613509] raw: ffffea0004208520 ffff88010b001680 ffff88010b002cc0 0000000000000000
+> > [    6.613509] page dumped because: kasan: bad access detected
+> > [    6.613509]
+> > [    6.613509] Memory state around the buggy address:
+> > [    6.613509]  ffff880107d4db00: fc 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > [    6.613509]  ffff880107d4db80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > [    6.613509] >ffff880107d4dc00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+> > [    6.613509]                                                     ^
+> > [    6.613509]  ffff880107d4dc80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [    6.613509]  ffff880107d4dd00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [    6.613509] ==================================================================
+> >
+> > Fixes: 51f7415039d4 ("drm/amd/amdgpu: creating two I2S instances for stoney/cz")
+> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> Acked-by: Akshu Agrawal <akshu.agrawal@amd.com>
 
-Multiple byte fields in standard descriptors, requests, and responses
-are interpreted as and moved over the bus in little-endian order, i.e.
-LSB to MSB.
-------------
 
-This commit belongs to the same family.
+Was this patch ever picked up?  I can't find it in agd5f/linux.
 
-[1] Example of endianness fixes in USB subsystem:
-commit 14e1d56cbea6 ("usb: gadget: f_uac2: endianness fixes.")
-commit 42370b821168 ("usb: gadget: f_uac1: endianness fixes.")
-commit 63afd5cc7877 ("USB: chaoskey: fix Alea quirk on big-endian hosts")
-commit 74098c4ac782 ("usb: gadget: acm: fix endianness in notifications")
-commit cdd7928df0d2 ("ACM gadget: fix endianness in notifications")
-commit 323ece54e076 ("cdc-wdm: fix endianness bug in debug statements")
-commit e102609f1072 ("usb: gadget: uvc: Fix endianness mismatches")
-       list goes on
-
-Fixes: 132fcb460839 ("usb: gadget: Add Audio Class 2.0 Driver")
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- drivers/usb/gadget/function/f_uac2.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_uac2.c b/drivers/usb/gadget/function/f_uac2.c
-index d2dc1f00180b..540a0ce63ad4 100644
---- a/drivers/usb/gadget/function/f_uac2.c
-+++ b/drivers/usb/gadget/function/f_uac2.c
-@@ -438,14 +438,14 @@ static struct usb_descriptor_header *hs_audio_desc[] = {
- };
- 
- struct cntrl_cur_lay3 {
--	__u32	dCUR;
-+	__le32	dCUR;
- };
- 
- struct cntrl_range_lay3 {
--	__u16	wNumSubRanges;
--	__u32	dMIN;
--	__u32	dMAX;
--	__u32	dRES;
-+	__le16	wNumSubRanges;
-+	__le32	dMIN;
-+	__le32	dMAX;
-+	__le32	dRES;
- } __packed;
- 
- static void set_ep_max_packet_size(const struct f_uac2_opts *uac2_opts,
-@@ -703,9 +703,9 @@ in_rq_cur(struct usb_function *fn, const struct usb_ctrlrequest *cr)
- 		memset(&c, 0, sizeof(struct cntrl_cur_lay3));
- 
- 		if (entity_id == USB_IN_CLK_ID)
--			c.dCUR = p_srate;
-+			c.dCUR = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			c.dCUR = c_srate;
-+			c.dCUR = cpu_to_le32(c_srate);
- 
- 		value = min_t(unsigned, w_length, sizeof c);
- 		memcpy(req->buf, &c, value);
-@@ -742,15 +742,15 @@ in_rq_range(struct usb_function *fn, const struct usb_ctrlrequest *cr)
- 
- 	if (control_selector == UAC2_CS_CONTROL_SAM_FREQ) {
- 		if (entity_id == USB_IN_CLK_ID)
--			r.dMIN = p_srate;
-+			r.dMIN = cpu_to_le32(p_srate);
- 		else if (entity_id == USB_OUT_CLK_ID)
--			r.dMIN = c_srate;
-+			r.dMIN = cpu_to_le32(c_srate);
- 		else
- 			return -EOPNOTSUPP;
- 
- 		r.dMAX = r.dMIN;
- 		r.dRES = 0;
--		r.wNumSubRanges = 1;
-+		r.wNumSubRanges = cpu_to_le16(1);
- 
- 		value = min_t(unsigned, w_length, sizeof r);
- 		memcpy(req->buf, &r, value);
--- 
-2.18.0
-
+Thanks,
+-Dan
