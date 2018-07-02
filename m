@@ -2,104 +2,127 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9703AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E7DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE7B20844
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE6220844
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpcZ3btE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE7B20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Bm0yzJwh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE6220844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753543AbeGBXOw (ORCPT
+        id S1753499AbeGBXRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 19:14:52 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45699 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753171AbeGBXOu (ORCPT
+        Mon, 2 Jul 2018 19:17:03 -0400
+Received: from mail.efficios.com ([167.114.142.138]:48940 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752860AbeGBXRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 19:14:50 -0400
-Received: by mail-oi0-f65.google.com with SMTP id m2-v6so124355oim.12;
-        Mon, 02 Jul 2018 16:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/U5q+eIZfjDIYKctrLb08XSTIKz3yf5Nq4NXswsquiI=;
-        b=IpcZ3btEWP0W5Uqd9sxMdT2wqilAU/KgL18mzze+eby83G96SKLJqKeR89W7dI6J+u
-         wCYyhafzp0O0PSOYqk8Qyg/tUPBPjCUAwU8ncDM3ZPkHf5fJPtCLQyjB9ky7Wd/KBp7W
-         TN4XD1LsvqlAyYpZSwF+SI050WhGFD/amGxonRAkuMpDNmOVjnjGU5KJ/EQeA4L+Q7PK
-         aZmXqyzZPeOziIstY0X09xDSZGpCN1MHIjYiYBPyLTFX9f5vPzUcaZsQYwx7QoZVrxvP
-         aJ4Ssxu3j5HeivGEOZZUV+LDayyDHkR8+fSiFqJEqZ9tKAVVgCho4KM27gaX2V+N+lUh
-         2uZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/U5q+eIZfjDIYKctrLb08XSTIKz3yf5Nq4NXswsquiI=;
-        b=GtRG3xKWnTIIM6Oy4tM3W6uvlDAIe4e2akaRsssTTnfEzgu2EDl9KRpU9h1XukAb5P
-         Id0K1bvEiG+oCLgbx84TBsI97e2jtkj/lSmxkyFaXifRzeu5L9RAuRJlWTaLXFZd4pVJ
-         ad+Jo0N1AcvcnXXPn/LjvDvIngKRDllqB/U8nSE+kF7fZuA+YcuT4Ul6BhBEoc8Jqnr2
-         8bNg74bdmetf9XYLtWOE8P6tgnbw9CQ+4P8174L6+swi6rRu0flbdQliGL1aj+5srhBt
-         hAQgsmXpx7yHY7Ad4XRmcgToXvvn/jHep9gRe6Lml/LrJ5ZWBZTybUaxzIfSdb06rwdM
-         i6GQ==
-X-Gm-Message-State: APt69E1JOglD6kG0xIYcVXAA4nFsqDQtIr9MtOqfCzVW3moK86rqL4oH
-        wVofY5CnfFxvVNLYV+UyJUTQbRAkwfE6FxOWxgE=
-X-Google-Smtp-Source: AAOMgpd3k1L6ughjEsjOmleWC6rW5OpoX2eOYBdTfrp6712qpuioqqmlEoOjzalPvJlknXSTD3fyAsZX78G69eSmO/0=
-X-Received: by 2002:aca:3ac6:: with SMTP id h189-v6mr18999694oia.336.1530573290162;
- Mon, 02 Jul 2018 16:14:50 -0700 (PDT)
+        Mon, 2 Jul 2018 19:17:01 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 96FF322FD71;
+        Mon,  2 Jul 2018 19:17:00 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id yWHPsSq6uwkL; Mon,  2 Jul 2018 19:17:00 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id E0F6122FD65;
+        Mon,  2 Jul 2018 19:16:59 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E0F6122FD65
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530573419;
+        bh=KSKM7pu8Zy4OeUTC0sMdR+VnF7EzwFsiHUkZcAS6zpY=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=Bm0yzJwh4uN9BtB2yv2i3TjdCyR10NjGAaSGjmgvCcdSL+XO/7XX72QUrInt55Psm
+         +S04JrOZcZOvGgSPnfjQL9lwnH1sb132SMUhSO10aAdjDzuj6ytBJ6xN+FdNV++doE
+         r1chfXN9M0ihhpZ1wufFEXUS35UbDD+3e2pifOkU4WEfUe4G/D5skswOBQzzkXFZdk
+         1h1pPF6p6chIh4dK3viHCu86TsFXNvNfg1lb2Wj4Q2RkeHSutF5utq4F9mSRyTaHfy
+         2OuI8JfDRNtjXcdFsl1dycUYQS5Xnb8AjVwjwBQ506DQ/w5qIvbnjfK0esOHPX/ONZ
+         IMZnl1lqqXZyA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 8i-EZ_w6V4Sc; Mon,  2 Jul 2018 19:16:59 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id BFF7122FD5F;
+        Mon,  2 Jul 2018 19:16:59 -0400 (EDT)
+Date:   Mon, 2 Jul 2018 19:16:59 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com> <CA+55aFxrX+wRoe+5HDaTrRXg1K-Qpks4jJ9Buc_OevoG8hoGFw@mail.gmail.com> <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com> <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
 MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 16:14:49 -0700 (PDT)
-In-Reply-To: <1530526335.15665.13.camel@nxp.com>
-References: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
- <20180701093402.GN4348@dragon> <CAOMZO5BjOEGWv2dC-bp0BYHq+PhLssEKic+o7ock8_1Dobd=sQ@mail.gmail.com>
- <AM3PR04MB131507901BFEE1A5E426EECBF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5D8tjnjbwMdLGd7KF7_4PwqRWX8XH8kdcF3-5e-r2YQEA@mail.gmail.com>
- <AM3PR04MB1315E7AED2BCE2265E6C443DF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5D8v4KM9S4ooHTDbA+vc8BZN_eO_wDuOPA+8Hcq-SmLDw@mail.gmail.com>
- <AM3PR04MB1315C7C7CFF990615732FFBCF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5AM5VRS7UiWuvAQ8vvTB8OM+iwofuYrbsL_yB9e0Z9Kyg@mail.gmail.com>
- <AM3PR04MB13155B8D567ABEF7EF03249AF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5BdtxKjQge5ONpnjr1yNVeTJf4u8Gh-fPqpHz7G9ipOTg@mail.gmail.com> <1530526335.15665.13.camel@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 2 Jul 2018 20:14:49 -0300
-Message-ID: <CAOMZO5AxsvOhWi47goBm7YuqiLEhZ5fgK4BtCqg_hyLtdWfqfA@mail.gmail.com>
-Subject: Re: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
+Thread-Index: SHiTQe7XPSOexphG2GWas6EadgayhQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
+----- On Jul 2, 2018, at 7:06 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-On Sun, Jul 1, 2018 at 11:12 PM, Robin Gong <yibin.gong@nxp.com> wrote:
+> On Mon, Jul 2, 2018 at 4:00 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> Unfortunately, that rseq->rseq_cs field needs to be updated by user-space
+>> with single-copy atomicity. Therefore, we want 32-bit user-space to initialize
+>> the padding with 0, and only update the low bits with single-copy atomicity.
+> 
+> Well... It's actually still single-copy atomicity as a 64-bit value.
+> 
+> Why? Because it doesn't matter how you write the upper bits. You'll be
+> writing the same value to them (zero) anyway.
+> 
+> So who cares if the write ends up being two instructions, because the
+> write to the upper bits doesn't actually *do* anything.
+> 
+> Hmm?
 
-> But in fact, the original dts is not correct without 'regulator-always-
-> on'since SW4 is the critical DDR power rail, although, it's kept on in
-> the previous kernel by no switches enable/disable interfaces provided
-> in pfuze driver. Adding new property which can be done totally by the
-> common 'regulator-always-on' is not a good choice. Keep the dts patch
-> adding 'regulator-always-on' ahead of pfuze driver pach adding
-> enable/disable interface is enough for such case I think.
+Are there any kind of guarantees that a __u64 update on a 32-bit architecture
+won't be torn into something daft like byte-per-byte stores when performed
+from C code ?
 
-We really want to avoid  breaking old dtb's running a new kernel.
+I don't worry whether the upper bits get updated or how, but I really care
+about not having store tearing of the low bits update.
+
+Thanks,
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
