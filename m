@@ -6,127 +6,315 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C16AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E1AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E91724AB3
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E91724AB3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 9987222B41
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:53:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9987222B41
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754476AbeGBJvX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:51:23 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42084 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753279AbeGBJvW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:51:22 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 05563634C80;
-        Mon,  2 Jul 2018 12:51:20 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fZvUN-0001UO-Ni; Mon, 02 Jul 2018 12:51:19 +0300
-Date:   Mon, 2 Jul 2018 12:51:19 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/17] media: imx: Switch to subdev notifiers
-Message-ID: <20180702095119.t2adtiffpuaoanqk@valkosipuli.retiisi.org.uk>
-References: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
+        id S933467AbeGBJxl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:53:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33220 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752068AbeGBJxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 05:53:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0B861AEC0;
+        Mon,  2 Jul 2018 09:53:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5DB791E3BF2; Mon,  2 Jul 2018 11:53:31 +0200 (CEST)
+Date:   Mon, 2 Jul 2018 11:53:31 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     john.hubbard@gmail.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v2 5/6] mm: track gup pages with page->dma_pinned_* fields
+Message-ID: <20180702095331.n5zfz35d3invl5al@quack2.suse.cz>
+References: <20180702005654.20369-1-jhubbard@nvidia.com>
+ <20180702005654.20369-6-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530298220-5097-1-git-send-email-steve_longerbeam@mentor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180702005654.20369-6-jhubbard@nvidia.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Sun 01-07-18 17:56:53, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> This patch sets and restores the new page->dma_pinned_flags and
+> page->dma_pinned_count fields, but does not actually use them for
+> anything yet.
+> 
+> In order to use these fields at all, the page must be removed from
+> any LRU list that it's on. The patch also adds some precautions that
+> prevent the page from getting moved back onto an LRU, once it is
+> in this state.
+> 
+> This is in preparation to fix some problems that came up when using
+> devices (NICs, GPUs, for example) that set up direct access to a chunk
+> of system (CPU) memory, so that they can DMA to/from that memory.
+> 
+> CC: Matthew Wilcox <willy@infradead.org>
+> CC: Jan Kara <jack@suse.cz>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-On Fri, Jun 29, 2018 at 11:49:44AM -0700, Steve Longerbeam wrote:
-> This patchset converts the imx-media driver and its dependent
-> subdevs to use subdev notifiers.
-> 
-> There are a couple shortcomings in v4l2-core that prevented
-> subdev notifiers from working correctly in imx-media:
-> 
-> 1. v4l2_async_notifier_fwnode_parse_endpoint() treats a fwnode
->    endpoint that is not connected to a remote device as an error.
->    But in the case of the video-mux subdev, this is not an error,
->    it is OK if some of the mux inputs have no connection. Also,
->    Documentation/devicetree/bindings/media/video-interfaces.txt explicitly
->    states that the 'remote-endpoint' property is optional. So the first
->    patch is a small modification to ignore empty endpoints in
->    v4l2_async_notifier_fwnode_parse_endpoint() and allow
->    __v4l2_async_notifier_parse_fwnode_endpoints() to continue to
->    parse the remaining port endpoints of the device.
-> 
-> 2. In the imx-media graph, multiple subdevs will encounter the same
->    upstream subdev (such as the imx6-mipi-csi2 receiver), and so
->    v4l2_async_notifier_parse_fwnode_endpoints() will add imx6-mipi-csi2
->    multiple times. This is treated as an error by
->    v4l2_async_notifier_register() later.
-> 
->    To get around this problem, add an v4l2_async_notifier_add_subdev()
->    which first verifies the provided asd does not already exist in the
->    given notifier asd list or in other registered notifiers. If the asd
->    exists, the function returns -EEXIST and it's up to the caller to
->    decide if that is an error (in imx-media case it is never an error).
-> 
->    Patches 2-5 deal with adding that support.
-> 
-> 3. Patch 6 adds v4l2_async_register_fwnode_subdev(), which is a
->    convenience function for parsing a subdev's fwnode port endpoints
->    for connected remote subdevs, registering a subdev notifier, and
->    then registering the sub-device itself.
-> 
-> 4. Patches 7-14 update the subdev drivers to register a subdev notifier
->    with endpoint parsing, and the changes to imx-media to support that.
-> 
-> 5. Finally, the last 3 patches endeavor to completely remove support for
->    the notifier->subdevs[] array in platform drivers and v4l2 core. All
->    platform drivers are modified to make use of
->    v4l2_async_notifier_add_subdev() and its related convenience functions
->    to add asd's to the notifier @asd_list, and any allocation or reference
->    to the notifier->subdevs[] array removed. After that large patch,
->    notifier->subdevs[] array is stripped from v4l2-async and v4l2-subdev
->    docs are updated to reflect the new method of adding asd's to notifiers.
-> 
-> 
+...
 
-Thanks for the update! This is beginning to look really nice. A few notes
-on the entire set. I'll separately review some of the patches; I mainly
-wanted to see how the async/fwnode framework changes end up:
+> @@ -904,12 +907,24 @@ static inline void get_page(struct page *page)
+>  	 */
+>  	VM_BUG_ON_PAGE(page_ref_count(page) <= 0, page);
+>  	page_ref_inc(page);
+> +
+> +	if (unlikely(PageDmaPinned(page)))
+> +		__get_page_for_pinned_dma(page);
+>  }
+>  
+>  static inline void put_page(struct page *page)
+>  {
+>  	page = compound_head(page);
+>  
+> +	/* Because the page->dma_pinned_* fields are unioned with
+> +	 * page->lru, there is no way to do classical refcount-style
+> +	 * decrement-and-test-for-zero. Instead, PageDmaPinned(page) must
+> +	 * be checked, in order to safely check if we are allowed to decrement
+> +	 * page->dma_pinned_count at all.
+> +	 */
+> +	if (unlikely(PageDmaPinned(page)))
+> +		__put_page_for_pinned_dma(page);
+> +
 
-- The reason V4L2_MAX_SUBDEVS exists is to avoid drivers accidentally
-  allocating more space than intended. Now that the subdevs array will
-  disappear, the checks as well as the macro can be removed. I think the
-  num_subdevs field also becomes redundant as a result. Could you do this
-  in the patch that removes the subdevs array?
+These two are just wrong. You cannot make any page reference for
+PageDmaPinned() account against a pin count. First, it is just conceptually
+wrong as these references need not be long term pins, second, you can
+easily race like:
 
-- The notifier has register, unregister and cleanup operations. Now that
-  there's an obvious need to initialise it, it'd make sense to show that to
-  the drivers as an init operation --- rather than silently initialise it
-  based on the need.
+Pinner				Random process
+				get_page(page)
+pin_page_for_dma()
+				put_page(page)
+				 -> oops, page gets unpinned too early
 
-- I'd assign j in its declaration in
-  v4l2_async_notifier_has_async_subdev().
+So you really have to create counterpart to get_user_pages() - like
+put_user_page() or whatever... It is inconvenient to have to modify all GUP
+users but I don't see a way around that.
 
-- No need to explicitly check that the notifier's asd_list is empty in
-  __v4l2_async_notifier_register --- list_for_each_entry() over the same
-  list will be nop in that case.
+								Honza
 
+>  	/*
+>  	 * For devmap managed pages we need to catch refcount transition from
+>  	 * 2 to 1, when refcount reach one it means the page is free and we
+> diff --git a/mm/gup.c b/mm/gup.c
+> index 73f0b3316fa7..e5c0104fd234 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -20,6 +20,51 @@
+>  
+>  #include "internal.h"
+>  
+> +static int pin_page_for_dma(struct page *page)
+> +{
+> +	int ret = 0;
+> +	struct zone *zone;
+> +
+> +	page = compound_head(page);
+> +	zone = page_zone(page);
+> +
+> +	spin_lock(zone_gup_lock(zone));
+> +
+> +	if (PageDmaPinned(page)) {
+> +		/* Page was not on an LRU list, because it was DMA-pinned. */
+> +		VM_BUG_ON_PAGE(PageLRU(page), page);
+> +
+> +		atomic_inc(&page->dma_pinned_count);
+> +		goto unlock_out;
+> +	}
+> +
+> +	/*
+> +	 * Note that page->dma_pinned_flags is unioned with page->lru.
+> +	 * Therefore, the rules are: checking if any of the
+> +	 * PAGE_DMA_PINNED_FLAGS bits are set may be done while page->lru
+> +	 * is in use. However, setting those flags requires that
+> +	 * the page is both locked, and also, removed from the LRU.
+> +	 */
+> +	ret = isolate_lru_page(page);
+> +
+> +	if (ret == 0) {
+> +		/* Avoid problems later, when freeing the page: */
+> +		ClearPageActive(page);
+> +		ClearPageUnevictable(page);
+> +
+> +		/* counteract isolate_lru_page's effects: */
+> +		put_page(page);
+> +
+> +		atomic_set(&page->dma_pinned_count, 1);
+> +		SetPageDmaPinned(page);
+> +	}
+> +
+> +unlock_out:
+> +	spin_unlock(zone_gup_lock(zone));
+> +
+> +	return ret;
+> +}
+> +
+>  static struct page *no_page_table(struct vm_area_struct *vma,
+>  		unsigned int flags)
+>  {
+> @@ -659,7 +704,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  		unsigned int gup_flags, struct page **pages,
+>  		struct vm_area_struct **vmas, int *nonblocking)
+>  {
+> -	long i = 0;
+> +	long i = 0, j;
+>  	int err = 0;
+>  	unsigned int page_mask;
+>  	struct vm_area_struct *vma = NULL;
+> @@ -764,6 +809,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  	} while (nr_pages);
+>  
+>  out:
+> +	if (pages)
+> +		for (j = 0; j < i; j++)
+> +			pin_page_for_dma(pages[j]);
+> +
+>  	return i ? i : err;
+>  }
+>  
+> @@ -1843,7 +1892,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>  			struct page **pages)
+>  {
+>  	unsigned long addr, len, end;
+> -	int nr = 0, ret = 0;
+> +	int nr = 0, ret = 0, i;
+>  
+>  	start &= PAGE_MASK;
+>  	addr = start;
+> @@ -1864,6 +1913,9 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>  		ret = nr;
+>  	}
+>  
+> +	for (i = 0; i < nr; i++)
+> +		pin_page_for_dma(pages[i]);
+> +
+>  	if (nr < nr_pages) {
+>  		/* Try to get the remaining pages with get_user_pages */
+>  		start += nr << PAGE_SHIFT;
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e6f0d5ef320a..510d442647c2 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2062,6 +2062,11 @@ static void lock_page_lru(struct page *page, int *isolated)
+>  	if (PageLRU(page)) {
+>  		struct lruvec *lruvec;
+>  
+> +		/* LRU and PageDmaPinned are mutually exclusive: they use the
+> +		 * same fields in struct page, but for different purposes.
+> +		 */
+> +		VM_BUG_ON_PAGE(PageDmaPinned(page), page);
+> +
+>  		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+>  		ClearPageLRU(page);
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
+> @@ -2079,6 +2084,8 @@ static void unlock_page_lru(struct page *page, int isolated)
+>  
+>  		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+>  		VM_BUG_ON_PAGE(PageLRU(page), page);
+> +		VM_BUG_ON_PAGE(PageDmaPinned(page_tail), page);
+> +
+>  		SetPageLRU(page);
+>  		add_page_to_lru_list(page, lruvec, page_lru(page));
+>  	}
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 26fc9b5f1b6c..09ba61300d06 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -52,6 +52,43 @@ static DEFINE_PER_CPU(struct pagevec, lru_lazyfree_pvecs);
+>  static DEFINE_PER_CPU(struct pagevec, activate_page_pvecs);
+>  #endif
+>  
+> +void __get_page_for_pinned_dma(struct page *page)
+> +{
+> +	struct zone *zone = page_zone(page);
+> +
+> +	spin_lock(zone_gup_lock(zone));
+> +
+> +	if (PageDmaPinned(page))
+> +		atomic_inc(&page->dma_pinned_count);
+> +
+> +	spin_unlock(zone_gup_lock(zone));
+> +}
+> +EXPORT_SYMBOL(__get_page_for_pinned_dma);
+> +
+> +void __put_page_for_pinned_dma(struct page *page)
+> +{
+> +	struct zone *zone = page_zone(page);
+> +
+> +	if (atomic_dec_and_test(&page->dma_pinned_count)) {
+> +		spin_lock(zone_gup_lock(zone));
+> +
+> +		VM_BUG_ON_PAGE(PageLRU(page), page);
+> +
+> +		/* Re-check while holding the lock, because
+> +		 * pin_page_for_dma() or get_page() may have snuck in right
+> +		 * after the atomic_dec_and_test, and raised the count
+> +		 * above zero again. If so, just leave the flag set. And
+> +		 * because the atomic_dec_and_test above already got the
+> +		 * accounting correct, no other action is required.
+> +		 */
+> +		if (atomic_read(&page->dma_pinned_count) == 0)
+> +			ClearPageDmaPinned(page);
+> +
+> +		spin_unlock(zone_gup_lock(zone));
+> +	}
+> +}
+> +EXPORT_SYMBOL(__put_page_for_pinned_dma);
+> +
+>  /*
+>   * This path almost never happens for VM activity - pages are normally
+>   * freed via pagevecs.  But it gets used by networking.
+> @@ -824,6 +861,11 @@ void lru_add_page_tail(struct page *page, struct page *page_tail,
+>  	VM_BUG_ON_PAGE(!PageHead(page), page);
+>  	VM_BUG_ON_PAGE(PageCompound(page_tail), page);
+>  	VM_BUG_ON_PAGE(PageLRU(page_tail), page);
+> +
+> +	/* LRU and PageDmaPinned are mutually exclusive: they use the
+> +	 * same fields in struct page, but for different purposes.
+> +	 */
+> +	VM_BUG_ON_PAGE(PageDmaPinned(page_tail), page);
+>  	VM_BUG_ON(NR_CPUS != 1 &&
+>  		  !spin_is_locked(&lruvec_pgdat(lruvec)->lru_lock));
+>  
+> @@ -863,6 +905,12 @@ static void __pagevec_lru_add_fn(struct page *page, struct lruvec *lruvec,
+>  
+>  	VM_BUG_ON_PAGE(PageLRU(page), page);
+>  
+> +	/* LRU and PageDmaPinned are mutually exclusive: they use the
+> +	 * same fields in struct page, but for different purposes.
+> +	 */
+> +	if (PageDmaPinned(page))
+> +		return;
+> +
+>  	SetPageLRU(page);
+>  	/*
+>  	 * Page becomes evictable in two ways:
+> -- 
+> 2.18.0
+> 
 -- 
-Kind regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
