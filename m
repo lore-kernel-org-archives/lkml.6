@@ -2,116 +2,119 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC5FC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E980C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453272445C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:43:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rw0MKNL3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453272445C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0074522439
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0074522439
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752480AbeGBOnq (ORCPT
+        id S1752184AbeGBOpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:43:46 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:38671 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeGBOnm (ORCPT
+        Mon, 2 Jul 2018 10:45:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33268 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751544AbeGBOpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:43:42 -0400
-Received: by mail-yw0-f194.google.com with SMTP id r3-v6so75474ywc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 07:43:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vjprifdxSiKHrnWlfhNRxh5ZE7VyCQPgycwdC6B4qmQ=;
-        b=Rw0MKNL3lzcH7opgUDikOB+1jpvq3UmEotItyLkk/Si+9dPDGNv3n0nu4JB3lxZMPt
-         VLRosRG92R88/my7pXBJ6/wQf8G4A+KVIkyMtlMHl8HQTcCJ1Yo9ZOi1M7y33zne4+Py
-         H6HTbh1cJO1hHXr6gJCy90VBKdbarNaKR5zoIdKufKSUe1t6QmW5otf+c4u9mwddQTfq
-         NPrbLSeh9X1zagc1i6gHadH42oTd7jAEJiQEwuRC2sCd0py6/ez6TPlr/nale83R5K4d
-         VcGafCX5u0HKX43HVzso2Ci1csqHToEoRl0jtbIJaKmjOL5jw3p8QDdMJpQKOuxY+RKR
-         5rzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vjprifdxSiKHrnWlfhNRxh5ZE7VyCQPgycwdC6B4qmQ=;
-        b=g7R6M/uKmluiey6kVD9xpyP9KJ0rO5Mp4QG7RHUTDxQ68C0UY+whhw0CZPIpvlTeTm
-         qN4gMhvz8uYgAgf9OX+qn5UYwUpjYJAS5DsL94cd6UAd6WyiNCChHbr7F2GX406a0qD7
-         0O+shaoxTvoMOT6f6o94SORaSONDIzPGlKdFtxwP4dx1sqDu5JS7lndlpsFeSl/g07Qj
-         tyabtV10tZpNyRnCofJHLll2M9/WMH63opQlbCoe+61MKAYy7uSG/p049gNrPc5CIQaJ
-         5yRRmKo6PlXiLCcas8ZTj8CZvSF9mI/yxQqktTrAT3Nj/Vo+1IuJHur23Oh4hG+x8WP0
-         dTDg==
-X-Gm-Message-State: APt69E2vdPJ4TwGTfSsNTEsTl7MjfVpvEvBJ8N2xC+oLogBKFUxNHIoK
-        P7Q4qhfEwYRtm01rD8IOgtJ3+j40hiosh0hh/f4REw==
-X-Google-Smtp-Source: AAOMgpdaPleW47ZVi3+u2X/lR6NTepOBFRv7b2M5TnnnDYIKdZr0ZC29ZeBeFByDqw1u1ZnUf1jxcC2ZLaWMa8LZ4Rk=
-X-Received: by 2002:a81:6bc6:: with SMTP id g189-v6mr7982117ywc.267.1530542621565;
- Mon, 02 Jul 2018 07:43:41 -0700 (PDT)
+        Mon, 2 Jul 2018 10:45:46 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62EjCfb040023
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 10:45:45 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jykxbdwe0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:45:45 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 15:45:43 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 15:45:38 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62EjbXE38928636
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 14:45:37 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1E8642049;
+        Mon,  2 Jul 2018 15:45:20 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE20742054;
+        Mon,  2 Jul 2018 15:45:17 +0100 (BST)
+Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Mon,  2 Jul 2018 15:45:17 +0100 (BST)
+Date:   Mon, 2 Jul 2018 07:45:33 -0700
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Subject: Re: [PATCH v5 10/10] perf probe: Support SDT markers having
+ reference counter (semaphore)
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-11-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-References: <20180702102201.13461-1-enric.balletbo@collabora.com> <20180702102201.13461-4-enric.balletbo@collabora.com>
-In-Reply-To: <20180702102201.13461-4-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 2 Jul 2018 07:43:30 -0700
-Message-ID: <CABXOdTfLS-x_sPWBi2mmjkUTtN0Spd9ObEy5fYtEB-hoLJTPEg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Input: keyboard: Fix ChromeOS EC keyboard help message.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>, kgene@kernel.org,
-        krzk@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        kernel@collabora.com, linux-arm-kernel@lists.infradead.org,
-        Arnd Bergmann <arnd@arndb.de>, chen.zhong@mediatek.com,
-        linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180628052209.13056-11-ravi.bangoria@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18070214-0008-0000-0000-0000024ECE6F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070214-0009-0000-0000-000021B4D87A
+Message-Id: <20180702144533.GA65296@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 3:22 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> The cros-ec I2C and SPI transport drivers have been moved from MFD
-> subsystem to platform/chrome, at the same time, the config symbol
-> has been renamed and lost the MFD_ prefix So, update the help message
-> accordingly.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+* Ravi Bangoria <ravi.bangoria@linux.ibm.com> [2018-06-28 10:52:09]:
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+> With this, perf buildid-cache will save SDT markers with reference
+> counter in probe cache. Perf probe will be able to probe markers
+> having reference counter. Ex,
+> 
+>   # readelf -n /tmp/tick | grep -A1 loop2
+>     Name: loop2
+>     ... Semaphore: 0x0000000010020036
+> 
+>   # ./perf buildid-cache --add /tmp/tick
+>   # ./perf probe sdt_tick:loop2
+>   # ./perf stat -e sdt_tick:loop2 /tmp/tick
+>     hi: 0
+>     hi: 1
+>     hi: 2
+>     ^C
+>      Performance counter stats for '/tmp/tick':
+>                  3      sdt_tick:loop2
+>        2.561851452 seconds time elapsed
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> 
 
-> ---
->
->  drivers/input/keyboard/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-> index 6bd97ffee761..4713957b0cbb 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -721,7 +721,7 @@ config KEYBOARD_CROS_EC
->         help
->           Say Y here to enable the matrix keyboard used by ChromeOS devices
->           and implemented on the ChromeOS EC. You must enable one bus option
-> -         (MFD_CROS_EC_I2C or MFD_CROS_EC_SPI) to use this.
-> +         (CROS_EC_I2C or CROS_EC_SPI) to use this.
->
->           To compile this driver as a module, choose M here: the
->           module will be called cros_ec_keyb.
-> --
-> 2.18.0
->
+Looks good to me.
+
+Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
