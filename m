@@ -2,82 +2,88 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68411C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6897DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE9E25E50
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:07:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE9E25E50
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 17C8324832
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:09:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C8324832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeGBOHr (ORCPT
+        id S1752185AbeGBOJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:07:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41210 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751931AbeGBOHp (ORCPT
+        Mon, 2 Jul 2018 10:09:54 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33080 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751922AbeGBOJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:07:45 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 136FAECC;
-        Mon,  2 Jul 2018 14:07:44 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 16:07:42 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Mikko Perttunen <mperttunen@nvidia.com>, jassisinghbrar@gmail.com,
-        jonathanh@nvidia.com, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] Tegra Combined UART driver
-Message-ID: <20180702140742.GA7977@kroah.com>
-References: <20180702114033.15654-1-mperttunen@nvidia.com>
- <20180702140343.GO13096@ulmo>
+        Mon, 2 Jul 2018 10:09:52 -0400
+Received: by mail-ua0-f196.google.com with SMTP id g18-v6so7412505uak.0;
+        Mon, 02 Jul 2018 07:09:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFsFiUfEbRC88ucyi2zmEWvPPJY8J+COWuxLhXuD/V4=;
+        b=ZVRt2BaviK72kwC/NLakDKe4dVK9HTsMByqch2zUPFPKrfjk9RsjiY2r3b3CC1ssYY
+         iDJUMmuBEJa1ts8KIhGEx2tXpCRRM2OiFpU1wfiRgOzvs4HHqET0//I7azbEf69YOFWP
+         6L9nLkO8Jjtu0PMF2o7LfW/9yFJiDAznJ001RUIh7FDnUxbiq8k2LYj2zSE58zmDZgLJ
+         EMoDLsJpdCqKeWXZGiWJTMsyaHkA+b0i49YfGRa9HiM5M+bfVaBlHM4pL+gjvxMDSKTg
+         0lfzUHeC7wJIJKwDhb8O8mCj480LDxJZgOFz0AF3C9gHsJuD0Tw7pn6Ca7MjfetNQhwS
+         z9oQ==
+X-Gm-Message-State: APt69E08V5AparmqOPxLBikALy/WA/6JcxooUlw3PuMqhcv4/g4QSA/C
+        3fvLf6zPpYaij883iJYNBCp1B+3jLcp4JgY0ZZBteQ==
+X-Google-Smtp-Source: AAOMgpdDPpPWW0ijziLIA/0q2IsoPoiJSMSKrpzy2Ys3DPROYV3Tz6FPUNzk90RoOzAzalXHt9QvvSgawi3AEArCxsQ=
+X-Received: by 2002:ab0:25d6:: with SMTP id y22-v6mr17001942uan.33.1530540591462;
+ Mon, 02 Jul 2018 07:09:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702140343.GO13096@ulmo>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180702140050.1660-1-geert@linux-m68k.org>
+In-Reply-To: <20180702140050.1660-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 2 Jul 2018 16:09:40 +0200
+Message-ID: <CAMuHMdUHkShW5dT41x06Jz9DUJHim6=Wg6pspgTBJpsoVNphwA@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.18-rc3
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     sparclinux <sparclinux@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 04:03:43PM +0200, Thierry Reding wrote:
-> On Mon, Jul 02, 2018 at 02:40:25PM +0300, Mikko Perttunen wrote:
-> > Hi, here's v3. Changes are in individual patches. Acks are still
-> > missing from the following patches:
-> > 
-> > mailbox: Add transmit done by blocking option
-> > mailbox: tegra-hsp: Refactor in preparation of mailboxes
-> > mailbox: tegra-hsp: Add support for shared mailboxes
-> > serial: Add Tegra Combined UART driver
-> 
-> There don't seem to be any build-time dependencies between the above, so
-> technically I guess these could be applied to the respective trees
-> separately. The only thing we need to be careful about is to not merge
-> the final patch before the others, because it will break serial console
-> if the other patches aren't applied.
-> 
-> Jassi, Greg,
-> 
-> What I could do to resolve the runtime dependency is pull the mailbox
-> patches into a separate branch, create another separate branch for the
-> TCU driver that is based on the mailbox branch and then base the DT
-> changes on that branch, or possibly send a separate pull request for
-> just the DT change late in the merge window or shortly after v4.19-rc1.
-> 
-> Obviously the latter would be equivalent to you guys merging the patches
-> through your trees for v4.19-rc1 and me sending out a late pull request
-> for the DT bits.
+On Mon, Jul 2, 2018 at 4:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> JFYI, when comparing v4.18-rc3[1] to v4.18-rc2[3], the summaries are:
+>   - build errors: +1/-7
 
-No need for me to take the serial driver if these types of dependancies
-are required, you are free to take that in your tree if you want to.
+  + /kisskb/src/include/linux/highmem.h: error: passing argument 1 of
+'sparc_flush_page_to_ram' from incompatible pointer type
+[-Werror=incompatible-pointer-types]:  => 209:20, 233:36, 137:31
 
-does that help?
+sparc64/sparc-allmodconfig (patch available)
 
-greg k-h
+> [1] http://kisskb.ellerman.id.au/kisskb/head/021c91791a5e7e85c567452f1be3e4c2c6cb6063/ (231 out of 244 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/head/7daf201d7fe8334e2d2364d4e8ed3394ec9af819/ (231 out of 244 configs)
+
+> *** WARNINGS ***
+>
+> [Deleted 26903 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
+> [Deleted 19308 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on parisc-allmodconfig]
+
+Seems they're gone. Hopefully for good ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
