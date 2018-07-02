@@ -2,112 +2,168 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72602C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B4CC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE2925230
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B358255A6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AGeuGw2+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE2925230
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXIp/yz8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B358255A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753497AbeGBGd5 (ORCPT
+        id S1753524AbeGBGeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:33:57 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38164 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753465AbeGBGdz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:33:55 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j17-v6so7008570pfn.5
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 23:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=alTePAsm5rvwZ6RMQFYt1QbTavgWLkXAOYlcUJeLxEc=;
-        b=AGeuGw2+a51h0kKOBJNaSgoO3RnA7ev4T0x6Id+KPzenmWXM5X46ZCkfhXGLYT3Qac
-         w43p/+ME/6R1yUdb7LwqMCya5Rejb5/5RMMHNvT4FMqh/3FrFeaXGo87T9XYEmMx8Ahh
-         J6Clxxtk8clr0nBrvPqJmdF1QgTdXYBMR8kfY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=alTePAsm5rvwZ6RMQFYt1QbTavgWLkXAOYlcUJeLxEc=;
-        b=evcxF6v77D4UVygvm1w1UtPhBpznHCEpTgIaL/Bnshu6jKh35AFmBUaxNRpKc3kXAI
-         T0hDT1aMvFqDZCc3vRiXTmR2y38d4ZNGug5ZYUjsXhS9eE/YRoHeFDaGuXiHlk2DJdvv
-         gCWQIm7Lakfhi1K3kHk/hGx7f/Di+3eDo6Krf/Ey7qsom1OYKpodQL369DubZyYYQgHI
-         gyhTOpahwZzfIqrm1IL0u70MbEb3/6OXg9inJ48jI61tvsy2N6z6pgM+Ifh2SL9q/A6h
-         Zx/2d98tM+gmHZd4RA3s3wz5g+d81GwadMbWi+yN8cXixCJUP3AJ/odWU4yTa0K/LtG/
-         Ffpw==
-X-Gm-Message-State: APt69E0Wh5u+ngfeTXyasKRhfkWYitcn/aKULLfNzUYzjzKVyR60Bkzz
-        UPmaV8FPTLFto+gV8e5svuSt6Q==
-X-Google-Smtp-Source: AAOMgpcQKSbpaxoltpo2bKfNWMFfLxhJYxZoYF8Y7cslHgxJ6tpBGcxnYMVD7krHJWNsGORnwOBPog==
-X-Received: by 2002:a62:b90f:: with SMTP id z15-v6mr24385435pfe.254.1530513235197;
-        Sun, 01 Jul 2018 23:33:55 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k186-v6sm38297784pgk.94.2018.07.01.23.33.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 01 Jul 2018 23:33:54 -0700 (PDT)
-Date:   Sun, 1 Jul 2018 23:33:51 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: smd: Add missing include of sizes.h
-Message-ID: <20180702063351.GA21402@builder>
-References: <20180629170101.16255-1-niklas.cassel@linaro.org>
+        Mon, 2 Jul 2018 02:34:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753465AbeGBGeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 02:34:07 -0400
+Received: from localhost (unknown [5.29.173.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23CD92555B;
+        Mon,  2 Jul 2018 06:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530513246;
+        bh=03yaajkqqPNEwoTqSo0J4bDGMbOnunsE0UIdlpcvIjI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tXIp/yz8EG2rsQZJG3DIE2ho3bBlirnBDNsPsaWxWE17bfEWvLLjiqD32W4+L/rkI
+         wEe851gpt9dQYys1irgxDwXXq9egsikO8GqIIgeduepb3dX9QSUz94wkuP8sl/E65K
+         acRhE4IJCo1zROVe2S0Rk40Mt4IgCyrdfARxL4w4=
+Date:   Mon, 2 Jul 2018 09:34:03 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180702063403.GX3014@mtr-leonro.mtl.com>
+References: <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+ <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+ <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+ <20180702055251.GV3014@mtr-leonro.mtl.com>
+ <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vs0rQTeTompTJjtd"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180629170101.16255-1-niklas.cassel@linaro.org>
+In-Reply-To: <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 29 Jun 10:01 PDT 2018, Niklas Cassel wrote:
 
-> Add missing include of sizes.h.
-> 
-> drivers/rpmsg/qcom_smd.c: In function ‘qcom_smd_channel_open’:
-> drivers/rpmsg/qcom_smd.c:809:36: error: ‘SZ_4K’ undeclared (first use in this function)
->   bb_size = min(channel->fifo_size, SZ_4K);
->                                     ^~~~~
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+--vs0rQTeTompTJjtd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied
+On Sun, Jul 01, 2018 at 11:10:04PM -0700, John Hubbard wrote:
+> On 07/01/2018 10:52 PM, Leon Romanovsky wrote:
+> > On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
+> >> On Wed 27-06-18 19:42:01, John Hubbard wrote:
+> >>> On 06/27/2018 10:02 AM, Jan Kara wrote:
+> >>>> On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
+> >>>>> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
+> >>>>>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+> >>>>>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+> >>>>>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+> >>>>>>> [...]
+> >>> One question though: I'm still vague on the best actions to take in the
+> >>> following functions:
+> >>>
+> >>>     page_mkclean_one
+> >>>     try_to_unmap_one
+> >>>
+> >>> At the moment, they are both just doing an evil little early-out:
+> >>>
+> >>> 	if (PageDmaPinned(page))
+> >>> 		return false;
+> >>>
+> >>> ...but we talked about maybe waiting for the condition to clear, instead?
+> >>> Thoughts?
+> >>
+> >> What needs to happen in page_mkclean() depends on the caller. Most of the
+> >> callers really need to be sure the page is write-protected once
+> >> page_mkclean() returns. Those are:
+> >>
+> >>   pagecache_isize_extended()
+> >>   fb_deferred_io_work()
+> >>   clear_page_dirty_for_io() if called for data-integrity writeback - which
+> >>     is currently known only in its caller (e.g. write_cache_pages()) where
+> >>     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
+> >>     information into page_mkclean() will require some plumbing and
+> >>     clear_page_dirty_for_io() has some 50 callers but it's doable.
+> >>
+> >> clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
+> >> WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
+> >> otherwise memory cleaning would get stuck on pinned pages until RDMA
+> >> drivers release its pins.
+> >
+> > Sorry for naive question, but won't it create too much dirty pages
+> > so writeback will be called "non-stop" to rebalance watermarks without
+> > ability to progress?
+> >
+>
+> That is an interesting point.
+>
+> Holding off page writeback of this region does seem like it could cause
+> problems under memory pressure. Maybe adjusting the watermarks so that we
+> tell the writeback  system, "all is well, just ignore this region until
+> we're done with it" might help? Any ideas here are welcome...
 
-Thanks,
-Bjorn
+AFAIR, it is per-zone, so the solution to count dirty-but-untouchable
+number of pages to take them into account for accounting can work, but
+it seems like an overkill. Can we create special ZONE for such gup
+pages, or this is impossible too?
 
-> ---
->  drivers/rpmsg/qcom_smd.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 6437bbeebc91..8695cb041c31 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -14,6 +14,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/sched.h>
-> +#include <linux/sizes.h>
->  #include <linux/slab.h>
->  #include <linux/soc/qcom/smem.h>
->  #include <linux/wait.h>
-> -- 
-> 2.17.1
-> 
+>
+> Longer term, maybe some additional work could allow the kernel to be able
+> to writeback the gup-pinned pages (while DMA is happening--snapshots), but
+> that seems like a pretty big overhaul.
+>
+> thanks,
+> --
+> John Hubbard
+> NVIDIA
+
+--vs0rQTeTompTJjtd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbOcdbAAoJEORje4g2clincF8P/3tH3MM9BAk1vtFcIlSgwgpV
+CQo1zGcl889+0KwSERr8y3BKYaPE778TN2m6kUqZPiKJRBQ4AlmUCPR9KPAkvB2G
+5JlGMcqBzFd13lfu7i6sG2mAA4inEvvf4Pe0DF2FH8bma3grt3JDLSIhbrk9bu1a
+XEV8+ThFcjonsZis2Qr89aXiyvixorRblKWFmtKhlCZkeWYol08I0jk3UTkucod4
+PCahPfSXuOJsha2KVLmLlbOH9cIaGHUzNkUtq/R61Fx64HQ/WbGJnIMXJFnDZtVz
+o5JI1MtYBTib1j4e/8MaWb1b8CIgv9KoUtX3h8m/ySayRkkyTkdL8jtfuayOCb2P
+zf6HcixfstiYaLxzl3QxyRNsnBTBTSxEmnZlK3BQ2/bDD3gP2D5FPpBEim2odSWI
+Fh2djmRICd/rnWJVF9b5OUCQ2a6tzquRMVv2is5ogvD2B1pUPf2D4kSEoYA4IKd1
+biYv0TL5VJn2DEUK7ldomhimbtji5dXaYocXwVkKzeuXRdkcfXhw9AbbsLLRacyL
+78OtTp4++rQdVwh91pcyNibBYrTD/wVPe8KbIPSjXF1I87uzN76uzEVrP7UEute8
+LYVHkPMItOpbzqDOBpmDq00d4r0abip3B5Aa4aCrutGsdW0OtaZ4z17Td96CcM1b
+39VS5RZudMv3B1dY0Gng
+=j7ao
+-----END PGP SIGNATURE-----
+
+--vs0rQTeTompTJjtd--
