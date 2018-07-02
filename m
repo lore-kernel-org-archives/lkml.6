@@ -2,123 +2,80 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EEBC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F51DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB7023EA5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB7023EA5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 57DCB24FA0
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:22:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57DCB24FA0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752801AbeGBTVT (ORCPT
+        id S1752863AbeGBTWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:21:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55220 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeGBTVQ (ORCPT
+        Mon, 2 Jul 2018 15:22:52 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:58402 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeGBTWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:21:16 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E64A6CB7;
-        Mon,  2 Jul 2018 19:21:13 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 12:21:12 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Evgenii Stepanov <eugenis@google.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address
- sanitizer
-Message-Id: <20180702122112.267261b1e1609cf522753cf3@linux-foundation.org>
-In-Reply-To: <CAFKCwrjxGEa6CLJnjmNy+92d2GSUkoymQ6Sm91CDpMZcJCcWCA@mail.gmail.com>
-References: <cover.1530018818.git.andreyknvl@google.com>
-        <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
-        <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
-        <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
-        <CAAeHK+xsBOKghUp9XhpfXGqU=gjSYuy3G2GH14zWNEmaLPy8_w@mail.gmail.com>
-        <20180629194117.01b2d31e805808eee5c97b4d@linux-foundation.org>
-        <CAFKCwrjxGEa6CLJnjmNy+92d2GSUkoymQ6Sm91CDpMZcJCcWCA@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 2 Jul 2018 15:22:51 -0400
+Received: from belgarion ([90.55.203.186])
+        by mwinf5d45 with ME
+        id 5vNl1y00341oiFu03vNlT6; Mon, 02 Jul 2018 21:22:49 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Mon, 02 Jul 2018 21:22:49 +0200
+X-ME-IP: 90.55.203.186
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Mack <zonque@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: linux-next: Tree for Jul 2 (sound/soc/pxa/)
+References: <20180702145158.10190101@canb.auug.org.au>
+        <2276786f-3f50-0740-0500-68a26a49704a@infradead.org>
+        <c12cc7c4-03d0-4b0b-d02f-7e72b8a135d4@infradead.org>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Mon, 02 Jul 2018 21:22:45 +0200
+In-Reply-To: <c12cc7c4-03d0-4b0b-d02f-7e72b8a135d4@infradead.org> (Randy
+        Dunlap's message of "Mon, 2 Jul 2018 09:41:16 -0700")
+Message-ID: <87h8lhh27u.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 12:16:42 -0700 Evgenii Stepanov <eugenis@google.com> wrote:
-
-> On Fri, Jun 29, 2018 at 7:41 PM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> > On Fri, 29 Jun 2018 14:45:08 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> >> >> What kind of memory consumption testing would you like to see?
-> >> >
-> >> > Well, 100kb or so is a teeny amount on virtually any machine.  I'm
-> >> > assuming the savings are (much) more significant once the machine gets
-> >> > loaded up and doing work?
-> >>
-> >> So with clean kernel after boot we get 40 kb memory usage. With KASAN
-> >> it is ~120 kb, which is 200% overhead. With KHWASAN it's 50 kb, which
-> >> is 25% overhead. This should approximately scale to any amounts of
-> >> used slab memory. For example with 100 mb memory usage we would get
-> >> +200 mb for KASAN and +25 mb with KHWASAN. (And KASAN also requires
-> >> quarantine for better use-after-free detection). I can explicitly
-> >> mention the overhead in %s in the changelog.
-> >>
-> >> If you think it makes sense, I can also make separate measurements
-> >> with some workload. What kind of workload should I use?
-> >
-> > Whatever workload people were running when they encountered problems
-> > with KASAN memory consumption ;)
-> >
-> > I dunno, something simple.  `find / > /dev/null'?
-> >
->
-> Looking at a live Android device under load, slab (according to
-> /proc/meminfo) + kernel stack take 8-10% available RAM (~350MB).
-> Kasan's overhead of 2x - 3x on top of it is not insignificant.
+Randy Dunlap <rdunlap@infradead.org> writes:
+> [add other maintainers]
+> on i386 or x86_64:
 > 
+> builtin:
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x228): undefined reference to `pxa2xx_soc_pcm_new'
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x22c): undefined reference to `pxa2xx_pcm_free_dma_buffers'
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x250): undefined reference to `pxa2xx_pcm_ops'
 
-(top-posting repaired.  Please don't)
+Hi Randy,
 
-For a debugging, not-for-production-use feature, that overhead sounds
-quite acceptable to me.  What problems is it known to cause?
+I think the fix is already queued in Mark's tree, the commit message should be
+"ASoC: pxa: select SND_PXA2XX_LIB for drivers that depend on it".
 
+Adding Daniel as he is the original author.
+
+Cheers.
+
+--
+Robert
