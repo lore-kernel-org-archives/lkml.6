@@ -2,104 +2,463 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29534C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D0EC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D065F2515D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E7D62515D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:43:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="CQrDol5T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D065F2515D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LLM6W1Qi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7D62515D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeGBXnL (ORCPT
+        id S1753738AbeGBXnT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 19:43:11 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34709 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbeGBXnJ (ORCPT
+        Mon, 2 Jul 2018 19:43:19 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45734 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753609AbeGBXnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 19:43:09 -0400
-Received: by mail-pl0-f65.google.com with SMTP id z9-v6so69644plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 16:43:09 -0700 (PDT)
+        Mon, 2 Jul 2018 19:43:15 -0400
+Received: by mail-lf0-f66.google.com with SMTP id m13-v6so79300lfb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 16:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0Whq/EohKBwtXw06TbXWGz4D80xdSyAY9mDQANq6Abo=;
-        b=CQrDol5TUtv7WtSxxSgKpeDjPzmf73AyqlwiCOCzBmolA0BduARJNPPJ4yfU3pfqes
-         gSGqb00Pyky6/O89PBDcEg12ujg5ZBOkU3eDQTATsEHmE4LybZS09YFleV6qDIleLKBz
-         DwhzmlQNLVidu+vw/jPXL3wVbuKpabKXGwPw9zGlelJzplv+IA308oDgcEIt8z4TLJWZ
-         cF7SsX3fagNaiMTqMLpVL4m0JdG3MWF1oOZTvp+UXB/5y+mpb+CxqDs9ruCl2vce3qkw
-         JY3nOjp1nH6S6gmQAptRbV5Z2fBMF0ZrUjRdoEOhfWrtJkWKx+geovhxhlQUXLGfKYBy
-         HGrA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EDPLdcJUMzQrBaYjNCmlIYLOmXGMe4lYwEdZySJbreE=;
+        b=LLM6W1QijJ3nIi26L7Pl5tZTNEmNR9syIrFxeVZAYfAwxQhUFE6qq2AfVVZaTFhY0o
+         nZBvVrhzkfCRAEyErsFngtRFoIwGcx/ZRIRiT60W7aGA34sRKH+KMcs1v9Xf1b8cMt/r
+         rJYnwX2pjHbowv76BrvoiuwebDh1qE1aEivBE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0Whq/EohKBwtXw06TbXWGz4D80xdSyAY9mDQANq6Abo=;
-        b=s6wKcHNct5UtUmPa7yZv+57w2O/E81QVxL9SEp9CPd+KM9XDoMImJ0QXBgPE1YRTu1
-         iPQzAHL2tsW45X79SLxIk9tK8BSRD1FYrtFnqv62swPqO6poT1jCDwoweDgHPgh4X8Bm
-         usbt44tzfmd7ZJhtPL8iKPHky0ygLEr0o7a76ny/KWGQ1uuB1HEAPKRaCCiDGFZvFUMr
-         wXZJ+zuuaMKYnoXZwRLvLtaXFDKRrlH7gWr1ZwYt9WfNty14E2nCaJoyCcow24OQTfeI
-         KymbRRHhNU9B0p7Bk6jHmtxQFUDWVGaOWRCqDBrCjeTYpkwtPBIiWRAOqoGNN1OHC9Q/
-         HwHw==
-X-Gm-Message-State: APt69E3joS7y307y4V5u+Z2DzDt8QN0lIakzLmrJfgOrHAdUMG7VPSTz
-        u3PsBxIos6n3UG6DXTJZPKZqog==
-X-Google-Smtp-Source: ADUXVKJ+MI9PFrlgM34YmBg/qaZVXqD/EB0SlIZnaPKOrBflmdsi3OxVTTm6JUpkbf8g59i748wV1A==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr27472961plb.274.1530574988968;
-        Mon, 02 Jul 2018 16:43:08 -0700 (PDT)
-Received: from vader ([2620:10d:c090:200::7:a7e4])
-        by smtp.gmail.com with ESMTPSA id c5-v6sm21874062pfe.169.2018.07.02.16.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 16:43:08 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 16:43:07 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sam Hurst <shurst@google.com>
-Subject: Re: [PATCH] loop: Add LOOP_SET_BLOCK_SIZE in compat ioctl
-Message-ID: <20180702234307.GA27810@vader>
-References: <20180702230346.72350-1-evgreen@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EDPLdcJUMzQrBaYjNCmlIYLOmXGMe4lYwEdZySJbreE=;
+        b=QOy6kMcJ846D1LzJELoZQO90rMg0y4ZeiNnTSZLgew51MkaiwKudtTyNjTW17yviJo
+         1Vlbb7MPDiLgC9COB/s/0opXIDvTSQShFUn3CE0eAmiM78yCxw6FfIeZuGyQfHENZWDW
+         vzuR9g0WTPgZSo/Jx2jlxtRRZUCk+Cmsap7hbV4Ph1Z4VtowNlO7zlJdidWIf/eU++V5
+         S/6GAxcafBChfOJpb/1/AL30rSei0fZGa9viHQ1IEOy2XQU/ixf/ye3i8P2IEJ9QGcsz
+         Df7coyDfFhRvNV1Dh+RKHGxkJaCh7I9E6+26lKF1w+yRxDQqWQlXZuiDLFf39vucVd0K
+         /WbQ==
+X-Gm-Message-State: APt69E2VZSg8Hb6mm1s70nRs7TjkoMYem20w8Eyzh8UG6hxT6JgbyZV3
+        D+v2rSajWjw6oCSJ7xOI2rFtQb2N20eKNQ==
+X-Google-Smtp-Source: AAOMgpfMRzrEc/SaCcFkkLCvWOJsteo6GuKwa3Js5mWT8HjVL7D4/YSWaNbeuC9lz/XLaW5zoDJJ1w==
+X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr18302807lfl.78.1530574993235;
+        Mon, 02 Jul 2018 16:43:13 -0700 (PDT)
+Received: from mail-lf0-f49.google.com (mail-lf0-f49.google.com. [209.85.215.49])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm2575807lji.41.2018.07.02.16.43.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 16:43:12 -0700 (PDT)
+Received: by mail-lf0-f49.google.com with SMTP id y200-v6so87454lfd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 16:43:11 -0700 (PDT)
+X-Received: by 2002:a19:1366:: with SMTP id j99-v6mr18583018lfi.21.1530574991212;
+ Mon, 02 Jul 2018 16:43:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702230346.72350-1-evgreen@chromium.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1529985829-18689-1-git-send-email-sayalil@codeaurora.org> <1529985829-18689-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1529985829-18689-3-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 2 Jul 2018 16:42:33 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4nUUVQABMDNi40g6q+pj4DT5=zXxdtpmcqoy2BcGY5Rg@mail.gmail.com>
+Message-ID: <CAE=gft4nUUVQABMDNi40g6q+pj4DT5=zXxdtpmcqoy2BcGY5Rg@mail.gmail.com>
+Subject: Re: [PATCH V4 2/3] scsi: ufs: Add ufs provisioning support
+To:     sayalil@codeaurora.org
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 04:03:46PM -0700, Evan Green wrote:
-> This change adds LOOP_SET_BLOCK_SIZE as one of the supported ioctls
-> in lo_compat_ioctl. It only takes an unsigned long argument, and
-> in practice a 32-bit value works fine.
+Hi Sayali,
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-
-> Signed-off-by: Evan Green <evgreen@chromium.org>
+On Mon, Jun 25, 2018 at 9:04 PM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> A new api ufshcd_do_config_device() is added in driver
+> to support UFS provisioning at runtime. Configfs support
+> is added to trigger provisioning.
+> Device and Unit descriptor configurable parameters are
+> parsed from vendor specific provisioning data or file and
+> passed via configfs node at runtime to provision ufs device.
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
->  drivers/block/loop.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index d6b6f434fd4b..4cb1d1be3cfb 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1613,6 +1613,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
->  		arg = (unsigned long) compat_ptr(arg);
->  	case LOOP_SET_FD:
->  	case LOOP_CHANGE_FD:
-> +	case LOOP_SET_BLOCK_SIZE:
->  		err = lo_ioctl(bdev, mode, cmd, arg);
->  		break;
->  	default:
-> -- 
-> 2.16.4
-> 
+>  drivers/scsi/ufs/ufs.h    |  28 +++++++
+>  drivers/scsi/ufs/ufshcd.c | 198 ++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h |   2 +
+>  3 files changed, 228 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> index e15deb0..1f99904 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -333,6 +333,7 @@ enum {
+>         UFSHCD_AMP              = 3,
+>  };
+>
+> +#define UFS_BLOCK_SIZE 4096
+
+Is this not prescribed by UFS. You need to look at bMinAddrBlockSize,
+whose minimum value is 8, representing 4k blocks. But you can't assume
+they're all going to be that, the spec allows for larger block sizes.
+
+>  #define POWER_DESC_MAX_SIZE                    0x62
+>  #define POWER_DESC_MAX_ACTV_ICC_LVLS           16
+>
+> @@ -425,6 +426,33 @@ enum {
+>         MASK_TM_SERVICE_RESP            = 0xFF,
+>  };
+>
+> +struct ufs_unit_desc {
+> +       u8     bLUEnable;              /* 1 for enabled LU */
+> +       u8     bBootLunID;             /* 0 for using this LU for boot */
+> +       u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
+> +       u8     bMemoryType;            /* 0 for enhanced memory type */
+> +       u32    dNumAllocUnits;         /* Number of alloc unit for this LU */
+> +       u8     bDataReliability;       /* 0 for reliable write support */
+> +       u8     bLogicalBlockSize;      /* See section 13.2.3 of UFS standard */
+> +       u8     bProvisioningType;      /* 0 for thin provisioning */
+> +       u16    wContextCapabilities;   /* refer Unit Descriptor Description */
+> +};
+> +
+> +struct ufs_config_descr {
+> +       u8     bNumberLU;              /* Total number of active LUs */
+> +       u8     bBootEnable;            /* enabling device for partial init */
+> +       u8     bDescrAccessEn;         /* desc access during partial init */
+> +       u8     bInitPowerMode;         /* Initial device power mode */
+> +       u8     bHighPriorityLUN;       /* LUN of the high priority LU */
+> +       u8     bSecureRemovalType;     /* Erase config for data removal */
+> +       u8     bInitActiveICCLevel;    /* ICC level after reset */
+> +       u16    wPeriodicRTCUpdate;     /* 0 to set a priodic RTC update rate */
+> +       u32     bConfigDescrLock;      /* 1 to lock Configation Descriptor */
+> +       u32    qVendorConfigCode;      /* Vendor specific configuration code */
+> +       struct ufs_unit_desc unit[8];
+> +       u8      lun_to_grow;
+> +};
+
+You've created a structure whose naming and members suggest that it
+matches the hardware, but it does not. I think you should make this
+structure match the hardware, and remove software members like
+lun_to_grow. It's okay with me if 8 is hardcoded for now, but bear in
+mind I think the spec allows for this to be a different number.
+
+> +
+>  /* Task management service response */
+>  enum {
+>         UPIU_TASK_MANAGEMENT_FUNC_COMPL         = 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 351f874..370a7c6 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -42,6 +42,7 @@
+>  #include <linux/nls.h>
+>  #include <linux/of.h>
+>  #include <linux/bitfield.h>
+> +#include <asm/unaligned.h>
+
+Alphabetize includes, though I think if you follow my other
+suggestions this will go away.
+
+>  #include "ufshcd.h"
+>  #include "ufs_quirks.h"
+>  #include "unipro.h"
+> @@ -3063,6 +3064,14 @@ static inline int ufshcd_read_power_desc(struct ufs_hba *hba,
+>         return ufshcd_read_desc(hba, QUERY_DESC_IDN_POWER, 0, buf, size);
+>  }
+>
+> +static inline int ufshcd_read_geometry_desc(struct ufs_hba *hba,
+> +                                        u8 *buf,
+> +                                        u32 size)
+> +{
+> +       return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size);
+> +}
+> +
+> +
+
+Remove extra blank line.
+
+>  static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
+>  {
+>         return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
+> @@ -6363,6 +6372,195 @@ static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+>  }
+>
+>  /**
+> + * ufshcd_do_config_device - API function for UFS provisioning
+> + * hba: per-adapter instance
+> + * Returns 0 for success, non-zero in case of failure.
+> + */
+> +int ufshcd_do_config_device(struct ufs_hba *hba)
+> +{
+> +       struct ufs_config_descr *cfg = &hba->cfgs;
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int i, ret = 0;
+> +       int lun_to_grow = -1;
+> +       u64 qTotalRawDeviceCapacity;
+> +       u16 wEnhanced1CapAdjFac, wEnhanced2CapAdjFac;
+> +       u32 dEnhanced1MaxNAllocU, dEnhanced2MaxNAllocU;
+> +       size_t alloc_units, units_to_create = 0;
+> +       size_t capacity_to_alloc_factor;
+> +       size_t enhanced1_units = 0, enhanced2_units = 0;
+> +       size_t conversion_ratio = 1;
+> +       u8 *pt;
+> +       u32 blocks_per_alloc_unit = 1024;
+
+Is this really hardcoded by the spec? I think it probably isn't, but
+if it is, make it a define.
+
+> +       int geo_len = hba->desc_size.geom_desc;
+> +       u8 geo_buf[hba->desc_size.geom_desc];
+> +       unsigned int max_partitions = 8;
+
+Magic value. Perhaps a define here as well.
+
+> +
+> +       WARN_ON(!hba || !cfg);
+> +
+> +       pm_runtime_get_sync(hba->dev);
+> +       scsi_block_requests(hba->host);
+
+Is this needed? Why is it bad to have requests going through during
+this function, given that you re-enable them at the end of this
+function?
+
+> +       if (ufshcd_wait_for_doorbell_clr(hba, U64_MAX)) {
+
+Why is this needed?
+
+> +               dev_err(hba->dev, "%s: Timed out waitig for DB to clear\n",
+> +                       __func__);
+> +               ret = -EBUSY;
+> +               goto out;
+> +       }
+> +
+> +       ret = ufshcd_read_geometry_desc(hba, geo_buf, geo_len);
+> +       if (ret) {
+> +               dev_err(hba->dev, "%s: Failed getting geometry_desc %d\n",
+> +                       __func__, ret);
+> +               goto out;
+> +       }
+> +
+> +       /*
+> +        * Get Geomtric parameters like total configurable memory
+> +        * quantity (Offset 0x04 to 0x0b), Capacity Adjustment
+> +        * Factors (Offset 0x30, 0x31, 0x36, 0x37), Max allocation
+> +        * units (Offset 0x2c to 0x2f, 0x32 to 0x35) used to configure
+> +        * the device logical units.
+> +        */
+> +       qTotalRawDeviceCapacity = get_unaligned_be64(&geo_buf[0x04]);
+> +       wEnhanced1CapAdjFac = get_unaligned_be16(&geo_buf[0x30]);
+> +       wEnhanced2CapAdjFac = get_unaligned_be16(&geo_buf[0x36]);
+> +       dEnhanced1MaxNAllocU = get_unaligned_be32(&geo_buf[0x2c]);
+> +       dEnhanced2MaxNAllocU = get_unaligned_be32(&geo_buf[0x32]);
+
+Magic values, these should be done as other descriptors do it (see
+enum device_desc_param).
+
+> +
+> +       capacity_to_alloc_factor =
+> +               (blocks_per_alloc_unit * UFS_BLOCK_SIZE) / 512;
+> +
+> +       if (qTotalRawDeviceCapacity % capacity_to_alloc_factor != 0) {
+> +               dev_err(hba->dev,
+> +                       "%s: Raw capacity(%llu) not multiple of alloc factor(%zu)\n",
+> +                       __func__, qTotalRawDeviceCapacity,
+> +                       capacity_to_alloc_factor);
+> +               ret = -EINVAL;
+> +               goto out;
+> +       }
+> +       alloc_units = (qTotalRawDeviceCapacity / capacity_to_alloc_factor);
+> +       units_to_create = 0;
+> +       enhanced1_units = enhanced2_units = 0;
+> +
+> +       /*
+> +        * Calculate number of allocation units to be assigned to a logical unit
+> +        * considering the capacity adjustment factor of respective memory type.
+> +        */
+> +       for (i = 0; i < (max_partitions - 1) &&
+> +               units_to_create <= alloc_units; i++) {
+> +               if ((cfg->unit[i].dNumAllocUnits % blocks_per_alloc_unit) == 0)
+> +                       cfg->unit[i].dNumAllocUnits /= blocks_per_alloc_unit;
+> +               else
+> +                       cfg->unit[i].dNumAllocUnits =
+> +                       cfg->unit[i].dNumAllocUnits / blocks_per_alloc_unit + 1;
+> +
+> +               if (cfg->unit[i].bMemoryType == 0)
+> +                       units_to_create += cfg->unit[i].dNumAllocUnits;
+> +               else if (cfg->unit[i].bMemoryType == 3) {
+> +                       enhanced1_units += cfg->unit[i].dNumAllocUnits;
+> +                       cfg->unit[i].dNumAllocUnits *=
+> +                               (wEnhanced1CapAdjFac / 0x100);
+> +                       units_to_create += cfg->unit[i].dNumAllocUnits;
+> +               } else if (cfg->unit[i].bMemoryType == 4) {
+> +                       enhanced2_units += cfg->unit[i].dNumAllocUnits;
+> +                       cfg->unit[i].dNumAllocUnits *=
+> +                               (wEnhanced1CapAdjFac / 0x100);
+> +                       units_to_create += cfg->unit[i].dNumAllocUnits;
+> +               } else {
+> +                       dev_err(hba->dev, "%s: Unsupported memory type %d\n",
+> +                               __func__, cfg->unit[i].bMemoryType);
+> +                       ret = -EINVAL;
+> +                       goto out;
+> +               }
+> +       }
+> +       if (enhanced1_units > dEnhanced1MaxNAllocU) {
+> +               dev_err(hba->dev, "%s: size %zu exceeds max enhanced1 area size %u\n",
+> +                       __func__, enhanced1_units, dEnhanced1MaxNAllocU);
+> +               ret = -ERANGE;
+> +               goto out;
+> +       }
+> +       if (enhanced2_units > dEnhanced2MaxNAllocU) {
+> +               dev_err(hba->dev, "%s: size %zu exceeds max enhanced2 area size %u\n",
+> +                       __func__, enhanced2_units, dEnhanced2MaxNAllocU);
+> +               ret = -ERANGE;
+> +               goto out;
+> +       }
+> +       if (units_to_create > alloc_units) {
+> +               dev_err(hba->dev, "%s: Specified size %zu exceeds device size %zu\n",
+> +                       __func__, units_to_create, alloc_units);
+> +               ret = -ERANGE;
+> +               goto out;
+> +       }
+> +       lun_to_grow = cfg->lun_to_grow;
+> +       if (lun_to_grow != -1) {
+> +               if (cfg->unit[i].bMemoryType == 0)
+> +                       conversion_ratio = 1;
+> +               else if (cfg->unit[i].bMemoryType == 3)
+> +                       conversion_ratio = (wEnhanced1CapAdjFac / 0x100);
+> +               else if (cfg->unit[i].bMemoryType == 4)
+> +                       conversion_ratio = (wEnhanced2CapAdjFac / 0x100);
+> +
+> +               cfg->unit[lun_to_grow].dNumAllocUnits +=
+> +               ((alloc_units - units_to_create) / conversion_ratio);
+> +               dev_dbg(hba->dev, "%s: conversion_ratio %zu for lun %d\n",
+> +                       __func__, conversion_ratio, i);
+> +       }
+
+I really don't like all this wizardry in here. I think the kernel
+should just accept config descriptor bytes through configfs that it
+more or less passes along. These calculations could all be done in
+user mode.
+
+> +
+> +       /* Fill in the buffer with configuration data */
+> +       pt = desc_buf;
+> +       *pt++ = 0x90;        // bLength
+> +       *pt++ = 0x01;        // bDescriptorType
+> +       *pt++ = 0;           // Reserved in UFS2.0 and onward
+> +       *pt++ = cfg->bBootEnable;
+> +       *pt++ = cfg->bDescrAccessEn;
+> +       *pt++ = cfg->bInitPowerMode;
+> +       *pt++ = cfg->bHighPriorityLUN;
+> +       *pt++ = cfg->bSecureRemovalType;
+> +       *pt++ = cfg->bInitActiveICCLevel;
+> +       put_unaligned_be16(cfg->wPeriodicRTCUpdate, pt);
+> +       pt = pt + 7; // Reserved fields set to 0
+> +
+> +       /* Fill in the buffer with per logical unit data */
+> +       for (i = 0; i < UFS_UPIU_MAX_GENERAL_LUN; i++) {
+> +               *pt++ = cfg->unit[i].bLUEnable;
+> +               *pt++ = cfg->unit[i].bBootLunID;
+> +               *pt++ = cfg->unit[i].bLUWriteProtect;
+> +               *pt++ = cfg->unit[i].bMemoryType;
+> +               put_unaligned_be32(cfg->unit[i].dNumAllocUnits, pt);
+> +               pt = pt + 4;
+> +               *pt++ = cfg->unit[i].bDataReliability;
+> +               *pt++ = cfg->unit[i].bLogicalBlockSize;
+> +               *pt++ = cfg->unit[i].bProvisioningType;
+> +               put_unaligned_be16(cfg->unit[i].wContextCapabilities, pt);
+> +               pt = pt + 5; // Reserved fields set to 0
+> +       }
+
+Yikes. If your structure reflected the hardware, then you could use
+actual members. Barring that, you could create and use enum values for
+the descriptor members. The way it stands this is very brittle and
+full of magic values and offsets.
+
+> +
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+
+I'm not sure this works out of the box, especially if what you're
+writing isn't exactly the descriptor size (which it might be in your
+tests, but might suddenly start failing later). Please consider
+absorbing my change [1] which properly refactors the function for
+reading and writing.
+
+> +
+> +       if (ret) {
+> +               dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d, opcode %x ret %d\n",
+> +               __func__, QUERY_DESC_IDN_CONFIGURATION,
+> +               UPIU_QUERY_OPCODE_WRITE_DESC, ret);
+> +               goto out;
+> +       }
+> +
+> +       if (cfg->bConfigDescrLock == 1) {
+> +               ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
+> +               if (ret)
+> +                       dev_err(hba->dev, "%s: Failed writing bConfigDescrLock %d\n",
+> +                               __func__, ret);
+> +       }
+
+It might be better not to merge this functionality in with the act of
+writing provisioning data, and instead make the sysfs attributes
+writable like [2].
+
+> +
+> +out:
+> +       scsi_unblock_requests(hba->host);
+> +       pm_runtime_put_sync(hba->dev);
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>   * @hba: per-adapter instance
+>   *
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 101a75c..0e6bf30 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -549,6 +549,7 @@ struct ufs_hba {
+>         unsigned int irq;
+>         bool is_irq_enabled;
+>         u32 dev_ref_clk_freq;
+> +       struct ufs_config_descr cfgs;
+
+How come you store this here, rather than as a local in
+ufshcd_do_config_device()?
+
+>
+>         /* Interrupt aggregation support is broken */
+>         #define UFSHCD_QUIRK_BROKEN_INTR_AGGR                   0x1
+> @@ -867,6 +868,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+>
+>  int ufshcd_hold(struct ufs_hba *hba, bool async);
+>  void ufshcd_release(struct ufs_hba *hba);
+> +int ufshcd_do_config_device(struct ufs_hba *hba);
+>
+>  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
+>         int *desc_length);
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
+
+[1] https://patchwork.kernel.org/patch/10467669/
+[2] https://patchwork.kernel.org/patch/10467665/
