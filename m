@@ -2,204 +2,105 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FCBC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3854DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AAA25DC1
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E748525E5B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:23:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AmpVh/gW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99AAA25DC1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g3xXwPsL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XSInLh1p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E748525E5B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeGBOXC (ORCPT
+        id S1752425AbeGBOXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:23:02 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35817 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbeGBOW6 (ORCPT
+        Mon, 2 Jul 2018 10:23:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55642 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752326AbeGBOXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:22:58 -0400
-Received: by mail-lf0-f68.google.com with SMTP id i15-v6so12195637lfc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 07:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MSpoUNl9bI0A4Y/NNKOpQyaeykGpII5Kp2/XR5vnvuo=;
-        b=AmpVh/gWhcI8M2ckNlwvnHTbGREVaJdDpQ3hmoC0uFvPls6tBVkvocuuEU4vwLCYvN
-         QnlHWdQQ2uSpTaokLcuh6//sVBzQGReaXzSj2ivIDKkyiTXlefLyWb0J2MUMYeiK6x2N
-         ZB9uf/DiFjZsbOhc1OQ/rkjgdIPAa8sCqsv5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MSpoUNl9bI0A4Y/NNKOpQyaeykGpII5Kp2/XR5vnvuo=;
-        b=OSvEZwcrOCcRay1xKc/dlok/zEwr5UqIfOaaDzDnqEzAdHuBNck/AgL+A3Gaqh0Kth
-         kyL7jlglkXtuJevMKNUEercRmptSCUt7IIcVfW8iHWiFHtYuLqd+oF0FnabqjHlFVtcu
-         4zTxWN3JWHHjq2RCAbvcdDOm+8m2C+dIA4RiEwIeVsjog4P9CgTyNgaq8vH9CgWCSKcC
-         hZ2NwBBVn9skEPUuOh4VQWFJWqeTpA9oRvoVpT5AdIUd/3sGzrJY21LR1ieKcpONRPwp
-         Kbp2m90BehBPvKRX5NhWHtVwxwoBq+n09gLQMIoOlLnxQXVJIZQ5puS0cc/VSBz+41CL
-         430A==
-X-Gm-Message-State: APt69E3j08CMKGni5SySzFewvFNBlSWUa/X+Z8sqIvjUf/Lg2pXi7r7a
-        k65h14FLF9hqeT0nbqnMRclGK40gUNV3oTOeFQmatkXM0oE=
-X-Google-Smtp-Source: AAOMgped57QAbWq2mkjRwUA0z69GbiOpMcKRhdFPsch1xZlnL5/YY9dI6YrYoxALyG/44ti84hnOcUZz8uXVOSITqYQ=
-X-Received: by 2002:a19:c1c4:: with SMTP id r187-v6mr17490069lff.90.1530541377101;
- Mon, 02 Jul 2018 07:22:57 -0700 (PDT)
+        Mon, 2 Jul 2018 10:23:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E93FC6037C; Mon,  2 Jul 2018 14:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530541399;
+        bh=eExqIY1/5k6YlwJ5MxyK/eZqF0OzJVlyTiTpHEgI1gw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=g3xXwPsLeZU7Y33Lo5mdLJBaZHo0EHQOhAfx50W/2CvDNEzgtR+bVFp5qKxxqAtsV
+         XtibHMeViSWDYB6nbLzZXEfumClK43CJH/UvJdDEPli97rkBRl3DbLx5jOHYG5sQtu
+         tAXeKcL66tNvH2/ZHov4uO/891ubRJM3t3E1O+PY=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF9526037C;
+        Mon,  2 Jul 2018 14:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530541398;
+        bh=eExqIY1/5k6YlwJ5MxyK/eZqF0OzJVlyTiTpHEgI1gw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=XSInLh1pkTSKnXmqXXAPsctwnrb5pTxLMLYBmxKXkVzH8+VLaP3yEo03AyPeUHPQb
+         Xp2g+DXoJ8kAwV5jZlSU2fW9SYJ4FTubiU3MCTzylyX3lEEQ4r/tlk/x2NfX9EZhad
+         CQMGN1Z3w69NAfVrCzIpJ24cZmLYHavkMWgyfQ8Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF9526037C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 07:22:56 -0700 (PDT)
-In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
-References: <20180701153149.382300170@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 2 Jul 2018 19:52:56 +0530
-Message-ID: <CA+G9fYtqrq3YuhztjZm8NjdZVwwRMF4WSeJwhY5VSpKmx_01Ag@mail.gmail.com>
-Subject: Re: [PATCH 4.4 000/105] 4.4.139-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Subject: Re: [1/3] ath10k: sdio: use same endpoint id for all packets in a
+ bundle
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180620084222.3521-2-niklas.cassel@linaro.org>
+References: <20180620084222.3521-2-niklas.cassel@linaro.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        alagusankar@silex-india.com,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180702142319.E93FC6037C@smtp.codeaurora.org>
+Date:   Mon,  2 Jul 2018 14:23:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1 July 2018 at 21:31, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
-ote:
-> This is the start of the stable review cycle for the 4.4.139 release.
-> There are 105 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Tue Jul  3 15:31:30 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.139-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Niklas Cassel <niklas.cassel@linaro.org> wrote:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+> All packets in a bundle should use the same endpoint id as the
+> first lookahead.
+> 
+> This matches how things are done is ath6kl, however,
+> this patch can theoretically handle several bundles
+> in ath10k_sdio_mbox_rx_process_packets().
+> 
+> Without this patch we get lots of errors about invalid endpoint id:
+> 
+> ath10k_sdio mmc2:0001:1: invalid endpoint in look-ahead: 224
+> ath10k_sdio mmc2:0001:1: failed to get pending recv messages: -12
+> ath10k_sdio mmc2:0001:1: failed to process pending SDIO interrupts: -12
+> 
+> Co-Developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Summary
-------------------------------------------------------------------------
+3 patches applied to ath-next branch of ath.git, thanks.
 
-kernel: 4.4.139-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: a2f8445cb8b24e35e0f3d8ebdcd70236ebb6acec
-git describe: v4.4.138-106-ga2f8445cb8b2
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.138-106-ga2f8445cb8b2
+679e1f07c862 ath10k: sdio: use same endpoint id for all packets in a bundle
+d1d061b1395a ath10k: sdio: allocate correct size for RECV_1MORE_BLOCK rx packets
+8530b4e7b22b ath10k: sdio: set skb len for all rx packets
 
+-- 
+https://patchwork.kernel.org/patch/10476637/
 
-No regressions (compared to build v4.4.138-26-g2197a4466680)
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-
-Ran 7156 total tests in the following environments and test suites.
-
-Environments
---------------
-- juno-r2 - arm64
-- qemu_arm
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.139-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.139-rc1-hikey-20180701-226
-git commit: afc4165cf23e88d709720057aceb8cf040f62ee3
-git describe: 4.4.139-rc1-hikey-20180701-226
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.139-rc1-hikey-20180701-226
-
-
-No regressions (compared to build 4.4.139-rc1-hikey-20180624-224)
-
-
-Ran 2587 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-fs-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
