@@ -2,98 +2,73 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5F5C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A46C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643DD2150A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:49:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643DD2150A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5DDAD2150A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DDAD2150A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=loewensteinmedical.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932148AbeGBGtc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:49:32 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42237 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753229AbeGBGta (ORCPT
+        id S932254AbeGBGuZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 02:50:25 -0400
+Received: from mail.steuer-voss.de ([85.183.69.95]:38244 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753347AbeGBGuW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:49:30 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fZseO-0001jF-Pd; Mon, 02 Jul 2018 08:49:28 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1fZseM-0006v2-LF; Mon, 02 Jul 2018 08:49:26 +0200
-Date:   Mon, 2 Jul 2018 08:49:26 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] siox: don't create a thread without starting it
-Message-ID: <20180702064926.sxx4wj5mxiywxkva@pengutronix.de>
-References: <20180626073134.GW2458@hirez.programming.kicks-ass.net>
- <20180628075742.8991-1-u.kleine-koenig@pengutronix.de>
- <20180629073858.5gwpfwqo2ccb4jaa@pengutronix.de>
- <20180702093404.747c4148@canb.auug.org.au>
+        Mon, 2 Jul 2018 02:50:22 -0400
+X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 02:50:21 EDT
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id D43BF40B88; Mon,  2 Jul 2018 08:41:23 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.steuer-voss.de (Postfix) with ESMTP id C9B84409D3;
+        Mon,  2 Jul 2018 08:41:23 +0200 (CEST)
+Date:   Mon, 2 Jul 2018 08:41:23 +0200 (CEST)
+From:   Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+X-X-Sender: nv@fox.voss.local
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] IIO: st_sensors_i2c: improve device enumeration
+In-Reply-To: <CAHp75VfR8JZaDbvzudW5mc4=nOoYM2EeXPMhUHCw1ovnPmGV5A@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1807020810580.31530@fox.voss.local>
+References: <cover.1530268235.git.nikolaus.voss@loewensteinmedical.de> <CAHp75VfR8JZaDbvzudW5mc4=nOoYM2EeXPMhUHCw1ovnPmGV5A@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180702093404.747c4148@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 29 Jun 2018, Andy Shevchenko wrote:
 
-On Mon, Jul 02, 2018 at 09:34:04AM +1000, Stephen Rothwell wrote:
-> On Fri, 29 Jun 2018 09:38:58 +0200 Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > On Thu, Jun 28, 2018 at 09:57:42AM +0200, Uwe Kleine-König wrote:
-> > > Greg, you applied the initial patches creating drivers/siox. I assume
-> > > you will continue to apply siox patches and tell if I should search a
-> > > different path for these.  
-> > 
-> > I put the two patches that I'd like to get in during the next merge
-> > window into a branch in my repository:
-> > 
-> > 	https://git.pengutronix.de/git/ukl/linux siox/next
-> > 
-> > I assume you wouldn't object to add this branch to linux-next?
-> 
-> Added from today. 
+> I'm not sure I understand how ->probe_new() is supposed to work
+> against i2c_id_table, but I don't care for legacy platform data
+> anyway.
+>
+> What I would like to point to is device_get_match_data() API which
+> should simplify / unify the case how you get driver data.
 
-Ok, great. 
+This driver doesn't need any driver data/ platform_data beyond the 
+i2c_id_table name (which has already been matched when probe()/ 
+probe_new() is called), so strictly neither of_match_table nor 
+apci_match_table would be necessary, because i2c DT/ ACPI enumeration also 
+matches against i2c_table names.
 
-> Is this a continuing effort, or should I just remove the tree once
-> Greg has merged it?
+But thanks for the hint ;-).
 
-I expect the patch count to be zero for most future releases because
-there are probably no users apart from Eckelmann. On the other hand if
-we still need a patch it would continue to be good to have the exposure
-in next.
+Niko
 
-So I'd say, if it reduces your burden feel free to drop it and if there
-is something relevant later, it seems to be easy enough to readd it
-then.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
