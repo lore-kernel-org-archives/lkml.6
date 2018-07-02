@@ -2,132 +2,140 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FCEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D797AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED0E25BB6
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B4625BB6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="stIgPHm2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED0E25BB6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eURRN7ul"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91B4625BB6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753144AbeGBIvO (ORCPT
+        id S1753387AbeGBIv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:51:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41026 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753375AbeGBIvL (ORCPT
+        Mon, 2 Jul 2018 04:51:26 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35444 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753621AbeGBIvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:51:11 -0400
-Received: by mail-lj1-f194.google.com with SMTP id a17-v6so8806841ljd.8;
-        Mon, 02 Jul 2018 01:51:10 -0700 (PDT)
+        Mon, 2 Jul 2018 04:51:16 -0400
+Received: by mail-io0-f196.google.com with SMTP id q4-v6so14056384iob.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3My401lb/sQB3l5NERJxMDxI2gKqsok/1mh22W65fIA=;
-        b=stIgPHm2/2T+yfAe+qBo5/cGRt2q6+4KWmwfvgDdxM39kfIkKVO009hJMzfGzh+ykO
-         w8egvmAvAniCKx3KWzWNLOETBHHwRLeU1ZFgLZAtEYji7fdhW7xq90/GMgmh2QKZXEEV
-         4GP1lEraemG8GZoezzdOum3Z3DZ51wbs7KmJkSZuiSDrYRTJHaNYU7scZp/d3630ZhT6
-         HayXDNPsXS+xSAMVHLTdfh1geYScqdaANsAW5o4+R3TIwByxZnNzEa1Jd5DuK+Fq0eeM
-         zjOkGUKlbJZ/W63SaIsHmVdfj8me/S98QQVnPqpwhnd3qcleRxxhusPsaGOyKl3rwZE7
-         aTCg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1TjdyQXsyL3mjkJnB80bb9GrDAuptfPkHXcvzQkECS4=;
+        b=eURRN7ultZ6G3S6dJ+b+VWR9j8IkA4BCUWQgah+CYUFBUi0g7fKfPayJFzi5mmMT9X
+         z/wluxpEOCsH/su0YPMvO+pPdD5pO2SDsoQWw6Xthy1KmaYoIYZLwqCFFE2t1oc97T2O
+         gIZ337TcdxoBXK+tUbsHhzziHBd1Rv4ocY0W8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3My401lb/sQB3l5NERJxMDxI2gKqsok/1mh22W65fIA=;
-        b=A34QsN3SHY2h1yiAf77CxSOLA4DXoB24cg4ofkjVeeUcGgd5sYTYER4+l4KwjIjPWV
-         4mzuIqmIXKgnfCkfwoXoUCs6u+JDwtHO2lPCXajWQ4trFFgqRWhXihG1ILTw2dQNMdJo
-         DesQod0KTfT74LU2e+Z8tTF0w8pAEXz44j2L1zcl73TFNRexNvM79wUnAbKWQ/tYfHkE
-         SLqOEVYQ+BmBxZw9b175zUKZ8AxoIkkdsGa+4qY3IhwkfwevffmEVWE/x9tgeAA6g4M+
-         Qd20zaR+6X4+3vDNz5eL7rIMeHtiDruqdtoBKHRs2sWX+IltHEec7FnDQbjJ4poLgLSP
-         cpyQ==
-X-Gm-Message-State: APt69E0WIaalu6PT9D2IB9zu96/ADUSMPgEtqx9gxXfcKgOjvHMmJzQw
-        voccmChUgXBPQhsWfuSu1tw=
-X-Google-Smtp-Source: ADUXVKJZJpe0Dzd7Q4uxGE1ByD8e9Q43kqCj+NyzjVc2VVM0DV5jrVxW6YvWh2en6cmt4Wp+VRls0w==
-X-Received: by 2002:a2e:5c41:: with SMTP id q62-v6mr15606071ljb.77.1530521469690;
-        Mon, 02 Jul 2018 01:51:09 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id j7-v6sm2529504ljg.48.2018.07.02.01.51.08
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1TjdyQXsyL3mjkJnB80bb9GrDAuptfPkHXcvzQkECS4=;
+        b=HL31C0iXfnI7sG25pd6BnMqZfQlHxa2tfCPWGOnSZ9XIRtCDdjsTPhZYpjhykygnww
+         ik4A8wJ0qggFO6lu3rdwKFDk2RsYhmatNjirPqT7J3LSV9vtYvZtV075Oq8gBe8DsYSL
+         zH9zdxvGPWC8Dhu4b37On8+aLVVB4PX9L2sVUBOvfBC5unNZJU5RXivsJShcD6vV8p/b
+         yw7/qJHkddAGss/IhAU1BWJcnTdFrXqcJ0K1xAEAWGkzTln85OugIj+k6wzI1EkWwRR3
+         nh3usHGyHNnaw7Kp+CfiFABXvviYRlsLC8ZC1ocSbmX4WZftpiYxDZoRBuDyk2NoqJBW
+         ZpHQ==
+X-Gm-Message-State: APt69E3jip9V5+M9rcvEc9C31dLPt4KM87nU/hFtEczodUgVVmukPLpe
+        k/gkIiKi25/3tsUs3sCSzXjTKGBP0eE=
+X-Google-Smtp-Source: AAOMgpfLpK9ZLzOQeBzbM/GcYyBywwlunerIk6lDaP/NdXscFyCHMcA+atntGk65sumDpxTWceOzMw==
+X-Received: by 2002:a6b:96c2:: with SMTP id y185-v6mr8921398iod.161.1530521476074;
+        Mon, 02 Jul 2018 01:51:16 -0700 (PDT)
+Received: from mail-io0-f171.google.com (mail-io0-f171.google.com. [209.85.223.171])
+        by smtp.gmail.com with ESMTPSA id v199-v6sm3800319itb.18.2018.07.02.01.51.15
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 01:51:08 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fZuY0-000836-OW; Mon, 02 Jul 2018 10:51:00 +0200
-Date:   Mon, 2 Jul 2018 10:51:00 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: io_edgeport: mark expected switch
- fall-throughs
-Message-ID: <20180702085100.GF9802@localhost>
-References: <20180628184030.GA23656@embeddedor.com>
+        Mon, 02 Jul 2018 01:51:15 -0700 (PDT)
+Received: by mail-io0-f171.google.com with SMTP id l25-v6so14030301ioh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:51:15 -0700 (PDT)
+X-Received: by 2002:a6b:33ce:: with SMTP id z197-v6mr3336225ioz.112.1530521474682;
+ Mon, 02 Jul 2018 01:51:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628184030.GA23656@embeddedor.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Mon, 2 Jul 2018 17:51:03 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MUBi+Dn5v4PKngxztFgKd6CA7bC1pKvWd1GMY9NJFoyZQ@mail.gmail.com>
+Message-ID: <CAPBb6MUBi+Dn5v4PKngxztFgKd6CA7bC1pKvWd1GMY9NJFoyZQ@mail.gmail.com>
+Subject: Re: [PATCH] venus: vdec: fix decoded data size
+To:     vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 01:40:30PM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Mon, Jul 2, 2018 at 4:44 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> Exisiting code returns the max of the decoded
+
+s/Exisiting/Existing
+
+Also the lines of your commit message look pretty short - I think the
+standard for kernel log messges is 72 chars?
+
+> size and buffer size. It turns out that buffer
+> size is always greater due to hardware alignment
+> requirement. As a result, payload size given to
+> client is incorrect. This change ensures that
+> the bytesused is assigned to actual payload size.
+>
+> Change-Id: Ie6f3429c0cb23f682544748d181fa4fa63ca2e28
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
 > ---
->  drivers/usb/serial/io_edgeport.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-> index 97c69d3..441dab6 100644
-> --- a/drivers/usb/serial/io_edgeport.c
-> +++ b/drivers/usb/serial/io_edgeport.c
-> @@ -1760,7 +1760,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->  				edge_serial->rxState = EXPECT_HDR2;
->  				break;
->  			}
-> -			/* otherwise, drop on through */
-> +			/* else: fall through */
+>  drivers/media/platform/qcom/venus/vdec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index d079aeb..ada1d2f 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -890,7 +890,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
+>
+>                 vb = &vbuf->vb2_buf;
+>                 vb->planes[0].bytesused =
+> -                       max_t(unsigned int, opb_sz, bytesused);
+> +                       min_t(unsigned int, opb_sz, bytesused);
 
-This doesn't silence the compiler warning with gcc 7.2.0 as the "else: "
-pattern isn't recognised.
+Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
+Tested-by: Alexandre Courbot <acourbot@chromium.org>
 
->  		case EXPECT_HDR2:
->  			edge_serial->rxHeader2 = *buffer;
->  			++buffer;
-> @@ -1820,7 +1820,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
->  					edge_serial->rxState = EXPECT_DATA;
->  					break;
->  				}
-> -				/* Else, drop through */
-> +				/* else: fall through */
->  			}
+This indeed reports the correct size to the client. If bytesused were
+larger than the size of the buffer we would be having some trouble
+anyway.
 
-And this doesn't work either due to the "else: " as well as the fact
-that the compiler expects the fallthrough comment to precede the case
-statement directly (e.g. it would need to be moved out of the else
-block, but that isn't necessarily desirable as we discussed last year: 
+Actually in my tree I was using the following patch:
 
-	lkml.kernel.org/r/20171027203906.GA7054@embeddedor.com
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -924,13 +924,12 @@ static void vdec_buf_done(struct venus_inst
+*inst, unsigned int buf_type,
 
-)
+               vb = &vbuf->vb2_buf;
+               vb->planes[0].bytesused =
+-                       max_t(unsigned int, opb_sz, bytesused);
++                       min_t(unsigned int, opb_sz, bytesused);
+               vb->planes[0].data_offset = data_offset;
+               vb->timestamp = timestamp_us * NSEC_PER_USEC;
+               vbuf->sequence = inst->sequence_cap++;
+               if (vbuf->flags & V4L2_BUF_FLAG_LAST) {
+                       const struct v4l2_event ev = { .type = V4L2_EVENT_EOS };
+-                       vb->planes[0].bytesused = bytesused;
+                       v4l2_event_queue_fh(&inst->fh, &ev);
 
->  		case EXPECT_DATA: /* Expect data */
->  			if (bufferLength < edge_serial->rxBytesRemaining) {
-
-How do you compile test these these patches?
-
-Thanks,
-Johan
+Given that we are now taking the minimum of these two values, it seems
+to me that we don't need to set bytesused again in case we are dealing
+with the last buffer? Stanimir, what do you think?
