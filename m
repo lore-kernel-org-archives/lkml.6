@@ -2,134 +2,119 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B652C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDBDC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E7024823
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 720AC24D84
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="obNYgi+6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RtC4njDK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E7024823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RDP2N41A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 720AC24D84
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753647AbeGBWxs (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:53:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34944 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753500AbeGBWxq (ORCPT
+        id S932423AbeGBWyS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 18:54:18 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53854 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753603AbeGBWyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:53:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 062C960B72; Mon,  2 Jul 2018 22:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530572026;
-        bh=pYHQTxnahFexmpL0lQMGi2zFFobmcYwl9fUxyeMG0/s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=obNYgi+69uFQK8/CA/GVTO9zgspjE6gW3YlRZHFOje6DZoNAJpKUjMkKGb9d3Aa+P
-         MwtvhW88bih6XY2AHenyg+kl5LJLQGmhpLQeyJRh9C6wB9gboksmZogVvARuVdw3+M
-         ubGEpGtkPxBvU9UeUxqj/9fdZX0VNFbtFijtoAiU=
-Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7692260B7E;
-        Mon,  2 Jul 2018 22:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530572025;
-        bh=pYHQTxnahFexmpL0lQMGi2zFFobmcYwl9fUxyeMG0/s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RtC4njDKHyVHGvive42vHZS2h2QVXs+5smq5x9HQBtLyvoejuO27wQCn3EB/qolPT
-         vG1pf2X5tXL9ArF6sh5s/8zhu/F0cDUbUiXqdNKCG5kwv048YwaAQx5mgQdgzmr60k
-         uVQ1KHt28JUBFBQ6iMfhGVYPPDN+M33Bm1XKg17M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7692260B7E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From:   Sinan Kaya <okaya@codeaurora.org>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during reset
-Date:   Mon,  2 Jul 2018 18:52:47 -0400
-Message-Id: <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
+        Mon, 2 Jul 2018 18:54:16 -0400
+Received: by mail-it0-f68.google.com with SMTP id a195-v6so528893itd.3;
+        Mon, 02 Jul 2018 15:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p8CHpZyszHyJTYC/00e2QCkHGmz5oqWztjAlfY6soOc=;
+        b=RDP2N41A85NdN2ePXjYwuoS5XmSGH9uBvynffJ21sbxAbSl8zJxFJIoD4ka3UPUgOd
+         2TmdmFaNi2p6atQmhfnixl5K6QCMJXT+xslbGL6zpZSyd44pZvxVo/0WFd3/nHbyBNQ8
+         0FsSfQTc+V2AZN4m7n5A8gYx40so96pwgDh6I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p8CHpZyszHyJTYC/00e2QCkHGmz5oqWztjAlfY6soOc=;
+        b=XW/7hR1ALk+HEsD90W/8XTljR7yDjE+nSV5MNyF2a8H0RjDxd1KJ0k7gOEq3+Zxliu
+         QA4SSLLFkA3Lu8/punLiT7pN4/hE/6SdzKZArVEaUPdGfjvtKcxh817mFg12CwedSkCP
+         IbmDF9rI1R9S1+cKaRLsA/zYMzSBU/5Yihgrp6I3kR3pyt7+vaWj5Tagmf6clXDN9ELY
+         hWb0kzwhI756SzWDZ4bJQGY6kfAre0ICDGBjd3A/8MY0DBWxNy+gL1wsHHTKnpfudVcL
+         nCyrXgfEYXDm/GB4gygqm7IsSoQZrEZAPnYT5//83XNJKKVHawXqMe4KXztAl6e8KI9P
+         r00w==
+X-Gm-Message-State: APt69E3DT5TamYj1zzQXe4f9ZlfzJVJ4zsE6B5egUz1VYGPBuK+TD3/t
+        88XP96XeFL93aFU7BfzZn9V+5xtG98UPHUgv7mE=
+X-Google-Smtp-Source: AAOMgpcPWOqsmyooO8tSF9xB23VKwGQta28Jrz2zU5Y14cyo+/13wXwC/nDOhKVR2dgrUGlz5+vGP3HNmx/ZZ9x+RtQ=
+X-Received: by 2002:a02:89a3:: with SMTP id p32-v6mr22617968jaj.10.1530572055594;
+ Mon, 02 Jul 2018 15:54:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <1530510723-24814-1-git-send-email-longman@redhat.com>
+ <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
+ <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org> <1530570880.3179.9.camel@HansenPartnership.com>
+In-Reply-To: <1530570880.3179.9.camel@HansenPartnership.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 15:54:04 -0700
+Message-ID: <CA+55aFzyUb07Lt251bzi4T79oB=M8uypFQ2m__FgnRJUauqd0Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a bridge supports hotplug and observes a PCIe fatal error, the following
-events happen:
+On Mon, Jul 2, 2018 at 3:34 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> There are still a lot of applications that keep looking up non-existent
+> files, so I think it's still beneficial to keep them.  Apparently
+> apache still looks for a .htaccess file in every directory it
+> traverses, for instance.
 
-1. AER driver removes the devices from PCI tree on fatal error
-2. AER driver brings down the link by issuing a secondary bus reset waits
-for the link to come up.
-3. Hotplug driver observes a link down interrupt
-4. Hotplug driver tries to remove the devices waiting for the rescan lock
-but devices are already removed by the AER driver and AER driver is waiting
-for the link to come back up.
-5. AER driver tries to re-enumerate devices after polling for the link
-state to go up.
-6. Hotplug driver obtains the lock and tries to remove the devices again.
+.. or git looking for ".gitignore" files in every directory, or any
+number of similar things.
 
-If a bridge is a hotplug capable bridge, mask hotplug interrupts before the
-reset and unmask afterwards.
+Lookie here, for example:
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/pci/pcie/err.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+  [torvalds@i7 linux]$ strace -e trace=%file -c git status
+  On branch master
+  Your branch is up to date with 'origin/master'.
 
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index ae72f88..5a2d410 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -285,10 +285,12 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
-  */
- void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
- {
-+	struct pcie_port_service_driver *hpsvc;
- 	struct pci_dev *udev;
- 	struct pci_bus *parent;
- 	struct pci_dev *pdev, *temp;
- 	pci_ers_result_t result;
-+	struct device *hpdev;
- 
- 	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
- 		udev = dev;
-@@ -308,8 +310,17 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
- 		pci_dev_put(pdev);
- 	}
- 
-+	hpsvc = pcie_port_find_service(udev, PCIE_PORT_SERVICE_HP);
-+	hpdev = pcie_port_find_device(udev, PCIE_PORT_SERVICE_HP);
-+
-+	if (hpdev && hpsvc)
-+		hpsvc->mask_irq(to_pcie_device(hpdev));
-+
- 	result = reset_link(udev, service);
- 
-+	if (hpdev && hpsvc)
-+		hpsvc->unmask_irq(to_pcie_device(hpdev));
-+
- 	if ((service == PCIE_PORT_SERVICE_AER) &&
- 	    (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)) {
- 		/*
--- 
-2.7.4
+  nothing to commit, working tree clean
+  % time     seconds  usecs/call     calls    errors syscall
+  ------ ----------- ----------- --------- --------- ----------------
+   73.23    0.009066           2      4056         6 open
+   23.33    0.002888           2      1294      1189 openat
+    1.60    0.000198          13        15         8 access
+    0.80    0.000099           2        36        31 lstat
+    0.53    0.000066           1        40         6 stat
+    0.27    0.000033           8         4           getcwd
+    0.11    0.000014          14         1           execve
+    0.11    0.000014          14         1           chdir
+    0.02    0.000003           3         1         1 readlink
+    0.00    0.000000           0         1           unlink
+  ------ ----------- ----------- --------- --------- ----------------
+  100.00    0.012381                  5449      1241 total
 
+so almost a quarter (1241 of 5449) of the file accesses resulted in
+errors (and I think they are all ENOENT).
+
+Negative lookups are *not* some unusual thing.
+
+                   Linus
