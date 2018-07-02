@@ -2,168 +2,138 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0522CC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DE6C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B24B425606
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48D5F208A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UCFaTK03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24B425606
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="Upb2qtQ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D5F208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753377AbeGBUla (ORCPT
+        id S1753193AbeGBUnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:41:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36318 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753121AbeGBUlZ (ORCPT
+        Mon, 2 Jul 2018 16:43:55 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53184 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752715AbeGBUnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:41:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KqTZyCx7rCMMg042GrAPh/iReohA/moEW67UNbjMLac=; b=UCFaTK03ZqFFdlnXK9dOk5fEX
-        +iv77v7+Ledf++tDqMfc9jGEdoV17z2taxBfU3rxFQG4xY7bglnX5WaXg9NHKfZ79pQ15YX3Da7GV
-        JcPnbM8pBUcNVaOnttLhx3rhqkGXxApmOMA6/k/jsepNrU4greHH91SOngCfIm5jKb5SoTJAAB71h
-        NnuzRjZhr8Bvw1ioxNGSCWf9hZylskAju4uZPJ61bObYA5og9vv6lzEwVmFhMsBI3VljYVqEe3g87
-        K3NP/hnn/qhFZKv3jGdecV5Y/rvs6DZfYNIDKpfdmqX+7LBMbCcTXGeMNCud3HgluOzAtpexEivBj
-        nLjpcoTVg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fa5dV-0006fk-74; Mon, 02 Jul 2018 20:41:25 +0000
-Subject: Re: [PATCH 1/5] kconfig: include common Kconfig files from top-level
- Kconfig
-To:     Christoph Hellwig <hch@lst.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180702144711.22111-1-hch@lst.de>
- <20180702144711.22111-2-hch@lst.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <43b9a29d-27fc-1b6e-6f90-9187749bf338@infradead.org>
-Date:   Mon, 2 Jul 2018 13:41:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 16:43:52 -0400
+Received: by mail-it0-f67.google.com with SMTP id p4-v6so156898itf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=e6Q6Pz62yXotXW3zyTdsIVn8Lr+MQtonEfNPYK8QiKM=;
+        b=Upb2qtQ5S8xZoej9E99PhzyPoNjTASKRcgPbQhNKiRDFwj+OXpMIZfXQGBL6DHxZPw
+         GMIVmL6EJEvliXo0ePSdm6JnpV8XSBDEZl8axyX/Jpujev3KqoTkpYUY2NOsEIyir1Ch
+         /O41hMXvgG7Rlex443ZBPi//7tEsiCnp4ElitenpgMHzvYPbT0HiHux+f7Rva3sMFknr
+         bFEbGH3LPZ1QyUY14Oc4mcGCBNo1f2QXD/A3iqE4qI30WUMLH9xi+bMdQK7q9xhUbkh5
+         U046ZqgIIcyKYs5nOa3F48xEBsFAjlrsyUFZyR6Fg7wdgjjRJFJAN7eeCo15zk9Np2E8
+         jaTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e6Q6Pz62yXotXW3zyTdsIVn8Lr+MQtonEfNPYK8QiKM=;
+        b=WTc9tvCNwHvf4LuUlyvbyJcmCLPb8lai5d+jE4f/EukRJWi0q4bsOGip7RdbRx7hj/
+         qdkQ2XpFBH+co5PTiqdu6B0PNfJ9o53avWTQqbs8JOiB7fiKv8fEsmti032m4TcQo9JQ
+         T+O5RyUgTJGiFLeN4BH3Hv1cvF5zB2i7L5eio40C6nitRb+Vq8uUxUO+Fg7ujqwWqjHP
+         WWIq1D0cFa7iI1InFtbe6iAQn4FvelLR01gLb2YAKhyJ//8lVH3bdIxnu0+jFMLv3N2/
+         PF27UNJdGw2sJbSNPmNofNSMkdo+3FpSvwu65EJ6MimgQSQyYOIKjeTsc1Gie5z6Ab4i
+         5AxA==
+X-Gm-Message-State: APt69E0zau/sTUMs/wRBD4L0uTHs88jioKFPZIA1yayAd5ICWO5pU2I/
+        nNgyapVqyvEW4W/dq3EwPvm5BDFv
+X-Google-Smtp-Source: AAOMgpc15KQyEpQDgWjQO9goEcRgI0LQYAG+Xhua9VcTr5kKJhF1gD0khEy4nH70hBoxQqqvqe6P5A==
+X-Received: by 2002:a02:62ce:: with SMTP id d197-v6mr21975269jac.36.1530564232314;
+        Mon, 02 Jul 2018 13:43:52 -0700 (PDT)
+Received: from x220t ([64.26.149.125])
+        by smtp.gmail.com with ESMTPSA id x7-v6sm6907612iob.49.2018.07.02.13.43.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 13:43:51 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 16:43:46 -0400
+From:   Alexander Aring <aring@mojatatu.com>
+To:     Michael Scott <michael@opensourcefoundries.com>
+Cc:     Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 6lowpan: iphc: reset mac_header after decompress to fix
+ panic
+Message-ID: <20180702204346.d7bynetvzw3ayn5m@x220t>
+References: <20180619234406.8217-1-michael@opensourcefoundries.com>
+ <20180702185438.dqqjg6k45iefj5is@x220t>
+ <516fbc65-cc4b-8016-de5a-e2240b779d15@opensourcefoundries.com>
 MIME-Version: 1.0
-In-Reply-To: <20180702144711.22111-2-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <516fbc65-cc4b-8016-de5a-e2240b779d15@opensourcefoundries.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/18 07:47, Christoph Hellwig wrote:
-> Instead of duplicating the source statements in every architecture just
-> do it once in the toplevel Kconfig file.
+Hi,
+
+On Mon, Jul 02, 2018 at 12:45:41PM -0700, Michael Scott wrote:
+> Hello Alexander,
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  Kconfig                 | 22 ++++++++++++++++++++++
->  arch/alpha/Kconfig      | 20 --------------------
->  arch/arc/Kconfig        | 16 ----------------
->  arch/arm/Kconfig        | 25 -------------------------
->  arch/arm64/Kconfig      | 23 -----------------------
->  arch/c6x/Kconfig        | 24 ------------------------
->  arch/h8300/Kconfig      | 24 ------------------------
->  arch/hexagon/Kconfig    | 16 ----------------
->  arch/ia64/Kconfig       | 20 --------------------
->  arch/m68k/Kconfig       | 24 ------------------------
->  arch/microblaze/Kconfig | 24 ------------------------
->  arch/mips/Kconfig       | 24 ------------------------
->  arch/nds32/Kconfig      | 16 ----------------
->  arch/nios2/Kconfig      | 24 ------------------------
->  arch/openrisc/Kconfig   | 23 -----------------------
->  arch/parisc/Kconfig     | 24 ------------------------
->  arch/powerpc/Kconfig    | 19 -------------------
->  arch/riscv/Kconfig      | 24 ------------------------
->  arch/s390/Kconfig       | 24 ------------------------
->  arch/sh/Kconfig         | 24 ------------------------
->  arch/sparc/Kconfig      | 24 ------------------------
->  arch/unicore32/Kconfig  | 24 ------------------------
->  arch/x86/Kconfig        | 22 +---------------------
->  arch/xtensa/Kconfig     | 25 -------------------------
->  24 files changed, 23 insertions(+), 512 deletions(-)
+...
+> > Question is for me: which upper layer wants access MAC header here on
+> > receive path?
+> > It cannot parsed anyhow because so far I know no upper layer can parse
+> > at the moment 802.15.4 frames (which is a complex format). Maybe over
+> > some header_ops callback?
 > 
-> diff --git a/Kconfig b/Kconfig
-> index a90d9f9e268b..5499b1273ba5 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -10,3 +10,25 @@ comment "Compiler: $(CC_VERSION_TEXT)"
->  source "scripts/Kconfig.include"
->  
->  source "arch/$(SRCARCH)/Kconfig"
-> +
-> +source "init/Kconfig"
-> +
-> +source "kernel/Kconfig.freezer"
-> +
-> +menu "Executable file formats"
-> +source "fs/Kconfig.binfmt"
-> +endmenu
-> +
-> +source "mm/Kconfig"
-> +
-> +source "net/Kconfig"
-> +
-> +source "drivers/Kconfig"
-> +
-> +source "fs/Kconfig"
-> +
-> +source "security/Kconfig"
-> +
-> +source "crypto/Kconfig"
-> +
-> +source "lib/Kconfig"
+> I was testing a C program which performs NAT64 handling on packets
+> destined to a certain IPv6 subnet (64:ff9b::). To do this, the application
+> opens a RAW socket like this: sniff_sock = socket(PF_PACKET, SOCK_RAW,
+> htons(ETH_P_ALL)); It then sets promiscuous mode and enters a looping call
+> of:
+> length = recv(sniff_sock, buffer, PACKET_BUFFER, MSG_TRUNC); My host PC
+> kernel would then promptly crash on me. (I'm going to purposely avoid the
+> obvious point of: this probably isn't the best way to parse packets for
+> NAT64 translation as you will get every single packet incoming or outgoing
+> on the host.) Turns out, testing the program on an 802.15.4 6lowpan
+> interface exposed some of the issues which this mailing list (but not
+> myself) is well aware of (no L2 data in the RAW packets) and also led me to
+> debugging this patch to stop the kernel crash. TL;DR: To summarize, any
+> PF_PACKET SOCK_RAW socket which recv()'s IPv6 data from a 6lowpan node will
+> cause this kernel crash eventually (checked on kernel 4.15, 4.16, 4.17 and
+> 4.18-rc1). - Mike
+> > 
 
-FWIW, I prefer this modification, but it's not a deal breaker.
+"any PF_PACKET SOCK_RAW" can't be otherwise I would also see it with my
+sniffer programs e.g. wireshark or tcpdump which use libpcap.
 
----
-From: Randy Dunlap <rdunlap@infradead.org>
+There need to be some different in the handling. This is what I have
+currently in my mind.
 
-Present "General setup" before "Processor type and features".
-This is done by sourcing arch/$(SRCARCH)/Kconfig before arch/Kconfig
-inside init/Kconfig.
+I currently not sure how to set skb->mac_header if interface is RAW_IP.
+It seems there is an indicator that mac header is not set. Example:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
- Kconfig      |    2 --
- init/Kconfig |    6 ++++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
---- linux-next-20180702.orig/Kconfig
-+++ linux-next-20180702/Kconfig
-@@ -9,8 +9,6 @@ comment "Compiler: $(CC_VERSION_TEXT)"
+diff --git a/net/6lowpan/iphc.c b/net/6lowpan/iphc.c
+index 6b1042e21656..e6ec2df3afe0 100644
+--- a/net/6lowpan/iphc.c
++++ b/net/6lowpan/iphc.c
+@@ -770,6 +770,7 @@ int lowpan_header_decompress(struct sk_buff *skb, const struct net_device *dev,
+                hdr.hop_limit, &hdr.daddr);
  
- source "scripts/Kconfig.include"
+        skb_push(skb, sizeof(hdr));
++       skb->mac_header = (typeof(skb->mac_header))~0U;
+        skb_reset_network_header(skb);
+        skb_copy_to_linear_data(skb, &hdr, sizeof(hdr));
  
--source "arch/$(SRCARCH)/Kconfig"
--
- source "init/Kconfig"
- 
- source "kernel/Kconfig.freezer"
---- linux-next-20180702.orig/init/Kconfig
-+++ linux-next-20180702/init/Kconfig
-@@ -1717,6 +1717,12 @@ config PROFILING
- config TRACEPOINTS
- 	bool
- 
-+# Note:  arch/$(SRCARCH)/Kconfig needs to be before arch/Kconfig
-+# so that each $ARCH can specify its values for CONFIG_PGTABLE_LEVELS
-+# before the default value is found in arch/Kconfig.
-+
-+source "arch/$(SRCARCH)/Kconfig"
-+
- source "arch/Kconfig"
- 
- endmenu		# General setup
 
+Maybe we should lookup what skb->mac_header points to on tun interfaces
+then do the same.
+
+- Alex
