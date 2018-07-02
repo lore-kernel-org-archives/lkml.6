@@ -2,113 +2,211 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD8BC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE82C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67BF256AB
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:41:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67BF256AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D88F2550D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:50:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lX0Lasjo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D88F2550D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753154AbeGBElc (ORCPT
+        id S1753166AbeGBEt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 00:41:32 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12058 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753118AbeGBElZ (ORCPT
+        Mon, 2 Jul 2018 00:49:59 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41461 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751287AbeGBEt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 00:41:25 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b39acf20000>; Sun, 01 Jul 2018 21:41:22 -0700
-Received: from HQMAIL107.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 01 Jul 2018 21:41:24 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 01 Jul 2018 21:41:24 -0700
-Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Jul
- 2018 04:41:23 +0000
-Subject: Re: [PATCH v2 4/6] mm/fs: add a sync_mode param for
- clear_page_dirty_for_io()
-To:     kbuild test robot <lkp@intel.com>, <john.hubbard@gmail.com>
-CC:     <kbuild-all@01.org>, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20180702005654.20369-5-jhubbard@nvidia.com>
- <201807020900.J6omiRbx%fengguang.wu@intel.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <b98be1bd-89dd-8b76-20f6-8f440dc3ba44@nvidia.com>
-Date:   Sun, 1 Jul 2018 21:40:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 00:49:58 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a11-v6so6888022pff.8
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 21:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Bxgym+5QKqlD/8jmSh7EyWNv5FofjwD6jKAKdKBayws=;
+        b=lX0Lasjoh4i9xat62xhCmFvDTWbMyhsWnE9bSKS4AElXniNeTIE6UOzew23rBDYpvR
+         YWajUfOw/dPFeUFF3blT9aDzED7kGAHYrG9EJpTrWTbjn5ZFHG7Do0XgKVKdsl/f2NBs
+         o6/SWxkHUA51w6BAOMEKXkq8CHVdSy3Et6FtY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Bxgym+5QKqlD/8jmSh7EyWNv5FofjwD6jKAKdKBayws=;
+        b=BvuM8geeF5jMTBVSm/AbZuC1V5rDZiC3Q6F6dSnSviV6FxtNAq3rh0L9wUGG6J68xM
+         +p4gQ+c6/4xBbXenl7Y8AfL32JtEsMHp4i4XCK58paYLP/LGqoySo4ZV+meA6XPGyECX
+         nwsdNJUlz310gDbSu0MJs7d+i3MnO69xmuCZlRkLLTHMXJmM8iFVHARHdvJphwtJ16a8
+         CbosDE2TjJnYoIvOkZrpJvOjhxQn4EsbyK/G6Tl+AZM0oYUncOIAVX56vekqJPHcWhMI
+         o0AcFSz+F3uoIu7x7rLw0dZxfi0KFctmNAUz9YiwClrmT3hN5WAGx/lo4iSN7/qG82AE
+         3ZIg==
+X-Gm-Message-State: APt69E20xsli/v7CCwNx4xY+wUTCqD/dwd5NSCy2i2nuJll4z21h0siG
+        pQftBTv04eNablUrrAiwOsycdA==
+X-Google-Smtp-Source: AAOMgpc99LK96wj9rLSKH1Df+b0QDNXvVbPhIX3lJWe0hCPmtKIrWnkuasJNEJT2WJgCWBjwmFc/GQ==
+X-Received: by 2002:a62:d94a:: with SMTP id s71-v6mr12064306pfg.164.1530506998046;
+        Sun, 01 Jul 2018 21:49:58 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id 145-v6sm23529156pfz.69.2018.07.01.21.49.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 01 Jul 2018 21:49:57 -0700 (PDT)
+Date:   Sun, 1 Jul 2018 21:49:56 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH RFC tip/core/rcu 1/2] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Message-ID: <20180702044956.GB158348@joelaf.mtv.corp.google.com>
+References: <20180627204835.GA25456@linux.vnet.ibm.com>
+ <20180627204915.27253-1-paulmck@linux.vnet.ibm.com>
+ <20180701183828.GB111992@joelaf.mtv.corp.google.com>
+ <20180701222749.GD3593@linux.vnet.ibm.com>
+ <20180702003553.GA95395@joelaf.mtv.corp.google.com>
+ <20180702031132.GI3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <201807020900.J6omiRbx%fengguang.wu@intel.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702031132.GI3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/2018 07:47 PM, kbuild test robot wrote:
-> Hi John,
+On Sun, Jul 01, 2018 at 08:11:32PM -0700, Paul E. McKenney wrote:
+> On Sun, Jul 01, 2018 at 05:35:53PM -0700, Joel Fernandes wrote:
+> > On Sun, Jul 01, 2018 at 03:27:49PM -0700, Paul E. McKenney wrote:
+> > [...]
+> > > > > +/*
+> > > > > + * Report a deferred quiescent state if needed and safe to do so.
+> > > > > + * As with rcu_preempt_need_deferred_qs(), "safe" involves only
+> > > > > + * not being in an RCU read-side critical section.  The caller must
+> > > > > + * evaluate safety in terms of interrupt, softirq, and preemption
+> > > > > + * disabling.
+> > > > > + */
+> > > > > +static void rcu_preempt_deferred_qs(struct task_struct *t)
+> > > > > +{
+> > > > > +	unsigned long flags;
+> > > > > +
+> > > > > +	if (!rcu_preempt_need_deferred_qs(t))
+> > > > > +		return;
+> > > > > +	local_irq_save(flags);
+> > > > > +	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > > > +}
+> > > > > +
+> > > > > +/*
+> > > > > + * Handle special cases during rcu_read_unlock(), such as needing to
+> > > > > + * notify RCU core processing or task having blocked during the RCU
+> > > > > + * read-side critical section.
+> > > > > + */
+> > > > > +static void rcu_read_unlock_special(struct task_struct *t)
+> > > > > +{
+> > > > > +	unsigned long flags;
+> > > > > +	bool preempt_bh_were_disabled = !!(preempt_count() & ~HARDIRQ_MASK);
+> > > > > +	bool irqs_were_disabled;
+> > > > > +
+> > > > > +	/* NMI handlers cannot block and cannot safely manipulate state. */
+> > > > > +	if (in_nmi())
+> > > > > +		return;
+> > > > > +
+> > > > > +	local_irq_save(flags);
+> > > > > +	irqs_were_disabled = irqs_disabled_flags(flags);
+> > > > > +	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
+> > > > > +	    t->rcu_read_unlock_special.b.blocked) {
+> > > > > +		/* Need to defer quiescent state until everything is enabled. */
+> > > > > +		raise_softirq_irqoff(RCU_SOFTIRQ);
+> > > > > +		local_irq_restore(flags);
+> > > > > +		return;
+> > > > > +	}
+> > > > > +	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > > > +}
+> > > > > +
+> > > > >  /*
+> > > > >   * Dump detailed information for all tasks blocking the current RCU
+> > > > >   * grace period on the specified rcu_node structure.
+> > > > > @@ -737,10 +784,20 @@ static void rcu_preempt_check_callbacks(void)
+> > > > >  	struct rcu_state *rsp = &rcu_preempt_state;
+> > > > >  	struct task_struct *t = current;
+> > > > >  
+> > > > > -	if (t->rcu_read_lock_nesting == 0) {
+> > > > > -		rcu_preempt_qs();
+> > > > > +	if (t->rcu_read_lock_nesting > 0 ||
+> > > > > +	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+> > > > > +		/* No QS, force context switch if deferred. */
+> > > > > +		if (rcu_preempt_need_deferred_qs(t))
+> > > > > +			resched_cpu(smp_processor_id());
+> > > > 
+> > > > 
+> > > > Hi Paul,
+> > > > 
+> > > > I had a similar idea of checking the preempt_count() sometime back but didn't
+> > > > believe this path can be called with preempt enabled (for some reason ;-)).
+> > > > Now that I've convinced myself that's possible, what do you think about
+> > > > taking advantage of the opportunity to report a RCU-sched qs like below from
+> > > > rcu_check_callbacks ?
+> > > > 
+> > > > Did some basic testing, can roll into a patch later if you're Ok with it.
+> > > 
+> > > The problem here is that the code patch above cannot be called
+> > > with CONFIG_PREEMPT_COUNT=n, but the code below can.  And if
+> > > CONFIG_PREEMPT_COUNT=n, the return value from preempt_count() can be
+> > > misleading.
+> > > 
+> > > Or am I missing something here?
+> > 
+> > That is true! so then I could also test if PREEMPT_RCU is enabled like you're
+> > doing in the other path.
+> > 
+> > thanks!
+> > 
+> > ---8<-----------------------
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index fb440baf8ac6..03a460921dca 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -2683,6 +2683,12 @@ void rcu_check_callbacks(int user)
+> >  		rcu_note_voluntary_context_switch(current);
+> > 
+> >  	} else if (!in_softirq()) {
+> > +		/*
+> > +		 * Report RCU-sched qs if not in an RCU-sched read-side
+> > +		 * critical section.
+> > +		 */
+> > +		if (IS_ENABLED(PREEMPT_RCU) && !(preempt_count() & PREEMPT_MASK))
 > 
-> Thank you for the patch! Yet something to improve:
+> For more precision, s/PREEMPT_RCU/CONFIG_PREEMPT_COUNT/
 > 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.18-rc3]
-> [cannot apply to next-20180629]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Hmmm...  I recently queued a patch that redefines the RCU-bh update-side
+> API in terms of the consolidated RCU implementation, so this "else"
+> clause no longer exists.  One approach would be to fold this condition
+> (with the addition of SOFTIRQ_MASK) into the previous "if" condition,
+> but that would call rcu_note_voluntary_context_switch() at bad times.
+> So maybe this becomes a new "else if" clause.
 > 
-> url:    https://github.com/0day-ci/linux/commits/john-hubbard-gmail-com/mm-fs-gup-don-t-unmap-or-drop-filesystem-buffers/20180702-090125
-> config: i386-randconfig-x075-201826 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
+> Another complication is an upcoming step that redefines the RCU-sched
+> update-side API in terms of the consolidated RCU implementation, which
+> will likely restructure this "if" statement yet again.
 > 
-> All errors (new ones prefixed by >>):
-> 
->    fs/f2fs/dir.c: In function 'f2fs_delete_entry':
->>> fs/f2fs/dir.c:734:33: error: 'WB_SYNC_ALL' undeclared (first use in this function); did you mean 'FS_SYNC_FL'?
->       clear_page_dirty_for_io(page, WB_SYNC_ALL);
->                                     ^~~~~~~~~~~
->                                     FS_SYNC_FL
+> So I will try to fold this idea in (with attribution).  If I don't get
+> it in place in a week or two, please remind me.  Of course, one good way
+> to remind me is to supply a patch against whatever this turns into.  ;-)
 
-Fixed locally, via:
+Sounds good, I will keep these complications in mind and remind you in some
+time and/or supply a patch doing the same. Will continue going through the
+new code in your tree and let you know anything I find.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 258f9dc117f4..ca20c1262582 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -16,6 +16,7 @@
- #include "acl.h"
- #include "xattr.h"
- #include <trace/events/f2fs.h>
-+#include <linux/writeback.h>
- 
- static unsigned long dir_blocks(struct inode *inode)
- {
+Cheers, thanks!
 
+ - Joel
 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
