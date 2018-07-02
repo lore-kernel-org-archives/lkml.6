@@ -2,138 +2,110 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BD4C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBEAC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B68DF25DC5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68DF25DC5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E9DDD25DC7
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:33:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="ZD9TlRUz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9DDD25DC7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752567AbeGBNdY (ORCPT
+        id S1752611AbeGBNde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:33:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752366AbeGBNdW (ORCPT
+        Mon, 2 Jul 2018 09:33:34 -0400
+Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:28613 "EHLO
+        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752117AbeGBNdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:33:22 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62DUS1S133543
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 09:33:22 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyjkbxb16-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 09:33:21 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 14:33:19 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 14:33:14 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62DXCbq36503734
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 13:33:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A6F64C046;
-        Mon,  2 Jul 2018 14:32:55 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 845084C050;
-        Mon,  2 Jul 2018 14:32:54 +0100 (BST)
-Received: from [9.145.48.243] (unknown [9.145.48.243])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 14:32:54 +0100 (BST)
-Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
- <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
- <20180702121528.GM19043@dhcp22.suse.cz>
- <80406cbd-67f4-ca4c-cd54-aeb305579a72@linux.vnet.ibm.com>
- <20180702124558.GP19043@dhcp22.suse.cz>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Mon, 2 Jul 2018 15:33:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180702124558.GP19043@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        Mon, 2 Jul 2018 09:33:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1530538411; x=1562074411;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=5/UW/YIPGW5JjVfDWsi0Sy35UudPRxWlumDv6/9Uey8=;
+  b=ZD9TlRUzIKl2eK+v5uXj7OcI2JquFifCTfnoOMq69+epg7uwzIpe9LvK
+   ZNDm4CH5tc4HUeZznP98Cg6Jgdoez51ceND3vyX3GnPJHNegX6o8U4mCz
+   wUlu918TlvrRUkgpyT0oWsf3Pe25Oxnn/oNLLVbZmA+eeQ1rJzrs3NERK
+   8=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EnAQDGKDpbmD+a6ERcGgEBAQEBAgEBA?=
+ =?us-ascii?q?QEIAQEBAYQdgQ0oCoNvlECCB5Bvhi8LhGwCF4McITgUAQIBAQIBAQIBAQIQAQE?=
+ =?us-ascii?q?BAQEICwsGKS+CNSKCYQEBAQEDIxFFDAQCAQgRBAEBAwIjAwICAkQBCAgCBAENB?=
+ =?us-ascii?q?QiDGIIAp0qCHIhJgS6BC4dighWDaTWEQ4M4glUCmUYHAo8VjV0rkVyBWIF0cIM?=
+ =?us-ascii?q?5gjIajgZvjxOBLoEaAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EnAQDGKDpbmD+a6ERcGgEBAQEBAgEBAQEIAQEBAYQdgQ0?=
+ =?us-ascii?q?oCoNvlECCB5Bvhi8LhGwCF4McITgUAQIBAQIBAQIBAQIQAQEBAQEICwsGKS+CN?=
+ =?us-ascii?q?SKCYQEBAQEDIxFFDAQCAQgRBAEBAwIjAwICAkQBCAgCBAENBQiDGIIAp0qCHIh?=
+ =?us-ascii?q?JgS6BC4dighWDaTWEQ4M4glUCmUYHAo8VjV0rkVyBWIF0cIM5gjIajgZvjxOBL?=
+ =?us-ascii?q?oEaAQE?=
+Received: from esa3.dell-outbound2.iphmx.com ([68.232.154.63])
+  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 08:33:31 -0500
+From:   <Mario.Limonciello@dell.com>
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 19:28:38 +0600
+X-LoopCount0: from 10.166.132.187
+X-IronPort-AV: E=Sophos;i="5.51,299,1526360400"; 
+   d="scan'208";a="1104718477"
+X-DLP:  DLP_GlobalPCIDSS
+To:     <colin.king@canonical.com>, <dvhart@infradead.org>,
+        <andy@infradead.org>, <platform-driver-x86@vger.kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] platform/x86: dell-smbios-wmi: make function
+ dell_smbios_wmi_call static
+Thread-Topic: [PATCH] platform/x86: dell-smbios-wmi: make function
+ dell_smbios_wmi_call static
+Thread-Index: AQHUEGtXiG2hbxmxnk+xccRmPGi846R78Y8Q
+Date:   Mon, 2 Jul 2018 13:33:29 +0000
+Message-ID: <2ebb046f53e047e6aefc78c0f73594dc@ausx13mpc120.AMER.DELL.COM>
+References: <20180630121024.18993-1-colin.king@canonical.com>
+In-Reply-To: <20180630121024.18993-1-colin.king@canonical.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070213-0020-0000-0000-000002A23315
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070213-0021-0000-0000-000020EE4490
-Message-Id: <e6f8d0e2-48c1-f610-c00b-d05d4bd0d9eb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=838 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020156
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 02/07/2018 14:45, Michal Hocko wrote:
-> On Mon 02-07-18 14:26:09, Laurent Dufour wrote:
->> On 02/07/2018 14:15, Michal Hocko wrote:
->>> On Mon 02-07-18 10:45:03, Laurent Dufour wrote:
->>>> On 30/06/2018 00:39, Yang Shi wrote:
->>>>> Check VM_DEAD flag of vma in page fault handler, if it is set, trigger
->>>>> SIGSEGV.
->>>>>
->>>>> Cc: Michal Hocko <mhocko@kernel.org>
->>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>>>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->>>>> ---
->>>>>  arch/x86/mm/fault.c | 4 ++++
->>>>>  1 file changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
->>>>> index 9a84a0d..3fd2da5 100644
->>>>> --- a/arch/x86/mm/fault.c
->>>>> +++ b/arch/x86/mm/fault.c
->>>>> @@ -1357,6 +1357,10 @@ static inline bool smap_violation(int error_code, struct pt_regs *regs)
->>>>>  		bad_area(regs, error_code, address);
->>>>>  		return;
->>>>>  	}
->>>>> +	if (unlikely(vma->vm_flags & VM_DEAD)) {
->>>>> +		bad_area(regs, error_code, address);
->>>>> +		return;
->>>>> +	}
->>>>
->>>> This will have to be done for all the supported architectures, what about doing
->>>> this check in handle_mm_fault() and return VM_FAULT_SIGSEGV ?
->>>
->>> We already do have a model for that. Have a look at MMF_UNSTABLE.
->>
->> MMF_UNSTABLE is a mm's flag, here this is a VMA's flag which is checked.
-> 
-> Yeah, and we have the VMA ready for all places where we do check the
-> flag. check_stable_address_space can be made to get vma rather than mm.
-
-Yeah, this would have been more efficient to check that flag at the beginning
-of the page fault handler rather than the end, but this way it will be easier
-to handle the speculative page fault too ;)
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4gS2luZyBbbWFp
+bHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogU2F0dXJkYXksIEp1bmUgMzAs
+IDIwMTggNzoxMCBBTQ0KPiBUbzogTGltb25jaWVsbG8sIE1hcmlvOyBEYXJyZW4gSGFydDsgQW5k
+eSBTaGV2Y2hlbmtvOyBwbGF0Zm9ybS1kcml2ZXItDQo+IHg4NkB2Z2VyLmtlcm5lbC5vcmcNCj4g
+Q2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
+cm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBwbGF0Zm9ybS94ODY6IGRlbGwtc21iaW9zLXdt
+aTogbWFrZSBmdW5jdGlvbg0KPiBkZWxsX3NtYmlvc193bWlfY2FsbCBzdGF0aWMNCj4gDQo+IEZy
+b206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBUaGUg
+ZnVuY3Rpb24gZGVsbF9zbWJpb3Nfd21pX2NhbGwgaXMgbG9jYWwgdG8gdGhlIHNvdXJjZSBhbmQg
+ZG9lcyBub3QNCj4gbmVlZCB0byBiZSBpbiBnbG9iYWwgc2NvcGUsIHNvIG1ha2UgaXQgc3RhdGlj
+Lg0KPiANCj4gQ2xlYW5zIHVwIHNwYXJzZSB3YXJuaW5nOg0KPiBzeW1ib2wgJ2RlbGxfc21iaW9z
+X3dtaV9jYWxsJyB3YXMgbm90IGRlY2xhcmVkLiBTaG91bGQgaXQgYmUgc3RhdGljPw0KPiANCj4g
+U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
+Cg0KU2FtZSB2YWluIGFzIHRoZSBvdGhlciBvbmUgb2YgdGhlc2UsIG1ha2VzIHNlbnNlIHRvIG1l
+Lg0KDQpBY2tlZC1ieTogTWFyaW8gTGltb25jaWVsbG8gPG1hcmlvLmxpbW9uY2llbGxvQGRlbGwu
+Y29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVsbC1zbWJpb3Mtd21pLmMg
+fCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BsYXRmb3JtL3g4Ni9kZWxsLXNtYmlvcy13bWku
+YyBiL2RyaXZlcnMvcGxhdGZvcm0veDg2L2RlbGwtDQo+IHNtYmlvcy13bWkuYw0KPiBpbmRleCBm
+YmVmZWRiMWMxNzIuLjg4YWZlNTY1MWQyNCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wbGF0Zm9y
+bS94ODYvZGVsbC1zbWJpb3Mtd21pLmMNCj4gKysrIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvZGVs
+bC1zbWJpb3Mtd21pLmMNCj4gQEAgLTgyLDcgKzgyLDcgQEAgc3RhdGljIGludCBydW5fc21iaW9z
+X2NhbGwoc3RydWN0IHdtaV9kZXZpY2UgKndkZXYpDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+IA0K
+PiAtaW50IGRlbGxfc21iaW9zX3dtaV9jYWxsKHN0cnVjdCBjYWxsaW5nX2ludGVyZmFjZV9idWZm
+ZXIgKmJ1ZmZlcikNCj4gK3N0YXRpYyBpbnQgZGVsbF9zbWJpb3Nfd21pX2NhbGwoc3RydWN0IGNh
+bGxpbmdfaW50ZXJmYWNlX2J1ZmZlciAqYnVmZmVyKQ0KPiAgew0KPiAgCXN0cnVjdCB3bWlfc21i
+aW9zX3ByaXYgKnByaXY7DQo+ICAJc2l6ZV90IGRpZmZlcmVuY2U7DQo+IC0tDQo+IDIuMTcuMQ0K
+DQo=
