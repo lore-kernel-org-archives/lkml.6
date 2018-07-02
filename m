@@ -3,150 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF0EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E18C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23602533E
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23602533E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D8DD02533E
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:06:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8DD02533E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeGBNGJ (ORCPT
+        id S1752244AbeGBNGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 09:06:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:59962 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752055AbeGBNGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Jul 2018 09:06:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39833 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751279AbeGBNGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:06:07 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 358475B02182A;
-        Mon,  2 Jul 2018 21:06:04 +0800 (CST)
-Received: from localhost (10.202.226.43) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
- 21:06:03 +0800
-Date:   Mon, 2 Jul 2018 14:05:51 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        "Voss, Dr. Nikolaus" <Nikolaus.Dr.Voss@loewensteinmedical.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] IIO: st_accel_i2c.c: Use fallback if DT/ACPI enum
- failed
-Message-ID: <20180702140551.00006297@huawei.com>
-In-Reply-To: <alpine.DEB.2.20.1807020843100.31768@fox.voss.local>
-References: <cover.1530268235.git.nikolaus.voss@loewensteinmedical.de>
-        <a84243a1a15d11511061eeae2f09c0ad8154d093.1530268235.git.nikolaus.voss@loewensteinmedical.de>
-        <20180630162803.3a2ad759@archlinux>
-        <alpine.DEB.2.20.1807020843100.31768@fox.voss.local>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51B8A18A;
+        Mon,  2 Jul 2018 06:06:09 -0700 (PDT)
+Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BEA63F5AD;
+        Mon,  2 Jul 2018 06:06:08 -0700 (PDT)
+Subject: Re: DMA mappings and crossing boundaries
+To:     benh@au1.ibm.com, Christoph Hellwig <hch@lst.de>
+Cc:     Russell Currey <ruscur@au1.ibm.com>,
+        iommu@lists.linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jens Axboe <jens.axboe@oracle.com>
+References: <2d752386b82481bc53080fcee1a3dcd474dbeef2.camel@au1.ibm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <82688fc5-c294-1db3-9a05-fecf9b9b5e17@arm.com>
+Date:   Mon, 2 Jul 2018 14:06:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <2d752386b82481bc53080fcee1a3dcd474dbeef2.camel@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 08:53:00 +0200
-Nikolaus Voss <nikolaus.voss@loewensteinmedical.de> wrote:
+Hi Ben,
 
-> On Sat, 30 Jun 2018, Jonathan Cameron wrote:
+On 24/06/18 08:32, Benjamin Herrenschmidt wrote:
+> Hi Folks !
 > 
-> > On Fri, 29 Jun 2018 10:10:10 +0200
-> > Nikolaus Voss <nikolaus.voss@loewensteinmedical.de> wrote:
-> >  
-> >> Currently, the driver bails out if not explicitly referred to in
-> >> DT or ACPI tables. This prevents fallback mechanisms from coming
-> >> into effect, e.g. I2C device ID table match via DT or ACPI
-> >> PRP0001 HID. However DT/ACPI enum should take precedence over
-> >> the fallback, so evaluate that first.
-> >>
-> >> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>  
-> >
-> > Is the change to probe_new actually related to the rest of the change?
-> >
-> > I can't immediately see why...  If not I would prefer that as a separate
-> > change.  
+> So due work around issues with devices having to strict limitations in
+> DMA address bits (GPUs ugh....) on POWER, we've been playing with a
+> mechanism that does dynamic mapping in the IOMMU but using a very large
+> IOMMU page size (256M on POWER8 and 1G on POWER9) for performances.
 > 
-> Well, it is, because the id table pointer of the old probe() is not 
-> used any more.
-Hmm. Fair enough, kind of incidental cleanup rather than anything more.
-
-J
-
+> Now, with such page size, we can't just pop out new entries for every
+> DMA map, we need to try to re-use entries for mappings in the same
+> "area".
 > 
-> >  
-> >> ---
-> >>  drivers/iio/accel/st_accel_i2c.c | 21 ++++++++++++---------
-> >>  1 file changed, 12 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
-> >> index 6bdec8c451e0..e360da407027 100644
-> >> --- a/drivers/iio/accel/st_accel_i2c.c
-> >> +++ b/drivers/iio/accel/st_accel_i2c.c
-> >> @@ -138,8 +138,7 @@ static const struct i2c_device_id st_accel_id_table[] = {
-> >>  };
-> >>  MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
-> >>
-> >> -static int st_accel_i2c_probe(struct i2c_client *client,
-> >> -						const struct i2c_device_id *id)
-> >> +static int st_accel_i2c_probe(struct i2c_client *client)
-> >>  {
-> >>  	struct iio_dev *indio_dev;
-> >>  	struct st_sensor_data *adata;
-> >> @@ -156,14 +155,18 @@ static int st_accel_i2c_probe(struct i2c_client *client,
-> >>  					 client->name, sizeof(client->name));
-> >>  	} else if (ACPI_HANDLE(&client->dev)) {
-> >>  		ret = st_sensors_match_acpi_device(&client->dev);
-> >> -		if ((ret < 0) || (ret >= ST_ACCEL_MAX))
-> >> -			return -ENODEV;
-> >> -
-> >> -		strlcpy(client->name, st_accel_id_table[ret].name,
-> >> +		if ((ret >= 0) && (ret < ST_ACCEL_MAX))
-> >> +			strlcpy(client->name, st_accel_id_table[ret].name,
-> >>  				sizeof(client->name));
-> >> -	} else if (!id)
-> >> -		return -ENODEV;
-> >> +	}
-> >>
-> >> +	/*
-> >> +	 * If OF and ACPI enumeration failed, there could still be platform
-> >> +	 * information via fallback enumeration or explicit instantiation, so
-> >> +	 * check if id table has been matched via client->name.
-> >> +	 */
-> >> +	if (!client->name)
-> >> +		return -ENODEV;
-> >>
-> >>  	st_sensors_i2c_configure(indio_dev, client, adata);
-> >>
-> >> @@ -187,7 +190,7 @@ static struct i2c_driver st_accel_driver = {
-> >>  		.of_match_table = of_match_ptr(st_accel_of_match),
-> >>  		.acpi_match_table = ACPI_PTR(st_accel_acpi_match),
-> >>  	},
-> >> -	.probe = st_accel_i2c_probe,
-> >> +	.probe_new = st_accel_i2c_probe,
-> >>  	.remove = st_accel_i2c_remove,
-> >>  	.id_table = st_accel_id_table,
-> >>  };  
-> >
-> >  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> We've prototypes something using refcounts on the entires. It does
+> imply some locking which is potentially problematic, and we'll be
+> looking at options there long run, but it works... so far.
+> 
+> My worry is that it will fail if we ever get a mapping request (or
+> coherent allocation request) that spawns one of those giant pages
+> boundaries. At least our current implementation.
+> 
+> AFAIK, dma_alloc_coherent() is defined (Documentation/DMA-API-
+> HOWTO.txt) as always allocating to the next power-of-2 order, so we
+> should never have the problem unless we allocate a single chunk larger
+> than the IOMMU page size.
 
+(and even then it's not *that* much of a problem, since it comes down to 
+just finding n > 1 consecutive unused IOMMU entries for exclusive use by 
+that new chunk)
 
+> For dma_map_sg() however, if a request that has a single "entry"
+> spawning such a boundary, we need to ensure that the result mapping is
+> 2 contiguous "large" iommu pages as well.
+> 
+> However, that doesn't fit well with us re-using existing mappings since
+> they may already exist and either not be contiguous, or partially exist
+> with no free hole around them.
+> 
+> Now, we *could* possibly construe a way to solve this by detecting this
+> case and just allocating another "pair" (or set if we cross even more
+> pages) of IOMMU pages elsewhere, thus partially breaking our re-use
+> scheme.
+> 
+> But while doable, this introduce some serious complexity in the
+> implementation, which I would very much like to avoid.
+> 
+> So I was wondering if you guys thought that was ever likely to happen ?
+> Do you see reasonable cases where dma_map_sg() would be called with a
+> list in which a single entry crosses a 256M or 1G boundary ?
+
+For streaming mappings of buffers cobbled together out of any old CPU 
+pages (e.g. user memory), you may well happen to get two 
+physically-adjacent pages falling either side of an IOMMU boundary, 
+which comprise all or part of a single request - note that whilst it's 
+probably less likely than the scatterlist case, this could technically 
+happen for dma_map_{page, single}() calls too.
+
+Conceptually it looks pretty easy to extend the allocation constraints 
+to cope with that - even the pathological worst case would have an 
+absolute upper bound of 3 IOMMU entries for any one physical region - 
+but if in practice it's a case of mapping arbitrary CPU pages to 32-bit 
+DMA addresses having only 4 1GB slots to play with, I can't really see a 
+way to make that practical :(
+
+Maybe the best compromise would be some sort of hybrid scheme which 
+makes sure that one of the IOMMU entries always covers the SWIOTLB 
+buffer, and invokes software bouncing for the awkward cases.
+
+Robin.
