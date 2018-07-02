@@ -2,79 +2,117 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9733C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23939C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62ABC24DFC
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:14:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ABC24DFC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D0C94250E8
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:15:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UImFkxkz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C94250E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752646AbeGBNOL (ORCPT
+        id S1752288AbeGBNPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:14:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60098 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeGBNOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:14:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83FA618A;
-        Mon,  2 Jul 2018 06:14:03 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF6533F5AD;
-        Mon,  2 Jul 2018 06:14:00 -0700 (PDT)
-Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <f7715da8-73ea-28fb-9883-8d0c048e0792@arm.com>
-Date:   Mon, 2 Jul 2018 14:13:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 09:15:11 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44699 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751761AbeGBNPG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:15:06 -0400
+Received: by mail-ua0-f196.google.com with SMTP id v15-v6so10017968ual.11;
+        Mon, 02 Jul 2018 06:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cew5eadQLlZR92u21/oB4VMEfkUNLxZXnZ8DngIAUhc=;
+        b=UImFkxkzHUIU4WQ3hU6rFyxEKhsmURrRuTElJes+gXtCgb8zd1b8RDDzykbuQ0k1Dd
+         G4oBVKaOKM1RO+E3OCBiHU0ASGb/pLtUrDv8hdAxO3/UQcNL7H2rifWHKCjQBkOrOzs3
+         FEndnf/dH4ozopdeuqz+E/AmppyX4ceEW27Wp6bYc4/i2UPVk4eQYzpJVrpqQEWy5SLU
+         H8wfhRcQcibHFpfZriVri3r19WCdWL+LY+RvL2R4j27XiojNdZp9oMcZEDu5DavtDOv1
+         R0xGvztPRh52wpv80kAPBXQwRBRUR62BSaMkyS/erjESuxIwVg5vg0hKaXpWDK7yQqtp
+         sAYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cew5eadQLlZR92u21/oB4VMEfkUNLxZXnZ8DngIAUhc=;
+        b=dUvXVW9JcBT9+ZolgYEX4+ZXAHB6rSbBpu/gtJIcij0JDLQJGS8jUdrbeZYTWGW0LV
+         hgGTpxy5OaBzERHnqoxndRfUyYbuvbS/U1oKrPJ9VZMDZm/BmjKisM7nJkawUxJCMpLf
+         xM022mypsC9lDByJWtsbBGFxMR0j1s0eugB9nCeqp5SvXssH7aJQuc9zgLbb3ixSC+BE
+         nM51mGQUYB5BtXpF19tbPpCil073L9QPr0whVDz5O+d5X8b039tztn5r5Pbp82EiL3aN
+         ALCEB7mcFJInQxfP6FKmZSTAhLuxERVZe2s+SsjGvvhkKcnRh5aXpLcUr3R4EWgH+nxo
+         86eA==
+X-Gm-Message-State: APt69E3UH9SU5UKOS29s/lqv+aQxIz+EqLdCVW5kQ31tOFrB05NGdLV3
+        vLk8oNiFZosJC5e00SmMoucJdjsU9k3+uGnOkX8=
+X-Google-Smtp-Source: AAOMgpdDfZxgsmZB4IQFM5BfrY41nErkJQawsuIrKYnybs57oZPRbkbRMEIK0Lk63opaOzBhU8issd0URtNcRMP8b7k=
+X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr15673169uai.47.1530537305576;
+ Mon, 02 Jul 2018 06:15:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:15:04 -0700 (PDT)
+In-Reply-To: <20180630121024.18993-1-colin.king@canonical.com>
+References: <20180630121024.18993-1-colin.king@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 2 Jul 2018 16:15:04 +0300
+Message-ID: <CAHp75Vf8AAnmvdWsUPyRY+13vi43Ta=FiaVEhNwn1+QyN88K0A@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: dell-smbios-wmi: make function
+ dell_smbios_wmi_call static
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mario Limonciello <mario.limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/06/18 12:15, Suzuki K Poulose wrote:
-> Allow specifying the physical address size for a new VM via
-> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
-> us to finalise the stage2 page table format as early as possible
-> and hence perform the right checks on the memory slots without
-> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
-> of the type field and can encode more information in the future if
-> required. The IPA size is still capped at 40bits.
+On Sat, Jun 30, 2018 at 3:10 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The function dell_smbios_wmi_call is local to the source and does not
+> need to be in global scope, so make it static.
+>
+> Cleans up sparse warning:
+> symbol 'dell_smbios_wmi_call' was not declared. Should it be static?
+>
 
-Can't we relax this? There is no technical reason (AFAICS) not to allow
-going down to 36bit IPA if the user has requested it.
+Pushed to my review and testing queue, thanks!
 
-If we run on a 36bit IPA system, the default would fail. But if the user
-specified "please give me a 36bit IPA VM", we could satisfy that
-requirement and allow them to run their stupidly small guest!
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/platform/x86/dell-smbios-wmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+> index fbefedb1c172..88afe5651d24 100644
+> --- a/drivers/platform/x86/dell-smbios-wmi.c
+> +++ b/drivers/platform/x86/dell-smbios-wmi.c
+> @@ -82,7 +82,7 @@ static int run_smbios_call(struct wmi_device *wdev)
+>         return 0;
+>  }
+>
+> -int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
+> +static int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
+>  {
+>         struct wmi_smbios_priv *priv;
+>         size_t difference;
+> --
+> 2.17.1
+>
 
-Thanks,
 
-	M.
+
 -- 
-Jazz is not dead. It just smells funny...
+With Best Regards,
+Andy Shevchenko
