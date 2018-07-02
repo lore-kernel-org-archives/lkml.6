@@ -2,121 +2,81 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B292C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255A7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29C024563
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C29C024563
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id C44262536E
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44262536E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeGBQew (ORCPT
+        id S1752664AbeGBQhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:34:52 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:39426 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752508AbeGBQev (ORCPT
+        Mon, 2 Jul 2018 12:37:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35502 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeGBQhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:34:51 -0400
-Received: (qmail 3884 invoked by uid 2102); 2 Jul 2018 12:34:49 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 2 Jul 2018 12:34:49 -0400
-Date:   Mon, 2 Jul 2018 12:34:49 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb/host/pci-quirks: Only reset USB bus on NVIDIA devices
-In-Reply-To: <ad342918-1534-a499-ae25-63c8d8bff1d1@molgen.mpg.de>
-Message-ID: <Pine.LNX.4.44L0.1807021233400.1574-100000@iolanthe.rowland.org>
+        Mon, 2 Jul 2018 12:37:54 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fa1po-00059y-Cu; Mon, 02 Jul 2018 16:37:52 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/amd: remove redundant variable tag
+Date:   Mon,  2 Jul 2018 17:37:52 +0100
+Message-Id: <20180702163752.16418-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018, Paul Menzel wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Dear Alan,
-> 
-> 
-> Am 02.07.2018 um 18:03 schrieb Alan Stern:
-> > On Mon, 2 Jul 2018, Paul Menzel wrote:
-> 
-> >> Am 02.07.2018 um 17:45 schrieb Alan Stern:
-> >>> On Sun, 1 Jul 2018, Paul Menzel wrote:
-> >>>
-> >>>> Currently, on the AMD board Asus F2A85-M Pro there is a 100 ms delay as
-> >>>> the USB bus of each of the two OHCI PCI devices is reset. As a 50 ms
-> >>>> delay is done per the USB specification.
-> >>>>
-> >>>> Commit c6187597 (OHCI: final fix for NVIDIA problems (I hope))
-> >>>> unconditionally does the bus reset for
-> >>>>    all chipsets, while it was only doen for NVIDIA chipsets before.
-> >>>
-> >>> I don't follow this at all.  Prior to that commit, the bus reset (i.e.,
-> >>>
-> >>> 	writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
-> >>>
-> >>> ) was performed unconditionally for _all_ controllers.  (However, the
-> >>> 50-ms delay was used only for NVIDIA hardware.)  Following that commit,
-> >>> the reset is performed for all controllers, but only if the HCFS
-> >>> bitfield is nonzero.
-> >>>
-> >>>> As it should not be needed for non-NVIDIA chipsets, only do the reset
-> >>>> for Nvidia devices.
-> >>>
-> >>> Therefore this reasoning is wrong.
-> >>
-> >> True. Thank you for checking that.
-> >>
-> >>>> Tested on Asus F2A85-M PRO and ASRock E350M1. The USB keyboard works and
-> >>>> the LUKS passphrase can be entered.
-> >>>
-> >>> Unfortunately, there is a wide variety of OHCI controller hardware
-> >>> available.  Something that works on one or two controllers might not
-> >>> work on another.
-> >>
-> >> The problem is, that currently 100 ms sleep is over 10 % of the overall
-> >> execution time of the Linux kernel here. So I really like to not sleep
-> >> if it’s not needed.
-> > 
-> > It would be nice to execute the probes in parallel; that would reduce
-> > the total delay to 50 ms.  However, that is the subject of a separate
-> > discussion.
-> > 
-> >>> Besides, doesn't it seem like a bad idea to reset the controller while
-> >>> leaving devices on the USB bus in whatever state they happened to be?
-> >>
-> >> Yes, it’s probably not optimal.
-> >>
-> >> I wonder if the reset is needed, if the firmware has already initialized
-> >> the device.
-> > 
-> > The devices on the bus need to be reset, because the OS has no idea of
-> > what they are and what the firmware has them doing.
-> > 
-> > For example, the firmware may have assigned bus address 2 to a
-> > keyboard.  But the OS can initialize the devices in a different order,
-> > and it might want to assign bus address 2 to a USB drive.  Then you'd
-> > have two devices trying to use the same address at the same time, which
-> > would not be a good thing.
-> 
-> Understood.
-> 
-> So, what would be a way forward? Add a whitelist for boards or chipsets
-> not needing the 50 ms delay?
+Variable tag is being assigned but is never used hence it is
+redundant and can be removed.
 
-The 50-ms delay isn't for the board or the chipset; it is for the USB 
-devices that are plugged into the controller.  It is required by the 
-USB spec, so we can't get rid of it.
+Cleans up clang warning:
+warning: variable 'tag' set but not used [-Wunused-but-set-variable]
 
-Alan Stern
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/iommu/amd_iommu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 596b95c50051..c6aed1b088e9 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -547,7 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
+ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ {
+ 	struct device *dev = iommu->iommu.dev;
+-	int type, devid, pasid, flags, tag;
++	int type, devid, pasid, flags;
+ 	volatile u32 *event = __evt;
+ 	int count = 0;
+ 	u64 address;
+@@ -615,7 +615,6 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 	case EVENT_TYPE_INV_PPR_REQ:
+ 		pasid = ((event[0] >> 16) & 0xFFFF)
+ 			| ((event[1] << 6) & 0xF0000);
+-		tag = event[1] & 0x03FF;
+ 		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+-- 
+2.17.1
 
