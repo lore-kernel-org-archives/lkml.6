@@ -3,88 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087FDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF07C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC1D9208C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:24:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1D9208C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 842DD2528F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:27:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842DD2528F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeGBRYq (ORCPT
+        id S1752964AbeGBR1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:24:46 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:44634 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752254AbeGBRYp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:24:45 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3r6fys_1530552267;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3r6fys_1530552267)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 03 Jul 2018 01:24:35 +0800
-Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
-To:     Michal Hocko <mhocko@kernel.org>,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc:     willy@infradead.org, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
- <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
- <20180702121528.GM19043@dhcp22.suse.cz>
- <80406cbd-67f4-ca4c-cd54-aeb305579a72@linux.vnet.ibm.com>
- <20180702124558.GP19043@dhcp22.suse.cz>
- <e6f8d0e2-48c1-f610-c00b-d05d4bd0d9eb@linux.vnet.ibm.com>
- <20180702133733.GU19043@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <6fd4eb3d-ef66-7a37-4adb-05c22ac51d95@linux.alibaba.com>
-Date:   Mon, 2 Jul 2018 10:24:27 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Mon, 2 Jul 2018 13:27:30 -0400
+Received: from ms.lwn.net ([45.79.88.28]:47888 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752554AbeGBR10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 13:27:26 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 937E59B6;
+        Mon,  2 Jul 2018 17:27:24 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 11:27:23 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        devicetree@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@zh-kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-leds@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        James Morris <james.morris@microsoft.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, netdev@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-input@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-scsi@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>
+Subject: Re: [PATCH 0/9] Fix references for some missing documentation files
+Message-ID: <20180702112723.654d348c@lwn.net>
+In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
+References: <cover.1530005114.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-In-Reply-To: <20180702133733.GU19043@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 26 Jun 2018 06:49:02 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
+> Having nothing to do while waiting for my plane to arrive while
+> returning back from Japan, I ended by writing a small series of 
+> patches meant to reduce the number of bad Documentation/* 
+> links that are detected by:
+> 	./scripts/documentation-file-ref-check
 
-On 7/2/18 6:37 AM, Michal Hocko wrote:
-> On Mon 02-07-18 15:33:11, Laurent Dufour wrote:
->>
->> On 02/07/2018 14:45, Michal Hocko wrote:
->>> On Mon 02-07-18 14:26:09, Laurent Dufour wrote:
->>>> On 02/07/2018 14:15, Michal Hocko wrote:
-> [...]
->>>>> We already do have a model for that. Have a look at MMF_UNSTABLE.
->>>> MMF_UNSTABLE is a mm's flag, here this is a VMA's flag which is checked.
->>> Yeah, and we have the VMA ready for all places where we do check the
->>> flag. check_stable_address_space can be made to get vma rather than mm.
->> Yeah, this would have been more efficient to check that flag at the beginning
->> of the page fault handler rather than the end, but this way it will be easier
->> to handle the speculative page fault too ;)
-> The thing is that it doesn't really need to be called earlier. You are
-> not risking data corruption on file backed mappings.
-
-OK, I just think it could save a few cycles to check the flag earlier.
-
-If nobody think it is necessary, we definitely could re-use 
-check_stable_address_space(), just return VM_FAULT_SIGSEGV for VM_DEAD 
-vma, and check for both shared and non-shared.
+I've applied everything except the two networking patches, since I expect
+those to go through Dave's tree.
 
 Thanks,
-Yang
 
->
-
+jon
