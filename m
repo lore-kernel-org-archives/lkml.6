@@ -2,118 +2,115 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DA2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D05AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E47324530
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30BE025333
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:06:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RvzBalPg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E47324530
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mc/Lu9UG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BE025333
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754447AbeGBI7s (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:59:48 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42136 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753155AbeGBI7o (ORCPT
+        id S932853AbeGBJGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:06:25 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46778 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752766AbeGBJGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:59:44 -0400
-Received: by mail-lf0-f68.google.com with SMTP id u202-v6so11412540lff.9;
-        Mon, 02 Jul 2018 01:59:43 -0700 (PDT)
+        Mon, 2 Jul 2018 05:06:23 -0400
+Received: by mail-oi0-f67.google.com with SMTP id y207-v6so14974968oie.13;
+        Mon, 02 Jul 2018 02:06:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vCSjayYSk6fN6FqqdVaQnovAcn5HysKrlKo1HJ5JHkQ=;
-        b=RvzBalPgZmc8/c+vwBe3MXxizQ7Xeuw5rYqjGemr6go8YByNQ78jLy2bCXBiPtOFs7
-         yKJ/ZaJUAWISkrm4OPWVZekBvScZDDiWpNniMD8Dxa8a+3U/XkrinN7NK6p+/Dvj/6sS
-         +dsDYf2UoKzJOmGZ8qWTXZDaguixLzVy+WlyaB2AzaZBOycJNVV2N17pdw2NOkCov39J
-         WTJaWlgnbGOVblBUHOncbrReDZqn0a12LqUaHyu3H2RpqcbKhyk9fdaXuFIQyqV8D90z
-         D59L6zccSvG+HEnxqGTSLI98Th9l1wP0+WOuGFa7WsOzTQk6BwIG8BPBvD3NVPwtBNxH
-         547g==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=0WV5yKlSgdiZDxuC0JtM34KjQMNT2FcfEiT9EIyR6QI=;
+        b=mc/Lu9UGMNEJioh+jKVQlC2iejVehzXA/31/xtXFAn/R5JhZlv3Xll3IOpzaWjEdsO
+         o+m+L3UBGEbvGmzLLon2ietezvMPAR+Nzz7dUuXdbf6T5L1+HgoYXIcRF6dq59hPuzb9
+         hee9nsQM+vM0IUYel6jkEPzxKbJ2NgmM+yM9Ca3H9ez8RMEEXm14TvCd2ZACQcUkLTqv
+         1GLgXbIB7WimAGzUS2SACcuck/nUSyZVRpALTcXRZsQknNTL78/S8nCNPUGJ7JYgf+dn
+         ZdfsK7h4T0BB5SfcIHQwL2QXLVJBcxjJI/75Qq+Jsjp7+3dNDvxSn3ToqodSufPc20Ja
+         e0Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vCSjayYSk6fN6FqqdVaQnovAcn5HysKrlKo1HJ5JHkQ=;
-        b=GgN8mafMs/OIWjdNiidWhHcH9Pt9OEJLuWTxCjvhcSzkQsA3t93C/GQ+tADJ+R4j4b
-         +dr3qGPl2ZIO8cIOP8AobS8veYfrvmGEQRY1WcoKimCXlecoPlW0eAL608OqpMfSkREs
-         EqclW7gJt4La2PDs4C/alC/auc5/IYPLIZDmr+big35Kmv9Oed2wZoOP1/JlS+HjP8pR
-         Nx8bi8k/IJon0F836Ep4pOjICu0hTjjebgxVXer1x27W4nt9vUj/bKKsrHod3YC5ftAd
-         t58LNnA/Gh25TFI0XejnNuAkNrMtkvaePfeTBIlO/2mfTdJVYtnjAVxkcB8ILC8M3bsl
-         IbiA==
-X-Gm-Message-State: APt69E0KhGToiatSvlIgJYWeLaFpxFlctfcQJ3kyUJ0KynpvohcVNrGe
-        0zNK0NrWnSA2yBJZpcSTrKc=
-X-Google-Smtp-Source: AAOMgpclgmpKD6R4pYh51mBD6iDfSoNog+72GJxXfl5HNScBCcwPOhow+c3ctxCz4f6HVaJ6T5ocng==
-X-Received: by 2002:a19:c301:: with SMTP id t1-v6mr14181877lff.45.1530521982642;
-        Mon, 02 Jul 2018 01:59:42 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id y5-v6sm3059668lfy.94.2018.07.02.01.59.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 01:59:41 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fZugH-00085S-OW; Mon, 02 Jul 2018 10:59:33 +0200
-Date:   Mon, 2 Jul 2018 10:59:33 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Johan Hovold <johan@kernel.org>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH][next] gnss: make struct ubx_gserial_ops static
-Message-ID: <20180702085933.GG9802@localhost>
-References: <20180630112246.942-1-colin.king@canonical.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=0WV5yKlSgdiZDxuC0JtM34KjQMNT2FcfEiT9EIyR6QI=;
+        b=KU316VpaWAed3RUgj58a/A7AQ3byC8XRhYrtz0fsMIYS1QcwpgZQ/ENVTYxGvXExXi
+         y+dAMxO82w0b886BMeyWIMrGYYT8+ksWxxKZwkEk9Ajri8Zy/fQ1ddMGzVZMxMjt4UW3
+         ka31gNMuMz9RATVguZp67JnynhvJLWfbnve6jTuyjq+rZPdVC9eeR2Yjb2LhKsuLYQgf
+         2w1TWxkhmTOTiVXUSx2lGqpRQaHL5o/2J0JeMdDHQ+JQ3Ed2Hnrdnvf0IwmVZczricoM
+         N9N1sbGpubEOXB9cGWqy6DTKpXD0XDlCspID6iBebGgrL1UnU+qHPT0Q5inw3xK4kRuH
+         9M8Q==
+X-Gm-Message-State: APt69E0/Hc52llAO0WfMa8snGfBUxEZASt2mwrC+VMHGx1Xe9+xiMi8Y
+        3s1/h2TByI7e2i0S7HnU9sexIVfSk2zdFNCpA2Y=
+X-Google-Smtp-Source: AAOMgpdkUOOv/3zNsz3FjOTw1tMItNeN+/HTgbVGnrrEDG1glMCSJVJo7POg9+oN4lD5wZWnTFhbLuxlDfyEW7fJ03w=
+X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr7420940oib.116.1530522382808;
+ Mon, 02 Jul 2018 02:06:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180630112246.942-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:1427:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 02:06:22 -0700 (PDT)
+In-Reply-To: <1530289077-2444-1-git-send-email-sudeep.holla@arm.com>
+References: <1530289077-2444-1-git-send-email-sudeep.holla@arm.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 2 Jul 2018 11:06:22 +0200
+X-Google-Sender-Auth: Fu65Zn6-AlL7CfCjDeobe7-fSpc
+Message-ID: <CAJZ5v0gnspK3soa5j8iqU9QDM78MMBbz8YC9s7TOJ5Qwh7=mZg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI/PPTT: use ACPI ID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID
+ is set
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 12:22:46PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The structure ubx_gserial_ops is local to the source and does not need
-> to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> symbol 'ubx_gserial_ops' was not declared. Should it be static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-This was reported by the kbuild test robot and an automated RFC patch
-submitted was a while back.
-
-I prefer this man-generated one with a proper commit message, so:
-
-Acked-by: Johan Hovold <johan@kernel.org>
-
+On Fri, Jun 29, 2018 at 6:17 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> Currently we use the ACPI processor ID only for the leaf/processor nodes
+> as the specification states it must match the value of ACPI processor ID
+> field in the processor=E2=80=99s entry in the MADT.
+>
+> However, if a PPTT structure represents processors group, it match a
+> processor container UID in the namespace and ACPI_PPTT_ACPI_PROCESSOR_ID_=
+VALID
+> flag describe whether the ACPI processor ID is valid.
+>
+> Lets use UID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set to be
+> consistent instead of using table offset as it's currently done for non
+> leaf nodes.
+>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > ---
->  drivers/gnss/ubx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gnss/ubx.c b/drivers/gnss/ubx.c
-> index 902b6854b7db..12568aebb7f6 100644
-> --- a/drivers/gnss/ubx.c
-> +++ b/drivers/gnss/ubx.c
-> @@ -59,7 +59,7 @@ static int ubx_set_power(struct gnss_serial *gserial,
->  	return -EINVAL;
->  }
->  
-> -const struct gnss_serial_ops ubx_gserial_ops = {
-> +static const struct gnss_serial_ops ubx_gserial_ops = {
->  	.set_power = ubx_set_power,
->  };
+>  drivers/acpi/pptt.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> Hi,
+>
+> There's ongoing discussion on assigning ID based in OS using simple
+> counters. It can never be consistent with firmware's view. So if the
+> firmware provides valid UID for non-processors node, we must use it.
+
+OK
+
+Do you regard this as a fix for the recently merged PPTT material?  If
+so, I should apply it as a fix for 4.18.
 
 Thanks,
-Johan
+Rafael
