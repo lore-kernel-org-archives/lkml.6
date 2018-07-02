@@ -2,208 +2,121 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4DEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B82BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF1225D7D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF1225D7D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B8AB825DA6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lexmark.com header.i=@lexmark.com header.b="b/D69F9T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8AB825DA6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lexmark.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeGBNcI (ORCPT
+        id S1752312AbeGBNcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:32:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60520 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751535AbeGBNcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:32:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35AC280D;
-        Mon,  2 Jul 2018 06:32:06 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B7243F5AD;
-        Mon,  2 Jul 2018 06:32:03 -0700 (PDT)
-Subject: Re: [PATCH v3 16/20] kvm: arm64: Switch to per VM IPA limit
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-17-git-send-email-suzuki.poulose@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <98b1fa06-d026-52b2-09de-87ec1dfdbfb2@arm.com>
-Date:   Mon, 2 Jul 2018 14:32:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 09:32:45 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:45245 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752073AbeGBNci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:32:38 -0400
+Received: by mail-lj1-f170.google.com with SMTP id g3-v6so12580017ljk.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 06:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lexmark.com; s=lxk-google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=f1scTJqg+dwNDLC0NnHDWB9narjcM0q/MvkCTh7IFPE=;
+        b=b/D69F9T9OeRHyCMR7MVD4uuAqTJlcPQnJPmUctENipIhuq1JAGWACxksaPtXEV9zx
+         ppE9AevBingYJ+cWDWExpgnAdhX7xDPoxSAUgvnAwAJQraiaKgnv0dTZ89ofQ/K/huDx
+         WHAROC3Wi5RTPS4fiUpeaZRGcxPRlRojRd+KoQSQV4rlFKrbpbD13CEtJoCHifQ9Kvo/
+         5wTZAW/fndaFzEKzmvYUWHVFuHKt9fgGfMw1+zEqDxbDlEmvRrOtyCwpNfYNnXKdc/KX
+         HpfcTsytCupcVAzz4foPlHd9ykJweX6mbNOnGpXWoRlXY0WZx1hSZAZ5E8efu8XjT1KB
+         BBgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=f1scTJqg+dwNDLC0NnHDWB9narjcM0q/MvkCTh7IFPE=;
+        b=l7vXDNiKGBccr7qES+vN9lLqXT/kIV5dHAUQUnHuCQP0m8dXi14hWKCrzCp7JJPsuj
+         iIzMNeyOy1HBZczB3J6ZdUw5WL6UTSDMqx/GQG1o6DPx1QKW9TAaD5UkUIfZhreUDjxr
+         JbXyxwI5/eQZma7WBw/JgnluvI1EG3DCbVd6ilXuFVGmKjMixTl7dJZxRm+Pnp5ZE1qk
+         zsVVJ7UWNBZ67EybX89XVxNKgA0xy3BGoMyLeIllE1vd3TUoXiAje1vPwFbMsGm7l/02
+         LXwLc5YvU1RgBomxfqJ3MwBqsh/Ds1xuFt8UM1Xpjl6Jxc1WU6roCjReSFL31yAO22Yl
+         AmDw==
+X-Gm-Message-State: APt69E373SGC+U2ZW7+vCWOzIPrmLJYoZGO/uzYBPZUdkCul6eCfetKU
+        R0AUXfjRbVZlrgDOhez0iuZ8LwFQWOXlDwp+a5m3iw==
+X-Google-Smtp-Source: AAOMgpeAe4s81GYjmbEwFWrL8zVi4iJnOKG11O5RhYZX60Q6TynFQNTNYo6thDLF7CXSGMsd7+K/6y4adXWPl2OSRHE=
+X-Received: by 2002:a2e:5243:: with SMTP id g64-v6mr9071102ljb.144.1530538357263;
+ Mon, 02 Jul 2018 06:32:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-17-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:9a4e:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:31:56 -0700 (PDT)
+In-Reply-To: <20180702093243.GO112168@atomide.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+ <20180620102904.GC112168@atomide.com> <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+ <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com> <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+ <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com> <20180702093243.GO112168@atomide.com>
+From:   Samuel Morris <samorris@lexmark.com>
+Date:   Mon, 2 Jul 2018 09:31:56 -0400
+Message-ID: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Roger Quadros <rogerq@ti.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Tejun Heo <tj@kernel.org>, linux-omap@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
+        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/06/18 12:15, Suzuki K Poulose wrote:
-> Now that we can manage the stage2 page table per VM, switch the
-> configuration details to per VM instance. We keep track of the
-> IPA bits, number of page table levels and the VTCR bits (which
-> depends on the IPA and the number of levels). While at it, remove
-> unused pgd_lock field from kvm_arch for arm64.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/include/asm/kvm_host.h       | 14 ++++++++++++--
->  arch/arm64/include/asm/kvm_hyp.h        |  3 +--
->  arch/arm64/include/asm/kvm_mmu.h        | 20 ++++++++++++++++++--
->  arch/arm64/include/asm/stage2_pgtable.h |  1 -
->  virt/kvm/arm/mmu.c                      |  4 ++++
->  5 files changed, 35 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 328f472..9a15860 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -61,13 +61,23 @@ struct kvm_arch {
->  	u64    vmid_gen;
->  	u32    vmid;
->  
-> -	/* 1-level 2nd stage table and lock */
-> -	spinlock_t pgd_lock;
-> +	/* stage-2 page table */
->  	pgd_t *pgd;
->  
->  	/* VTTBR value associated with above pgd and vmid */
->  	u64    vttbr;
->  
-> +	/* Private bits of VTCR_EL2 for this VM */
-> +	u64    vtcr_private;
+On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
+> Hi,
+>
+> * Roger Quadros <rogerq@ti.com> [180621 14:56]:
+>> On 21/06/18 17:31, Samuel Morris wrote:
+>> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+>> >> +Rafael
+>> >>
+>> >> On 20/06/18 18:30, Samuel Morris wrote:
+>> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+>> >>>> Tony,
+>> >>>>
+>> >>>> On 20/06/18 13:29, Tony Lindgren wrote:
+>> >>>>> Hi,
+>> >>>>>
+>> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
+>> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
+>> >>>>>
+>> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
+>> >>>>> hotplug to save power").
+>> >>>>>
+>> >>>>> Reverting the patch makes things work again. Any ideas what
+>> >>>>> might be going wrong here? Things clearly idle but then there
+>> >>>>> seems to be some register access with clocks disabled.
+>
+> So this issue is still happening as of next-20180702. Can you guys
+> please revert the commit above while working on a better solution?
 
-As I said in another email, this should become a full VTCR_EL2 copy.
+That's fine with me. I'm not very familiar with the process here, does
+this require anything on my end? And would that require the
+accompanying patch to be reverted: "ata: ahci: rpm_put port on
+port_stop to match rpm_get in port_start"? There shouldn't be any
+problem leaving that one in, but I just want to know before submitting
+my next patch set.
 
-> +	/* Size of the PA size for this guest */
-> +	u8     phys_shift;
-> +	/*
-> +	 * Number of levels in page table. We could always calculate
-> +	 * it from phys_shift above. We cache it for faster switches
-> +	 * in stage2 page table helpers.
-> +	 */
-> +	u8     s2_levels;
-
-And these two fields feel like they should be derived from the VTCR
-itself, instead of being there on their own. Any chance you could look
-into this?
-
-> +
->  	/* The last vcpu id that ran on each physical CPU */
->  	int __percpu *last_vcpu_ran;
->  
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-> index 3e8052d1..699f678 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -166,8 +166,7 @@ static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
->  	u64 vtcr = read_sysreg(vtcr_el2);
->  
->  	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
-> -	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
-> -		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
-> +	vtcr |= kvm->arch.vtcr_private;
->  	write_sysreg(vtcr, vtcr_el2);
->  	write_sysreg(kvm->arch.vttbr, vttbr_el2);
->  }
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index f3fb05a3..a291cdc 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -143,9 +143,10 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
->   */
->  #define KVM_PHYS_SHIFT	(40)
->  
-> -#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
-> +#define kvm_phys_shift(kvm)		(kvm->arch.phys_shift)
->  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
->  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
-> +#define kvm_stage2_levels(kvm)		(kvm->arch.s2_levels)
->  
->  static inline bool kvm_page_empty(void *ptr)
->  {
-> @@ -528,6 +529,18 @@ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
->  
->  static inline void *stage2_alloc_pgd(struct kvm *kvm)
->  {
-> +	u32 ipa, lvls;
-> +
-> +	/*
-> +	 * Stage2 page table can support concatenation of (upto 16) tables
-> +	 * at the entry level, thereby reducing the number of levels.
-> +	 */
-> +	ipa = kvm_phys_shift(kvm);
-> +	lvls = stage2_pt_levels(ipa);
-> +
-> +	kvm->arch.s2_levels = lvls;
-> +	kvm->arch.vtcr_private = VTCR_EL2_SL0(lvls) | TCR_T0SZ(ipa);
-> +
->  	return alloc_pages_exact(stage2_pgd_size(kvm),
->  				 GFP_KERNEL | __GFP_ZERO);
->  }
-> @@ -537,7 +550,10 @@ static inline u32 kvm_get_ipa_limit(void)
->  	return KVM_PHYS_SHIFT;
->  }
->  
-> -static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
-> +static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift)
-> +{
-> +	kvm->arch.phys_shift = ipa_shift;
-> +}
->  
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ARM64_KVM_MMU_H__ */
-> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
-> index ffc37cc..91d7936 100644
-> --- a/arch/arm64/include/asm/stage2_pgtable.h
-> +++ b/arch/arm64/include/asm/stage2_pgtable.h
-> @@ -65,7 +65,6 @@
->  #define __s2_pgd_ptrs(pa, lvls)	(1 << ((pa) - pt_levels_pgdir_shift((lvls))))
->  #define __s2_pgd_size(pa, lvls)	(__s2_pgd_ptrs((pa), (lvls)) * sizeof(pgd_t))
->  
-> -#define kvm_stage2_levels(kvm)		stage2_pt_levels(kvm_phys_shift(kvm))
->  #define stage2_pgdir_shift(kvm)	\
->  		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
->  #define stage2_pgdir_size(kvm)		(_AC(1, UL) << stage2_pgdir_shift((kvm)))
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index a339e00..d7822e1 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -867,6 +867,10 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
->  		return -EINVAL;
->  	}
->  
-> +	/* Make sure we have the stage2 configured for this VM */
-> +	if (WARN_ON(!kvm_phys_shift(kvm)))
-
-Can this be triggered from userspace?
-
-> +		return -EINVAL;
-> +
->  	/* Allocate the HW PGD, making sure that each page gets its own refcount */
->  	pgd = stage2_alloc_pgd(kvm);
->  	if (!pgd)
-> 
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>
+> Regards,
+>
+> Tony
