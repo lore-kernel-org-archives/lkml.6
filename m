@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 294F1C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD887C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16D725283
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16D725283
+	by mail.kernel.org (Postfix) with ESMTP id 8410A25290
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8410A25290
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753808AbeGBWAl (ORCPT
+        id S1753816AbeGBWBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:00:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40228 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753674AbeGBWAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:00:10 -0400
+        Mon, 2 Jul 2018 18:01:01 -0400
+Received: from foss.arm.com ([217.140.101.70]:40220 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753636AbeGBWAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 18:00:07 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E92DE1688;
-        Mon,  2 Jul 2018 15:00:09 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BADDB1650;
+        Mon,  2 Jul 2018 15:00:06 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 95A1F3F2EA;
-        Mon,  2 Jul 2018 15:00:08 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 674073F2EA;
+        Mon,  2 Jul 2018 15:00:05 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
         will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v4 5/7] arm64: perf: Clean up armv8pmu_select_counter
-Date:   Mon,  2 Jul 2018 22:59:46 +0100
-Message-Id: <1530568788-26458-6-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v4 3/7] arm_pmu: Add support for 64bit event counters
+Date:   Mon,  2 Jul 2018 22:59:44 +0100
+Message-Id: <1530568788-26458-4-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530568788-26458-1-git-send-email-suzuki.poulose@arm.com>
 References: <1530568788-26458-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,84 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-armv8pmu_select_counter always returns the passed idx. So
-let us make that void and get rid of the pointless checks.
+Each PMU has a set of 32bit event counters. But in some
+special cases, the events could be counted using counters
+which are effectively 64bit wide.
 
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
+e.g, Arm V8 PMUv3 has a 64 bit cycle counter which can count
+only the CPU cycles. Also, the PMU can chain the event counters
+to effectively count as a 64bit counter.
+
+Add support for tracking the events that uses 64bit counters.
+This only affects the periods set for each counter in the core
+driver.
+
 Cc: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/perf_event.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+Changes since v3:
+ - Replace ternary operator with if..else for max_period
+ - Added Acked-by from Mark R
+---
+ drivers/perf/arm_pmu.c       | 16 ++++++++++------
+ include/linux/perf/arm_pmu.h |  6 ++++++
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index ac66851..bc014af 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -503,13 +503,17 @@ static inline int armv8pmu_counter_has_overflowed(u32 pmnc, int idx)
- 	return pmnc & BIT(ARMV8_IDX_TO_COUNTER(idx));
- }
+diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+index 6ddc00d..8cad6b5 100644
+--- a/drivers/perf/arm_pmu.c
++++ b/drivers/perf/arm_pmu.c
+@@ -28,9 +28,12 @@
+ static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+ static DEFINE_PER_CPU(int, cpu_irq);
  
--static inline int armv8pmu_select_counter(int idx)
-+static inline void armv8pmu_select_counter(int idx)
+-static inline u64 arm_pmu_max_period(void)
++static inline u64 arm_pmu_event_max_period(struct perf_event *event)
  {
- 	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
- 	write_sysreg(counter, pmselr_el0);
- 	isb();
-+}
- 
--	return idx;
-+static inline u32 armv8pmu_read_evcntr(int idx)
-+{
-+	armv8pmu_select_counter(idx);
-+	return read_sysreg(pmxevcntr_el0);
- }
- 
- static inline u64 armv8pmu_read_counter(struct perf_event *event)
-@@ -524,12 +528,18 @@ static inline u64 armv8pmu_read_counter(struct perf_event *event)
- 			smp_processor_id(), idx);
- 	else if (idx == ARMV8_IDX_CYCLE_COUNTER)
- 		value = read_sysreg(pmccntr_el0);
--	else if (armv8pmu_select_counter(idx) == idx)
--		value = read_sysreg(pmxevcntr_el0);
+-	return (1ULL << 32) - 1;
++	if (event->hw.flags & ARMPMU_EVT_64BIT)
++		return GENMASK_ULL(63, 0);
 +	else
-+		value = armv8pmu_read_evcntr(idx);
- 
- 	return value;
++		return GENMASK_ULL(31, 0);
  }
  
-+static inline void armv8pmu_write_evcntr(int idx, u32 value)
-+{
-+	armv8pmu_select_counter(idx);
-+	write_sysreg(value, pmxevcntr_el0);
-+}
-+
- static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
-@@ -547,16 +557,15 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
+ static int
+@@ -122,7 +125,7 @@ int armpmu_event_set_period(struct perf_event *event)
+ 	u64 max_period;
+ 	int ret = 0;
+ 
+-	max_period = arm_pmu_max_period();
++	max_period = arm_pmu_event_max_period(event);
+ 	if (unlikely(left <= -period)) {
+ 		left = period;
+ 		local64_set(&hwc->period_left, left);
+@@ -148,7 +151,7 @@ int armpmu_event_set_period(struct perf_event *event)
+ 
+ 	local64_set(&hwc->prev_count, (u64)-left);
+ 
+-	armpmu->write_counter(event, (u64)(-left) & 0xffffffff);
++	armpmu->write_counter(event, (u64)(-left) & max_period);
+ 
+ 	perf_event_update_userpage(event);
+ 
+@@ -160,7 +163,7 @@ u64 armpmu_event_update(struct perf_event *event)
+ 	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	u64 delta, prev_raw_count, new_raw_count;
+-	u64 max_period = arm_pmu_max_period();
++	u64 max_period = arm_pmu_event_max_period(event);
+ 
+ again:
+ 	prev_raw_count = local64_read(&hwc->prev_count);
+@@ -368,6 +371,7 @@ __hw_perf_event_init(struct perf_event *event)
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int mapping;
+ 
++	hwc->flags = 0;
+ 	mapping = armpmu->map_event(event);
+ 
+ 	if (mapping < 0) {
+@@ -410,7 +414,7 @@ __hw_perf_event_init(struct perf_event *event)
+ 		 * is far less likely to overtake the previous one unless
+ 		 * you have some serious IRQ latency issues.
  		 */
- 		value |= 0xffffffff00000000ULL;
- 		write_sysreg(value, pmccntr_el0);
--	} else if (armv8pmu_select_counter(idx) == idx)
--		write_sysreg(value, pmxevcntr_el0);
-+	} else
-+		armv8pmu_write_evcntr(idx, value);
- }
+-		hwc->sample_period  = arm_pmu_max_period() >> 1;
++		hwc->sample_period  = arm_pmu_event_max_period(event) >> 1;
+ 		hwc->last_period    = hwc->sample_period;
+ 		local64_set(&hwc->period_left, hwc->sample_period);
+ 	}
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index f7126a2..10f92e1 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -25,6 +25,12 @@
+  */
+ #define ARMPMU_MAX_HWEVENTS		32
  
- static inline void armv8pmu_write_evtype(int idx, u32 val)
- {
--	if (armv8pmu_select_counter(idx) == idx) {
--		val &= ARMV8_PMU_EVTYPE_MASK;
--		write_sysreg(val, pmxevtyper_el0);
--	}
-+	armv8pmu_select_counter(idx);
-+	val &= ARMV8_PMU_EVTYPE_MASK;
-+	write_sysreg(val, pmxevtyper_el0);
- }
- 
- static inline int armv8pmu_enable_counter(int idx)
++/*
++ * ARM PMU hw_event flags
++ */
++/* Event uses a 64bit counter */
++#define ARMPMU_EVT_64BIT		1
++
+ #define HW_OP_UNSUPPORTED		0xFFFF
+ #define C(_x)				PERF_COUNT_HW_CACHE_##_x
+ #define CACHE_OP_UNSUPPORTED		0xFFFF
 -- 
 2.7.4
 
