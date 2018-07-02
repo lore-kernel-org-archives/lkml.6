@@ -3,94 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12A8C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B610EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61D3E24A21
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D74C24581
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JcM+KmJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D3E24A21
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iDT+GI6L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D74C24581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933719AbeGBL6s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:58:48 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45776 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932864AbeGBL6p (ORCPT
+        id S933856AbeGBL7G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:59:06 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37718 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933061AbeGBL7D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:58:45 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w62BvSmR066200;
-        Mon, 2 Jul 2018 06:57:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530532648;
-        bh=opDWHjNLQhyqxkt9ST4jiK+IUzXpT1PNbj05R97NJJM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JcM+KmJRXDBAJskCO0B7QMWiSsjvcoGtrd4LD4b5s3eDlFIB3ROekwk8vhxVYr8ox
-         6D/dz0YMU9ByBrF+xqgijFZKHjneQIJhQdKG70Zzm/BMibWLZgrQVnLXfSYBEpSbqq
-         QEIcdPAv8POSvtxgKB/yXfLdOBlCaO/U7/A8nMpo=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62BvSTV005305;
-        Mon, 2 Jul 2018 06:57:28 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 2 Jul
- 2018 06:57:27 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 2 Jul 2018 06:57:27 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62BvLbU015369;
-        Mon, 2 Jul 2018 06:57:22 -0500
-Subject: Re: [PATCH v7 3/4] ARM: davinci: dts: make psc0 a reset provider
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
+        Mon, 2 Jul 2018 07:59:03 -0400
+Received: by mail-it0-f65.google.com with SMTP id p17-v6so11633182itc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 04:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=m9535BQyrQbAOIUzmxsuUqQRjrPd9QU7DBbff/NlDEk=;
+        b=iDT+GI6LLUvgmgedLT8pD8BNB0pD6unk53y7RUubnrBzLWBjHQ3G8SMGFk47a8pAsl
+         qs6+aA43fHeiDtRy4xlPcuLvE7+5sa/1xoeFsJAn48q9rKXSOPaNgiNflpDa9udAvfeL
+         rFGHGrSVxPZbqX5Ly7AQUghZyDedFcz+Qh6sS4Qvs9nhrFpV771gz5PHnHhCBMZRmsDB
+         X6hOeV6S9tAwdNr3yHyCyKUdj7OShSVFEPPtxGC0GLkuqm8jfI87uj5bpalUzO0TL6jN
+         bTI+9XBQygjBHjrCvsM6eJz+uRpkEzrAL1rOA9BQp6OchmWpsvAWIz6f0Ti+hegId/ls
+         zptQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=m9535BQyrQbAOIUzmxsuUqQRjrPd9QU7DBbff/NlDEk=;
+        b=MrYSNnDZXsaIdme6qNq61kNaoJX+AoKf9wAFpJYAicUyECVpGT2+OoTsX44PyvMKqb
+         6P9fj6Qhr5bNAaK3oS8+G3sh4QQh2HP8aY0mt8oc6C2tNhs46QZ8S/FahreZ57rIJhTt
+         SanmqSllBtY9I/QysmzZb8H7j56tQTtX19OP1JfjlKGLcBRbtv1CPO3iDnCpPFDK73xI
+         jSfFPcUHtFDbmMSNTGNki3wdksiQjYUEcufhS+MQOBMuNSw4vJfTvUUH7HHo5VFhS3Pp
+         eqnhfSttiggB3mLqN+pFIr9DywBgQq5aCD2uCuw+bu9RBJkBC0QiWQh4rDbiquhMo2dH
+         HAow==
+X-Gm-Message-State: APt69E1S3hovizQUf6uJdGFhBSKHM8I3ok4yBH9pEb/Ncuxy/o2jsdnT
+        56W1C9Pk0B8au28SUNBnc9AV50JGeddQ5Ab84YuPeg==
+X-Google-Smtp-Source: AAOMgpeWoCZXnV02mJCjLStbYy6aGw8eAvTl599/Bt5Bx/gDgxWB612yXk3yMHjDnpdTlNY+xiFJbJoJz8lohxD/I90=
+X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr5601916itg.141.1530532742492;
+ Mon, 02 Jul 2018 04:59:02 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 04:59:02 -0700 (PDT)
+In-Reply-To: <1530522740-2798-1-git-send-email-alanx.chiang@intel.com>
+References: <1530522740-2798-1-git-send-email-alanx.chiang@intel.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 2 Jul 2018 13:59:02 +0200
+Message-ID: <CAMRc=MfFH7EnyAXyBK+sssjyYoz9LhNDTkzWRsHBsPcDV7Ecig@mail.gmail.com>
+Subject: Re: [RESEND PATCH v4 0/2] Add a property in at24.c
+To:     alanx.chiang@intel.com
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>, andy.yeh@intel.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        andriy.shevchenko@intel.com,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        tfiga@chromium.org, jcliang@chromium.org,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <20180621073706.22812-4-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <b56077f5-c8ef-6c19-7b2e-c82eec23d127@ti.com>
-Date:   Mon, 2 Jul 2018 17:27:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180621073706.22812-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The psc driver registers with the reset framework as a provider. Add
-> the #reset-cells property to the psc0 node.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
+2018-07-02 11:12 GMT+02:00  <alanx.chiang@intel.com>:
+> From: Alan Chiang <alanx.chiang@intel.com>
+>
+> This RESEND PATCH only adds the Acked-by and Reviewed-by,
+> no other patch for the codes.
+>
 
-Applied to v4.19/dt branch of my tree.
+Please don't do this. We're waiting for Rob's Acked-by and I will
+collect all the tags anyway. Don't resend unless there are changes to
+patches.
 
-Thanks,
-Sekhar
+Best regards,
+Bartosz Golaszewski
+
+> In at24.c, it uses 8-bit addressing by default. In this patch,
+> add a property address-width that provides a flexible method to
+> pass the information to the driver.
+>
+> Alan Chiang (2):
+>   dt-bindings: at24: Add address-width property
+>   eeprom: at24: Add support for address-width property
+>
+>  Documentation/devicetree/bindings/eeprom/at24.txt |  2 ++
+>  drivers/misc/eeprom/at24.c                        | 17 +++++++++++++++++
+>  2 files changed, 19 insertions(+)
+>
+> --
+> 2.7.4
+>
