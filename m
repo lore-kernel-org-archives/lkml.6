@@ -2,132 +2,98 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F04C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8CAC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58880253C6
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:11:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58880253C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E3FD225469
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3FD225469
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752554AbeGBQLR (ORCPT
+        id S1752456AbeGBQMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:11:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752185AbeGBQLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:11:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA28B81A4EAE;
-        Mon,  2 Jul 2018 16:11:15 +0000 (UTC)
-Received: from gondolin (ovpn-117-51.ams2.redhat.com [10.36.117.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3401C2166B5D;
-        Mon,  2 Jul 2018 16:11:11 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 18:11:08 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
- virtualization
-Message-ID: <20180702181108.2c721a86.cohuck@redhat.com>
-In-Reply-To: <d1eb3115-cc3c-cc4f-b683-1a660aa0c6c9@linux.ibm.com>
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
-        <276b5ae7-7f27-faae-1e5a-0d4c084139e9@linux.ibm.com>
-        <20180702174103.5d1ce603.cohuck@redhat.com>
-        <d1eb3115-cc3c-cc4f-b683-1a660aa0c6c9@linux.ibm.com>
-Organization: Red Hat GmbH
+        Mon, 2 Jul 2018 12:12:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60012 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeGBQMc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 12:12:32 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04B88E65;
+        Mon,  2 Jul 2018 16:12:31 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 18:12:29 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     airlied@linux.ie, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] char: agp: Change return type to vm_fault_t
+Message-ID: <20180702161229.GC11874@kroah.com>
+References: <20180521181704.GA19646@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZdb5+32CvvU_4Pmb1u-d15-iAFb3ab0ftBLP95257Z-Q@mail.gmail.com>
+ <CAFqt6zYX-BsGsTHzEzWHWTLGA=7VtSMWYy7w8dBx+hTzxyhyfw@mail.gmail.com>
+ <CAFqt6zYKOaieNEQE3TrXLoh9uXwcWH496EyuT_Tuyf8nZ1zd=w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 16:11:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 16:11:15 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zYKOaieNEQE3TrXLoh9uXwcWH496EyuT_Tuyf8nZ1zd=w@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 11:54:28 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-
-> On 07/02/2018 11:41 AM, Cornelia Huck wrote:
-> > On Mon, 2 Jul 2018 11:37:11 -0400
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >  
-> >> On 07/02/2018 10:38 AM, Christian Borntraeger wrote:  
-> >>> On 06/29/2018 11:11 PM, Tony Krowiak wrote:  
-> >>>> Introduces a new CPU model feature and two CPU model
-> >>>> facilities to support AP virtualization for KVM guests.
-> >>>>
-> >>>> CPU model feature:
-> >>>>
-> >>>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-> >>>> AP instructions are available on the guest. This
-> >>>> feature will be enabled by the kernel only if the AP
-> >>>> instructions are installed on the linux host. This feature
-> >>>> must be specifically turned on for the KVM guest from
-> >>>> userspace to use the VFIO AP device driver for guest
-> >>>> access to AP devices.
-> >>>>
-> >>>> CPU model facilities:
-> >>>>
-> >>>> 1. AP Query Configuration Information (QCI) facility is installed.
-> >>>>
-> >>>>      This is indicated by setting facilities bit 12 for
-> >>>>      the guest. The kernel will not enable this facility
-> >>>>      for the guest if it is not set on the host. This facility
-> >>>>      must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
-> >>>>      feature is not installed.
-> >>>>
-> >>>>      If this facility is not set for the KVM guest, then only
-> >>>>      APQNs with an APQI less than 16 will be available to the
-> >>>>      guest regardless of the guest's matrix configuration. This
-> >>>>      is a limitation of the AP bus running on the guest.
-> >>>>
-> >>>> 2. AP Facilities Test facility (APFT) is installed.
-> >>>>
-> >>>>      This is indicated by setting facilities bit 15 for
-> >>>>      the guest. The kernel will not enable this facility for
-> >>>>      the guest if it is not set on the host. This facility
-> >>>>      must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
-> >>>>      feature is not installed.
-> >>>>
-> >>>>      If this facility is not set for the KVM guest, then no
-> >>>>      AP devices will be available to the guest regardless of
-> >>>>      the guest's matrix configuration. This is a limitation
-> >>>>      of the AP bus running under the guest.
-> >>>>
-> >>>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> >>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> >>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>  
-> >>> I think it probably should be at the end of the series, other than that its good.  
-> >> If I move this to the end of the series, the very next patch checks the
+On Mon, Jul 02, 2018 at 09:33:19PM +0530, Souptick Joarder wrote:
+> On Mon, Jun 18, 2018 at 5:07 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > On Thu, May 31, 2018 at 10:38 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >> On Mon, May 21, 2018 at 11:47 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >>> Use new return type vm_fault_t for fault handler. For now,
+> >>> this is just documenting that the function returns a
+> >>> VM_FAULT value rather than an errno. Once all instances are
+> >>> converted, vm_fault_t will become a distinct type.
+> >>>
+> >>> Ref-> commit 1c8f422059ae ("mm: change return type to
+> >>> vm_fault_t") was added in 4.17-rc1 to introduce the new
+> >>> typedef vm_fault_t. Currently we are making change to all
+> >>> drivers to return vm_fault_t for page fault handlers. As
+> >>> part of that char/agp driver is also getting changed to
+> >>> return vm_fault_t type from fault handler.
+> >>>
+> >>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> >>> ---
+> >>>  drivers/char/agp/alpha-agp.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/char/agp/alpha-agp.c b/drivers/char/agp/alpha-agp.c
+> >>> index 53fe633..c9bf2c2 100644
+> >>> --- a/drivers/char/agp/alpha-agp.c
+> >>> +++ b/drivers/char/agp/alpha-agp.c
+> >>> @@ -11,7 +11,7 @@
+> >>>
+> >>>  #include "agp.h"
+> >>>
+> >>> -static int alpha_core_agp_vm_fault(struct vm_fault *vmf)
+> >>> +static vm_fault_t alpha_core_agp_vm_fault(struct vm_fault *vmf)
+> >>>  {
+> >>>         alpha_agp_info *agp = agp_bridge->dev_private_data;
+> >>>         dma_addr_t dma_addr;
+> >>> --
+> >>> 1.9.1
+> >>>
 > >>
-> >> KVM_S390_VM_CPU_FEAT_AP feature?  
-> > Introduce it here, offer it only with the last patch?  
+> >> Any comment for this patch ?
+> >
+> > Any further comment on this patch ?
 > 
-> I apologize, but I don't know what you mean by this. Are you suggesting 
-> this patch
-> should only include the #define for KVM_S390_VM_CPU_FEAT_AP?
+> Greg, Can we get this patch in queue for 4.19 ?
 
-Yes, just introduce the definition here (so code later in the series
-can refer to it) and flip the switch (offer the bit) as the final
-patch.
+I am not the agp maintainer, am I?  That would be David...
+
+thanks,
+
+greg k-h
