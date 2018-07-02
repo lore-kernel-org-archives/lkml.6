@@ -2,154 +2,110 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64223C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB14BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACA8240EB
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACA8240EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8772123E49
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:54:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMDdgydg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8772123E49
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeGBNxm (ORCPT
+        id S1752641AbeGBNyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:53:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752445AbeGBNxj (ORCPT
+        Mon, 2 Jul 2018 09:54:09 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45063 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeGBNyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:53:39 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62DnmGC004815
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 09:53:39 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyjaxya43-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 09:53:38 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Mon, 2 Jul 2018 14:53:36 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 14:53:33 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62DrWuD45154532
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 13:53:32 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F1EA11C054;
-        Mon,  2 Jul 2018 14:53:15 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55C9E11C05C;
-        Mon,  2 Jul 2018 14:53:14 +0100 (BST)
-Received: from oc3836556865.ibm.com (unknown [9.152.224.39])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 14:53:14 +0100 (BST)
-Subject: Re: [PATCH v6 07/21] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-8-git-send-email-akrowiak@linux.vnet.ibm.com>
-From:   Halil Pasic <pasic@linux.ibm.com>
-Date:   Mon, 2 Jul 2018 15:53:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 09:54:07 -0400
+Received: by mail-oi0-f67.google.com with SMTP id m2-v6so8564762oim.12;
+        Mon, 02 Jul 2018 06:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=M8l+uad6sZO1dUMfQdDqB5Vk+4j0+qikrl1pzFsBPv8=;
+        b=ZMDdgydgJ32l2xSrGpP+CLdLEDyIUrwup6DTWoUjxVAAS8wQW6/3DS09WCHi5lH66p
+         j09FT1eV6I37zjGsKgCDgk8E+ogHzXtsRYL7l66LofU57fxYGJH8xnWRpLy6t7CwfNc4
+         z7a/5otVmEuFb0TfIHjHppqjjw3W8CyeanHR9nY+UxI041bU70+yFCzioZgeKUENJtm7
+         v/ipUQawLnBlzFpleAQhUNBOtSlU1qjJup1iZd34Ya5Am5LJ/ASPjUs8CetXIV7Uj5oU
+         Z599aS7/BpbBSoI6EerIGb46xyB6MLffovq0gGR9vWLK0XWMHxXgAW0KfVG+0zBzMOFV
+         3NuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=M8l+uad6sZO1dUMfQdDqB5Vk+4j0+qikrl1pzFsBPv8=;
+        b=IOlVYHp93KXesxexFmNy94+yQgNi1SzQwHeBR/SS9L2vsd61Jcs4ZBLMrjOGKGK/jF
+         90cIZZMKfJy43Bq84h35G5NKfylvHhxEBYKJeEpoqOd9/vnnz4gXwYLokm8emye3N4e9
+         2Nt/PHoqfRJIfQ7QoAe746m64hjYC3kkE1nrbqEhCOlwHdYlid2uG1ssLl3UasWK7a2Y
+         O2m+CnsN5SOb8w50mn1/khhcSh9wUFlUiPMj3ZPtFgXPmJUEaWTl0e7IGWOfWZ8wTPZR
+         VCnrQ4LTOH0uvTh55aqgYNOTsoCfK1BJx7AKLEwm3s9JjLOK9Gl4k0wv1BY/Wde/8zud
+         ekmQ==
+X-Gm-Message-State: APt69E2IV0yx/JROzk8BSIDMchnMUgZ64n07anvFg0CAoHGMQvkog3mg
+        43YATiNYrdLZT3YWwWNoHIfW0MCjKnGIiD323Uc=
+X-Google-Smtp-Source: AAOMgpfH1qsnN/oijlT54zzVcZtvOVcJsjsnu14IpNvD+o0JmkxOnIywpIUnttbdAvCkqml84cHV1nP/7CezzXsFUv4=
+X-Received: by 2002:aca:b641:: with SMTP id g62-v6mr4770293oif.71.1530539646948;
+ Mon, 02 Jul 2018 06:54:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530306683-7270-8-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070213-4275-0000-0000-0000029445CD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070213-4276-0000-0000-0000379BC008
-Message-Id: <f4fdea7d-1c4d-bb6e-1dd2-27e441dc9837@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=831 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020160
+Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:54:06 -0700 (PDT)
+In-Reply-To: <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+References: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com> <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 2 Jul 2018 10:54:06 -0300
+Message-ID: <CAOMZO5Bw8u_rkY9iow=ypDvG4+9OE77b8hDneOxFHxNO54m9Aw@mail.gmail.com>
+Subject: Re: [PATCH] bindings: add clocks optional binding for imx gpio
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 2, 2018 at 10:45 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Jun 29, 2018 at 5:34 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+>
+>> Some i.MX SoCs have GPIO clock gate in CCM, accessing
+>> GPIO registers needs to enable GPIO clock gate first,
+>> i.MX GPIO driver will enable clock gate if there is
+>> clock property in GPIO node of dtb, add optional property
+>> to i.MX GPIO binding doc.
+>>
+>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>
+> Make sense since the gpio-mxc driver already supports this :)
+>
+>> +Optional properties:
+>> +- clocks: the clocks used by gpio bank
+>
+> Should the text be "the clock for clocking the GPIO silicon"
+> I guess that is what it is. And singularis?
+>
+> Does it hurt to give the clock a name? Like the common
+> "pclk" for peripheral clock or something similar that other
+> i.MX silicon uses?
+>
+> Fabio: can we have your ACK on this too.
 
+In case a respin will be made for this one I would suggest to add the
+name of the SoCs that need to pass the GPIO clock like imx6ul, imx6sll
+in the commit log.
 
-On 06/29/2018 11:11 PM, Tony Krowiak wrote:
-> Introduces a new AP device driver. This device driver
-> is built on the VFIO mediated device framework. The framework
-> provides sysfs interfaces that facilitate passthrough
-> access by guests to devices installed on the linux host.
-> 
-> The VFIO AP device driver will serve two purposes:
-> 
-> 1. Provide the interfaces to reserve AP devices for exclusive
->     use by KVM guests. This is accomplished by unbinding the
->     devices to be reserved for guest usage from the default AP
->     device driver and binding them to the VFIO AP device driver.
-> 
-> 2. Implements the functions, callbacks and sysfs attribute
->     interfaces required to create one or more VFIO mediated
->     devices each of which will be used to configure the AP
->     matrix for a guest and serve as a file descriptor
->     for facilitating communication between QEMU and the
->     VFIO AP device driver.
-> 
-> When the VFIO AP device driver is initialized:
-> 
-> * It registers with the AP bus for control of type 10 (CEX4
->    and newer) AP queue devices. This limitation was imposed
->    due to:
-> 
->    1. A lack of access to older systems needed to test the
->       older AP device models;
-> 
->    2. A desire to keep the code as simple as possible;
-> 
->    3. Some older models are no longer supported by the kernel
->       and others are getting close to end of service.
-> 
->    The probe and remove callbacks will be provided to support
->    the binding/unbinding of AP queue devices to/from the VFIO
->    AP device driver.
-> 
-> * Creates a /sys/devices/vfio-ap/matrix device to hold
->    the APQNs of the AP devices bound to the VFIO
->    AP device driver and serves as the parent of the
->    mediated devices created for each guest.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> ---
->   MAINTAINERS                           |   10 +++
->   arch/s390/Kconfig                     |   11 +++
->   drivers/s390/crypto/Makefile          |    4 +
->   drivers/s390/crypto/vfio_ap_drv.c     |  140 +++++++++++++++++++++++++++++++++
->   drivers/s390/crypto/vfio_ap_private.h |   29 +++++++
->   include/uapi/linux/vfio.h             |    2 +
->   samples/bpf/bpf_load.c                |   62 +++++++++++++++
-
-You have probably touched the last one by accident.
-
-Regards,
-Halil
-
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
