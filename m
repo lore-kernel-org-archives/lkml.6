@@ -2,158 +2,157 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACC3C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377F5C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87E7257E2
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5636257E2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:00:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="V/hDslNp";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRjMDuJY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87E7257E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bZSNm9RK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5636257E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeGBOAR (ORCPT
+        id S1752396AbeGBOAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:00:17 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42640 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752174AbeGBOAN (ORCPT
+        Mon, 2 Jul 2018 10:00:42 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:54656 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeGBOAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:00:13 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n84-v6so16549329oib.9
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 07:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=vpw6Ww1tpLgsBd6Nu8uo/mAKx/FeFyXKYaSP/QRgOhs=;
-        b=V/hDslNpjeiKvLGZxdADc1r0R1Mzk3YkG81xPmQjZcKKwf7/exRyWxpXlS36VT6DGd
-         t6NMKVuQwF8tMSSX3gqPepqPdPDxqzJPnMOsbOMWhs3iTKoMLG9oiMJR8vj132qn4rGx
-         U0M7zi1iuZP7kh1icc+MgptslQyllIVmpN+58Q9yFioOEeIY6lS8EtfqMs+3LC6+5WVS
-         nkdLItnSU8XL0zsZ6yqobZgx1RtD+weYfQkeIaYr6IFVi27ChmwhcpA/IDcrqAqZuInh
-         RXK00tWG2z5soMmFTH5AfkCJhetiS4MXagqnfEYepo1FvwFzBV6xkhmLhyhOgwWzpx33
-         J8cw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=vpw6Ww1tpLgsBd6Nu8uo/mAKx/FeFyXKYaSP/QRgOhs=;
-        b=jRjMDuJYo7IL0YLCiU0JNSFieESsmNVZ0aaGvCX3U/QC9mW99X5wmajYjD5cDJADcE
-         wglo32wwv6LizY6/fmnNTIpAQjMHWtkAKgdQxGzqC+AekteymGcdoacCXhE2JiP58NBe
-         hyYFv6zNImL5jX0iG6sZNH1Coo+exDPItzNgY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=vpw6Ww1tpLgsBd6Nu8uo/mAKx/FeFyXKYaSP/QRgOhs=;
-        b=cIMgah9+RIio4wRflZYsnehDbf9ZLa7/cjE7qmFSyLc7skZggxfjDbrODDaxHCChDX
-         mpyV577MmsbQa3C1W809KLiABPBN24K4VN9P7xPsTc8/YLwhB3WnPFUusaC6PCnoG8D0
-         3QqmvXKzwgwD8xKWHqjjKJIs5Mq5K/IurYbIeI4qXcDhLjFnwjoaCg/NUYcAQV/bKKRS
-         Cmhd+dtD9w0XnqUd9r0KWv3DLsQzi8GNITGiVtwZW9db4TzY0ZkhiuInhcNTMqSEf1St
-         0aN2HVlRKH91EdeERSu+JnCJBhQjy9Ti51SipV7Mg+5uo9IhSMPOFlk0sK98XlUDHytb
-         66pw==
-X-Gm-Message-State: APt69E3jjx8iLO63BrQgUlu6+zl2aCS9Pw0m6YTTlk/Eiyb1ArTahJvH
-        sEVGz+ipfBDnxGT/liHRXNii+p+lr3ykDbh5MS2uBxNW6/E=
-X-Google-Smtp-Source: AAOMgpcCjyzUrj4C/AoInFz7N4W95qLdmOjvPAUDj6LQu9z/uFfMXQQq5VhP1OLq/b4liNqH2ml+MYu7lnzHISwOLEM=
-X-Received: by 2002:aca:b1c1:: with SMTP id a184-v6mr4147222oif.182.1530540012206;
- Mon, 02 Jul 2018 07:00:12 -0700 (PDT)
+        Mon, 2 Jul 2018 10:00:40 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w62E0Txt089205;
+        Mon, 2 Jul 2018 09:00:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530540029;
+        bh=14nXrWjotd8zpuk6/BzeBmeMnYv1oneg7Zqshapc1JA=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=bZSNm9RKPJx7KdGRODbDbgwKxE+w1l3ZhUnvStEHK/f1vYf21oR4hjNy4cYrjLq4C
+         0q97gknDWzM0BCEtZqYpkc0Iafnl8ZR1hdjHQ914X7d0KXdmklngTsEqojDCK4XNtH
+         u3/YvuMICZcb2SlIpv1FNNa5IXOjPkQn3+b7G/+k=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62E0Tm7016969;
+        Mon, 2 Jul 2018 09:00:29 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 2 Jul
+ 2018 09:00:29 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 2 Jul 2018 09:00:29 -0500
+Received: from [172.22.170.203] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62E0TRr019635;
+        Mon, 2 Jul 2018 09:00:29 -0500
+Subject: Re: [PATCH net-next v2 1/2] net: phy: DP83TC811: Add INT_STAT3
+From:   Dan Murphy <dmurphy@ti.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180629153546.24107-1-dmurphy@ti.com>
+ <20180629154502.GG11285@lunn.ch>
+ <ee9220f3-4e93-0054-d94b-97c3756fb38d@ti.com>
+Message-ID: <2e414357-2b7f-3706-2edb-2953dd6ee7c8@ti.com>
+Date:   Mon, 2 Jul 2018 09:00:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a4a:3745:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 07:00:11 -0700 (PDT)
-In-Reply-To: <cover.1530533998.git.amit.kucheria@linaro.org>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 2 Jul 2018 19:30:11 +0530
-X-Google-Sender-Auth: Nt0yT9EWSpyfUpZdWScNuhrAKd8
-Message-ID: <CAHLCerNj83pYHDJg2aHoqOqJ6NEg+OWHT-RW4SDbEHrwJXYEtw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] thermal: tsens: Refactoring for TSENSv2 IP
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        smohanad@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ee9220f3-4e93-0054-d94b-97c3756fb38d@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 6:14 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> This series is a mixed bag:
-> - Some code moves to allow code sharing between various v2.x.y versions of
->   the TSENS IP,
-> - new qcom,tsens-v2.4.0 DT property for SDM845 and a generic qcom,tsens-v2
->   property as a fallback compatible for all v2.x.y platforms,
-> - new platform support (sdm845)
-> - a cleanup patch and
-> - a DT change to have a common way to deal with the SROT and TM registers
->   despite slightly different features across the IP family and different
->   register offsets.
->
-> Rob mentioned offline that we should expose the full version string of the
-> TSENS IP (x.y.z) and have a fallback compatible. I hope patch 4 does what
-> you were looking for.
->
-> Regards,
-> Amit
+Andrew
 
-Forgot to append the changelog. Here it is.
+On 06/29/2018 11:17 AM, Dan Murphy wrote:
+> Andrew
+> 
+> On 06/29/2018 10:45 AM, Andrew Lunn wrote:
+>> On Fri, Jun 29, 2018 at 10:35:45AM -0500, Dan Murphy wrote:
+>>> Add INT_STAT3 interrupt setting and clearing
+>>> support.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>
+>>> v2 - Removed bug fix removal of writing INT_STAT1 twice when disabling interrupts
+>>>
+>>>  drivers/net/phy/dp83tc811.c | 26 ++++++++++++++++++++++++++
+>>>  1 file changed, 26 insertions(+)
+>>>
+>>> diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
+>>> index 49ac678eb2dc..f8653f5d8789 100644
+>>> --- a/drivers/net/phy/dp83tc811.c
+>>> +++ b/drivers/net/phy/dp83tc811.c
+>>> @@ -21,6 +21,7 @@
+>>>  #define MII_DP83811_SGMII_CTRL	0x09
+>>>  #define MII_DP83811_INT_STAT1	0x12
+>>>  #define MII_DP83811_INT_STAT2	0x13
+>>> +#define MII_DP83811_INT_STAT3	0x18
+>>>  #define MII_DP83811_RESET_CTRL	0x1f
+>>>  
+>>>  #define DP83811_HW_RESET	BIT(15)
+>>> @@ -44,6 +45,11 @@
+>>>  #define DP83811_OVERVOLTAGE_INT_EN	BIT(6)
+>>>  #define DP83811_UNDERVOLTAGE_INT_EN	BIT(7)
+>>>  
+>>> +/* INT_STAT3 bits */
+>>> +#define DP83811_LPS_INT_EN	BIT(0)
+>>> +#define DP83811_NO_FRAME_INT_EN	BIT(3)
+>>> +#define DP83811_POR_DONE_INT_EN	BIT(4)
+>>> +
+>>>  #define MII_DP83811_RXSOP1	0x04a5
+>>>  #define MII_DP83811_RXSOP2	0x04a6
+>>>  #define MII_DP83811_RXSOP3	0x04a7
+>>> @@ -81,6 +87,10 @@ static int dp83811_ack_interrupt(struct phy_device *phydev)
+>>>  	if (err < 0)
+>>>  		return err;
+>>>  
+>>> +	err = phy_read(phydev, MII_DP83811_INT_STAT3);
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -216,6 +226,18 @@ static int dp83811_config_intr(struct phy_device *phydev)
+>>>  				DP83811_UNDERVOLTAGE_INT_EN);
+>>>  
+>>>  		err = phy_write(phydev, MII_DP83811_INT_STAT2, misr_status);
+>>
+>> Hi Dan
+>>
+>> Isn't this going to fail to apply because net-next says STAT1 here?
+>>
+> 
+> Yes but this should not be a pre-requisite for a code review.
+> 
+> Maybe I should have put the RFC in the subject.
+> 
+>> That is why i said you need to wait for David to merge net into
+>> net-next. Then you can submit these patches, and not have conflicts.
+>>
 
-Changes since v3:
-- Introduce qcom,tsens-v2.4.0 property and make qcom,tsens-v2 a
-  fallback, compatible property.
-- Rename ops_v2 to ops_generic_v2
+David has applied the pre-requisite patch so this series can be review and tested.
 
-Changes since v2:
-- Based on review, moved tsens-8996.c to tsens-v2.c and changed
-  corresponding function names, struct names to allow for generic tsensv2
-  platforms
-- All v2 platforms will now only need to use the qcom,tsen-v2 property
-- Added a DT patch to initialize tsens driver on sdm845, now that 4.18-rc1
-  will contain an sdm845.dtsi
+Dan
 
-Changes since v1:
-- Move get_temp() from tsens-8996 to tsens-common and rename
-- Change 8996 DT entry to allow init_common() to work across sdm845 and
-  8996 due to different offsets
+>> 	  Andrew
+>>
+> 
+> 
 
-> Amit Kucheria (6):
->   thermal: tsens: Get rid of unused fields in structure
->   dt: qcom: 8996: thermal: Move to DT initialisation
->   thermal: tsens: Rename tsens-8996 to tsens-v2 for reuse
->   thermal: tsens: Add support for SDM845
->   thermal: tsens: Check if we have valid data before reading
->   arm64: dts: sdm845: Add tsens nodes
->
->  .../devicetree/bindings/thermal/qcom-tsens.txt     |  2 ++
->  arch/arm64/boot/dts/qcom/msm8996.dtsi              | 12 ++++++-
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               | 16 +++++++++
->  drivers/thermal/qcom/Makefile                      |  2 +-
->  drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c}  | 39 ++++++++++++----------
->  drivers/thermal/qcom/tsens.c                       |  6 ++++
->  drivers/thermal/qcom/tsens.h                       |  7 ++--
->  7 files changed, 62 insertions(+), 22 deletions(-)
->  rename drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} (66%)
->
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+------------------
+Dan Murphy
