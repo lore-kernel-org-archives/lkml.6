@@ -3,107 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF1AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2641FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B11120989
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:20:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B11120989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D75AE24DDE
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75AE24DDE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753921AbeGBLUE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:20:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9192 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964936AbeGBLUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:20:01 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 494B36E274D31;
-        Mon,  2 Jul 2018 19:19:45 +0800 (CST)
-Received: from [127.0.0.1] (10.142.68.147) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
- 19:19:38 +0800
-Subject: Re: hrtimer become inaccurate with RT patch
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Ouyangzhaowei (Charles)" <ouyangzhaowei@huawei.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <anna-maria@linutronix.de>, <john.stultz@linaro.org>,
-        Hangaohuai <hangaohuai@huawei.com>,
-        "zhangjianwei (D)" <zhangjianwei8@huawei.com>,
-        <yangchuanlong@huawei.com>,
-        "Zhangbin (EulerOS)" <zhangbin46@huawei.com>,
-        <liupeifeng3@huawei.com>
-References: <12e6da4e-7681-771f-38d3-3c1abf943c24@huawei.com>
- <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
- <20180702101420.rskzwqrdyws5fl6m@breakpoint.cc>
-From:   gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <75928d33-ade0-3bc7-33df-43abf5442c32@huawei.com>
-Date:   Mon, 2 Jul 2018 19:19:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933971AbeGBLWQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:22:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48370 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933716AbeGBLWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:22:13 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80BBE30E6855;
+        Mon,  2 Jul 2018 11:22:13 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F8A3D7167;
+        Mon,  2 Jul 2018 11:22:13 +0000 (UTC)
+Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 37EBF4BB78;
+        Mon,  2 Jul 2018 11:22:13 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 07:22:13 -0400 (EDT)
+From:   Rodrigo Freire <rfreire@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Message-ID: <1113748807.15224076.1530530533122.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180702093043.GB19043@dhcp22.suse.cz>
+References: <7de14c6cac4a486c04149f37948e3a76028f3fa5.1530461087.git.rfreire@redhat.com> <20180702093043.GB19043@dhcp22.suse.cz>
+Subject: Re: [PATCH] mm: be more informative in OOM task list
 MIME-Version: 1.0
-In-Reply-To: <20180702101420.rskzwqrdyws5fl6m@breakpoint.cc>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.97.116.8, 10.4.195.24]
+Thread-Topic: be more informative in OOM task list
+Thread-Index: dRqHzh92LTMqo5Vkbt+Fs7RizLiH2Q==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 02 Jul 2018 11:22:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian ,
-   Thanks for the answer.
+Hello Michal,
 
-On 2018/7/2 18:14, Sebastian Andrzej Siewior wrote:
-> On 2018-07-02 17:34:34 [+0800], gengdongjiu wrote:
->>   The Linux kernel version is v4.1.46, and the preempt_rt patch is
->> patch-4.1.46-rt52.patch.
-> 
-> the 4.1 series is no longer supported (neither RT wise nor non-RT,
-> https://www.kernel.org/category/releases.html). I suggest to move away.
-> If you notice this problem now it is hardly a long running project.
-yes, I Know, but we found the latest RT 4.14 series also has the same problem,
-so this is common issue.
+----- Original Message ----- 
+> From: "Michal Hocko" <mhocko@kernel.org>
+> To: "Rodrigo Freire" <rfreire@redhat.com>
+> Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+> Sent: Monday, July 2, 2018 6:30:43 AM
+> Subject: Re: [PATCH] mm: be more informative in OOM task list
+>
+> On Sun 01-07-18 13:09:40, Rodrigo Freire wrote:
+> > The default page memory unit of OOM task dump events might not be
+> > intuitive for the non-initiated when debugging OOM events. Add
+> > a small printk prior to the task dump informing that the memory
+> > units are actually memory _pages_.
+>
+> Does this really help? I understand the the oom report might be not the
+> easiest thing to grasp but wouldn't it be much better to actually add
+> documentation with clarification of each part of it?
 
-> 
->> process will not be interrupt. But if the hrtimer is also runs in
->> process context the timer is useless when it's inaccurate. so I want to
->> consult you whether this is expected behavior? whether is reasonable to move the timer IRQ
->> handling to a thread?
-> 
-> This depends on your expectations. The timer is defined not to fire
-> before the programmed time. So it fires as soon as possible _after_ the
-> programmed time.
-It is reasonable that the timer is defined not to fire before the programmed time.
-but we found it fires long _after_ the programmed time. For example, we define it to
-fire after 2s, but it will fire after 5s, so it is very later than the expectations. I think the reason may be
-that the timer handler thread is preempted by another higher priority thread. so from for this issue,
-the timer handler should be in IRQ context instead of the process context or increase the timer handler thread priority, right?
+That would be great: After a quick grep -ri for oom in Documentation,
+I found several other files containing its own OOM behaviour modifier
+configurations. But it indeed lacks a central and canonical Doc file
+which documents the OOM Killer behavior and workflows.
 
-> 
->> I think this is why hrtimer is run as a thread, I tried to set
->> hrtimer.irqsafe to 1, but the timer still seemed not right. Could anyone
->> give some advise? Thanks.
-> 
-> By setting irqsafe to 1 you ensure taht the timer will fire from the
-> timer interrupt and before doing so you should ensure that the timer is
-> indeed IRQ safe.
-> Depending on what you do it is possible that the timer fires early but
-> the application notices it later (the scheduler will first handle RT
-> tasks according to their priorities followed by non RT tasks).
+However, I still stand by my proposed patch: It is unobtrusive, infers
+no performance issue and clarifying: I recently worked in a case (for
+full disclosure: I am a far cry from a MM expert) where the sum of the
+RSS pages made sense when interpreted as real kB pages. Reason: There
+were processes sharing (a good amount of) memory regions, misleading
+the interpretation and that misled not only me, but some other
+colleagues a well: The pages was only sorted out after actually
+inspecting the source code.
 
-(I will continue check this comments, thanks)
+This patch is user-friendly and can be a great time saver to others in
+the community.
 
-> 
-> Sebastian
-> 
-> .
-> 
+I kindly request the ACKed-by ;-)
 
+Have a great week,
+
+- RF.
