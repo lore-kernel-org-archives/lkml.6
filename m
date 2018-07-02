@@ -2,313 +2,171 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953E1C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 05:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA93C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 05:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468A425663
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 05:53:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468A425663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CCB1D256A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 05:53:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUPsAjFX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB1D256A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeGBFxG (ORCPT
+        id S1753459AbeGBFxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 01:53:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46610 "EHLO mx1.redhat.com"
+        Mon, 2 Jul 2018 01:53:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753383AbeGBFxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 01:53:00 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1753389AbeGBFwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 01:52:55 -0400
+Received: from localhost (unknown [5.29.173.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC89B30820D2;
-        Mon,  2 Jul 2018 05:52:59 +0000 (UTC)
-Received: from llong.com (ovpn-116-112.phx2.redhat.com [10.3.116.112])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 359831001643;
-        Mon,  2 Jul 2018 05:52:51 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B23524D31;
+        Mon,  2 Jul 2018 05:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530510775;
+        bh=sZgE9m3vxXUk8Nj4DbXM3PPncniqtoll/4VCI6+DSuI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CUPsAjFXvlNNmvqR+uCV5QztTJ94jfnvBkfcQehlH/FFLA/6ssLi20ph6EHOMw9qI
+         srsk7O3YKr+4BRdBYVRQJN6WD409Ns0lDIGKceQoKAwT1/J4CrUZ73VM8Of8FmMbWu
+         zQcPnPrzrbS2rz/wFynlZQxrjUtDdBfQzcJ7+hI8=
+Date:   Mon, 2 Jul 2018 08:52:51 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v5 3/6] fs/dcache: Enable automatic pruning of negative dentries
-Date:   Mon,  2 Jul 2018 13:52:00 +0800
-Message-Id: <1530510723-24814-4-git-send-email-longman@redhat.com>
-In-Reply-To: <1530510723-24814-1-git-send-email-longman@redhat.com>
-References: <1530510723-24814-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 02 Jul 2018 05:53:00 +0000 (UTC)
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180702055251.GV3014@mtr-leonro.mtl.com>
+References: <20180626134757.GY28965@dhcp22.suse.cz>
+ <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+ <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+ <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="l06SQqiZYCi8rTKz"
+Content-Disposition: inline
+In-Reply-To: <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not good enough to have a soft limit for the number of
-negative dentries in the system and print a warning if that limit is
-exceeded. We need to do something about it when this happens.
 
-This patch enables automatic pruning of negative dentries when
-the soft limit is going to be exceeded.  This is done by using the
-workqueue API to do the pruning gradually when a threshold is reached
-to minimize performance impact on other running tasks.
+--l06SQqiZYCi8rTKz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The current threshold is 1/4 of the initial value of the free pool
-count. Once the threshold is reached, the automatic pruning process
-will be kicked in to replenish the free pool. Each pruning run will
-scan 64 dentries per LRU list and can remove up to 256 negative
-dentries to minimize the LRU locks hold time. The pruning rate will
-be 50 Hz if the free pool count is less than 1/8 of the original and
-10 Hz otherwise.
+On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
+> On Wed 27-06-18 19:42:01, John Hubbard wrote:
+> > On 06/27/2018 10:02 AM, Jan Kara wrote:
+> > > On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
+> > >> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
+> > >>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+> > >>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+> > >>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+> > >>>> [...]
+> > >>>>>> Appart from that, do we really care about 32b here? Big DIO, IB users
+> > >>>>>> seem to be 64b only AFAIU.
+> > >>>>>
+> > >>>>> IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
+> > >>>>> kernel even for uncommon platforms...
+> > >>>>
+> > >>>> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
+> > >>>> wanted to say that we can stay with a simple solution for 32b. I thought
+> > >>>> the g-u-p-longterm has plugged the most obvious breakage already. But
+> > >>>> maybe I just misunderstood.
+> > >>>
+> > >>> Most yes, but if you try hard enough, you can still trigger the oops e.g.
+> > >>> with appropriately set up direct IO when racing with writeback / reclaim.
+> > >>
+> > >> gup longterm is only different from normal gup if you have DAX and few
+> > >> people do, which really means it doesn't help at all.. AFAIK??
+> > >
+> > > Right, what I wrote works only for DAX. For non-DAX situation g-u-p
+> > > longterm does not currently help at all. Sorry for confusion.
+> > >
+> >
+> > OK, I've got an early version of this up and running, reusing the page->lru
+> > fields. I'll clean it up and do some heavier testing, and post as a PATCH v2.
+>
+> Cool.
+>
+> > One question though: I'm still vague on the best actions to take in the
+> > following functions:
+> >
+> >     page_mkclean_one
+> >     try_to_unmap_one
+> >
+> > At the moment, they are both just doing an evil little early-out:
+> >
+> > 	if (PageDmaPinned(page))
+> > 		return false;
+> >
+> > ...but we talked about maybe waiting for the condition to clear, instead?
+> > Thoughts?
+>
+> What needs to happen in page_mkclean() depends on the caller. Most of the
+> callers really need to be sure the page is write-protected once
+> page_mkclean() returns. Those are:
+>
+>   pagecache_isize_extended()
+>   fb_deferred_io_work()
+>   clear_page_dirty_for_io() if called for data-integrity writeback - which
+>     is currently known only in its caller (e.g. write_cache_pages()) where
+>     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
+>     information into page_mkclean() will require some plumbing and
+>     clear_page_dirty_for_io() has some 50 callers but it's doable.
+>
+> clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
+> WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
+> otherwise memory cleaning would get stuck on pinned pages until RDMA
+> drivers release its pins.
 
-The dentry pruning operation may also free some least recently used
-positive dentries.
+Sorry for naive question, but won't it create too much dirty pages
+so writeback will be called "non-stop" to rebalance watermarks without
+ability to progress?
 
-In the unlikely event that a superblock is being umount'ed while in
-negative dentry pruning mode, the umount may face an additional delay
-of up to 0.1s.
+Thanks
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- fs/dcache.c              | 158 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/list_lru.h |   1 +
- mm/list_lru.c            |   4 +-
- 3 files changed, 162 insertions(+), 1 deletion(-)
+--l06SQqiZYCi8rTKz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 889d3bb..6d00f52 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -136,6 +136,11 @@ struct dentry_stat_t dentry_stat = {
-  */
- #define NEG_DENTRY_PC_DEFAULT	2
- #define NEG_DENTRY_BATCH	(1 << 8)
-+#define NEG_PRUNING_SIZE	(1 << 6)
-+#define NEG_PRUNING_SLOW_RATE	(HZ/10)
-+#define NEG_PRUNING_FAST_RATE	(HZ/50)
-+#define NEG_IS_SB_UMOUNTING(sb)	\
-+	unlikely(!(sb)->s_root || !((sb)->s_flags & MS_ACTIVE))
- 
- #ifdef CONFIG_DCACHE_TRACK_NEG_ENTRY
- static int neg_dentry_pc __read_mostly = NEG_DENTRY_PC_DEFAULT;
-@@ -143,8 +148,17 @@ struct dentry_stat_t dentry_stat = {
- static long neg_dentry_nfree_init __read_mostly; /* Free pool initial value */
- static struct {
- 	raw_spinlock_t nfree_lock;
-+	int niter;			/* Pruning iteration count */
-+	int lru_count;			/* Per-LRU pruning count */
-+	long n_neg;			/* # of negative dentries pruned */
-+	long n_pos;			/* # of positive dentries pruned */
- 	long nfree;			/* Negative dentry free pool */
-+	struct super_block *prune_sb;	/* Super_block for pruning */
- } ndblk ____cacheline_aligned_in_smp;
-+
-+static void prune_negative_dentry(struct work_struct *work);
-+static DECLARE_DELAYED_WORK(prune_neg_dentry_work, prune_negative_dentry);
-+
- static DEFINE_PER_CPU(long, nr_dentry_neg);
- #endif
- 
-@@ -330,6 +344,25 @@ static void __neg_dentry_inc(struct dentry *dentry)
- 	 */
- 	if (!cnt)
- 		pr_warn_once("Too many negative dentries.");
-+
-+	/*
-+	 * Initiate negative dentry pruning if free pool has less than
-+	 * 1/4 of its initial value.
-+	 */
-+	if ((READ_ONCE(ndblk.nfree) < READ_ONCE(neg_dentry_nfree_init)/4) &&
-+	    !READ_ONCE(ndblk.prune_sb) &&
-+	    !cmpxchg(&ndblk.prune_sb, NULL, dentry->d_sb)) {
-+		/*
-+		 * Abort if umounting is in progress, otherwise take a
-+		 * reference and move on.
-+		 */
-+		if (NEG_IS_SB_UMOUNTING(ndblk.prune_sb)) {
-+			WRITE_ONCE(ndblk.prune_sb, NULL);
-+		} else {
-+			atomic_inc(&ndblk.prune_sb->s_active);
-+			schedule_delayed_work(&prune_neg_dentry_work, 1);
-+		}
-+	}
- }
- 
- static inline void neg_dentry_inc(struct dentry *dentry)
-@@ -1368,6 +1401,131 @@ void shrink_dcache_sb(struct super_block *sb)
- }
- EXPORT_SYMBOL(shrink_dcache_sb);
- 
-+#ifdef CONFIG_DCACHE_TRACK_NEG_ENTRY
-+/*
-+ * A modified version that attempts to remove a limited number of negative
-+ * dentries as well as some other non-negative dentries at the front.
-+ */
-+static enum lru_status dentry_negative_lru_isolate(struct list_head *item,
-+		struct list_lru_one *lru, spinlock_t *lru_lock, void *arg)
-+{
-+	struct list_head *freeable = arg;
-+	struct dentry	*dentry = container_of(item, struct dentry, d_lru);
-+	enum lru_status	status = LRU_SKIP;
-+
-+	/*
-+	 * Limit amount of dentry walking in each LRU list.
-+	 */
-+	if (ndblk.lru_count >= NEG_PRUNING_SIZE) {
-+		ndblk.lru_count = 0;
-+		return LRU_STOP;
-+	}
-+	ndblk.lru_count++;
-+
-+	/*
-+	 * we are inverting the lru lock/dentry->d_lock here,
-+	 * so use a trylock. If we fail to get the lock, just skip
-+	 * it
-+	 */
-+	if (!spin_trylock(&dentry->d_lock))
-+		return LRU_SKIP;
-+
-+	/*
-+	 * Referenced dentries are still in use. If they have active
-+	 * counts, just remove them from the LRU. Otherwise give them
-+	 * another pass through the LRU.
-+	 */
-+	if (dentry->d_lockref.count) {
-+		d_lru_isolate(lru, dentry);
-+		status = LRU_REMOVED;
-+		goto out;
-+	}
-+
-+	/*
-+	 * Dentries with reference bit on are moved back to the tail.
-+	 */
-+	if (dentry->d_flags & DCACHE_REFERENCED) {
-+		dentry->d_flags &= ~DCACHE_REFERENCED;
-+		status = LRU_ROTATE;
-+		goto out;
-+	}
-+
-+	status = LRU_REMOVED;
-+	d_lru_shrink_move(lru, dentry, freeable);
-+	if (d_is_negative(dentry))
-+		ndblk.n_neg++;
-+out:
-+	spin_unlock(&dentry->d_lock);
-+	return status;
-+}
-+
-+/*
-+ * A workqueue function to prune negative dentry.
-+ *
-+ * The pruning is done gradually over time so as to have as little
-+ * performance impact as possible.
-+ */
-+static void prune_negative_dentry(struct work_struct *work)
-+{
-+	int freed, last_n_neg;
-+	long nfree;
-+	struct super_block *sb = READ_ONCE(ndblk.prune_sb);
-+	LIST_HEAD(dispose);
-+
-+	if (!sb)
-+		return;
-+	if (NEG_IS_SB_UMOUNTING(sb))
-+		goto stop_pruning;
-+
-+	ndblk.niter++;
-+	ndblk.lru_count = 0;
-+	last_n_neg = ndblk.n_neg;
-+	freed = list_lru_walk(&sb->s_dentry_lru, dentry_negative_lru_isolate,
-+			      &dispose, NEG_DENTRY_BATCH);
-+
-+	if (freed)
-+		shrink_dentry_list(&dispose);
-+	ndblk.n_pos += freed - (ndblk.n_neg - last_n_neg);
-+
-+	/*
-+	 * Continue delayed pruning until negative dentry free pool is at
-+	 * least 1/2 of the initial value, the super_block has no more
-+	 * negative dentries left at the front, or unmounting is in
-+	 * progress.
-+	 *
-+	 * The pruning rate depends on the size of the free pool. The
-+	 * faster rate is used when there is less than 1/8 left.
-+	 * Otherwise, the slower rate will be used.
-+	 */
-+	nfree = READ_ONCE(ndblk.nfree);
-+	if ((ndblk.n_neg == last_n_neg) ||
-+	    (nfree >= neg_dentry_nfree_init/2) || NEG_IS_SB_UMOUNTING(sb))
-+		goto stop_pruning;
-+
-+	schedule_delayed_work(&prune_neg_dentry_work,
-+			     (nfree < neg_dentry_nfree_init/8)
-+			     ? NEG_PRUNING_FAST_RATE : NEG_PRUNING_SLOW_RATE);
-+	return;
-+
-+stop_pruning:
-+#ifdef CONFIG_DEBUG_KERNEL
-+	/*
-+	 * Report large negative dentry pruning event.
-+	 */
-+	if (ndblk.n_neg > NEG_PRUNING_SIZE) {
-+		pr_info("Negative dentry pruning (SB=%s):\n\t"
-+			"%d iterations, %ld/%ld neg/pos dentries freed.\n",
-+			ndblk.prune_sb->s_id, ndblk.niter, ndblk.n_neg,
-+			ndblk.n_pos);
-+	}
-+#endif
-+	ndblk.niter = 0;
-+	ndblk.n_neg = ndblk.n_pos = 0;
-+	deactivate_super(sb);
-+	WRITE_ONCE(ndblk.prune_sb, NULL);
-+}
-+#endif /* CONFIG_DCACHE_TRACK_NEG_ENTRY */
-+
- /**
-  * enum d_walk_ret - action to talke during tree walk
-  * @D_WALK_CONTINUE:	contrinue walk
-diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
-index 96def9d..a9598a0 100644
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -23,6 +23,7 @@ enum lru_status {
- 	LRU_SKIP,		/* item cannot be locked, skip */
- 	LRU_RETRY,		/* item not freeable. May drop the lock
- 				   internally, but has to return locked. */
-+	LRU_STOP,		/* stop walking the list */
- };
- 
- struct list_lru_one {
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index fcfb6c8..2ee5d3a 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -246,11 +246,13 @@ unsigned long list_lru_count_node(struct list_lru *lru, int nid)
- 			 */
- 			assert_spin_locked(&nlru->lock);
- 			goto restart;
-+		case LRU_STOP:
-+			goto out;
- 		default:
- 			BUG();
- 		}
- 	}
--
-+out:
- 	spin_unlock(&nlru->lock);
- 	return isolated;
- }
--- 
-1.8.3.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAEBAgAGBQJbOb2zAAoJEORje4g2clin2UEP/2gsXQfoqD/g3+O6NCSU6W8/
+zWhbpfKO5Sdk1SxTUcgiIA8q8NsYfdkS3MrELWp2HnnsopBzwfDvCyJWgyPyXUn5
+eDFdSzVmZJal1i1SaUr1cAvCwZRYKw8ht5yq6delwJHSVsfy6Aqp4WOQrCtybV4A
+BODxFNtd1xjn7U6fdlAD07L/dSCyWVmV0ePqy2Fk6lPOuHimOV0Zy8XfLp++fopq
+sQkYpe9ZV712fsiIOZGMFtL0ictgjn917JnJKN4g89s3fNUwZHvivWu1KbEqyVeT
+sdC6rdW/tN24aIXd1mmn+DVBI/6g/oD+WDfjYOQcbbVvwWc4PLfWhITE63oMjwRh
+GUWwHE12O8o5TU6MyXkKcleQmdXhIFoZvRzxJmxxmW+4aPj8agPf2GIRjINYdwAL
+3tkqUL/tEGtCIu3+5poOIqgMp/AwXAchDPaSIJuyOrjamFUj8f1X1ZvElPjaBjQn
+RLvtteMqSIP+q0iU2pTR0/2/DEHIBZPBGKaxHo6FToDMNJRi4RB6/BBR9qc/7fWp
+7xhf8jw+Sk+cFPSOBh6Ju2Eajq3lGrU4VNz+aT3el7jOeTY4LJizLdzVRVOmVXv7
+G+CAVzaNK/G77Qc0F0TY2s7S9ihh+hcyiYyUSG/l/v2zxl1qRaMlu077n9EPmxi3
+RyDg7USdthTqO8uo/Ybw
+=GG7j
+-----END PGP SIGNATURE-----
+
+--l06SQqiZYCi8rTKz--
