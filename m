@@ -3,43 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB00EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8C6C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89297250A8
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B24325195
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:36:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="GU5Y5oT0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89297250A8
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="z1tDeHVP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B24325195
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeGBVgC (ORCPT
+        id S1753616AbeGBVgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:36:02 -0400
-Received: from mail-eopbgr680086.outbound.protection.outlook.com ([40.107.68.86]:38190
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Mon, 2 Jul 2018 17:36:13 -0400
+Received: from mail-eopbgr720061.outbound.protection.outlook.com ([40.107.72.61]:45216
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752930AbeGBVf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:35:59 -0400
+        id S1753573AbeGBVgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 17:36:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yha16T8LchjUd5Wb6hhGypG7eAcSVBmBnU0kQJcvaps=;
- b=GU5Y5oT0RSuQB6ReK49BbDLl/q4KoAasn/pUBwFgYc4PnWPWNHP+EuWgwBx5Emy9Lwrw6askV5W08HjTHBgW5rkUUC5BEaPkhIQmBcB+08sJjrxRQ7fsB1xWTFyWC0N/zZJkvI/wKKNmtzlgtiDfLjRD02bCbTjpbD4EdgKiYpc=
+ bh=4E5kkq3ujvUcNa4yWjtP3rnowe6bPCxGjsgSabMWwRM=;
+ b=z1tDeHVPPhPIIodt3zxXmRO6VIEZhiR0V0GGst7eCWBynPeWjWsqNiD4kTRxosAltwCbshUKrMbBV5qG29hBL4PzaR3mMHE/7IgFPZnylPyEyAMnLsfHgwy9x8Qbgs38gVXfJgpmvKcXTY49cwTyBXXUEB0DHYTM6fBwzQWX9sE=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Thomas.Lendacky@amd.com; 
 Received: from tlendack-t1.amdoffice.net (165.204.77.1) by
- CY1PR12MB0166.namprd12.prod.outlook.com (2a01:111:e400:50f6::24) with
+ CY1PR12MB0165.namprd12.prod.outlook.com (2a01:111:e400:50f6::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.24; Mon, 2 Jul
- 2018 21:35:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.20; Mon, 2 Jul
+ 2018 21:36:05 +0000
 From:   Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH 1/2] x86/bugs: Update when to check for the LS_CFG SSBD
- mitigation
+Subject: [PATCH 2/2] x86/bugs: Fix the AMD SSBD usage of the SPEC_CTRL MSR
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Ingo Molnar <mingo@redhat.com>,
@@ -47,8 +46,8 @@ Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bpetkov@suse.de>,
         David Woodhouse <dwmw@amazon.co.uk>
-Date:   Mon, 02 Jul 2018 16:35:53 -0500
-Message-ID: <20180702213553.29202.21089.stgit@tlendack-t1.amdoffice.net>
+Date:   Mon, 02 Jul 2018 16:36:02 -0500
+Message-ID: <20180702213602.29202.33151.stgit@tlendack-t1.amdoffice.net>
 In-Reply-To: <20180702213543.29202.79104.stgit@tlendack-t1.amdoffice.net>
 References: <20180702213543.29202.79104.stgit@tlendack-t1.amdoffice.net>
 User-Agent: StGit/0.17.1-dirty
@@ -56,92 +55,110 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: SN6PR1501CA0017.namprd15.prod.outlook.com
- (2603:10b6:805::30) To CY1PR12MB0166.namprd12.prod.outlook.com
- (2a01:111:e400:50f6::24)
+X-ClientProxiedBy: DM5PR21CA0060.namprd21.prod.outlook.com
+ (2603:10b6:3:129::22) To CY1PR12MB0165.namprd12.prod.outlook.com
+ (2a01:111:e400:50f6::23)
 X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6c1d6b78-c523-47fc-0106-08d5e063d11d
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: b958aed0-71fb-4ad7-a1cf-08d5e063cbe2
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR12MB0166;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0166;3:OD/nCvMKqtR7IRqJX9/S/ppDaYG5E5RxvBjsyOYNyQLuR7r7Qlt6L8KKBOKtfef60PxOp+1Q2OlOd1OSSc13TW8rDkeye2IqQd6opq5+OpdLCr4hlzz6SoSnyuIISjPh4Pc9jQ6uMAJqhhRFDiIv86roM3NDuYpfj1eU6z4mbQC5JDM2NzKZBL0J8We4r4loRDUNjv+I5aWmP14C3Ogo+AVbQKH3pglrNjWiBMvFQtUAfakQsHpUcAEctndaufX+;25:HdTM3QZrR6NF7Z8/WXIJkXIN1ecwlm3/4qKAKgp2kTkOew8ubsHTYgdfZthL2I+A5919X6BFKl/oTFMD8cga1fQklizXPT9bHzgELqgIoVyiU3EIk00apWRSCa7KrkHBB+E6hlcKWyK7JwBOXgVAkx4zV5O+m3WsFE4WziRCi75DOZxiNH7aVWt3elgGEinCnemBHiuuUAmR+P/vMIQdqThQp+MVoOsmnMgFw5hJ5JMHnfDnQjnxGDdCMTbUh3z7RFtgqPACiGRdTHx6GqUz8A/RS+gb1tr65XO+RtTL2Lhua0ar0fbBKKMsLYcisNw+BEhZnFFHBuhyzkwqWANwwA==;31:Ctekby+boMMs+GGpgj52xj/dBsFDRwI3ZZ1BkP/b96kXxaVuFHL7cv3BZ6ym20mqKp9ugGIhptysUe3IayzqFX7s63XJBkseLyx8313RK6lVbHlvN6Q/kRkO25r6+l0rRsRRMFcN1QIedFb8jbWejDRShwTm3HlWRkkjvCjsLcw8Y4vqcYvksLGD2JEbkXy4PHEfco7a0skqNApB/CR9nvPOtM9TA7ak63ycsEt4CXA=
-X-MS-TrafficTypeDiagnostic: CY1PR12MB0166:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0166;20:CLF+xlKGJ/UReamAFJK7j4qHvMxBmkzzT3FJZn7S7b1+bjeRSk2AEdXyfbhqX2rxi06F1zWxhCT3QQEoYWuv4n3rmHOLDRhgd/6eYK/Pylg/eXz0A8ifKxHa0GMbDxRqQQjFW5wm3bXF5OPWle+88QsxohZD2zUHt1UjUiaC0aztkGvwuj5Mx/e/e9mpxlyNpOnYh76zesWIf6UjEA/QU9eRxn0yCznMI/FZFDnXFdHjnUUTFgPN5dqNWYTH4yY8f/cMiG9PGp6c6kMA2vnTn6aJeahN87bjWnRNttJWOTV4AbYdN4+9SSGQ7aG1JsbnpkCyJVJoOoSiINv5mCxxN5W0oNgW3VlPsEyosI1WVHEU2IyotIVydSuTDzBzOdJjU5tmyEC0/Ysb6Ou7ZJME4gDMGfXpOirgZvOrUjYZpwn94239VYY2/Kw6vMcyExBX9O6nL0YEpDma1PafqO4ozAmGfPeHMr28wwBL8VkWZddKiHuJCIsfdRbUbjI+2mVY;4:ky1zljgYSijAJiF9Do4X3s1GyA0VU6JksEAK1pdUDVpDP2063RfvUxVp7mrxUCGQH8kwovM+8ECYeC0gTIeQdM+DQ7MQWH/kJS5AimZS7FZgIgehBnbLKir5yOMToYP4dvhSgorvxsQllWC/uPqIWTsHcSgliibX0IwvMTIs0+CoEbDEyDN3PHjLfm7zSsEAmGMQHXgwPGDogzWmywN4WtdMj1BpfojbQzeIYPZUCAyHCel53DdNTJYStlQStRI+Uv4en4YbyMiFF3VS+sFqQP7tG8wtd2yBPFOeMKarWnpIn+Wps/AX6MFJdpIUGc2F
-X-Microsoft-Antispam-PRVS: <CY1PR12MB016649AF1B04C40AD4FB1DBDEC430@CY1PR12MB0166.namprd12.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CY1PR12MB0165;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0165;3:0DTFMxX5jY3A78OiF8rwLXQHgAdkEoFcqSrRKX7ZpDZujfIoV+c2mnb/LZsV398VDNPo3a4I6EjAqrI4/szOyuiO+yxeqL98QQ+vqwo90hGK8DGh+OGDtCSYTY0AyFp7OAYlrAD617SWRp3hWRm6dS6Am1lF3LB7+Pa+rQRbq/0DU8cflXob0agfjYJB/LFhVx9ULmZrLbbkE9mm9kUNtuW6rZL4ZYHCW2UlzVIOp+2/a4wNV1KyAIdjQpXxt6GK;25:s4f7/v7IEI3pRW6THNAlpuan2WwPx1o5qrqso1p64D8QIeDjqEO4FBRkRFpVtlaS3R3DsY+sYmC+rvWe9PEWQAiCIq6dm37R0iyVXA/5kV3P5kUdZNXqgpe0P2dSsIk7OZrP5o445RzOjH8KsAzRrJt2r7xZqVmLFjyTy9o7IvISfLePh/l/QQQAg5+qeDK6H5gAychdxkzt758mpCeN/WOmDwNNN/3uOpOT3u9x+2QAfuV7HCav+t/bl0YVZucI/osVg0J09s1lG64bnU0yHLe/o7Ly9x57OUy8hORdkwyfmwY0QLs2SZ7nSM5e3fSdpfHEDOSre0p2HzIo1PKPdQ==;31:QXMLCAydRDlrh9zyrwaz/Tiwt6ikCGcmtLuwbrWKVYZMyrop7VS+0OU4MzqNH9CI20CeVXixPo/XfjgLbep7DvOwCPhSjCh/509BMd/zIZusvN2F4bl0+9Wa1O0EHl3BPFZlP8AqvDOf2pGwIzvlD5m9wHZVs8pK7f5uNJzM+yDIbfE+bHfdNQO4IIOfauYGRbx3F7ag6qKfdNrvvzUXgFznK09GxfgD2Jp0s7BwHYU=
+X-MS-TrafficTypeDiagnostic: CY1PR12MB0165:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0165;20:mhgAlBb0q9jp6MRwkB5nyI2HW9vPBmKdUVSMVYzlRNI9lGCxFGK2I3cHu+/VamekqNwHwxsFBGpDBiyDgq/L38FIFl93xNLo10fZzajwiuCo7WcB4NwM0uZpBC7nRVV5irJOXLVHeNhmAZt3WsDndlCTMppMfv8wOAvWsR1h1vQkvPERivfFDFLNc1B0+M5RFcXeryGpVwXQo87pJ3SwRjb98lc4GdTVfTSrfKcw3FAvJhkfVhsLIIMeZOy8PCxs/Xnfo4GSHjDKvWM5tjY0Y4JmEg7bE+E8tQZxphVrmRgPsECN1NrYC0U8wjvrbTJvHtkaLlGV4AltDJyAWRDMNskfRwybZ2lldKHb1V5MuZGFUgv9HNrHSLo5XciM3GkjLuiPcpBafFNAJ01Kc0uftB3dJAJnibFp+EhaIxk1+X1Sii4wWkjBxD8KGEDfDTJiij/audrVEFiq0jbmj9R9Lun7Bf5dpZ0z8//Coie9ZU3DgKKSsO5gj4EZzPIAiKO6;4:yBuBoktynmgnlEd+9uMjsQ/NTo2mCgr2qvwjCPPZkI8rXpRhNEOr1ShuZaS0kBZ0xe3Mr7HC8QElLGTs1WQAPhJw08H01PT/B1IdVxgSqWeBrTi+VpKqH3hE8G1HPXPtI7zsZcq4nRnKjzQSkI4F2i4aCa4Mi3OD6f/WznIEYbQ17FiDr9gbiw9L+F9y1cYutrGI3uSAHQzvGAHKTWPotZjONsQ8uQCFA+gZCmfK+Kb/MCmYhDnL4l3oOFmYDPV0+StmSaYw5fWz8KkrHaydp7TAxphvpzobAYAxwT+q6fWV4c84p9cH52gjEXtUBRN8
+X-Microsoft-Antispam-PRVS: <CY1PR12MB01651233B7D963115588899DEC430@CY1PR12MB0165.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY1PR12MB0166;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0166;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY1PR12MB0165;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0165;
 X-Forefront-PRVS: 07215D0470
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(376002)(346002)(199004)(189003)(50466002)(106356001)(105586002)(53936002)(66066001)(230700001)(6116002)(1076002)(3846002)(2906002)(6666003)(97746001)(47776003)(11346002)(446003)(14444005)(25786009)(55016002)(4326008)(53416004)(9686003)(5660300001)(8676002)(81166006)(2486003)(52116002)(72206003)(23676004)(478600001)(7696005)(81156014)(6506007)(186003)(386003)(97736004)(76176011)(26005)(7736002)(8936002)(305945005)(16526019)(86362001)(68736007)(476003)(956004)(486006)(69596002)(58126008)(103116003)(316002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0166;H:tlendack-t1.amdoffice.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(376002)(346002)(396003)(189003)(199004)(1076002)(5660300001)(50466002)(14444005)(6116002)(97746001)(2906002)(68736007)(230700001)(3846002)(316002)(58126008)(54906003)(66066001)(47776003)(97736004)(69596002)(53416004)(105586002)(72206003)(103116003)(4326008)(25786009)(53936002)(106356001)(478600001)(386003)(7736002)(81156014)(81166006)(575784001)(86362001)(305945005)(6666003)(23676004)(486006)(8676002)(55016002)(26005)(956004)(2486003)(6506007)(446003)(186003)(9686003)(76176011)(52116002)(7696005)(11346002)(476003)(8936002)(16526019)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0165;H:tlendack-t1.amdoffice.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjEyTUIwMTY2OzIzOnoyUmNDTktmR0N5LzNHbUxSdU04VExBZ0Uy?=
- =?utf-8?B?b2ZIQ1ZNanozMWVMSzY4bEh3VHhyVC9TSDFNSXhKdjdGbmFwRG03bWJERE1M?=
- =?utf-8?B?QzVpMzVFd2V5Qk1CNkxiZ0lySnpLSHJwalFzeHhqOExpVEowQnZOYWpIUWsz?=
- =?utf-8?B?cEVPb0FVOFZnSndhRWh6ZE9CenlWYlVsK0gyYU9MeW9pbm9TTERKM1RWcnhx?=
- =?utf-8?B?NU9GNVpyYkpsdXhFYU9DTUJTNDJyVThIdmJVZEplZkw3ZVc0WXBxaUpSUTJv?=
- =?utf-8?B?Nm11RGVuRnZkMjByMXk3aGlOd2hFczlJc2NYYnUwNnBSQ2R6bXhZa2tpRWVt?=
- =?utf-8?B?cS9TWnJOaHhwZERUWjV3OWM3QWZybTZBQ1dJRnRHenlkRWJ1QUR4SUpDdG9r?=
- =?utf-8?B?ejM0RGtQRFkrRVV1WTRyU0NtVDF4MTN6L2pJeDBmaFNraGlYT1QzQTdTRHg0?=
- =?utf-8?B?bHNuUXJCcFJLQk03V0p3UUNBV3VnbkNjMGlUZXMxMWRKa1hNbGl3UkNERVJW?=
- =?utf-8?B?Rzh2bEVzOEV3aE5jRGpGbHlTTmxCaWVXZk1hdmcrQUkycDhXbEREQncwd0tY?=
- =?utf-8?B?NW9IcGZvUENTcUdKbUNvMW4zMVovQVRxb2F1aWNQN2Z0ajlpNi8rNTZMRzZh?=
- =?utf-8?B?VG5sUEJ3M04zdFZ2RzU1Z01lN1QxQmNlalBweEpUM3c5WUx0ZXhhM0FMblU1?=
- =?utf-8?B?L3NqM2R2WWNvWHNxUkRzUmpnZ3ZMMGxmZWdrUnhNemYvTjlDbHNJUUNmb1ZS?=
- =?utf-8?B?N084cm1WVFRkWFF6dTd1S3B0ZnNYZjNaV3FwMFZRdW0wemVRaldaekVNYVh0?=
- =?utf-8?B?bWVDd1p4c1pMYWVOcE93VS9rNXcyaHYzQzAwM3BUQXZBT09Jc3E4VHc0Q28y?=
- =?utf-8?B?ZXJleEg4dG1GZFV2NXpoaXNzeXU2d0VYUk45WmVwaWRYeFRQQWtWb3BKRTl6?=
- =?utf-8?B?dDdabml6cXBBU0JPL09PWmpGT3k3b3FoV2poODdYVlZ2bUhnNXJFSG8vUGh0?=
- =?utf-8?B?WFY5dkdvRkoySFFwWEpJakVGWjhrYVE2Wi9URGRHT2lKQkVUL3V4VFVXTG9p?=
- =?utf-8?B?REc4UC92bXBzWUxiQVZDMTl1UGRWK01hTnhlMEVCT0pZcTZOVE5YMjRUdmJJ?=
- =?utf-8?B?cVdUa2ZuTTBVTTZIeW42Y04rdDlxOEVhYzlIN0pxczRQVm5xQTF0ekZSZkRB?=
- =?utf-8?B?TTUxNFFpYVdvQUJZaUcvVVNwaTVWenVkK000RGFmSWNXdVNadkZEeVorTjN0?=
- =?utf-8?B?QnRjUmlxWTZjTHBlaWpJRFc5QXRyWG9KamVoUnA5RklVQnhUa1BhaGVpVkUv?=
- =?utf-8?B?OU5JRE9US0pIL3VTcUhmeFZHUktFelFUMkd3OVhZTHo2RHlBY28xbVQvODg1?=
- =?utf-8?B?cXNNU2lDK1B5ZXNHM1M0OWR5Q1MzYUdrYWgyZjdHOTBYRGk3ME85OElmMU9j?=
- =?utf-8?B?cFBsdFpMSlY0U3NHdVNYZmg3NlVHSHFpQlJLU2oxR3l3dVp3OFpid3I1UXJl?=
- =?utf-8?B?dE8vSGZyRXJJQjByTkxjcUtUWnhTOVRMRTdNV2VzWlZtb1NrZml3amZnSVFS?=
- =?utf-8?B?TlZLZllENGtCOHA5bWowODloMjFPSmxYTEpTZDNqcWl4Sy90MlZHRE1XV1dY?=
- =?utf-8?B?YXlPVEZtLzlFVkhMNGYyVGU4ZDUyNUJWUEl2S3lXN0Q2cEt4RE9aaWpGQUF3?=
- =?utf-8?B?ekpJTWVKZ3pXY2ErZmFYdit2MTlqRTV2NzJwZmk0eVZKUE5iYS85elB0UmRB?=
- =?utf-8?B?UzUyN3NIQ1QrZmR5MjM2Zz09?=
-X-Microsoft-Antispam-Message-Info: EmBb33cbkVBczJIFby0HXTaIHrPNbrMh9ciReVz6Tq020TV+ws5+XpTPhV8JsIdub38TZPQwTmGSIBzKswS7X8rQ0tkSZOydMsMt8WYsnIsH+eWw1jsWEXm9l9mAkZZY0UNRvvqlrHSM9kqOdKsgGk4yyOdEBs3WffGFHJaUPiJkcQm9UVa+HhGHRAAj97nFlWFYsoCkvyOgXyQemr65Kme6dAePDNHplBvO5umbBVT8MrdFKVMyIjuezW/HP+k/QpShFVbbPT7++eZV+3AomlAe1glwMC/pR5nNj81IWT9zMpzwgnlfpG6edqfOE7oL1+j1BFhz883qxXF4VMUhKT2v6MRLdpMNEvuw2HnKIf0=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0166;6:O0JSJ6ddeGBgv5uU+ktJwJd4ELzM7Ua2D/gOzM9tAuiu5fui2nhNtk1jJSkACrHz3a6rUflVGCBO9j26ysICKPY0t3L8KwkEty5InEldpff4FUiC4+Q87TO7f10A3uolC6RC19nmRmHUtOluUh5GuYUViq1iygv8vUqGqeJpQZ26X/PVUN5RFwcl/qh+VGYKcCFFwObsYFvXsW2MmIgtKkXglkVD6tUDqz5kMax5Pfi5iHYsJEGeZaAIPTTKH/i6d7/wk2FFkJBmQ01zRa8rYE+SYVPMnlon8nwYyLhnQCasvUGN8cSWKb/zFIome0MwKRnm/BpfPYQ49Dm8sdhmXwRRuvy1XLayhmrLXolXm1fgWT7GKVIi8ye//Vln0HlGC/e2dowFaOZom9eU//y7scBYhwAIsnOuvF3nS9ZnJVvqewGDfcFxkS3eHctVoUo+03zBv2LcBJ0n/ErpV9rKqw==;5:gIzA+zlf1phn4+uom2Y7pYTj15vKzM/RBQF0kD2kHowF7QQIR0x9B/pDNN0OWNFjzZMXpnaak/PGu7fuzyfeVdx8SptCkMxu/jlpNoZz7qZ5y727HuthBqnKu3beIh3pPNs99OW1JiZ4NLJMg1IKs4tYblxPRR+qxNBETY/nSTU=;24:XhE/TDyqcCDqF7LAeFq4ZoGTZobhFeAOH7GeitkgdA/73OjP3YD/S7ygv7m+1NRYoscZMwREzcrAmbPaJ3/VbmTu5rIu8TBqh6elqUs92mk=
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjEyTUIwMTY1OzIzOnRWYkN1cHVPdmJFdDNHYXlZTjBSOVVtS1Nt?=
+ =?utf-8?B?RnZwQ0MrUXRHVlFoNXArZW94YklQdm5Zb0hQa2FlOXY2emhLdmlsM21TbklM?=
+ =?utf-8?B?djkwMVJLcGh0eFVPcEFjOXZTTitNWHRQamR0bVRVL3dqamk5SmxRTXdjcmRH?=
+ =?utf-8?B?eG5kdFk0UnBBamsrNFpmc1lrQm8xYkN5Tmw5d3oxZUNaeE1MOW1qQXpRbVlo?=
+ =?utf-8?B?T0tmTEFocGlFMVNaMjRLSGVsbVY3SUE2SDdRSFZJZFQ5bUQrSURwZWQrVjh4?=
+ =?utf-8?B?ZVRxK2lVdGRNbFlDZ0IwWEhpMGVjVmVTNVE1OE1UaUE0VnpIQWJMNXUyZWJB?=
+ =?utf-8?B?RUJ2U0hFQUpRd3J6cVlkUTB2OUFlemQyY1cyTEU5aGZTMFk3NWpzTkZEK3VP?=
+ =?utf-8?B?UVNzVTJzcWR4cnJOekxWZUxaN2QxUW9keGI1VkhWZFAraXJFVC9tNkkyMEE5?=
+ =?utf-8?B?ZFdma0RJRFRGM09URUs5VlJQeE95enN3bkljdGRqUi9HWUxpR3daOXE0L3hM?=
+ =?utf-8?B?L1JXUG5ldUNLRFMrY3ZwaktIMTFNLzN0RjZFMFJMWmcvSDM3eW43V2RpQmlO?=
+ =?utf-8?B?TjZuWERybGRGTEdxNzdydi9UenVNYTJvbmRRYXRCb05rWlhrN3VMaFl2T2NN?=
+ =?utf-8?B?OU9ieXBBUFRqZWlDWERzbElPbnBwT1hrZnhhRGNBWkxMeFFLaThhaXVHVHhY?=
+ =?utf-8?B?MHRNVVpEZkI2akZmMzNLZ1JRK0lMZGJnblpqQnpSb1ZQVVYvMmIySmVpUGNz?=
+ =?utf-8?B?YTFhL0xnRWg4bklvUE5BeCtIS2kvMnRIdTJGYU8xdzNtY0o3TE4vcG54MEZX?=
+ =?utf-8?B?NmpYdExJZURzNHZMKytnaXF4cmdUNXh2bUpvMkNNQTBZcjBYWEdZekFiYmtn?=
+ =?utf-8?B?RTYwMkVIb1NRM2kxTTZpUXh0QXFZSlJYK1JkaUtEeEdDZko0ajIyeURvMWdQ?=
+ =?utf-8?B?Wldxb3NNSkNXKy9NeW92N1FQZGxsUGZLdmJ5bFFFMmxLUDU4TGF6ZFpPamxz?=
+ =?utf-8?B?a0Y4eEYvODIzektkVmhRRUhyTjZKQTZMejdEZzdvekE3SmNtV1BCbkZQUUlK?=
+ =?utf-8?B?OHdNSmpCMDJiamVMakNIczFwY3VJTU1JYm9MNG9nSndlN0ZQRGY3c2VJc3N0?=
+ =?utf-8?B?ZkRhSlNDOU4zNFZCSmVJa1M2L010SFUzNjI1NXhVNTVVbTl5TWdpK245dG90?=
+ =?utf-8?B?NnFIbDhJZFB5RXV2UE9nWE9wQ3QyQS9SYjcxOG9ZcVh1clI1ZDRrdDJ6Wkor?=
+ =?utf-8?B?YUdMR0U4UjV2MksvMUFnaXlWK2FnRURMWUhzb2NQQ2NTaHpPek1sUmVLQUh4?=
+ =?utf-8?B?L1lob2tqWWFhY2tTVFNkTCtIQXFSaEo5SWVmMnNSN0tiZmt5c1llM1FlNGZU?=
+ =?utf-8?B?S2VUWHdabURqZzZYUGtROXcvK3lnZFovOUp6REl4UktaeGNnc2N4UGxPWVg2?=
+ =?utf-8?B?VE85WDF3NlErMHFIVWhoSXhHdkI4d3JyU3ZFazRnVjNDQ0pDNjJ1akZNTGJZ?=
+ =?utf-8?B?WlBhbTJnWWJ4WSt4SVBRUzduMS9ZdEtZMmxaZ0dxelNrWi9NSUgxTzdyeTNa?=
+ =?utf-8?B?Z2wxY3k5WWkrVGlXVGcrdWZQMjNBZUN1Z29WeWxXTWFRNERGcTVZRU1OMWlQ?=
+ =?utf-8?B?ZjNySE01dURuZ0JUWjV0Vmw0QXMyZWtxaVk5OXA2MHFNcHJ5TzVERDE1Rmx4?=
+ =?utf-8?B?TEhhblRkY1hJdlVFWmNaYVFORlpBWU9oYkhSLzF2bjBaUlJ5RlYrbkRLY0lH?=
+ =?utf-8?B?Unc2MGZ5YlNxWXBaY2JRaEhFclFJMHNva0VXcEQ4UFBPVDRlVHV2MDZjQTM5?=
+ =?utf-8?Q?P5QM1XMZ+sqEW?=
+X-Microsoft-Antispam-Message-Info: YfrCCG2JSqtd4+I2qQOxu1ueuwvAn4q6CInnNldjS/ZcUOq5RkSFyn77Ins5jeGkLaHkHqFDJ4udSaD5JpkcF/cny17JEHH8WssGCrMrX/i7Pytr7TM2Cu01eHv4+HAodwua3iWFE32DmvxiEbIvHHn9J9uKA9N76dd3ex65cnRdkhftaEqjzX9t7+uyjuYTect9xa2BTrqPGEH5rLMpI3vzQgAjBuoog8xqvDBkeiU9Lmu1FBYRCysWSgRsGRZ4JKoQPn0/VKg0+/Co7NJmpn+SmHqXTDsvFT7ZwXXrujdQq3fS1hFSa7FjM63/1Jy17zu0LklpE55lNJzlEB9Mk4CylZYYxjYUgzNH31frGjE=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0165;6:e04TmkBsQgVRbpXcWtJctzLROUao1Jy58w1Cb02h7dBC9IbkZeyUALZ6A7EdHLEAIAD558+ceGM+aIaA3j5wdbT/khf7DDfJuyJ7vG93V3bN83CJie4pqrv25hjGOX3GnlsSxGvNzGp79MWtoZa3FeEfaCQn99DLgKso3OQDPAwlbQH4K2YmK7H7HS/FNTqZogRdNfmwA/p+of4uJMfB6WZCh2OvUr5uMc5TY6dWhjiXLkDJ7qCHJIPk1bS1jlAwBthWdIAkQYu8byUsPWRyebE316zKnbU+cCyg3dxDYKWgBYyPqBQgX7xIcyj4A7CO25+QwXmc+x3GkeN0n72Hel9kxL5wxf+Z4A8c07U1UWwcDU/qQY/8JXgE/a4h5vEoQ3tQO+xs5mboIi/JpQtN1R6P9JatNcYWbBa5zNv0ksMpySchnaqP4AMd/x2CWjuO2Biu76Jw5+Y/SRtIMEzDUg==;5:Yi31RC4hF7Rtp/3AvymqG7lIserO6PkqwA8CMZosbGwS+fVgdAsyWpVh677GW4yytZNEvrprBbIqnrYjH9KLoINUZeq32ctnZKlbqxMZ3/buWPm4Fz7goIJfN7BEjlvxqqKa7yAcA9CIgAFppVrHVSnckco32E47JL5GeZpCswM=;24:2i5hYz7PgUFLT/q73tn2KrZ3K7O+ryNjWS/puFgU7fJ5iqR5JHmgOi86lp+urFDPgzg0GbVjJEfk9oIVSk6Xwhmr9OSYmVXn7bv4rtHGIPk=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0166;7:RjxhKVopjyA+Oyw8F3hDMZXIlG3569AHmCLK1ArPuuIgUEl1miYKrQeqFVpRpVX4t0wr+yOQN0FbJsfcBLNHDklIoX/iq2DZ8qCzG1S1PweWNcwiPDYFmztiWGVk7cPpzOoTJl5NAO/rYPWJvmzLnYJgwRvaZBlWepQh4MapYwyUkYa/4dhdv42g09Yt9KejCudxe234mtVTfq/V9U3uKagM00pGr6ZpWRImqWvfizWrM708679KnTJhe/A3lwXq;20:0m6W2o/xtHZ80xkXpKphlJBt84wdSEGa+K7+7mRH6K6s8eNNCxh/7y9+mGUCFqBu0IdnUelLBWBsi/3m3vRbMbBIbUBoMaO1FgARRLLx5n+zx+MRw9BorDdHmMHfWZ5ORr6DGJvePjydl4m34fucisGrpO1Wi4HHtYKIwKJnF+PCgXLJFTmgwK9GrAdaEvTyCPon08PMStmgYDlv7eUs1NkwAvPTXrE7sGMcac9QukSGwkFXe8kjnbT4sQ6qXOVB
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0165;7:gAN8kyQ+TE5FSj6P0yjUNn4HVOTjpqyj1+0gNA8tDvrrRgIBTlH8UvHn3WoVRDmc4OD7MQegohG6pOmHVCOOLbUiAYoudRUEmOurAT4KaRoMiAryfaMSTQ6p1FFsd2/xcNiWRe+gJLP+V/Odin/o9cz8mw4AszfQMIuyBXQ5oi0DuuU1593lak/cpv7nbFgDR9y0hHP1CEzgzALvpdi4IqGP1zd5/IRuds4tP5ATPEupYGhzbvVW7ebpojHo7Zmu;20:lLFPDZfL79exrB4s7zAnow1+i470Kwc1njnEdYZe9gAWNS22J2zKU9vTsY/DL9P8n6JIJw/r/vtweMdfJui7+PVsVDrpV/PPRLog3FK1B8dIVjVOcbrWWJ6yVD8G+o4bPk0vm9ZcSE9JfOPuT1Z86khRWoQ1xdfLrKkX8b6dEXkillQ11YKZ7bb3fEYABD9DFMJr0M85cus6HRk4vyDBGk44QJUl8nAdIeFgAgkxBo4kdKgCUw6NRJFN58P1BZmq
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2018 21:35:56.4460 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b958aed0-71fb-4ad7-a1cf-08d5e063cbe2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2018 21:36:05.2712 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c1d6b78-c523-47fc-0106-08d5e063d11d
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0166
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If either the X86_FEATURE_AMD_SSBD or X86_FEATURE_VIRT_SSBD features are
-present, then there is no need to perform the check for the LS_CFG SSBD
-mitigation support.
+On AMD, the presence of the MSR_SPEC_CTRL feature does not imply that the
+SSBD mitigation support should use the SPEC_CTRL MSR. Other features could
+have caused the MSR_SPEC_CTRL feature to be set, while a different SSBD
+mitigation option is in place.
 
+Update the SSBD support to check for the actual SSBD features that will
+use the SPEC_CTRL MSR.
+
+Fixes: 6ac2f49edb1e ("x86/bugs: Add AMD's SPEC_CTRL MSR usage")
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/kernel/cpu/amd.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 082d787..38915fb 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -543,7 +543,9 @@ static void bsp_init_amd(struct cpuinfo_x86 *c)
- 		nodes_per_socket = ((value >> 3) & 7) + 1;
- 	}
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 404df26..5c0ea39 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -155,7 +155,8 @@ enum spectre_v2_mitigation_cmd {
+ 		guestval |= guest_spec_ctrl & x86_spec_ctrl_mask;
  
--	if (c->x86 >= 0x15 && c->x86 <= 0x17) {
-+	if (!boot_cpu_has(X86_FEATURE_AMD_SSBD) &&
-+	    !boot_cpu_has(X86_FEATURE_VIRT_SSBD) &&
-+	    c->x86 >= 0x15 && c->x86 <= 0x17) {
- 		unsigned int bit;
+ 		/* SSBD controlled in MSR_SPEC_CTRL */
+-		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD))
++		if (static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) ||
++		    static_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
  
- 		switch (c->x86) {
+ 		if (hostval != guestval) {
+@@ -533,9 +534,10 @@ static enum ssb_mitigation __init __ssb_select_mitigation(void)
+ 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD may
+ 		 * use a completely different MSR and bit dependent on family.
+ 		 */
+-		if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
++		if (!static_cpu_has(X86_FEATURE_SPEC_CTRL_SSBD) &&
++		    !static_cpu_has(X86_FEATURE_AMD_SSBD)) {
+ 			x86_amd_ssb_disable();
+-		else {
++		} else {
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+ 			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
 
