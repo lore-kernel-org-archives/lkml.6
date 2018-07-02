@@ -2,91 +2,207 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE310C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E2FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B1620C09
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E2222522
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:09:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iN+smaYA";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="esgcA5Y0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B1620C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cpU/IBrO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E2222522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753135AbeGBGH5 (ORCPT
+        id S1753225AbeGBGJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:07:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39452 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752406AbeGBGH4 (ORCPT
+        Mon, 2 Jul 2018 02:09:22 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48126 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752303AbeGBGJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:07:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A797607DC; Mon,  2 Jul 2018 06:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530511676;
-        bh=DDeXTLjktyfcKu8AzzShrw2Di8+fZjgS1HxxrGDt2OE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iN+smaYAxDdRGrrem78NB1psGdE9WZfTMqGxMt6AFFl32oLYlgBuizujoNtkSZIvv
-         mRm6jqesgIdMjfQRVwoGVtN6uQyirwEXqgOrvRrs01rd2YdnuWYD7Ovh3kHhaOZ874
-         jK2QSBHTWj6vWMnsDKhvuchwYmDnDuefg0nUToJE=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B038F606FC;
-        Mon,  2 Jul 2018 06:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530511675;
-        bh=DDeXTLjktyfcKu8AzzShrw2Di8+fZjgS1HxxrGDt2OE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=esgcA5Y0Md2VgCSXR90ZrY5QTrK+puOYBynW5l5M9eGrizcJGxhEDrUaf5Yf1ZFus
-         08io4dP1Hl/nKdj6Z6nERcxoK5NWMNwAsQPSNpdiQ9WiCAOCmiLJkXs4h+LxshMC5M
-         LgzyYV4LkujwA0qC16uT5V0btjtgNwP+z110f7eU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B038F606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org,
-        Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: show the fsync_mode=nobarrier mount option
-Date:   Mon,  2 Jul 2018 11:37:40 +0530
-Message-Id: <1530511660-31323-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 2 Jul 2018 02:09:20 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6269HAA031563;
+        Mon, 2 Jul 2018 06:09:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2017-10-26; bh=KXLDu1dnZtiOyM3Bzd3rbYE/dZNZK0pG7raQGUX85dw=;
+ b=cpU/IBrOAejzlOyqo3i36NbtZiPrWOGlXpUuKD1Q4WSSiHg2O50YN5TgcXOOS6rS/nVX
+ +pULqoBIqQLrvUfmnQo9NVGFIWGd02VMS9FWVS7rrDx7r23tOcgQ6n+EF9DycISHdKGH
+ UftEAphAii1/XOJXsO6eGtM0+LXjzPhPlrvPCqfmopBY3CoGpjap/TRzJEau/O4tNxZl
+ eqCcgc0z0ljEh11W5TSpHQdP2Qr4Qui3p2/e7hVm7fVKIBh6a+zlrZJYKFipKRp8XcR0
+ QU2C8W4q06g/wK+bf5cSh209fGqFieRS5m9LZeNEw9OK3axG1dW1tQZxfvyMkaHpx4As aA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2jx2gptwsd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Jul 2018 06:09:17 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6269GXB023797
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Jul 2018 06:09:16 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6269FvS020088;
+        Mon, 2 Jul 2018 06:09:15 GMT
+Received: from mwanda (/197.157.34.167)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 01 Jul 2018 23:09:14 -0700
+Date:   Mon, 2 Jul 2018 09:09:07 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@01.org, Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     kbuild-all@01.org, linux-media@vger.kernel.org,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 15/17] media: platform: Switch to
+ v4l2_async_notifier_add_subdev
+Message-ID: <20180702060907.xlghcxtsj5eepdxu@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530298220-5097-16-git-send-email-steve_longerbeam@mentor.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8941 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch shows the fsync_mode=nobarrier mount option in
-f2fs_show_options().
+Hi Steve,
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+I love your patch! Perhaps something to improve:
+
+url:    https://github.com/0day-ci/linux/commits/Steve-Longerbeam/media-imx-Switch-to-subdev-notifiers/20180630-035625
+base:   git://linuxtv.org/media_tree.git master
+
+New smatch warnings:
+drivers/media/platform/xilinx/xilinx-vipp.c:97 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
+drivers/media/platform/xilinx/xilinx-vipp.c:335 xvip_graph_notify_bound() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
+
+Old smatch warnings:
+drivers/media/platform/xilinx/xilinx-vipp.c:106 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 4 has type 'struct fwnode_handle*'
+drivers/media/platform/xilinx/xilinx-vipp.c:133 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
+drivers/media/platform/xilinx/xilinx-vipp.c:143 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 4 has type 'struct fwnode_handle*'
+
+# https://github.com/0day-ci/linux/commit/86ede05d30b3cad4b07c2df915fc83b94d3327f1
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 86ede05d30b3cad4b07c2df915fc83b94d3327f1
+vim +97 drivers/media/platform/xilinx/xilinx-vipp.c
+
+df3305156 Laurent Pinchart      2013-05-15   70  
+df3305156 Laurent Pinchart      2013-05-15   71  static int xvip_graph_build_one(struct xvip_composite_device *xdev,
+df3305156 Laurent Pinchart      2013-05-15   72  				struct xvip_graph_entity *entity)
+df3305156 Laurent Pinchart      2013-05-15   73  {
+df3305156 Laurent Pinchart      2013-05-15   74  	u32 link_flags = MEDIA_LNK_FL_ENABLED;
+df3305156 Laurent Pinchart      2013-05-15   75  	struct media_entity *local = entity->entity;
+df3305156 Laurent Pinchart      2013-05-15   76  	struct media_entity *remote;
+df3305156 Laurent Pinchart      2013-05-15   77  	struct media_pad *local_pad;
+df3305156 Laurent Pinchart      2013-05-15   78  	struct media_pad *remote_pad;
+df3305156 Laurent Pinchart      2013-05-15   79  	struct xvip_graph_entity *ent;
+859969b38 Sakari Ailus          2016-08-26   80  	struct v4l2_fwnode_link link;
+86ede05d3 Steve Longerbeam      2018-06-29   81  	struct fwnode_handle *ep = NULL;
+df3305156 Laurent Pinchart      2013-05-15   82  	int ret = 0;
+df3305156 Laurent Pinchart      2013-05-15   83  
+df3305156 Laurent Pinchart      2013-05-15   84  	dev_dbg(xdev->dev, "creating links for entity %s\n", local->name);
+df3305156 Laurent Pinchart      2013-05-15   85  
+df3305156 Laurent Pinchart      2013-05-15   86  	while (1) {
+df3305156 Laurent Pinchart      2013-05-15   87  		/* Get the next endpoint and parse its link. */
+86ede05d3 Steve Longerbeam      2018-06-29   88  		ep = fwnode_graph_get_next_endpoint(entity->asd.match.fwnode,
+86ede05d3 Steve Longerbeam      2018-06-29   89  						    ep);
+ef94711a0 Akinobu Mita          2017-10-12   90  		if (ep == NULL)
+df3305156 Laurent Pinchart      2013-05-15   91  			break;
+df3305156 Laurent Pinchart      2013-05-15   92  
+68d9c47b1 Rob Herring           2017-07-21   93  		dev_dbg(xdev->dev, "processing endpoint %pOF\n", ep);
+df3305156 Laurent Pinchart      2013-05-15   94  
+86ede05d3 Steve Longerbeam      2018-06-29   95  		ret = v4l2_fwnode_parse_link(ep, &link);
+df3305156 Laurent Pinchart      2013-05-15   96  		if (ret < 0) {
+68d9c47b1 Rob Herring           2017-07-21  @97  			dev_err(xdev->dev, "failed to parse link for %pOF\n",
+68d9c47b1 Rob Herring           2017-07-21   98  				ep);
+df3305156 Laurent Pinchart      2013-05-15   99  			continue;
+df3305156 Laurent Pinchart      2013-05-15  100  		}
+df3305156 Laurent Pinchart      2013-05-15  101  
+df3305156 Laurent Pinchart      2013-05-15  102  		/* Skip sink ports, they will be processed from the other end of
+df3305156 Laurent Pinchart      2013-05-15  103  		 * the link.
+df3305156 Laurent Pinchart      2013-05-15  104  		 */
+df3305156 Laurent Pinchart      2013-05-15  105  		if (link.local_port >= local->num_pads) {
+68d9c47b1 Rob Herring           2017-07-21  106  			dev_err(xdev->dev, "invalid port number %u for %pOF\n",
+86ede05d3 Steve Longerbeam      2018-06-29  107  				link.local_port, link.local_node);
+859969b38 Sakari Ailus          2016-08-26  108  			v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  109  			ret = -EINVAL;
+df3305156 Laurent Pinchart      2013-05-15  110  			break;
+df3305156 Laurent Pinchart      2013-05-15  111  		}
+df3305156 Laurent Pinchart      2013-05-15  112  
+df3305156 Laurent Pinchart      2013-05-15  113  		local_pad = &local->pads[link.local_port];
+df3305156 Laurent Pinchart      2013-05-15  114  
+df3305156 Laurent Pinchart      2013-05-15  115  		if (local_pad->flags & MEDIA_PAD_FL_SINK) {
+68d9c47b1 Rob Herring           2017-07-21  116  			dev_dbg(xdev->dev, "skipping sink port %pOF:%u\n",
+86ede05d3 Steve Longerbeam      2018-06-29  117  				link.local_node, link.local_port);
+859969b38 Sakari Ailus          2016-08-26  118  			v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  119  			continue;
+df3305156 Laurent Pinchart      2013-05-15  120  		}
+df3305156 Laurent Pinchart      2013-05-15  121  
+df3305156 Laurent Pinchart      2013-05-15  122  		/* Skip DMA engines, they will be processed separately. */
+859969b38 Sakari Ailus          2016-08-26  123  		if (link.remote_node == of_fwnode_handle(xdev->dev->of_node)) {
+68d9c47b1 Rob Herring           2017-07-21  124  			dev_dbg(xdev->dev, "skipping DMA port %pOF:%u\n",
+86ede05d3 Steve Longerbeam      2018-06-29  125  				link.local_node, link.local_port);
+859969b38 Sakari Ailus          2016-08-26  126  			v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  127  			continue;
+df3305156 Laurent Pinchart      2013-05-15  128  		}
+df3305156 Laurent Pinchart      2013-05-15  129  
+df3305156 Laurent Pinchart      2013-05-15  130  		/* Find the remote entity. */
+86ede05d3 Steve Longerbeam      2018-06-29  131  		ent = xvip_graph_find_entity(xdev, link.remote_node);
+df3305156 Laurent Pinchart      2013-05-15  132  		if (ent == NULL) {
+68d9c47b1 Rob Herring           2017-07-21  133  			dev_err(xdev->dev, "no entity found for %pOF\n",
+86ede05d3 Steve Longerbeam      2018-06-29  134  				link.remote_node);
+859969b38 Sakari Ailus          2016-08-26  135  			v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  136  			ret = -ENODEV;
+df3305156 Laurent Pinchart      2013-05-15  137  			break;
+df3305156 Laurent Pinchart      2013-05-15  138  		}
+df3305156 Laurent Pinchart      2013-05-15  139  
+df3305156 Laurent Pinchart      2013-05-15  140  		remote = ent->entity;
+df3305156 Laurent Pinchart      2013-05-15  141  
+df3305156 Laurent Pinchart      2013-05-15  142  		if (link.remote_port >= remote->num_pads) {
+68d9c47b1 Rob Herring           2017-07-21  143  			dev_err(xdev->dev, "invalid port number %u on %pOF\n",
+86ede05d3 Steve Longerbeam      2018-06-29  144  				link.remote_port, link.remote_node);
+859969b38 Sakari Ailus          2016-08-26  145  			v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  146  			ret = -EINVAL;
+df3305156 Laurent Pinchart      2013-05-15  147  			break;
+df3305156 Laurent Pinchart      2013-05-15  148  		}
+df3305156 Laurent Pinchart      2013-05-15  149  
+df3305156 Laurent Pinchart      2013-05-15  150  		remote_pad = &remote->pads[link.remote_port];
+df3305156 Laurent Pinchart      2013-05-15  151  
+859969b38 Sakari Ailus          2016-08-26  152  		v4l2_fwnode_put_link(&link);
+df3305156 Laurent Pinchart      2013-05-15  153  
+df3305156 Laurent Pinchart      2013-05-15  154  		/* Create the media link. */
+df3305156 Laurent Pinchart      2013-05-15  155  		dev_dbg(xdev->dev, "creating %s:%u -> %s:%u link\n",
+df3305156 Laurent Pinchart      2013-05-15  156  			local->name, local_pad->index,
+df3305156 Laurent Pinchart      2013-05-15  157  			remote->name, remote_pad->index);
+df3305156 Laurent Pinchart      2013-05-15  158  
+8df00a158 Mauro Carvalho Chehab 2015-08-07  159  		ret = media_create_pad_link(local, local_pad->index,
+df3305156 Laurent Pinchart      2013-05-15  160  					       remote, remote_pad->index,
+df3305156 Laurent Pinchart      2013-05-15  161  					       link_flags);
+df3305156 Laurent Pinchart      2013-05-15  162  		if (ret < 0) {
+df3305156 Laurent Pinchart      2013-05-15  163  			dev_err(xdev->dev,
+df3305156 Laurent Pinchart      2013-05-15  164  				"failed to create %s:%u -> %s:%u link\n",
+df3305156 Laurent Pinchart      2013-05-15  165  				local->name, local_pad->index,
+df3305156 Laurent Pinchart      2013-05-15  166  				remote->name, remote_pad->index);
+df3305156 Laurent Pinchart      2013-05-15  167  			break;
+df3305156 Laurent Pinchart      2013-05-15  168  		}
+df3305156 Laurent Pinchart      2013-05-15  169  	}
+df3305156 Laurent Pinchart      2013-05-15  170  
+86ede05d3 Steve Longerbeam      2018-06-29  171  	fwnode_handle_put(ep);
+df3305156 Laurent Pinchart      2013-05-15  172  	return ret;
+df3305156 Laurent Pinchart      2013-05-15  173  }
+df3305156 Laurent Pinchart      2013-05-15  174  
+
 ---
- fs/f2fs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3995e92..12e3d2d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1343,6 +1343,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",fsync_mode=%s", "posix");
- 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
- 		seq_printf(seq, ",fsync_mode=%s", "strict");
-+	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER)
-+		seq_printf(seq, ",fsync_mode=%s", "nobarrier");
- 	return 0;
- }
- 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
