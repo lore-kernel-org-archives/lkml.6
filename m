@@ -3,82 +3,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6BAC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7FDC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878042548A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878042548A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 26D85255A8
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:06:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D85255A8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932842AbeGBHGf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:06:35 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51744 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeGBHGe (ORCPT
+        id S932959AbeGBHGn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:06:43 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:39964 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753243AbeGBHGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:06:34 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fZsul-0000ex-Ia; Mon, 02 Jul 2018 07:06:23 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kvmclock: remove redundant variable 'size'
-Date:   Mon,  2 Jul 2018 08:06:23 +0100
-Message-Id: <20180702070623.4769-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 2 Jul 2018 03:06:37 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fZsut-0002pl-9z; Mon, 02 Jul 2018 15:06:31 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fZsuq-0000S4-Qx; Mon, 02 Jul 2018 15:06:28 +0800
+Date:   Mon, 2 Jul 2018 15:06:28 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     neilb@suse.com, tgraf@suug.ch, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: rhashtable: Correct self-assignment in rhashtable.c
+Message-ID: <20180702070628.lhi63kcgcfwj64y4@gondor.apana.org.au>
+References: <1530493906-19711-1-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530493906-19711-1-git-send-email-rishabhb@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun, Jul 01, 2018 at 06:11:46PM -0700, Rishabh Bhatnagar wrote:
+> In file lib/rhashtable.c line 777, skip variable is assigned to
+> itself. The following error was observed:
+> 
+> lib/rhashtable.c:777:41: warning: explicitly assigning value of
+> variable of type 'int' to itself [-Wself-assign] error, forbidden
+> warning: rhashtable.c:777
+> This error was found when compiling with Clang 6.0. Change it to iter->skip.
+> 
+> Change-Id: I5abd1ce5ba76737a73bd6eca94b07b1bd5267523
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 
-Variable size is being assigned but is never used hence it is redundant
-and can be removed.
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Cleans up clang warning:
-warning: variable ‘size’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/x86/kernel/kvmclock.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index bf8d1eb7fca3..45c22ce941c1 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -354,13 +354,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
- 	int cpu;
- 	u8 flags;
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	unsigned int size;
- 
- 	if (!hv_clock)
- 		return 0;
- 
--	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
--
- 	cpu = get_cpu();
- 
- 	vcpu_time = &hv_clock[cpu].pvti;
+Thanks,
 -- 
-2.17.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
