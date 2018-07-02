@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7E2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D313C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064872186D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A404218C2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GymrCStW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064872186D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAn2Wztv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A404218C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932148AbeGBSOK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:14:10 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44074 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753384AbeGBSME (ORCPT
+        id S932180AbeGBSOe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 14:14:34 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39012 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753323AbeGBSMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:12:04 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p12-v6so16417898wrn.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:12:04 -0700 (PDT)
+        Mon, 2 Jul 2018 14:12:00 -0400
+Received: by mail-wr0-f193.google.com with SMTP id b8-v6so16422671wro.6
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=w4lxjj61CeIJtbmnFVjG2GWM9frrLYdO8XaMvDkK3nI=;
-        b=GymrCStWjyo2SvoZDUrwyeQXJkBuT4se9Fg+tlEcaSo8Aym536nvFRSHOd7XtAmMya
-         1cL8Wd/1/asNFKwEGUHVvxVPJM+2IlGnMiza3uAWHP5OVn+C/2H3QjewoJJxBO7xHlhd
-         OpHAV/O6SWI/9zM3HEWvMLl+wwzB48KZ/wPpM=
+        bh=o8m2ubatinriCgE+fyFRDo1C7fsKjnxpNpjlgZpUC+Y=;
+        b=OAn2Wztv72vqFNhayw1xHb7skMG8qhK6hKdeatCA5L6fGMcqW864ln6UrWAfAFCxKA
+         j0Jte8u75R9lvgw8tbhVaSEiZ7nP3WDPw83Fl3bQzEhb96VlBDxh/8q2r24x4ItyMlyy
+         v7kiVMHld00DBkkIwClWjSvXm3DyM2TrLJc9E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=w4lxjj61CeIJtbmnFVjG2GWM9frrLYdO8XaMvDkK3nI=;
-        b=VJwSMMdzxJnEMMEYtkTPBIvXFqIgefpV3UKSGs2UPziUPE0l38sw+ynk4shM8bnmP6
-         XppepRi7mocWGhN3BD+7HsOD0oOl8csYRwpYvcksdXjcT9WVwg9O8e//MeagY3C2LW6g
-         ClAM0oORmUx0pLV7ig+sOlfoxXM3uLb4W6CY60RhvFnX1koff4uhmBdDGxPyYSfV57Gm
-         OP1gWv4XdgGqeHb80nx3htLmUaRGN63HzoYG7T3n5aDBLLto0oZo77Qr8kjRrCAs3eve
-         zlEUb7l+od0+799vBVslKNzNxQhhJ6la5/A7lMGzo+2wlnisoD3I0ODGHx8JYDdrajcx
-         HExQ==
-X-Gm-Message-State: APt69E0hCe+Uy6dHdJcNQg+I/WIL3aPc08lhJYrBwU3nqRCC/eWOTkQe
-        zv7PNhbHEw7yPbnhVudwyOqVHQ==
-X-Google-Smtp-Source: AAOMgpc4dZrSrdg3KWZAALIfxmtO8U+AjGhk5fNvj0iSbn/hiLmJQgn1cO5C2seb/rPtBR/9d8g/DA==
-X-Received: by 2002:adf:8e49:: with SMTP id n67-v6mr19861946wrb.131.1530555123423;
-        Mon, 02 Jul 2018 11:12:03 -0700 (PDT)
+        bh=o8m2ubatinriCgE+fyFRDo1C7fsKjnxpNpjlgZpUC+Y=;
+        b=h6fnFWQCq7xUAvhaNKTe/yK0FSHxYwU9m2E64vnJ+B0NmPmYpdntmjlnhr8BtG+CrN
+         vgIVmL9jrc7ie+4gi8JiJlh2PD/5b5kmVV3MGqVyKx2GC9r7eW/LDvKbo+9d08rNyJSe
+         x57coe/U69qquFPF3iw2Dp4YF9V5nyxKiXefEwlq3X6PWEst5RsLUGUp0VLCU6V8OQlT
+         rWmU4FCjJYGOrBD2AVBAbHWIe3tFIjUQ5/VYxTm4EJI852URTci9vZwPfrdc9cmmnD3U
+         Mwdj5hZmS04M5gTXbHFlcew0pd+DvFuuIGp7lMeVoUU3ZrNijBDsJe79ZTxupqdPN1Wb
+         8APQ==
+X-Gm-Message-State: APt69E0lPJVB7Vh/+8KfBl0umVNzZGQ2RyKSz8djcGyzCEdW3IbdhKxF
+        Pg+Rs9n2j1CK+qn7YkG14WLybQ==
+X-Google-Smtp-Source: AAOMgpffB15mKVw3rO3zTA+MYkl7XFYW9cE8/ZZkFitPG+pVAEFPm2/L3Qv4TG+p5DYq4yLJ9gAINw==
+X-Received: by 2002:adf:d181:: with SMTP id h1-v6mr20077520wri.198.1530555118810;
+        Mon, 02 Jul 2018 11:11:58 -0700 (PDT)
 Received: from localhost.localdomain (151.21.90.92.rev.sfr.net. [92.90.21.151])
-        by smtp.gmail.com with ESMTPSA id 189-v6sm10582822wmd.17.2018.07.02.11.12.01
+        by smtp.gmail.com with ESMTPSA id 189-v6sm10582822wmd.17.2018.07.02.11.11.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 11:12:02 -0700 (PDT)
+        Mon, 02 Jul 2018 11:11:58 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-s390@vger.kernel.org, linux-arch@vger.kernel.org
@@ -68,9 +68,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Jessica Yu <jeyu@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 5/8] x86: jump_label: switch to jump_entry accessors
-Date:   Mon,  2 Jul 2018 20:11:42 +0200
-Message-Id: <20180702181145.4799-6-ard.biesheuvel@linaro.org>
+Subject: [PATCH v2 3/8] arm64/kernel: jump_label: switch to relative references
+Date:   Mon,  2 Jul 2018 20:11:40 +0200
+Message-Id: <20180702181145.4799-4-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180702181145.4799-1-ard.biesheuvel@linaro.org>
 References: <20180702181145.4799-1-ard.biesheuvel@linaro.org>
@@ -79,114 +79,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of switching x86 to use place-relative references for
-the code, target and key members of struct jump_entry, replace direct
-references to the struct members with invocations of the new accessors.
-This will allow us to make the switch by modifying the accessors only.
+On a randomly chosen distro kernel build for arm64, vmlinux.o shows the
+following sections, containing jump label entries, and the associated
+RELA relocation records, respectively:
 
-This incorporates a cleanup of __jump_label_transform() proposed by
-Peter.
+  ...
+  [38088] __jump_table      PROGBITS         0000000000000000  00e19f30
+       000000000002ea10  0000000000000000  WA       0     0     8
+  [38089] .rela__jump_table RELA             0000000000000000  01fd8bb0
+       000000000008be30  0000000000000018   I      38178   38088     8
+  ...
 
-Cc: Peter Zijlstra <peterz@infradead.org>
+In other words, we have 190 KB worth of 'struct jump_entry' instances,
+and 573 KB worth of RELA entries to relocate each entry's code, target
+and key members. This means the RELA section occupies 10% of the .init
+segment, and the two sections combined represent 5% of vmlinux's entire
+memory footprint.
+
+So let's switch from 64-bit absolute references to 32-bit relative
+references for the code and target field, and a 64-bit relative
+reference for the 'key' field (which may reside in another module or the
+core kernel, which may be more than 4 GB way on arm64 when running with
+KASLR enable): this reduces the size of the __jump_table by 33%, and
+gets rid of the RELA section entirely.
+
+Acked-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/kernel/jump_label.c | 62 ++++++++------------
- 1 file changed, 25 insertions(+), 37 deletions(-)
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/include/asm/jump_label.h | 36 +++++++++-----------
+ arch/arm64/kernel/jump_label.c      |  6 ++--
+ 3 files changed, 20 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index e56c95be2808..023768222a94 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -42,52 +42,37 @@ static void __jump_label_transform(struct jump_entry *entry,
- 				   void *(*poker)(void *, const void *, size_t),
- 				   int init)
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 1940c6405d04..d17aa9614e69 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -91,6 +91,7 @@ config ARM64
+ 	select HAVE_ARCH_BITREVERSE
+ 	select HAVE_ARCH_HUGE_VMAP
+ 	select HAVE_ARCH_JUMP_LABEL
++	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ 	select HAVE_ARCH_KASAN if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_MMAP_RND_BITS
+diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
+index 1b5e0e843c3a..bb6d15b34668 100644
+--- a/arch/arm64/include/asm/jump_label.h
++++ b/arch/arm64/include/asm/jump_label.h
+@@ -26,13 +26,15 @@
+ 
+ #define JUMP_LABEL_NOP_SIZE		AARCH64_INSN_SIZE
+ 
+-static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
++static __always_inline bool arch_static_branch(struct static_key *key,
++					       bool branch)
  {
--	union jump_code_union code;
-+	union jump_code_union jmp;
- 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
- 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
-+	const void *expect, *code;
-+	int line;
-+
-+	jmp.jump = 0xe9;
-+	jmp.offset = jump_entry_target(entry) -
-+		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+-	asm goto("1: nop\n\t"
+-		 ".pushsection __jump_table,  \"aw\"\n\t"
+-		 ".align 3\n\t"
+-		 ".quad 1b, %l[l_yes], %c0\n\t"
+-		 ".popsection\n\t"
++	asm goto("1:	nop					\n\t"
++		 "	.pushsection	__jump_table, \"aw\"	\n\t"
++		 "	.align		3			\n\t"
++		 "	.long		1b - ., %l[l_yes] - .	\n\t"
++		 "	.quad		%c0 - .			\n\t"
++		 "	.popsection				\n\t"
+ 		 :  :  "i"(&((char *)key)[branch]) :  : l_yes);
  
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
--			/*
--			 * Jump label is enabled for the first time.
--			 * So we expect a default_nop...
--			 */
--			if (unlikely(memcmp((void *)entry->code, default_nop, 5)
--				     != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = default_nop; line = __LINE__;
- 		} else {
--			/*
--			 * ...otherwise expect an ideal_nop. Otherwise
--			 * something went horribly wrong.
--			 */
--			if (unlikely(memcmp((void *)entry->code, ideal_nop, 5)
--				     != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = ideal_nop; line = __LINE__;
- 		}
- 
--		code.jump = 0xe9;
--		code.offset = entry->target -
--				(entry->code + JUMP_LABEL_NOP_SIZE);
-+		code = &jmp.code;
- 	} else {
--		/*
--		 * We are disabling this jump label. If it is not what
--		 * we think it is, then something must have gone wrong.
--		 * If this is the first initialization call, then we
--		 * are converting the default nop to the ideal nop.
--		 */
- 		if (init) {
--			if (unlikely(memcmp((void *)entry->code, default_nop, 5) != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = default_nop; line = __LINE__;
- 		} else {
--			code.jump = 0xe9;
--			code.offset = entry->target -
--				(entry->code + JUMP_LABEL_NOP_SIZE);
--			if (unlikely(memcmp((void *)entry->code, &code, 5) != 0))
--				bug_at((void *)entry->code, __LINE__);
-+			expect = &jmp.code; line = __LINE__;
- 		}
--		memcpy(&code, ideal_nops[NOP_ATOMIC5], JUMP_LABEL_NOP_SIZE);
-+
-+		code = ideal_nop;
- 	}
- 
-+	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-+		bug_at((void *)jump_entry_code(entry), line);
-+
- 	/*
- 	 * Make text_poke_bp() a default fallback poker.
- 	 *
-@@ -96,11 +81,14 @@ static void __jump_label_transform(struct jump_entry *entry,
- 	 * always nop being the 'currently valid' instruction
- 	 *
- 	 */
--	if (poker)
--		(*poker)((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE);
--	else
--		text_poke_bp((void *)entry->code, &code, JUMP_LABEL_NOP_SIZE,
--			     (void *)entry->code + JUMP_LABEL_NOP_SIZE);
-+	if (poker) {
-+		(*poker)((void *)jump_entry_code(entry), code,
-+			 JUMP_LABEL_NOP_SIZE);
-+		return;
-+	}
-+
-+	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
-+		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 	return false;
+@@ -40,13 +42,15 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 	return true;
  }
  
+-static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
++static __always_inline bool arch_static_branch_jump(struct static_key *key,
++						    bool branch)
+ {
+-	asm goto("1: b %l[l_yes]\n\t"
+-		 ".pushsection __jump_table,  \"aw\"\n\t"
+-		 ".align 3\n\t"
+-		 ".quad 1b, %l[l_yes], %c0\n\t"
+-		 ".popsection\n\t"
++	asm goto("1:	b		%l[l_yes]		\n\t"
++		 "	.pushsection	__jump_table, \"aw\"	\n\t"
++		 "	.align		3			\n\t"
++		 "	.long		1b - ., %l[l_yes] - .	\n\t"
++		 "	.quad		%c0 - .			\n\t"
++		 "	.popsection				\n\t"
+ 		 :  :  "i"(&((char *)key)[branch]) :  : l_yes);
+ 
+ 	return false;
+@@ -54,13 +58,5 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 	return true;
+ }
+ 
+-typedef u64 jump_label_t;
+-
+-struct jump_entry {
+-	jump_label_t code;
+-	jump_label_t target;
+-	jump_label_t key;
+-};
+-
+ #endif  /* __ASSEMBLY__ */
+ #endif	/* __ASM_JUMP_LABEL_H */
+diff --git a/arch/arm64/kernel/jump_label.c b/arch/arm64/kernel/jump_label.c
+index c2dd1ad3e648..903d17023d77 100644
+--- a/arch/arm64/kernel/jump_label.c
++++ b/arch/arm64/kernel/jump_label.c
+@@ -25,12 +25,12 @@
  void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+-	void *addr = (void *)entry->code;
++	void *addr = (void *)jump_entry_code(entry);
+ 	u32 insn;
+ 
+ 	if (type == JUMP_LABEL_JMP) {
+-		insn = aarch64_insn_gen_branch_imm(entry->code,
+-						   entry->target,
++		insn = aarch64_insn_gen_branch_imm(jump_entry_code(entry),
++						   jump_entry_target(entry),
+ 						   AARCH64_INSN_BRANCH_NOLINK);
+ 	} else {
+ 		insn = aarch64_insn_gen_nop();
 -- 
 2.17.1
 
