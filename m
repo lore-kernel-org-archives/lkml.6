@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E94AEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC68C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9962525728
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0302259A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:32:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="XeO1lmiB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9962525728
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="X5xRwqOT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0302259A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752904AbeGBQbt (ORCPT
+        id S1752923AbeGBQcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:31:49 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:52676 "EHLO
+        Mon, 2 Jul 2018 12:32:20 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:35423 "EHLO
         bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752277AbeGBQbs (ORCPT
+        with ESMTP id S1752216AbeGBQcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:31:48 -0400
+        Mon, 2 Jul 2018 12:32:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
         :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
         :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jHfyA0omNd0dxseEqGq1qkpvrbsqiAUQNYDuwGL5MgI=; b=XeO1lmiBq9b9t1qQ+mkTHEfwWd
-        kfthZStDbfLk7rS/CblvO2rBf4KPi/RKZY9alyI5+h3H4nWmAz4bFaVVix6Juo6RCbYe3vnhLJGH0
-        Oq8O6fzN6wKf9ZgaUTP/2QEhnJTbclSo63UrgkDn+6+1NVkpbwCVbzYaZDX9zYObYPnD/8z/0HhAj
-        H/dpeBb2ZePgAeBQm3cooQCDKUPdSRXNHcdB6rBiWKy7mkJR1QGWWQhuHiuh25ySrpA8yfxzk0ksn
-        sH9z7GVGUjSyfdLw0wB6EUR3T+DWdl7TEish/XdXJqJV14zuYCbOTjsTCL45ZPGIgSx+lLhZpsRww
-        KtuJ2IpA==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:57262 helo=localhost)
+        bh=S7WbbrFiv1yBzgjKbSqST9Dbo0P/nGJJExON1ZrY0Fg=; b=X5xRwqOTT/C0rJZNNdZM/47Grv
+        EkQvIA/bTzcS1lByBkWTVS6ZdKpxy9ZPUQxEuDb20f9T0ZesY+fW6N86sZ1mCqiXolxPpTmb+eQEy
+        kL+hgnfTUXFayifWEG7+5bt6No9D0efnebdTBcjS3iJw3JIa5n+cejZ8vX4QvaUexln0eYFaJpFT2
+        h6Bp8rGPa/3oUDT3qFeyDXGk80B30OX/g2Yx7QocOOxOH29sxEt73VHZOO/DQ39G9WSc2qRZlBvJD
+        xA6KVSwAMzYa/UhKrhcFDVzQg+e46b22htFi4p6Qu/HuTx5N44pAx/keAadrdiYpf7bQd+O6iEPLC
+        3K2+eYsg==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:57276 helo=localhost)
         by bh-25.webhostbox.net with esmtpa (Exim 4.89)
         (envelope-from <linux@roeck-us.net>)
-        id 1fa1jv-009cKk-Jl; Mon, 02 Jul 2018 16:31:48 +0000
-Date:   Mon, 2 Jul 2018 09:31:46 -0700
+        id 1fa1kP-009cxv-Tj; Mon, 02 Jul 2018 16:32:18 +0000
+Date:   Mon, 2 Jul 2018 09:32:16 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 000/105] 4.4.139-stable review
-Message-ID: <20180702163146.GB9114@roeck-us.net>
-References: <20180701153149.382300170@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 000/101] 4.9.111-stable review
+Message-ID: <20180702163216.GC9114@roeck-us.net>
+References: <20180701160757.138608453@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180701153149.382300170@linuxfoundation.org>
+In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Authenticated_sender: guenter@roeck-us.net
 X-OutGoing-Spam-Status: No, score=-1.0
@@ -73,20 +73,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 06:01:10PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.139 release.
-> There are 105 patches in this series, all will be posted as a response
+On Sun, Jul 01, 2018 at 06:20:46PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.111 release.
+> There are 101 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Tue Jul  3 15:31:30 UTC 2018.
+> Responses should be made by Tue Jul  3 16:07:40 UTC 2018.
 > Anything received after that time might be too late.
 > 
 
 Build results:
 	total: 148 pass: 148 fail: 0
 Qemu test results:
-	total: 138 pass: 138 fail: 0
+	total: 153 pass: 153 fail: 0
 
 Details are available at http://kerneltests.org/builders.
 
