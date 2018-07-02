@@ -2,144 +2,118 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2D7C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D55CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8201924E44
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8201924E44
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 155C925065
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:14:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="TFDx4Dxm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155C925065
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753494AbeGBVOF (ORCPT
+        id S1753509AbeGBVOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:14:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11968 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753087AbeGBVOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:14:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 14:14:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,300,1526367600"; 
-   d="scan'208";a="52145093"
-Received: from maru.jf.intel.com ([10.54.51.80])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Jul 2018 14:14:03 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH] i2c: aspeed: Add newline characters into message printings.
-Date:   Mon,  2 Jul 2018 14:13:59 -0700
-Message-Id: <20180702211359.30585-1-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 2 Jul 2018 17:14:17 -0400
+Received: from rcdn-iport-1.cisco.com ([173.37.86.72]:60105 "EHLO
+        rcdn-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752748AbeGBVOP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 17:14:15 -0400
+X-Greylist: delayed 563 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 17:14:15 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=1262; q=dns/txt; s=iport;
+  t=1530566054; x=1531775654;
+  h=from:to:cc:subject:date:message-id;
+  bh=KdN1OkqFY6/LenlgEaQPg241zjchKzZg5vCWiLuFUg8=;
+  b=TFDx4DxmruervHtP6VSry6BO28sOZGx0GrocPEJkpLsZ998eygEypP/F
+   IZfq+1CrRrBOkDeGnq2GV7WsvcwcDoTEDgPnWe/vDRJGKYyRk75WV3mW1
+   PXi0eygzSsT/FJGZHNmdMZVkfPPcy+SlApkZAQxBRErPRMEZEBC70jxxh
+   I=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0D1AAAukjpb/4YNJK1cGQEBAQEBAQE?=
+ =?us-ascii?q?BAQEBAQcBAQEBAYNJgWEoi32MQJcrgXoLhGyDNiE0GAECAQECAQECbSiGNoE?=
+ =?us-ascii?q?+ARKDIIF/AapahFuDdIE2FIhZgVY/jm4CjTeMDwmPEguNVZIHgUE4gVIzGgg?=
+ =?us-ascii?q?bFYMkkHJPkQcBAQ?=
+X-IronPort-AV: E=Sophos;i="5.51,300,1526342400"; 
+   d="scan'208";a="418342071"
+Received: from alln-core-12.cisco.com ([173.36.13.134])
+  by rcdn-iport-1.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 21:04:52 +0000
+Received: from sjc-ads-3734.cisco.com (sjc-ads-3734.cisco.com [171.68.250.181])
+        by alln-core-12.cisco.com (8.14.5/8.14.5) with ESMTP id w62L4pnj024843;
+        Mon, 2 Jul 2018 21:04:52 GMT
+From:   Nikunj Kela <nkela@cisco.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     xe-kernel@external.cisco.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] arm64: add support for 43bit physical address
+Date:   Mon,  2 Jul 2018 14:04:51 -0700
+Message-Id: <20180702210451.16057-2-nkela@cisco.com>
+X-Mailer: git-send-email 2.10.3.dirty
+X-Auto-Response-Suppress: DR, OOF, AutoReply
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some log printing without a newline character. This
-patch adds the missing newline characters.
+This patch adds support for 43bit physical address. Additionally,
+this patch adds support for 27bit section size. This is useful in
+reducing kernel memory usage. One usecase is in kdump kernel.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: xe-kernel@external.cisco.com
+Cc: Nikunj Kela <nkela@cisco.com>
+Signed-off-by: Nikunj Kela <nkela@cisco.com>
 ---
- drivers/i2c/busses/i2c-aspeed.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/Kconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index 60e4d0e939a3..e3007c1c4ac5 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -407,7 +407,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 	 */
- 	ret = aspeed_i2c_is_irq_error(irq_status);
- 	if (ret < 0) {
--		dev_dbg(bus->dev, "received error interrupt: 0x%08x",
-+		dev_dbg(bus->dev, "received error interrupt: 0x%08x\n",
- 			irq_status);
- 		bus->cmd_err = ret;
- 		bus->master_state = ASPEED_I2C_MASTER_INACTIVE;
-@@ -416,7 +416,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index edf327f..76d0bfb 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -665,6 +665,9 @@ choice
+ 	  Choose the maximum physical address range that the kernel will
+ 	  support.
  
- 	/* We are in an invalid state; reset bus to a known state. */
- 	if (!bus->msgs) {
--		dev_err(bus->dev, "bus in unknown state");
-+		dev_err(bus->dev, "bus in unknown state\n");
- 		bus->cmd_err = -EIO;
- 		if (bus->master_state != ASPEED_I2C_MASTER_STOP)
- 			aspeed_i2c_do_stop(bus);
-@@ -431,7 +431,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 	 */
- 	if (bus->master_state == ASPEED_I2C_MASTER_START) {
- 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
--			pr_devel("no slave present at %02x", msg->addr);
-+			pr_devel("no slave present at %02x\n", msg->addr);
- 			status_ack |= ASPEED_I2CD_INTR_TX_NAK;
- 			bus->cmd_err = -ENXIO;
- 			aspeed_i2c_do_stop(bus);
-@@ -451,11 +451,11 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 	switch (bus->master_state) {
- 	case ASPEED_I2C_MASTER_TX:
- 		if (unlikely(irq_status & ASPEED_I2CD_INTR_TX_NAK)) {
--			dev_dbg(bus->dev, "slave NACKed TX");
-+			dev_dbg(bus->dev, "slave NACKed TX\n");
- 			status_ack |= ASPEED_I2CD_INTR_TX_NAK;
- 			goto error_and_stop;
- 		} else if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
--			dev_err(bus->dev, "slave failed to ACK TX");
-+			dev_err(bus->dev, "slave failed to ACK TX\n");
- 			goto error_and_stop;
- 		}
- 		status_ack |= ASPEED_I2CD_INTR_TX_ACK;
-@@ -478,7 +478,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 		/* fallthrough intended */
- 	case ASPEED_I2C_MASTER_RX:
- 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_RX_DONE))) {
--			dev_err(bus->dev, "master failed to RX");
-+			dev_err(bus->dev, "master failed to RX\n");
- 			goto error_and_stop;
- 		}
- 		status_ack |= ASPEED_I2CD_INTR_RX_DONE;
-@@ -509,7 +509,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 		goto out_no_complete;
- 	case ASPEED_I2C_MASTER_STOP:
- 		if (unlikely(!(irq_status & ASPEED_I2CD_INTR_NORMAL_STOP))) {
--			dev_err(bus->dev, "master failed to STOP");
-+			dev_err(bus->dev, "master failed to STOP\n");
- 			bus->cmd_err = -EIO;
- 			/* Do not STOP as we have already tried. */
- 		} else {
-@@ -520,7 +520,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
- 		goto out_complete;
- 	case ASPEED_I2C_MASTER_INACTIVE:
- 		dev_err(bus->dev,
--			"master received interrupt 0x%08x, but is inactive",
-+			"master received interrupt 0x%08x, but is inactive\n",
- 			irq_status);
- 		bus->cmd_err = -EIO;
- 		/* Do not STOP as we should be inactive. */
-@@ -851,7 +851,7 @@ static int aspeed_i2c_probe_bus(struct platform_device *pdev)
- 	bus->rst = devm_reset_control_get_shared(&pdev->dev, NULL);
- 	if (IS_ERR(bus->rst)) {
- 		dev_err(&pdev->dev,
--			"missing or invalid reset controller device tree entry");
-+			"missing or invalid reset controller device tree entry\n");
- 		return PTR_ERR(bus->rst);
- 	}
- 	reset_control_deassert(bus->rst);
++config ARM64_PA_BITS_43
++	bool "43-bit"
++
+ config ARM64_PA_BITS_48
+ 	bool "48-bit"
+ 
+@@ -684,6 +687,7 @@ endchoice
+ 
+ config ARM64_PA_BITS
+ 	int
++	default 43 if ARM64_PA_BITS_43
+ 	default 48 if ARM64_PA_BITS_48
+ 	default 52 if ARM64_PA_BITS_52
+ 
+@@ -693,6 +697,9 @@ choice
+ 	help
+ 	  Choose the maximum amount of memory in a section.
+ 
++config ARM64_SEC_BITS_27
++	bool "27-bit"
++
+ config ARM64_SEC_BITS_30
+ 	bool "30-bit"
+ 
+@@ -700,6 +707,7 @@ endchoice
+ 
+ config ARM64_SEC_BITS
+ 	int
++	default 27 if ARM64_SEC_BITS_27
+ 	default 30 if ARM64_SEC_BITS_30
+ 
+ config CPU_BIG_ENDIAN
 -- 
-2.17.1
+2.5.0
 
