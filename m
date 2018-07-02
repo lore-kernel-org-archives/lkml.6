@@ -2,140 +2,88 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3964C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7512C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7425724481
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:24:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmAVf3uo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7425724481
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A1842521C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1842521C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753407AbeGBGYz (ORCPT
+        id S1753436AbeGBGdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:24:55 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38405 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753287AbeGBGYw (ORCPT
+        Mon, 2 Jul 2018 02:33:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53134 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752635AbeGBGc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:24:52 -0400
-Received: by mail-lf0-f67.google.com with SMTP id a4-v6so11072467lff.5;
-        Sun, 01 Jul 2018 23:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NyfTUz7M+qPVVizTRv2zgOP2JJfuIM9sWRwslerlrtM=;
-        b=lmAVf3uotadq/8R97ikwHSseQAgXBhWSA7HYQiaAe56ExSGkQDvUEa2gt9M4Uphoou
-         uJHAVQROw+rYgFrbeaBF2vgN9rbg909BImcx63IdIobJ2aiHp4gkCoabM21OXNoFmcj2
-         Fwqj3dhDNQqxLDXipYQ/PwEoHH9hGtKDTUBhp2a5jHGC2aKAmLqR/pGMRG3DKqEvTucX
-         do8xFPZMLIuj9kgSAH04MaGz3Lu5AWJkub/FN/RJyJYhm2GwQWioanAK6qce+DsI/VBl
-         e7n2bzMOpAFfFD8VRocqeKmE5VxL0T+nDuKoxZgT8MW34stR9zuZTQszhcNZFEJTOp9v
-         acNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NyfTUz7M+qPVVizTRv2zgOP2JJfuIM9sWRwslerlrtM=;
-        b=hUXIACo5Vc2glbfcTtOTn5mb9/qLPfqL5mOpcOSVam6pjYNbLAd+HnthlTHhrqXdD0
-         Oa2nU+Vm4WiGWZ2OexZA52obt/YjID4lcOmOh0p8fsc6L2CjtBxWUYurLw7wlE2xTWMV
-         OR4FNdLP4bvHOgnvmoWlcslM4T38Fzfik2yibhj1GjhgOXNI6C22wLNciIhHADwhErgI
-         LnR4din1ae7fThMDHqn1xMYDT/qPw/n1OFkt838UsAh87ZAjEuWBhVpwaMoTBFWn9dTm
-         tJM/lNcEynEFXxK8XfH9KxqzcPGc8uXm/ItMPsgGYDdGQv/2R0jlBaadimKJzi+3ApP0
-         YIOA==
-X-Gm-Message-State: APt69E3KfQqQpbCgkJFQ6idHuV38xkrlVNLLb4qzz8AAcQ2LFbDWdtXt
-        b+uB+H0Sxv8H6DppPABnl9c=
-X-Google-Smtp-Source: AAOMgpcUqWejqYBL07yqEpjXiGXxBPxYJ2Vv3h0xPt221AW2Xi/fBYzhxYYqQjAcnoUsikBmribi1Q==
-X-Received: by 2002:a19:d60a:: with SMTP id n10-v6mr16395700lfg.27.1530512691247;
-        Sun, 01 Jul 2018 23:24:51 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id 26-v6sm2480742lje.26.2018.07.01.23.24.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 23:24:50 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fZsGQ-00008Z-7O; Mon, 02 Jul 2018 08:24:42 +0200
-Date:   Mon, 2 Jul 2018 08:24:42 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Octavian Purdila <tavi@cs.pub.ro>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
-        tglx@linutronix.de, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH REPOST] mfd: dln2: use irqsave() in USB's complete
- callback
-Message-ID: <20180702062442.GD9802@localhost>
-References: <20180701154108.13233-1-bigeasy@linutronix.de>
- <CAMoF9u0ZxNqKLV6FEjpHkGGuh8_V7zFQ_VpK-Y-fmbkSwL31Rg@mail.gmail.com>
+        Mon, 2 Jul 2018 02:32:59 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2584B78;
+        Mon,  2 Jul 2018 06:32:58 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 08:32:55 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Silvio Cesare <silvio.cesare@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 4.17 154/220] UBIFS: Fix potential integer overflow in
+ allocation
+Message-ID: <20180702063255.GA12378@kroah.com>
+References: <20180701160908.272447118@linuxfoundation.org>
+ <20180701160914.723817814@linuxfoundation.org>
+ <CAFLxGvwxDRMUoJH-3NKefXS6YxL62DjxRDd-5e_ui5jjJAJiJQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMoF9u0ZxNqKLV6FEjpHkGGuh8_V7zFQ_VpK-Y-fmbkSwL31Rg@mail.gmail.com>
+In-Reply-To: <CAFLxGvwxDRMUoJH-3NKefXS6YxL62DjxRDd-5e_ui5jjJAJiJQ@mail.gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 12:07:22AM +0200, Octavian Purdila wrote:
-> On Sun, Jul 1, 2018 at 5:41 PM, Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> > The USB completion callback does not disable interrupts while acquiring
-> > the lock. We want to remove the local_irq_disable() invocation from
-> > __usb_hcd_giveback_urb() and therefore it is required for the callback
-> > handler to disable the interrupts while acquiring the lock.
-> > The callback may be invoked either in IRQ or BH context depending on the
-> > USB host controller.
-> > Use the _irqsave() variant of the locking primitives.
+On Sun, Jul 01, 2018 at 08:48:07PM +0200, Richard Weinberger wrote:
+> On Sun, Jul 1, 2018 at 6:22 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > 4.17-stable review patch.  If anyone has any objections, please let me know.
 > >
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Octavian Purdila <octavian.purdila@intel.com>
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >  drivers/mfd/dln2.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > ------------------
 > >
-> > diff --git a/drivers/mfd/dln2.c b/drivers/mfd/dln2.c
-> > index 704e189ca162..1ef3c92f32e0 100644
-> > --- a/drivers/mfd/dln2.c
-> > +++ b/drivers/mfd/dln2.c
-> > @@ -194,6 +194,7 @@ static bool dln2_transfer_complete(struct dln2_dev *dln2, struct urb *urb,
-> >         struct device *dev = &dln2->interface->dev;
-> >         struct dln2_mod_rx_slots *rxs = &dln2->mod_rx_slots[handle];
-> >         struct dln2_rx_context *rxc;
-> > +       unsigned long flags;
-> >         bool valid_slot = false;
+> > From: Silvio Cesare <silvio.cesare@gmail.com>
 > >
-> >         if (rx_slot >= DLN2_MAX_RX_SLOTS)
-> > @@ -206,13 +207,13 @@ static bool dln2_transfer_complete(struct dln2_dev *dln2, struct urb *urb,
-> >          * context elsewhere in this driver. This function (or its callers) are
-> >          * also not exported to other modules.
-> >          */
-> > -       spin_lock(&rxs->lock);
-> > +       spin_lock_irqsave(&rxs->lock, flags);
+> > commit 353748a359f1821ee934afc579cf04572406b420 upstream.
+> >
+> > There is potential for the size and len fields in ubifs_data_node to be
+> > too large causing either a negative value for the length fields or an
+> > integer overflow leading to an incorrect memory allocation. Likewise,
+> > when the len field is small, an integer underflow may occur.
+> >
+> > Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+> > Fixes: 1e51764a3c2ac ("UBIFS: add new flash file system")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
+> Guys, this patch was never on linux-mtd nor was I CC'ed.
+> I don't see it so super security critical which argues to bypass the
+> whole community review process.
 > 
-> I don't think disabling the IRQ is necessary, please see the comment
-> above and also this discussion:
-> 
-> https://www.spinics.net/lists/linux-usb/msg115214.html
+> Anyway, I don't like this patch for two reasons.
+> 1. Instead of doing the kmalloc_array() dance, just check whether size
+> is 0 > and <= UBIFS_BLOCK_SIZE, in the caller.
+> 2. It will not apply to most stable kernels since it targets the code
+> path with UBIFS encryption available.
 
-It hasn't been necessary so far, but we want to get rid of the disabling
-of interrupts before calling the completion handler so this patch is
-correct.
+Can you get a fix into Linus's tree that I can also queue up for a
+stable release?
 
-The comment above the lock is not correct as it stands, and definitely
-is not after the conversion, so Sebastian, could you please drop it as
-part of this change?
+thanks,
 
-With that you can add my:
-
-Reviewed-by: Johan Hovold <johan@kernel.org>
-
-Thanks,
-Johan
+greg k-h
