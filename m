@@ -2,171 +2,200 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BECC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22089C6778C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBD124C44
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DBD124C44
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE64024FCD
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:42:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="FkVt6nSb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hePIlbPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE64024FCD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932889AbeGBBj3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 21:39:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56914 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932839AbeGBBjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 21:39:24 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BAC0168801;
-        Mon,  2 Jul 2018 01:39:23 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD08B2026D66;
-        Mon,  2 Jul 2018 01:39:22 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 09:39:18 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
-Subject: Re: [PATCH v2 2/2] mm/sparse: start using sparse_init_nid(), and
- remove old code
-Message-ID: <20180702013918.GJ3223@MiWiFi-R3L-srv>
-References: <20180630030944.9335-1-pasha.tatashin@oracle.com>
- <20180630030944.9335-3-pasha.tatashin@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180630030944.9335-3-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 01:39:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 01:39:23 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        id S932892AbeGBBmP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 21:42:15 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41433 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932102AbeGBBmM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 21:42:12 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 808FE210FE;
+        Sun,  1 Jul 2018 21:42:11 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sun, 01 Jul 2018 21:42:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :content-transfer-encoding:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=fT+fysjxMG/V5Mok7bKcfIpThTlzA
+        qqqWt1e9HthhgM=; b=FkVt6nSbyyUGQIH+Hn7Avv/PxjQQa3Yx/aopR2iT6hi5s
+        w97PozpXEPfk+bMBvO03KR13APHZspr3k+IIp5Y82nIusxHMpJLTER/DGoHU9FP6
+        YEkaIf4w52zUZqKvO43O/l2QbrWrb8uz/5htjcJmAsVmJv/pzi/bndenlvnhQWqb
+        9BdPW6xpqCCPFSezvA20wx3KA/gstuhPlVw0l+C4qp0z/seqeFVxoSiBDFGw+1hy
+        0GUC1O1SNU6oSABanlXCav+uOUw0LFfzouBFzGbizhyjm6TLoDgLXzk3ai1RAfBG
+        zpYAykMoETQ5dve3oq0A1+Xl20DcU6KhKxtQkG8bA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=fT+fys
+        jxMG/V5Mok7bKcfIpThTlzAqqqWt1e9HthhgM=; b=hePIlbPpwrEkAhnLggh77M
+        ivo2fWhkzYqMChZ2eXzuxVZxVjEl9r4T+s6UL6u4f/RTwrzoHEeRUvLHlvrRLjqN
+        jdkmqf/8KFMBhBvoDFaRbvSjR0oYeOrlolUFfYFdoiCtw261lBuVVpDnn128GLWj
+        EAmKC6X0CrunURnMF3hCwZzO8O/BVX6AasMaHE/F57b5v5Su1df8RBON1TvYlLOd
+        PB/WOo6mMD/zJreiw4Dd/wyFVDf34DwMkWn+ihDGVwHc5bq13A01Qo0ZfTYWOr9a
+        gO820TzXAJOJS9WjiOYN7oM5/omaAfvSmnJmi+koJqxIhrWHbB2LID0s/Zrya2FA
+        ==
+X-ME-Proxy: <xmx:84I5W6h1XemhJ2plgKNIUdBIh4hF21r3Zwf60zEA7MqsYuaA0Ikddg>
+    <xmx:84I5W_QlJO0D6Tq2PPWGdGiF9rlpxQzCoH4ZBhDxmxML57L-KCvUtw>
+    <xmx:84I5W9c-Wx50A_JxjgkD8EwMtwImCR_Np4TRV-IkoDwvPA3af6dTxQ>
+    <xmx:84I5WwKkNZ21xkRQfEtjOkkg0BpQDM6AVpbRrHdQXWgVNwJICSnpKw>
+    <xmx:84I5WyB-XfdSqgcAY4PnB--sZoVPTRvjQfBV_dNqAWo6BILrOzne7g>
+    <xmx:84I5WzdycaJwbA3lGRf5ERqsaHeptVqUlnac7WaHi-0XpHuy5Fn0PQ>
+X-ME-Sender: <xms:84I5W8pOMDPjeJ3nCdP-9vIEWJLrQX-E99XfsRendMnFcuO0LrduCQ>
+Received: from localhost (unknown [121.44.171.84])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 72889E44F1;
+        Sun,  1 Jul 2018 21:42:09 -0400 (EDT)
+Message-ID: <1530495726.2749.13.camel@themaw.net>
+Subject: Re: [PATCH upstream] KASAN: slab-out-of-bounds Read in
+ getname_kernel
+From:   Ian Kent <raven@themaw.net>
+To:     tomas <tomasbortoli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        autofs@vger.kernel.org
+Date:   Mon, 02 Jul 2018 09:42:06 +0800
+In-Reply-To: <1530493827.2749.8.camel@themaw.net>
+References: <38c5a8ad-c192-74b9-b2ff-9eb2a3386930@gmail.com>
+         <1530493827.2749.8.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/18 at 11:09pm, Pavel Tatashin wrote:
-> Change sprase_init() to only find the pnum ranges that belong to a specific
-> node and call sprase_init_nid() for that range from sparse_init().
+On Mon, 2018-07-02 at 09:10 +0800, Ian Kent wrote:
+> On Mon, 2018-07-02 at 00:04 +0200, tomas wrote:
+> > Hi,
+> > 
+> > I've looked into this issue found by Syzbot and I made a patch:
+> > 
+> > https://syzkaller.appspot.com/bug?id=d03abd8b42847f7f69b1d1d7f97208ae425b116
+> > 3
 > 
-> Delete all the code that became obsolete with this change.
->  void __init sparse_init(void)
->  {
-> -	unsigned long pnum;
-> -	struct page *map;
-> -	struct page **map_map;
-> -	unsigned long *usemap;
-> -	unsigned long **usemap_map;
-> -	int size, size2;
-> -	int nr_consumed_maps = 0;
-> -
-> -	/* see include/linux/mmzone.h 'struct mem_section' definition */
-> -	BUILD_BUG_ON(!is_power_of_2(sizeof(struct mem_section)));
-> +	unsigned long pnum_begin = first_present_section_nr();
-> +	int nid_begin = sparse_early_nid(__nr_to_section(pnum_begin));
-> +	unsigned long pnum_end, map_count = 1;
->  
-> -	/* Setup pageblock_order for HUGETLB_PAGE_SIZE_VARIABLE */
-> -	set_pageblock_order();
-> +	for_each_present_section_nr(pnum_begin + 1, pnum_end) {
-> +		int nid = sparse_early_nid(__nr_to_section(pnum_end));
->  
-> -	/*
-> -	 * map is using big page (aka 2M in x86 64 bit)
-> -	 * usemap is less one page (aka 24 bytes)
-> -	 * so alloc 2M (with 2M align) and 24 bytes in turn will
-> -	 * make next 2M slip to one more 2M later.
-> -	 * then in big system, the memory will have a lot of holes...
-> -	 * here try to allocate 2M pages continuously.
-> -	 *
-> -	 * powerpc need to call sparse_init_one_section right after each
-> -	 * sparse_early_mem_map_alloc, so allocate usemap_map at first.
-> -	 */
-> -	size = sizeof(unsigned long *) * nr_present_sections;
-> -	usemap_map = memblock_virt_alloc(size, 0);
-> -	if (!usemap_map)
-> -		panic("can not allocate usemap_map\n");
-> -	alloc_usemap_and_memmap(sparse_early_usemaps_alloc_node,
-> -				(void *)usemap_map,
-> -				sizeof(usemap_map[0]));
-> -
-> -	size2 = sizeof(struct page *) * nr_present_sections;
-> -	map_map = memblock_virt_alloc(size2, 0);
-> -	if (!map_map)
-> -		panic("can not allocate map_map\n");
-> -	alloc_usemap_and_memmap(sparse_early_mem_maps_alloc_node,
-> -				(void *)map_map,
-> -				sizeof(map_map[0]));
-> -
-> -	/* The numner of present sections stored in nr_present_sections
-> -	 * are kept the same since mem sections are marked as present in
-> -	 * memory_present(). In this for loop, we need check which sections
-> -	 * failed to allocate memmap or usemap, then clear its
-> -	 * ->section_mem_map accordingly. During this process, we need
-> -	 * increase 'nr_consumed_maps' whether its allocation of memmap
-> -	 * or usemap failed or not, so that after we handle the i-th
-> -	 * memory section, can get memmap and usemap of (i+1)-th section
-> -	 * correctly. */
-> -	for_each_present_section_nr(0, pnum) {
-> -		struct mem_section *ms;
-> -
-> -		if (nr_consumed_maps >= nr_present_sections) {
-> -			pr_err("nr_consumed_maps goes beyond nr_present_sections\n");
-> -			break;
-> -		}
-> -		ms = __nr_to_section(pnum);
-> -		usemap = usemap_map[nr_consumed_maps];
-> -		if (!usemap) {
-> -			ms->section_mem_map = 0;
-> -			nr_consumed_maps++;
-> -			continue;
-> -		}
-> -
-> -		map = map_map[nr_consumed_maps];
-> -		if (!map) {
-> -			ms->section_mem_map = 0;
-> -			nr_consumed_maps++;
-> +		if (nid == nid_begin) {
-> +			map_count++;
->  			continue;
->  		}
-> -
-> -		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
-> -								usemap);
-> -		nr_consumed_maps++;
-> +		sparse_init_nid(nid, pnum_begin, pnum_end, map_count);
-				~~~
-Here, node id passed to sparse_init_nid() should be 'nid_begin', but not
-'nid'. When you found out the current section's 'nid' is diferent than
-'nid_begin', handle node 'nid_begin', then start to next node 'nid'.
-
-
-> +		nid_begin = nid;
-> +		pnum_begin = pnum_end;
-> +		map_count = 1;
->  	}
-> -
-> +	sparse_init_nid(nid_begin, pnum_begin, pnum_end, map_count);
->  	vmemmap_populate_print_last();
-> -
-> -	memblock_free_early(__pa(map_map), size2);
-> -	memblock_free_early(__pa(usemap_map), size);
->  }
->  
->  #ifdef CONFIG_MEMORY_HOTPLUG
-> -- 
-> 2.18.0
+> Umm ... oops!
 > 
+> Thanks for looking into this Tomas.
+> 
+> > 
+> > 
+> > The autofs subsystem does not check that the "path" parameter is present
+> > within the "param" struct passed by the userspace in case the
+> > AUTOFS_DEV_IOCTL_OPENMOUNT_CMD command is passed. Indeed, it assumes a
+> > path is always provided (though a path is not always present, as per how
+> > the struct is defined:
+> > https://github.com/torvalds/linux/blob/master/include/uapi/linux/auto_dev-io
+> > ct
+> > l.h#L89).
+> > Skipping the check provokes an oob read in "strlen", called by
+> > "getname_kernel", in turn called by the autofs to assess the length of
+> > the non-existing path.
+> > 
+> > To solve it, modify the "validate_dev_ioctl" function to check also that
+> > a path has been provided if the command is AUTOFS_DEV_IOCTL_OPENMOUNT_CMD.
+> > 
+> > 
+> > --- b/fs/autofs/dev-ioctl.c    2018-07-01 23:10:16.059728621 +0200
+> > +++ a/fs/autofs/dev-ioctl.c    2018-07-01 23:10:24.311792133 +0200
+> > @@ -136,6 +136,9 @@ static int validate_dev_ioctl(int cmd, s
+> >              goto out;
+> >          }
+> >      }
+> > +    /* AUTOFS_DEV_IOCTL_OPENMOUNT_CMD without path */
+> > +    else if(_IOC_NR(cmd) == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD)
+> > +        return -EINVAL;
+> 
+> My preference is to put the comment inside the else but ...
+> 
+> There's another question, should the check be done in
+> autofs_dev_ioctl_openmount() in the same way it's checked in other
+> ioctls that need a path, such as in autofs_dev_ioctl_requester()
+> and autofs_dev_ioctl_ismountpoint()?
+> 
+> For consistency I'd say it should.
+> 
+> >  
+> >      err = 0;
+> >  out:
+> > 
+> > 
+> > Tested and solves the issue on Linus' main git tree.
+> > 
+> > 
+
+Or perhaps this (not even compile tested) patch would be better?
+
+autofs - fix slab out of bounds read in getname_kernel()
+
+From: Ian Kent <raven@themaw.net>
+
+The autofs subsystem does not check that the "path" parameter is
+present for all cases where it is required when it is passed in
+via the "param" struct.
+
+In particular it isn't checked for the AUTOFS_DEV_IOCTL_OPENMOUNT_CMD
+ioctl command.
+
+To solve it, modify validate_dev_ioctl() function to check that a
+path has been provided for ioctl commands that require it.
+---
+ fs/autofs/dev-ioctl.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+index ea4ca1445ab7..61c63715c3fb 100644
+--- a/fs/autofs/dev-ioctl.c
++++ b/fs/autofs/dev-ioctl.c
+@@ -135,6 +135,11 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+ 				cmd);
+ 			goto out;
+ 		}
++	} else if (cmd == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD ||
++		   cmd == AUTOFS_DEV_IOCTL_REQUESTER_CMD ||
++		   cmd == AUTOFS_DEV_IOCTL_ISMOUNTPOINT_CMD) {
++		err = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	err = 0;
+@@ -433,10 +438,7 @@ static int autofs_dev_ioctl_requester(struct file *fp,
+ 	dev_t devid;
+ 	int err = -ENOENT;
+ 
+-	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
+-		err = -EINVAL;
+-		goto out;
+-	}
++	/* param->path has already been checked */
+ 
+ 	devid = sbi->sb->s_dev;
+ 
+@@ -521,10 +523,7 @@ static int autofs_dev_ioctl_ismountpoint(struct file *fp,
+ 	unsigned int devid, magic;
+ 	int err = -ENOENT;
+ 
+-	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
+-		err = -EINVAL;
+-		goto out;
+-	}
++	/* param->path has already been checked */
+ 
+ 	name = param->path;
+ 	type = param->ismountpoint.in.type;
