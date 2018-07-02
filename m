@@ -2,145 +2,140 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD90C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E29FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB145256D1
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLqNCWwG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB145256D1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 514D624805
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514D624805
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753489AbeGBSxO (ORCPT
+        id S1753498AbeGBSxV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:53:14 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:45669 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753263AbeGBSxM (ORCPT
+        Mon, 2 Jul 2018 14:53:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753263AbeGBSxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:53:12 -0400
-Received: by mail-qt0-f194.google.com with SMTP id y5-v6so4930475qti.12;
-        Mon, 02 Jul 2018 11:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3/isBrlL86YnFTHHKRy7etWt5GUXy9hxpfht62BgfOA=;
-        b=bLqNCWwGzno1Y1yck1WpXoos++oT/EPe5kypMthucY4p+GPba1V6lSiba7oAtUnPHO
-         9sRaP4rXIZkgGlWjBWNUGx3LvMHexGAD7xCS0acfBPx5OrmP7k8NommVdMUPnoITobp7
-         xpnrkuzQj+0d/eidy2zFil/pbkVwnkJLoMHopjK9o4C97LB2fO1f2gHfnWfB7//1tbXk
-         iQ4a8f4pkTXBpqp+ggGAg2gB3H3KNqgtdjDYdJbH/Uu2uUXXV7XdBoQnMvTFUHRhjtVi
-         LdOkRFKAhVnGKGVa/HtgFqxZFZ66gfX8m9NXgK3la4w3xpfmHwd6amPkR5cEgtsIvpjr
-         46cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3/isBrlL86YnFTHHKRy7etWt5GUXy9hxpfht62BgfOA=;
-        b=SEHzhFspUHr/JXLDN55Y3x1YgPxpKm9lTRQXGhjkfaY3djrQIQ/7J+d9IwWynHs3oV
-         mL6zciBMNJMfN3mGoRM4HfeHS8nx51gEStsLbk7mcQLDGKaQIb8wr1F2HJIXFi134dmw
-         1vAE1COaTQR8zgX+rv9tQDI6+OXA/qmR/roZ8ayYAP+AX5t9T6sNaZ7WILoFBbYr74IA
-         KqCb3kvubIr4jB039P6m9iorFnAJelSlOmQAYQZNR4BHkUGq8CcDVQW71Ljlv2O+dVu+
-         e8xsjZo2IS6L8XEvqgz0CsU6Wunvq7yjkakLyayN06Owre3LKxF6zf28r3Nrmv6tkKJS
-         lY8g==
-X-Gm-Message-State: APt69E2vAC/A7sPlnBpa9D5AIvidUw8EXABKVkXD28qvXah5zz5R15lB
-        ngTSSz+E/1YGCKasAGyFW6B5sqzNhvw=
-X-Google-Smtp-Source: AAOMgpeESRaXyBKAc94rAvx9HwXui2KQgGRD1Db/rOk/MOww4UjfmyHxy8e0K80hBlGhcxxBF+j3vA==
-X-Received: by 2002:aed:3c42:: with SMTP id u2-v6mr24688100qte.198.1530557591347;
-        Mon, 02 Jul 2018 11:53:11 -0700 (PDT)
-Received: from [192.168.44.96] (203.sub-174-226-3.myvzw.com. [174.226.3.203])
-        by smtp.gmail.com with ESMTPSA id y49-v6sm13443786qty.91.2018.07.02.11.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 11:53:10 -0700 (PDT)
-Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20180619110027.16935-1-digetx@gmail.com>
- <d99935be-797d-4676-c186-a045a590f01b@gmail.com> <11534185.70fb5jbPr6@dimapc>
-From:   Peter Geis <pgwipeout@gmail.com>
-Message-ID: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
-Date:   Mon, 2 Jul 2018 14:53:08 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 14:53:17 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62IiJQq145951
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 14:53:16 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyqp8nq0u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:53:16 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 14:53:16 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 14:53:13 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62IrDEi8913366
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 18:53:13 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5905B2066;
+        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7491B2065;
+        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2510D16CA366; Mon,  2 Jul 2018 11:55:26 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 11:55:26 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: atomic_ops: atomic_set is a write (not read)
+ operation
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180605194326.23596-1-j.neuschaefer@gmx.net>
+ <20180606080756.GU3593@linux.vnet.ibm.com>
+ <20180629134345.GA10981@andrea>
 MIME-Version: 1.0
-In-Reply-To: <11534185.70fb5jbPr6@dimapc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180629134345.GA10981@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070218-0060-0000-0000-00000285BD72
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009296; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055583; UDB=6.00541417; IPR=6.00833506;
+ MB=3.00021965; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 18:53:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070218-0061-0000-0000-000045A71A92
+Message-Id: <20180702185526.GS3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 29, 2018 at 03:43:45PM +0200, Andrea Parri wrote:
+> On Wed, Jun 06, 2018 at 01:07:56AM -0700, Paul E. McKenney wrote:
+> > On Tue, Jun 05, 2018 at 09:43:23PM +0200, Jonathan Neuschäfer wrote:
+> > > Describe it as such.
+> > > 
+> > > Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> > 
+> > I have queued this, but if someone else would prefer to take it:
+> > 
+> > Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> In the commit message of bb7d47b697116c ("docs: atomic_ops: Describe
+> atomic_set as a write operation") from your dev branch,
+> 
+> from "reads" to "writes"
 
+Good catch, fixed, thank you!
 
-On 07/02/2018 10:48 AM, Dmitry Osipenko wrote:
-> On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
->> Good Afternoon,
->>
->> I have tested these patches on the Ouya T3 device.
->> They work great to enable the L2 cache controller, however they do not
->> respect explicitly disabling the L2 cache controller via the kernel
->> config nor device tree.
->>
->> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
->> the L2 cache controller is silently enabled and allows all four cores to
->> boot.
->>
-> 
-> I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled, there
-> is no code to do that. Could you elaborate please?
-> 
-> Secondary cores do not depend on the cache state, disabled cache shouldn't
-> prevent them to boot.
+							Thanx, Paul
 
-On the untouched mainline kernel running on a Trusted Foundations T3 
-device, I observed the following indications:
-With the L2 cache controller enabled, all four processor cores were 
-enabled, but it would immediately panic for writing to a secure register 
-from insecure mode.
-With the L2 cache controller disabled, only the boot core is detected, 
-but it successfully boots.
-This is the issue that I inquired originally to you about.
+>   Andrea
+> 
+> 
+> > 
+> > > ---
+> > >  Documentation/core-api/atomic_ops.rst | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/Documentation/core-api/atomic_ops.rst b/Documentation/core-api/atomic_ops.rst
+> > > index 2e7165f86f55..724583453e1f 100644
+> > > --- a/Documentation/core-api/atomic_ops.rst
+> > > +++ b/Documentation/core-api/atomic_ops.rst
+> > > @@ -29,7 +29,7 @@ updated by one CPU, local_t is probably more appropriate. Please see
+> > >  local_t.
+> > > 
+> > >  The first operations to implement for atomic_t's are the initializers and
+> > > -plain reads. ::
+> > > +plain writes. ::
+> > > 
+> > >  	#define ATOMIC_INIT(i)		{ (i) }
+> > >  	#define atomic_set(v, i)	((v)->counter = (i))
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
+> 
 
-With your patch running on the same device, the following is observed:
-With the L2 controller enabled, all four cores are active, and the cache 
-controller appears to function.
-With the L2 controller disabled, but trusted foundations enabled, the L2 
-controller enabled kernel message is missing, however all four cores 
-still enable.
-
-After looking through the code a little more deeply, I see you modified 
-the reset handler for handling offline cores.
-I am wondering if you fixed an additional issue inadvertently.
-
-The reason I discovered this is I am working with kexec as a bootloader.
-On a device without trusted foundations, kexec works without issue.
-On a device with trusted foundations and your patch, I found that 
-disabling the l2 cache controller and trusted foundations allow kexec to 
-occur.
-I haven't tried an either/or scenario, though now you have me thinking I 
-should.
-> 
->> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
->> controller from spinning up.
->>
->> Tested-by: Peter Geis <pgwipeout@gmail.com>
->>
-> 
-> 
-> 
-> 
