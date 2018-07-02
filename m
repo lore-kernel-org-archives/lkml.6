@@ -2,102 +2,88 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4FDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D97C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6F525C62
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:28:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6F525C62
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B24225C8F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B24225C8F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030441AbeGBL2D (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:28:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49210 "EHLO mx1.suse.de"
+        id S965705AbeGBL3L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:29:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49460 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965489AbeGBL16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:27:58 -0400
+        id S965174AbeGBL3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:29:08 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C1CE4AE13;
-        Mon,  2 Jul 2018 11:27:56 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen: setup pv irq ops vector earlier
-To:     Jan Beulich <JBeulich@suse.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>, mingo@redhat.com,
-        lkml <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-References: <20180702100001.19953-1-jgross@suse.com>
- <5B3A09EA02000078001CFBB7@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <f6615f1c-6835-eba5-7b38-be06927700c9@suse.com>
-Date:   Mon, 2 Jul 2018 13:27:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mx1.suse.de (Postfix) with ESMTP id 6CFCBAE13;
+        Mon,  2 Jul 2018 11:29:07 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 13:29:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Rodrigo Freire <rfreire@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: be more informative in OOM task list
+Message-ID: <20180702112906.GH19043@dhcp22.suse.cz>
+References: <7de14c6cac4a486c04149f37948e3a76028f3fa5.1530461087.git.rfreire@redhat.com>
+ <20180702093043.GB19043@dhcp22.suse.cz>
+ <1113748807.15224076.1530530533122.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5B3A09EA02000078001CFBB7@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1113748807.15224076.1530530533122.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/18 13:18, Jan Beulich wrote:
->>>> On 02.07.18 at 12:00, <jgross@suse.com> wrote:
->> --- a/arch/x86/xen/enlighten_pv.c
->> +++ b/arch/x86/xen/enlighten_pv.c
->> @@ -1213,6 +1213,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
->>  	pv_info = xen_info;
->>  	pv_init_ops.patch = paravirt_patch_default;
->>  	pv_cpu_ops = xen_cpu_ops;
->> +	xen_init_irq_ops();
+On Mon 02-07-18 07:22:13, Rodrigo Freire wrote:
+> Hello Michal,
 > 
-> Isn't this still too late? xen_setup_machphys_mapping(), for example,
-> has a WARN_ON(), which implies multiple printk()s.
+> ----- Original Message ----- 
+> > From: "Michal Hocko" <mhocko@kernel.org>
+> > To: "Rodrigo Freire" <rfreire@redhat.com>
+> > Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+> > Sent: Monday, July 2, 2018 6:30:43 AM
+> > Subject: Re: [PATCH] mm: be more informative in OOM task list
+> >
+> > On Sun 01-07-18 13:09:40, Rodrigo Freire wrote:
+> > > The default page memory unit of OOM task dump events might not be
+> > > intuitive for the non-initiated when debugging OOM events. Add
+> > > a small printk prior to the task dump informing that the memory
+> > > units are actually memory _pages_.
+> >
+> > Does this really help? I understand the the oom report might be not the
+> > easiest thing to grasp but wouldn't it be much better to actually add
+> > documentation with clarification of each part of it?
+> 
+> That would be great: After a quick grep -ri for oom in Documentation,
+> I found several other files containing its own OOM behaviour modifier
+> configurations. But it indeed lacks a central and canonical Doc file
+> which documents the OOM Killer behavior and workflows.
+> 
+> However, I still stand by my proposed patch: It is unobtrusive, infers
+> no performance issue and clarifying: I recently worked in a case (for
+> full disclosure: I am a far cry from a MM expert) where the sum of the
+> RSS pages made sense when interpreted as real kB pages. Reason: There
+> were processes sharing (a good amount of) memory regions, misleading
+> the interpretation and that misled not only me, but some other
+> colleagues a well: The pages was only sorted out after actually
+> inspecting the source code.
+> 
+> This patch is user-friendly and can be a great time saver to others in
+> the community.
 
-Seems as if it would be a good idea to move calling
-xen_setup_machphys_mapping() into xen_init_mmu_ops(). There is really
-no need to do it earlier.
+Well, all other counters we print are in page units unless explicitly
+kB. So I am not sure we really need to do anything but document the
+output better. Maybe others will find it more important though.
 
-
-Juergen
+-- 
+Michal Hocko
+SUSE Labs
