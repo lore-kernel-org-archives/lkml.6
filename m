@@ -2,228 +2,232 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390E6C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1B5C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3FF25C79
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="AqkynUMb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ncH8TPjB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3FF25C79
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
+	by mail.kernel.org (Postfix) with ESMTP id 9965325C76
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9965325C76
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030202AbeGBK0T (ORCPT
+        id S1030238AbeGBK0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:26:19 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:45307 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965239AbeGBK0M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 06:26:12 -0400
-X-Greylist: delayed 343 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 06:26:12 EDT
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 01283194;
-        Mon,  2 Jul 2018 06:20:25 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 02 Jul 2018 06:20:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=8FUfl8hjvL1b474kMa0XmRPm7xL3/
-        zxaAeN/blF/Ffo=; b=AqkynUMbc8LspsZW0OxdKNMJyOAAf2xTcl0iqGANvbdKM
-        hxLbNpT0SAwJrBRk7d/F/xfsVjH5J7Bvp2QqmF4D7R/LJEvMCIvEvryFxxxoeR01
-        yIw1Vb8dsIcqzVpgWsqgSqjU1YkfImqmLrhh67ds8We4zdpxEwb80wejRmK744kj
-        jhl9MrQxxOHxdLFohca7O1GPVzjGb6pApGQHq0MlzxkZzENddxcvz2Wi5PKDamfr
-        QIvSCeqVxFJem8TNloIvYm6/vL4SAiy3QgxwWD9FS8etMmcbnOQu1enzAfc0NVOE
-        l2ByItNZ2IUwVlnusL9Ja0tcoZGQ+5NViLzQk+8WQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=8FUfl8
-        hjvL1b474kMa0XmRPm7xL3/zxaAeN/blF/Ffo=; b=ncH8TPjB/Izwv7yrR90HE0
-        zhiIZc6reGnjMtORxFvtol4IyHN5dZvzk0o9Zu60iyuVxWQT2WJO2v83WD2DmWoj
-        hZRbuyiWvvp8tluAOv1F/dkVbtA+5+AnBjl/n1T9QLxWwj5f4rC7nQLgwqnlDkG9
-        dKVoRAes8RyPRYYHYCP6cxxg2tZwut0eF5qqB1QRU5D8yyR7DfqieSFhjQED1WeE
-        YYAobYARiBymfkAT78YvlYpTxq77kp6OQqJHBo24D+Z/GaV3QECNrvJLt58q4VNk
-        wnbptJzXNdC5wPl7ZGYxRMkc0pJZnnlEcS3TRsNKfy7WDXmpy5XG/AOKLsYde63A
-        ==
-X-ME-Proxy: <xmx:afw5W3EWOswJaEtXDkGL5MX4Sa4ciggnJZKFSgTV5tyMX7RDwJaxng>
-    <xmx:afw5Wx0Mg59e4CslnuImTApgLAbFL2ALFmKn_8JwaXrbmi6kDgaRKw>
-    <xmx:afw5W_f2VkZuxLkCsf8WXvyansyncYPkOknOudoxdmajzth-f-ACXQ>
-    <xmx:afw5W8M4jRkDfmWAz8Sc4mfhsXkXEw62azHgDpb7ixVxWq-CHIPyVA>
-    <xmx:afw5W02aUE3fOJU1vGzxf5hXQXDxXz_31ruNfbRo1IlbQjaHqgXjog>
-    <xmx:afw5W0pMVJpy2-KQO5k2kZLIqPyw1FNWpKn9LHwqfGb0ky0I5aNYLQ>
-X-ME-Sender: <xms:afw5Wy1xlUBYnpRcMBLk2bNqjnWQvoo4zPxbOwGTVJNDoVD1cek2tQ>
-Received: from localhost (unknown [121.44.171.84])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 716C1102CA;
-        Mon,  2 Jul 2018 06:20:23 -0400 (EDT)
-Message-ID: <1530526820.9527.4.camel@themaw.net>
-Subject: Re: [PATCH upstream] KASAN: slab-out-of-bounds Read in
- getname_kernel
-From:   Ian Kent <raven@themaw.net>
-To:     tomas <tomasbortoli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
-        autofs@vger.kernel.org
-Date:   Mon, 02 Jul 2018 18:20:20 +0800
-In-Reply-To: <1bbf3634-6c2a-f40e-a9d3-9d6ffc9a0562@gmail.com>
-References: <38c5a8ad-c192-74b9-b2ff-9eb2a3386930@gmail.com>
-         <1530493827.2749.8.camel@themaw.net> <1530495726.2749.13.camel@themaw.net>
-         <1bbf3634-6c2a-f40e-a9d3-9d6ffc9a0562@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 2 Jul 2018 06:26:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965239AbeGBK0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:26:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DEBDA7C6A9;
+        Mon,  2 Jul 2018 10:26:29 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDDF52166B5D;
+        Mon,  2 Jul 2018 10:26:28 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v2 1/2] KVM: X86: Implement PV IPI in linux guest
+References: <1530526462-920-1-git-send-email-wanpengli@tencent.com>
+        <1530526462-920-2-git-send-email-wanpengli@tencent.com>
+Date:   Mon, 02 Jul 2018 12:26:27 +0200
+In-Reply-To: <1530526462-920-2-git-send-email-wanpengli@tencent.com> (Wanpeng
+        Li's message of "Mon, 2 Jul 2018 18:14:21 +0800")
+Message-ID: <87sh52aq7g.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 10:26:29 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 10:26:29 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 10:31 +0200, tomas wrote:
-> Hi Ian,
-> 
-> you are welcome!
-> 
-> yes your patch is much better. You should just put the "_IOC_NR" macro
-> around "cmd" in the lines added to "validate_dev_ioctl" to make it work.
+Wanpeng Li <kernellwp@gmail.com> writes:
 
-LOL, yes, that was a dumb mistake.
+> From: Wanpeng Li <wanpengli@tencent.com>
+>
+> Implement PV IPIs in guest kernel.
+>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+>  arch/x86/kernel/kvm.c         | 99 +++++++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/kvm_para.h |  1 +
+>  2 files changed, 100 insertions(+)
+>
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 5b2300b..7e3ee25 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -47,6 +47,7 @@
+>  #include <asm/hypervisor.h>
+>  #include <asm/kvm_guest.h>
+>
+> +static struct apic orig_apic;
+>  static int kvmapf = 1;
+>
+>  static int __init parse_no_kvmapf(char *arg)
+> @@ -454,6 +455,89 @@ static void __init sev_map_percpu_data(void)
+>  }
+>
+>  #ifdef CONFIG_SMP
+> +
+> +#ifdef CONFIG_X86_64
+> +static bool __send_ipi_mask(const struct cpumask *mask, int vector)
+> +{
+> +	unsigned long flags, ipi_bitmap_low = 0, ipi_bitmap_high = 0, icr = 0;
+> +	int cpu, apic_id, ret = 1;
+> +
+> +	if (cpumask_empty(mask))
+> +		return true;
+> +
+> +	local_irq_save(flags);
+> +
+> +	for_each_cpu(cpu, mask) {
+> +		apic_id = per_cpu(x86_cpu_to_apicid, cpu);
+> +		if (apic_id < BITS_PER_LONG)
+> +			__set_bit(apic_id, &ipi_bitmap_low);
+> +		else if (apic_id < 2 * BITS_PER_LONG)
+> +			__set_bit(apic_id - BITS_PER_LONG, &ipi_bitmap_high);
+> +		else
+> +			goto ipi_mask_done;
 
-I'll send it to Andrew Morton, after some fairly simple sanity testing,
-with both our Signed-off-by added.
+Nit:
 
-> 
-> Tomas
-> 
-> 
-> On 07/02/2018 03:42 AM, Ian Kent wrote:
-> > On Mon, 2018-07-02 at 09:10 +0800, Ian Kent wrote:
-> > > On Mon, 2018-07-02 at 00:04 +0200, tomas wrote:
-> > > > Hi,
-> > > > 
-> > > > I've looked into this issue found by Syzbot and I made a patch:
-> > > > 
-> > > > https://syzkaller.appspot.com/bug?id=d03abd8b42847f7f69b1d1d7f97208ae425
-> > > > b116
-> > > > 3
-> > > 
-> > > Umm ... oops!
-> > > 
-> > > Thanks for looking into this Tomas.
-> > > 
-> > > > 
-> > > > The autofs subsystem does not check that the "path" parameter is present
-> > > > within the "param" struct passed by the userspace in case the
-> > > > AUTOFS_DEV_IOCTL_OPENMOUNT_CMD command is passed. Indeed, it assumes a
-> > > > path is always provided (though a path is not always present, as per how
-> > > > the struct is defined:
-> > > > https://github.com/torvalds/linux/blob/master/include/uapi/linux/auto_de
-> > > > v-io
-> > > > ct
-> > > > l.h#L89).
-> > > > Skipping the check provokes an oob read in "strlen", called by
-> > > > "getname_kernel", in turn called by the autofs to assess the length of
-> > > > the non-existing path.
-> > > > 
-> > > > To solve it, modify the "validate_dev_ioctl" function to check also that
-> > > > a path has been provided if the command is
-> > > > AUTOFS_DEV_IOCTL_OPENMOUNT_CMD.
-> > > > 
-> > > > 
-> > > > --- b/fs/autofs/dev-ioctl.c    2018-07-01 23:10:16.059728621 +0200around
-> > > > +++ a/fs/autofs/dev-ioctl.c    2018-07-01 23:10:24.311792133 +0200
-> > > > @@ -136,6 +136,9 @@ static int validate_dev_ioctl(int cmd, s
-> > > >              goto out;
-> > > >          }
-> > > >      }
-> > > > +    /* AUTOFS_DEV_IOCTL_OPENMOUNT_CMD without path */
-> > > > +    else if(_IOC_NR(cmd) == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD)
-> > > > +        return -EINVAL;
-> > > 
-> > > My preference is to put the comment inside the else but ...
-> > > 
-> > > There's another question, should the check be done in
-> > > autofs_dev_ioctl_openmount() in the same way it's checked in other
-> > > ioctls that need a path, such as in autofs_dev_ioctl_requester()
-> > > and autofs_dev_ioctl_ismountpoint()?
-> > > 
-> > > For consistency I'd say it should.
-> > > 
-> > > >  
-> > > >      err = 0;You should just put the "_IOC_NR" directive around "cmd" in
-> > > > the lines added to "validate_dev_ioctl" to make it work.
-> > > >  out:
-> > > > 
-> > > > 
-> > > > Tested and solves the issue on Linus' main git tree.
-> > > > 
-> > > > 
-> > 
-> > Or perhaps this (not even compile tested) patch would be better?
-> > 
-> > autofs - fix slab out of bounds read in getname_kernel()
-> > 
-> > From: Ian Kent <raven@themaw.net>
-> > 
-> > The autofs subsystem does not check that the "path" parameter is
-> > present for all cases where it is required when it is passed in
-> > via the "param" struct.
-> > 
-> > In particular it isn't checked for the AUTOFS_DEV_IOCTL_OPENMOUNT_CMD
-> > ioctl command.
-> > 
-> > To solve it, modify validate_dev_ioctl() function to check that a
-> > path has been provided for ioctl commands that require it.
-> > ---
-> >  fs/autofs/dev-ioctl.c |   15 +++++++--------
-> >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-> > index ea4ca1445ab7..61c63715c3fb 100644
-> > --- a/fs/autofs/dev-ioctl.c
-> > +++ b/fs/autofs/dev-ioctl.c
-> > @@ -135,6 +135,11 @@ static int validate_dev_ioctl(int cmd, struct
-> > autofs_dev_ioctl *param)
-> >  				cmd);
-> >  			goto out;
-> >  		}
-> > +	} else if (cmd == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD ||
-> > +		   cmd == AUTOFS_DEV_IOCTL_REQUESTER_CMD ||
-> > +		   cmd == AUTOFS_DEV_IOCTL_ISMOUNTPOINT_CMD) {
-> > +		err = -EINVAL;
-> > +		goto out;
-> >  	}
-> >  
-> >  	err = 0;
-> > @@ -433,10 +438,7 @@ static int autofs_dev_ioctl_requester(struct file *fp,
-> >  	dev_t devid;
-> >  	int err = -ENOENT;
-> >  
-> > -	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
-> > -		err = -EINVAL;
-> > -		goto out;
-> > -	}
-> > +	/* param->path has already been checked */
-> >  
-> >  	devid = sbi->sb->s_dev;
-> >  
-> > @@ -521,10 +523,7 @@ static int autofs_dev_ioctl_ismountpoint(struct file
-> > *fp,
-> >  	unsigned int devid, magic;
-> >  	int err = -ENOENT;
-> >  
-> > -	if (param->size <= AUTOFS_DEV_IOCTL_SIZE) {
-> > -		err = -EINVAL;
-> > -		goto out;
-> > -	}
-> > +	/* param->path has already been checked */
-> >  
-> >  	name = param->path;
-> >  	type = param->ismountpoint.in.type;
-> 
-> 
+Both the fact that we don't set 'ret' here and the fact that the label
+is named 'ipi_mask_done' -- which sounds like 'all OK' at least to me --
+contribute to the feeling that we just skip sending IPIs in some cases.
+
+I would prefer to see something like
+
+else {
+   ret = -EFAULT;
+   goto irq_restore_exit;
+}
+
+> +	}
+> +
+> +	switch (vector) {
+> +	default:
+> +		icr = APIC_DM_FIXED | vector;
+> +		break;
+> +	case NMI_VECTOR:
+> +		icr = APIC_DM_NMI;
+> +		break;
+> +	}
+> +
+> +	ret = kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitmap_high, icr);
+> +
+> +ipi_mask_done:
+> +	local_irq_restore(flags);
+> +	return ((ret == 0) ? true : false);
+
+... and why in the first place do we need to make this function return
+'bool' then? Let's just make it return 'int'.
+
+> +}
+> +
+> +static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
+> +{
+> +	if (!__send_ipi_mask(mask, vector))
+> +		orig_apic.send_IPI_mask(mask, vector);
+> +}
+> +
+> +static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
+> +{
+> +	unsigned int this_cpu = smp_processor_id();
+> +	struct cpumask new_mask;
+> +	const struct cpumask *local_mask;
+> +
+> +	cpumask_copy(&new_mask, mask);
+> +	cpumask_clear_cpu(this_cpu, &new_mask);
+> +	local_mask = &new_mask;
+> +	if (!__send_ipi_mask(local_mask, vector))
+> +		orig_apic.send_IPI_mask_allbutself(mask, vector);
+> +}
+> +
+> +static void kvm_send_ipi_allbutself(int vector)
+> +{
+> +	kvm_send_ipi_mask_allbutself(cpu_online_mask, vector);
+> +}
+> +
+> +static void kvm_send_ipi_all(int vector)
+> +{
+> +	if (!__send_ipi_mask(cpu_online_mask, vector))
+> +		orig_apic.send_IPI_all(vector);
+> +}
+> +
+> +/*
+> + * Set the IPI entry points
+> + */
+> +static void kvm_setup_pv_ipi(void)
+> +{
+> +	orig_apic = *apic;
+> +
+> +	apic->send_IPI_mask = kvm_send_ipi_mask;
+> +	apic->send_IPI_mask_allbutself = kvm_send_ipi_mask_allbutself;
+> +	apic->send_IPI_allbutself = kvm_send_ipi_allbutself;
+> +	apic->send_IPI_all = kvm_send_ipi_all;
+> +	pr_info("KVM setup pv IPIs\n");
+> +}
+> +#endif
+> +
+>  static void __init kvm_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+>  	native_smp_prepare_cpus(max_cpus);
+> @@ -624,12 +708,27 @@ static uint32_t __init kvm_detect(void)
+>  	return kvm_cpuid_base();
+>  }
+>
+> +static void __init kvm_apic_init(void)
+> +{
+> +#if defined(CONFIG_SMP) && defined(CONFIG_X86_64)
+> +	if (kvm_para_has_feature(KVM_FEATURE_PV_SEND_IPI) &&
+> +		num_possible_cpus() <= 2 * BITS_PER_LONG)
+> +		kvm_setup_pv_ipi();
+> +#endif
+> +}
+> +
+> +static void __init kvm_init_platform(void)
+> +{
+> +	x86_platform.apic_post_init = kvm_apic_init;
+> +}
+> +
+>  const __initconst struct hypervisor_x86 x86_hyper_kvm = {
+>  	.name			= "KVM",
+>  	.detect			= kvm_detect,
+>  	.type			= X86_HYPER_KVM,
+>  	.init.guest_late_init	= kvm_guest_init,
+>  	.init.x2apic_available	= kvm_para_available,
+> +	.init.init_platform	= kvm_init_platform,
+>  };
+>
+>  static __init int activate_jump_labels(void)
+> diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
+> index dcf629d..7395f38 100644
+> --- a/include/uapi/linux/kvm_para.h
+> +++ b/include/uapi/linux/kvm_para.h
+> @@ -26,6 +26,7 @@
+>  #define KVM_HC_MIPS_EXIT_VM		7
+>  #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
+>  #define KVM_HC_CLOCK_PAIRING		9
+> +#define KVM_HC_SEND_IPI			10
+>
+>  /*
+>   * hypercalls use architecture specific
+
+-- 
+  Vitaly
