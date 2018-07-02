@@ -2,127 +2,94 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1A3C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A1BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA8725054
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA8725054
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id CF2A6251B1
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:34:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eEoiXllR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2A6251B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752937AbeGBTca (ORCPT
+        id S1753015AbeGBTeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:32:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60947 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752387AbeGBTc2 (ORCPT
+        Mon, 2 Jul 2018 15:34:14 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37928 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeGBTeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:32:28 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 519978051E; Mon,  2 Jul 2018 21:32:27 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 21:32:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        alan@linux.intel.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180702193226.GB30798@amd>
-References: <20180601082259.17563-1-johan@kernel.org>
- <20180628120103.GA28131@kroah.com>
- <20180629094607.GC31718@amd>
- <20180629114646.GU629@localhost>
- <20180629120554.GA2477@amd>
- <20180629120914.GA9802@localhost>
+        Mon, 2 Jul 2018 15:34:12 -0400
+Received: by mail-io0-f196.google.com with SMTP id v26-v6so3469050iog.5;
+        Mon, 02 Jul 2018 12:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n2hDmcghnGHm0FGCNAaGgIwqIJLG8wNI1QNpl5f7fi8=;
+        b=eEoiXllRb9TQAkrZoZSuhmP6/P8EEtpJomK9lWStW3NbDmCDvqeSBBRxYspG5kQd/j
+         vmm/AoYrRdk8UAv4T4cZniOojMjV7VNax28zQwLTsr3i+anSlx40J59BuKxwwwJJ+fLe
+         E94hqK2kf6H6yXXUW/4SJ7y6sUfRqjuObYa1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n2hDmcghnGHm0FGCNAaGgIwqIJLG8wNI1QNpl5f7fi8=;
+        b=K52d1vZeZGLIqP3yKPwX/cuOE4uNJNQ6rffn4FJZ+Jw3sTOHNZBCvQ9JgW+hnG0IYr
+         LWM+Zp+wMvc//BNsDhw4sCFxj/icpoHThsCrAM9fYLuWaLe6yxkKs1A/cDhvbnoenw3A
+         SyhIwhyFvwQRwWXi/kFEHNaehPUocOJ+ncNB7k840xYNqGE30CKg2ttcorUYrM0/Ey4h
+         3U8X1D+T23z+Oz6noWTal9Jth/7FpmmSZAFjLMBNdMSK6xLdYIT8K/uQKp6+jrMrm0U9
+         pn8+9bNEXfdwdh58yLusx3gXE12erCIzSz+zX43e6NvIZZEqub8V7G/CkAZ0JRpJFMYl
+         ceHQ==
+X-Gm-Message-State: APt69E2kD5EJOMYFX/UNvNxc+Vx7LEBm89jVPPG6ePuS3IcxrXF+kJho
+        bEU5IbbqhFMO6yc0RyXY/0xtPf/l1TCvGluMR2w=
+X-Google-Smtp-Source: AAOMgpePgk8a4CdnkbvV3WpPjfvfHOMK5PCEcK5O3pwlw13O8i69gq6MX+nFYmMLRVsyrXz1034KHBDnCVFuzqZn6/E=
+X-Received: by 2002:a6b:980e:: with SMTP id a14-v6mr17849099ioe.238.1530560051731;
+ Mon, 02 Jul 2018 12:34:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
-Content-Disposition: inline
-In-Reply-To: <20180629120914.GA9802@localhost>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1530510723-24814-1-git-send-email-longman@redhat.com>
+In-Reply-To: <1530510723-24814-1-git-send-email-longman@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 12:34:00 -0700
+Message-ID: <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
+To:     Waiman Long <longman@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jul 1, 2018 at 10:52 PM Waiman Long <longman@redhat.com> wrote:
+>
+> A rogue application can potentially create a large number of negative
+> dentries in the system consuming most of the memory available if it
+> is not under the direct control of a memory controller that enforce
+> kernel memory limit.
 
---b5gNqxB1S1yM7hjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I certainly don't mind the patch series, but I would like it to be
+accompanied with some actual example numbers, just to make it all a
+bit more concrete.
 
-On Fri 2018-06-29 14:09:14, Johan Hovold wrote:
-> On Fri, Jun 29, 2018 at 02:05:54PM +0200, Pavel Machek wrote:
-> > On Fri 2018-06-29 13:46:46, Johan Hovold wrote:
-> > > On Fri, Jun 29, 2018 at 11:46:07AM +0200, Pavel Machek wrote:
-> > > >=20
-> > > > > > Finally, note that documentation (including kerneldoc) remains =
-to be
-> > > > > > written, but hopefully this will not hinder review given that t=
-he
-> > > > > > current interfaces are fairly self-describing.
-> > > > >=20
-> > > > > This all looks great.  Thanks for doing this work and adding a new
-> > > > > subsystem for something that has been asked for for many years.
-> > > > >=20
-> > > > > All now merged in my tree, nice job!
-> > > >=20
-> > > > I don't think discussion was finished on this one.
-> > > >=20
-> > > > In particular, we agreed that /dev/gnssrawX would be better device
-> > > > name, so that we still have place where to put proper abstraction
-> > > > layer in future.
-> > >=20
-> > > I did not agree with you on that. I said we could consider that name =
-if
-> > > this was to be changed at all, which I do not think is necessary for
-> > > the reasons spelled out in this thread.
-> >=20
-> > So, again: there's nothing gnss specific in those patches. It does not
-> > know about the format of the data passed around. (Best you can claim
-> > that somehow data flow characteristics are unique to gnss.) And this
-> > takes namespace needed for real gnss subsystem. Please don't do it.
->=20
-> This is the real gnss subsystem. Get over it.
+Maybe even performance numbers showing "look, I've filled the dentry
+lists with nasty negative dentries, now it's all slower because we
+walk those less interesting entries".
 
-Congratulations. You have created gnss subsystem that has 0 lines of
-code that are gnss-specific.
-
-This is not real gnss subsystem. This is pipe that passes data,
-similar to /dev/psaux or mouse on /dev/ttyS0. Sooner or later, real
-gnss subsystem (with unified interface) will be needed, as it was for
-input, and this "pipe and gpio" thing should not hog required
-namespace.
-
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---b5gNqxB1S1yM7hjW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls6fcoACgkQMOfwapXb+vK2iwCfekkE2c8NlLS4L3/4tD8bWoXA
-zHcAn2ZPmC5eoFkUPoujyruLRo+UVc1h
-=8YSM
------END PGP SIGNATURE-----
-
---b5gNqxB1S1yM7hjW--
+              Linus
