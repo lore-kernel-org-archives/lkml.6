@@ -2,74 +2,69 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23939C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FF0C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C94250E8
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975EA2554C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:16:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UImFkxkz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C94250E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iWuIBqAD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975EA2554C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeGBNPL (ORCPT
+        id S1752240AbeGBNQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:15:11 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44699 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeGBNPG (ORCPT
+        Mon, 2 Jul 2018 09:16:36 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54917 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751415AbeGBNQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:15:06 -0400
-Received: by mail-ua0-f196.google.com with SMTP id v15-v6so10017968ual.11;
-        Mon, 02 Jul 2018 06:15:06 -0700 (PDT)
+        Mon, 2 Jul 2018 09:16:33 -0400
+Received: by mail-it0-f67.google.com with SMTP id s7-v6so1161206itb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 06:16:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=cew5eadQLlZR92u21/oB4VMEfkUNLxZXnZ8DngIAUhc=;
-        b=UImFkxkzHUIU4WQ3hU6rFyxEKhsmURrRuTElJes+gXtCgb8zd1b8RDDzykbuQ0k1Dd
-         G4oBVKaOKM1RO+E3OCBiHU0ASGb/pLtUrDv8hdAxO3/UQcNL7H2rifWHKCjQBkOrOzs3
-         FEndnf/dH4ozopdeuqz+E/AmppyX4ceEW27Wp6bYc4/i2UPVk4eQYzpJVrpqQEWy5SLU
-         H8wfhRcQcibHFpfZriVri3r19WCdWL+LY+RvL2R4j27XiojNdZp9oMcZEDu5DavtDOv1
-         R0xGvztPRh52wpv80kAPBXQwRBRUR62BSaMkyS/erjESuxIwVg5vg0hKaXpWDK7yQqtp
-         sAYQ==
+        bh=NpHQkYeHKKp/UEvI/AbNEpm8cp2SD+4irWUt7fLWkBw=;
+        b=iWuIBqADVEp6/GCAxtBuIwzm9L2FB9ysSSxDssrR0kBcPwZ+HrxXOP3NW3L+0gnB49
+         dSbFNzZMGMOPHDZS/PsJU0cKFgv2uYGcpnj0Zs9ugJVMh5aI0nwRBhDnCvxOgGbkJumX
+         fqrAQwyLYnAFRPlIzSk12WxbkHhICYZVFU92w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=cew5eadQLlZR92u21/oB4VMEfkUNLxZXnZ8DngIAUhc=;
-        b=dUvXVW9JcBT9+ZolgYEX4+ZXAHB6rSbBpu/gtJIcij0JDLQJGS8jUdrbeZYTWGW0LV
-         hgGTpxy5OaBzERHnqoxndRfUyYbuvbS/U1oKrPJ9VZMDZm/BmjKisM7nJkawUxJCMpLf
-         xM022mypsC9lDByJWtsbBGFxMR0j1s0eugB9nCeqp5SvXssH7aJQuc9zgLbb3ixSC+BE
-         nM51mGQUYB5BtXpF19tbPpCil073L9QPr0whVDz5O+d5X8b039tztn5r5Pbp82EiL3aN
-         ALCEB7mcFJInQxfP6FKmZSTAhLuxERVZe2s+SsjGvvhkKcnRh5aXpLcUr3R4EWgH+nxo
-         86eA==
-X-Gm-Message-State: APt69E3UH9SU5UKOS29s/lqv+aQxIz+EqLdCVW5kQ31tOFrB05NGdLV3
-        vLk8oNiFZosJC5e00SmMoucJdjsU9k3+uGnOkX8=
-X-Google-Smtp-Source: AAOMgpdDfZxgsmZB4IQFM5BfrY41nErkJQawsuIrKYnybs57oZPRbkbRMEIK0Lk63opaOzBhU8issd0URtNcRMP8b7k=
-X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr15673169uai.47.1530537305576;
- Mon, 02 Jul 2018 06:15:05 -0700 (PDT)
+        bh=NpHQkYeHKKp/UEvI/AbNEpm8cp2SD+4irWUt7fLWkBw=;
+        b=L0/Up6YS+OpbJQ348weanYvftISc/RRMGWt/vRfU8qGxgBih/hXVs2OM6VYNkO5OSD
+         LxP45DvkMrhsP72BLUtK3iMFg8a2SneLv/hi7R457aYDQTL9GJilnIZLcBbQzAp9GmxI
+         +Iog1cIQbgWNFmhinHG+As3+3U7Xf+c674YONIP68iFdaGAjM8zuDs1XXwiCw7RyhYYt
+         OZXT2mvP0AWXDLAy7hdfvcxO4MR1gxN4orvXWaU2mYKSL5jGTv2dVNYx1LMuBHrI5fsX
+         K87Wp0G1TFTUKaxz5zfGgz2itH5rbp29C7fe1K3NgtGlTCxWb+c20n9nYmCedq3cmdxl
+         YJ/w==
+X-Gm-Message-State: APt69E05OiLVMC1Mo7AHmYj3aRdJ8NjcmM1BVbqWbxULgBZ27cnzvS2f
+        O/hi91BrmgFeG0LK1vRYZGFxgSax133srIN8W+eUow==
+X-Google-Smtp-Source: AAOMgpekhIq+87Cv2Lo55lxjNnvXGL7zLHv6o5ql8nQNOcvQ43P+JEZ2B0ROZ99r6kWMdRfzpIch+FR5jIIqn/V/zPE=
+X-Received: by 2002:a02:570c:: with SMTP id u12-v6mr20780884jaa.142.1530537392741;
+ Mon, 02 Jul 2018 06:16:32 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:15:04 -0700 (PDT)
-In-Reply-To: <20180630121024.18993-1-colin.king@canonical.com>
-References: <20180630121024.18993-1-colin.king@canonical.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 2 Jul 2018 16:15:04 +0300
-Message-ID: <CAHp75Vf8AAnmvdWsUPyRY+13vi43Ta=FiaVEhNwn1+QyN88K0A@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell-smbios-wmi: make function
- dell_smbios_wmi_call static
-To:     Colin King <colin.king@canonical.com>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
+Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:16:32 -0700 (PDT)
+In-Reply-To: <CAPDyKFo7FP5bL8doK3P749Rcyzh_H-3SzG+GZVJb2pp9j_ZH_A@mail.gmail.com>
+References: <1527590335-171787-1-git-send-email-xiaqing17@hisilicon.com> <CAPDyKFo7FP5bL8doK3P749Rcyzh_H-3SzG+GZVJb2pp9j_ZH_A@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 2 Jul 2018 15:16:32 +0200
+Message-ID: <CAPDyKFrLY=rH+xaYSd=Qr72BVtk0UPeHkY4s0GTeU+0NHks-zg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: fix card threshold control configuration
+To:     Shawn Lin <shawn.lin@rock-chips.com>,
+        Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
+        Doug Anderson <dianders@chromium.org>
+Cc:     Jaehoon Chung <jh80.chung@samsung.com>,
+        Qing Xia <xiaqing17@hisilicon.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,42 +72,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 30, 2018 at 3:10 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 11 June 2018 at 14:20, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> + Shawn Lin, Evgeniy Didin, Doug Andersson
 >
-> The function dell_smbios_wmi_call is local to the source and does not
-> need to be in global scope, so make it static.
+> On 29 May 2018 at 12:38, Qing Xia <xiaqing17@hisilicon.com> wrote:
+>> From: x00270170 <xiaqing17@hisilicon.com>
+>>
+>> Card write threshold control is supposed to be set since controller
+>> version 2.80a for data write in HS400 mode and data read in
+>> HS200/HS400/SDR104 mode. However the current code returns without
+>> configuring it in the case of data writing in HS400 mode.
+>> Meanwhile the patch fixes that the current code goes to
+>> 'disable' when doing data reading in HS400 mode.
+>>
+>> Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
 >
-> Cleans up sparse warning:
-> symbol 'dell_smbios_wmi_call' was not declared. Should it be static?
+> This looks good to me. However, it seems like Jaehoon has been busy,
+> no response yet.
 >
+> I have looped in a few more people to see if they thinks this makes sense.
 
-Pushed to my review and testing queue, thanks!
+It sounds this should be a fix for regression (also confirmed
+off-list). Could you please resend and by adding a fixes tag?
 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/platform/x86/dell-smbios-wmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
-> index fbefedb1c172..88afe5651d24 100644
-> --- a/drivers/platform/x86/dell-smbios-wmi.c
-> +++ b/drivers/platform/x86/dell-smbios-wmi.c
-> @@ -82,7 +82,7 @@ static int run_smbios_call(struct wmi_device *wdev)
->         return 0;
->  }
->
-> -int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
-> +static int dell_smbios_wmi_call(struct calling_interface_buffer *buffer)
->  {
->         struct wmi_smbios_priv *priv;
->         size_t difference;
-> --
-> 2.17.1
->
+In the meantime, I have applied this for my next branch, as to get it
+tested. I can move it later to fixes if needed.
 
+[...]
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+Kind regards
+Uffe
