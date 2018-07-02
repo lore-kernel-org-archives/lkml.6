@@ -2,83 +2,152 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDD3C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAA5C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B95F25D7D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64C222154C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:18:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sP8BCMNE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B95F25D7D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QaFtbnce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C222154C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeGBNRx (ORCPT
+        id S1752508AbeGBNS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:17:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751761AbeGBNRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:17:48 -0400
-Received: from localhost (unknown [122.167.89.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A26125D2F;
-        Mon,  2 Jul 2018 13:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530537468;
-        bh=kmboEbABkwQgsEhEafrSQG2CEFutieXu9hykq/IbeJA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sP8BCMNEvCO4lDLyi0ZJbQzV50GTsDbfZE/KxVXUKvKJall46arJZzeLaYW0nBDfo
-         npDrSrtnytqMzFBxO9hy7jNrPNOSCgjAIpuQzUw5ZqhDM3kvuIibS0xgRyNWtlrXFm
-         LnUE8BPTfq3+u1TXXn8KqWVXu4RlCH6MHsjZTRh0=
-Date:   Mon, 2 Jul 2018 18:47:37 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 0/7] add virt-dma support for imx-sdma
-Message-ID: <20180702131737.GJ22377@vkoul-mobl>
-References: <1529427424-12321-1-git-send-email-yibin.gong@nxp.com>
- <1530025442.9910.44.camel@pengutronix.de>
- <1530527489.15665.22.camel@nxp.com>
+        Mon, 2 Jul 2018 09:18:58 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40698 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbeGBNSz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:18:55 -0400
+Received: by mail-wr0-f196.google.com with SMTP id t6-v6so3214175wrn.7;
+        Mon, 02 Jul 2018 06:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KzAJiBlrIe6rJ7U2avRI9T9ivZ6XfONYA0KdK98Rbwo=;
+        b=QaFtbnce0q9XanfyjPBOXepyOjmLiSkWGLh0hIE/JhBWktkcuqVai8PxTnu2TDPJl4
+         MdvMakK9rYzciuUgfjnqrNQO0ysfLg1HvGG2C7csTU5tF4v0F4b0KYtK8rFDHsrkrXO8
+         tROOdH09aRIZxDpzPQ6dtEB1TPrmI/er1vDojHs8eC5gLCu8oqfMNMzQh+0GhgXaKWjN
+         l6qQNgk1zvmurqG3t+Vcel7tz4vXRzHpJQpxmRbDSk5jPI//ZVGR7SqUQiR/uyakcgtk
+         Gcj0Z/u68Inkdetfg5HeNLtmSdMkvulRFjd1cjTHC4EpMPI0phpe9lNljETxNGIOiKJW
+         CAyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KzAJiBlrIe6rJ7U2avRI9T9ivZ6XfONYA0KdK98Rbwo=;
+        b=L3i4nrXjGo9XJf7akARMExHc60DDSgttqc7creL7edS2aaOEf+0kXGScL6MRwwC1M3
+         c90RwCDfUAvh+VjIDDO5TNRl6G+bgUfZcUGt17vdsMr+n6rnyZADSSM/XdFEWKctYcCQ
+         vXuvB5tCr5DY2zgkCEq3v3kqaFivrRZpBWe8sPKNWAjox4zcwsRyxdGxBZdGqmfiQyA2
+         AofYgYUiuyQbAir3vgXDpAIRUACzMcXaYCaMVUZpFaGFhE7dVqPLCu22H96w3vyo7joX
+         dYiqe+/M93iG6x5OPzyiYs8+MPZO0EctFjf+wbeaLuUjg9CZ3tvS6LVCH9dUk0Va/rZq
+         j+JQ==
+X-Gm-Message-State: APt69E3Sc0mOrtdOxGNKbS2uK5vHOCv4P5DxDdatwpHz9ntBGqETCbj+
+        4YBqbDjRFZd3oioJjOG4WzI=
+X-Google-Smtp-Source: AAOMgpeDOGaoLVYNNlGtF6O8yiFEI9eyc0TOGyDxGxvQ9eZ4CR01BuDgYyk+Yb4hiUElgoU6YodJPA==
+X-Received: by 2002:adf:a9b3:: with SMTP id b48-v6mr4049041wrd.48.1530537533560;
+        Mon, 02 Jul 2018 06:18:53 -0700 (PDT)
+Received: from localhost (pD9E51838.dip0.t-ipconnect.de. [217.229.24.56])
+        by smtp.gmail.com with ESMTPSA id l15-v6sm19448383wrs.95.2018.07.02.06.18.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 06:18:52 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 15:18:51 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     jassisinghbrar@gmail.com, gregkh@linuxfoundation.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
+Message-ID: <20180702131851.GH13096@ulmo>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-7-mperttunen@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4LFBTxd4L5NLO6ly"
 Content-Disposition: inline
-In-Reply-To: <1530527489.15665.22.camel@nxp.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180702114033.15654-7-mperttunen@nvidia.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-07-18, 02:32, Robin Gong wrote:
-> Hi Vinod,
-> 	Do you have any comment for this patchset? Lucas and Sascha
-> acked it and tty patch already merged in.
 
-I was actually waiting for ACK/action on patch 1 :)
+--4LFBTxd4L5NLO6ly
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have reviewed the series, some nitpicks nothing major, so I have
-applied this good cleanup and conversion :) along with fixes for typos
-in code, GFP_ fix and removed unused variable.
+On Mon, Jul 02, 2018 at 02:40:31PM +0300, Mikko Perttunen wrote:
+> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> multiplexing multiple "virtual UARTs" into a single hardware serial
+> port. The TCU is the primary serial port on Tegra194 devices.
+>=20
+> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> are part of Tegra HSP blocks that are already controlled by the Tegra
+> HSP mailbox driver.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>=20
+> Notes:
+>     v2:
+>     - Removed (void) casts for unused variables.
+>     - Changed the uart_set_options() call to be on one line, even if its
+>       over 80 characters.
+>     - Added defines for magic numbers.
+>     - Style fixes.
+>     - Changed Kconfig entry to depend on the Tegra HSP driver instead of
+>       just the mailbox framework.
+>    =20
+>     v3:
+>     - Removed FLUSH bit, as it's unnecessary and slows down printing
+>     - Removed call to uart_set_options
+>     - Added mbox_free_channel calls to remove()
+>=20
+>  drivers/tty/serial/Kconfig       |   9 ++
+>  drivers/tty/serial/Makefile      |   1 +
+>  drivers/tty/serial/tegra-tcu.c   | 291 +++++++++++++++++++++++++++++++++=
+++++++
+>  include/uapi/linux/serial_core.h |   3 +
+>  4 files changed, 304 insertions(+)
+>  create mode 100644 drivers/tty/serial/tegra-tcu.c
 
-My buildchain noticed warns (with W=1) on this file, esp now that
-structs are moved around. Pls fix the struct descriptions.
+The driver looks good to me. But for my own understanding, is there some
+way we can make use of the multiplexing? That is, could we add a
+mechanism to have the driver filter out only a specific stream? Could we
+also specify which stream to send data back to? What happens by default?
+Which stream is data sent to?
 
-Thanks
--- 
-~Vinod
+Thierry
+
+--4LFBTxd4L5NLO6ly
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6JjsACgkQ3SOs138+
+s6Eocg//ecQc8Nx/NJvOletPxaThwcsEtINjIWHInHZq6CzmY/lrvS9ewzqWHocv
+xV+qUziWgRY5i8LUnQ/bPnCRRHP3oEZQOhAigZCK4sZX17LyaL/RMFqcT61+Umlv
+pE98vpYGeBFKt92VMv3ou5pKNQH/CM9CM0pVhhUSlm7LCgy3M4PZqxPApSCdbWLw
+MoQE4Ex0E5uZr5L7x/S9V5xz051pey3vfTziOvZj8FasXSZZtoZ0zIEkuzKO25q+
+2XYSH0j2Xihfp9bvOcO70pVAPykSLYF0QYqmoFH6apJnwomSEYYompC67BXUYOit
+0l8NXCED1RG6a3mkCU9fr/tfcyKoz83iADrJv3gNI3QJhWFWduIEaSQS8rqeHZSn
+e2cXirbqp28L3PVmOKWbKuDQY0/Uow7eLZw+ckd8PBXsOTDPdsdjm12IyGEEKugJ
+NPBtX6oQms2hauvJGAvv6hb1XZafTeiaF7fMXzOQJVNL1owNPx5dd908XFLP6ca0
+HVuq5pq+T/sFuM0yyX4zHbTKHWu1+DkManiN8AQw3V42LbN6/3GdGx7+PbYHVdCA
+9gFUv28cY5uq+Dju5BSOi3tPMcv7gNxWhb2EPOImR+0UND+ET7DzVLLkhK6dUZsL
+nHx/r0HX0CnHn8o2243Jb6KIzvmuqkbbE3jEOlgSedC34qH56Os=
+=+LfL
+-----END PGP SIGNATURE-----
+
+--4LFBTxd4L5NLO6ly--
