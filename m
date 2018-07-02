@@ -2,127 +2,183 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC88BC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F3BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E581253D5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD60253D5
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w67KkN6c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E581253D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9iD5CdC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD60253D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeGBMJs (ORCPT
+        id S1752117AbeGBMKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:09:48 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46428 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932944AbeGBMJi (ORCPT
+        Mon, 2 Jul 2018 08:10:06 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:43873 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752031AbeGBMKB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:09:38 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w62C8VwA068286;
-        Mon, 2 Jul 2018 07:08:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1530533311;
-        bh=tygW0TW0FOu3iHSlexpm+CLFV/TQRP5bxqTXwMAdO3g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=w67KkN6cv2lDJhQXnBk+F93V+lzVhgi6Ylb3Xail03WigncMKFkBRk+GLYXG5YDgP
-         HhI/s2k81Wl6+rwSZ6nNmk7uGFKpu7NBYuFPxqWJp9QcbZSNFZfFXUfMOsjt8WmF5M
-         6yECYF5g86hFrHOASWYE6vjE2V7nfdFLw00OloIQ=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62C8VP0008478;
-        Mon, 2 Jul 2018 07:08:31 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 2 Jul
- 2018 07:08:31 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 2 Jul 2018 07:08:31 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62C8OGI027697;
-        Mon, 2 Jul 2018 07:08:25 -0500
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
- <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
-Date:   Mon, 2 Jul 2018 17:38:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 08:10:01 -0400
+Received: by mail-ua0-f194.google.com with SMTP id x24-v6so3192789ual.10;
+        Mon, 02 Jul 2018 05:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=X5ktp69V0SFX6yCr+y5QP6PCip4Qh7LWmQ6lpgq1vgU=;
+        b=U9iD5CdCym7e/+QRKyi2YdGEYY6OD9uFTAMzSNtsZNSWKtzvYt237kWAg0ytCYNClA
+         1fC2m24tnLMtcLSy8zwB2XGU+QJey+XUCB57Gp3FB3MvKi+2+wVvtbGH5tVxInvbzT8D
+         MPXDoo+xUF0AL6rYQ/Vhv/ZlMz52zpbmeq0tM8Xz0C4n7Iu3S47pWkWE1i6RS5h/8M0m
+         QS0902rIYaplWZ0Nr5Ht6w/2vklUI85MijOOtsq/+tH2uykuCCn3GzOKSmYe7pYJKwWU
+         vQRfQ1KDaoAOfbQiYuxJEJYbUk7u06dEY6DIJqlHpiSrbw6C6r712B3OWA2HdQf+rdGf
+         iNvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=X5ktp69V0SFX6yCr+y5QP6PCip4Qh7LWmQ6lpgq1vgU=;
+        b=riQe1Xb0qpoNP44wM5OS0b7ZxAjFAXxoABkpJlyryAHuiusQuA16k0d0JcJEyHN1Xw
+         aA21eFE9mVMXO6/VqwU/8ysJ0FoByMM55JK1iE/YreuaBLlpFWLHu5IyWqJJ0ukD0u8A
+         yS4LPa+GhwLJFxMICgskDSogFDqrjSBQYiBLl/sgF3DnzQajclX8m2DNM69XEPmrh3QC
+         jNYl0QpchCJSKfF/Wh5sj3jgS4PGzrLrWQWx20cA6QomQ0AF/PP2ya8wIjV3Ef/ftFwL
+         OTF95scpbNpGCEXhP49Q5mQpNwn623hM4vjwq0npt1QDZpZ/W0jMOuy3PyvnSASIrNAe
+         5a0g==
+X-Gm-Message-State: APt69E3xskmcTbb8IIZQb7DOuS/3kcTvlQSwti+qxPdmfgy8YI6EnPv0
+        vsganQkxp2gYYYOImwsWaAAKb3m7WoAwCt8OAj0=
+X-Google-Smtp-Source: AAOMgpcWmpg0R5ayTzBgpvYxSMl/4U1TFUteLLLlKRCVGCCXhC/NEfQN9I4uaqXyPqlLoLPcxrfLZ95mgDOBc9UyQAU=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr7374512ual.141.1530533400905;
+ Mon, 02 Jul 2018 05:10:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 05:10:00 -0700 (PDT)
+In-Reply-To: <CAB4CAwdCixoGj9t=1Nvcc52kAjmcMWobKt11pRa0vNyLdeA_rg@mail.gmail.com>
+References: <20180620144645.2084-1-chiu@endlessm.com> <CAB4CAwdCixoGj9t=1Nvcc52kAjmcMWobKt11pRa0vNyLdeA_rg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 2 Jul 2018 15:10:00 +0300
+Message-ID: <CAHp75VcvaJVuM=TL2AJaC=y5B9GRVbXO0DczfHWs+i03OJRXcw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] platform/x86: asus-wmi: Call led hw_changed API on
+ kbd brightness change
+To:     Chris Chiu <chiu@endlessm.com>
+Cc:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Wed, Jun 27, 2018 at 1:27 PM, Chris Chiu <chiu@endlessm.com> wrote:
+> On Wed, Jun 20, 2018 at 10:46 PM, Chris Chiu <chiu@endlessm.com> wrote:
+>> Make asus-wmi notify on hotkey kbd brightness changes, listen for
+>> brightness events and update the brightness directly in the driver.
+>> Create new do_kbd_led_set function for in-driver update, and leave
+>> kbd_led_set for original led_classdev call path.
+>>
+>> Update the brightness by led_classdev_notify_brightness_hw_changed.
+>> This will allow userspace to monitor (poll) for brightness changes
+>> on the LED without reporting via input keymapping.
 
-On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
-> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->> Hi Bartosz,
->>
->> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> These are the remaining patches that still need to be merged in order
->>> to complete the conversion of the davinci dsp driver to using the reset
->>> framework.
->>>
->>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
->>> merged.
->>
->> Series looks good to me.
->>
->> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
->> and #2 ?
->>
->> Given the dependencies and to preserve bisect its easiest if I take the
->> series with acks from remoteproc and clock maintainers.
->>
->> Open to other suggestions as well.
->>
->> Thanks,
->> Sekhar
-> 
-> Oops you're right about the order. Do you want me to resend?
+LGTM, I'm about to push it to my review and testing queue, so, we will
+have 1 day or so time to gather objections if any.
+Thanks!
 
-With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
-to you (on top of v4.18-rc1) for you to merge any further changes you
-want to queue from your tree.
+>>
+>> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+>> ---
+>>  drivers/platform/x86/asus-wmi.c | 26 ++++++++++++++++++++++----
+>>  1 file changed, 22 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+>> index 1f6e68f0b646..f2b9037f6ded 100644
+>> --- a/drivers/platform/x86/asus-wmi.c
+>> +++ b/drivers/platform/x86/asus-wmi.c
+>> @@ -460,6 +460,7 @@ static void kbd_led_update(struct work_struct *work)
+>>                 ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+>>
+>>         asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
+>> +       led_classdev_notify_brightness_hw_changed(&asus->kbd_led, asus->kbd_led_wk);
+>>  }
+>>
+>>  static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
+>> @@ -490,15 +491,16 @@ static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
+>>         return retval;
+>>  }
+>>
+>> -static void kbd_led_set(struct led_classdev *led_cdev,
+>> -                       enum led_brightness value)
+>> +static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+>>  {
+>>         struct asus_wmi *asus;
+>> +       int max_level;
+>>
+>>         asus = container_of(led_cdev, struct asus_wmi, kbd_led);
+>> +       max_level = asus->kbd_led.max_brightness;
+>>
+>> -       if (value > asus->kbd_led.max_brightness)
+>> -               value = asus->kbd_led.max_brightness;
+>> +       if (value > max_level)
+>> +               value = max_level;
+>>         else if (value < 0)
+>>                 value = 0;
+>>
+>> @@ -506,6 +508,12 @@ static void kbd_led_set(struct led_classdev *led_cdev,
+>>         queue_work(asus->led_workqueue, &asus->kbd_led_work);
+>>  }
+>>
+>> +static void kbd_led_set(struct led_classdev *led_cdev,
+>> +                       enum led_brightness value)
+>> +{
+>> +       do_kbd_led_set(led_cdev, value);
+>> +}
+>> +
+>>  static enum led_brightness kbd_led_get(struct led_classdev *led_cdev)
+>>  {
+>>         struct asus_wmi *asus;
+>> @@ -656,6 +664,7 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>>
+>>                 asus->kbd_led_wk = led_val;
+>>                 asus->kbd_led.name = "asus::kbd_backlight";
+>> +               asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+>>                 asus->kbd_led.brightness_set = kbd_led_set;
+>>                 asus->kbd_led.brightness_get = kbd_led_get;
+>>                 asus->kbd_led.max_brightness = 3;
+>> @@ -1745,6 +1754,15 @@ static void asus_wmi_notify(u32 value, void *context)
+>>                 }
+>>         }
+>>
+>> +       if (code == NOTIFY_KBD_BRTUP) {
+>> +               do_kbd_led_set(&asus->kbd_led, asus->kbd_led_wk + 1);
+>> +               goto exit;
+>> +       }
+>> +       if (code == NOTIFY_KBD_BRTDWN) {
+>> +               do_kbd_led_set(&asus->kbd_led, asus->kbd_led_wk - 1);
+>> +               goto exit;
+>> +       }
+>> +
+>>         if (is_display_toggle(code) &&
+>>             asus->driver->quirks->no_display_toggle)
+>>                 goto exit;
+>> --
+>> 2.11.0
+>>
+>
+> Gentle ping. Any comment for the v3 patch?
+>
+> Chris
 
-Bartosz, given the number of moving pieces, I think its better to keep
-2/4 for v4.20 release - once all other other dependencies have been merged.
 
-Thanks,
-Sekhar
+
+-- 
+With Best Regards,
+Andy Shevchenko
