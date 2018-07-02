@@ -2,134 +2,182 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F684C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BACC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7FE2205F4
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A8FA208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:19:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToF0cPYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7FE2205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWVdrOme"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8FA208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965633AbeGBLSg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:18:36 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38320 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932286AbeGBLRb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:17:31 -0400
-Received: by mail-pl0-f65.google.com with SMTP id d10-v6so7802751plo.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 04:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hcw1PlOv/9gyu/Mnq84/eHJ9RxrRgO90E2yNOi4lvt4=;
-        b=ToF0cPYMxwJltyjXw44wEdd4TxyFpJA6nNlmRfAitJDr+OKMl7DggtjQL5tpdwFpqs
-         Nz2uA69fuiLgZpAT4U9tHlNYhTHKUBhglGajaj8uJkxRwtEnwloaWNiDpzriZkXRLrBc
-         eMWA2iBgSJKR6gkrS+ZIo6VDJQwamlcPR4Z6uLWrGDeXtaK7EIe1YVcxRqHou25MP5lz
-         B4gOnyG49IKxAEJ4lkrVju1XD29W8O/j0edtuE50OiNo3xT48C7IKsxgJqIL+lNPvrZ5
-         81FPI1tbA06cfNZ8J2/IzON+VEgRw3IUYlAnuHLv3qKSxohAqRkiLupwMCs4xxgucD2e
-         bEsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hcw1PlOv/9gyu/Mnq84/eHJ9RxrRgO90E2yNOi4lvt4=;
-        b=NWmkC+VxCJMCjZUudEI1tNOiB9S3iWdGpCBFieFgc4qDG9nlVr+LHa7qkUBEdyM30w
-         iDp0NbltN17txKcS+V0gCFVX49qkohudyp+MHEaOW8FzKOMlst+0PHmO2P5uAxknIonm
-         VmLDtegHCqN7osp5vne7gt1Bh3nvW9uF296mSKNHC4zIYDv03Tou8QkzTdmNCXmvsjLg
-         jp6bYhDbuPlbiYkGqK4EpU/RheUNAQAbY1KZ4pWU4mJUcsFdqo1upiyWm8lOjSnEOPv4
-         /NEa/vdfUOP9TcBRrJhw1fqPlxmsubsES+QGQP/GX7FeTAZwOD0/JpypWUVe19VkeA1l
-         stAw==
-X-Gm-Message-State: APt69E3iAcQIR5Hgm5DxApYzEZ9ZoEeF1k3Fe7dCmIJ17HPb0Yvd2CGf
-        RN0uJeBexJchzRzM7+1fX2k=
-X-Google-Smtp-Source: ADUXVKKWAxWVw/5o0HpR8bRsTPphnZv9l6ScGPZTUchJJooiUb8UwLlV0A08jCLg318uvl21VBNpFg==
-X-Received: by 2002:a17:902:6f02:: with SMTP id w2-v6mr24895831plk.216.1530530251301;
-        Mon, 02 Jul 2018 04:17:31 -0700 (PDT)
-Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm11262150pfh.186.2018.07.02.04.17.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 04:17:30 -0700 (PDT)
-From:   Jun Yao <yaojun8558363@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        suzuki.poulose@arm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] arm64/mm: Make __enable_mmu() take the ttbr1 page as an argument
-Date:   Mon,  2 Jul 2018 19:16:56 +0800
-Message-Id: <20180702111659.25570-3-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180702111659.25570-1-yaojun8558363@gmail.com>
-References: <20180702111659.25570-1-yaojun8558363@gmail.com>
+        id S965646AbeGBLT3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:19:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753800AbeGBLTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:19:25 -0400
+Received: from linux-5o07.suse.de (nat.nue.novell.com [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C107A208AF;
+        Mon,  2 Jul 2018 11:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530530364;
+        bh=YBxVu2iOj4dFFvbYhwdkC5j21fG0juGbR2BgXM+e5Nk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hWVdrOmeHhoIZMymS/Otd6icx6ZU5yqSNuH52zWCKAyoWX4jMzSRqB/P1rjLXFJM3
+         dupNDKGyLgeIceUAMkmjIUfugYroONIi5k2QkpedQ5ZmV9kDLhu09ctbjvCvIHZRu+
+         k3wjloPGeYt6ATWWEILNZsHEAh4PQgOQVVbtA1oQ=
+From:   Jessica Yu <jeyu@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>, Joe Perches <joe@perches.com>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v2] modsign: log module name in the event of an error
+Date:   Mon,  2 Jul 2018 13:18:31 +0200
+Message-Id: <20180702111831.4699-1-jeyu@kernel.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make __enable_mmu() take the physical address of the ttbr1 page as
-an argument.
+Now that we have the load_info struct all initialized (including
+info->name, which contains the name of the module) before
+module_sig_check(), make the load_info struct and hence module name
+available to mod_verify_sig() so that we can log the module name in the
+event of an error.
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 ---
- arch/arm64/kernel/head.S  | 5 ++++-
- arch/arm64/kernel/sleep.S | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+v2:
+ - remove _modlen argument and just use the passed info struct
 
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 3f99c59ba193..a1c7a4d3b9f3 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -718,6 +718,7 @@ secondary_startup:
- 	 * Common entry point for secondary CPUs.
- 	 */
- 	bl	__cpu_setup			// initialise processor
-+	adrp	x26, swapper_pg_dir
- 	bl	__enable_mmu
- 	ldr	x8, =__secondary_switched
- 	br	x8
-@@ -760,6 +761,7 @@ ENDPROC(__secondary_switched)
-  * Enable the MMU.
-  *
-  *  x0  = SCTLR_EL1 value for turning on the MMU.
-+ *  x26 = TTBR1_EL1 value for turning on the MMU.
-  *
-  * Returns to the caller via x30/lr. This requires the caller to be covered
-  * by the .idmap.text section.
-@@ -774,7 +776,7 @@ ENTRY(__enable_mmu)
- 	b.ne	__no_granule_support
- 	update_early_cpu_boot_status 0, x1, x2
- 	adrp	x1, idmap_pg_dir
--	adrp	x2, swapper_pg_dir
-+	mov	x2, x26
- 	phys_to_ttbr x3, x1
- 	phys_to_ttbr x4, x2
- 	msr	ttbr0_el1, x3			// load TTBR0
-@@ -835,6 +837,7 @@ __primary_switch:
- 	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
- #endif
+ kernel/module-internal.h | 25 ++++++++++++++++++++++++-
+ kernel/module.c          | 22 +---------------------
+ kernel/module_signing.c  | 12 +++++++-----
+ 3 files changed, 32 insertions(+), 27 deletions(-)
+
+diff --git a/kernel/module-internal.h b/kernel/module-internal.h
+index 915e123a430f..79c9be2dbbe9 100644
+--- a/kernel/module-internal.h
++++ b/kernel/module-internal.h
+@@ -9,4 +9,27 @@
+  * 2 of the Licence, or (at your option) any later version.
+  */
  
-+	adrp	x26, swapper_pg_dir
- 	bl	__enable_mmu
- #ifdef CONFIG_RELOCATABLE
- 	bl	__relocate_kernel
-diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
-index bebec8ef9372..3f2c7bf67a2c 100644
---- a/arch/arm64/kernel/sleep.S
-+++ b/arch/arm64/kernel/sleep.S
-@@ -101,6 +101,7 @@ ENTRY(cpu_resume)
- 	bl	el2_setup		// if in EL2 drop to EL1 cleanly
- 	bl	__cpu_setup
- 	/* enable the MMU early - so we can access sleep_save_stash by va */
-+	adrp	x26, swapper_pg_dir
- 	bl	__enable_mmu
- 	ldr	x8, =_cpu_resume
- 	br	x8
+-extern int mod_verify_sig(const void *mod, unsigned long *_modlen);
++#include <linux/elf.h>
++#include <asm/module.h>
++
++struct load_info {
++	const char *name;
++	/* pointer to module in temporary copy, freed at end of load_module() */
++	struct module *mod;
++	Elf_Ehdr *hdr;
++	unsigned long len;
++	Elf_Shdr *sechdrs;
++	char *secstrings, *strtab;
++	unsigned long symoffs, stroffs;
++	struct _ddebug *debug;
++	unsigned int num_debug;
++	bool sig_ok;
++#ifdef CONFIG_KALLSYMS
++	unsigned long mod_kallsyms_init_off;
++#endif
++	struct {
++		unsigned int sym, str, mod, vers, info, pcpu;
++	} index;
++};
++
++extern int mod_verify_sig(const void *mod, struct load_info *info);
+diff --git a/kernel/module.c b/kernel/module.c
+index ba45a84e4287..8a45986fd728 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -307,26 +307,6 @@ int unregister_module_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL(unregister_module_notifier);
+ 
+-struct load_info {
+-	const char *name;
+-	/* pointer to module in temporary copy, freed at end of load_module() */
+-	struct module *mod;
+-	Elf_Ehdr *hdr;
+-	unsigned long len;
+-	Elf_Shdr *sechdrs;
+-	char *secstrings, *strtab;
+-	unsigned long symoffs, stroffs;
+-	struct _ddebug *debug;
+-	unsigned int num_debug;
+-	bool sig_ok;
+-#ifdef CONFIG_KALLSYMS
+-	unsigned long mod_kallsyms_init_off;
+-#endif
+-	struct {
+-		unsigned int sym, str, mod, vers, info, pcpu;
+-	} index;
+-};
+-
+ /*
+  * We require a truly strong try_module_get(): 0 means success.
+  * Otherwise an error is returned due to ongoing or failed
+@@ -2778,7 +2758,7 @@ static int module_sig_check(struct load_info *info, int flags)
+ 	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
+ 		/* We truncate the module to discard the signature */
+ 		info->len -= markerlen;
+-		err = mod_verify_sig(mod, &info->len);
++		err = mod_verify_sig(mod, info);
+ 	}
+ 
+ 	if (!err) {
+diff --git a/kernel/module_signing.c b/kernel/module_signing.c
+index 937c844bee4a..f2075ce8e4b3 100644
+--- a/kernel/module_signing.c
++++ b/kernel/module_signing.c
+@@ -45,10 +45,10 @@ struct module_signature {
+ /*
+  * Verify the signature on a module.
+  */
+-int mod_verify_sig(const void *mod, unsigned long *_modlen)
++int mod_verify_sig(const void *mod, struct load_info *info)
+ {
+ 	struct module_signature ms;
+-	size_t modlen = *_modlen, sig_len;
++	size_t sig_len, modlen = info->len;
+ 
+ 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
+ 
+@@ -62,10 +62,11 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 	if (sig_len >= modlen)
+ 		return -EBADMSG;
+ 	modlen -= sig_len;
+-	*_modlen = modlen;
++	info->len = modlen;
+ 
+ 	if (ms.id_type != PKEY_ID_PKCS7) {
+-		pr_err("Module is not signed with expected PKCS#7 message\n");
++		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
++		       info->name);
+ 		return -ENOPKG;
+ 	}
+ 
+@@ -76,7 +77,8 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
+ 	    ms.__pad[0] != 0 ||
+ 	    ms.__pad[1] != 0 ||
+ 	    ms.__pad[2] != 0) {
+-		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
++		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
++		       info->name);
+ 		return -EBADMSG;
+ 	}
+ 
 -- 
-2.17.1
+2.16.4
 
