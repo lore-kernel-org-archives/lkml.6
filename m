@@ -2,124 +2,130 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EF3C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68645C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD7C2087A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:18:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="j1QN8elU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD7C2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 1391221D08
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:19:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1391221D08
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753034AbeGBRSh (ORCPT
+        id S1753070AbeGBRTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:18:37 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37504 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752962AbeGBRSf (ORCPT
+        Mon, 2 Jul 2018 13:19:47 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:39506 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1752445AbeGBRTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:18:35 -0400
-Received: by mail-lf0-f68.google.com with SMTP id j8-v6so3001592lfb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jDylPXCR3Yu/DKi/NkTYx8zWzp7/lGc5ROU2E3K/jrs=;
-        b=j1QN8elU2W0ZBjeMO9AIogdDMLkLieC1bfxVS8Oy7n3uKOkj9ulYksez6ehpb1Iehx
-         nOp8hdbC+LWFPuksWyxWnyoHWe1vuv1a1uY56lMd3pXODIPaquXg2uQ7EchxjCUX1cbv
-         luQygMTPsymtm9aGZDQhyyTyTYmhwn00ev26EuN7ICJWQBEfrV+ImsjTJoeClwyE1mgd
-         bht4bQ9TfDX3c4aG8Le79KUTm6WPgrbkKQrz7O4sQvdiroz2HibndfGybW6HcsR608WC
-         j3YTK9fbWN3T8fG73cPwgS02pIltz7bTe/XsIDjojZHInrH+ImtTpgfsojCMB70Zy0xQ
-         TFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jDylPXCR3Yu/DKi/NkTYx8zWzp7/lGc5ROU2E3K/jrs=;
-        b=Y6bnZfLWizDcpnN7qUK1/nAZ9l1wwB8oHEXWr+R2cbfyYTQKcmk+y/9+Y2B25SbL4M
-         88aBvKezV7NfwaPlfrwTWmwo0Nh/Tvz4lTGvwQbp+Fbkw0s+hRR6rDScqgzf2bm7bjzW
-         jpWC8us61ih7w+YvzH/NT2mKUnsnRoqfoSKqlFeFgjmk0iObk6L8o40H+n/CrVJcsl40
-         vzHAGTL4wYzbqz0s4NHWE3oYFQ3NhNgYYrwvITraqPXeuo07bd4Um69pyTYh99Jku0pC
-         fw42tnsUfa6ywHON95shnfQ2etmZzp0N1w8nLzOVuDS14yQSlvIFaKqr9pYLn/zJmBQ2
-         gyFw==
-X-Gm-Message-State: APt69E3ydE29bBDEJLbN32o3pQoNU5PilgfWTU/lWHoRXcumBJar1uu3
-        SNIeeBw1RIKyJ70K2Wmm+Mp3NPYXkeFRBjxT32ujiQ==
-X-Google-Smtp-Source: AAOMgpdscwZGnkhcLqrs4vm7IoA58z+NnUN+08DCx0K/CP0UNrPAnb9DGv3hrnkEgj901Iv4z4lIDxoyUyJjxoVOr7U=
-X-Received: by 2002:a19:1f4b:: with SMTP id f72-v6mr10022774lff.42.1530551914329;
- Mon, 02 Jul 2018 10:18:34 -0700 (PDT)
+        Mon, 2 Jul 2018 13:19:46 -0400
+Received: (qmail 4343 invoked by uid 2102); 2 Jul 2018 13:19:45 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 2 Jul 2018 13:19:45 -0400
+Date:   Mon, 2 Jul 2018 13:19:45 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb/host/pci-quirks: Only reset USB bus on NVIDIA devices
+In-Reply-To: <Pine.LNX.4.44L0.1807021233400.1574-100000@iolanthe.rowland.org>
+Message-ID: <Pine.LNX.4.44L0.1807021302210.1574-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 10:18:33 -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::6:4265]
-In-Reply-To: <20180702121013.GA17791@jax.urgonet>
-References: <20180702121013.GA17791@jax.urgonet>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Mon, 2 Jul 2018 10:18:33 -0700
-Message-ID: <CAOesGMj=OG0j_3rOY8XmJiY5c8bhJL6boxcBUm2B2yyKQTTRog@mail.gmail.com>
-Subject: Re: [GIT PULL] tee driver for v4.18
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
+On Mon, 2 Jul 2018, Alan Stern wrote:
+
+> > >> The problem is, that currently 100 ms sleep is over 10 % of the overall
+> > >> execution time of the Linux kernel here. So I really like to not sleep
+> > >> if it’s not needed.
+> > > 
+> > > It would be nice to execute the probes in parallel; that would reduce
+> > > the total delay to 50 ms.  However, that is the subject of a separate
+> > > discussion.
+> > > 
+> > >>> Besides, doesn't it seem like a bad idea to reset the controller while
+> > >>> leaving devices on the USB bus in whatever state they happened to be?
+> > >>
+> > >> Yes, it’s probably not optimal.
+> > >>
+> > >> I wonder if the reset is needed, if the firmware has already initialized
+> > >> the device.
+> > > 
+> > > The devices on the bus need to be reset, because the OS has no idea of
+> > > what they are and what the firmware has them doing.
+> > > 
+> > > For example, the firmware may have assigned bus address 2 to a
+> > > keyboard.  But the OS can initialize the devices in a different order,
+> > > and it might want to assign bus address 2 to a USB drive.  Then you'd
+> > > have two devices trying to use the same address at the same time, which
+> > > would not be a good thing.
+> > 
+> > Understood.
+> > 
+> > So, what would be a way forward? Add a whitelist for boards or chipsets
+> > not needing the 50 ms delay?
+> 
+> The 50-ms delay isn't for the board or the chipset; it is for the USB 
+> devices that are plugged into the controller.  It is required by the 
+> USB spec, so we can't get rid of it.
+
+I may have been too hasty.  The drivers for other types of USB host
+controllers do not perform a USB bus reset during startup, so maybe
+OHCI doesn't really need it either.
+
+We still need to put the controller into the correct state, but what 
+happens to the bus shouldn't matter.  This is because reinitializing 
+the controller disables all its ports, and the only way to enable a 
+port is by sending a reset signal through it.  So the attached devices 
+will end up getting reset one way or another, even if we don't do it 
+explicitly during the handoff.
+
+Therefore in theory we should be okay without the 50-ms delay at all.  
+And we might as well tell the controller to go into the USB_RESET even
+if it already is in that state; testing the current state is more
+effort than just doing setting it.  Something like the patch below
+ought to work, although I wouldn't submit it for the -stable kernels
+since it doesn't fix a real bug.
+
+It's not clear why OHCI has both a USB_RESET state and a 
+HostControllerReset command, especially since the command changes the 
+state to USB_SUSPEND instead of USB_RESET.  This is just one of several 
+odd things in the OHCI specification.
+
+Alan Stern
 
 
-On Mon, Jul 2, 2018 at 5:10 AM, Jens Wiklander
-<jens.wiklander@linaro.org> wrote:
-> Hello arm-soc maintainers,
->
-> Please pull these small tee driver enhancements. There's a new config
-> option for the OP-TEE driver, OPTEE_SHM_NUM_PRIV_PAGES. Also the OP-TEE
-> driver reads current time with ktime_get_real_ts64() from now on.
->
-> Thanks,
-> Jens
->
-> The following changes since commit 29dcea88779c856c7dc92040a0c01233263101d4:
->
->   Linux 4.17 (2018-06-03 14:15:21 -0700)
->
-> are available in the Git repository at:
->
->   git://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-drv-for-4.18
->
-> for you to fetch changes up to 3249527f19d660c5adfb2b6f4ffd4ca0506b8755:
->
->   tee: optee: making OPTEE_SHM_NUM_PRIV_PAGES configurable via Kconfig (2018-06-20 11:20:36 +0200)
->
-> ----------------------------------------------------------------
-> Misc enhancement for tee driver subsystem
->
-> * Replaces getnstimeofday64() with ktime_get_real_ts64()
-> * Adds OPTEE_SHM_NUM_PRIV_PAGES to configure how many pages should be
->   statically reserved for driver private allocations
->
-> ----------------------------------------------------------------
-> Arnd Bergmann (1):
->       tee: replace getnstimeofday64() with ktime_get_real_ts64()
->
-> Sahil Malhotra (1):
->       tee: optee: making OPTEE_SHM_NUM_PRIV_PAGES configurable via Kconfig
 
-This doesn't seem to be bugfixes (and not regression fixes in
-particular), so I took the liberty of queuing these for 4.19 (in
-next/drivers) instead of fixes for v4.18.
+Index: usb-4.x/drivers/usb/host/pci-quirks.c
+===================================================================
+--- usb-4.x.orig/drivers/usb/host/pci-quirks.c
++++ usb-4.x/drivers/usb/host/pci-quirks.c
+@@ -783,15 +783,9 @@ static void quirk_usb_handoff_ohci(struc
+ 	/* disable interrupts */
+ 	writel((u32) ~0, base + OHCI_INTRDISABLE);
+ 
+-	/* Reset the USB bus, if the controller isn't already in RESET */
+-	if (control & OHCI_HCFS) {
+-		/* Go into RESET, preserving RWC (and possibly IR) */
+-		writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
+-		readl(base + OHCI_CONTROL);
+-
+-		/* drive bus reset for at least 50 ms (7.1.7.5) */
+-		msleep(50);
+-	}
++	/* Go into the USB_RESET state, preserving RWC (and possibly IR) */
++	writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
++	readl(base + OHCI_CONTROL);
+ 
+ 	/* software reset of the controller, preserving HcFmInterval */
+ 	if (!no_fminterval)
 
-Let me know if this was an inaccurate assessment and I can move them over.
-
-
-Thanks!
-
--Olof
