@@ -2,182 +2,108 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BACC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF1AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:20:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8FA208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:19:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWVdrOme"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A8FA208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B11120989
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:20:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B11120989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965646AbeGBLT3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:19:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753800AbeGBLTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:19:25 -0400
-Received: from linux-5o07.suse.de (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C107A208AF;
-        Mon,  2 Jul 2018 11:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530530364;
-        bh=YBxVu2iOj4dFFvbYhwdkC5j21fG0juGbR2BgXM+e5Nk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hWVdrOmeHhoIZMymS/Otd6icx6ZU5yqSNuH52zWCKAyoWX4jMzSRqB/P1rjLXFJM3
-         dupNDKGyLgeIceUAMkmjIUfugYroONIi5k2QkpedQ5ZmV9kDLhu09ctbjvCvIHZRu+
-         k3wjloPGeYt6ATWWEILNZsHEAh4PQgOQVVbtA1oQ=
-From:   Jessica Yu <jeyu@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>, Joe Perches <joe@perches.com>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH v2] modsign: log module name in the event of an error
-Date:   Mon,  2 Jul 2018 13:18:31 +0200
-Message-Id: <20180702111831.4699-1-jeyu@kernel.org>
-X-Mailer: git-send-email 2.16.4
+        id S1753921AbeGBLUE (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:20:04 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9192 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964936AbeGBLUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:20:01 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 494B36E274D31;
+        Mon,  2 Jul 2018 19:19:45 +0800 (CST)
+Received: from [127.0.0.1] (10.142.68.147) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
+ 19:19:38 +0800
+Subject: Re: hrtimer become inaccurate with RT patch
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Ouyangzhaowei (Charles)" <ouyangzhaowei@huawei.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <anna-maria@linutronix.de>, <john.stultz@linaro.org>,
+        Hangaohuai <hangaohuai@huawei.com>,
+        "zhangjianwei (D)" <zhangjianwei8@huawei.com>,
+        <yangchuanlong@huawei.com>,
+        "Zhangbin (EulerOS)" <zhangbin46@huawei.com>,
+        <liupeifeng3@huawei.com>
+References: <12e6da4e-7681-771f-38d3-3c1abf943c24@huawei.com>
+ <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
+ <20180702101420.rskzwqrdyws5fl6m@breakpoint.cc>
+From:   gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <75928d33-ade0-3bc7-33df-43abf5442c32@huawei.com>
+Date:   Mon, 2 Jul 2018 19:19:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180702101420.rskzwqrdyws5fl6m@breakpoint.cc>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have the load_info struct all initialized (including
-info->name, which contains the name of the module) before
-module_sig_check(), make the load_info struct and hence module name
-available to mod_verify_sig() so that we can log the module name in the
-event of an error.
+Hi Sebastian ,
+   Thanks for the answer.
 
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
----
-v2:
- - remove _modlen argument and just use the passed info struct
+On 2018/7/2 18:14, Sebastian Andrzej Siewior wrote:
+> On 2018-07-02 17:34:34 [+0800], gengdongjiu wrote:
+>>   The Linux kernel version is v4.1.46, and the preempt_rt patch is
+>> patch-4.1.46-rt52.patch.
+> 
+> the 4.1 series is no longer supported (neither RT wise nor non-RT,
+> https://www.kernel.org/category/releases.html). I suggest to move away.
+> If you notice this problem now it is hardly a long running project.
+yes, I Know, but we found the latest RT 4.14 series also has the same problem,
+so this is common issue.
 
- kernel/module-internal.h | 25 ++++++++++++++++++++++++-
- kernel/module.c          | 22 +---------------------
- kernel/module_signing.c  | 12 +++++++-----
- 3 files changed, 32 insertions(+), 27 deletions(-)
+> 
+>> process will not be interrupt. But if the hrtimer is also runs in
+>> process context the timer is useless when it's inaccurate. so I want to
+>> consult you whether this is expected behavior? whether is reasonable to move the timer IRQ
+>> handling to a thread?
+> 
+> This depends on your expectations. The timer is defined not to fire
+> before the programmed time. So it fires as soon as possible _after_ the
+> programmed time.
+It is reasonable that the timer is defined not to fire before the programmed time.
+but we found it fires long _after_ the programmed time. For example, we define it to
+fire after 2s, but it will fire after 5s, so it is very later than the expectations. I think the reason may be
+that the timer handler thread is preempted by another higher priority thread. so from for this issue,
+the timer handler should be in IRQ context instead of the process context or increase the timer handler thread priority, right?
 
-diff --git a/kernel/module-internal.h b/kernel/module-internal.h
-index 915e123a430f..79c9be2dbbe9 100644
---- a/kernel/module-internal.h
-+++ b/kernel/module-internal.h
-@@ -9,4 +9,27 @@
-  * 2 of the Licence, or (at your option) any later version.
-  */
- 
--extern int mod_verify_sig(const void *mod, unsigned long *_modlen);
-+#include <linux/elf.h>
-+#include <asm/module.h>
-+
-+struct load_info {
-+	const char *name;
-+	/* pointer to module in temporary copy, freed at end of load_module() */
-+	struct module *mod;
-+	Elf_Ehdr *hdr;
-+	unsigned long len;
-+	Elf_Shdr *sechdrs;
-+	char *secstrings, *strtab;
-+	unsigned long symoffs, stroffs;
-+	struct _ddebug *debug;
-+	unsigned int num_debug;
-+	bool sig_ok;
-+#ifdef CONFIG_KALLSYMS
-+	unsigned long mod_kallsyms_init_off;
-+#endif
-+	struct {
-+		unsigned int sym, str, mod, vers, info, pcpu;
-+	} index;
-+};
-+
-+extern int mod_verify_sig(const void *mod, struct load_info *info);
-diff --git a/kernel/module.c b/kernel/module.c
-index ba45a84e4287..8a45986fd728 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -307,26 +307,6 @@ int unregister_module_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL(unregister_module_notifier);
- 
--struct load_info {
--	const char *name;
--	/* pointer to module in temporary copy, freed at end of load_module() */
--	struct module *mod;
--	Elf_Ehdr *hdr;
--	unsigned long len;
--	Elf_Shdr *sechdrs;
--	char *secstrings, *strtab;
--	unsigned long symoffs, stroffs;
--	struct _ddebug *debug;
--	unsigned int num_debug;
--	bool sig_ok;
--#ifdef CONFIG_KALLSYMS
--	unsigned long mod_kallsyms_init_off;
--#endif
--	struct {
--		unsigned int sym, str, mod, vers, info, pcpu;
--	} index;
--};
--
- /*
-  * We require a truly strong try_module_get(): 0 means success.
-  * Otherwise an error is returned due to ongoing or failed
-@@ -2778,7 +2758,7 @@ static int module_sig_check(struct load_info *info, int flags)
- 	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
- 		/* We truncate the module to discard the signature */
- 		info->len -= markerlen;
--		err = mod_verify_sig(mod, &info->len);
-+		err = mod_verify_sig(mod, info);
- 	}
- 
- 	if (!err) {
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 937c844bee4a..f2075ce8e4b3 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -45,10 +45,10 @@ struct module_signature {
- /*
-  * Verify the signature on a module.
-  */
--int mod_verify_sig(const void *mod, unsigned long *_modlen)
-+int mod_verify_sig(const void *mod, struct load_info *info)
- {
- 	struct module_signature ms;
--	size_t modlen = *_modlen, sig_len;
-+	size_t sig_len, modlen = info->len;
- 
- 	pr_devel("==>%s(,%zu)\n", __func__, modlen);
- 
-@@ -62,10 +62,11 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- 	if (sig_len >= modlen)
- 		return -EBADMSG;
- 	modlen -= sig_len;
--	*_modlen = modlen;
-+	info->len = modlen;
- 
- 	if (ms.id_type != PKEY_ID_PKCS7) {
--		pr_err("Module is not signed with expected PKCS#7 message\n");
-+		pr_err("%s: Module is not signed with expected PKCS#7 message\n",
-+		       info->name);
- 		return -ENOPKG;
- 	}
- 
-@@ -76,7 +77,8 @@ int mod_verify_sig(const void *mod, unsigned long *_modlen)
- 	    ms.__pad[0] != 0 ||
- 	    ms.__pad[1] != 0 ||
- 	    ms.__pad[2] != 0) {
--		pr_err("PKCS#7 signature info has unexpected non-zero params\n");
-+		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
-+		       info->name);
- 		return -EBADMSG;
- 	}
- 
--- 
-2.16.4
+> 
+>> I think this is why hrtimer is run as a thread, I tried to set
+>> hrtimer.irqsafe to 1, but the timer still seemed not right. Could anyone
+>> give some advise? Thanks.
+> 
+> By setting irqsafe to 1 you ensure taht the timer will fire from the
+> timer interrupt and before doing so you should ensure that the timer is
+> indeed IRQ safe.
+> Depending on what you do it is possible that the timer fires early but
+> the application notices it later (the scheduler will first handle RT
+> tasks according to their priorities followed by non RT tasks).
+
+(I will continue check this comments, thanks)
+
+> 
+> Sebastian
+> 
+> .
+> 
 
