@@ -2,131 +2,87 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081C7C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2F6C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7330205F4
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:59:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hRUSoyWn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7330205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F3D28205F4
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D28205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754595AbeGBJ7P (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:59:15 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40588 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754559AbeGBJ7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:59:11 -0400
-Received: by mail-wr0-f193.google.com with SMTP id t6-v6so2565336wrn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EbEYDKvJQJO2HBj2i9sGl6Eh/82MVpfJrr3AUwNRZFg=;
-        b=hRUSoyWnc55a9h+GPZBKQGbzBupJvzwraRn9r45NI+ZKuNL9IaePqA/pCI3vfwMr+p
-         /abaL9vvd3fpxOqgi7bohME2cTbfsaKWGEMrRctMgNfziQo945s+TQxLBVDYtURDdEsE
-         L6pYqQfGK7z2xMHxkH07purj1jz4DtMr808AY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EbEYDKvJQJO2HBj2i9sGl6Eh/82MVpfJrr3AUwNRZFg=;
-        b=Fo5r8hd/dgYn1dsG31i2TmajqZ8Z9tpInMXT2QubqUYEC1U0XoBVeXb+BrhFcLP72C
-         iWvaghEhxWL37Wq4XblBI0WViJN7wZjnCr041UGd5ps4njzsH6FFh3aMI73vLIwR132c
-         44mxXii5ZRDDN/ApyxfsggJyrWaCibz8vTlXZBldP7k+Xaq7dzcI+rzWjUc1gFKDN4Wy
-         0OThl6il7WYG4dMW978186CIXuCIVoMpKmMj594T67nyPC6hYDUKW/gy+kEWl5BSJYzi
-         lo6uxh/Y6lElxkmJCwAeyzPAaIs3CXRGp6dMa2hH/aNRNHfiRVuJdva7Wa1Ab0fn5hgD
-         at3Q==
-X-Gm-Message-State: APt69E2mSLxDHNVTY3e5I0ABFk/TL2X6t8Ky0N/g2Px/kZq36BRTSeNk
-        g2xFUD6i9OyrBCPwWFYKQGVyLg==
-X-Google-Smtp-Source: AAOMgpdDypR23lnvCqayQuKjUiiD0QpET50skqzzGYlmiLF5DD3K9mkvIclp+Hepkjwm2LbBKOxQPw==
-X-Received: by 2002:adf:e50f:: with SMTP id j15-v6mr8525939wrm.111.1530525550135;
-        Mon, 02 Jul 2018 02:59:10 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id 75-v6sm2502515wmn.22.2018.07.02.02.59.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 02:59:09 -0700 (PDT)
-Subject: Re: [PATCH v2 12/29] venus: add common capability parser
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        vgarodia@codeaurora.org
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-13-stanimir.varbanov@linaro.org>
- <CAAFQd5Bj73zyi0vsaSJ2sam2TGm7agshXg+n+sa2c7HoqLRGUw@mail.gmail.com>
- <13c7aec1-2bb9-f449-6b7d-7ec93be4ec71@linaro.org>
- <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
- <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <30d141b6-dffa-bf6a-dae8-79595c966a23@linaro.org>
-Date:   Mon, 2 Jul 2018 12:59:07 +0300
+        id S933666AbeGBJ7n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:59:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56350 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933467AbeGBJ7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 05:59:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DD8C18A;
+        Mon,  2 Jul 2018 02:59:42 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02CC13F5BA;
+        Mon,  2 Jul 2018 02:59:39 -0700 (PDT)
+Subject: Re: [PATCH v3 05/20] kvm: arm/arm64: Fix stage2_flush_memslot for 4
+ level page table
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-6-git-send-email-suzuki.poulose@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <bc7b51fe-c210-76fd-8df1-66ba33e6769b@arm.com>
+Date:   Mon, 2 Jul 2018 10:59:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
+In-Reply-To: <1530270944-11351-6-git-send-email-suzuki.poulose@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-On 07/02/2018 12:23 PM, Tomasz Figa wrote:
-> On Thu, May 31, 2018 at 4:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
->>
->> On Thu, May 31, 2018 at 1:21 AM Stanimir Varbanov
->> <stanimir.varbanov@linaro.org> wrote:
->>>
->>> Hi Tomasz,
->>>
->>> On 05/24/2018 05:16 PM, Tomasz Figa wrote:
->>>> Hi Stanimir,
->>>>
->>>> On Tue, May 15, 2018 at 5:08 PM Stanimir Varbanov <
-> [snip]
->>>>
->>>>> +                       break;
->>>>> +               }
->>>>> +
->>>>> +               word++;
->>>>> +               words_count--;
->>>>
->>>> If data is at |word + 1|, shouldn’t we increment |word| by |1 + |data
->>>> size||?
->>>
->>> yes, that could be possible but the firmware packets are with variable
->>> data length and don't want to make the code so complex.
->>>
->>> The idea is to search for HFI_PROPERTY_PARAM* key numbers. Yes it is not
->>> optimal but this enumeration is happen only once during driver probe.
->>>
->>
->> Hmm, do we have a guarantee that we will never find a value that
->> matches HFI_PROPERTY_PARAM*, but would be actually just some data
->> inside the payload?
+On 29/06/18 12:15, Suzuki K Poulose wrote:
+> So far we have only supported 3 level page table with fixed IPA of 40bits.
+> Fix stage2_flush_memslot() to accommodate for 4 level tables.
 > 
-> Ping?
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Acked-by: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  virt/kvm/arm/mmu.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 1d90d79..061e6b3 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -379,7 +379,8 @@ static void stage2_flush_memslot(struct kvm *kvm,
+>  	pgd = kvm->arch.pgd + stage2_pgd_index(addr);
+>  	do {
+>  		next = stage2_pgd_addr_end(addr, end);
+> -		stage2_flush_puds(kvm, pgd, addr, next);
+> +		if (!stage2_pgd_none(*pgd))
+> +			stage2_flush_puds(kvm, pgd, addr, next);
+>  	} while (pgd++, addr = next, addr != end);
+>  }
+>  
+> 
 
-OK, you are right there is guarantee that we not mixing keywords and
-data. I can make parse_* functions to return how words they consumed and
-increment 'word' pointer with consumed words.
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
+	M.
 -- 
-regards,
-Stan
+Jazz is not dead. It just smells funny...
