@@ -2,160 +2,112 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CEFC6778C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14369C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6863325834
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6863325834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB1F325860
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:04:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UmHZ9B3U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1F325860
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933390AbeGBDBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 23:01:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51352 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932468AbeGBDBI (ORCPT
+        id S932166AbeGBDEF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 23:04:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36376 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752416AbeGBDED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 23:01:08 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w622wo8v091053
-        for <linux-kernel@vger.kernel.org>; Sun, 1 Jul 2018 23:01:07 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jybgx8cqh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 23:01:07 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 1 Jul 2018 23:01:06 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 1 Jul 2018 23:01:02 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62311UL18743598
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 03:01:01 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB872B2066;
-        Sun,  1 Jul 2018 23:00:47 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A38A9B2072;
-        Sun,  1 Jul 2018 23:00:47 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.206.224])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun,  1 Jul 2018 23:00:47 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 45A7C16CA314; Sun,  1 Jul 2018 20:03:13 -0700 (PDT)
-Date:   Sun, 1 Jul 2018 20:03:13 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com
-Subject: Re: [PATCH RFC tip/core/rcu 1/2] rcu: Defer reporting RCU-preempt
- quiescent states when disabled
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180627204835.GA25456@linux.vnet.ibm.com>
- <20180627204915.27253-1-paulmck@linux.vnet.ibm.com>
- <20180701174045.GA111992@joelaf.mtv.corp.google.com>
- <20180701222501.GC3593@linux.vnet.ibm.com>
- <20180702003732.GB95395@joelaf.mtv.corp.google.com>
+        Sun, 1 Jul 2018 23:04:03 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62343iP112107
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 03:04:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=WyT1LAYCUI16/JRcHyYNVtgiiP2gNxgIs0W5+TLKqXw=;
+ b=UmHZ9B3UJEePUGS46AyyuxLWwZ47iJ3HthBuBj90l9knsHQTKJvop77EUM+SpS4+vAIS
+ /BvaU7rJLDg4yXQtv3l26halExNlSt7hTs03GM/E66lknWkjcMO0An1QYtSG+K+rBKED
+ H87218z0hNihx+5iiyiFDC9/TA5HfUtbjfwUF01X8a546h7R00pB9tW/TOivlBD5TwSs
+ NKQCUBAtOKDEytHCiuT6xIJNHw6wapx32xXMJZFzzCWTh7Vh9EgtCygt3KDSrqVwyQSk
+ E37FXLN0yxuhj5FqWOkISlKMlFllLjbRAPcCvmCUz4rtNnAajwlj8R8ZLcEMvfulNKyx jQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2jx2gptkft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 03:04:02 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w62341nX002604
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 03:04:02 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w62341ui007356
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 03:04:01 GMT
+Received: from mail-oi0-f42.google.com (/209.85.218.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 01 Jul 2018 20:04:01 -0700
+Received: by mail-oi0-f42.google.com with SMTP id m2-v6so5725947oim.12
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 20:04:01 -0700 (PDT)
+X-Gm-Message-State: APt69E1z4rlib/5igy904SI6ZO8lT3yEqUT1WyIuNUq+98fresILRSZV
+        12uFnMSiFHOS5s48GKgz/VBGSYebVrUo8PXuKTw=
+X-Google-Smtp-Source: AAOMgpf6b/1IiOZlC2eH0p9OKB53G5S+mIPjyOv9KbuqazOZYxpKMN6ulk3Ma3QG90Mo1bg+uzHCSs+75s4pb08uQjg=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr14400452oia.229.1530500640719;
+ Sun, 01 Jul 2018 20:04:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702003732.GB95395@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070203-0072-0000-0000-000003781DED
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009292; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055266; UDB=6.00541227; IPR=6.00833188;
- MB=3.00021955; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 03:01:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070203-0073-0000-0000-0000488ED626
-Message-Id: <20180702030313.GH3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020034
+References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
+ <20180702020417.21281-2-pasha.tatashin@oracle.com> <20180702021121.GL3223@MiWiFi-R3L-srv>
+ <CAGM2rebY1_-3hvp_+kqF==nLawC0FN6Q1J5X5pm5qxHdDJzjiQ@mail.gmail.com>
+ <20180702023130.GM3223@MiWiFi-R3L-srv> <CAGM2rebUsJ2r-2F38Vv13zbaEPPgTn0w6H3j6fpg0WVa9wB6Uw@mail.gmail.com>
+ <20180702025343.GN3223@MiWiFi-R3L-srv>
+In-Reply-To: <20180702025343.GN3223@MiWiFi-R3L-srv>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Sun, 1 Jul 2018 23:03:24 -0400
+X-Gmail-Original-Message-ID: <CAGM2reatQzroymAb8kaPKgd8sEehtScH9DAELeWpYCaNNnAU6w@mail.gmail.com>
+Message-ID: <CAGM2reatQzroymAb8kaPKgd8sEehtScH9DAELeWpYCaNNnAU6w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
+To:     bhe@redhat.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8941 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=585
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020035
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 05:37:32PM -0700, Joel Fernandes wrote:
-> On Sun, Jul 01, 2018 at 03:25:01PM -0700, Paul E. McKenney wrote:
-> [...]
-> > > > @@ -602,6 +589,66 @@ static void rcu_read_unlock_special(struct task_struct *t)
-> > > >  	}
-> > > >  }
-> > > >  
-> > > > +/*
-> > > > + * Is a deferred quiescent-state pending, and are we also not in
-> > > > + * an RCU read-side critical section?  It is the caller's responsibility
-> > > > + * to ensure it is otherwise safe to report any deferred quiescent
-> > > > + * states.  The reason for this is that it is safe to report a
-> > > > + * quiescent state during context switch even though preemption
-> > > > + * is disabled.  This function cannot be expected to understand these
-> > > > + * nuances, so the caller must handle them.
-> > > > + */
-> > > > +static bool rcu_preempt_need_deferred_qs(struct task_struct *t)
-> > > > +{
-> > > > +	return (this_cpu_ptr(&rcu_preempt_data)->deferred_qs ||
-> > > > +		READ_ONCE(t->rcu_read_unlock_special.s)) &&
-> > > > +	       !t->rcu_read_lock_nesting;
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Report a deferred quiescent state if needed and safe to do so.
-> > > > + * As with rcu_preempt_need_deferred_qs(), "safe" involves only
-> > > > + * not being in an RCU read-side critical section.  The caller must
-> > > > + * evaluate safety in terms of interrupt, softirq, and preemption
-> > > > + * disabling.
-> > > > + */
-> > > > +static void rcu_preempt_deferred_qs(struct task_struct *t)
-> > > > +{
-> > > > +	unsigned long flags;
-> > > > +
-> > > > +	if (!rcu_preempt_need_deferred_qs(t))
-> > > > +		return;
-> > > > +	local_irq_save(flags);
-> > > > +	rcu_preempt_deferred_qs_irqrestore(t, flags);
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Handle special cases during rcu_read_unlock(), such as needing to
-> > > > + * notify RCU core processing or task having blocked during the RCU
-> > > > + * read-side critical section.
-> > > > + */
-> > > > +static void rcu_read_unlock_special(struct task_struct *t)
-> > > > +{
-> > > > +	unsigned long flags;
-> > > > +	bool preempt_bh_were_disabled = !!(preempt_count() & ~HARDIRQ_MASK);
-> > > 
-> > > Would it be better to just test for those bits just to be safe the higher
-> > > order bits don't bleed in, such as PREEMPT_NEED_RESCHED, something like the
-> > > following based on the 'dev' branch?
-> > 
-> > Good point!  My plan is to merge it into the original commit with
-> > attribution.  Please let me know if you have objections.
-> > 
-> 
-> Sure! That sounds good to me.
+> Ah, yes, I misunderstood it, sorry for that.
+>
+> Then I have only one concern, for vmemmap case, if one section doesn't
+> succeed to populate its memmap, do we need to skip all the remaining
+> sections in that node?
 
-Very good, I now have a "squash" commit queued, thank you!
+Yes, in sparse_populate_node() we have the following:
 
-							Thanx, Paul
+294         for (pnum = pnum_begin; map_index < map_count; pnum++) {
+295                 if (!present_section_nr(pnum))
+296                         continue;
+297                 if (!sparse_mem_map_populate(pnum, nid, NULL))
+298                         break;
 
+So, on the first failure, we even stop trying to populate other
+sections. No more memory to do so.
+
+Pavel
