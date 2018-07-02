@@ -2,125 +2,281 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A57C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893A5C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7FF2555B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:24:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="At1Eau7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA7FF2555B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 3931825661
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:29:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3931825661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932357AbeGBBYa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 21:24:30 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:30285 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752972AbeGBBY1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 21:24:27 -0400
-Received: from mail-ua0-f182.google.com (mail-ua0-f182.google.com [209.85.217.182]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w621OCLH027151;
-        Mon, 2 Jul 2018 10:24:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w621OCLH027151
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1530494653;
-        bh=kkXSgbwywCWqHPfSqYBOpHe/7IRkYKuujUtPuk9FFXo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=At1Eau7VOPX6xTv352NWsBLp720R4dD3c8peFf9M5SIRLg2TxVfJYXzvcL7Ma5Sf/
-         VdjomtsjJ+MqcFCZIsBHP6p3DzRBSas7WwBof5H5MynQFBEYgbr7AgBgdhAp2f9P9Y
-         t42T4U+6bbFhW0C9QxnVKYSJq1zDBmYpqXvn5HD7y/t3rLkxA36gDCmeIaNp34TUok
-         VIW/ogsfytTRD6ldCvVEMqs3hxhmz1WpC2hdWbSW+RUooZqINpyodQUsw2naHsjGQ9
-         nQ2rGeKW5ovoPimTnrlD4fpU6PmQxhKNyS/ZYgHFJ6aPvvsbdpuuEuNLB3xUeQpyvy
-         kc2tXnY5grJRQ==
-X-Nifty-SrcIP: [209.85.217.182]
-Received: by mail-ua0-f182.google.com with SMTP id g6-v6so9070709uam.2;
-        Sun, 01 Jul 2018 18:24:12 -0700 (PDT)
-X-Gm-Message-State: APt69E01eKG66jiYrD95GMysHSSgWFNOmI1CbpQ3SGT70ABfa0RQBqg2
-        SXUwwVLcL/k+OGX155GV/pdfB29j48HlJrQ9AqU=
-X-Google-Smtp-Source: AAOMgpe3CTIMnMPt2FEoY6sZVMRNhlCC0KjP5QbzVBnCWKcfPho6hSzB6n7/haqX+n7XqWRLw6xoCSbxXP1vo8o7jiY=
-X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr2044684uaf.199.1530494651935;
- Sun, 01 Jul 2018 18:24:11 -0700 (PDT)
+        id S932688AbeGBB3k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 21:29:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752962AbeGBB3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 21:29:39 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 216B5400E9A3;
+        Mon,  2 Jul 2018 01:29:38 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B5EE52156880;
+        Mon,  2 Jul 2018 01:29:36 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 09:29:33 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
+Subject: Re: [PATCH v2 1/2] mm/sparse: add sparse_init_nid()
+Message-ID: <20180702012933.GH3223@MiWiFi-R3L-srv>
+References: <20180630030944.9335-1-pasha.tatashin@oracle.com>
+ <20180630030944.9335-2-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Sun, 1 Jul 2018 18:23:31 -0700 (PDT)
-In-Reply-To: <1df7f847-484c-a368-9dc2-50d191f8be9b@infradead.org>
-References: <1df7f847-484c-a368-9dc2-50d191f8be9b@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 2 Jul 2018 10:23:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQh9jgxTYTUue7j9QjkFmUV-cdLGvMpGhrjivU1km7cWw@mail.gmail.com>
-Message-ID: <CAK7LNAQh9jgxTYTUue7j9QjkFmUV-cdLGvMpGhrjivU1km7cWw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: check for /sbin/depmod installed
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180630030944.9335-2-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 01:29:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 01:29:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-02 2:12 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Verify that 'depmod' ($DEPMOD) is installed.
-> This is a partial revert of 620c231c7a7f (from 2012):
->   ("kbuild: do not check for ancient modutils tools")
->
-> Fixes kernel bugzilla #198965:
-> https://bugzilla.kernel.org/show_bug.cgi?id=198965
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
-> Cc: stable@vger.kernel.org # any kernel since 2012
+On 06/29/18 at 11:09pm, Pavel Tatashin wrote:
+> sparse_init() requires to temporary allocate two large buffers:
+> usemap_map and map_map. Baoquan He has identified that these buffers are so
+> large that Linux is not bootable on small memory machines, such as a kdump
+> boot.
+
+These two temporary buffers are large when CONFIG_X86_5LEVEL is enabled.
+Otherwise it's OK.
+
+> 
+> Baoquan provided a fix, which reduces these sizes of these buffers, but it
+> is much better to get rid of them entirely.
+> 
+> Add a new way to initialize sparse memory: sparse_init_nid(), which only
+> operates within one memory node, and thus allocates memory either in large
+> contiguous block or allocates section by section. This eliminates the need
+> for use of temporary buffers.
+> 
+> For simplified bisecting and review, the new interface is going to be
+> enabled as well as old code removed in the next patch.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 > ---
->  scripts/depmod.sh |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> --- lnx-418-rc2.orig/scripts/depmod.sh
-> +++ lnx-418-rc2/scripts/depmod.sh
-> @@ -10,10 +10,16 @@ fi
->  DEPMOD=$1
->  KERNELRELEASE=$2
->
-> -if ! test -r System.map -a -x "$DEPMOD"; then
-> +if ! test -r System.map ; then
->         exit 0
->  fi
->
-> +if [ -z $(command -v $DEPMOD) ]; then
-> +       echo "'make *install' requires $DEPMOD. Please install it." >&2
-
-
-
-I think depmod is required by 'make modules_install'
-
-Is there any reason to make this ambiguous like 'make *install' ?
-
-
-
-
-> +       echo "This is probably in the module-init-tools package." >&2
-> +       exit 1
-> +fi
+>  include/linux/mm.h  |  8 ++++
+>  mm/sparse-vmemmap.c | 49 ++++++++++++++++++++++++
+>  mm/sparse.c         | 91 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 148 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a0fbb9ffe380..85530fdfb1f2 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
+>  				   unsigned long pnum_end,
+>  				   unsigned long map_count,
+>  				   int nodeid);
+> +struct page * sparse_populate_node(unsigned long pnum_begin,
+> +				   unsigned long pnum_end,
+> +				   unsigned long map_count,
+> +				   int nid);
+> +struct page * sparse_populate_node_section(struct page *map_base,
+> +				   unsigned long map_index,
+> +				   unsigned long pnum,
+> +				   int nid);
+>  
+>  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
+>  		struct vmem_altmap *altmap);
+> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> index e1a54ba411ec..b3e325962306 100644
+> --- a/mm/sparse-vmemmap.c
+> +++ b/mm/sparse-vmemmap.c
+> @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  		vmemmap_buf_end = NULL;
+>  	}
+>  }
 > +
->  # older versions of depmod require the version string to start with three
->  # numbers, so we cheat with a symlink here
->  depmod_hack_needed=true
->
->
+> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
+> +					  unsigned long pnum_end,
+> +					  unsigned long map_count,
+> +					  int nid)
+> +{
+> +	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
+> +	unsigned long pnum, map_index = 0;
+> +	void *vmemmap_buf_start;
+> +
+> +	size = ALIGN(size, PMD_SIZE) * map_count;
+> +	vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
+> +						      PMD_SIZE,
+> +						      __pa(MAX_DMA_ADDRESS));
+> +	if (vmemmap_buf_start) {
+> +		vmemmap_buf = vmemmap_buf_start;
+> +		vmemmap_buf_end = vmemmap_buf_start + size;
+> +	}
+> +
+> +	for (pnum = pnum_begin; map_index < map_count; pnum++) {
+> +		if (!present_section_nr(pnum))
+> +			continue;
+> +		if (!sparse_mem_map_populate(pnum, nid, NULL))
+> +			break;
+> +		map_index++;
+> +		BUG_ON(pnum >= pnum_end);
+> +	}
+> +
+> +	if (vmemmap_buf_start) {
+> +		/* need to free left buf */
+> +		memblock_free_early(__pa(vmemmap_buf),
+> +				    vmemmap_buf_end - vmemmap_buf);
+> +		vmemmap_buf = NULL;
+> +		vmemmap_buf_end = NULL;
+> +	}
+> +	return pfn_to_page(section_nr_to_pfn(pnum_begin));
+> +}
+> +
+> +/*
+> + * Return map for pnum section. sparse_populate_node() has populated memory map
+> + * in this node, we simply do pnum to struct page conversion.
+> + */
+> +struct page * __init sparse_populate_node_section(struct page *map_base,
+> +						  unsigned long map_index,
+> +						  unsigned long pnum,
+> +						  int nid)
+> +{
+> +	return pfn_to_page(section_nr_to_pfn(pnum));
+> +}
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index d18e2697a781..c18d92b8ab9b 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  		       __func__);
+>  	}
+>  }
+> +
+> +static unsigned long section_map_size(void)
+> +{
+> +	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
+> +}
+> +
+> +/*
+> + * Try to allocate all struct pages for this node, if this fails, we will
+> + * be allocating one section at a time in sparse_populate_node_section().
+> + */
+> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
+> +					  unsigned long pnum_end,
+> +					  unsigned long map_count,
+> +					  int nid)
+> +{
+> +	return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
+> +					       PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+> +					       BOOTMEM_ALLOC_ACCESSIBLE, nid);
+> +}
+> +
+> +/*
+> + * Return map for pnum section. map_base is not NULL if we could allocate map
+> + * for this node together. Otherwise we allocate one section at a time.
+> + * map_index is the index of pnum in this node counting only present sections.
+> + */
+> +struct page * __init sparse_populate_node_section(struct page *map_base,
+> +						  unsigned long map_index,
+> +						  unsigned long pnum,
+> +						  int nid)
+> +{
+> +	if (map_base) {
+> +		unsigned long offset = section_map_size() * map_index;
+> +
+> +		return (struct page *)((char *)map_base + offset);
+> +	}
+> +	return sparse_mem_map_populate(pnum, nid, NULL);
+> +}
+>  #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
+>  
+>  static void __init sparse_early_mem_maps_alloc_node(void *data,
+> @@ -520,6 +557,60 @@ static void __init alloc_usemap_and_memmap(void (*alloc_func)
+>  						map_count, nodeid_begin);
+>  }
+>  
+> +/*
+> + * Initialize sparse on a specific node. The node spans [pnum_begin, pnum_end)
+> + * And number of present sections in this node is map_count.
+> + */
+> +void __init sparse_init_nid(int nid, unsigned long pnum_begin,
+> +				   unsigned long pnum_end,
+> +				   unsigned long map_count)
+> +{
+> +	unsigned long pnum, usemap_longs, *usemap, map_index;
+> +	struct page *map, *map_base;
+> +
+> +	usemap_longs = BITS_TO_LONGS(SECTION_BLOCKFLAGS_BITS);
+> +	usemap = sparse_early_usemaps_alloc_pgdat_section(NODE_DATA(nid),
+> +							  usemap_size() *
+> +							  map_count);
+> +	if (!usemap) {
+> +		pr_err("%s: usemap allocation failed", __func__);
+> +		goto failed;
+> +	}
+> +	map_base = sparse_populate_node(pnum_begin, pnum_end,
+> +					map_count, nid);
+> +	map_index = 0;
+> +	for_each_present_section_nr(pnum_begin, pnum) {
+> +		if (pnum >= pnum_end)
+> +			break;
+> +
+> +		BUG_ON(map_index == map_count);
+> +		map = sparse_populate_node_section(map_base, map_index,
+> +						   pnum, nid);
+> +		if (!map) {
+> +			pr_err("%s: memory map backing failed. Some memory will not be available.",
+> +			       __func__);
+> +			pnum_begin = pnum;
+> +			goto failed;
+
+If one memmap is unavailable, do we need to jump to 'failed' to mark all
+sections of the node as not present? E.g the last section of one node
+failed to populate memmap?
 
 
-
--- 
-Best Regards
-Masahiro Yamada
+> +		}
+> +		check_usemap_section_nr(nid, usemap);
+> +		sparse_init_one_section(__nr_to_section(pnum), pnum, map,
+> +					usemap);
+> +		map_index++;
+> +		usemap += usemap_longs;
+> +	}
+> +	return;
+> +failed:
+> +	/* We failed to allocate, mark all the following pnums as not present */
+> +	for_each_present_section_nr(pnum_begin, pnum) {
+> +		struct mem_section *ms;
+> +
+> +		if (pnum >= pnum_end)
+> +			break;
+> +		ms = __nr_to_section(pnum);
+> +		ms->section_mem_map = 0;
+> +	}
+> +}
+> +
+>  /*
+>   * Allocate the accumulated non-linear sections, allocate a mem_map
+>   * for each and record the physical to section mapping.
+> -- 
+> 2.18.0
+> 
