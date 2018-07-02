@@ -2,104 +2,131 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207DFC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C507C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92C620C48
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92C620C48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 27FA0224F5
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IIQiQsD4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27FA0224F5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752767AbeGBPZ1 (ORCPT
+        id S1752369AbeGBP2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:25:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38594 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752575AbeGBPZZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:25:25 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FOS5K123418
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:25:25 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jymvtw04n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:25:24 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 11:25:23 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 11:25:21 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62FPKXe65077252
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 15:25:20 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D392128058;
-        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C40DC2805C;
-        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
-Subject: Re: [PATCH v7 5/5] ima: Get rid of ima_used_chip and use ima_tpm_chip
- != NULL instead
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
-Cc:     linux-kernel@vger.kernel.org
-References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
- <20180626190933.2508821-6-stefanb@linux.vnet.ibm.com>
- <1530544304.3709.40.camel@linux.vnet.ibm.com>
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date:   Mon, 2 Jul 2018 11:25:20 -0400
+        Mon, 2 Jul 2018 11:28:00 -0400
+Received: from vern.gendns.com ([206.190.152.46]:37566 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752150AbeGBP16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:27:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=R+zbhw4j2bow9K8nbLIV14wMYZf26fHCcUqexe8eSFU=; b=IIQiQsD4nJ3HrTj26nEA3kFn20
+        pZX0C2MzBn+hnynzBVQpXCA7717wrw614v8hsBQgs2/cmTvN2/HOKk4uhojumraD8ysdUSSiUfIdf
+        pWj5YFbjrLeb2m/SbC3++C1tqj5nBJk4r9nDMRbyMD6rlzipPAcMRtScspvJSJKNOwbXsSY9GGZLm
+        T64QCj0zAQi//nxHfCtokBZWUkXQXA+eBBPosH2TLtdV5ic8vXFKluNFXJba5+mYPPnzANA+ZL8iQ
+        XwbJBtDE0qA9XR+IRPFOogTrmzWLCRoUTXUwHXmOwtLMbHf+Cg6Ph49N77cJ1VtnMUCxt5pFf9BE9
+        sWzsaYtQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59290 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fa0k7-00DDDN-3M; Mon, 02 Jul 2018 11:27:55 -0400
+Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
+ reset framework
+To:     Sekhar Nori <nsekhar@ti.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
+ <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
+ <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
+Date:   Mon, 2 Jul 2018 10:27:53 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1530544304.3709.40.camel@linux.vnet.ibm.com>
+In-Reply-To: <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18070215-0052-0000-0000-000003074F1F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055514; UDB=6.00541376; IPR=6.00833436;
- MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:25:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070215-0053-0000-0000-00005D373FB3
-Message-Id: <b5fe7a69-ae53-70de-b8eb-bd7cb81fb15c@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020176
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 11:11 AM, Mimi Zohar wrote:
-> Hi Stefan,
->
-> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
->> Get rid of ima_used_chip and use ima_tpm_chip variable instead for
->> determining whether to use the TPM chip.
-> I don't see a need for separating this change from the previous patch.
-> Could you squash this patch with the previous one?
->
-> As Jarkko has already queued the TPM patches, there's no need for
-> posting them.  Posting just this one IMA patch is fine.
->
-> thanks!
-Posted
+On 07/02/2018 07:08 AM, Sekhar Nori wrote:
+> Hi Bjorn,
+> 
+> On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
+>> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>>> Hi Bartosz,
+>>>
+>>> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> These are the remaining patches that still need to be merged in order
+>>>> to complete the conversion of the davinci dsp driver to using the reset
+>>>> framework.
+>>>>
+>>>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
+>>>> merged.
+>>>
+>>> Series looks good to me.
+>>>
+>>> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
+>>> and #2 ?
+>>>
+>>> Given the dependencies and to preserve bisect its easiest if I take the
+>>> series with acks from remoteproc and clock maintainers.
+>>>
+>>> Open to other suggestions as well.
+>>>
+>>> Thanks,
+>>> Sekhar
+>>
+>> Oops you're right about the order. Do you want me to resend?
+> 
+> With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
+> to you (on top of v4.18-rc1) for you to merge any further changes you
+> want to queue from your tree.
+> 
+> Bartosz, given the number of moving pieces, I think its better to keep
+> 2/4 for v4.20 release - once all other other dependencies have been merged.
+
+I was thinking the same thing as well. I will pick it up in a
+clk-davinci-4.20 branch if that sounds OK.
 
