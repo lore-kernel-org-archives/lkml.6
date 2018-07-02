@@ -2,235 +2,189 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E48FC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D085DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6D921A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B6D921A56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8ABC921A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:56:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EjFblqB9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABC921A56
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeGBRzt (ORCPT
+        id S1753225AbeGBR4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:55:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752728AbeGBRzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:55:48 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6D924023351;
-        Mon,  2 Jul 2018 17:55:47 +0000 (UTC)
-Received: from crecklin.bos.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7FE2111AF34;
-        Mon,  2 Jul 2018 17:55:46 +0000 (UTC)
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v4] add param that allows bootline control of hardened usercopy
-Date:   Mon,  2 Jul 2018 13:55:43 -0400
-Message-Id: <1530554143-17218-1-git-send-email-crecklin@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 02 Jul 2018 17:55:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 02 Jul 2018 17:55:47 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+        Mon, 2 Jul 2018 13:56:54 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44356 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752874AbeGBR4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 13:56:52 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so8292452pls.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=NLpximiZkdzVulWqgLF8cYHSckBWxujlk9+VukWVlO8=;
+        b=EjFblqB9TC8FEeG9bAWn08gkkDiEB5fTbkgjP5giaQ2vuzKUF4RioRnMmsKh+Fk2eK
+         wFXPAHv8ANUG6nnUSB0mnga4Tnv9aXCjOlFTJKEP7D0A9t9qFiY5AVHV5+jp2HZq5TVI
+         fphztaqwh2JDUFmg0HDvyWqgXcpObREMQnu78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=NLpximiZkdzVulWqgLF8cYHSckBWxujlk9+VukWVlO8=;
+        b=sN/NjU7eTwgBtHlYBItNw2Fwm/FyAvKHF+NuI385VEt+2keMTVM2s3Xq5zpxpwtZyV
+         dW/zKUgMlqLh2V7XfoBNJ6KZxcdHRYmIt8GmodsOl37tvIEQlgCjKLzO4dzs5G1exw08
+         M5EUmFzoakrxuZzgRZ3/q3AjNGKltufFNBUcc4WA96FReZjaROTzj7uZSB5zBTsPRttY
+         PVkCmTlZPNyoC8e+uNX7ei/YlxRZc8hM8vln3XWEAsQA/vpxtjcphLgLrPQhdLZYWvJp
+         lSztbKn0iddvzqDW+3FBUWNcZ480GLDeJHXtL/kAcUWkxHV0e01mdu26zwPZq/nqp4Zu
+         Zzeg==
+X-Gm-Message-State: APt69E3Fsc+6uXfZ7Q8BjbDw2QBGvoaRVsP7jiauZkmIMTgoTl8Txz4A
+        jBh48gXk+/nnxuLkd4EWvkRh+w==
+X-Google-Smtp-Source: AAOMgpe6XkZj1z7idTMmRjYs7g+FylXVZeT5nc2vl9q9gNf+Ex0g2rqbv8EtKsqczLmXKpoL+Ee/xg==
+X-Received: by 2002:a17:902:7888:: with SMTP id q8-v6mr21765077pll.79.1530554211271;
+        Mon, 02 Jul 2018 10:56:51 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
+        by smtp.gmail.com with ESMTPSA id b1-v6sm704738pff.141.2018.07.02.10.56.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 10:56:50 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20180618205255.246104-1-swboyd@chromium.org>
+ <20180618205255.246104-3-swboyd@chromium.org>
+ <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
+ <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
+ <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
+ <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com>
+Message-ID: <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date:   Mon, 02 Jul 2018 10:56:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: root <root@dell-pr1700-02.lab.bos.redhat.com>
+Quoting Doug Anderson (2018-06-28 11:45:30)
+> Hi,
+> =
 
-Enabling HARDENED_USERCOPY causes measurable regressions in
- networking performance, up to 8% under UDP flood.
+> On Thu, Jun 28, 2018 at 10:14 AM, Stephen Boyd <swboyd@chromium.org> wrot=
+e:
+> > Quoting Linus Walleij (2018-06-28 07:25:46)
+> >> On Fri, Jun 22, 2018 at 8:29 PM Bjorn Andersson
+> >> <bjorn.andersson@linaro.org> wrote:
+> >> > On Fri 22 Jun 10:58 PDT 2018, Bjorn Andersson wrote:
+> >> > > On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+> >> > >
+> >> > > > We rely on devices to use pinmuxing configurations in DT to sele=
+ct the
+> >> > > > GPIO function (function 0) if they're going to use the gpio in G=
+PIO
+> >> > > > mode. Let's simplify things for driver authors by implementing
+> >> > > > gpio_request_enable() for this pinctrl driver to mux out the GPIO
+> >> > > > function when the gpio is use from gpiolib.
+> >> > > >
+> >> > > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> > >
+> >> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >> (...)
+> >> > While both patch 2 and 3 are convenient ways to get around the annoy=
+ance
+> >> > of having to specify a pinmux state both patches then ends up relyin=
+g on
+> >> > some default pinconf state; which I think is bad.
+> >
+> > What default state are we relying on? The reset state of the pins? I'm
+> > very confused by this statement. These last two patches are making sure
+> > that when a GPIO is requested as a GPIO or IRQ, it's really in GPIO
+> > mode. If this code is not in place, then we'll allow drivers to request
+> > a GPIO but pinmuxing won't be called to actually mux that pin to GPIO
+> > mode unless they have a DT conf for function =3D "gpio". That seems
+> > entirely unexpected and easy to mess up.
+> >
+> >>
+> >> Nothing stops you from setting up a default conf in
+> >> this callback though.
+> >>
+> >> But admittedly this call was added for simpler hardware.
+> >>
+> >> > Further more in situations like i2c-qup (downstream), where the pins=
+ are
+> >> > requested as gpios in order to "bitbang" a reset this would mean that
+> >> > the driver has to counter the convenience; by either switching in the
+> >> > default pinmux at the end of probe or postponing the gpio_request() =
+to
+> >> > the invocation of reset and then, after issuing the gpio_release,
+> >> > switching in the default pinmux explicitly again.
+> >>
+> >> That's a bigger problem. If the system is using device and GPIO
+> >> mode orthogonally, it'd be good to leave like this.
+> >>
+> >
+> > Doesn't that driver need to explicitly mux GPIO mode vs. device mode
+> > right now? So having gpio_request() do the muxing to GPIO mode and then
+> > explicit muxing of the pin to device mode would be what we have after
+> > this patch, while before this patch we would have mux to GPIO, request
+> > GPIO (nop), mux to device. We saved an explicit pinmux call?
+> =
 
-I'm running an a small packet UDP flood using pktgen vs. a host b2b
-connected. On the receiver side the UDP packets are processed by a
-simple user space process that just reads and drops them:
+> After reading these replies I'm slightly worried about some of the
+> stuff Bjorn is worried about too.  In Bjorn's example I think that the
+> "default" state of the pins is probably i2c-mode and that it might
+> switch to GPIO mode only when it needs to do the special unwedge of
+> the i2c port.
+> =
 
-https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
+> So maybe the i2c driver does this:
+> =
 
-Not very useful from a functional PoV, but it helps to pin-point
-bottlenecks in the networking stack.
+> 1. "Default" pinmux state of i2c is i2c-mode, "unwedge" pinmux state
+> is gpio-mode.
+> =
 
-When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
-regression in the receive tput, compared to the same kernel without
-this option enabled.
+> 2. In probe, request the GPIOs for use later in case we need to
+> unwedge.  Don't use them right now since we don't need to unwedge.
+> Assumes pinmux state stays as "default".
+> =
 
-With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
-cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
+> 3. When you decide you need to unwedge the bus, pinmux to the special
+> i2c mode and drive the pins you requested in probe.  Then pinmux back.
+> =
 
-The call-chain is:
+> =
 
-__GI___libc_recvfrom
-entry_SYSCALL_64_after_hwframe
-do_syscall_64
-__x64_sys_recvfrom
-__sys_recvfrom
-inet_recvmsg
-udp_recvmsg
-__check_object_size
+> ...I think your patch will break this because when you request the
+> GPIOs you'll have an implicit (and unexpected?) pinmux transition.
+> =
 
-udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
-calls check_copy_size() (again, inlined).
+> What do you think?
+> =
 
-A generic distro may want to enable HARDENED_USERCOPY in their default
-kernel config, but at the same time, such distro may want to be able to
-avoid the performance penalties in with the default configuration and
-disable the stricter check on a per-boot basis.
+> =
 
-This change adds a boot parameter that conditionally disables
-HARDENED_USERCOPY at boot time.
 
-Atomics needed by jump label code are not available on platforms with
-CONFIG_BROKEN_ON_SMP set, so don't enable this functionality on those
-platforms.
-
-v3->v4:
-	fix a couple of nits in commit comments
-	declaration of bypass_usercopy_checks moved inside mm/usercopy.c and
-		made static
-	add blurb to commit comments about not enabling this functionality on
-		platforms with CONFIG_BROKEN_ON_SMP set.
-v2->v3:
-	add benchmark details to commit comments
-	Don't add new item to Documentation/admin-guide/kernel-parameters.rst
-	rename boot param to "hardened_usercopy="
-	update description in Documentation/admin-guide/kernel-parameters.txt
-	static_branch_likely -> static_branch_unlikely
-	add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
-		DEFINE_STATIC_KEY_TRUE
-	disable_huc_atboot -> enable_checks (strtobool "on" == true)
-
-v1->v2:
-	remove CONFIG_HUC_DEFAULT_OFF
-	default is now enabled, boot param disables
-	move check to __check_object_size so as to not break optimization of
-		__builtin_constant_p()
-	include linux/atomic.h before linux/jump_label.h
-
-Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 11 ++++++++
- include/linux/jump_label.h                      |  6 +++++
- mm/usercopy.c                                   | 35 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7..560d4dc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -816,6 +816,17 @@
- 	disable=	[IPV6]
- 			See Documentation/networking/ipv6.txt.
- 
-+	hardened_usercopy=
-+                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
-+                        hardening is enabled for this boot. Hardened
-+                        usercopy checking is used to protect the kernel
-+                        from reading or writing beyond known memory
-+                        allocation boundaries as a proactive defense
-+                        against bounds-checking flaws in the kernel's
-+                        copy_to_user()/copy_from_user() interface.
-+                on      Perform hardened usercopy checks (default).
-+                off     Disable hardened usercopy checks.
-+
- 	disable_radix	[PPC]
- 			Disable RADIX MMU mode on POWER9
- 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index b46b541..1a0b6f1 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -299,12 +299,18 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_TRUE(name)	\
- 	struct static_key_true name = STATIC_KEY_TRUE_INIT
- 
-+#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
-+	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-+
- #define DECLARE_STATIC_KEY_TRUE(name)	\
- 	extern struct static_key_true name
- 
- #define DEFINE_STATIC_KEY_FALSE(name)	\
- 	struct static_key_false name = STATIC_KEY_FALSE_INIT
- 
-+#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
-+	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-+
- #define DECLARE_STATIC_KEY_FALSE(name)	\
- 	extern struct static_key_false name
- 
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325..a5f8be5 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -20,6 +20,10 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/thread_info.h>
-+#ifndef CONFIG_BROKEN_ON_SMP
-+#include <linux/atomic.h>
-+#include <linux/jump_label.h>
-+#endif
- #include <asm/sections.h>
- 
- /*
-@@ -240,6 +244,10 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
- 	}
- }
- 
-+#ifndef CONFIG_BROKEN_ON_SMP
-+static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
-+#endif
-+
- /*
-  * Validates that the given object is:
-  * - not bogus address
-@@ -248,6 +256,11 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
-  */
- void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- {
-+#ifndef CONFIG_BROKEN_ON_SMP
-+	if (static_branch_unlikely(&bypass_usercopy_checks))
-+		return;
-+#endif
-+
- 	/* Skip all tests if size is zero. */
- 	if (!n)
- 		return;
-@@ -279,3 +292,25 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
- }
- EXPORT_SYMBOL(__check_object_size);
-+
-+#ifndef CONFIG_BROKEN_ON_SMP
-+EXPORT_SYMBOL(bypass_usercopy_checks);
-+
-+static bool enable_checks __initdata = true;
-+
-+static int __init parse_hardened_usercopy(char *str)
-+{
-+	return strtobool(str, &enable_checks);
-+}
-+
-+__setup("hardened_usercopy=", parse_hardened_usercopy);
-+
-+static int __init set_hardened_usercopy(void)
-+{
-+	if (enable_checks == false)
-+		static_branch_enable(&bypass_usercopy_checks);
-+	return 1;
-+}
-+
-+late_initcall(set_hardened_usercopy);
-+#endif
--- 
-1.8.3.1
+I could do with some more clarity from Linus in the "Drivers needing
+both pin control and GPIOs" section of
+Documentation/driver-api/pinctl.rst but I read that section as stating
+that the GPIO driver needs to mux the pin as a GPIO by requesting the
+pinctrl backend to do so, unless the hardware overrides the muxed
+function selection when the GPIO is used, without involving pinctrl
+software.
 
