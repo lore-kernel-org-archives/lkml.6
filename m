@@ -2,86 +2,96 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1F6C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A084BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2017E25116
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:28:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2017E25116
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B96F25116
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:29:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ArmgLnC7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B96F25116
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752216AbeGBM2z convert rfc822-to-8bit (ORCPT
+        id S1752390AbeGBM3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:28:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57672 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751761AbeGBM2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:28:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 35A41207D4; Mon,  2 Jul 2018 14:28:50 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D204B20703;
-        Mon,  2 Jul 2018 14:28:39 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 14:28:40 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v4 0/5] mtd: rawnand: denali: add new clocks and improve
- setup_data_interface
-Message-ID: <20180702142840.42801396@xps13>
-In-Reply-To: <1529683598-25783-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529683598-25783-1-git-send-email-yamada.masahiro@socionext.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 2 Jul 2018 08:29:39 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49206 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752212AbeGBM3h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 08:29:37 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w62CSRIZ112881;
+        Mon, 2 Jul 2018 07:28:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1530534507;
+        bh=Qwq+/SQtHYYsI4UsPtINepBJtJ1+b2rB3uyWOtNb6Ys=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ArmgLnC7tI17ZKuYYq+EZF5gJ/Lrcioz8SYMySEQJtfvmvlWZqaOAFpFZ8ajKFJLz
+         IuNaOAyOnAn6LqU7S0J+busy7byd/sf8xfWk4Yyjj+XULciqZq1M/onlp/96+qP5C4
+         nWgFM3ziWun0YP+vPWcuXp9ZlXhIrUQGawxA7sME=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62CSROs020457;
+        Mon, 2 Jul 2018 07:28:27 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 2 Jul
+ 2018 07:28:27 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 2 Jul 2018 07:28:27 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w62CSMpf007012;
+        Mon, 2 Jul 2018 07:28:23 -0500
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+Date:   Mon, 2 Jul 2018 17:58:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+Hi David, Stephen,
 
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Sat, 23 Jun
-2018 01:06:33 +0900:
+On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This series moves all aemif/nand users to using the ti-aemif platform
+> driver located in drivers/memory instead of the older API located in
+> mach-davinci.
+> 
+> First five patches add necessary changes to the clock driver. Next
+> seven convert the board files to using the ti-aemif driver. Last patch
+> removes now dead code.
 
-> The ->setup_data_interface() hook needs to know the clock frequency.
-> In fact, this IP needs three clocks, but the current driver does not
-> represent it.  Thus, it is hard to understand what is the correct
-> clock frequency.
-> (at least, clock property is not described in the DT-binding at all.)
-> 
-> This series adds more clocks based on the IP datasheet, and document
-> it in the DT binding.
-> In the new binding, three clocks are required: core clock, bus interface
-> clock, ECC engine clock.
-> 
-> 1/5 is a backport candidate to fix SOCFPGA.
-> 
-> 
-> Masahiro Yamada (5):
->   mtd: rawnand: denali_dt: set clk_x_rate to 200 MHz unconditionally
->   mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
->   dt-binding: mtd: denali_dt: document clock property
->   mtd: rawnand: denali_dt: add more clocks based on IP datasheet
->   mtd: rawnand: denali: optimize timing parameters for data interface
-
-Applied patches 2-5/5 to nand/next on top of v4-18.rc3 (to have the fix
-1/5).
+How do you want to handle this series? I can apply the series and
+provide you an immutable branch on v4.18-rc1 with the clock patches
+applied if that can work.
 
 Thanks,
-Miquèl
+Sekhar
