@@ -2,102 +2,94 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45422C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7399DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3DFB25C80
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3DFB25C80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id 30CAA25C89
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CAA25C89
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030336AbeGBKfT (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:35:19 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44728 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965467AbeGBKfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 06:35:17 -0400
-Received: by mail-oi0-f66.google.com with SMTP id s198-v6so11568761oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 03:35:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=evua5Z4l3ryXBHcNwSdemEPnzM2540/rq3smKiWoMek=;
-        b=kgNSDX2oAhPQ25OlEn/E0xDCc9AbKXqw/mxfthjWdO4HUrEjLG7uDz7wBwdQ/zFLeS
-         0V7l+eCoYEkGPgP3faeCwV30/tatGiDy9uFKI+Kbm8YtEFzwAMTdnH/LDeA8BzyltIVQ
-         MOd8fcam6LJpx4ROxLj3pzhqM6JycttK05iCoC6MqkJtUFeFW07Pv9LqV3rLdXhdy1f7
-         x5qe7TgYl2YqYmYmjpHfNCxORJVpyag6m+HywfBnriy/04DFxObOqVRAOFWr5XNCO/JE
-         BcFKLwc7PvGOq9c5s/59pQ28TDVhiI/E5vydFDYgDHZXwY04/pV13K+dR/R1Ip8aj1S0
-         8GzA==
-X-Gm-Message-State: APt69E33xibHaAFwqC/TJe/C6VU2LsDbwhyNP1XOHkNExkd6gpkrinwt
-        o/6S9NKR6Ts6JasOV46xwq9a2OfsDFxPxXtA1uA=
-X-Google-Smtp-Source: AAOMgpcvez7lPxIAJPJRaGls0Ad/Dwf49J246IZ6ArJljXs9deD9It7WYR5FzSHGL9TxTqTbB/bA5xQX3Dp9HQkS69k=
-X-Received: by 2002:aca:45d5:: with SMTP id s204-v6mr14312197oia.289.1530527716897;
- Mon, 02 Jul 2018 03:35:16 -0700 (PDT)
+        id S965640AbeGBKgF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 06:36:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40656 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965411AbeGBKgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:36:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BBA8BAECD;
+        Mon,  2 Jul 2018 10:36:02 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 12:36:01 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Leon Romanovsky <leon@kernel.org>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180702103601.GG19043@dhcp22.suse.cz>
+References: <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+ <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+ <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+ <20180702055251.GV3014@mtr-leonro.mtl.com>
+ <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
+ <20180702063403.GX3014@mtr-leonro.mtl.com>
+ <cd6ec2d7-0c19-fb34-e8d3-0459671432b8@nvidia.com>
 MIME-Version: 1.0
-References: <cover.1530519301.git.fthain@telegraphics.com.au> <720e9899186bed184fb9b5cce070e2dc519f9665.1530519301.git.fthain@telegraphics.com.au>
-In-Reply-To: <720e9899186bed184fb9b5cce070e2dc519f9665.1530519301.git.fthain@telegraphics.com.au>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Mon, 2 Jul 2018 12:35:04 +0200
-Message-ID: <CA+7wUsyfkC3FvbFyt9JRdBas3s+52tp7OH8h2jiJM9z+ynoyyw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/11] macintosh/via-pmu: Fix section mismatch warning
-To:     fthain@telegraphics.com.au
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd6ec2d7-0c19-fb34-e8d3-0459671432b8@nvidia.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 10:25 AM Finn Thain <fthain@telegraphics.com.au> wrote:
->
-> The pmu_init() function has the __init qualifier, but the ops struct
-> that holds a pointer to it does not. This causes a build warning.
-> The driver works fine because the pointer is only dereferenced early.
->
-> The function is so small that there's negligible benefit from using
-> the __init qualifier. Remove it to fix the warning, consistent with
-> the other ADB drivers.
+On Sun 01-07-18 23:41:21, John Hubbard wrote:
+> On 07/01/2018 11:34 PM, Leon Romanovsky wrote:
+> > On Sun, Jul 01, 2018 at 11:10:04PM -0700, John Hubbard wrote:
+[...]
+> >>> Sorry for naive question, but won't it create too much dirty pages
+> >>> so writeback will be called "non-stop" to rebalance watermarks without
+> >>> ability to progress?
+> >>>
+> >>
+> >> That is an interesting point.
+> >>
+> >> Holding off page writeback of this region does seem like it could cause
+> >> problems under memory pressure. Maybe adjusting the watermarks so that we
+> >> tell the writeback  system, "all is well, just ignore this region until
+> >> we're done with it" might help? Any ideas here are welcome...
+> > 
+> > AFAIR, it is per-zone, so the solution to count dirty-but-untouchable
+> > number of pages to take them into account for accounting can work, but
+> > it seems like an overkill. Can we create special ZONE for such gup
+> > pages, or this is impossible too?
+> > 
+> 
+> Let's see what Michal and others prefer. The zone idea intrigues me. 
 
-Would you mind copy/pasting the warning you are seeing.
+No new zones please. Pinned pages are essentially mlocked pages, except
+they are worse because they cannot be even migrated. What we really
+needs is a) limit their usage and b) have a way to find out that pins
+are not ephemeral and a special action needs to be taken. What is that
+special action is yet to be decided but please do not add even more
+complexity on top.
 
-Make sure you have:
-
-58935176ad17 powerpc/via-pmu: Fix section mismatch warning
-
-Thanks
-
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
->  drivers/macintosh/via-pmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-> index 25c1ce811053..f8a2c917201f 100644
-> --- a/drivers/macintosh/via-pmu.c
-> +++ b/drivers/macintosh/via-pmu.c
-> @@ -378,7 +378,7 @@ static int pmu_probe(void)
->         return vias == NULL? -ENODEV: 0;
->  }
->
-> -static int __init pmu_init(void)
-> +static int pmu_init(void)
->  {
->         if (vias == NULL)
->                 return -ENODEV;
-> --
-> 2.16.4
->
+-- 
+Michal Hocko
+SUSE Labs
