@@ -2,207 +2,110 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5315AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E15C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0874E2517D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0874E2517D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A54222518F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FggABiQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54222518F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeGBP4M (ORCPT
+        id S1752769AbeGBP41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:56:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54868 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752415AbeGBP4L (ORCPT
+        Mon, 2 Jul 2018 11:56:27 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38011 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbeGBP4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:56:11 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FrmJL115605
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:56:10 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jykxbghnn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:56:10 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 2 Jul 2018 11:56:08 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 11:56:06 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62Fu4O92294038
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 15:56:04 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 417D3AE05F;
-        Mon,  2 Jul 2018 11:55:48 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4954AE062;
-        Mon,  2 Jul 2018 11:55:47 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 11:55:47 -0400 (EDT)
-Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
- virtualization
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 2 Jul 2018 11:56:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 2 Jul 2018 11:56:24 -0400
+Received: by mail-pf0-f193.google.com with SMTP id j17-v6so7711421pfn.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 08:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=7sgR3XWb0ZjhnXliIyW3/K457TTRxSTFst5nLbjcNV8=;
+        b=FggABiQqwWjx5dBkx9/Xc0dLo9ZCFmCWp4XNprXC5r9MTEGWSaQLjjLoI6bxwAEbq/
+         JpkZ+DT/cN/SPVcc0Sqic0F4+x6gJjdbZ2qEwDTDmC5/ry8T6X95OkqT/GOwADGWDZHi
+         8uIPegkjPgSR3wtqNiAdF25VnxNdPs3cTy/5Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=7sgR3XWb0ZjhnXliIyW3/K457TTRxSTFst5nLbjcNV8=;
+        b=a6wJwhkEU1wnDaAq8MJU4CiUmhskcSulDjafwWJHRcSbPe0TCYIXgUb4a3NVosDRcs
+         neNWbRp56JupGzPDxZNHHerPkdyjgmWfVgWEPDeT/A1g71UnCNwkAHi239lXuE1M92QR
+         fTeY+Vv27omDUHkDJjmkznn4pCuKp57pNaKT3ZPZX5ascX2oAX4kWzhVKXnKcTzFb8oq
+         AKvLcEDir53QBBLZzB9bc+seuHyTaR7yjg04x+yK55KJuDoIFoGyJlY0jCtUsW8xRotD
+         NZY9SxbfUNpZdf01W2lN23JL7EcPKA5bf7yVMpe7KoLnEm2tbYjDPBa4THAKQKsvdNZH
+         21Lg==
+X-Gm-Message-State: APt69E0PuGIEnxsvxGBCy6sE0kEPB9E6MPxjljOOmCDdE5XjS3+uokeJ
+        sL+sQPjUMy26AYBOjznZ9LUbAOjcue4=
+X-Google-Smtp-Source: AAOMgpdUedS5JSPLBHQOIbAFBycB1rD2VZwUQcHr++db/twPxBRfGwHDkdy3yW21y0JHhupq+srRoQ==
+X-Received: by 2002:a65:6398:: with SMTP id h24-v6mr5576172pgv.245.1530546984098;
+        Mon, 02 Jul 2018 08:56:24 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm26084830pfj.123.2018.07.02.08.56.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 08:56:22 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 08:56:21 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Anatolij Gustschin <agust@denx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc: mpc5200: Remove VLA usage
+Message-ID: <20180702155621.GA16047@beast>
 MIME-Version: 1.0
-In-Reply-To: <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18070215-0040-0000-0000-0000044854E0
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055524; UDB=6.00541382; IPR=6.00833446;
- MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:56:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070215-0041-0000-0000-0000084E70BA
-Message-Id: <e83a1433-649f-5540-016b-aa2c96f66d02@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020181
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/29/2018 05:11 PM, Tony Krowiak wrote:
-> Introduces a new CPU model feature and two CPU model
-> facilities to support AP virtualization for KVM guests.
->
-> CPU model feature:
->
-> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-> AP instructions are available on the guest. This
-> feature will be enabled by the kernel only if the AP
-> instructions are installed on the linux host. This feature
-> must be specifically turned on for the KVM guest from
-> userspace to use the VFIO AP device driver for guest
-> access to AP devices.
->
-> CPU model facilities:
->
-> 1. AP Query Configuration Information (QCI) facility is installed.
->
->     This is indicated by setting facilities bit 12 for
->     the guest. The kernel will not enable this facility
->     for the guest if it is not set on the host. This facility
->     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->     feature is not installed.
->
->     If this facility is not set for the KVM guest, then only
->     APQNs with an APQI less than 16 will be available to the
->     guest regardless of the guest's matrix configuration. This
->     is a limitation of the AP bus running on the guest.
->
-> 2. AP Facilities Test facility (APFT) is installed.
->
->     This is indicated by setting facilities bit 15 for
->     the guest. The kernel will not enable this facility for
->     the guest if it is not set on the host. This facility
->     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->     feature is not installed.
->
->     If this facility is not set for the KVM guest, then no
->     AP devices will be available to the guest regardless of
->     the guest's matrix configuration. This is a limitation
->     of the AP bus running under the guest.
->
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> ---
->   arch/s390/include/uapi/asm/kvm.h |    1 +
->   arch/s390/kvm/kvm-s390.c         |    8 ++++++++
->   arch/s390/tools/gen_facilities.c |    3 +++
->   3 files changed, 12 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
-> index 4cdaa55..a580dec 100644
-> --- a/arch/s390/include/uapi/asm/kvm.h
-> +++ b/arch/s390/include/uapi/asm/kvm.h
-> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->   #define KVM_S390_VM_CPU_FEAT_KSS	13
-> +#define KVM_S390_VM_CPU_FEAT_AP		14
->   struct kvm_s390_vm_cpu_feat {
->   	__u64 feat[16];
->   };
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 3b7a515..d2208d4 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -40,6 +40,7 @@
->   #include <asm/sclp.h>
->   #include <asm/cpacf.h>
->   #include <asm/timex.h>
-> +#include <asm/ap.h>
->   #include "kvm-s390.h"
->   #include "gaccess.h"
->   
-> @@ -366,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
->   
->   	if (MACHINE_HAS_ESOP)
->   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
-> +
-> +	/*
-> +	 * Check if AP instructions installed on host
-> +	 */
-> +	if (ap_instructions_available() == 0)
-> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
-> +
->   	/*
->   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
-> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
-> index 90a8c9e..e0e2c19 100644
-> --- a/arch/s390/tools/gen_facilities.c
-> +++ b/arch/s390/tools/gen_facilities.c
-> @@ -106,6 +106,9 @@ struct facility_def {
->   
->   		.name = "FACILITIES_KVM_CPUMODEL",
->   		.bits = (int[]){
-> +			12, /* AP Query Configuration Information */
-> +			15, /* AP Facilities Test */
-> +			156, /* Execution Token facility */
+In the quest to remove all stack VLA usage from the kernel[1], this
+switches to using a stack size large enough for the saved routine and
+adds a sanity check making sure the routine doesn't overflow into the
+0x600 exception handler.
 
-Oops. This last one is an error, the result of a faulty merge with the 
-latest
-code base.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
->   			-1  /* END */
->   		}
->   	},
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: use "0x600-0x500" for size calculation to illustrate handler sizes
+---
+ arch/powerpc/platforms/52xx/mpc52xx_pm.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/52xx/mpc52xx_pm.c b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
+index 31d3515672f3..b1d208ded981 100644
+--- a/arch/powerpc/platforms/52xx/mpc52xx_pm.c
++++ b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
+@@ -117,7 +117,10 @@ int mpc52xx_pm_enter(suspend_state_t state)
+ 	u32 intr_main_mask;
+ 	void __iomem * irq_0x500 = (void __iomem *)CONFIG_KERNEL_START + 0x500;
+ 	unsigned long irq_0x500_stop = (unsigned long)irq_0x500 + mpc52xx_ds_cached_size;
+-	char saved_0x500[mpc52xx_ds_cached_size];
++	char saved_0x500[0x600-0x500];
++
++	if (WARN_ON(mpc52xx_ds_cached_size > sizeof(saved_0x500)))
++		return -ENOMEM;
+ 
+ 	/* disable all interrupts in PIC */
+ 	intr_main_mask = in_be32(&intr->main_mask);
+-- 
+2.17.1
 
 
+-- 
+Kees Cook
+Pixel Security
