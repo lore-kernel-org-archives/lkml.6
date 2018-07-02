@@ -5,129 +5,155 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5E4C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527BFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C555224176
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C555224176
+	by mail.kernel.org (Postfix) with ESMTP id 0B2F82418A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:10:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2F82418A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752664AbeGBPBg (ORCPT
+        id S1752205AbeGBPKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:01:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58554 "EHLO mx1.redhat.com"
+        Mon, 2 Jul 2018 11:10:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57206 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752055AbeGBPBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:01:34 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1751931AbeGBPKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:10:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 162247A7E5;
-        Mon,  2 Jul 2018 15:01:34 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-57.ams2.redhat.com [10.36.116.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 217B82026D5B;
-        Mon,  2 Jul 2018 15:01:32 +0000 (UTC)
-Subject: Re: [PATCH v3 08/20] kvm: arm/arm64: Abstract stage2 pgd table
- allocation
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-9-git-send-email-suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ac15d082-22eb-54d1-d695-6a0a3ac2d1eb@redhat.com>
-Date:   Mon, 2 Jul 2018 17:01:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        by mx1.redhat.com (Postfix) with ESMTPS id A6EAD4021CC2;
+        Mon,  2 Jul 2018 15:10:00 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 124661C4C3;
+        Mon,  2 Jul 2018 15:09:58 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "pbonzini\@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "mingo\@redhat.com" <mingo@redhat.com>,
+        "hpa\@zytor.com" <hpa@zytor.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: Re: [PATCH 3/4] KVM/VMX: Add identical ept table pointer check
+References: <20180702141653.88936-1-Tianyu.Lan@microsoft.com>
+        <20180702141653.88936-4-Tianyu.Lan@microsoft.com>
+Date:   Mon, 02 Jul 2018 17:09:57 +0200
+In-Reply-To: <20180702141653.88936-4-Tianyu.Lan@microsoft.com> (Tianyu Lan's
+        message of "Mon, 2 Jul 2018 14:17:29 +0000")
+Message-ID: <87lgatbrne.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-9-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 15:01:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 15:01:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 15:10:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 15:10:00 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki
+Tianyu Lan <Tianyu.Lan@microsoft.com> writes:
 
-On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
-> Abstract the allocation of stage2 entry level tables for
-> given VM, so that later we can choose to fall back to the
-> normal page table levels (i.e, avoid entry level table
-> concatenation) on arm64.
-
-the justification is not crystal clear to me but it does no harm I think.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> This patch is to check ept table pointer of each cpus when set ept
+> tables and store identical ept table pointer if all ept table pointers
+> of single VM are same. This is for support of para-virt ept flush
+> hypercall.
+>
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 > ---
-> Changes since V2:
->  - New patch
-> ---
->  arch/arm/include/asm/kvm_mmu.h   | 6 ++++++
->  arch/arm64/include/asm/kvm_mmu.h | 6 ++++++
->  virt/kvm/arm/mmu.c               | 2 +-
->  3 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-> index f36eb20..b2da5a4 100644
-> --- a/arch/arm/include/asm/kvm_mmu.h
-> +++ b/arch/arm/include/asm/kvm_mmu.h
-> @@ -372,6 +372,12 @@ static inline int hyp_map_aux_data(void)
->  	return 0;
+>  arch/x86/kvm/vmx.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 1689f433f3a0..0b1e4e9fef2b 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -194,6 +194,9 @@ struct kvm_vmx {
+>  	unsigned int tss_addr;
+>  	bool ept_identity_pagetable_done;
+>  	gpa_t ept_identity_map_addr;
+> +
+> +	u64 identical_ept_pointer;
+> +	spinlock_t ept_pointer_lock;
+>  };
+>
+>  #define NR_AUTOLOAD_MSRS 8
+> @@ -853,6 +856,7 @@ struct vcpu_vmx {
+>  	 */
+>  	u64 msr_ia32_feature_control;
+>  	u64 msr_ia32_feature_control_valid_bits;
+> +	u64 ept_pointer;
+>  };
+>
+>  enum segment_cache_field {
+> @@ -4958,6 +4962,29 @@ static u64 construct_eptp(struct kvm_vcpu *vcpu, unsigned long root_hpa)
+>  	return eptp;
 >  }
->  
-> +static inline void *stage2_alloc_pgd(struct kvm *kvm)
+>
+> +static void check_ept_pointer(struct kvm_vcpu *vcpu, u64 eptp)
 > +{
-> +	return alloc_pages_exact(stage2_pgd_size(kvm),
-> +				 GFP_KERNEL | __GFP_ZERO);
+> +	struct kvm *kvm = vcpu->kvm;
+> +	u64 tmp_eptp = INVALID_PAGE;
+> +	int i;
+> +
+> +	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +	to_vmx(vcpu)->ept_pointer = eptp;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		if (!VALID_PAGE(tmp_eptp)) {
+> +			tmp_eptp = to_vmx(vcpu)->ept_pointer;
+> +		} else if (tmp_eptp != to_vmx(vcpu)->ept_pointer) {
+> +			to_kvm_vmx(kvm)->identical_ept_pointer = INVALID_PAGE;
+> +			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +			return;
+> +		}
+> +	}
+> +
+> +	to_kvm_vmx(kvm)->identical_ept_pointer = tmp_eptp;
+> +	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+
+It seems we can get away with identical_ept_pointer being just 'bool':
+go through the vCPU list and compare ept_pointer with ept_pointer for
+the current vcpu. It would also make sense to rename it to something
+like 'ept_pointers_match'.
+
+I'm also not sure we need a dedicated ept_pointer_lock, can't we just
+use the already existent mmu_lock from struct kvm?
+
 > +}
 > +
->  #define kvm_phys_to_vttbr(addr)		(addr)
->  
->  #endif	/* !__ASSEMBLY__ */
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 5da8f52..dbaf513 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -501,5 +501,11 @@ static inline int hyp_map_aux_data(void)
->  
->  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
->  
-> +static inline void *stage2_alloc_pgd(struct kvm *kvm)
-> +{
-> +	return alloc_pages_exact(stage2_pgd_size(kvm),
-> +				 GFP_KERNEL | __GFP_ZERO);
-> +}
+>  static void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+>  {
+>  	unsigned long guest_cr3;
+> @@ -4967,6 +4994,8 @@ static void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+>  	if (enable_ept) {
+>  		eptp = construct_eptp(vcpu, cr3);
+>  		vmcs_write64(EPT_POINTER, eptp);
+> +		check_ept_pointer(vcpu, eptp);
+
+Do we always get here when we need? E.g, do we need to enforce
+CPU_BASED_CR3_STORE_EXITING?
+
 > +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ARM64_KVM_MMU_H__ */
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 82dd571..a339e00 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -868,7 +868,7 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
->  	}
->  
->  	/* Allocate the HW PGD, making sure that each page gets its own refcount */
-> -	pgd = alloc_pages_exact(stage2_pgd_size(kvm), GFP_KERNEL | __GFP_ZERO);
-> +	pgd = stage2_alloc_pgd(kvm);
->  	if (!pgd)
->  		return -ENOMEM;
->  
-> 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+>  		if (enable_unrestricted_guest || is_paging(vcpu) ||
+>  		    is_guest_mode(vcpu))
+>  			guest_cr3 = kvm_read_cr3(vcpu);
+> @@ -10383,6 +10412,8 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+>
+>  static int vmx_vm_init(struct kvm *kvm)
+>  {
+> +	spin_lock_init(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +
+>  	if (!ple_gap)
+>  		kvm->arch.pause_in_guest = true;
+>  	return 0;
 
-Thanks
-
-Eric
+-- 
+  Vitaly
