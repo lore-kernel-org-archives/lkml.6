@@ -3,134 +3,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A620C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AB3C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47DE924212
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DE924212
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id D63D0254E4
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:14:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63D0254E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753273AbeGBGLL (ORCPT
+        id S1753273AbeGBGO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:11:11 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14716 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753148AbeGBGLG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:11:06 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b39c1d70000>; Sun, 01 Jul 2018 23:10:32 -0700
-Received: from HQMAIL107.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 01 Jul 2018 23:11:06 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 01 Jul 2018 23:11:06 -0700
-Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Jul
- 2018 06:11:05 +0000
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-To:     Leon Romanovsky <leon@kernel.org>, Jan Kara <jack@suse.cz>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>, Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-References: <20180626134757.GY28965@dhcp22.suse.cz>
- <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
- <20180627113221.GO32348@dhcp22.suse.cz>
- <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
- <20180627115927.GQ32348@dhcp22.suse.cz>
- <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
- <20180627145718.GB20171@ziepe.ca>
- <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
- <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
- <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
- <20180702055251.GV3014@mtr-leonro.mtl.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
-Date:   Sun, 1 Jul 2018 23:10:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Mon, 2 Jul 2018 02:14:57 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9190 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752824AbeGBGO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 02:14:56 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 209C7FD2BF7D9;
+        Mon,  2 Jul 2018 14:14:42 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
+ 14:14:38 +0800
+Subject: Re: [PATCH] f2fs: show the fsync_mode=nobarrier mount option
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <linux-kernel@vger.kernel.org>
+References: <1530511660-31323-1-git-send-email-stummala@codeaurora.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <5dcab7eb-d169-fc57-1dcb-b66cf806540f@huawei.com>
+Date:   Mon, 2 Jul 2018 14:14:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180702055251.GV3014@mtr-leonro.mtl.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
+In-Reply-To: <1530511660-31323-1-git-send-email-stummala@codeaurora.org>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/2018 10:52 PM, Leon Romanovsky wrote:
-> On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
->> On Wed 27-06-18 19:42:01, John Hubbard wrote:
->>> On 06/27/2018 10:02 AM, Jan Kara wrote:
->>>> On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
->>>>> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
->>>>>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
->>>>>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
->>>>>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
->>>>>>> [...]
->>> One question though: I'm still vague on the best actions to take in the
->>> following functions:
->>>
->>>     page_mkclean_one
->>>     try_to_unmap_one
->>>
->>> At the moment, they are both just doing an evil little early-out:
->>>
->>> 	if (PageDmaPinned(page))
->>> 		return false;
->>>
->>> ...but we talked about maybe waiting for the condition to clear, instead?
->>> Thoughts?
->>
->> What needs to happen in page_mkclean() depends on the caller. Most of the
->> callers really need to be sure the page is write-protected once
->> page_mkclean() returns. Those are:
->>
->>   pagecache_isize_extended()
->>   fb_deferred_io_work()
->>   clear_page_dirty_for_io() if called for data-integrity writeback - which
->>     is currently known only in its caller (e.g. write_cache_pages()) where
->>     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
->>     information into page_mkclean() will require some plumbing and
->>     clear_page_dirty_for_io() has some 50 callers but it's doable.
->>
->> clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
->> WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
->> otherwise memory cleaning would get stuck on pinned pages until RDMA
->> drivers release its pins.
+On 2018/7/2 14:07, Sahitya Tummala wrote:
+> This patch shows the fsync_mode=nobarrier mount option in
+> f2fs_show_options().
 > 
-> Sorry for naive question, but won't it create too much dirty pages
-> so writeback will be called "non-stop" to rebalance watermarks without
-> ability to progress?
-> 
+> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 
-That is an interesting point. 
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Holding off page writeback of this region does seem like it could cause
-problems under memory pressure. Maybe adjusting the watermarks so that we
-tell the writeback  system, "all is well, just ignore this region until
-we're done with it" might help? Any ideas here are welcome...
+Thanks,
 
-Longer term, maybe some additional work could allow the kernel to be able
-to writeback the gup-pinned pages (while DMA is happening--snapshots), but
-that seems like a pretty big overhaul.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
