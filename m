@@ -6,79 +6,166 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B2EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EECC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C61F025B1C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C61F025B1C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D3B3255D7
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:33:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D3B3255D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964854AbeGBIb4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:31:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53252 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932339AbeGBIbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:31:48 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fZuFO-0005hN-5t; Mon, 02 Jul 2018 08:31:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Harald Welte <laforge@gnumonks.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] char: pcmcia: remove redundant pointer dev
-Date:   Mon,  2 Jul 2018 09:31:45 +0100
-Message-Id: <20180702083145.14326-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S964915AbeGBIdq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:33:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48963 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932339AbeGBIdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 04:33:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6667A20875; Mon,  2 Jul 2018 10:33:38 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 14C9A20703;
+        Mon,  2 Jul 2018 10:33:28 +0200 (CEST)
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        marek.vasut@gmail.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>
+Subject: [PATCH v4 1/2] ubi: provide a way to skip CRC checks
+Date:   Mon,  2 Jul 2018 10:32:57 +0200
+Message-Id: <328390941d1e1d3cbd94a9a36622809f8ab4d483.1530519426.git-series.quentin.schulz@bootlin.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
+References: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
+In-Reply-To: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
+References: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Some users of static UBI volumes implement their own integrity check,
+thus making the volume CRC check done at open time useless. For
+instance, this is the case when one use the ubiblock + dm-verity +
+squashfs combination, where dm-verity already checks integrity of the
+block device but this time at the block granularity instead of verifying
+the whole volume.
 
-Pointer dev is being assigned but is never used hence it is redundant
-and can be removed.
+Skipping this test drastically improves the boot-time.
 
-Cleans up clang warning:
-warning: variable ‘dev’ set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
 ---
- drivers/char/pcmcia/cm4000_cs.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/mtd/ubi/kapi.c      |  2 +-
+ drivers/mtd/ubi/ubi-media.h |  6 ++++++
+ drivers/mtd/ubi/ubi.h       |  4 ++++
+ drivers/mtd/ubi/vmt.c       |  9 +++++++++
+ drivers/mtd/ubi/vtbl.c      |  3 +++
+ 5 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
-index 370e0a64ead1..a219964cb770 100644
---- a/drivers/char/pcmcia/cm4000_cs.c
-+++ b/drivers/char/pcmcia/cm4000_cs.c
-@@ -1748,8 +1748,6 @@ static int cm4000_config_check(struct pcmcia_device *p_dev, void *priv_data)
+diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+index d4b2e87..e9e9ecb 100644
+--- a/drivers/mtd/ubi/kapi.c
++++ b/drivers/mtd/ubi/kapi.c
+@@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+ 	desc->mode = mode;
  
- static int cm4000_config(struct pcmcia_device * link, int devno)
- {
--	struct cm4000_dev *dev;
--
- 	link->config_flags |= CONF_AUTO_SET_IO;
+ 	mutex_lock(&ubi->ckvol_mutex);
+-	if (!vol->checked) {
++	if (!vol->checked && !vol->skip_check) {
+ 		/* This is the first open - check the volume */
+ 		err = ubi_check_volume(ubi, vol_id);
+ 		if (err < 0) {
+diff --git a/drivers/mtd/ubi/ubi-media.h b/drivers/mtd/ubi/ubi-media.h
+index 195ff8c..b5fe8f8 100644
+--- a/drivers/mtd/ubi/ubi-media.h
++++ b/drivers/mtd/ubi/ubi-media.h
+@@ -45,6 +45,11 @@ enum {
+  * Volume flags used in the volume table record.
+  *
+  * @UBI_VTBL_AUTORESIZE_FLG: auto-resize this volume
++ * @UBI_VTBL_SKIP_CRC_CHECK_FLG: skip the CRC check done on a static volume at
++ *				 open time. Should only be set on volumes that
++ *				 are used by upper layers doing this kind of
++ *				 check. Main use-case for this flag is
++ *				 boot-time reduction
+  *
+  * %UBI_VTBL_AUTORESIZE_FLG flag can be set only for one volume in the volume
+  * table. UBI automatically re-sizes the volume which has this flag and makes
+@@ -76,6 +81,7 @@ enum {
+  */
+ enum {
+ 	UBI_VTBL_AUTORESIZE_FLG = 0x01,
++	UBI_VTBL_SKIP_CRC_CHECK_FLG = 0x02,
+ };
  
- 	/* read the config-tuples */
-@@ -1759,8 +1757,6 @@ static int cm4000_config(struct pcmcia_device * link, int devno)
- 	if (pcmcia_enable_device(link))
- 		goto cs_release;
+ /*
+diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+index f5ba97c..d47b9e4 100644
+--- a/drivers/mtd/ubi/ubi.h
++++ b/drivers/mtd/ubi/ubi.h
+@@ -327,6 +327,9 @@ struct ubi_eba_leb_desc {
+  *           atomic LEB change
+  *
+  * @eba_tbl: EBA table of this volume (LEB->PEB mapping)
++ * @skip_check: %1 if CRC check of this static volume should be skipped.
++ *		Directly reflects the presence of the
++ *		%UBI_VTBL_SKIP_CRC_CHECK_FLG flag in the vtbl entry
+  * @checked: %1 if this static volume was checked
+  * @corrupted: %1 if the volume is corrupted (static volumes only)
+  * @upd_marker: %1 if the update marker is set for this volume
+@@ -374,6 +377,7 @@ struct ubi_volume {
+ 	void *upd_buf;
  
--	dev = link->priv;
--
- 	return 0;
+ 	struct ubi_eba_table *eba_tbl;
++	unsigned int skip_check:1;
+ 	unsigned int checked:1;
+ 	unsigned int corrupted:1;
+ 	unsigned int upd_marker:1;
+diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
+index 0be5167..e2606a4 100644
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -299,6 +299,10 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
+ 		vtbl_rec.vol_type = UBI_VID_DYNAMIC;
+ 	else
+ 		vtbl_rec.vol_type = UBI_VID_STATIC;
++
++	if (vol->skip_check)
++		vtbl_rec.flags |= UBI_VTBL_SKIP_CRC_CHECK_FLG;
++
+ 	memcpy(vtbl_rec.name, vol->name, vol->name_len);
  
- cs_release:
+ 	err = ubi_change_vtbl_record(ubi, vol_id, &vtbl_rec);
+@@ -733,6 +737,11 @@ static int self_check_volume(struct ubi_device *ubi, int vol_id)
+ 			ubi_err(ubi, "bad used_bytes");
+ 			goto fail;
+ 		}
++
++		if (vol->skip_check) {
++			ubi_err(ubi, "bad skip_check");
++			goto fail;
++		}
+ 	} else {
+ 		if (vol->used_ebs < 0 || vol->used_ebs > vol->reserved_pebs) {
+ 			ubi_err(ubi, "bad used_ebs");
+diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+index 94d7a86..2c133cd 100644
+--- a/drivers/mtd/ubi/vtbl.c
++++ b/drivers/mtd/ubi/vtbl.c
+@@ -560,6 +560,9 @@ static int init_volumes(struct ubi_device *ubi,
+ 		vol->name[vol->name_len] = '\0';
+ 		vol->vol_id = i;
+ 
++		if (vtbl[i].flags & UBI_VTBL_SKIP_CRC_CHECK_FLG)
++			vol->skip_check = 1;
++
+ 		if (vtbl[i].flags & UBI_VTBL_AUTORESIZE_FLG) {
+ 			/* Auto re-size flag may be set only for one volume */
+ 			if (ubi->autoresize_vol_id != -1) {
 -- 
-2.17.1
-
+git-series 0.9.1
