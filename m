@@ -2,112 +2,182 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F85FC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A205C6778C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB091255AB
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A284225584
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULa8AWbH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB091255AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cEuekzkd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A284225584
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752772AbeGBAMp (ORCPT
+        id S1752788AbeGBAPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 20:12:45 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39375 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbeGBAMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 20:12:43 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s24-v6so7038064plq.6;
-        Sun, 01 Jul 2018 17:12:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=5FEIAL/TUjLtICR48hur9kUozIq4AKaz+YxEjnFY7Oc=;
-        b=ULa8AWbHrCMa4pQ1VgZa8Z/Ut0cb2WFLobWIsbhNEyT9y6Rl1EU1r4eExnoTuo7ZPP
-         mSaFD0uDXQRPf4/b+hDaN4ePa1UgvsRSyCq0QP0lcodENnWt7HnixB8b71XOmjzi9MVl
-         fvaJBEhltwe8E0l1AvSKL1IDo/Nmrz6PQ8SffhhDY3qBNb5rBlFCJXhytXN9wAkz9bRU
-         fSS9Yh0xD6cOv8YJfSYVtyj7kkGCfxwybESSXGzXXxamv3ZzsBBr7R/TE1qbwb9kPX0q
-         s8LPXffqyrLYiiygDmmN6TSMJ69TEJhgp/VZqymFJOsaNc9VJWBSw8VRg0r33PAaKijZ
-         dRvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=5FEIAL/TUjLtICR48hur9kUozIq4AKaz+YxEjnFY7Oc=;
-        b=um3E4ZKhnuQRYb7daZb5B7dn/EMaiu+9Rl7xq9ao/MV/EkqNq3B80vA6n6y0uQuMas
-         EYnH1lYhCyqU3eLQRrNt8QE/L58nRnrRW/9o8dou9NC7q4pgKMNqFf1ok9l+nw38pTLY
-         iCFWtHFxsIHOznYLt/I2VJq7Qpe2nVS6LAKaLNxkBcaQiI8eo/Hdt/RvetgBz98ZaNj9
-         804rIYE0oW7/pc6kb4JHlsl2SnuU5pY7fkUFeRrLKvB2NWJHfdGEnrHbQC3rAQ3vxBiw
-         43IIMri+mOJEzHGoNHEAZYVdU3GX8vjdgfFY/Nh/7EHzMkPCtwbu8HubqNi6Al/noJ0r
-         BceA==
-X-Gm-Message-State: APt69E0T+m8KsEHQ7UU6zkIowwFP1/JHbFSooGjF8zmwXkjb0+DmPwsC
-        u50N+/cmAHomKrX6q8AVq9U=
-X-Google-Smtp-Source: AAOMgpd2Vu1r4N0E2RaUnZqF9mPG8bRd1UVKdXp/tOLBQdVT0YUauhxzxF5ro5Zzu9p1NvVV/zOacQ==
-X-Received: by 2002:a17:902:d692:: with SMTP id v18-v6mr16464984ply.59.1530490362129;
-        Sun, 01 Jul 2018 17:12:42 -0700 (PDT)
-Received: from ?IPv6:2601:647:4001:5a00:6d23:90c7:3039:df6a? ([2601:647:4001:5a00:6d23:90c7:3039:df6a])
-        by smtp.gmail.com with ESMTPSA id r6-v6sm13978902pgv.0.2018.07.01.17.12.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 17:12:40 -0700 (PDT)
-Date:   Sun, 01 Jul 2018 17:12:37 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CA+55aFwCdAuw+GuKTCzACWpQBDFAx_DsMM0uTCx2fZKBBU7X0w@mail.gmail.com>
-References: <1527507182-3858-1-git-send-email-kt.liao@emc.com.tw> <20180529180506.GB167092@dtor-ws> <000301d3f7e4$5c9e51c0$15daf540$@emc.com.tw> <20180622001632.GI79890@dtor-ws> <CA+55aFzLMkyAGdfaeDLUXeRE0MJUckRDsrbVy2yonT6R=wf-Og@mail.gmail.com> <20180701234419.GA250349@dtor-ws> <CA+55aFwCdAuw+GuKTCzACWpQBDFAx_DsMM0uTCx2fZKBBU7X0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] Input: elantech - Fix V4 report decoding for module with middle key
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     kt.liao@emc.com.tw,
+        Sun, 1 Jul 2018 20:15:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:49023 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752623AbeGBAPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 20:15:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Jnnk59lSz9s3q;
+        Mon,  2 Jul 2018 10:15:06 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1530490508;
+        bh=4hKVxhNxTCDGyDaNWNCRoGnVFUIb1poRARihZwgfQAE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cEuekzkdxBDVPUgQJduIi0mIaD/8HVxSDZnyyavW34llmZvQQk6WPEn1Qv6UM/KYo
+         7T4eENfkZbnfs97abyYj33Y8OtQERlQidJLp7OtQtSqiJbET6/X4FnxFnjeOr7vHzr
+         7IyrL8hgA6QeAqWdn/fCbJO6ENs5OYktzlDQIiFRNGquIOxe4f6hVpD13cwnJqCqJM
+         aPBvb3DT8EAhlr001hwKEIUKlYKAY36CPhlaRJ5qF5WPR81SVFw+fMc39QQblAgZlf
+         aOhLK9xymZTJDCopQbSEvQPfbvckk78YUmgtHDVZmpnoEHfbhRalu6eu1OkZEYrO/6
+         XTpcYWQntqp0g==
+Date:   Mon, 2 Jul 2018 10:15:06 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        ulrik.debie-os@e2big.org, phoenix@emc.com.tw,
-        aaron.ma@canonical.com, josh.chen@emc.com.tw
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Message-ID: <A5DA555C-6131-4F7B-82F2-A06C12E23CAF@gmail.com>
+        Jose Abreu <Jose.Abreu@synopsys.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180702101506.6ba3de0e@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jODOqf1DtYm7h3NcT_UXHXA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On July 1, 2018 5:00:03 PM PDT, Linus Torvalds <torvalds@linux-foundation=
-=2Eorg> wrote:
->On Sun, Jul 1, 2018 at 4:44 PM Dmitry Torokhov
-><dmitry=2Etorokhov@gmail=2Ecom> wrote:
->>
->> The reason it got messed up is I switched to pulling patches from
->> patchwork=2Ekernel=2Eorg as it collects Acked-by and Reviewed-by tags s=
-o
->I
->> do not have to add them manually, but unfortunately it does not do
->> proper UTF-8:
->
->Ugh=2E
->
->I made an 'issue' of it for patchwork:
->
->  https://github=2Ecom/getpatchwork/patchwork/issues/194
->
->and hopefully that can be fixed=2E It's sad when we corrupt names like
->this=2E
+--Sig_/jODOqf1DtYm7h3NcT_UXHXA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Might not even be an issue with recent patchwork, but unfortunately the ve=
-rsion that is running on kernel=2Eorg is ancient as far as I know=2E
+Hi all,
 
+Today's linux-next merge of the net-next tree got conflicts in:
 
-Thanks=2E
+  drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+  drivers/net/ethernet/stmicro/stmmac/hwif.h
+
+between commit:
+
+  4205c88eaf17 ("net: stmmac: Set DMA buffer size in HW")
+
+from the net tree and commit:
+
+  1f705bc61aee ("net: stmmac: Add support for CBS QDISC")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
-Dmitry
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+index 65bc3556bd8f,6e32f8a3710b..000000000000
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
+@@@ -407,16 -407,19 +407,29 @@@ static void dwmac4_enable_tso(void __io
+  	}
+  }
+ =20
+ +static void dwmac4_set_bfsize(void __iomem *ioaddr, int bfsize, u32 chan)
+ +{
+ +	u32 value =3D readl(ioaddr + DMA_CHAN_RX_CONTROL(chan));
+ +
+ +	value &=3D ~DMA_RBSZ_MASK;
+ +	value |=3D (bfsize << DMA_RBSZ_SHIFT) & DMA_RBSZ_MASK;
+ +
+ +	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(chan));
+ +}
+ +
++ static void dwmac4_qmode(void __iomem *ioaddr, u32 channel, u8 qmode)
++ {
++ 	u32 mtl_tx_op =3D readl(ioaddr + MTL_CHAN_TX_OP_MODE(channel));
++=20
++ 	mtl_tx_op &=3D ~MTL_OP_MODE_TXQEN_MASK;
++ 	if (qmode !=3D MTL_QUEUE_AVB)
++ 		mtl_tx_op |=3D MTL_OP_MODE_TXQEN;
++ 	else
++ 		mtl_tx_op |=3D MTL_OP_MODE_TXQEN_AV;
++=20
++ 	writel(mtl_tx_op, ioaddr +  MTL_CHAN_TX_OP_MODE(channel));
++ }
++=20
+  const struct stmmac_dma_ops dwmac4_dma_ops =3D {
+  	.reset =3D dwmac4_dma_reset,
+  	.init =3D dwmac4_dma_init,
+@@@ -441,7 -444,7 +454,8 @@@
+  	.set_rx_tail_ptr =3D dwmac4_set_rx_tail_ptr,
+  	.set_tx_tail_ptr =3D dwmac4_set_tx_tail_ptr,
+  	.enable_tso =3D dwmac4_enable_tso,
+ +	.set_bfsize =3D dwmac4_set_bfsize,
++ 	.qmode =3D dwmac4_qmode,
+  };
+ =20
+  const struct stmmac_dma_ops dwmac410_dma_ops =3D {
+@@@ -468,5 -471,5 +482,6 @@@
+  	.set_rx_tail_ptr =3D dwmac4_set_rx_tail_ptr,
+  	.set_tx_tail_ptr =3D dwmac4_set_tx_tail_ptr,
+  	.enable_tso =3D dwmac4_enable_tso,
+ +	.set_bfsize =3D dwmac4_set_bfsize,
++ 	.qmode =3D dwmac4_qmode,
+  };
+diff --cc drivers/net/ethernet/stmicro/stmmac/hwif.h
+index fe8b536b13f8,e2a965790648..000000000000
+--- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
++++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+@@@ -183,7 -183,7 +183,8 @@@ struct stmmac_dma_ops=20
+  	void (*set_rx_tail_ptr)(void __iomem *ioaddr, u32 tail_ptr, u32 chan);
+  	void (*set_tx_tail_ptr)(void __iomem *ioaddr, u32 tail_ptr, u32 chan);
+  	void (*enable_tso)(void __iomem *ioaddr, bool en, u32 chan);
+ +	void (*set_bfsize)(void __iomem *ioaddr, int bfsize, u32 chan);
++ 	void (*qmode)(void __iomem *ioaddr, u32 channel, u8 qmode);
+  };
+ =20
+  #define stmmac_reset(__priv, __args...) \
+@@@ -236,8 -236,8 +237,10 @@@
+  	stmmac_do_void_callback(__priv, dma, set_tx_tail_ptr, __args)
+  #define stmmac_enable_tso(__priv, __args...) \
+  	stmmac_do_void_callback(__priv, dma, enable_tso, __args)
+ +#define stmmac_set_dma_bfsize(__priv, __args...) \
+ +	stmmac_do_void_callback(__priv, dma, set_bfsize, __args)
++ #define stmmac_dma_qmode(__priv, __args...) \
++ 	stmmac_do_void_callback(__priv, dma, qmode, __args)
+ =20
+  struct mac_device_info;
+  struct net_device;
+
+--Sig_/jODOqf1DtYm7h3NcT_UXHXA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls5booACgkQAVBC80lX
+0GxTmQf9ElKlJ7tu70FtVxLgHVYC8qTnGro8tEmr0pgag7n895ToFcuSABSkoLTy
+jgQm+zJPtAlVPYqXkKpIaCdy4W5JCmoL9gTuHjV4j9oXZGCsrcR0HPLcgqXE5Jmz
+DHmCzUbhBmVBW0xi5apC1FF7RZ8sdMXmh58qWCrI5vpEjT45Cow3qN59Nwi+ggq9
+jD50MfCbdsn/H4k+skjf9T41oa4T4Tk22MPXWW82+z50NoKSjlnHPonDuXIlEWj0
+cHxbMVTBPkXbh7rPfl8lxfhGAabpDCIXiescGRzrIeVFroxZcylOwZSSmf7r6mko
+BNV2/9sa0jlM7+FA8nqD60uUoCXoyQ==
+=EvQ/
+-----END PGP SIGNATURE-----
+
+--Sig_/jODOqf1DtYm7h3NcT_UXHXA--
