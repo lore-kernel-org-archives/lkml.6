@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4932C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1841C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73A325C8F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73A325C8F
+	by mail.kernel.org (Postfix) with ESMTP id B8A6825C8F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:05:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A6825C8F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030437AbeGBLFE (ORCPT
+        id S1030475AbeGBLFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:05:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:57540 "EHLO foss.arm.com"
+        Mon, 2 Jul 2018 07:05:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:57608 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030359AbeGBLEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:04:47 -0400
+        id S1030417AbeGBLFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:05:02 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09AFB18A;
-        Mon,  2 Jul 2018 04:04:47 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A06E19F6;
+        Mon,  2 Jul 2018 04:05:02 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ED63F3F5BA;
-        Mon,  2 Jul 2018 04:04:44 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 495D73F5BA;
+        Mon,  2 Jul 2018 04:05:00 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, will.deacon@arm.com
 Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
         dave.martin@arm.com, hch@infradead.org, james.morse@arm.com,
         linux@dominikbrodowski.net, linux-fsdevel@vger.kernel.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv4 09/19] arm64: convert native/compat syscall entry to C
-Date:   Mon,  2 Jul 2018 12:04:05 +0100
-Message-Id: <20180702110415.10465-10-mark.rutland@arm.com>
+Subject: [PATCHv4 14/19] kernel: add kcompat_sys_{f,}statfs64()
+Date:   Mon,  2 Jul 2018 12:04:10 +0100
+Message-Id: <20180702110415.10465-15-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180702110415.10465-1-mark.rutland@arm.com>
 References: <20180702110415.10465-1-mark.rutland@arm.com>
@@ -45,148 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the syscall invocation logic is in C, we can migrate the rest
-of the syscall entry logic over, so that the entry assembly needn't look
-at the register values at all.
+Using this helper allows us to avoid the in-kernel calls to the
+compat_sys_{f,}statfs64() sycalls, as are necessary for parameter
+mangling in arm64's compat handling.
 
-The SVE reset across syscall logic now unconditionally clears TIF_SVE,
-but sve_user_disable() will only write back to CPACR_EL1 when SVE is
-actually enabled.
+Following the example of ksys_* functions, kcompat_sys_* functions are
+intended to be a drop-in replacement for their compat_sys_*
+counterparts, with the same calling convention.
+
+This is necessary to enable conversion of arm64's syscall handling to
+use pt_regs wrappers.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- arch/arm64/kernel/entry.S   | 42 ++++--------------------------------------
- arch/arm64/kernel/syscall.c | 41 +++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 43 insertions(+), 40 deletions(-)
+ fs/statfs.c            | 14 ++++++++++++--
+ include/linux/compat.h | 11 +++++++++++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 05b9f03f3e00..156c4e3fd1a4 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -720,14 +720,9 @@ el0_sync_compat:
- 	b.ge	el0_dbg
- 	b	el0_inv
- el0_svc_compat:
--	/*
--	 * AArch32 syscall handling
--	 */
--	ldr	x16, [tsk, #TSK_TI_FLAGS]	// load thread flags
--	adrp	stbl, compat_sys_call_table	// load compat syscall table pointer
--	mov	wscno, w7			// syscall number in w7 (r7)
--	mov     wsc_nr, #__NR_compat_syscalls
--	b	el0_svc_naked
-+	mov	x0, sp
-+	bl	el0_svc_compat_handler
-+	b	ret_to_user
- 
- 	.align	6
- el0_irq_compat:
-@@ -925,37 +920,8 @@ ENDPROC(ret_to_user)
-  */
- 	.align	6
- el0_svc:
--	ldr	x16, [tsk, #TSK_TI_FLAGS]	// load thread flags
--	adrp	stbl, sys_call_table		// load syscall table pointer
--	mov	wscno, w8			// syscall number in w8
--	mov	wsc_nr, #__NR_syscalls
--
--#ifdef CONFIG_ARM64_SVE
--alternative_if_not ARM64_SVE
--	b	el0_svc_naked
--alternative_else_nop_endif
--	tbz	x16, #TIF_SVE, el0_svc_naked	// Skip unless TIF_SVE set:
--	bic	x16, x16, #_TIF_SVE		// discard SVE state
--	str	x16, [tsk, #TSK_TI_FLAGS]
--
--	/*
--	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
--	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
--	 * happens if a context switch or kernel_neon_begin() or context
--	 * modification (sigreturn, ptrace) intervenes.
--	 * So, ensure that CPACR_EL1 is already correct for the fast-path case:
--	 */
--	mrs	x9, cpacr_el1
--	bic	x9, x9, #CPACR_EL1_ZEN_EL0EN	// disable SVE for el0
--	msr	cpacr_el1, x9			// synchronised by eret to el0
--#endif
--
--el0_svc_naked:					// compat entry point
- 	mov	x0, sp
--	mov	w1, wscno
--	mov	w2, wsc_nr
--	mov	x3, stbl
--	bl	el0_svc_common
-+	bl	el0_svc_handler
- 	b	ret_to_user
- ENDPROC(el0_svc)
- 
-diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-index e3153ffe7f8e..ea4fc5eea182 100644
---- a/arch/arm64/kernel/syscall.c
-+++ b/arch/arm64/kernel/syscall.c
-@@ -8,7 +8,9 @@
- #include <linux/syscalls.h>
- 
- #include <asm/daifflags.h>
-+#include <asm/fpsimd.h>
- #include <asm/thread_info.h>
-+#include <asm/unistd.h>
- 
- long compat_arm_syscall(struct pt_regs *regs);
- 
-@@ -61,8 +63,8 @@ static inline bool has_syscall_work(unsigned long flags)
- int syscall_trace_enter(struct pt_regs *regs);
- void syscall_trace_exit(struct pt_regs *regs);
- 
--asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
--			       syscall_fn_t syscall_table[])
-+static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-+			   syscall_fn_t syscall_table[])
- {
- 	unsigned long flags = current_thread_info()->flags;
- 
-@@ -99,3 +101,38 @@ asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- trace_exit:
- 	syscall_trace_exit(regs);
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 5b2a24f0f263..f0216629621d 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -335,7 +335,7 @@ static int put_compat_statfs64(struct compat_statfs64 __user *ubuf, struct kstat
+ 	return 0;
  }
-+
-+static inline void sve_user_discard(void)
+ 
+-COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, sz, struct compat_statfs64 __user *, buf)
++int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz, struct compat_statfs64 __user * buf)
+ {
+ 	struct kstatfs tmp;
+ 	int error;
+@@ -349,7 +349,12 @@ COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, s
+ 	return error;
+ }
+ 
+-COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct compat_statfs64 __user *, buf)
++COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, sz, struct compat_statfs64 __user *, buf)
 +{
-+	if (!system_supports_sve())
-+		return;
-+
-+	clear_thread_flag(TIF_SVE);
-+
-+	/*
-+	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
-+	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
-+	 * happens if a context switch or kernel_neon_begin() or context
-+	 * modification (sigreturn, ptrace) intervenes.
-+	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
-+	 */
-+	sve_user_disable();
++	return kcompat_sys_statfs64(pathname, sz, buf);
 +}
 +
-+extern syscall_fn_t sys_call_table[];
-+
-+asmlinkage void el0_svc_handler(struct pt_regs *regs)
++int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz, struct compat_statfs64 __user * buf)
+ {
+ 	struct kstatfs tmp;
+ 	int error;
+@@ -363,6 +368,11 @@ COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct co
+ 	return error;
+ }
+ 
++COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct compat_statfs64 __user *, buf)
 +{
-+	sve_user_discard();
-+	el0_svc_common(regs, regs->regs[8], __NR_syscalls, sys_call_table);
++	return kcompat_sys_fstatfs64(fd, sz, buf);
 +}
 +
-+#ifdef CONFIG_COMPAT
-+extern syscall_fn_t compat_sys_call_table[];
+ /*
+  * This is a copy of sys_ustat, just dealing with a structure layout.
+  * Given how simple this syscall is that apporach is more maintainable
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index c68acc47da57..43f4ed44c5d5 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -1028,6 +1028,17 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
+ 	return ctv;
+ }
+ 
++/*
++ * Kernel code should not call compat syscalls (i.e., compat_sys_xyzyyz())
++ * directly.  Instead, use one of the functions which work equivalently, such
++ * as the kcompat_sys_xyzyyz() functions prototyped below.
++ */
 +
-+asmlinkage void el0_svc_compat_handler(struct pt_regs *regs)
-+{
-+	el0_svc_common(regs, regs->regs[7], __NR_compat_syscalls,
-+		       compat_sys_call_table);
-+}
-+#endif
++int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz,
++		     struct compat_statfs64 __user * buf);
++int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz,
++			  struct compat_statfs64 __user * buf);
++
+ #else /* !CONFIG_COMPAT */
+ 
+ #define is_compat_task() (0)
 -- 
 2.11.0
 
