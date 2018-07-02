@@ -2,136 +2,160 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB54C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC85C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F9D24FE3
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:21:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fFuqR2/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F9D24FE3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C2E5204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:23:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C2E5204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932170AbeGBVVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:21:15 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:40616 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753505AbeGBVUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:20:14 -0400
-Received: by mail-it0-f67.google.com with SMTP id 188-v6so255490ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kPbxhTSWC6O0G+NWKxurVzbQQPIYMg5fubB9OKv6290=;
-        b=fFuqR2/9BeLWrYyal2lCpLKX0IlXcM4wfFuK+OT0cZ0vIggq3Z2EyYwuVQdot1FugP
-         LRzceLNAYBNe+FnZlBg8ITBTNJdaSUiz8H3H/S3PWfgMlUALzXhiILwg+/fhZFwIhvmv
-         fR6Ct05wfk0hf0zy4ZBkMBHqcINFYZyEjzFO0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=kPbxhTSWC6O0G+NWKxurVzbQQPIYMg5fubB9OKv6290=;
-        b=TZ4ksx7VvniAJjAr5kYFd/eOPLxnvyNpbidKmnvQ6XVAIUP9X22ERtrNQqWNh7dUxA
-         g68zlOLe/jOAb2E8+na/0uFQni71PP/GMS8VMVKqIcnWu8kDlpQ90TLwzvONPkXAaibV
-         GvWb7ILW14YlX95qzCTQBe9j4t4/XaFEv9FEy7xpvdHgh68GDYx7jRchMU504Lsh7GaM
-         AJ2ckgPH9BvunVwRRIk90PADO2KwnDleMmyZPImd0NW9z2eU3lN0tIvqCXkgSdQRPAl/
-         ihPmbyjHhR4ItBkRHPuX//F/OGZfc+Wn4OXUieHBopP7TcaJmAKDdig1Pyt1kdJzKDKp
-         J6Jw==
-X-Gm-Message-State: APt69E086vUbUWvt2aRAKY8oVBz3+rn+AI5JSmE6mLg5LU0aj0EoDiVV
-        O78Myb0Pv0VNK/DIP8AzFrwAeQ==
-X-Google-Smtp-Source: AAOMgpeWrZvpkqugR09+1c2G/TxtS12yrdAgbgJ1ISIMUcMDOxO3tImz43tVW880qU/2P32Ubf7/7w==
-X-Received: by 2002:a24:73c1:: with SMTP id y184-v6mr2977234itb.31.1530566414328;
-        Mon, 02 Jul 2018 14:20:14 -0700 (PDT)
-Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
-        by smtp.gmail.com with ESMTPSA id h75-v6sm776729ioh.50.2018.07.02.14.20.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 14:20:13 -0700 (PDT)
-From:   Daniel Kurtz <djkurtz@chromium.org>
-Cc:     Daniel Kurtz <djkurtz@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
-        AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 5/6] ASoC: AMD: Do not generate interrups for every captured sample
-Date:   Mon,  2 Jul 2018 15:19:54 -0600
-Message-Id: <20180702211956.149355-5-djkurtz@chromium.org>
-X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
-In-Reply-To: <20180702211956.149355-1-djkurtz@chromium.org>
-References: <20180702211956.149355-1-djkurtz@chromium.org>
-To:     unlisted-recipients:; (no To-header on input)
+        id S1753553AbeGBVXg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 17:23:36 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:41382 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753191AbeGBVXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 17:23:31 -0400
+Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1fa6IB-00076m-0Y; Mon, 02 Jul 2018 23:23:27 +0200
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To:     Michael Krufky <mkrufky@linuxtv.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Andy Walls <awalls@md.metrocast.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH v7 0/6] [media] Add analog mode support for Medion MD95700
+Date:   Mon,  2 Jul 2018 23:23:20 +0200
+Message-Id: <cover.1530565770.git.mail@maciej.szmigiero.name>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On capture, audio data is first copied from I2S to ACP memory, and then
-from ACP to SYSRAM.  The I2S_TO_ACP_DMA interrupt fires on every sample
-transferred from I2S to ACP memory.  That is it fires ~48000 times per
-second when capturing @ 48 kHz.  Since we don't do anything on this
-interrupt anyway, disable it to save quite a few unnecessary interrupts.
-The real "work" (calling snd_pcm_period_elapsed()) is done when transfer
-from ACP to SYSRAM is complete.
+This series adds support for analog part of Medion 95700 in the cxusb
+driver.
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
----
- sound/soc/amd/acp-pcm-dma.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+What works:
+* Video capture at various sizes with sequential fields,
+* Input switching (TV Tuner, Composite, S-Video),
+* TV and radio tuning,
+* Video standard switching and auto detection,
+* Radio mode switching (stereo / mono),
+* Unplugging while capturing,
+* DVB / analog coexistence,
+* Raw BT.656 stream support.
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 2a6a6e65e27c3..ab60129f4f266 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -412,10 +412,8 @@ static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
- 	switch (ch_num) {
- 	case ACP_TO_I2S_DMA_CH_NUM:
- 	case ACP_TO_SYSRAM_CH_NUM:
--	case I2S_TO_ACP_DMA_CH_NUM:
- 	case ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM:
- 	case ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM:
--	case I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM:
- 		dma_ctrl |= ACP_DMA_CNTL_0__DMAChIOCEn_MASK;
- 		break;
- 	default:
-@@ -704,12 +702,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
--	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
--		valid_irq = true;
--		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
--			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
--	}
--
- 	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
- 		valid_irq = true;
- 		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
-@@ -718,13 +710,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
--	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
--		valid_irq = true;
--		acp_reg_write((intr_flag &
--			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
--			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
--	}
--
- 	if (valid_irq)
- 		return IRQ_HANDLED;
- 	else
--- 
-2.18.0.399.gad0ab374a1-goog
+What does not work yet:
+* Audio,
+* VBI,
+* Picture controls.
 
+This series (as a one patch) was submitted for inclusion few years ago,
+then waited few months in a patch queue.
+Unfortunately, by the time it was supposed to be merged there
+were enough changes in media that it was no longer mergeable.
+
+I thought at that time that I will be able to rebase and retest it soon
+but unfortunately up till now I was never able to find enough time to do
+so.
+Also, with the passing of time the implementation diverged more and
+more from the current kernel code, necessitating even more reworking.
+
+That last iteration can be found here:
+https://patchwork.linuxtv.org/patch/8048/
+
+Since that version there had been the following changes:
+* Adaptation to changes in V4L2 / DVB core,
+
+* Radio device was added, with a possibility to tune to a FM radio
+station and switch between stereo and mono modes (tested by taping
+audio signal directly at tuner output pin),
+
+* DVB / analog coexistence was improved - resolved a few cases where
+DVB core would switch off power or reset the tuner when the device
+was still being used but in the analog mode,
+
+* Fixed issues reported by v4l2-compliance,
+
+* Switching to raw BT.656 mode is now done by a custom streaming
+parameter set via VIDIOC_S_PARM ioctl instead of using a
+V4L2_BUF_TYPE_PRIVATE buffer (which was removed from V4L2),
+
+* General small code cleanups (like using BIT() or ARRAY_SIZE() macros
+instead of open coding them, code formatting improvements, etc.).
+
+Changes from v1:
+* Only support configuration of cx25840 pins that the cxusb driver is
+actually using so there is no need for an ugly CX25840_PIN() macro,
+
+* Split cxusb changes into two patches: first one implementing
+digital / analog coexistence in this driver, second one adding the
+actual implementation of the analog mode,
+
+* Fix a warning reported by kbuild test robot.
+
+Changes from v2:
+* Split out ivtv cx25840 platform data zero-initialization to a separate
+commit,
+
+* Add kernel-doc description of struct cx25840_state,
+
+* Make sure that all variables used in CX25840_VCONFIG_OPTION() and
+CX25840_VCONFIG_SET_BIT() macros are their explicit parameters,
+
+* Split out some code from cxusb_medion_copy_field() and
+cxusb_medion_v_complete_work() functions to separate ones to increase
+their readability,
+
+* Generate masks using GENMASK() and BIT() macros in cx25840.h and
+cxusb.h.
+
+Changes from v3:
+Add SPDX tag to a newly added "cxusb-analog.c" file.
+
+Changes from v4:
+* Make analog support conditional on a new DVB_USB_CXUSB_ANALOG Kconfig
+option,
+
+* Use '//' comments in the header of a newly added "cxusb-analog.c"
+file,
+
+* Don't print errors on memory allocation failures,
+
+* Get rid of the driver MODULE_VERSION(),
+
+* Small formating fix of a one line.
+
+Changes from v5:
+Rebase onto current media_tree/master.
+
+Changes from v6:
+Adapt to commit 4eb2f55728abbe changing V4L2_SUBDEV_IO_PIN_* from bit
+masks to bit numbers.
+Thanks to Dan Carpenter's kbuild bot for catching this.
+
+ drivers/media/i2c/cx25840/cx25840-core.c |  396 ++++-
+ drivers/media/i2c/cx25840/cx25840-core.h |   46 +-
+ drivers/media/i2c/cx25840/cx25840-vbi.c  |    3 +
+ drivers/media/pci/ivtv/ivtv-i2c.c        |    1 +
+ drivers/media/tuners/tuner-simple.c      |    5 +-
+ drivers/media/usb/dvb-usb/Kconfig        |   16 +-
+ drivers/media/usb/dvb-usb/Makefile       |    3 +
+ drivers/media/usb/dvb-usb/cxusb-analog.c | 1914 ++++++++++++++++++++++
+ drivers/media/usb/dvb-usb/cxusb.c        |  452 ++++-
+ drivers/media/usb/dvb-usb/cxusb.h        |  154 ++
+ drivers/media/usb/dvb-usb/dvb-usb-dvb.c  |   20 +-
+ drivers/media/usb/dvb-usb/dvb-usb-init.c |   13 +
+ drivers/media/usb/dvb-usb/dvb-usb.h      |    8 +
+ include/media/drv-intf/cx25840.h         |   74 +-
+ 14 files changed, 3042 insertions(+), 63 deletions(-)
+ create mode 100644 drivers/media/usb/dvb-usb/cxusb-analog.c
