@@ -2,127 +2,137 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D925AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF3EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90C12254F8
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:02:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efvJwpOE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C12254F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 339CA2550D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:04:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 339CA2550D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeGBLB5 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:01:57 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34774 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752862AbeGBLBz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:01:55 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so3141790ois.1;
-        Mon, 02 Jul 2018 04:01:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=buAaaDwWwD7qaxqpvFyjA3ZbJ23ck2dBEUihcY9rcVg=;
-        b=efvJwpOExC7qEY+/YqR0UvgHqM+fuP8miaXzc1TGpiLumgJIUPkfcmkl4QLviNv/t0
-         B4n+/Lv2Nw0rjGjkltNzOt0yR9jTCsxUcL81iIF9eNvnJs+bCo+GpQN0P07VkqgD4P9Q
-         eX9USfntAKZpBV4jfRc7zVKVg1e/rCyKWW94JIR41UK4bSW+Yrwsr1wUcbSeR6hxsX3y
-         I+nIkTOfMqTFyyYejR5QQJbklXAenjKE5KVDwL3sOHFEtRKtfrKZrJJ7NMo4tQdXLkOY
-         rtiuen/u7/ppqLVmIqrePyuI8b5EKBsfAASSGDmWz2K8p972DaobgQn7dd7xLQO1Cbps
-         MALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=buAaaDwWwD7qaxqpvFyjA3ZbJ23ck2dBEUihcY9rcVg=;
-        b=sCb1KBPzXK1KWk1tgkKYZ1iiebj3h5HDoiidzBgdXbuTfRP/RRv0fZOLSTzS7XuqwK
-         52KAsI3CWGi0xDVevhF2WQfcEUqe2WW9LDlpzzFqdMVc1QNtKU+sEPNyRMFB+Q72X5Dr
-         Vu31+8OVvBUfJfyYCp8vDPtcaUXmxY6jx6JMdL9hSn0rQlpvgBDtEu+A/og8w1yvXGOX
-         8vROCc6H/T/tcM2QVsildfFXvc6mmhfpP16YNLqAPhH9/B4VrVcLz9So9KtKhtkjpKPv
-         jnr5GmU/y7oVkZB5XclBCr8BkeMRipG8cK20/HOPU0he/KcLXjSArT2FXztptKYvy85f
-         30ng==
-X-Gm-Message-State: APt69E2rB0arThss+mGl4gy0+yEbc7IWHVdePvCG6r+ftflS83u6vxaQ
-        0Q6elPUgyuGUMwmUqFVQ51s4OyhmqfPxmI3+JyQ=
-X-Google-Smtp-Source: AAOMgpfXhqc9lSTDGaPwOwn0Wk+hIQgUtkNxP6rgUZks4KHVgT9GaUQU5aX7v3WRUWcq1tQWn4LaNdsQJzcCaUedpoE=
-X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr8084810oie.233.1530529315017;
- Mon, 02 Jul 2018 04:01:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1427:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 04:01:54 -0700 (PDT)
-In-Reply-To: <3895a0d8-9cca-2512-a06e-0ee2ac7db773@arm.com>
-References: <1530289077-2444-1-git-send-email-sudeep.holla@arm.com>
- <CAJZ5v0gnspK3soa5j8iqU9QDM78MMBbz8YC9s7TOJ5Qwh7=mZg@mail.gmail.com> <3895a0d8-9cca-2512-a06e-0ee2ac7db773@arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 2 Jul 2018 13:01:54 +0200
-X-Google-Sender-Auth: HmtaY56gRdDh_-5tADUNxhrDc64
-Message-ID: <CAJZ5v0gh0-psU7bbLf5zDGW5adQNALSdWdedbCgDoh1F-peh0g@mail.gmail.com>
-Subject: Re: [PATCH] ACPI/PPTT: use ACPI ID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID
- is set
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S934166AbeGBLE0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 07:04:26 -0400
+Received: from foss.arm.com ([217.140.101.70]:57422 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752862AbeGBLEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:04:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F12C818A;
+        Mon,  2 Jul 2018 04:04:21 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DFA913F5BA;
+        Mon,  2 Jul 2018 04:04:19 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, will.deacon@arm.com
+Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        dave.martin@arm.com, hch@infradead.org, james.morse@arm.com,
+        linux@dominikbrodowski.net, linux-fsdevel@vger.kernel.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, viro@zeniv.linux.org.uk
+Subject: [PATCHv4 00/19] arm64: invoke syscalls with pt_regs
+Date:   Mon,  2 Jul 2018 12:03:56 +0100
+Message-Id: <20180702110415.10465-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 11:57 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
->
-> On 02/07/18 10:06, Rafael J. Wysocki wrote:
->> On Fri, Jun 29, 2018 at 6:17 PM, Sudeep Holla <sudeep.holla@arm.com> wro=
-te:
->>> Currently we use the ACPI processor ID only for the leaf/processor node=
-s
->>> as the specification states it must match the value of ACPI processor I=
-D
->>> field in the processor=E2=80=99s entry in the MADT.
->>>
->>> However, if a PPTT structure represents processors group, it match a
->>> processor container UID in the namespace and ACPI_PPTT_ACPI_PROCESSOR_I=
-D_VALID
->>> flag describe whether the ACPI processor ID is valid.
->>>
->>> Lets use UID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set to be
->>> consistent instead of using table offset as it's currently done for non
->>> leaf nodes.
->>>
->>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>> ---
->>>  drivers/acpi/pptt.c | 10 ++++++++--
->>>  1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>> Hi,
->>>
->>> There's ongoing discussion on assigning ID based in OS using simple
->>> counters. It can never be consistent with firmware's view. So if the
->>> firmware provides valid UID for non-processors node, we must use it.
->>
->> OK
->>
->> Do you regard this as a fix for the recently merged PPTT material?  If
->> so, I should apply it as a fix for 4.18.
->>
->
-> Yes, it should be considered as fix IMO.
+This series reworks arm64's syscall handling to minimize the propagation
+of user-controlled register values into speculated code paths. As with
+x86 [1], a wrapper is generated for each syscall, which extracts the
+argument from a struct pt_regs. During kernel entry from userspace,
+registers are zeroed.
 
-So any chance to provide a Fixes: tag?
+The arm64 kernel code directly invokes some syscalls which the x86 code
+doesn't, so I've added ksys_* wrappers for these, following the x86
+example. The rest of the series is arm64-specific.
+
+I've pushed the series out to my arm64/syscall-regs branch [2] on
+kernel.org.
+
+Since v1 [3]:
+* Rebase atop of arm64 for-next/core (for SSBD conflicts)
+* Move ksys_personality logic into <linux/syscalls.h>
+* Move kcompat_sys_* wrappers to <linux/compat.h>
+* Fix scno bounds check to use unsigned comparison
+* Fix sve_user_reset() call in el0_svc_handler()
+* Add BUILD_BUG() to the !CONFIG_ARM64_SVE stubs
+* Accumulate acked-by / reviewed-by tags
+
+Since v2 [4]:
+* Rebase to v4.18-rc1
+* Take upper 32 RES0 bits of SCTLR_ELx into account
+* Accumulate acks
+
+Since v3 [5]:
+* Rebase to v4.18-rc3 to avoid conflict with FPSIMD/SVE fixes
+* Accumulate acks / reviewed-by tags
+* Rework __invoke_syscall() for consistency with do_ni_syscall()
+* Rename sve_user_reset() to sve_user_discard()
+* Tidied up comment placement
+* Typo fixes
+
+Thanks,
+Mark.
+
+[1] https://lkml.kernel.org/r/20180330093720.6780-1-linux@dominikbrodowski.net
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git
+[3] https://lkml.kernel.org/r/20180514094640.27569-1-mark.rutland@arm.com
+[4] https://lkml.kernel.org/r/20180601112441.37810-1-mark.rutland@arm.com
+[5] https://lkml.kernel.org/r/20180618120310.39527-1-mark.rutland@arm.com
+
+Mark Rutland (19):
+  arm64: consistently use unsigned long for thread flags
+  arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
+  arm64: kill config_sctlr_el1()
+  arm64: kill change_cpacr()
+  arm64: move sve_user_{enable,disable} to <asm/fpsimd.h>
+  arm64: remove sigreturn wrappers
+  arm64: convert raw syscall invocation to C
+  arm64: convert syscall trace logic to C
+  arm64: convert native/compat syscall entry to C
+  arm64: don't restore GPRs when context tracking
+  arm64: don't reload GPRs after apply_ssbd
+  arm64: zero GPRs upon entry from EL0
+  kernel: add ksys_personality()
+  kernel: add kcompat_sys_{f,}statfs64()
+  arm64: remove in-kernel call to sys_personality()
+  arm64: use {COMPAT,}SYSCALL_DEFINE0 for sigreturn
+  arm64: use SYSCALL_DEFINE6() for mmap
+  arm64: convert compat wrappers to C
+  arm64: implement syscall wrappers
+
+ arch/arm64/Kconfig                       |   1 +
+ arch/arm64/include/asm/fpsimd.h          |  17 +++-
+ arch/arm64/include/asm/syscall_wrapper.h |  80 ++++++++++++++++
+ arch/arm64/include/asm/sysreg.h          |  30 ++----
+ arch/arm64/include/asm/unistd32.h        |  26 ++---
+ arch/arm64/kernel/Makefile               |   5 +-
+ arch/arm64/kernel/armv8_deprecated.c     |   8 +-
+ arch/arm64/kernel/cpu_errata.c           |   3 +-
+ arch/arm64/kernel/entry.S                | 157 ++++---------------------------
+ arch/arm64/kernel/entry32.S              | 121 ------------------------
+ arch/arm64/kernel/fpsimd.c               |  19 ----
+ arch/arm64/kernel/signal.c               |   5 +-
+ arch/arm64/kernel/signal32.c             |   6 +-
+ arch/arm64/kernel/sys.c                  |  19 ++--
+ arch/arm64/kernel/sys32.c                | 127 ++++++++++++++++++++++---
+ arch/arm64/kernel/syscall.c              | 137 +++++++++++++++++++++++++++
+ arch/arm64/kernel/traps.c                |  18 +---
+ arch/arm64/mm/fault.c                    |   2 +-
+ fs/statfs.c                              |  14 ++-
+ include/linux/compat.h                   |  11 +++
+ include/linux/syscalls.h                 |  11 +++
+ 21 files changed, 453 insertions(+), 364 deletions(-)
+ create mode 100644 arch/arm64/include/asm/syscall_wrapper.h
+ delete mode 100644 arch/arm64/kernel/entry32.S
+ create mode 100644 arch/arm64/kernel/syscall.c
+
+-- 
+2.11.0
+
