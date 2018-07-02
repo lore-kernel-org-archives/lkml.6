@@ -2,103 +2,95 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EF5C6778C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A96BC6778C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA3BF25451
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3BF25451
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id AAD502546F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 01:12:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O6dnKFML";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O6dnKFML"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAD502546F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932625AbeGBBLG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 21:11:06 -0400
-Received: from mout.gmx.net ([212.227.15.19]:34383 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932354AbeGBBLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 21:11:05 -0400
-Received: from [172.17.46.209] ([122.224.77.194]) by mail.gmx.com (mrgmx001
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0Ltqb7-1gIee13NVV-011EcQ; Mon, 02
- Jul 2018 03:11:01 +0200
-Subject: Re: [PATCH] kernel/power: cast PAGE_SIZE to int when comparing with
- error code
-To:     rjw@rjwysocki.net
-Cc:     pavel@ucw.cz, cgxu519@gmx.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180625053058.25206-1-cgxu519@gmx.com>
-From:   cgxu519 <cgxu519@gmx.com>
-Message-ID: <0a812d02-d85d-f685-6e7f-f4dfe22f9629@gmx.com>
-Date:   Mon, 2 Jul 2018 09:10:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180625053058.25206-1-cgxu519@gmx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:CvyVtmqWLvgC9lG71PAbpGIcbsnQIA6t1gByO/Gi1hzoaOzrybC
- qpsCmgus0ip6C/4v21k60MtIEJYverszmSW7YuxhpsNkDKPP6nPjdE2UlkC7RU+GPLsS/gB
- wTHjC6h1lDZz3U4LzxHlJiQ1in7+QKE0ADfc2SDJ1M0v2RiGY/7PbwlaNSK8mECdJaqE0OF
- kNY/X/rGbJ6S3VqBk6UwA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:tgB2VTSADlg=:5m2tuVAKOXM2o8cH58rV61
- AmwqW4jPQUD9SBuqKTyiUiH5MYJjEUhEAecLiHWhNHao4P62k/Z1xuLFhQB1FiW4ysBDkLxwN
- w0hoomeJj9uXo/93yPkOrX9htLAH6cU5lqRRQa8tbJ3KDBHcWKA4CjVg1ne3DUK+s31Lf8Gbs
- biK5e3YN0wyfmjZEbu9UmtwVungeri/ke93VO73+XXSXp2gANZqPb3alPqCQx+1uAcGzjXYPT
- 2uSBBHsZH7OdHx7dd3eRQoO8Hg1THyeVifS2fKGbEEM5SVREfsb8x4yAe8lUXe3+cFRqI+A/x
- CnTnQ3pZGx8LBo13i6t58wPv4EHrB9OkPxRhvMPeI8gTWrZYdEqwiPyDq7z5D35BdjlydD0C1
- V/WFhQROy2bXZ9Vvzs3BBY20HyJydqWX9tUBwx/S6rhWg/8OzyO3RE72y4lLP7BqnL7zme/v1
- 4tsVrcdrz9WdCtrY72kU4e9pWqqsI2QrukGVxLuoHwme3dRuYQBJwwfjk8pUm6fYuDECVrefZ
- No2WD3ALF/IIGzYlQqy9BNfPq1q+BZ/0uQxmZ8/0rhcRpeZpR6u74ezSIJhX9NvZsO6oVMFZC
- xiq/wlbVY8JnLIUKxR5EfNEdZURs5BBc0NvzdsdTBn8b8wh8gaPhZ29mOGvbqfzBvVFLb0GeM
- icLFnPuySov0Cbbdq95hAkYJ7YDCnUT88bxMrHv83v26uw8A5Uf9x/9QTtquXZmYArq9z+HKA
- kxrEIwA8mItNVMlANJlfPQIqRk9lqNuhWmQtGSXCVvS7zNYydybYdT9CZwzm+XSiy8CHQkb+r
- Jgo+IlM
+        id S932644AbeGBBMD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 21:12:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753046AbeGBBMC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 21:12:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B3D4260452; Mon,  2 Jul 2018 01:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530493921;
+        bh=a5Ujte802Ceibov3ZIHbR41qUs3kOEw9yi450DcLXBc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=O6dnKFMLlq1OWxwFMp2OyUTRE548o67hw7gm8z/Juhx0sDWrZ1FSOf3Dr4Moq6lPv
+         xjUE+VqjVcKjpiznLzBnBK82iJneHU+skInLYxOq4lVZw7APxT2ohoz5PddN4zg5r3
+         3Tjxrlb+Q9EkUenvaodXSGU3SUhQeaKrAC93m5ZY=
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1CF6A6034E;
+        Mon,  2 Jul 2018 01:12:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530493921;
+        bh=a5Ujte802Ceibov3ZIHbR41qUs3kOEw9yi450DcLXBc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=O6dnKFMLlq1OWxwFMp2OyUTRE548o67hw7gm8z/Juhx0sDWrZ1FSOf3Dr4Moq6lPv
+         xjUE+VqjVcKjpiznLzBnBK82iJneHU+skInLYxOq4lVZw7APxT2ohoz5PddN4zg5r3
+         3Tjxrlb+Q9EkUenvaodXSGU3SUhQeaKrAC93m5ZY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CF6A6034E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     neilb@suse.com, tgraf@suug.ch, linux-arm-msm@vger.kernel.org
+Cc:     herbert@gondor.apana.org.au, linux-kernel@vger.kernel.org,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH] lib: rhashtable: Correct self-assignment in rhashtable.c
+Date:   Sun,  1 Jul 2018 18:11:46 -0700
+Message-Id: <1530493906-19711-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+In file lib/rhashtable.c line 777, skip variable is assigned to
+itself. The following error was observed:
 
-Could you have a look at this simple patch?
+lib/rhashtable.c:777:41: warning: explicitly assigning value of
+variable of type 'int' to itself [-Wself-assign] error, forbidden
+warning: rhashtable.c:777
+This error was found when compiling with Clang 6.0. Change it to iter->skip.
 
-Thanks,
-Chengguang
+Change-Id: I5abd1ce5ba76737a73bd6eca94b07b1bd5267523
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ lib/rhashtable.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 06/25/2018 01:30 PM, Chengguang Xu wrote:
-> If PAGE_SIZE is unsigned type then negative error code will be
-> larger than PAGE_SIZE.
->
-> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-> ---
->   kernel/power/swap.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> index c2bcf97d24c8..d7f6c1a288d3 100644
-> --- a/kernel/power/swap.c
-> +++ b/kernel/power/swap.c
-> @@ -923,7 +923,7 @@ int swsusp_write(unsigned int flags)
->   	}
->   	memset(&snapshot, 0, sizeof(struct snapshot_handle));
->   	error = snapshot_read_next(&snapshot);
-> -	if (error < PAGE_SIZE) {
-> +	if (error < (int)PAGE_SIZE) {
->   		if (error >= 0)
->   			error = -EFAULT;
->   
-> @@ -1483,7 +1483,7 @@ int swsusp_read(unsigned int *flags_p)
->   
->   	memset(&snapshot, 0, sizeof(struct snapshot_handle));
->   	error = snapshot_write_next(&snapshot);
-> -	if (error < PAGE_SIZE)
-> +	if (error < (int)PAGE_SIZE)
->   		return error < 0 ? error : -EFAULT;
->   	header = (struct swsusp_info *)data_of(snapshot);
->   	error = get_swap_reader(&handle, flags_p);
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 9427b57..3109b2e 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -774,7 +774,7 @@ int rhashtable_walk_start_check(struct rhashtable_iter *iter)
+ 				skip++;
+ 				if (list == iter->list) {
+ 					iter->p = p;
+-					skip = skip;
++					iter->skip = skip;
+ 					goto found;
+ 				}
+ 			}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
