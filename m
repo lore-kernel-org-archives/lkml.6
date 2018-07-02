@@ -2,105 +2,227 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B825C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B70CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10444253BA
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10444253BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 325E425421
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:00:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 325E425421
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752598AbeGBM7N (ORCPT
+        id S1752292AbeGBNAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:59:13 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:46600 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752163AbeGBM7L (ORCPT
+        Mon, 2 Jul 2018 09:00:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52622 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752146AbeGBNAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:59:11 -0400
-Received: by mail-ua0-f195.google.com with SMTP id r18-v6so9973035ual.13;
-        Mon, 02 Jul 2018 05:59:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YcSfcO5uVMR4CK4iBm716k8Rw1TfsDT23f4ealeYtS4=;
-        b=TiPnFgUJ8wjWwzfIEnkwIHpzvI1pwjXO9e910Y/vm+Q4TaOgTg8qiYDFmy+5/nPFJX
-         bApOc8RB2bY5BefzM7tVQzSd2Ii9FcNvGw2vnNt/4Z6eKYmNiy7ptjKkcmo3KzJyEA6M
-         YCPQ8oHWo+iF1VuO8uGaImKL9IdX8XW0eLtJm5DDBBGPeyZ9gXrfEpglTjq8Zzr3KBof
-         E9TC/0L2Dm2jh5RPZ9+zhS7wAqk8oRcMj+63eZy3NlT96Z777Qk6/370tfdZ8BEnemru
-         Ruej80E4dm8QZQ/07qhmfQqgargpXvaOL17l8BP9vUE+MTnE7RfHzzUMXdqZFmX6MtCm
-         +1eQ==
-X-Gm-Message-State: APt69E37McdLphMVQIs1vOYkBouPUUioETx2TB8r2tp93yIsfJM3xf/7
-        CV8OYM67aem3LlmmcVg786fvRFArGh8Jac7lxLM=
-X-Google-Smtp-Source: AAOMgpe6sDSUAZCjP8DiEXOqrB7xDpcdVjGu0oyFopx7hWsgIsa4/vwiZPY1srxcUjQImBLjm+L4SH0XwieV7Wq0JRk=
-X-Received: by 2002:ab0:1b6c:: with SMTP id n44-v6mr10151128uai.4.1530536350669;
- Mon, 02 Jul 2018 05:59:10 -0700 (PDT)
+        Mon, 2 Jul 2018 09:00:13 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62Cx697118908
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 09:00:12 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyksdhtxs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 09:00:12 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 09:00:10 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 09:00:05 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62D02GQ7864506
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 13:00:03 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ABB0DB2075;
+        Mon,  2 Jul 2018 08:59:47 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7FE1CB2071;
+        Mon,  2 Jul 2018 08:59:47 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.206.224])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 08:59:47 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4B89816CA312; Mon,  2 Jul 2018 06:02:14 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 06:02:14 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH RFC tip/core/rcu 1/2] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180627204835.GA25456@linux.vnet.ibm.com>
+ <20180627204915.27253-1-paulmck@linux.vnet.ibm.com>
+ <20180701183828.GB111992@joelaf.mtv.corp.google.com>
+ <20180701222749.GD3593@linux.vnet.ibm.com>
+ <20180702003553.GA95395@joelaf.mtv.corp.google.com>
+ <20180702031132.GI3593@linux.vnet.ibm.com>
+ <20180702044956.GB158348@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <1530428560-4440-1-git-send-email-gilad@benyossef.com> <1530428560-4440-7-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1530428560-4440-7-git-send-email-gilad@benyossef.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Jul 2018 14:58:59 +0200
-Message-ID: <CAMuHMdW7Sock8Z=L7w58u9-q-gWvkz=VfK-QZDUXPgEw4+NBzA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] crypto: ccree: rate limit debug print
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>, hadar.gat@arm.com,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702044956.GB158348@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070213-0040-0000-0000-000004483E51
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055465; UDB=6.00541347; IPR=6.00833388;
+ MB=3.00021961; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 13:00:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070213-0041-0000-0000-0000084E59FF
+Message-Id: <20180702130214.GL3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gilad,
+On Sun, Jul 01, 2018 at 09:49:56PM -0700, Joel Fernandes wrote:
+> On Sun, Jul 01, 2018 at 08:11:32PM -0700, Paul E. McKenney wrote:
+> > On Sun, Jul 01, 2018 at 05:35:53PM -0700, Joel Fernandes wrote:
+> > > On Sun, Jul 01, 2018 at 03:27:49PM -0700, Paul E. McKenney wrote:
+> > > [...]
+> > > > > > +/*
+> > > > > > + * Report a deferred quiescent state if needed and safe to do so.
+> > > > > > + * As with rcu_preempt_need_deferred_qs(), "safe" involves only
+> > > > > > + * not being in an RCU read-side critical section.  The caller must
+> > > > > > + * evaluate safety in terms of interrupt, softirq, and preemption
+> > > > > > + * disabling.
+> > > > > > + */
+> > > > > > +static void rcu_preempt_deferred_qs(struct task_struct *t)
+> > > > > > +{
+> > > > > > +	unsigned long flags;
+> > > > > > +
+> > > > > > +	if (!rcu_preempt_need_deferred_qs(t))
+> > > > > > +		return;
+> > > > > > +	local_irq_save(flags);
+> > > > > > +	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > > > > +}
+> > > > > > +
+> > > > > > +/*
+> > > > > > + * Handle special cases during rcu_read_unlock(), such as needing to
+> > > > > > + * notify RCU core processing or task having blocked during the RCU
+> > > > > > + * read-side critical section.
+> > > > > > + */
+> > > > > > +static void rcu_read_unlock_special(struct task_struct *t)
+> > > > > > +{
+> > > > > > +	unsigned long flags;
+> > > > > > +	bool preempt_bh_were_disabled = !!(preempt_count() & ~HARDIRQ_MASK);
+> > > > > > +	bool irqs_were_disabled;
+> > > > > > +
+> > > > > > +	/* NMI handlers cannot block and cannot safely manipulate state. */
+> > > > > > +	if (in_nmi())
+> > > > > > +		return;
+> > > > > > +
+> > > > > > +	local_irq_save(flags);
+> > > > > > +	irqs_were_disabled = irqs_disabled_flags(flags);
+> > > > > > +	if ((preempt_bh_were_disabled || irqs_were_disabled) &&
+> > > > > > +	    t->rcu_read_unlock_special.b.blocked) {
+> > > > > > +		/* Need to defer quiescent state until everything is enabled. */
+> > > > > > +		raise_softirq_irqoff(RCU_SOFTIRQ);
+> > > > > > +		local_irq_restore(flags);
+> > > > > > +		return;
+> > > > > > +	}
+> > > > > > +	rcu_preempt_deferred_qs_irqrestore(t, flags);
+> > > > > > +}
+> > > > > > +
+> > > > > >  /*
+> > > > > >   * Dump detailed information for all tasks blocking the current RCU
+> > > > > >   * grace period on the specified rcu_node structure.
+> > > > > > @@ -737,10 +784,20 @@ static void rcu_preempt_check_callbacks(void)
+> > > > > >  	struct rcu_state *rsp = &rcu_preempt_state;
+> > > > > >  	struct task_struct *t = current;
+> > > > > >  
+> > > > > > -	if (t->rcu_read_lock_nesting == 0) {
+> > > > > > -		rcu_preempt_qs();
+> > > > > > +	if (t->rcu_read_lock_nesting > 0 ||
+> > > > > > +	    (preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK))) {
+> > > > > > +		/* No QS, force context switch if deferred. */
+> > > > > > +		if (rcu_preempt_need_deferred_qs(t))
+> > > > > > +			resched_cpu(smp_processor_id());
+> > > > > 
+> > > > > 
+> > > > > Hi Paul,
+> > > > > 
+> > > > > I had a similar idea of checking the preempt_count() sometime back but didn't
+> > > > > believe this path can be called with preempt enabled (for some reason ;-)).
+> > > > > Now that I've convinced myself that's possible, what do you think about
+> > > > > taking advantage of the opportunity to report a RCU-sched qs like below from
+> > > > > rcu_check_callbacks ?
+> > > > > 
+> > > > > Did some basic testing, can roll into a patch later if you're Ok with it.
+> > > > 
+> > > > The problem here is that the code patch above cannot be called
+> > > > with CONFIG_PREEMPT_COUNT=n, but the code below can.  And if
+> > > > CONFIG_PREEMPT_COUNT=n, the return value from preempt_count() can be
+> > > > misleading.
+> > > > 
+> > > > Or am I missing something here?
+> > > 
+> > > That is true! so then I could also test if PREEMPT_RCU is enabled like you're
+> > > doing in the other path.
+> > > 
+> > > thanks!
+> > > 
+> > > ---8<-----------------------
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index fb440baf8ac6..03a460921dca 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -2683,6 +2683,12 @@ void rcu_check_callbacks(int user)
+> > >  		rcu_note_voluntary_context_switch(current);
+> > > 
+> > >  	} else if (!in_softirq()) {
+> > > +		/*
+> > > +		 * Report RCU-sched qs if not in an RCU-sched read-side
+> > > +		 * critical section.
+> > > +		 */
+> > > +		if (IS_ENABLED(PREEMPT_RCU) && !(preempt_count() & PREEMPT_MASK))
+> > 
+> > For more precision, s/PREEMPT_RCU/CONFIG_PREEMPT_COUNT/
+> > 
+> > Hmmm...  I recently queued a patch that redefines the RCU-bh update-side
+> > API in terms of the consolidated RCU implementation, so this "else"
+> > clause no longer exists.  One approach would be to fold this condition
+> > (with the addition of SOFTIRQ_MASK) into the previous "if" condition,
+> > but that would call rcu_note_voluntary_context_switch() at bad times.
+> > So maybe this becomes a new "else if" clause.
+> > 
+> > Another complication is an upcoming step that redefines the RCU-sched
+> > update-side API in terms of the consolidated RCU implementation, which
+> > will likely restructure this "if" statement yet again.
+> > 
+> > So I will try to fold this idea in (with attribution).  If I don't get
+> > it in place in a week or two, please remind me.  Of course, one good way
+> > to remind me is to supply a patch against whatever this turns into.  ;-)
+> 
+> Sounds good, I will keep these complications in mind and remind you in some
+> time and/or supply a patch doing the same. Will continue going through the
+> new code in your tree and let you know anything I find.
 
-On Sun, Jul 1, 2018 at 9:05 AM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> A debug print about register status post interrupt can happen
-> quite often. Rate limit it to avoid cluttering the log.
->
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Sounds good!
 
-Thanks for your patch!
+							Thanx, Paul
 
-> --- a/drivers/crypto/ccree/cc_driver.c
-> +++ b/drivers/crypto/ccree/cc_driver.c
-> @@ -131,8 +131,8 @@ static irqreturn_t cc_isr(int irq, void *dev_id)
->         }
->
->         if (irr) {
-> -               dev_dbg(dev, "IRR includes unknown cause bits (0x%08X)\n",
-> -                       irr);
-> +               dev_dbg_ratelimited(dev, "IRR includes unknown cause bits (0x%08X)\n",
-> +                                   irr);
->                 /* Just warning */
->         }
-
-    cc_isr: 932 callbacks suppressed
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Note that it still printed 1410 lines like:
-
-    ccree e6601000.crypto: Got IRR=0x008000D8 (actual value may differ)
-
-but perhaps you do intend to see these during debugging?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
