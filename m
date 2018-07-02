@@ -2,105 +2,100 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D04C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B214BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8177E25AD5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:38:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="irHtN4dV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8177E25AD5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 74D6525293
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D6525293
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeGBTiB (ORCPT
+        id S1753301AbeGBTiv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:38:01 -0400
-Received: from vern.gendns.com ([206.190.152.46]:47095 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752458AbeGBTh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:37:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vmChzewAc6ubkt6N3tDVw+AZ0MRL3p1kDpizcU88RkI=; b=irHtN4dVHWBfDcOQFHt7hIUTyd
-        O4MvQ9JjkMJeUvv6k7Lf+UwlpDJHq7HR5M/Cr03uyK59GzUJmHsVgL/n1G4xX0rx/NWlEqTJZGfBo
-        0g+B/F+7DIcogrUXIqSZ6zbXOxm02FQjMSnqfayddeG4z3SluZCNPqATH0G1kLYg/fxupbjG6Uqlj
-        CbRnh7uMNaW7zypv00MgScEg1zURkC7ls0aAKQnyJ5g9CviWOqZPi2OAT8HaURVMgg/vTFJ8Fm0l/
-        VrWWjmwSL7bpFoy7SJoFQK8sNr7A+BbEvylvUemFiXVjG3Wgc7Tk5HzeCLUDhg9PRRNzaTd/LGe/a
-        A/1akRpQ==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:36516 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fa4e3-00DuFA-Q7; Mon, 02 Jul 2018 15:37:55 -0400
-Subject: Re: [v7,03/10] docs: Add Generic Counter interface documentation
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
-        benjamin.gaignard@st.com, robh+dt@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mark.rutland@arm.com
-References: <7606bdc53c26c332b2bbff0f865380fb0e874b56.1529607879.git.vilhelm.gray@gmail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <b7c690eb-274e-3377-cf8a-2f9ab836677e@lechnology.com>
-Date:   Mon, 2 Jul 2018 14:37:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 15:38:51 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40624 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752533AbeGBTiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 15:38:50 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fa4es-0001lb-BC; Mon, 02 Jul 2018 21:38:46 +0200
+Date:   Mon, 2 Jul 2018 21:38:46 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     gengdongjiu <gengdongjiu@huawei.com>
+Cc:     "Ouyangzhaowei (Charles)" <ouyangzhaowei@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        anna-maria@linutronix.de, john.stultz@linaro.org,
+        Hangaohuai <hangaohuai@huawei.com>,
+        "zhangjianwei (D)" <zhangjianwei8@huawei.com>,
+        yangchuanlong@huawei.com,
+        "Zhangbin (EulerOS)" <zhangbin46@huawei.com>,
+        liupeifeng3@huawei.com
+Subject: Re: hrtimer become inaccurate with RT patch
+Message-ID: <20180702193845.6n3jrei35zdtfb7z@linutronix.de>
+References: <12e6da4e-7681-771f-38d3-3c1abf943c24@huawei.com>
+ <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
+ <20180702101420.rskzwqrdyws5fl6m@breakpoint.cc>
+ <75928d33-ade0-3bc7-33df-43abf5442c32@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <7606bdc53c26c332b2bbff0f865380fb0e874b56.1529607879.git.vilhelm.gray@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <75928d33-ade0-3bc7-33df-43abf5442c32@huawei.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/2018 04:07 PM, William Breathitt Gray wrote:
-> +Userspace Interface
-> +===================
-> +
-> +Several sysfs attributes are generated by the Generic Counter interface,
-> +and reside under the /sys/bus/counter/devices/counterX directory, where
-> +counterX refers to the respective counter device. Please see
-> +Documentation/ABI/testing/sys-bus-counter-generic-sysfs for detailed
-> +information on each Generic Counter interface sysfs attribute.
-> +
-> +Through these sysfs attributes, programs and scripts may interact with
-> +the Generic Counter paradigm Counts, Signals, and Synapses of respective
-> +counter devices.
-> +
+On 2018-07-02 19:19:07 [+0800], gengdongjiu wrote:
+> Hi Sebastian ,
+Hi gengdongjiu,
 
-Have you considered a character device in addition to the sysfs interface?
+> > the 4.1 series is no longer supported (neither RT wise nor non-RT,
+> > https://www.kernel.org/category/releases.html). I suggest to move away.
+> > If you notice this problem now it is hardly a long running project.
+> yes, I Know, but we found the latest RT 4.14 series also has the same problem,
+> so this is common issue.
+This does not change what I wrote regarding the v4.1 series. Also you
+could have mention v4.14 instead v4.1 if you really tested on v4.14.
 
-I basically have many of the same concerns that resulted in a char dev for
-gpio[1].
+> >> process will not be interrupt. But if the hrtimer is also runs in
+> >> process context the timer is useless when it's inaccurate. so I want to
+> >> consult you whether this is expected behavior? whether is reasonable to move the timer IRQ
+> >> handling to a thread?
+> > 
+> > This depends on your expectations. The timer is defined not to fire
+> > before the programmed time. So it fires as soon as possible _after_ the
+> > programmed time.
+> It is reasonable that the timer is defined not to fire before the programmed time.
+> but we found it fires long _after_ the programmed time. For example, we define it to
+> fire after 2s, but it will fire after 5s, so it is very later than the expectations. 
 
-- With sysfs, you *can* technically poll for events, but then you have to
-   seek and read or re-open the file.
-- File permissions are annoying if you want a non root user to be able to
-   use the device.
-- A single program can't claim exclusive access to a device.
-- There is no automatic cleanup if a userspace program accessing the device
-    crashes.
+under normal circumstances I would expect to have a few µs delay due to
+wakeup of the softirq thread. Not seconds. This is either broken HW or a
+long running RT thread which blocks the expected execution.
 
-[1]: https://www.elinux.org/images/7/74/Elce2017_new_GPIO_interface.pdf
+> I think the reason may be
+> that the timer handler thread is preempted by another higher priority thread. so from for this issue,
+> the timer handler should be in IRQ context instead of the process context or increase the timer handler thread priority, right?
+
+speculating on what is going on and acting based on speculation is one
+way to handle situation. You could also enable tracing to see
+- when does the timer fire
+- when does the thread wake up
+- when does is timer's function start / complete
+
+and then you know what *really* causes the delay. The hrtimer and sched
+tracepoints should provide enough information. Based on that you can
+figure out if it is wise the toggle the irqsave flag or change something
+else so that the system does not run ~3sec RT secs without a break.
+
+Sebastian
