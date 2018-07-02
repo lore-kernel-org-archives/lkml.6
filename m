@@ -2,187 +2,209 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDCDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DABC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E792174C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E792174C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 11D47242D7
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:01:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D47242D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754041AbeGBH7K (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:59:10 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39234 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933479AbeGBH6S (ORCPT
+        id S933544AbeGBIBR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:01:17 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:59238 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753665AbeGBIBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:58:18 -0400
-X-UUID: 830603471234494dbdf6157bc6e6fa7e-20180702
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2069116566; Mon, 02 Jul 2018 15:58:16 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 2 Jul 2018 15:58:15 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 2 Jul 2018 15:58:13 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
-        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <ryder.lee@mediatek.com>
-CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
-        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Subject: [PATCH v3 3/4] PCI: mediatek: Add system pm support for MT2712 and MT7622
-Date:   Mon, 2 Jul 2018 15:57:43 +0800
-Message-ID: <1530518264-6125-4-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
-References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
+        Mon, 2 Jul 2018 04:01:16 -0400
+Received: from [IPv6:2001:983:e9a7:1:211d:3901:19f1:80d] ([IPv6:2001:983:e9a7:1:211d:3901:19f1:80d])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id Ztlpf4yNWEJtcZtlqfuVpw; Mon, 02 Jul 2018 10:01:14 +0200
+Subject: Re: [PATCH 00/32] Qualcomm Camera Subsystem driver - 8x96 support
+To:     Todor Tomov <todor.tomov@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6cffd2ac-d241-1653-1afa-bc623375442d@xs4all.nl>
+Date:   Mon, 2 Jul 2018 10:01:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMarJxz2T+NRsCp1Bpq57ilqDtzu55/GTC1spMKlU6FnVxJCCs5YIUXjsYDVGLNScwEbrPGkRdqnxTLebq2OxOwsLyeNsOxUMZOpIQlnTrz1bhnCXTJx
+ PPVs0nRhKeVfhdr62f2QyJ6gSzSnNA/jU2UWaHDqKqgShMuN9RM0mkvC9RLSsHk+0X2gqXpR9T+ZYxxhwbhmsempt8U+97Kk/qkfagIvG8eyNifL3hfUT673
+ 0Vfv66E6kZDkgW9AeEepGKtZw/qYANCKn9gBPA4hdGagbItEpTQ2cQKj1ZBnHS1WhFxkiLEPAQxMP+fijSF/paHGjGl4POqnU0EkeTMySkxlI8XZk5Qvh21Z
+ nPAtXl97wO+idVrL8k0cXt1NumYuCUDWYxPM5WvJV2J4V9iDx6xlYt/uHQ3AYibhAgZsih8Qp1oKjYV5Axee5p+WIX39A143u/5Ju5BVoTeCnUBWdiA6n+Tt
+ 4NlwBOyXeTrOOOB2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+Hi Todor,
 
-The MTCMOS of PCIe Host for MT2712 and MT7622 will be off when system
-suspend, and all the internal control register will be reset after system
-resume. The PCIe link should be re-established and the related control
-register values should be re-set after system resume.
+On 22/06/18 17:33, Todor Tomov wrote:
+> This patchset adds support for the Qualcomm Camera Subsystem found
+> on Qualcomm MSM8996 and APQ8096 SoC to the existing driver which
+> used to support MSM8916 and APQ8016.
+> 
+> The camera subsystem hardware on 8x96 is similar to 8x16 but
+> supports more cameras and features. More details are added in the
+> driver document by the last patch.
+> 
+> The first 3 patches are dependencies which have already been on
+> the mainling list but I'm adding them here for completeness.
+> 
+> The following 11 patches add general updates and fixes to the driver.
+> Then the rest add the support for the new hardware.
+> 
+> The driver is tested on Dragonboard 410c (APQ8016) and Dragonboard 820c
+> (APQ8096) with OV5645 camera sensors. media-ctl [1], yavta [2] and
+> GStreamer were used for testing.
+> 
+> [1] https://git.linuxtv.org//v4l-utils.git
+> [2] http://git.ideasonboard.org/yavta.git
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/pci/controller/pcie-mediatek.c | 67 ++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+I did a quick review of this series and it looked good to me. So once I
+have Acked-by's for the bindings changes I can make a pull request.
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 86918d4..175d7b6 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -134,12 +134,14 @@ struct mtk_pcie_port;
- /**
-  * struct mtk_pcie_soc - differentiate between host generations
-  * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-+ * @pm_support: whether the host's MTCMOS will be off when suspend
-  * @ops: pointer to configuration access functions
-  * @startup: pointer to controller setting functions
-  * @setup_irq: pointer to initialize IRQ functions
-  */
- struct mtk_pcie_soc {
- 	bool need_fix_class_id;
-+	bool pm_support;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
- 	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-@@ -1197,12 +1199,75 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	const struct mtk_pcie_soc *soc = pcie->soc;
-+	struct mtk_pcie_port *port;
-+
-+	if (!soc->pm_support)
-+		return 0;
-+
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
-+	list_for_each_entry(port, &pcie->ports, list) {
-+		clk_disable_unprepare(port->pipe_ck);
-+		clk_disable_unprepare(port->obff_ck);
-+		clk_disable_unprepare(port->axi_ck);
-+		clk_disable_unprepare(port->aux_ck);
-+		clk_disable_unprepare(port->ahb_ck);
-+		clk_disable_unprepare(port->sys_ck);
-+		phy_power_off(port->phy);
-+		phy_exit(port->phy);
-+	}
-+
-+	mtk_pcie_subsys_powerdown(pcie);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
-+{
-+	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-+	const struct mtk_pcie_soc *soc = pcie->soc;
-+	struct mtk_pcie_port *port, *tmp;
-+
-+	if (!soc->pm_support)
-+		return 0;
-+
-+	if (list_empty(&pcie->ports))
-+		return 0;
-+
-+	if (dev->pm_domain) {
-+		pm_runtime_enable(dev);
-+		pm_runtime_get_sync(dev);
-+	}
-+
-+	clk_prepare_enable(pcie->free_ck);
-+
-+	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
-+		mtk_pcie_enable_port(port);
-+
-+	/* In case of EP was removed while system suspend. */
-+	if (list_empty(&pcie->ports))
-+		mtk_pcie_subsys_powerdown(pcie);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops mtk_pcie_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
-+				      mtk_pcie_resume_noirq)
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
- 	.ops = &mtk_pcie_ops,
- 	.startup = mtk_pcie_startup_port,
- };
- 
- static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
-+	.pm_support = true,
- 	.ops = &mtk_pcie_ops_v2,
- 	.startup = mtk_pcie_startup_port_v2,
- 	.setup_irq = mtk_pcie_setup_irq,
-@@ -1210,6 +1275,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
- 
- static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.need_fix_class_id = true,
-+	.pm_support = true,
- 	.ops = &mtk_pcie_ops_v2,
- 	.startup = mtk_pcie_startup_port_v2,
- 	.setup_irq = mtk_pcie_setup_irq,
-@@ -1229,6 +1295,7 @@ static struct platform_driver mtk_pcie_driver = {
- 		.name = "mtk-pcie",
- 		.of_match_table = mtk_pcie_ids,
- 		.suppress_bind_attrs = true,
-+		.pm = &mtk_pcie_pm_ops,
- 	},
- };
- builtin_platform_driver(mtk_pcie_driver);
--- 
-2.6.4
+One thing I would like to have before I do that is the output of
+'v4l2-compliance -m /dev/mediaX -v' (probably media0) for both 8x16 and
+the new 8x96. Make sure you use the latest v4l2-compliance since I have
+been adding new tests for the media controller.
+
+Thanks!
+
+	Hans
+
+> 
+> 
+> Sakari Ailus (1):
+>   doc-rst: Add packed Bayer raw14 pixel formats
+> 
+> Todor Tomov (31):
+>   media: v4l: Add new 2X8 10-bit grayscale media bus code
+>   media: v4l: Add new 10-bit packed grayscale format
+>   media: Rename CAMSS driver path
+>   media: camss: Use SPDX license headers
+>   media: camss: Fix OF node usage
+>   media: camss: csiphy: Ensure clock mux config is done before the rest
+>   media: camss: Unify the clock names
+>   media: camss: csiphy: Update settle count calculation
+>   media: camss: csid: Configure data type and decode format properly
+>   media: camss: vfe: Fix to_vfe() macro member name
+>   media: camss: vfe: Get line pointer as container of video_out
+>   media: camss: vfe: Do not disable CAMIF when clearing its status
+>   media: dt-bindings: media: qcom,camss: Fix whitespaces
+>   media: dt-bindings: media: qcom,camss: Add 8996 bindings
+>   media: camss: Add 8x96 resources
+>   media: camss: Add basic runtime PM support
+>   media: camss: csiphy: Split to hardware dependent and independent
+>     parts
+>   media: camss: csiphy: Unify lane handling
+>   media: camss: csiphy: Add support for 8x96
+>   media: camss: csid: Add support for 8x96
+>   media: camss: ispif: Add support for 8x96
+>   media: camss: vfe: Split to hardware dependent and independent parts
+>   media: camss: vfe: Add support for 8x96
+>   media: camss: Format configuration per hardware version
+>   media: camss: vfe: Different format support on source pad
+>   media: camss: vfe: Add support for UYVY output from VFE on 8x96
+>   media: camss: csid: Different format support on source pad
+>   media: camss: csid: MIPI10 to Plain16 format conversion
+>   media: camss: Add support for RAW MIPI14 on 8x96
+>   media: camss: Add support for 10-bit grayscale formats
+>   media: doc: media/v4l-drivers: Update Qualcomm CAMSS driver document
+>     for 8x96
+> 
+>  .../devicetree/bindings/media/qcom,camss.txt       |  128 +-
+>  Documentation/media/uapi/v4l/pixfmt-rgb.rst        |    1 +
+>  Documentation/media/uapi/v4l/pixfmt-srggb14p.rst   |  127 +
+>  Documentation/media/uapi/v4l/pixfmt-y10p.rst       |   33 +
+>  Documentation/media/uapi/v4l/subdev-formats.rst    |   72 +
+>  Documentation/media/uapi/v4l/yuv-formats.rst       |    1 +
+>  Documentation/media/v4l-drivers/qcom_camss.rst     |   93 +-
+>  .../media/v4l-drivers/qcom_camss_8x96_graph.dot    |  104 +
+>  MAINTAINERS                                        |    2 +-
+>  drivers/media/platform/Kconfig                     |    2 +-
+>  drivers/media/platform/Makefile                    |    2 +-
+>  drivers/media/platform/qcom/camss-8x16/Makefile    |   11 -
+>  .../media/platform/qcom/camss-8x16/camss-csid.c    | 1094 -------
+>  .../media/platform/qcom/camss-8x16/camss-csid.h    |   82 -
+>  .../media/platform/qcom/camss-8x16/camss-csiphy.c  |  893 ------
+>  .../media/platform/qcom/camss-8x16/camss-csiphy.h  |   77 -
+>  .../media/platform/qcom/camss-8x16/camss-ispif.c   | 1178 --------
+>  .../media/platform/qcom/camss-8x16/camss-ispif.h   |   85 -
+>  drivers/media/platform/qcom/camss-8x16/camss-vfe.c | 3093 --------------------
+>  drivers/media/platform/qcom/camss-8x16/camss-vfe.h |  123 -
+>  .../media/platform/qcom/camss-8x16/camss-video.c   |  859 ------
+>  .../media/platform/qcom/camss-8x16/camss-video.h   |   70 -
+>  drivers/media/platform/qcom/camss-8x16/camss.c     |  751 -----
+>  drivers/media/platform/qcom/camss-8x16/camss.h     |  106 -
+>  drivers/media/platform/qcom/camss/Makefile         |   15 +
+>  drivers/media/platform/qcom/camss/camss-csid.c     | 1376 +++++++++
+>  drivers/media/platform/qcom/camss/camss-csid.h     |   77 +
+>  .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     |  177 ++
+>  .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     |  256 ++
+>  drivers/media/platform/qcom/camss/camss-csiphy.c   |  761 +++++
+>  drivers/media/platform/qcom/camss/camss-csiphy.h   |   89 +
+>  drivers/media/platform/qcom/camss/camss-ispif.c    | 1367 +++++++++
+>  drivers/media/platform/qcom/camss/camss-ispif.h    |   78 +
+>  drivers/media/platform/qcom/camss/camss-vfe-4-1.c  | 1018 +++++++
+>  drivers/media/platform/qcom/camss/camss-vfe-4-7.c  | 1140 ++++++++
+>  drivers/media/platform/qcom/camss/camss-vfe.c      | 2341 +++++++++++++++
+>  drivers/media/platform/qcom/camss/camss-vfe.h      |  183 ++
+>  drivers/media/platform/qcom/camss/camss-video.c    |  958 ++++++
+>  drivers/media/platform/qcom/camss/camss-video.h    |   62 +
+>  drivers/media/platform/qcom/camss/camss.c          | 1027 +++++++
+>  drivers/media/platform/qcom/camss/camss.h          |  115 +
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |    1 +
+>  include/uapi/linux/media-bus-format.h              |    3 +-
+>  include/uapi/linux/videodev2.h                     |    6 +
+>  44 files changed, 11530 insertions(+), 8507 deletions(-)
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
+>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>  create mode 100644 Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/Makefile
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csid.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csid.h
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csiphy.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csiphy.h
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-ispif.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-ispif.h
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-vfe.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-vfe.h
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-video.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-video.h
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss.c
+>  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss.h
+>  create mode 100644 drivers/media/platform/qcom/camss/Makefile
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csid.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csid.h
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy.h
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-ispif.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-ispif.h
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe.h
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-video.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss-video.h
+>  create mode 100644 drivers/media/platform/qcom/camss/camss.c
+>  create mode 100644 drivers/media/platform/qcom/camss/camss.h
+> 
 
