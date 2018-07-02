@@ -6,134 +6,110 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F354C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33AAC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07D525075
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DA6F25081
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="C7vTKiVO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07D525075
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjTNHbTs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA6F25081
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeGBTY7 (ORCPT
+        id S1752881AbeGBTZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:24:59 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55448 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeGBTY6 (ORCPT
+        Mon, 2 Jul 2018 15:25:31 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39556 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752292AbeGBTZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:24:58 -0400
-Received: by mail-it0-f68.google.com with SMTP id 16-v6so13625904itl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:24:58 -0700 (PDT)
+        Mon, 2 Jul 2018 15:25:29 -0400
+Received: by mail-wm0-f66.google.com with SMTP id p11-v6so9760171wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=n3d4DzoG5csRWzT7fWXqBopNmuerctPcQIFjPZdmANU=;
-        b=C7vTKiVOJCQG/Qn7EAOg+8azMbbnnVC7CT/5zHBe1+joz8UIgX6z9EjYwuuxI9uxYY
-         APbVDn9F4Opv+9JW0wFe8vtCOQgy33Kcoo+9RZJh9gAttfB8HhVWa9+51rFflZDfd8Rd
-         ZN7Qm8ip6iPz4e0IK92eroO+Q9sp3tjrKsh+U=
+        bh=tUnif5yH6Usb3sc0P6gTSL8F/AZ4ZoABmyDKr/7WYc8=;
+        b=HjTNHbTsm8MB6PPpujVezpqEGLnRv2xLonbZ9GJ+8uJPd5wXgp7jsCufUnoYTTcLgG
+         fY5CfmMi7iAXha6zFpV+++ny7vNsabr6LMxgQU1/HEau8vdJxKgkxOHq7y/24tfmUgFu
+         iV4UL19clBXdZzRZTjjdo2XutuLE9OIDAkFBk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=n3d4DzoG5csRWzT7fWXqBopNmuerctPcQIFjPZdmANU=;
-        b=pi98khmuxhfM+j4yTZ+VScOlOuz+LzMA5FcFtheGrcCp4sw0xrXPcI/V5DHQxlY4mN
-         vJkvEPiXqQVki8dlg7qszNfdwHpZokBZ4HsJQjwwAw+GpLeatK+M9kMfpPgDgL6khKcL
-         DNARp9Mx2s56qI2hWx1dXmivLC5cHu2J0t2bT1gV0kQw7JZW46KGBeB+BeyXR80SS1Tl
-         BaylEUcBGvgmK2l9smbOpfVtk+tOjRsr6D9T5WsaCoTD0IOXBdkPXOTG3ebN0NZ3VAhI
-         hvyuoNTyrfHo6OjiB0ixVETLiK2jNnwHMTvIoU50Tp6NMGIvpPRth/3EpGAmbVagN/sj
-         OqBw==
-X-Gm-Message-State: APt69E1LlAVBBlfSVhU2akjr4fuhBh+0Wz26voH0S7fGlcYLcytBvfpE
-        GBgjz9Ajk8ZzpCdam9ZMBe3l2Hk//FVJqMAkv5M=
-X-Google-Smtp-Source: AAOMgpfKFBSe6AvnpWl7xutWHir5guPjBUnJqbW+eBSw7wfHACwrPGIH1HGfklP4nP+0o4UqxwK7bCbyOmw8PcTKXRI=
-X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr6841922itd.16.1530559497744;
- Mon, 02 Jul 2018 12:24:57 -0700 (PDT)
+        bh=tUnif5yH6Usb3sc0P6gTSL8F/AZ4ZoABmyDKr/7WYc8=;
+        b=JsNlnAncCX4b8AzVsSmZzGHcebcQE8mjTwMmHEK0q/j66Lt3MrLVD8k84nRgD37YIs
+         VZ+d+TRl+PIgQCHmnRl/xiUypfK0s8IW4W9cOn1wZOxZ57Z7EFboW5b1QvAiMBZ/7+tw
+         8ZM5dQqNerM9a2uNi3IXiN/1gVYuvxEr9EAP9wOxhpYBc5Dv1SI3I63PJLEYh5aC+bMq
+         5IwlOGKW2JKLTENEVUxGe8KTyQkw5E1KMv898zSzliqdBKLZ8jjPJGe8oVCutP9ItJT1
+         nfpELq9TWoypFALrCb7INZyc84pjUettFcAbEzi3i/ipuxw8I8JEOmQkxB2kXObpbkFh
+         TViQ==
+X-Gm-Message-State: APt69E1PB0vGpYs3nPXV6f5BC50rkiBPpciNjuu3jeb4JJ3rZ7WJI4BJ
+        HatVlZ+Q/Ooy4r8hqpbHuFtgk7XP+T8Hu1sbNCs06g==
+X-Google-Smtp-Source: AAOMgpfZuKIZnyv/e2HmKqeQEELKegcImz8RocjnImp5kkn5GnFDbutjt+4s8i5m73azwMTPB4l0E7nNlA/e9ifEqO0=
+X-Received: by 2002:a1c:1e4b:: with SMTP id e72-v6mr7968812wme.155.1530559527912;
+ Mon, 02 Jul 2018 12:25:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <c40fe912fe008b1b531a3867e8784ed79d68023e.camel@kernel.crashing.org>
- <CA+55aFxR0qg0yY-NWnH0DDruVWw8qRqp8=CRLq13p=TyxosJKw@mail.gmail.com>
- <edc7b03b9550ddcf1291ebf5a6dafd24f4455c23.camel@kernel.crashing.org>
- <CA+55aFxS7OVEN5XrxceC5ibz780mhn-qRa50w1gVFjsz2JjMbw@mail.gmail.com>
- <7eb06b499f2be366cf68c6b6588b16c603e6a567.camel@kernel.crashing.org>
- <CA+55aFyS1bdmETHUYEejecOcG5MAjGCAbkr-M5iphJYfrj2oLA@mail.gmail.com>
- <675c0752ea41c9dc52c2a4b69f09fb9746207de3.camel@kernel.crashing.org>
- <CA+55aFxqUyACDPBL4trTfGyJudg8P7YGazVGUW7-UaNFJiwZRQ@mail.gmail.com>
- <36fb9c9f873629abb7bf3758033cce00e463f768.camel@kernel.crashing.org>
- <CA+55aFzUhe7j+6XL_BB+gvSnCvMCOePZhanTBk5tq=zqvFFWSw@mail.gmail.com>
- <d56f1c255f7caa913ad77a174e1e3bde08043ac0.camel@kernel.crashing.org> <0dc3c0632b1821bd07abdf0224ccd9f32a4f250d.camel@kernel.crashing.org>
-In-Reply-To: <0dc3c0632b1821bd07abdf0224ccd9f32a4f250d.camel@kernel.crashing.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 2 Jul 2018 12:24:46 -0700
-Message-ID: <CA+55aFyzYXSTTuVoGfVeC574-7i0zp3q39RTsiPn3GoRceuwAQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drivers: core: Remove glue dirs from sysfs earlier
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joel Stanley <joel@jms.id.au>
+Received: by 2002:a1c:c202:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 12:25:27 -0700 (PDT)
+In-Reply-To: <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
+References: <12e6da4e-7681-771f-38d3-3c1abf943c24@huawei.com> <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 2 Jul 2018 12:25:27 -0700
+Message-ID: <CALAqxLVK=EghPr=GVTKzX511XMO2NM4Ehh3pVP9QumpKRBP+rA@mail.gmail.com>
+Subject: Re: hrtimer become inaccurate with RT patch
+To:     gengdongjiu <gengdongjiu@huawei.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, anna-maria@linutronix.de,
+        Hangaohuai <hangaohuai@huawei.com>,
+        "zhangjianwei (D)" <zhangjianwei8@huawei.com>,
+        yangchuanlong@huawei.com,
+        "Zhangbin (EulerOS)" <zhangbin46@huawei.com>,
+        liupeifeng3@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 3:23 AM Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
+On Mon, Jul 2, 2018 at 2:34 AM, gengdongjiu <gengdongjiu@huawei.com> wrote:
+> Hi Thomas/Anna/John,
 >
-> Let me try one last ditch attempt to convince you using maybe a
-> different perspective: this is how sysfs is intended to work and how
-> the device model already does everywhere else except the gluedirs.
+>   Recently I found that the hrtimer become inaccurate when there is a RT
+> process runs on the same cpu core, and the kernel has applied preempt_rt
+> patch.
+>   The Linux kernel version is v4.1.46, and the preempt_rt patch is
+> patch-4.1.46-rt52.patch.
+>   I know that in the preempt_rt environment the interrupt handlers no
+> longer run in interrupt context but in process context, so that RT
+> process will not be interrupt. But if the hrtimer is also runs in
+> process context the timer is useless when it's inaccurate. so I want to
+> consult you whether this is expected behavior? whether is reasonable to move the timer IRQ
+> handling to a thread?
 
-So don't get me wrong. I don't think that patch is _wrong_. It may
-well be the best thing we can do now.
+I've not looked at the PREEMPT_RT code in a long time, but years ago
+there was a tension in that there is not an easy way track ownership
+of timers. Thus timers all fired at the same priority of the hrtimer
+irq thread. This thread could be moved up or down in priority, but the
+problem was all timers would fire with the same priority. So either
+the thread priority was so high that low-priority process could
+generate a bunch of timers which would interrupt higher priority
+tasks, or the thread priority was lower, so a high priority task could
+block all timers.
 
-I just think some of the arguments for the patch are bogus.
+There was some handwavy talk of trying to keep per-process timer
+lists, so the hrtimer irq could still be in irq context but the firing
+logic it didn't do anything but mark its task as runnable and do the
+the actual timer firing logic before we eventually run the task (in
+proper rt priority order), in a fashion similar to signals. But I'm
+not sure if any attempts were made in that direction. I also think it
+was an open question if there's any logic in kernel that depend on
+strict in-order kernel timer processing, so its possible there could
+be odd inversion issues where high priority timer logic is waiting on
+/expecting lower priority timers to fire, etc, so its probably an area
+of research.
 
-I still think that the auto-cleanup is actually a good thing in
-general. Not because it simplifies things (which it can do), but
-because it fundamentally *allows* you to use less locking.
-
-And that ends up being my real reason to not like your patch all that
-much. It depends on
-
- (a) an extra reference count
-
- (b) on fairly heavy-handed locking (ie the whole "lock on release
-too, not just on allocation").
-
-and I think both of those are non-optimal.
-
-So:
-
-> The actual lifetime of the struct device is handled *separately* by
-> device_get/put which are just wrappers on kobject_get/put.
-
-I agree that that is the end result of your patch (and perhaps the
-buggy intent of the original code).
-
-I just don't necessarily agree it's a great thing in general. It
-basically uses sysfs visibility as an argument for why lifetimes
-should differ from the refcounted lifetimes.
-
-And that may be a practical argument, but I don't think it's a very
-good argument in general. I think it would arguably be much better to
-be less serialized, and depend on refcounting more, and make less of a
-deal about the sysfs visibility.
-
-For example, if we *really* add back the exact same device immediately
-after removing it, and the device was still in use somehow (ie the
-refcount never went down to zero), maybe we really should not have
-reused the same name? Or if we do re-use the same name, maybe we
-should have re-used the device node itself?
-
-See what I'm saying? I understand where your patch is coming from, but
-I am suspicious of the fact that it seems to want to re-use a name
-(but not the object) that is by definition still in use.
-
-Maybe that's the right thing in this case. Considering that we have a
-real oops and a real problem, and I don't have an alternative patch, I
-guess the "patches talk, bullshit walks" rule applies.
-
-                Linus
+thanks
+-john
