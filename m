@@ -6,103 +6,101 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C5AC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A33C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 319712515D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78A682515D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U8C71P0t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319712515D
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Onp1mEjH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A682515D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeGBXEP (ORCPT
+        id S1753384AbeGBXGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 19:04:15 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35112 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbeGBXEM (ORCPT
+        Mon, 2 Jul 2018 19:06:24 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38235 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbeGBXGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 19:04:12 -0400
-Received: by mail-it0-f67.google.com with SMTP id l16-v6so582605ita.0;
-        Mon, 02 Jul 2018 16:04:11 -0700 (PDT)
+        Mon, 2 Jul 2018 19:06:22 -0400
+Received: by mail-io0-f193.google.com with SMTP id v26-v6so49610iog.5;
+        Mon, 02 Jul 2018 16:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AFeU3XjU27qvR/UkfnljhwfQZmt9JtmIFn1qomgOwR0=;
-        b=U8C71P0tue/rUyfT8NvFioq5o/psAboHhq4EdQHmH7+a0ekx+dOfbod12VYAvnYSRz
-         olz9L6NT+2WqWkdbp6Zb8Gb5lDHr3OFm38h5RtcjN+Eb4ji87b+zzQocsAxKRyAlItfu
-         GErby9g9Ua1tZw85t5yG0KfUeIxh3gIwvl99g=
+        bh=1dlupA3AzweWiJR1maj1D0qN/TWnz74EeMjLp2yQOPQ=;
+        b=Onp1mEjH4pQqeZhJ4xIVKM9A8L1iK9ycXIZ7XrfTVqqbbuNAVnRXxvQ8by+f458dqQ
+         OUjrNkZZyjBhFNmoaVxwm7ujHN5cL4Z6Ogq0fzs4omR0WKCd6wsUqOF6dCmGo4qrv0LQ
+         JsfcXvN5EYTBlaaPqJXfS0GoIFFK57d54YR4M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AFeU3XjU27qvR/UkfnljhwfQZmt9JtmIFn1qomgOwR0=;
-        b=qiLgNGNaRLLHeB7YWpVpVS7A9aJojUfwnyam0bT/Zwm/STq79YqOC7Jli8ubVifxe1
-         k25nIymbD4xyu86jTUCvY0LmoH/Lq+JB0alQFhyxg7I5dCcYJmS0z4DpTApS789Gl7qy
-         tPZifzo8ztIx260DLRUGiA0ldDUqEWwiSwAeyB8adnuGiOVemgq/YfPibSfsqBAkOS8r
-         c4i10Oj8Gm8XfK9PGdAcfDGFuWrBN1MGkekUcgiwjZoPBGdgkEeiVsh0sit0DSS4cASF
-         b+UYesjm/wCKTRJdevxOZPIRr9khL1ogXN8xy5cd7ZAopGq37q3xZJucJEQ0m9RqHeSF
-         G9pg==
-X-Gm-Message-State: APt69E1XdOnYvxArW60XxbuZ8dNGW0+2osJroXwOGP7UwyjCO3iKqjlI
-        OwmiFhaJBPFA0l7sd/tH8iJ+EE9PWEgZJjAM+jE=
-X-Google-Smtp-Source: AAOMgpcLR4Udb8DwgYCF0TstzkLT2xnGHO9Z/CVoi7zlvifNpvHo1dRR40x6Nx9YKdJq9JGg5V6Z78fI5AQhJpeveBs=
-X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr6516066itg.1.1530572650488;
- Mon, 02 Jul 2018 16:04:10 -0700 (PDT)
+        bh=1dlupA3AzweWiJR1maj1D0qN/TWnz74EeMjLp2yQOPQ=;
+        b=P7WTjEw/09Fr25dFuG8f2FCCOrHRLvwhLd/12qmG7qkLyZGTZYfwZyreINCJlQlvLl
+         zBPOycqGpbxWjP8GzPdiZTzvy5qNjvnYRMVoyARQbd0o6rHu4Q8kec7ygTjNk6wfFCeG
+         IHs6KUG/1AxR0BPm38x5U+5mABS5jQ7WuYWXkfZUPWppyyD/dRJ6bS2fGnDDUXCJDkKo
+         OGVgyCO/D5mBXs9fuDy1kxLpYWtDow0lFioQnmLO2uEGv2FrUGHgMxgE1HmbTPjdG0Xh
+         kEEzEUmSf0FDdelHmJlMlKKWJyU6W4l7rJPI5ifAjvHy3ltdnhCtxl4isiBgtkO30JFL
+         NbQw==
+X-Gm-Message-State: APt69E2sN3OgmMvv9GfgBGiAsCcD2rVgkf/T5CdgG1wQC633rFP40elE
+        6bmfFlffQdTM/lBdvapoFuGGV2BIwO7NlW+/IPY=
+X-Google-Smtp-Source: AAOMgpeNSHWJZMuXkEiMgdaGwHO+VRbmvxDK+JaILOW4b+7Ya8BZyHn6jfls6lh6QNBQF9n1iUFy5MwJZAMD6C3vJ5M=
+X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr23944919iov.203.1530572780926;
+ Mon, 02 Jul 2018 16:06:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <1530510723-24814-1-git-send-email-longman@redhat.com>
- <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
- <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org>
- <1530570880.3179.9.camel@HansenPartnership.com> <CA+55aFzyUb07Lt251bzi4T79oB=M8uypFQ2m__FgnRJUauqd0Q@mail.gmail.com>
-In-Reply-To: <CA+55aFzyUb07Lt251bzi4T79oB=M8uypFQ2m__FgnRJUauqd0Q@mail.gmail.com>
+References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFxrX+wRoe+5HDaTrRXg1K-Qpks4jJ9Buc_OevoG8hoGFw@mail.gmail.com> <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com>
+In-Reply-To: <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 2 Jul 2018 16:03:59 -0700
-Message-ID: <CA+55aFxZM9JeOeMkksZR93LojhvPZC38QnyvDEdazYg2SG2qHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Date:   Mon, 2 Jul 2018 16:06:09 -0700
+Message-ID: <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
+ user inputs
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 3:54 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Jul 2, 2018 at 4:00 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
 >
-> Lookie here, for example:
->
->   [torvalds@i7 linux]$ strace -e trace=%file -c git status
+> Unfortunately, that rseq->rseq_cs field needs to be updated by user-space
+> with single-copy atomicity. Therefore, we want 32-bit user-space to initialize
+> the padding with 0, and only update the low bits with single-copy atomicity.
 
-So in the name of honestly, that's slightly misleading.
+Well... It's actually still single-copy atomicity as a 64-bit value.
 
-"git" will happily thread the actual index file up-to-date testing.
+Why? Because it doesn't matter how you write the upper bits. You'll be
+writing the same value to them (zero) anyway.
 
-And that's hidden in the above numbers (because I didn't use "-f" to
-follow threads), and they are all successful (because git will go an
-'lstat()' on every single entry in the index file, and the index file
-obviously is all valid filenames).
+So who cares if the write ends up being two instructions, because the
+write to the upper bits doesn't actually *do* anything.
 
-So the numbers quoted are closer to the
+Hmm?
 
-        git ls-files -o --exclude-standard
-
-command (which doesn't check the index state, it only checks "what
-non-tracked files do I have that aren't the ones I explicitly
-exclude").
-
-            Linus
+                Linus
