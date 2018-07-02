@@ -2,136 +2,112 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D7EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEEFFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CF524F27
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CF524F27
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 89CD024F68
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:16:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="hvYKr6mu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CD024F68
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932111AbeGBTOA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:14:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752526AbeGBTN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:13:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F3694401EF07;
-        Mon,  2 Jul 2018 19:13:57 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-57.ams2.redhat.com [10.36.116.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E2DE7111AF34;
-        Mon,  2 Jul 2018 19:13:55 +0000 (UTC)
-Subject: Re: [PATCH v3 12/20] kvm: arm64: Add helper for loading the stage2
- setting for a VM
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-13-git-send-email-suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <c8091c05-b7ea-92fa-6d04-917619691381@redhat.com>
-Date:   Mon, 2 Jul 2018 21:13:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1753466AbeGBTQZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 15:16:25 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34348 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752639AbeGBTQX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 15:16:23 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62JEveX011901
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 12:16:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date : from
+ : to : cc : subject : mime-version : content-type; s=facebook;
+ bh=/FDWNq5W1LM6JOQKxAVnlmXl8mUoDZtczhm1mLEx2Hk=;
+ b=hvYKr6muQVYMMpp10t+mMEfKk89t470CxZAKBuiQQnhtLjr1Qcy4OhLl1756vmZl3xAQ
+ rYqNP3ilaZXiXRUbGnAFktwlp5KdvwPaSqzrBfw9PxsbXXHdrUsUMXdDRxYPO+fEWYVv
+ DrRoIpFsYJnHIIdVs0YMrez0cKPfdGvshK0= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2jyq8nrg9e-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:16:23 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.14) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 2 Jul
+ 2018 12:16:22 -0700
+Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
+ 725948A245B; Mon,  2 Jul 2018 12:13:24 -0700 (PDT)
+Message-ID: <20180702183913.669030439@fb.com>
+User-Agent: quilt/0.63-1
+Date:   Mon, 2 Jul 2018 11:39:13 -0700
+Smtp-Origin-Hostprefix: dev
+From:   Okash Khawaja <osk@fb.com>
+Smtp-Origin-Hostname: dev026.lla1.facebook.com
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: lla1c22
+Subject: [PATCH bpf-next v2 0/3] bpf: btf: print bpftool map data with btf
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-13-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 19:13:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 19:13:58 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+Hi,
 
-On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
-> We load the stage2 context of a guest for different operations,
-> including running the guest and tlb maintenance on behalf of the
-> guest. As of now only the vttbr is private to the guest, but this
-> is about to change with IPA per VM. Add a helper to load the stage2
-> configuration for a VM, which could do the right thing with the
-> future changes.
-> 
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+This is v2. There are two key changes which mostly affect patches 2 and 3.
+First, we have two BTF outputs:
 
-Thanks
+1. when -j or -p switches are supplied to a map command - this is json- and
+backward- compatible
+2. when neither of -j and -p is supplied - this makes no promises on json- or
+backward- compatibility, and aimed for humans
 
-Eric
-> ---
-> Changes since v2:
->  - New patch
-> ---
->  arch/arm64/include/asm/kvm_hyp.h | 6 ++++++
->  arch/arm64/kvm/hyp/switch.c      | 2 +-
->  arch/arm64/kvm/hyp/tlb.c         | 4 ++--
->  3 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-> index 384c343..82f9994 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -155,5 +155,11 @@ void deactivate_traps_vhe_put(void);
->  u64 __guest_enter(struct kvm_vcpu *vcpu, struct kvm_cpu_context *host_ctxt);
->  void __noreturn __hyp_do_panic(unsigned long, ...);
->  
-> +/* Must be called from hyp code running at EL2 */
-> +static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
-> +{
-> +	write_sysreg(kvm->arch.vttbr, vttbr_el2);
-> +}
-> +
->  #endif /* __ARM64_KVM_HYP_H__ */
->  
-> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> index d496ef5..355fb25 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -195,7 +195,7 @@ void deactivate_traps_vhe_put(void)
->  
->  static void __hyp_text __activate_vm(struct kvm *kvm)
->  {
-> -	write_sysreg(kvm->arch.vttbr, vttbr_el2);
-> +	__load_guest_stage2(kvm);
->  }
->  
->  static void __hyp_text __deactivate_vm(struct kvm_vcpu *vcpu)
-> diff --git a/arch/arm64/kvm/hyp/tlb.c b/arch/arm64/kvm/hyp/tlb.c
-> index 131c777..4dbd9c6 100644
-> --- a/arch/arm64/kvm/hyp/tlb.c
-> +++ b/arch/arm64/kvm/hyp/tlb.c
-> @@ -30,7 +30,7 @@ static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm)
->  	 * bits. Changing E2H is impossible (goodbye TTBR1_EL2), so
->  	 * let's flip TGE before executing the TLB operation.
->  	 */
-> -	write_sysreg(kvm->arch.vttbr, vttbr_el2);
-> +	__load_guest_stage2(kvm);
->  	val = read_sysreg(hcr_el2);
->  	val &= ~HCR_TGE;
->  	write_sysreg(val, hcr_el2);
-> @@ -39,7 +39,7 @@ static void __hyp_text __tlb_switch_to_guest_vhe(struct kvm *kvm)
->  
->  static void __hyp_text __tlb_switch_to_guest_nvhe(struct kvm *kvm)
->  {
-> -	write_sysreg(kvm->arch.vttbr, vttbr_el2);
-> +	__load_guest_stage2(kvm);
->  	isb();
->  }
->  
-> 
+Second, in addition to map dump command, map lookup command has also been
+updated to print data with btf. The rules around -j and -p are same as above.
+
+Here is a summary of changes in v2:
+
+patch 1:
+    - line continuation alignment fixes + other style fixes
+
+patch 2:
+    - introduce struct btf_dumper which contains context for btf_dumper operation
+    - line continuation alignment fixes + other style fixes
+    - fix SPDX licence comment style to be C++ style
+    - reverse christmas tree style comments
+    - in btf_dumper_array() ensure we end json_writer array in case of error
+
+patch 3:
+    - btf output for humans is shown when neither -j nor -p is supplied
+    - when -j or -p are supplied, augment output with "formatted" object which shows btf data in json
+    - added btf output to map lookup command also
+    - declarations to follow reverse christmas tree style
+    - error message grammar fix and remove full stop
+    - line continuation alignment fixes + other style fixes
+    - reorganise do_dump_btf() to remove goto and make it clearer
+    - remove misleading comment about end of root json object
+    - add comment to explain allocation btf buffer
+    - brackets around else clause to harmonise with braces on if clause
+
+Thanks,
+Okash
