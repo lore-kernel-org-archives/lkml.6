@@ -2,236 +2,148 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434DDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11B8C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E738324C9F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:07:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E738324C9F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 871E824FFF
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:08:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DnLRbsi2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871E824FFF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeGBUHZ (ORCPT
+        id S1752874AbeGBUIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:07:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752144AbeGBUHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:07:24 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE663402211D;
-        Mon,  2 Jul 2018 20:07:23 +0000 (UTC)
-Received: from crecklin.bos.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D1F522166B5D;
-        Mon,  2 Jul 2018 20:07:22 +0000 (UTC)
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v5] add param that allows bootline control of hardened usercopy
-Date:   Mon,  2 Jul 2018 16:07:20 -0400
-Message-Id: <1530562040-16158-1-git-send-email-crecklin@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 20:07:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 20:07:23 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+        Mon, 2 Jul 2018 16:08:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49098 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752237AbeGBUIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 16:08:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8xu/bQKPpvYZ5FO89l2etc2gyzltA0Uk0dmNCIWs1KU=; b=DnLRbsi2Derzxgd3r9jlSoas8
+        VUMv1wPkJUuxI7F6yvKC3/oXIhM91IvCkXu15uTmUaI/qtIncwSBL+5VFaxDnnqrVTRhXBKtI0dce
+        vMr26GW/71ZAwOrQ5W627zz5N1COaLs0dvBHXsKQ0Lndvf7hsEhj7Hslhfwri0lPF9oWcSAbXVvWN
+        LehWTBfBFJFi1RHHZZZaID1IRXhGhPix0fYoCrssgFezPlwv88OMXHrAMZOpXKm5hzG0t+LMEiQgq
+        6LVdfNS+wZbZ1rgbYfuMtPG6uipXyIYWyP8MMErtxOe0gKW+/3CGDiubTQw5hN5BsgPVx2CEewHEs
+        VC0/arTaQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fa57S-0008WT-1V; Mon, 02 Jul 2018 20:08:18 +0000
+Subject: Re: [PATCH 1/5] kconfig: include common Kconfig files from top-level
+ Kconfig
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180702144711.22111-1-hch@lst.de>
+ <20180702144711.22111-2-hch@lst.de>
+ <5c090e3f-ced0-62c5-c511-f4c66804ed32@infradead.org>
+Message-ID: <4dfba139-43a2-5949-3221-39cae3191ae7@infradead.org>
+Date:   Mon, 2 Jul 2018 13:08:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <5c090e3f-ced0-62c5-c511-f4c66804ed32@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris von Recklinghausen <crecklin@redhat.com> 
+On 07/02/18 13:03, Randy Dunlap wrote:
+> On 07/02/18 07:47, Christoph Hellwig wrote:
+>> Instead of duplicating the source statements in every architecture just
+>> do it once in the toplevel Kconfig file.
+>>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  Kconfig                 | 22 ++++++++++++++++++++++
+>>  arch/alpha/Kconfig      | 20 --------------------
+>>  arch/arc/Kconfig        | 16 ----------------
+>>  arch/arm/Kconfig        | 25 -------------------------
+>>  arch/arm64/Kconfig      | 23 -----------------------
+>>  arch/c6x/Kconfig        | 24 ------------------------
+>>  arch/h8300/Kconfig      | 24 ------------------------
+>>  arch/hexagon/Kconfig    | 16 ----------------
+>>  arch/ia64/Kconfig       | 20 --------------------
+>>  arch/m68k/Kconfig       | 24 ------------------------
+>>  arch/microblaze/Kconfig | 24 ------------------------
+>>  arch/mips/Kconfig       | 24 ------------------------
+>>  arch/nds32/Kconfig      | 16 ----------------
+>>  arch/nios2/Kconfig      | 24 ------------------------
+>>  arch/openrisc/Kconfig   | 23 -----------------------
+>>  arch/parisc/Kconfig     | 24 ------------------------
+>>  arch/powerpc/Kconfig    | 19 -------------------
+>>  arch/riscv/Kconfig      | 24 ------------------------
+>>  arch/s390/Kconfig       | 24 ------------------------
+>>  arch/sh/Kconfig         | 24 ------------------------
+>>  arch/sparc/Kconfig      | 24 ------------------------
+>>  arch/unicore32/Kconfig  | 24 ------------------------
+>>  arch/x86/Kconfig        | 22 +---------------------
+>>  arch/xtensa/Kconfig     | 25 -------------------------
+>>  24 files changed, 23 insertions(+), 512 deletions(-)
+>>
+>> diff --git a/Kconfig b/Kconfig
+>> index a90d9f9e268b..5499b1273ba5 100644
+>> --- a/Kconfig
+>> +++ b/Kconfig
+>> @@ -10,3 +10,25 @@ comment "Compiler: $(CC_VERSION_TEXT)"
+>>  source "scripts/Kconfig.include"
+>>  
+>>  source "arch/$(SRCARCH)/Kconfig"
+>> +
+>> +source "init/Kconfig"
+> 
+> Hi Christoph,
+> 
+> Looks good overall.  I'm still doing some testing on it.
+> 
+> I would prefer to have init/Kconfig before arch/$(SRCARCH)/Kconfig.
 
-Enabling HARDENED_USERCOPY causes measurable regressions in
- networking performance, up to 8% under UDP flood.
+Ugh, that won't get this set correctly on x86_64:
+CONFIG_PGTABLE_LEVELS=2
 
-I'm running an a small packet UDP flood using pktgen vs. a host b2b
-connected. On the receiver side the UDP packets are processed by a
-simple user space process that just reads and drops them:
+> Is there a reason that you chose the ordering above?
+> Any known dependencies?
+> 
+> Thanks.
+> 
+>> +
+>> +source "kernel/Kconfig.freezer"
+>> +
+>> +menu "Executable file formats"
+>> +source "fs/Kconfig.binfmt"
+>> +endmenu
+>> +
+>> +source "mm/Kconfig"
+>> +
+>> +source "net/Kconfig"
+>> +
+>> +source "drivers/Kconfig"
+>> +
+>> +source "fs/Kconfig"
+>> +
+>> +source "security/Kconfig"
+>> +
+>> +source "crypto/Kconfig"
+>> +
+>> +source "lib/Kconfig"
+> 
+> 
 
-https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
 
-Not very useful from a functional PoV, but it helps to pin-point
-bottlenecks in the networking stack.
-
-When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
-regression in the receive tput, compared to the same kernel without
-this option enabled.
-
-With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
-cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
-
-The call-chain is:
-
-__GI___libc_recvfrom
-entry_SYSCALL_64_after_hwframe
-do_syscall_64
-__x64_sys_recvfrom
-__sys_recvfrom
-inet_recvmsg
-udp_recvmsg
-__check_object_size
-
-udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
-calls check_copy_size() (again, inlined).
-
-A generic distro may want to enable HARDENED_USERCOPY in their default
-kernel config, but at the same time, such distro may want to be able to
-avoid the performance penalties in with the default configuration and
-disable the stricter check on a per-boot basis.
-
-This change adds a boot parameter that conditionally disables
-HARDENED_USERCOPY at boot time.
-
-This feature is not available on platforms that don't have CONFIG_JUMP_LABEL
-set.
-
-v4->v5:
-	key off of CONFIG_JUMP_LABEL, not CONFIG_SMP_BROKEN.
-
-v3->v4:
-	fix a couple of nits in commit comments
-	declaration of bypass_usercopy_checks moved inside mm/usercopy.c and
-		made static
-	add blurb to commit comments about not enabling this functionality on
-		platforms with CONFIG_BROKEN_ON_SMP set.
-v2->v3:
-	add benchmark details to commit comments
-	Don't add new item to Documentation/admin-guide/kernel-parameters.rst
-	rename boot param to "hardened_usercopy="
-	update description in Documentation/admin-guide/kernel-parameters.txt
-	static_branch_likely -> static_branch_unlikely
-	add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
-		DEFINE_STATIC_KEY_TRUE
-	disable_huc_atboot -> enable_checks (strtobool "on" == true)
-
-v1->v2:
-	remove CONFIG_HUC_DEFAULT_OFF
-	default is now enabled, boot param disables
-	move check to __check_object_size so as to not break optimization of
-		__builtin_constant_p()
-	include linux/atomic.h before linux/jump_label.h
-
-Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 11 ++++++++
- include/linux/jump_label.h                      |  6 +++++
- mm/usercopy.c                                   | 35 +++++++++++++++++++++++++
- 3 files changed, 52 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7..560d4dc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -816,6 +816,17 @@
- 	disable=	[IPV6]
- 			See Documentation/networking/ipv6.txt.
- 
-+	hardened_usercopy=
-+                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
-+                        hardening is enabled for this boot. Hardened
-+                        usercopy checking is used to protect the kernel
-+                        from reading or writing beyond known memory
-+                        allocation boundaries as a proactive defense
-+                        against bounds-checking flaws in the kernel's
-+                        copy_to_user()/copy_from_user() interface.
-+                on      Perform hardened usercopy checks (default).
-+                off     Disable hardened usercopy checks.
-+
- 	disable_radix	[PPC]
- 			Disable RADIX MMU mode on POWER9
- 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index b46b541..1a0b6f1 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -299,12 +299,18 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_TRUE(name)	\
- 	struct static_key_true name = STATIC_KEY_TRUE_INIT
- 
-+#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
-+	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-+
- #define DECLARE_STATIC_KEY_TRUE(name)	\
- 	extern struct static_key_true name
- 
- #define DEFINE_STATIC_KEY_FALSE(name)	\
- 	struct static_key_false name = STATIC_KEY_FALSE_INIT
- 
-+#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
-+	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-+
- #define DECLARE_STATIC_KEY_FALSE(name)	\
- 	extern struct static_key_false name
- 
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325..baa0193 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -20,6 +20,10 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/thread_info.h>
-+#ifdef CONFIG_JUMP_LABEL
-+#include <linux/atomic.h>
-+#include <linux/jump_label.h>
-+#endif
- #include <asm/sections.h>
- 
- /*
-@@ -240,6 +244,10 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
- 	}
- }
- 
-+#ifdef CONFIG_JUMP_LABEL
-+static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
-+#endif
-+
- /*
-  * Validates that the given object is:
-  * - not bogus address
-@@ -248,6 +256,11 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
-  */
- void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- {
-+#ifdef CONFIG_JUMP_LABEL
-+	if (static_branch_unlikely(&bypass_usercopy_checks))
-+		return;
-+#endif
-+
- 	/* Skip all tests if size is zero. */
- 	if (!n)
- 		return;
-@@ -279,3 +292,25 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
- }
- EXPORT_SYMBOL(__check_object_size);
-+
-+#ifdef CONFIG_JUMP_LABEL
-+EXPORT_SYMBOL(bypass_usercopy_checks);
-+
-+static bool enable_checks __initdata = true;
-+
-+static int __init parse_hardened_usercopy(char *str)
-+{
-+	return strtobool(str, &enable_checks);
-+}
-+
-+__setup("hardened_usercopy=", parse_hardened_usercopy);
-+
-+static int __init set_hardened_usercopy(void)
-+{
-+	if (enable_checks == false)
-+		static_branch_enable(&bypass_usercopy_checks);
-+	return 1;
-+}
-+
-+late_initcall(set_hardened_usercopy);
-+#endif
 -- 
-1.8.3.1
-
+~Randy
