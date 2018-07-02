@@ -2,120 +2,175 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4970C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A62BC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B63425B4B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:45:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B63425B4B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C8FA325B8A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:45:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mHFKbZYC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8FA325B8A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933649AbeGBIpR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:45:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57928 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753148AbeGBIpM (ORCPT
+        id S1754253AbeGBIpn (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:45:43 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46827 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753314AbeGBIpj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:45:12 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w628iIk3119939
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 04:45:12 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyg8phdut-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 04:45:11 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ldufour@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 09:45:10 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 09:45:05 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w628j4bF26804394
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 08:45:04 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C60474C046;
-        Mon,  2 Jul 2018 09:44:47 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A948C4C052;
-        Mon,  2 Jul 2018 09:44:46 +0100 (BST)
-Received: from [9.145.48.243] (unknown [9.145.48.243])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 09:44:46 +0100 (BST)
-Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        willy@infradead.org, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com
-Cc:     linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
-From:   Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date:   Mon, 2 Jul 2018 10:45:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 04:45:39 -0400
+Received: by mail-io0-f195.google.com with SMTP id p7-v6so1665615ioh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/MLqTGVMr81t/6rlNmBVApRztnXvLHWrIRmByS7RlnA=;
+        b=mHFKbZYCi6mUqm9Juts9Csmny5N8OcAiVQIIv32SIRAxzm8atWX2G1pnyqcFAR+WNQ
+         5Sj1jckrkGMDWgGFKV0Wt8xTaRXEU7KWFHqdS5EpNFXGz9aASa2RMpCtfJlI7pGEGF5k
+         TqR39e8Lr801zO52QFwjySU33juE4UkCAfeGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/MLqTGVMr81t/6rlNmBVApRztnXvLHWrIRmByS7RlnA=;
+        b=VaI8yln4aYSESCM28ajUedLz/L2U+kDaXTHVpADhluixzSe+utXGpwHRWZloOQoPNz
+         PQN1FqyhKSOL3TKI+nmtWSem5l76hHO6K9v7Jz965XfagGpyFL/V9sxxYthCp5a6FwMZ
+         hqKK8yCghhNOh0B7XLQ5HfYwpRBR8abGhqZMXOVcHZrDe94tZGwn/2r039KMKKY2dnx8
+         +dbPLyW6Vbz7VJlkGnoGe0TmTuU0NKE/Fw2HiZ29bcaiZulTsFI4Ah7V5t8rSdBE1SKa
+         YXeBZwio6xcqey35bcQ4J7XPGgPFIXdaKCQ2TKnI4w4IgSBcIEOMgW26sLgtgmDDF2tP
+         74Kw==
+X-Gm-Message-State: APt69E1OYDLTbhdyCr8THPKKvxkvs4pPf1HmMwu0QFgqYQfft16+gtDw
+        6cxxMcBZrMspA7yiLV1cRMHNj1bdddY=
+X-Google-Smtp-Source: AAOMgpdA46BO0nXgnP8M/mQJYIc/SdvBaffN1Dez00oP/oLlvKWRNs2SdED6xPnUrcQBNp0fikmyHQ==
+X-Received: by 2002:a6b:b010:: with SMTP id z16-v6mr20000405ioe.206.1530521138554;
+        Mon, 02 Jul 2018 01:45:38 -0700 (PDT)
+Received: from mail-io0-f181.google.com (mail-io0-f181.google.com. [209.85.223.181])
+        by smtp.gmail.com with ESMTPSA id b4-v6sm1897824ioh.79.2018.07.02.01.45.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 01:45:35 -0700 (PDT)
+Received: by mail-io0-f181.google.com with SMTP id d185-v6so14045622ioe.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:45:35 -0700 (PDT)
+X-Received: by 2002:a6b:3b87:: with SMTP id i129-v6mr12367079ioa.86.1530521135269;
+ Mon, 02 Jul 2018 01:45:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070208-0016-0000-0000-000001E25E12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070208-0017-0000-0000-00003236B401
-Message-Id: <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020103
+References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Mon, 2 Jul 2018 17:45:24 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MXH7BpOXW++TxgsdRBr5C7PsHLO8jZtysGiNwUbkNW+BQ@mail.gmail.com>
+Message-ID: <CAPBb6MXH7BpOXW++TxgsdRBr5C7PsHLO8jZtysGiNwUbkNW+BQ@mail.gmail.com>
+Subject: Re: [PATCH v4 00/27] Venus updates
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
+        Tomasz Figa <tfiga@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/06/2018 00:39, Yang Shi wrote:
-> Check VM_DEAD flag of vma in page fault handler, if it is set, trigger
-> SIGSEGV.
-> 
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  arch/x86/mm/fault.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 9a84a0d..3fd2da5 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1357,6 +1357,10 @@ static inline bool smap_violation(int error_code, struct pt_regs *regs)
->  		bad_area(regs, error_code, address);
->  		return;
->  	}
-> +	if (unlikely(vma->vm_flags & VM_DEAD)) {
-> +		bad_area(regs, error_code, address);
-> +		return;
-> +	}
+Hi Stanimir,
 
-This will have to be done for all the supported architectures, what about doing
-this check in handle_mm_fault() and return VM_FAULT_SIGSEGV ?
+Thanks for this very well organized series and sorry for not giving
+feedback earlier.
 
->  	if (error_code & X86_PF_USER) {
->  		/*
->  		 * Accessing the stack below %sp is always a bug.
-> 
+I have tested this version against the 4.14 Chrome OS kernel tree (+ a
+few extra changes to comply with the codec API) and it was working
+flawlessly.
 
+Therefore,
+
+Tested-by: Alexandre Courbot <acourbot@chromium.org>
+
+For the whole series.
+
+I have a few comments/questions on some patches, would be great if you
+could take a look. Also wondering what is your plan regarding codec
+API compliance? Do you plan to integrate it into the current series,
+or work on it after merging this initial work? Both ways would be ok
+as far as I am concerned.
+
+Cheers,
+Alex.
+
+
+On Thu, Jun 28, 2018 at 12:27 AM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Hi,
+>
+> Here is v4 with following changes:
+>
+> - fixed kbuild test robot in 12/27.
+> - fixed destination of memcpy in fill_xxx functions.
+>
+> v3 can be found at https://lkml.org/lkml/2018/6/13/464
+>
+> regards,
+> Stan
+>
+> Stanimir Varbanov (27):
+>   venus: hfi_msgs: correct pointer increment
+>   venus: hfi: preparation to support venus 4xx
+>   venus: hfi: update sequence event to handle more properties
+>   venus: hfi_cmds: add set_properties for 4xx version
+>   venus: hfi: support session continue for 4xx version
+>   venus: hfi: handle buffer output2 type as well
+>   venus: hfi_venus: add halt AXI support for Venus 4xx
+>   venus: hfi_venus: fix suspend function for venus 3xx versions
+>   venus: hfi_venus: move set of default properties to core init
+>   venus: hfi_venus: add suspend functionality for Venus 4xx
+>   venus: core,helpers: add two more clocks found in Venus 4xx
+>   venus: hfi_parser: add common capability parser
+>   venus: helpers: rename a helper function and use buffer mode from caps
+>   venus: helpers: add a helper function to set dynamic buffer mode
+>   venus: helpers: add helper function to set actual buffer size
+>   venus: core: delete not used buffer mode flags
+>   venus: helpers: add buffer type argument to a helper
+>   venus: helpers: add a new helper to set raw format
+>   venus: helpers,vdec,venc: add helpers to set work mode and core usage
+>   venus: helpers: extend set_num_bufs helper with one more argument
+>   venus: helpers: add a helper to return opb buffer sizes
+>   venus: vdec: get required input buffers as well
+>   venus: vdec: a new function for output configuration
+>   venus: helpers: move frame size calculations on common place
+>   venus: implementing multi-stream support
+>   venus: core: add sdm845 DT compatible and resource data
+>   venus: add HEVC codec support
+>
+>  .../devicetree/bindings/media/qcom,venus.txt       |   1 +
+>  drivers/media/platform/qcom/venus/Makefile         |   3 +-
+>  drivers/media/platform/qcom/venus/core.c           | 107 ++++
+>  drivers/media/platform/qcom/venus/core.h           | 100 ++--
+>  drivers/media/platform/qcom/venus/helpers.c        | 555 +++++++++++++++++++--
+>  drivers/media/platform/qcom/venus/helpers.h        |  23 +-
+>  drivers/media/platform/qcom/venus/hfi.c            |  12 +-
+>  drivers/media/platform/qcom/venus/hfi.h            |  10 +
+>  drivers/media/platform/qcom/venus/hfi_cmds.c       |  62 ++-
+>  drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
+>  drivers/media/platform/qcom/venus/hfi_msgs.c       | 399 +++------------
+>  drivers/media/platform/qcom/venus/hfi_parser.c     | 278 +++++++++++
+>  drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
+>  drivers/media/platform/qcom/venus/hfi_venus.c      | 109 +++-
+>  drivers/media/platform/qcom/venus/hfi_venus_io.h   |  10 +
+>  drivers/media/platform/qcom/venus/vdec.c           | 326 +++++++-----
+>  drivers/media/platform/qcom/venus/venc.c           | 220 ++++----
+>  17 files changed, 1694 insertions(+), 678 deletions(-)
+>  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
+>  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
+>
+> --
+> 2.14.1
+>
