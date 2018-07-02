@@ -2,471 +2,101 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4EFC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5CFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A8A25C94
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:26:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A8A25C94
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 10D1225C79
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:27:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D1225C79
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030253AbeGBK0t (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:26:49 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:19476 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965239AbeGBK0q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 06:26:46 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w62AQhQ0077772;
-        Mon, 2 Jul 2018 19:26:43 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Mon, 02 Jul 2018 19:26:43 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w62AQbJP077725
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 2 Jul 2018 19:26:43 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: printk() from NMI backtrace can delay a lot
-Message-ID: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
-Date:   Mon, 2 Jul 2018 19:26:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S965569AbeGBK1j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 06:27:39 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:36172 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965366AbeGBK1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:27:36 -0400
+Received: from wd0142.dip.tu-dresden.de ([141.76.108.142] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fZw3Q-0004Ek-L2; Mon, 02 Jul 2018 12:27:32 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     thierry.reding@gmail.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanpaul@chromium.org,
+        briannorris@chromium.org, hl@rock-chips.com,
+        emil.l.velikov@gmail.com, Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v5 3/4] dt-bindings: Add Innolux P097PFG panel bindings
+Date:   Mon,  2 Jul 2018 12:27:20 +0200
+Message-Id: <20180702102721.3546-4-heiko@sntech.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180702102721.3546-1-heiko@sntech.de>
+References: <20180702102721.3546-1-heiko@sntech.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+From: huang lin <hl@rock-chips.com>
 
-Today I was testing conditions when/how stall watchdog fires. I noticed that
-printing NMI backtraces to consoles is delayed till IRQ is enabled or somebody
-else schedules printk(). This is not a welcomed behavior when the cause of
-lock up is doing nearly-infinite loop with IRQ disabled. Can we improve this?
+The Innolux P097PFG panel is 9.7" panel with 1536X2048
+resolution, it reuse P079ZCA panel driver, so improve
+p079ZCA dt-binding to support P097PFG.
 
-----------
-static int __init ccs_init(void)
-{
-	unsigned long stamp = jiffies;
-	local_irq_disable();
-	while (time_before(jiffies, stamp + 130 * HZ)) /* Emulating a lockup bug. */
-		;
-	local_irq_enable();
-	return -EINVAL;
-}
-----------
+Changes in v2:
+- None
+Changes in v3:
+- None
+Changes in v4:
+- None
+Changes in v5:
+- use separate file for binding
+- keep power supplies as required
 
-Below samples used netconsole in order to show the lag between printk() saved uptime
-and printk() wrote the pending lines.
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ .../display/panel/innolux,p097pfg.txt         | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/innolux,p097pfg.txt
 
+diff --git a/Documentation/devicetree/bindings/display/panel/innolux,p097pfg.txt b/Documentation/devicetree/bindings/display/panel/innolux,p097pfg.txt
+new file mode 100644
+index 000000000000..595d9dfeffd3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/innolux,p097pfg.txt
+@@ -0,0 +1,24 @@
++Innolux P097PFG 9.7" 1536x2048 TFT LCD panel
++
++Required properties:
++- compatible: should be "innolux,p097pfg"
++- reg: DSI virtual channel of the peripheral
++- avdd-supply: phandle of the regulator that provides positive voltage
++- avee-supply: phandle of the regulator that provides negative voltage
++- enable-gpios: panel enable gpio
++
++Optional properties:
++- backlight: phandle of the backlight device attached to the panel
++
++Example:
++
++	&mipi_dsi {
++		panel {
++			compatible = "innolux,p079zca";
++			reg = <0>;
++			avdd-supply = <...>;
++			avee-supply = <...>;
++			backlight = <&backlight>;
++			enable-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
++		};
++	};
+-- 
+2.17.0
 
-
-Loading the module after
-
-  echo 25 > /sys/module/rcupdate/parameters/rcu_cpu_stall_timeout
-
-----------
-2018-07-02 12:11:40 192.168.159.129:6666 [   58.090624] netconsole: network logging started
-2018-07-02 12:12:11 192.168.159.129:6666 [   89.017794] akari_test: loading out-of-tree module taints kernel.
-2018-07-02 12:12:41 192.168.159.129:6666 [  119.024961] INFO: rcu_sched detected stalls on CPUs/tasks:
-2018-07-02 12:12:41 192.168.159.129:6666 [  119.026970] 	2-...0: (0 ticks this GP) idle=0be/1/4611686018427387904 softirq=5544/5544 fqs=7077 
-2018-07-02 12:12:41 192.168.159.129:6666 [  119.030076] 	(detected by 3, t=30005 jiffies, g=2553, c=2552, q=94)
-2018-07-02 12:12:41 192.168.159.129:6666 [  119.032142] Sending NMI from CPU 3 to CPUs 2:
-
-/* Here is a 32 seconds of lag which is flushed by */
-
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033877] NMI backtrace for cpu 2
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033884] CPU: 2 PID: 10038 Comm: insmod Tainted: G           O      4.18.0-rc3 #643
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033886] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033895] RIP: 0010:__sanitizer_cov_trace_pc+0x20/0x50
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033896] Code: 5d c3 90 90 90 90 90 90 90 90 55 65 48 8b 04 25 40 5e 01 00 48 89 e5 65 8b 15 6c f6 d1 7e 81 e2 00 01 1f 00 48 8b 4d 08 75 2b <8b> 90 80 12 00 00 83 fa 02 75 20 48 8b b0 88 12 00 00 8b 80 84 12 
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033942] RSP: 0018:ffffc9000205fc60 EFLAGS: 00000046
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033945] RAX: ffff880136312080 RBX: 00000000fffcc7e1 RCX: ffffffffa000d038
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033947] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffa000d033
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033949] RBP: ffffc9000205fc60 R08: 0000000000000001 R09: 0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033951] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa000d000
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033953] R13: ffff8801351cd940 R14: 0000000000000001 R15: ffffc9000205fe78
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033956] FS:  00007f90d3e62740(0000) GS:ffff88013a680000(0000) knlGS:0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033958] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033961] CR2: 00000000015051d8 CR3: 0000000136a66004 CR4: 00000000000606e0
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.033998] Call Trace:
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034006]  ccs_init+0x38/0x79 [akari_test]
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034011]  do_one_initcall+0x7a/0x460
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034016]  ? trace_hardirqs_on+0xd/0x10
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034021]  do_init_module+0x5a/0x1e0
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034024]  load_module+0x2144/0x2800
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034030]  __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034033]  ? __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034038]  __x64_sys_finit_module+0x15/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034041]  do_syscall_64+0x81/0x260
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034047]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034050] RIP: 0033:0x7f90d3335ec9
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034050] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 97 cf 2c 00 f7 d8 64 89 01 48 
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034096] RSP: 002b:00007ffce0ff8338 EFLAGS: 00000202 ORIG_RAX: 0000000000000139
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034100] RAX: ffffffffffffffda RBX: 00000000015051e0 RCX: 00007f90d3335ec9
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034102] RDX: 0000000000000000 RSI: 000000000041aa0e RDI: 0000000000000003
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034104] RBP: 000000000041aa0e R08: 0000000000000000 R09: 00007ffce0ff84d8
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034105] R10: 0000000000000003 R11: 0000000000000202 R12: 0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  119.034107] R13: 0000000001504120 R14: 0000000000000000 R15: 0000000000000000
-
-/* somebody else's printk(). */
-
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.518735] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0 nice=0 stuck for 61s!
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.598965] Showing busy workqueues and worker pools:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.601027] workqueue mm_percpu_wq: flags=0x8
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.602688]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.605458]     pending: vmstat_update
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606825] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606827] ======================================================
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606829] WARNING: possible circular locking dependency detected
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606831] 4.18.0-rc3 #643 Tainted: G           O     
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606832] ------------------------------------------------------
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606834] swapper/0/0 is trying to acquire lock:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606835] 00000000316e1432 (console_owner){-.-.}, at: console_unlock+0x1ce/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606840] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606841] but task is already holding lock:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606842] 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606847] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606848] which lock already depends on the new lock.
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606849] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606849] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606851] the existing dependency chain (in reverse order) is:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606852] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606852] -> #4 (&(&pool->lock)->rlock){-.-.}:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606857]        _raw_spin_lock+0x2a/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606858]        __queue_work+0xfb/0x780
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606859]        queue_work_on+0xde/0x110
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606861]        put_pwq+0x85/0x90
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606862]        put_pwq_unlocked.part.29+0x1d/0x30
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606863]        destroy_workqueue+0x2df/0x320
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606865]        tipc_topsrv_stop+0x1a0/0x290
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606866]        tipc_exit_net+0x15/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606867]        ops_exit_list.isra.8+0x4e/0x90
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606869]        cleanup_net+0x219/0x390
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606870]        process_one_work+0x2ec/0x800
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606871]        worker_thread+0x45/0x4d0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606872]        kthread+0x14c/0x170
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606874]        ret_from_fork+0x3a/0x50
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606874] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606875] -> #3 (&pool->lock/1){-.-.}:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606880]        _raw_spin_lock+0x2a/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606881]        __queue_work+0xfb/0x780
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606882]        queue_work_on+0xde/0x110
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606884]        tty_flip_buffer_push+0x2f/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606885]        pty_write+0xb0/0xc0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606886]        n_tty_write+0x244/0x620
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606887]        tty_write+0x1e3/0x3f0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606888]        __vfs_write+0x54/0x270
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606890]        vfs_write+0xf0/0x230
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606891]        redirected_tty_write+0x61/0xb0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606892]        do_iter_write+0x1ce/0x220
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606893]        vfs_writev+0xb0/0x140
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606895]        do_writev+0x6d/0x120
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606896]        __x64_sys_writev+0x20/0x30
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606897]        do_syscall_64+0x81/0x260
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606899]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606899] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606900] -> #2 (&(&port->lock)->rlock){-.-.}:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606905]        _raw_spin_lock_irqsave+0x56/0x70
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606906]        tty_port_tty_get+0x20/0x60
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606907]        tty_port_default_wakeup+0x15/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606909]        tty_port_tty_wakeup+0x20/0x30
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606910]        uart_write_wakeup+0x26/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606911]        serial8250_tx_chars+0x1ae/0x2d0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606913]        serial8250_handle_irq.part.23+0x108/0x130
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606915]        serial8250_default_handle_irq+0x7a/0x90
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606916]        serial8250_interrupt+0x77/0x110
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606918]        __handle_irq_event_percpu+0x80/0x480
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606919]        handle_irq_event_percpu+0x35/0x90
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606920]        handle_irq_event+0x39/0x60
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606922]        handle_edge_irq+0xa5/0x230
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606923]        handle_irq+0xae/0x120
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606924]        do_IRQ+0x53/0x110
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606925]        ret_from_intr+0x0/0x1e
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606927]        free_unref_page_list+0x333/0x590
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606928]        release_pages+0x44a/0x5c0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606930]        free_pages_and_swap_cache+0x107/0x150
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606931]        tlb_flush_mmu_free+0x4e/0x70
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606932]        arch_tlb_finish_mmu+0x61/0xa0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606934]        tlb_finish_mmu+0x36/0x50
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606935]        exit_mmap+0x10a/0x230
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606936]        mmput+0x92/0x1c0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606937]        do_exit+0x365/0x10b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606938]        do_group_exit+0x60/0x100
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606940]        __x64_sys_exit_group+0x1c/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606941]        do_syscall_64+0x81/0x260
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606943]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606943] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606944] -> #1 (&port_lock_key){-.-.}:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606948]        _raw_spin_lock_irqsave+0x56/0x70
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606950]        serial8250_console_write+0x30c/0x3b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606951]        univ8250_console_write+0x35/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606953]        console_unlock+0x650/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606954]        register_console+0x339/0x540
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606955]        univ8250_console_init+0x30/0x3a
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606957]        console_init+0x2c6/0x424
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606958]        start_kernel+0x466/0x61f
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606959]        x86_64_start_reservations+0x2a/0x2c
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606961]        x86_64_start_kernel+0x72/0x75
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606962]        secondary_startup_64+0xa5/0xb0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606963] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606963] -> #0 (console_owner){-.-.}:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606968]        lock_acquire+0xbf/0x220
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606969]        console_unlock+0x23e/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606970]        vprintk_emit+0x394/0x680
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606971]        vprintk_default+0x28/0x30
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606973]        vprintk_func+0x57/0xc0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606974]        printk+0x5e/0x7d
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606975]        show_workqueue_state+0x448/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606977]        wq_watchdog_timer_fn+0x1df/0x320
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606978]        call_timer_fn+0xb0/0x420
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606979]        run_timer_softirq+0x2da/0x870
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606981]        __do_softirq+0xd0/0x4fe
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606982]        irq_exit+0xd4/0xe0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606983]        smp_apic_timer_interrupt+0x9a/0x2b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606985]        apic_timer_interrupt+0xf/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606986]        native_safe_halt+0x6/0x10
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606987]        default_idle+0x2e/0x1a0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606988]        arch_cpu_idle+0x10/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606990]        default_idle_call+0x1e/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606991]        do_idle+0x205/0x2e0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606992]        cpu_startup_entry+0x6e/0x70
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606993]        rest_init+0xc7/0xd0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606995]        start_kernel+0x5fc/0x61f
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606996]        x86_64_start_reservations+0x2a/0x2c
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606997]        x86_64_start_kernel+0x72/0x75
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606999]        secondary_startup_64+0xa5/0xb0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.606999] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607001] other info that might help us debug this:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607001] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607002] Chain exists of:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607003]   console_owner --> &pool->lock/1 --> &(&pool->lock)->rlock
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607009] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607010]  Possible unsafe locking scenario:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607011] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607012]        CPU0                    CPU1
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607014]        ----                    ----
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607014]   lock(&(&pool->lock)->rlock);
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607017]                                lock(&pool->lock/1);
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607021]                                lock(&(&pool->lock)->rlock);
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607024]   lock(console_owner);
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607026] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607027]  *** DEADLOCK ***
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607027] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607028] 4 locks held by swapper/0/0:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607029]  #0: 00000000acb744a0 ((&wq_watchdog_timer)){+.-.}, at: call_timer_fn+0x0/0x420
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607034]  #1: 00000000918be876 (rcu_read_lock_sched){....}, at: show_workqueue_state+0x0/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607040]  #2: 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607045]  #3: 000000005fd39989 (console_lock){+.+.}, at: vprintk_emit+0x386/0x680
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607050] 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607051] stack backtrace:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607053] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O      4.18.0-rc3 #643
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607056] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607057] Call Trace:
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607058]  <IRQ>
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607059]  dump_stack+0xe9/0x148
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607061]  print_circular_bug.isra.39+0x1f3/0x201
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607062]  __lock_acquire+0x135f/0x1400
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607063]  lock_acquire+0xbf/0x220
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607065]  ? console_unlock+0x215/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607066]  ? lock_acquire+0xbf/0x220
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607067]  ? console_unlock+0x1ce/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607068]  console_unlock+0x23e/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607070]  ? console_unlock+0x1ce/0x8b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607071]  vprintk_emit+0x394/0x680
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607072]  vprintk_default+0x28/0x30
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607073]  vprintk_func+0x57/0xc0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607074]  printk+0x5e/0x7d
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607076]  show_workqueue_state+0x448/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607077]  ? wq_watchdog_timer_fn+0x1a6/0x320
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607078]  wq_watchdog_timer_fn+0x1df/0x320
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607080]  ? show_workqueue_state+0x900/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607081]  ? show_workqueue_state+0x900/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607082]  call_timer_fn+0xb0/0x420
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607084]  ? show_workqueue_state+0x900/0x900
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607085]  run_timer_softirq+0x2da/0x870
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607086]  __do_softirq+0xd0/0x4fe
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607087]  irq_exit+0xd4/0xe0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607089]  smp_apic_timer_interrupt+0x9a/0x2b0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607090]  apic_timer_interrupt+0xf/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607091]  </IRQ>
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607092] RIP: 0010:native_safe_halt+0x6/0x10
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607093] Code: 53 18 fe 65 48 8b 04 25 40 5e 01 00 f0 80 48 02 20 48 8b 00 a8 08 0f 84 57 ff ff ff eb a6 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3 0f 1f 84 00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90 
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607135] RSP: 0018:ffffffff84003df8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607138] RAX: ffffffff8406d7c0 RBX: 0000000000000000 RCX: 0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607140] RDX: ffffffff8406d7c0 RSI: 0000000000000001 RDI: ffffffff8406d7c0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607142] RBP: ffffffff84003df8 R08: 0000000000000001 R09: 0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607144] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607146] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff84098920
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607148]  ? trace_hardirqs_on+0xd/0x10
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607149]  default_idle+0x2e/0x1a0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607150]  arch_cpu_idle+0x10/0x20
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607151]  default_idle_call+0x1e/0x40
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607152]  do_idle+0x205/0x2e0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607154]  ? do_idle+0xf9/0x2e0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607155]  cpu_startup_entry+0x6e/0x70
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607156]  rest_init+0xc7/0xd0
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607158]  ? trace_event_define_fields_vector_alloc_managed+0x8b/0x8b
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607159]  start_kernel+0x5fc/0x61f
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607161]  x86_64_start_reservations+0x2a/0x2c
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607162]  x86_64_start_kernel+0x72/0x75
-2018-07-02 12:13:13 192.168.159.129:6666 [  151.607163]  secondary_startup_64+0xa5/0xb0
-2018-07-02 12:13:44 192.168.159.129:6666 [  182.238928] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0 nice=0 stuck for 92s!
-2018-07-02 12:13:44 192.168.159.129:6666 [  182.241803] Showing busy workqueues and worker pools:
-2018-07-02 12:13:44 192.168.159.129:6666 [  182.243616] workqueue mm_percpu_wq: flags=0x8
-2018-07-02 12:13:44 192.168.159.129:6666 [  182.245141]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
-2018-07-02 12:13:44 192.168.159.129:6666 [  182.247130]     pending: vmstat_update
-2018-07-02 12:14:11 192.168.159.129:6666 [  209.030165] INFO: rcu_sched detected stalls on CPUs/tasks:
-2018-07-02 12:14:11 192.168.159.129:6666 [  209.032175] 	2-...0: (0 ticks this GP) idle=0be/1/4611686018427387904 softirq=5544/5544 fqs=27833 
-2018-07-02 12:14:11 192.168.159.129:6666 [  209.035069] 	(detected by 3, t=120007 jiffies, g=2553, c=2552, q=1155)
-2018-07-02 12:14:11 192.168.159.129:6666 [  209.037220] Sending NMI from CPU 3 to CPUs 2:
-
-/* Here is a 10 seconds of lag which is flushed by local_irq_enable(). */
-
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038805] NMI backtrace for cpu 2
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038813] CPU: 2 PID: 10038 Comm: insmod Tainted: G           O      4.18.0-rc3 #643
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038815] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038827] RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038828] Code: 90 90 90 90 55 65 48 8b 04 25 40 5e 01 00 48 89 e5 65 8b 15 6c f6 d1 7e 81 e2 00 01 1f 00 48 8b 4d 08 75 2b 8b 90 80 12 00 00 <83> fa 02 75 20 48 8b b0 88 12 00 00 8b 80 84 12 00 00 48 8b 16 48 
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038881] RSP: 0018:ffffc9000205fc60 EFLAGS: 00000046
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038884] RAX: ffff880136312080 RBX: 00000000fffcc7e1 RCX: ffffffffa000d038
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038886] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffa000d033
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038888] RBP: ffffc9000205fc60 R08: 0000000000000001 R09: 0000000000000000
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038890] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa000d000
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038892] R13: ffff8801351cd940 R14: 0000000000000001 R15: ffffc9000205fe78
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038895] FS:  00007f90d3e62740(0000) GS:ffff88013a680000(0000) knlGS:0000000000000000
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038897] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038899] CR2: 00000000015051d8 CR3: 0000000136a66004 CR4: 00000000000606e0
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038941] Call Trace:
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038950]  ccs_init+0x38/0x79 [akari_test]
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038956]  do_one_initcall+0x7a/0x460
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038961]  ? trace_hardirqs_on+0xd/0x10
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038966]  do_init_module+0x5a/0x1e0
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038969]  load_module+0x2144/0x2800
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038975]  __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038978]  ? __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038983]  __x64_sys_finit_module+0x15/0x20
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038986]  do_syscall_64+0x81/0x260
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038992]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038995] RIP: 0033:0x7f90d3335ec9
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.038996] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 97 cf 2c 00 f7 d8 64 89 01 48 
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039041] RSP: 002b:00007ffce0ff8338 EFLAGS: 00000202 ORIG_RAX: 0000000000000139
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039045] RAX: ffffffffffffffda RBX: 00000000015051e0 RCX: 00007f90d3335ec9
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039047] RDX: 0000000000000000 RSI: 000000000041aa0e RDI: 0000000000000003
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039049] RBP: 000000000041aa0e R08: 0000000000000000 R09: 00007ffce0ff84d8
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039051] R10: 0000000000000003 R11: 0000000000000202 R12: 0000000000000000
-2018-07-02 12:14:21 192.168.159.129:6666 [  209.039053] R13: 0000000001504120 R14: 0000000000000000 R15: 0000000000000000
-----------
-
-
-
-Loading the module after
-
-  echo 180 > /sys/module/workqueue/parameters/watchdog_thresh
-  echo 25 > /sys/module/rcupdate/parameters/rcu_cpu_stall_timeout
-
-----------
-2018-07-02 12:15:57 192.168.159.129:6666 [  315.368812] INFO: rcu_sched detected stalls on CPUs/tasks:
-2018-07-02 12:15:57 192.168.159.129:6666 [  315.370959] 	1-...0: (2 ticks this GP) idle=d0a/1/4611686018427387904 softirq=4587/4587 fqs=7128 
-2018-07-02 12:15:57 192.168.159.129:6666 [  315.373828] 	(detected by 7, t=30007 jiffies, g=2649, c=2648, q=64)
-2018-07-02 12:15:57 192.168.159.129:6666 [  315.375881] Sending NMI from CPU 7 to CPUs 1:
-
-/* Here is a 90 seconds of lag which is flushed by */
-
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377376] NMI backtrace for cpu 1
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377382] CPU: 1 PID: 10062 Comm: insmod Tainted: G           O      4.18.0-rc3 #643
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377384] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377394] RIP: 0010:__sanitizer_cov_trace_pc+0x4b/0x50
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377395] Code: 90 80 12 00 00 83 fa 02 75 20 48 8b b0 88 12 00 00 8b 80 84 12 00 00 48 8b 16 48 83 c2 01 48 39 d0 76 07 48 89 0c d6 48 89 16 <5d> c3 0f 1f 00 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 89 f3 48 
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377451] RSP: 0018:ffffc90000cffc60 EFLAGS: 00000093
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377454] RAX: ffff88013091a600 RBX: 00000000ffffc6dd RCX: ffffffffa0012038
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377456] RDX: 0000000000000000 RSI: 0000000000000bfa RDI: ffffffffa0012033
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377458] RBP: ffffc90000cffc60 R08: 0000000000000000 R09: 0000000000000000
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377460] R10: ffffc90000cffbe8 R11: ffff88013091a600 R12: ffffffffa0012000
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377462] R13: ffff88012f7734e0 R14: 0000000000000001 R15: ffffc90000cffe78
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377466] FS:  00007fafb5b7b740(0000) GS:ffff88013a640000(0000) knlGS:0000000000000000
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377468] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377470] CR2: 00007fafb50bf910 CR3: 0000000130321006 CR4: 00000000000606e0
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377507] Call Trace:
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377515]  ccs_init+0x38/0x79 [akari_test]
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377521]  do_one_initcall+0x7a/0x460
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377526]  ? trace_hardirqs_on+0xd/0x10
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377531]  do_init_module+0x5a/0x1e0
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377534]  load_module+0x2144/0x2800
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377540]  __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377543]  ? __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377548]  __x64_sys_finit_module+0x15/0x20
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377552]  do_syscall_64+0x81/0x260
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377557]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377560] RIP: 0033:0x7fafb504eec9
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377561] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 97 cf 2c 00 f7 d8 64 89 01 48 
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377606] RSP: 002b:00007ffcd3167148 EFLAGS: 00000206 ORIG_RAX: 0000000000000139
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377610] RAX: ffffffffffffffda RBX: 00000000012ab1e0 RCX: 00007fafb504eec9
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377612] RDX: 0000000000000000 RSI: 000000000041aa0e RDI: 0000000000000003
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377614] RBP: 000000000041aa0e R08: 0000000000000000 R09: 00007ffcd31672e8
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377616] R10: 0000000000000003 R11: 0000000000000206 R12: 0000000000000000
-2018-07-02 12:17:27 192.168.159.129:6666 [  315.377618] R13: 00000000012aa120 R14: 0000000000000000 R15: 0000000000000000
-
-/* somebody else's printk(). */
-
-2018-07-02 12:17:27 192.168.159.129:6666 [  405.373020] INFO: rcu_sched detected stalls on CPUs/tasks:
-2018-07-02 12:17:27 192.168.159.129:6666 [  405.449297] 	1-...0: (2 ticks this GP) idle=d0a/1/4611686018427387904 softirq=4587/4587 fqs=27972 
-2018-07-02 12:17:27 192.168.159.129:6666 [  405.452234] 	(detected by 2, t=120086 jiffies, g=2649, c=2648, q=537)
-2018-07-02 12:17:27 192.168.159.129:6666 [  405.454419] Sending NMI from CPU 2 to CPUs 1:
-
-/* Here is a 10 seconds of lag which is flushed by local_irq_enable(). */
-
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.455947] NMI backtrace for cpu 1
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.455953] CPU: 1 PID: 10062 Comm: insmod Tainted: G           O      4.18.0-rc3 #643
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.455956] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.455964] RIP: 0010:__sanitizer_cov_trace_pc+0x20/0x50
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.455965] Code: 5d c3 90 90 90 90 90 90 90 90 55 65 48 8b 04 25 40 5e 01 00 48 89 e5 65 8b 15 6c f6 d1 7e 81 e2 00 01 1f 00 48 8b 4d 08 75 2b <8b> 90 80 12 00 00 83 fa 02 75 20 48 8b b0 88 12 00 00 8b 80 84 12 
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456012] RSP: 0018:ffffc90000cffc60 EFLAGS: 00000046
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456014] RAX: ffff88013091a600 RBX: 00000000ffffc6dd RCX: ffffffffa0012038
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456017] RDX: 0000000000000000 RSI: 0000000000000bfa RDI: ffffffffa0012033
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456018] RBP: ffffc90000cffc60 R08: 0000000000000000 R09: 0000000000000000
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456021] R10: ffffc90000cffbe8 R11: ffff88013091a600 R12: ffffffffa0012000
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456023] R13: ffff88012f7734e0 R14: 0000000000000001 R15: ffffc90000cffe78
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456026] FS:  00007fafb5b7b740(0000) GS:ffff88013a640000(0000) knlGS:0000000000000000
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456028] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456030] CR2: 00007fafb50bf910 CR3: 0000000130321006 CR4: 00000000000606e0
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456069] Call Trace:
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456077]  ccs_init+0x38/0x79 [akari_test]
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456083]  do_one_initcall+0x7a/0x460
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456088]  ? trace_hardirqs_on+0xd/0x10
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456093]  do_init_module+0x5a/0x1e0
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456096]  load_module+0x2144/0x2800
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456102]  __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456105]  ? __do_sys_finit_module+0xd1/0xf0
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456110]  __x64_sys_finit_module+0x15/0x20
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456113]  do_syscall_64+0x81/0x260
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456119]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456122] RIP: 0033:0x7fafb504eec9
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456123] Code: 01 00 48 81 c4 80 00 00 00 e9 f1 fe ff ff 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 97 cf 2c 00 f7 d8 64 89 01 48 
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456168] RSP: 002b:00007ffcd3167148 EFLAGS: 00000206 ORIG_RAX: 0000000000000139
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456172] RAX: ffffffffffffffda RBX: 00000000012ab1e0 RCX: 00007fafb504eec9
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456174] RDX: 0000000000000000 RSI: 000000000041aa0e RDI: 0000000000000003
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456176] RBP: 000000000041aa0e R08: 0000000000000000 R09: 00007ffcd31672e8
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456177] R10: 0000000000000003 R11: 0000000000000206 R12: 0000000000000000
-2018-07-02 12:17:37 192.168.159.129:6666 [  405.456179] R13: 00000000012aa120 R14: 0000000000000000 R15: 0000000000000000
-----------
