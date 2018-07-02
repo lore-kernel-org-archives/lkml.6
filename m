@@ -4,237 +4,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4256DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070D2C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D7823C29
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:31:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB043204EC
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="By/PnF0U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D7823C29
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DwZWUn3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB043204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932254AbeGBWbv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:31:51 -0400
-Received: from mail.efficios.com ([167.114.142.138]:46142 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932100AbeGBWbt (ORCPT
+        id S1753746AbeGBWdh (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 18:33:37 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41668 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753470AbeGBWdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:31:49 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7051F22FEC8;
-        Mon,  2 Jul 2018 18:31:48 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id V-UAy1OfJJI4; Mon,  2 Jul 2018 18:31:47 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C07AB22FEBF;
-        Mon,  2 Jul 2018 18:31:47 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C07AB22FEBF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530570707;
-        bh=XXblgOCaLo7dkYli/cqPwWZjRHMctirpyNf354Ul5OA=;
-        h=From:To:Date:Message-Id;
-        b=By/PnF0Uxc45yihGBCQm9ycK2yU5ioednBlUuiyIwrPZMD8nuA6FteJLHrfbp8gZm
-         NcwbEwGEBIu/vkvJK0F7A6IRGS0c7/SLrt+Uz89zeuic7R32ZvTGAsFEQOUNGL4snb
-         oJdP2IM0hfH6o5fDvDoWUPCeR3pz1MDiFOBWf2W8C0YsVXOdv8WQ4IKzATA+BFtid/
-         CJTK9oS5tpbkwuEY9RquG0TlUXP6ob7lUwz6jnHLiuS7WYQtuYiYJ9OQZV7fuAddUF
-         7bGaSFIcO8Gi9ZyFBhYDAGvQXOjMh3nzoNA7JqfGG2gXU8WVFKPWWpumsJ9zMh05rK
-         9fCmepBL9hCEg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id JZMZHp4qZH4o; Mon,  2 Jul 2018 18:31:47 -0400 (EDT)
-Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 61C2322FEAF;
-        Mon,  2 Jul 2018 18:31:47 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate user inputs
-Date:   Mon,  2 Jul 2018 18:31:43 -0400
-Message-Id: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 2 Jul 2018 18:33:35 -0400
+Received: by mail-pg0-f67.google.com with SMTP id l65-v6so7738035pgl.8
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ObPwghtueNF6LlLM7mcfjzv83XXf9Nzzo2SzCH6fO+g=;
+        b=DwZWUn3jpZIlghNKAwEt15EQDN5bBzXFJ6MJvDOQz1MwQxxvb79GAATXNUyHBSiupk
+         4zB3gYC7/qrtTDmPX9YSM1GGsa5Xd0QL756cIszoHwt+RyQUkhRhV9MYGeW6nvE16pTB
+         MuFrMtzcrUfDYDrj2uC6MVt3qExjzE2pTEBnY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ObPwghtueNF6LlLM7mcfjzv83XXf9Nzzo2SzCH6fO+g=;
+        b=PuWopSw3EdR/PHNCy1FhRUtLPFlwijoKJFEeykbZA1o0VNlTZBNTxWdSlsgD16yXYy
+         Tjvtlsss4lKmSpaQI5rEV6649+c2im59JxY4/YrBLGiDkA49GHD5sLC2AXrXwGm3bIUN
+         Kh2xoYQkitFTODco9J77gRJYweldSaoWHeU+RwSY8BjZ3+i/byZoCpN8q3LMo2+3E9Cs
+         x3D+6+SNtCIPKL0rb9QmOkYPPbp1gbZpwz0bMiZ1+r2uoE1Fw6WaBa0k5WOkhlJRmTzB
+         aR46w4WyppQLXx/DsE+WpF5F/tvW/BEtRBfkPTROxIXOZlcPfr33rMCdEnsVcSlUk3XQ
+         mb8g==
+X-Gm-Message-State: APt69E23w6MidQr0NPFbhDYERgcnzyj/+JSFXeiiYHPRjcNlIA/6LfIl
+        60kQn2UnBO88CFEJPnhKk+bjUA==
+X-Google-Smtp-Source: AAOMgpe4PRdft+7cNvSBckcNH+kY2C1fOP2HOBk73aT/utkVy4qPHxYr9cXre7VVz6KiqGrQipzlLQ==
+X-Received: by 2002:a62:3a5b:: with SMTP id h88-v6mr10906279pfa.61.1530570813796;
+        Mon, 02 Jul 2018 15:33:33 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm21764132pgu.16.2018.07.02.15.33.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Jul 2018 15:33:32 -0700 (PDT)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     peterz@infradead.org, acme@kernel.org
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org,
+        gregkh@linuxfoundation.org, hpa@zytor.com,
+        mathieu.poirier@linaro.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/6] perf: Add ioctl for PMU driver configuration 
+Date:   Mon,  2 Jul 2018 16:33:24 -0600
+Message-Id: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the rseq ABI so rseq_cs start_ip, post_commit_offset and abort_ip
-fields are seen as 64-bit fields by both 32-bit and 64-bit kernels rather
-that ignoring the 32 upper bits on 32-bit kernels. This ensures we have a
-consistent behavior for a 32-bit binary executed on 32-bit kernels and in
-compat mode on 64-bit kernels.
+This set follows what has been done for filters by adding an ioctl
+to communicate PMU specific driver configuration to the kernel.
 
-Validating the value of abort_ip field to be below TASK_SIZE ensures the
-kernel don't return to an invalid address when returning to userspace
-after an abort. I don't fully trust each architecture code to consistently
-deal with invalid return addresses.
+Patch 01 and 02 provide the functionality in user space while patch 04
+and 05 take care of the kernel part.  Patches 03 and 06 use the newly
+added functionality to communicate the selection of CoreSight sink
+for each event.
 
-Validating the value of the start_ip and post_commit_offset fields
-prevents overflow on arithmetic performed on those values, used to
-check whether abort_ip is within the rseq critical section.
+This functionality is needed to identify the CoreSight sink to use when
+working with CPU-wide trace scenarios.  It also paves the way to support
+complex tracer configurations where dozens of trace parameters need to
+be communicated to the CoreSight PMU driver.
 
-On 32-bit kernels, the rseq->rseq_cs_padding field is never read by the
-kernel. However, 64-bit kernels dealing with 32-bit compat tasks read the
-full 64-bit in its entirety, and terminates the offending process with
-a segmentation fault if the upper 32 bits are set due to failure of
-copy_from_user().
+Applies cleanly on v4.18-rc3.
 
-Ensure that both 32-bit and 64-bit kernels dealing with 32-bit tasks end
-up terminating offending tasks with a segmentation fault if the upper
-32-bit padding bits (rseq->rseq_cs_padding) are set by explicitly ensuring
-that padding is zero on 32-bit kernels.
+Best regards,
+Mathieu
 
-If validation fails, the process is killed with a segmentation fault.
+Mathieu Poirier (6):
+  perf tools: Use ioctl to communicate driver configuration to kernel
+  perf tools: Make perf_evsel accessible to PMU driver configuration
+    code
+  perf tools: Use ioctl function to send sink configuration to kernel
+  perf/aux: Make perf_event accessible to setup_aux()
+  perf/core: Use ioctl to communicate driver configuration to kernel
+  coresight: Use PMU driver configuration for sink selection
 
-When the signature encountered before abort_ip does not match the expected
-signature, return -EINVAL rather than -EPERM to be consistent with other
-input validation return codes from rseq_get_rseq_cs().
+ arch/s390/kernel/perf_cpum_sf.c                  |   4 +-
+ arch/x86/events/intel/bts.c                      |   4 +-
+ arch/x86/events/intel/pt.c                       |   5 +-
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 134 ++++++++++++++++++++---
+ drivers/hwtracing/coresight/coresight-etm-perf.h |  10 ++
+ drivers/perf/arm_spe_pmu.c                       |   6 +-
+ include/linux/perf_event.h                       |  56 +++++++++-
+ include/uapi/linux/perf_event.h                  |   1 +
+ kernel/events/core.c                             | 110 +++++++++++++++++++
+ kernel/events/ring_buffer.c                      |   2 +-
+ tools/include/uapi/linux/perf_event.h            |   1 +
+ tools/perf/arch/arm/util/cs-etm.c                |  60 +++-------
+ tools/perf/arch/arm/util/cs-etm.h                |   3 +-
+ tools/perf/util/drv_configs.c                    |  30 ++---
+ tools/perf/util/evsel.c                          |   7 ++
+ tools/perf/util/evsel.h                          |   1 +
+ tools/perf/util/pmu.h                            |   3 +-
+ 17 files changed, 345 insertions(+), 92 deletions(-)
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
----
- include/uapi/linux/rseq.h |  6 +++---
- kernel/rseq.c             | 39 +++++++++++++++++++++++++++++++++++----
- 2 files changed, 38 insertions(+), 7 deletions(-)
-
-diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-index d620fa43756c..519ad6e176d1 100644
---- a/include/uapi/linux/rseq.h
-+++ b/include/uapi/linux/rseq.h
-@@ -52,10 +52,10 @@ struct rseq_cs {
- 	__u32 version;
- 	/* enum rseq_cs_flags */
- 	__u32 flags;
--	LINUX_FIELD_u32_u64(start_ip);
-+	__u64 start_ip;
- 	/* Offset from start_ip. */
--	LINUX_FIELD_u32_u64(post_commit_offset);
--	LINUX_FIELD_u32_u64(abort_ip);
-+	__u64 post_commit_offset;
-+	__u64 abort_ip;
- } __attribute__((aligned(4 * sizeof(__u64))));
- 
- /*
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 22b6acf1ad63..1d1dd6aa43f8 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -112,6 +112,29 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
- 	return 0;
- }
- 
-+#ifndef __LP64__
-+/*
-+ * Check that padding is zero.
-+ */
-+static int check_rseq_cs_padding(struct task_struct *t)
-+{
-+	u32 pad;
-+	int ret;
-+
-+	ret = __get_user(pad, &t->rseq->rseq_cs_padding);
-+	if (ret)
-+		return ret;
-+	if (pad)
-+		return -EINVAL;
-+	return 0;
-+}
-+#else
-+static int check_rseq_cs_padding(struct task_struct *t)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- {
- 	struct rseq_cs __user *urseq_cs;
-@@ -123,6 +146,8 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- 	ret = __get_user(ptr, &t->rseq->rseq_cs);
- 	if (ret)
- 		return ret;
-+	if (check_rseq_cs_padding(t))
-+		return -EINVAL;
- 	if (!ptr) {
- 		memset(rseq_cs, 0, sizeof(*rseq_cs));
- 		return 0;
-@@ -130,14 +155,20 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- 	urseq_cs = (struct rseq_cs __user *)ptr;
- 	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
- 		return -EFAULT;
--	if (rseq_cs->version > 0)
--		return -EINVAL;
- 
-+	if (rseq_cs->start_ip >= TASK_SIZE ||
-+	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
-+	    rseq_cs->abort_ip >= TASK_SIZE ||
-+	    rseq_cs->version > 0)
-+		return -EINVAL;
-+	/* Check for overflow. */
-+	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
-+		return -EINVAL;
- 	/* Ensure that abort_ip is not in the critical section. */
- 	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
- 		return -EINVAL;
- 
--	usig = (u32 __user *)(rseq_cs->abort_ip - sizeof(u32));
-+	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
- 	ret = get_user(sig, usig);
- 	if (ret)
- 		return ret;
-@@ -146,7 +177,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- 		printk_ratelimited(KERN_WARNING
- 			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
- 			sig, current->rseq_sig, current->pid, usig);
--		return -EPERM;
-+		return -EINVAL;
- 	}
- 	return 0;
- }
 -- 
-2.11.0
+2.7.4
 
