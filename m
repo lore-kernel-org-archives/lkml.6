@@ -2,143 +2,84 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D090C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6B8C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6012425B30
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6012425B30
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 14F8625B30
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F8625B30
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933637AbeGBIeM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:34:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48968 "EHLO mail.bootlin.com"
+        id S964963AbeGBIe3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:34:29 -0400
+Received: from mout.web.de ([212.227.15.4]:36533 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933534AbeGBIdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:33:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9F62E20703; Mon,  2 Jul 2018 10:33:38 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-87-188.w90-88.abo.wanadoo.fr [90.88.29.188])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4E9DE207DA;
-        Mon,  2 Jul 2018 10:33:28 +0200 (CEST)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH v4 2/2] ubi: expose the volume CRC check skip flag
-Date:   Mon,  2 Jul 2018 10:32:58 +0200
-Message-Id: <946c5ce87c94178e378bf83a4c282a404a900f2b.1530519426.git-series.quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
-References: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
-References: <cover.99f8f464b3a02f65080962001abf6fd1f8dff0e0.1530519426.git-series.quentin.schulz@bootlin.com>
+        id S933640AbeGBIeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 04:34:19 -0400
+Received: from [192.168.1.3] ([92.227.235.76]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LoLKj-1g27Io1nab-00gKLE; Mon, 02
+ Jul 2018 10:34:11 +0200
+To:     Kees Cook <keescook@chromium.org>, Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+References: <20180629184818.GA37439@beast>
+Subject: Re: [PATCH] drm/msm/adreno: Remove VLA usage
+From:   SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <b531d35a-631f-c84c-831d-9ce6cff02436@users.sourceforge.net>
+Date:   Mon, 2 Jul 2018 10:34:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180629184818.GA37439@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:LTKu1fy8Ijfqq5IGtI+GT9QJPIblrA6D1zFKTVd3MfHxMfgCuS9
+ rq7cBmYn6PHtCVZRo5NQiu2e+2z15FZvlDpDJ+XoaVXdyuFUaO5S70uEl/oFF6ieKILlfAP
+ BzqIe6dXixWHscsfrtBgg2kqGtsDbQUxrBcQT7wDQgb1o836oKpaOnXlHPYxVvrFva9rUbt
+ TPg9ltV6IwOvueAZ7NNxA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rIN9+Trdl9Q=:QSIaf41SLcoihUUILPwMK1
+ CrkB7PxSNkLkWog1Qf7YGXoOBrrbnE/BkGPkY0RjFJAiRUO+LF46oon3A0iXaDMnoi1zLIB7S
+ DPXLxubSExoScnnA3IgS37vIdLwV1gAPzauM85JDje1VZ+QJ3l2BKhMHlUnJFVFHTo3u4XwqF
+ bcky73BH40yYXsLVESWpuJ2tX75HAPWwPIWIktoBGiVvQs2wShC/Cat402RsTI2OWev0fRAyv
+ +p/Z9f6Uzu7WTuoZSnyumRYyf45YR0y0wn9CzCH1ViBzUyTBnOhXQO4Rr++29OSBXqt050Ohw
+ LndpZ21vUNNqBjon1IpHu5cIsiY0AcQC3V+QH9T9nN2EAPwwCo6M8t1wfKnclkV3UXkPKWpoH
+ ZL7PiXssW8QeAAQYU2ztkpJANxqJTzc2eW8zb7fNrz99N4MQ14o6s/eEGIVcZfF7ygRSaJPUD
+ rMY3pTl9CUi0sWa6JjPzAYised2Vig7Vc/Yz6JtBidFZ0MO+QtVi5RxA6sDNWkTHAjaRnn9en
+ gSzVxnN/UCcXeqaFMtgBAy79mIwIboylR3zeWGsx5EBPE48w73t7J8Prs8ZO0oiTMGrcp+zVE
+ BB/Bjuf7q65DAhYs4Lfm/Hrr8qqesdHdu82GmqTnCmaF24hfL4+ugFHatpVMMSJluS3NbKm3l
+ rX3ZeyTgRJhkH8fESCcBWvzWMcatX3TYrEAZzMX3apyxWInZH54nqDvE2Uh7J2bFqlQSVsvCN
+ NTyGI55D2uY3fuAesk/cNcY59pzYKZpYsP7Xi/GElqpwwJYcN1/SdG5soJ75IRMTR2jJ3EBVY
+ OAGZ/fr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have the logic for skipping CRC check for static UBI volumes
-in the core, let's expose it to users.
+> @@ -91,12 +93,13 @@  static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname)
+>  		ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+>  				mem_region, mem_phys, mem_size, NULL);
+>  	} else {
+> -		char newname[strlen("qcom/") + strlen(fwname) + 1];
+> +		char *newname;
+> 
+> -		sprintf(newname, "qcom/%s", fwname);
+> +		newname = kasprintf(GFP_KERNEL, "qcom/%s", fwname);
+> 
+>  		ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+>  				mem_region, mem_phys, mem_size, NULL);
 
-This makes use of a padding byte in the volume description data
-structure as a flag. This flag only tell for now whether we should skip
-the CRC check of a volume.
+I have taken another look also at this update suggestion.
+Now I wonder why the return value is not checked for the added name construction
+in the way as it is specified for the function “adreno_request_fw”.
+Will another condition check make sense at this place?
 
-This checks the UBI volume for which we are trying to skip the CRC check
-is static.
-
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
- drivers/mtd/ubi/cdev.c      |  7 +++++++
- drivers/mtd/ubi/vmt.c       |  3 +++
- include/uapi/mtd/ubi-user.h | 18 ++++++++++++++++--
- 3 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
-index 45c3296..6fe3fe9 100644
---- a/drivers/mtd/ubi/cdev.c
-+++ b/drivers/mtd/ubi/cdev.c
-@@ -622,6 +622,13 @@ static int verify_mkvol_req(const struct ubi_device *ubi,
- 	    req->vol_type != UBI_STATIC_VOLUME)
- 		goto bad;
- 
-+	if (req->flags & ~UBI_VOL_VALID_FLGS)
-+		goto bad;
-+
-+	if (req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG &&
-+	    req->vol_type != UBI_STATIC_VOLUME)
-+		goto bad;
-+
- 	if (req->alignment > ubi->leb_size)
- 		goto bad;
- 
-diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-index e2606a4..729588b 100644
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -174,6 +174,9 @@ int ubi_create_volume(struct ubi_device *ubi, struct ubi_mkvol_req *req)
- 	vol->dev.class = &ubi_class;
- 	vol->dev.groups = volume_dev_groups;
- 
-+	if (req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG)
-+		vol->skip_check = 1;
-+
- 	spin_lock(&ubi->volumes_lock);
- 	if (vol_id == UBI_VOL_NUM_AUTO) {
- 		/* Find unused volume ID */
-diff --git a/include/uapi/mtd/ubi-user.h b/include/uapi/mtd/ubi-user.h
-index 5b04a49..aad3b62 100644
---- a/include/uapi/mtd/ubi-user.h
-+++ b/include/uapi/mtd/ubi-user.h
-@@ -285,6 +285,20 @@ struct ubi_attach_req {
- 	__s8 padding[10];
- };
- 
-+/*
-+ * UBI volume flags.
-+ *
-+ * @UBI_VOL_SKIP_CRC_CHECK_FLG: skip the CRC check done on a static volume at
-+ *				open time. Only valid for static volumes and
-+ *				should only be used if the volume user has a
-+ *				way to verify data integrity
-+ */
-+enum {
-+	UBI_VOL_SKIP_CRC_CHECK_FLG = 0x1,
-+};
-+
-+#define UBI_VOL_VALID_FLGS	(UBI_VOL_SKIP_CRC_CHECK_FLG)
-+
- /**
-  * struct ubi_mkvol_req - volume description data structure used in
-  *                        volume creation requests.
-@@ -292,7 +306,7 @@ struct ubi_attach_req {
-  * @alignment: volume alignment
-  * @bytes: volume size in bytes
-  * @vol_type: volume type (%UBI_DYNAMIC_VOLUME or %UBI_STATIC_VOLUME)
-- * @padding1: reserved for future, not used, has to be zeroed
-+ * @flags: volume flags (%UBI_VOL_SKIP_CRC_CHECK_FLG)
-  * @name_len: volume name length
-  * @padding2: reserved for future, not used, has to be zeroed
-  * @name: volume name
-@@ -321,7 +335,7 @@ struct ubi_mkvol_req {
- 	__s32 alignment;
- 	__s64 bytes;
- 	__s8 vol_type;
--	__s8 padding1;
-+	__u8 flags;
- 	__s16 name_len;
- 	__s8 padding2[4];
- 	char name[UBI_MAX_VOLUME_NAME + 1];
--- 
-git-series 0.9.1
+Regards,
+Markus
