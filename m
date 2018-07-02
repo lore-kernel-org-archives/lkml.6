@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DABCC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C699C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410DC20C48
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE4121758
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHLhyH2K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410DC20C48
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJsKreuL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE4121758
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932424AbeGBWeQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:34:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43686 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932263AbeGBWdl (ORCPT
+        id S932458AbeGBWef (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 18:34:35 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34531 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753635AbeGBWdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:33:41 -0400
-Received: by mail-pl0-f65.google.com with SMTP id c41-v6so8581247plj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:33:40 -0700 (PDT)
+        Mon, 2 Jul 2018 18:33:36 -0400
+Received: by mail-pf0-f193.google.com with SMTP id e10-v6so4033pfn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OWMIpVbHHUucjZTQ8WkuficHw0asDAcRYsZ+36nc5jY=;
-        b=XHLhyH2KP3lLTK/guTRSVHiMbf778wKy4jaVyunMI8WBQGllgdtTd/Y0BCMRoWSqkY
-         BNFNXKBqOarjdxxxS8gPKE+vWLZsU5E9SsS24Q6gOc06ncho1aPEW6DQRtyhKug5co81
-         JTOUFAw5bkia7Q9PjEs9YYOOVErfWmtp1iJ1U=
+        bh=44uRkWGk/Osvmk24aNdLebhqCx/Gifs6WBek1wZDfO8=;
+        b=EJsKreuLczzPxxAeQS9U4zc42OStBcWtV3mG5AtxdY4SiLAO2PnVUq3GAUizBO1Enm
+         D9p3Mtz/f6Jy6HHYXEi6CIgtI8oTug41GeHaAue5xdq/4HF4Q2b5iUSXXw/mz3tKZpyq
+         ANE35Koraq1X+XhyRcDJyFeQwMe2L5+XdZG0Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OWMIpVbHHUucjZTQ8WkuficHw0asDAcRYsZ+36nc5jY=;
-        b=PPb57fBNGUYKe0GxhQ9Bs7t9noIz4ORVP8Hbo6dwFasB4HUCQpq7W6n9k8JbxARUqV
-         yoXdgSzuilCF8R2Rt9BSkhV6AGCFYuBR5pW8o9B2sTa9WQGHCce6geYpbz6ZHxc72Iur
-         sWpSDT39L8tkpvwilzevmeyGjXzoY6If3ZidaPPJUBwV8ypLdk441yfwws6epR5K8gk7
-         vMwbpU+4b4Nyzcn8XfErCP1/y4KxQvJfZ7WmrhTMuB6nntzY7yGAx6wgiwioht4Jd3Uz
-         0hox0CNT/5U+riuiYWaF1LHjY/1b6sUU7aVuSOKvEU+sFWYwth851CaJ0fVIbBNqUjRw
-         X13A==
-X-Gm-Message-State: APt69E32AT0lkG/FiphzwTMo6EBDrA3c4BhkS5ghKCZRofVtqlY7FB9Y
-        5/wrDFVYDDktD/wOnDIbdI4Q9w==
-X-Google-Smtp-Source: ADUXVKKG54+6oKktL4vuM/IlEsdavQ3MuOuohKsETjdjfNtjSU4G44uLgi2oqHdL7DquVioBDLh1Pg==
-X-Received: by 2002:a17:902:8a95:: with SMTP id p21-v6mr27432493plo.91.1530570820538;
-        Mon, 02 Jul 2018 15:33:40 -0700 (PDT)
+        bh=44uRkWGk/Osvmk24aNdLebhqCx/Gifs6WBek1wZDfO8=;
+        b=lxF1+HfSMhCXM5OZyZXybCNh8gsFdoP1KwmKHNqRVICcZkb58+S8GXLLvcZd9rDiAL
+         f1unaJxP1nBOKCGOUz/ay4noHNYz8c5FWIxNOGcvHVQSCsFGS9NeWZsPr0QUjkxNHZoc
+         +mrG/C9/MubV5jvE76gQQ8ybyxa7p2e0bknsY+Kx1M9yvOTYTNQy0bJMcbDLZnjb4PRt
+         BWm1JbKv8AuceUqNNwWHJ3fs0hpC5TTepowT3jl5Yzchv4VS29g2VcX2pesyOJ6Qizcq
+         vn8aS5i2pnRGoEfG+Ro5ewaRHoOhVpmHeNgMevjSyLkNcuMOvCl1bFCsDjAfehgQFn/e
+         XXnw==
+X-Gm-Message-State: APt69E30EitTVydY7sAfcKCS7QjrebV8aPC0FfUwg0HemAaWLigbc1u1
+        JzJZvTKxi4RRfeQWvayXTOV/Xg==
+X-Google-Smtp-Source: AAOMgpfP2k8LGuujrnyseQ9BmVyBsws57GGsZjH7Bc31R/Ds9ZzH+p/gni7oHCRXAr744reyiszE8w==
+X-Received: by 2002:a62:a8e:: with SMTP id 14-v6mr27103338pfk.57.1530570815969;
+        Mon, 02 Jul 2018 15:33:35 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm21764132pgu.16.2018.07.02.15.33.38
+        by smtp.gmail.com with ESMTPSA id p11-v6sm21764132pgu.16.2018.07.02.15.33.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 15:33:39 -0700 (PDT)
+        Mon, 02 Jul 2018 15:33:34 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     peterz@infradead.org, acme@kernel.org
 Cc:     mingo@redhat.com, tglx@linutronix.de,
@@ -63,9 +63,9 @@ Cc:     mingo@redhat.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, hpa@zytor.com,
         mathieu.poirier@linaro.org, linux-s390@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/6] perf tools: Use ioctl function to send sink configuration to kernel
-Date:   Mon,  2 Jul 2018 16:33:27 -0600
-Message-Id: <1530570810-28929-4-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 1/6] perf tools: Use ioctl to communicate driver configuration to kernel
+Date:   Mon,  2 Jul 2018 16:33:25 -0600
+Message-Id: <1530570810-28929-2-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
@@ -74,89 +74,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using sysFS to communicate sink information for a trace session doesn't
-work when more than one CPU is involved in the scenario.  As such
-communicate the sink information to each event by using the SET_DRV_CONFIG
-ioctl command.
+Following in the footsteps of what was done for filters, adding the
+necessary mechanic needed to push down driver specific configuration
+to the kernel using an ioctl. By proceeding this way PMU specific
+configuration can be communicated to each event.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- tools/perf/arch/arm/util/cs-etm.c | 54 ++++-----------------------------------
- 1 file changed, 5 insertions(+), 49 deletions(-)
+ include/uapi/linux/perf_event.h       | 1 +
+ tools/include/uapi/linux/perf_event.h | 1 +
+ tools/perf/util/evsel.c               | 7 +++++++
+ tools/perf/util/evsel.h               | 1 +
+ 4 files changed, 10 insertions(+)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index d8081c2e6d44..cb0978eb7181 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -599,55 +599,10 @@ struct auxtrace_record *cs_etm_record_init(int *err)
- 	return NULL;
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index b8e288a1f740..b5b3241877df 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -460,6 +460,7 @@ struct perf_event_query_bpf {
+ #define PERF_EVENT_IOC_PAUSE_OUTPUT		_IOW('$', 9, __u32)
+ #define PERF_EVENT_IOC_QUERY_BPF		_IOWR('$', 10, struct perf_event_query_bpf *)
+ #define PERF_EVENT_IOC_MODIFY_ATTRIBUTES	_IOW('$', 11, struct perf_event_attr *)
++#define PERF_EVENT_IOC_SET_DRV_CONFIG		_IOW('$', 12, char *)
+ 
+ enum perf_event_ioc_flags {
+ 	PERF_IOC_FLAG_GROUP		= 1U << 0,
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index b8e288a1f740..b5b3241877df 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -460,6 +460,7 @@ struct perf_event_query_bpf {
+ #define PERF_EVENT_IOC_PAUSE_OUTPUT		_IOW('$', 9, __u32)
+ #define PERF_EVENT_IOC_QUERY_BPF		_IOWR('$', 10, struct perf_event_query_bpf *)
+ #define PERF_EVENT_IOC_MODIFY_ATTRIBUTES	_IOW('$', 11, struct perf_event_attr *)
++#define PERF_EVENT_IOC_SET_DRV_CONFIG		_IOW('$', 12, char *)
+ 
+ enum perf_event_ioc_flags {
+ 	PERF_IOC_FLAG_GROUP		= 1U << 0,
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 94fce4f537e9..534aca4c642c 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1162,6 +1162,13 @@ static int perf_evsel__append_filter(struct perf_evsel *evsel,
+ 	return -1;
  }
  
--static FILE *cs_device__open_file(const char *name)
-+static int cs_etm_set_drv_config_term(struct perf_evsel *evsel,
-+				      const char *term)
++int perf_evsel__apply_drv_config(struct perf_evsel *evsel, const char *config)
++{
++	return perf_evsel__run_ioctl(evsel,
++				     PERF_EVENT_IOC_SET_DRV_CONFIG,
++				     (void *)config);
++}
++
+ int perf_evsel__append_tp_filter(struct perf_evsel *evsel, const char *filter)
  {
--	struct stat st;
--	char path[PATH_MAX];
--	const char *sysfs;
--
--	sysfs = sysfs__mountpoint();
--	if (!sysfs)
--		return NULL;
--
--	snprintf(path, PATH_MAX,
--		 "%s" CS_BUS_DEVICE_PATH "%s", sysfs, name);
--
--	if (stat(path, &st) < 0)
--		return NULL;
--
--	return fopen(path, "w");
--
--}
--
--static int __printf(2, 3) cs_device__print_file(const char *name, const char *fmt, ...)
--{
--	va_list args;
--	FILE *file;
--	int ret = -EINVAL;
--
--	va_start(args, fmt);
--	file = cs_device__open_file(name);
--	if (file) {
--		ret = vfprintf(file, fmt, args);
--		fclose(file);
--	}
--	va_end(args);
--	return ret;
--}
--
--static int cs_etm_set_drv_config_term(struct perf_evsel_config_term *term)
--{
--	int ret;
--	char enable_sink[ENABLE_SINK_MAX];
--
--	snprintf(enable_sink, ENABLE_SINK_MAX, "%s/%s",
--		 term->val.drv_cfg, "enable_sink");
--
--	ret = cs_device__print_file(enable_sink, "%d", 1);
--	if (ret < 0)
--		return ret;
--
--	return 0;
-+	return perf_evsel__apply_drv_config(evsel, term);
- }
+ 	return perf_evsel__append_filter(evsel, "(%s) && (%s)", filter);
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index d277930b19a1..0f671bd2a988 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -271,6 +271,7 @@ int perf_evsel__append_tp_filter(struct perf_evsel *evsel, const char *filter);
+ int perf_evsel__append_addr_filter(struct perf_evsel *evsel,
+ 				   const char *filter);
+ int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter);
++int perf_evsel__apply_drv_config(struct perf_evsel *evsel, const char *config);
+ int perf_evsel__enable(struct perf_evsel *evsel);
+ int perf_evsel__disable(struct perf_evsel *evsel);
  
- int cs_etm_set_drv_config(struct perf_evsel *evsel,
-@@ -660,7 +615,8 @@ int cs_etm_set_drv_config(struct perf_evsel *evsel,
- 		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
- 			continue;
- 
--		err = cs_etm_set_drv_config_term(term);
-+		err = cs_etm_set_drv_config_term(evsel,
-+						 term->val.drv_cfg);
- 		if (err) {
- 			*err_term = term;
- 			break;
 -- 
 2.7.4
 
