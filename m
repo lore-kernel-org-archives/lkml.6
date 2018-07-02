@@ -2,178 +2,132 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 475CCC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAD7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7FD20C03
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7FD20C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id 7972925232
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVXjDW2O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7972925232
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752508AbeGBPV2 (ORCPT
+        id S1752671AbeGBPVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:21:28 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:33862 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeGBPV0 (ORCPT
+        Mon, 2 Jul 2018 11:21:43 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37729 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752575AbeGBPVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:21:26 -0400
-Received: from localhost.localdomain ([127.0.0.1]:33942 "EHLO linux-mips.org"
-        rhost-flags-OK-OK-OK-FAIL) by eddie.linux-mips.org with ESMTP
-        id S23993883AbeGBPVYjH4YN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:21:24 +0200
-Received: from h7.dl5rb.org.uk (localhost [127.0.0.1])
-        by h7.dl5rb.org.uk (8.15.2/8.14.8) with ESMTP id w62FKUpZ439160;
-        Mon, 2 Jul 2018 17:20:30 +0200
-Received: (from ralf@localhost)
-        by h7.dl5rb.org.uk (8.15.2/8.15.2/Submit) id w62FKTBa439158;
-        Mon, 2 Jul 2018 17:20:29 +0200
-Date:   Mon, 2 Jul 2018 17:20:29 +0200
-From:   Ralf Baechle <ralf@linux-mips.org>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Remove no-op cast in show_regs()
-Message-ID: <20180702152029.GA437552@linux-mips.org>
-References: <20180622180703.18324-1-paul.burton@mips.com>
+        Mon, 2 Jul 2018 11:21:41 -0400
+Received: by mail-ua0-f195.google.com with SMTP id u8-v6so4979677uao.4;
+        Mon, 02 Jul 2018 08:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=pGni/ZhikmMCgbPRuYI0W33MGhckiYBQ7gyn8PCI5wE=;
+        b=UVXjDW2OJOEMs8LaDL9H9ELRCrp/LusBZ/MFhLJXYng19i18JhwB1AuLrjl/2wyOUr
+         vZhHfd7w78FQekfJlOQTLxP09YWmLH2fASOpjP9gvl/HI0zeFwCEC3RLUzdw90riFTvd
+         5Cck3QxmGRyeA6LUGHTsljjPYvbFCsrDOtmPzCHxbNIavAQ/pempTxbbj//muDWyaZ4w
+         wKmHn/mvzbfoLAeQuMGAF8iXxsqZbdOSyDv3mdxNDYvpbvw3jv4z8kX3ygRFXGDfUXkc
+         Z+oa/W0tfGJOc7frYUnvCTkBhUMnXNuyZsE6wx1NqUHqG/DS0tVFccHAgL/Mx+m+04jq
+         LIyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=pGni/ZhikmMCgbPRuYI0W33MGhckiYBQ7gyn8PCI5wE=;
+        b=Jfk9m+tG+Ks0wxA6mLvW0KEPAH0p7Sao9aIZUcyRSithlb45fvNvnmkI6y9JRjknOE
+         005PeTCYcHNP1JWNKO71ooWxJMbni9TxtiD3ke00FpdUHLMWs86xN7ZiaRoOriYVUAo1
+         t3n+pXirh29mxc05+QnbXw4cvZciLrDITqqw5x3K9HWMwokIvrPr+HSEyqY+dbU+PPh6
+         3C4uUFq+z2p2+B80ecR83gOo+edCxH6wf6c/bAEJTJ8Tmos6OQhqJz/eMKBlJYgNF2Nc
+         Ta+QabcxNB2CJ0/f+Yn4ET4atDzDaekn3KSzu1zmKu0aGkb2QKK8HDMWH7m2w+v6fDAw
+         XjKA==
+X-Gm-Message-State: APt69E0Wo8IHoqol5jNwvRs4THMne4HO3snmRZ8s5+DZiZKv6KOxBtwf
+        6Jr1C8nnSJy7YQONiGLmXWhUIqpKqGmMNCkSWM4=
+X-Google-Smtp-Source: AAOMgpcg89RvlHzocgsL+WV2M7xCPGVYU+4HtQT1sBcLyvWIHSHMhMKlMgquGMcHrf3tkjpzlV0koxpdlNB/8tjpiys=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr16138336uae.12.1530544900482;
+ Mon, 02 Jul 2018 08:21:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622180703.18324-1-paul.burton@mips.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 08:21:39 -0700 (PDT)
+In-Reply-To: <e17fbb51b98d45318001adb7eb6a51b2@ausx13mpc120.AMER.DELL.COM>
+References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
+ <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com> <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
+ <20180609010420.GA112645@localhost.localdomain> <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
+ <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com> <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
+ <8307f1e0-c480-3f78-9327-e248208e5349@gmail.com> <CAHp75VdTGXqE__VHjRphEmpMVfxaVVik=u-_0NRhQAKeq=+ZKA@mail.gmail.com>
+ <b5652ed8-5fff-4f8b-ec0f-467bce853bf8@gmail.com> <CAHp75VfL3v8U6o36-e3+XPL53sb9wMUOXsL6gn3XE4=-kJjuKQ@mail.gmail.com>
+ <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com> <CAHp75VdSVLzNHnrOzzrBMf4X2Cg4QACRrnxKNkQzcYJ0h5W+tw@mail.gmail.com>
+ <e17fbb51b98d45318001adb7eb6a51b2@ausx13mpc120.AMER.DELL.COM>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 2 Jul 2018 18:21:39 +0300
+Message-ID: <CAHp75VfNo9NVfgGn4Fqa5fA9zp47TkqHwn1MJ044qMQoMNMB-Q@mail.gmail.com>
+Subject: Re: [PATCH v3] dcdbas: Add support for WSMT ACPI table
+To:     Mario Limonciello <Mario.Limonciello@dell.com>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 11:07:03AM -0700, Paul Burton wrote:
+On Mon, Jul 2, 2018 at 5:07 PM,  <Mario.Limonciello@dell.com> wrote:
 
-> In show_regs() we have a regs argument of type struct pt_regs *, and we
-> explicitly cast it to that same type as part of calling __show_regs().
-> 
-> Casting regs to the same type that it is declared as does nothing at
-> all, so remove the useless cast.
+>> >> OK, now the most important question, did you investigate "SMM
+>> >> Communication ACPI Table"?
+>> >> Can you utilize information in it?
+>>
+>> > Dell BIOS does not provide a "SMM Communication ACPI Table", just the EPS.  It
+>> appears
+>> > that the "SMM Communication ACPI Table" is deprecated in the UEFI 2.7 spec.
+>> Also, the
+>> > dcdbas driver is for Dell systems only.
+>>
+>> > The EPS table isn't an ACPI table,
+>> > it's just a Dell-defined table.
+>>
+>> Hmm... It's either strange or has some background why is so.
+>> OK it has a note that there is no use case, but here it is!
+>>
+>> Mario, can we consider this as a BIOS bug which doesn't provide SMM
+>> Communication ACPI table?
+>>
+>> Can it be escalated on UEFI committee?
 
-Good catch but there's no dump_stack() in v4.18-rc3 so this doesn't apply.
-That's trivial to patch up but since pointless casts are one of my pet
-peeve I used a semantic patch from a dark local repository to hunt down a
-few more.
+> I don't believe SMM communication ACPI table has ever been implemented by Dell
+> on server or client BIOS.  I do agree this table describes the behavior that DCDBAS driver
+> has used since before even UEFI BIOS pretty accurately.
 
-@identitycast@
-type T;
-T *A;
-@@
--	(T *) A
-+	A
+So, EPS table has been for ages in Dell machines?
+Can we consider it as a predecessor of that SMM communication ACPI table?
 
-Julia, I guess this isn't bulletproof but maybe something similar should
-be considered for scripts/coccinelle?
+> Stuart and I did discuss with server BIOS (who uses this EPS mechanism) to see if its possible
+> to move EPS to SMM communication ACPI table however since it's been deprecated by
+> UEFI 2.7 they weren't willing to adopt it.
 
-  Ralf
+It's pity, but the motivation to deprecate is "lack of use" which is
+not true. That's why I would suggest to escalate this to UEFI
+committee.
 
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+> Stuart, anything else you want to add here?
 
- arch/mips/kernel/relocate.c           |  2 +-
- arch/mips/kernel/traps.c              |  2 +-
- arch/mips/loongson64/loongson-3/smp.c | 10 +++++-----
- arch/mips/pmcs-msp71xx/msp_usb.c      |  4 ++--
- arch/mips/sgi-ip22/ip28-berr.c        |  2 +-
- 5 files changed, 10 insertions(+), 10 deletions(-)
+Darren, what's your opinion about this?
 
-diff --git a/arch/mips/kernel/relocate.c b/arch/mips/kernel/relocate.c
-index cbf4cc0b0b6c..ae7d9cf2c849 100644
---- a/arch/mips/kernel/relocate.c
-+++ b/arch/mips/kernel/relocate.c
-@@ -146,7 +146,7 @@ int __init do_relocations(void *kbase_old, void *kbase_new, long offset)
- 			break;
- 
- 		type = (*r >> 24) & 0xff;
--		loc_orig = (void *)(kbase_old + ((*r & 0x00ffffff) << 2));
-+		loc_orig = (kbase_old + ((*r & 0x00ffffff) << 2));
- 		loc_new = RELOCATED(loc_orig);
- 
- 		if (reloc_handlers_rel[type] == NULL) {
-diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
-index d67fa74622ee..2935aa608d2f 100644
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -350,7 +350,7 @@ static void __show_regs(const struct pt_regs *regs)
-  */
- void show_regs(struct pt_regs *regs)
- {
--	__show_regs((struct pt_regs *)regs);
-+	__show_regs(regs);
- }
- 
- void show_registers(struct pt_regs *regs)
-diff --git a/arch/mips/loongson64/loongson-3/smp.c b/arch/mips/loongson64/loongson-3/smp.c
-index 8501109bb0f0..e231c2cb4a64 100644
---- a/arch/mips/loongson64/loongson-3/smp.c
-+++ b/arch/mips/loongson64/loongson-3/smp.c
-@@ -349,7 +349,7 @@ static void loongson3_smp_finish(void)
- 	write_c0_compare(read_c0_count() + mips_hpt_frequency/HZ);
- 	local_irq_enable();
- 	loongson3_ipi_write64(0,
--			(void *)(ipi_mailbox_buf[cpu_logical_map(cpu)]+0x0));
-+			(ipi_mailbox_buf[cpu_logical_map(cpu)] + 0x0));
- 	pr_info("CPU#%d finished, CP0_ST=%x\n",
- 			smp_processor_id(), read_c0_status());
- }
-@@ -416,13 +416,13 @@ static int loongson3_boot_secondary(int cpu, struct task_struct *idle)
- 			cpu, startargs[0], startargs[1], startargs[2]);
- 
- 	loongson3_ipi_write64(startargs[3],
--			(void *)(ipi_mailbox_buf[cpu_logical_map(cpu)]+0x18));
-+			(ipi_mailbox_buf[cpu_logical_map(cpu)] + 0x18));
- 	loongson3_ipi_write64(startargs[2],
--			(void *)(ipi_mailbox_buf[cpu_logical_map(cpu)]+0x10));
-+			(ipi_mailbox_buf[cpu_logical_map(cpu)] + 0x10));
- 	loongson3_ipi_write64(startargs[1],
--			(void *)(ipi_mailbox_buf[cpu_logical_map(cpu)]+0x8));
-+			(ipi_mailbox_buf[cpu_logical_map(cpu)] + 0x8));
- 	loongson3_ipi_write64(startargs[0],
--			(void *)(ipi_mailbox_buf[cpu_logical_map(cpu)]+0x0));
-+			(ipi_mailbox_buf[cpu_logical_map(cpu)] + 0x0));
- 	return 0;
- }
- 
-diff --git a/arch/mips/pmcs-msp71xx/msp_usb.c b/arch/mips/pmcs-msp71xx/msp_usb.c
-index c87c5f810cd1..d38ac70b5a2e 100644
---- a/arch/mips/pmcs-msp71xx/msp_usb.c
-+++ b/arch/mips/pmcs-msp71xx/msp_usb.c
-@@ -133,13 +133,13 @@ static int __init msp_usb_setup(void)
- 	 * "D" for device-mode.	 If it works for Ethernet, why not USB...
- 	 *  -- hammtrev, 2007/03/22
- 	 */
--	snprintf((char *)&envstr[0], sizeof(envstr), "usbmode");
-+	snprintf(&envstr[0], sizeof(envstr), "usbmode");
- 
- 	/* set default host mode */
- 	val = 1;
- 
- 	/* get environment string */
--	strp = prom_getenv((char *)&envstr[0]);
-+	strp = prom_getenv(&envstr[0]);
- 	if (strp) {
- 		/* compare string */
- 		if (!strcmp(strp, "device"))
-diff --git a/arch/mips/sgi-ip22/ip28-berr.c b/arch/mips/sgi-ip22/ip28-berr.c
-index 2ed8e4990b7a..082541d33161 100644
---- a/arch/mips/sgi-ip22/ip28-berr.c
-+++ b/arch/mips/sgi-ip22/ip28-berr.c
-@@ -464,7 +464,7 @@ void ip22_be_interrupt(int irq)
- 		die_if_kernel("Oops", regs);
- 		force_sig(SIGBUS, current);
- 	} else if (debug_be_interrupt)
--		show_regs((struct pt_regs *)regs);
-+		show_regs(regs);
- }
- 
- static int ip28_be_handler(struct pt_regs *regs, int is_fixup)
+P.S. I'm not against this approach (just some technical comments I
+already shared), but on the other hand it would be nice to have undo
+that deprecation and follow the standard in new firmwares.
+Would you agree?
+
+-- 
+With Best Regards,
+Andy Shevchenko
