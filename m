@@ -2,82 +2,87 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B167C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2975C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE7325220
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:42:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DE7325220
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EBE225220
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBE225220
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753959AbeGBHmh (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:42:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52238 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752226AbeGBHmg (ORCPT
+        id S933019AbeGBHn7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:43:59 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:43100 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753425AbeGBHn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:42:36 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fZtTm-0002dZ-Vn; Mon, 02 Jul 2018 07:42:35 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jiri Kosina <jikos@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] block/floppy: remove redundant variable dflags
-Date:   Mon,  2 Jul 2018 08:42:34 +0100
-Message-Id: <20180702074234.10435-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 2 Jul 2018 03:43:56 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 434D760A04A9;
+        Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 02aiSv2Im7sn; Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 0571060B3040;
+        Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id cIENoVzzsvTG; Mon,  2 Jul 2018 09:43:54 +0200 (CEST)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id DB9C160A04AC;
+        Mon,  2 Jul 2018 09:43:54 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     dedekind1@gmail.com
+Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH v3 1/2] ubi: provide a way to skip CRC checks
+Date:   Mon, 02 Jul 2018 09:43:48 +0200
+Message-ID: <1814021.2UnKZ8bNR8@blindfold>
+In-Reply-To: <1530516625.469.82.camel@gmail.com>
+References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com> <3f9cef553d4f5da3fe2d76113d79ada1f0fe5224.1530169759.git-series.quentin.schulz@bootlin.com> <1530516625.469.82.camel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Artem,
 
-Variable dflags is being assigned but is never used hence it is redundant
-and can be removed.
+Am Montag, 2. Juli 2018, 09:30:25 CEST schrieb Artem Bityutskiy:
+> Hi,
+> 
+> On Thu, 2018-06-28 at 09:40 +0200, Quentin Schulz wrote:
+> > diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+> > index d4b2e87..e9e9ecb 100644
+> > --- a/drivers/mtd/ubi/kapi.c
+> > +++ b/drivers/mtd/ubi/kapi.c
+> > @@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
+> >  	desc->mode = mode;
+> >  
+> >  	mutex_lock(&ubi->ckvol_mutex);
+> > -	if (!vol->checked) {
+> > +	if (!vol->checked && !vol->skip_check) {
+> >  		/* This is the first open - check the volume */
+> >  		err = ubi_check_volume(ubi, vol_id);
+> >  		if (err < 0) {
+> 
+> Did you deliberately did not add a similar check to 'vol_cdev_write()' ?
+> You want to skip checking on load but do have the checking after volume update ?
+> Looks a bit inconsistent to me. At the very least deserves a comment in
+> 'vol_cdev_write()' about why 'skip_check' flag is ignored there.
 
-Cleans up clang warning:
-warning: variable 'dflags' set but not used [-Wunused-but-set-variable]
+Well, the idea is skipping the check, not the crc32 on the medium.
+That way we can later, if needed, offer a way to drop the flag but
+and don't have to rewrite with crc32-enabled.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/block/floppy.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 8871b5044d9e..48f622728ce6 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -1461,7 +1461,6 @@ static void setup_rw_floppy(void)
- 	int i;
- 	int r;
- 	int flags;
--	int dflags;
- 	unsigned long ready_date;
- 	void (*function)(void);
- 
-@@ -1485,8 +1484,6 @@ static void setup_rw_floppy(void)
- 		if (fd_wait_for_completion(ready_date, function))
- 			return;
- 	}
--	dflags = DRS->flags;
--
- 	if ((flags & FD_RAW_READ) || (flags & FD_RAW_WRITE))
- 		setup_DMA();
- 
--- 
-2.17.1
-
+Thanks,
+//richard
