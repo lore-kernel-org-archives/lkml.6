@@ -2,113 +2,227 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5AAC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3A3C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439B2253F0
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D90EA253F2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:19:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXL9ENka"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439B2253F0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSlkAecA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90EA253F2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeGBNTa (ORCPT
+        id S1752670AbeGBNTj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:19:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60814 "EHLO mail.kernel.org"
+        Mon, 2 Jul 2018 09:19:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeGBNTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:19:25 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1752610AbeGBNTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:19:30 -0400
+Received: from [192.168.1.24] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA2DB2154C;
-        Mon,  2 Jul 2018 13:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F199C24EDC;
+        Mon,  2 Jul 2018 13:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530537564;
-        bh=GkXS6+YoD3lJWCoyDMzFG0WFb9c1x9rm7mnG+MQD1zc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oXL9ENkax/jE7XE0Y2rLt30S46KY3G0ixQQ8yGvMtZiaLDCLx+uCxr6Bh92Ygl2B2
-         9KU9394sD4A4DFZTDYxoEPxUQ247kwd/YdE0IYxVz4e/NJso6tasta1NhMVKP9a8+K
-         BZp6UQ6UTs8zOkrpv9kgvBtZL0JW7r8oqNgPzgqk=
-Date:   Mon, 2 Jul 2018 08:19:23 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     bhelgaas@google.com, keith.busch@intel.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, Frederick Lawler <fred@fredlawl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI/AER: Fix aerdrv loading with "pcie_ports=native"
- parameter
-Message-ID: <20180702131923.GB15983@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180619195835.5423-1-mr.nuke.me@gmail.com>
+        s=default; t=1530537570;
+        bh=EZrBnXM9vDoOUbG0QTnHyJOxUxrGREqJCdwYFMYyYt4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kSlkAecAOCnJIIY1RXGxBXnR8BvZTgRqxV3BIeZYeWuXL2UCNnwGMtnC15H4gCC06
+         UIU+y0KUiD95VZJhiESkmd0+YcYMZRxU16obO2DwPvlnqrL6dP3bUvXMp5fcmPIEaP
+         DZbx/obzIosPL/nxzbPgjVSvBIlXgAnGkXVa0DP4=
+Subject: Re: [PATCH] arm: dts: socfpga: denali needs nand_x_clk too
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        =?UTF-8?Q?Marek_Va=c5=a1ut?= <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20180619120719.26921-1-richard@nod.at>
+ <CAK7LNASgPa4D0Siyo3mvK_AJ2zaECDXGaMEn-iNzQ9PFXFir+w@mail.gmail.com>
+ <3320422.EJ8D6C0VHL@blindfold>
+ <d4fdcd1d-db20-1837-a037-0982a042d357@kernel.org>
+ <20180625165506.484e025f@bbrezillon>
+ <CAK7LNATyo+7gauyQcRmNfCs8CagU1XdpHHgREMeTvf4rqxpeNQ@mail.gmail.com>
+ <20180626200928.29aca979@xps13>
+ <CAK7LNATbmNadK=xPcaQ+seRS_YvH5ZP5SX8z74iOyYcJ0Soicw@mail.gmail.com>
+ <333ae81b-af62-ec2e-3311-5487b1cc90c1@kernel.org>
+ <CAK7LNATuCqs5ofKnNCSEYhWanD+u2+5NzB7asaYhqb7BVUW_Fw@mail.gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ff8ad078-1e98-9e4f-0f9c-64981caad8c9@kernel.org>
+Date:   Mon, 2 Jul 2018 08:19:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619195835.5423-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK7LNATuCqs5ofKnNCSEYhWanD+u2+5NzB7asaYhqb7BVUW_Fw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 02:58:20PM -0500, Alexandru Gagniuc wrote:
-> According to the documentation, "pcie_ports=native", linux should use
-> native AER and DPC services. While that is true for the _OSC method
-> parsing, this is not the only place that is checked. Should the HEST
-> table list PCIe ports as firmware-first, linux will not use native
-> services.
-> 
-> This happens because aer_acpi_firmware_first() doesn't take
-> 'pcie_ports' into account. This is wrong. DPC uses the same logic when
-> it decides whether to load or not, so fixing this also fixes DPC not
-> loading.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/pci/pcie/aer.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> Changes since v1:
->  - Re-tested with latest and greatest (v4.18-rc1) -- works great
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a2e88386af28..98ced0f7c850 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -291,7 +291,7 @@ static void aer_set_firmware_first(struct pci_dev *pci_dev)
->  
->  	rc = apei_hest_parse(aer_hest_parse, &info);
->  
-> -	if (rc)
-> +	if (rc || pcie_ports_native)
->  		pci_dev->__aer_firmware_first = 0;
->  	else
->  		pci_dev->__aer_firmware_first = info.firmware_first;
-> @@ -327,6 +327,9 @@ bool aer_acpi_firmware_first(void)
->  		apei_hest_parse(aer_hest_parse, &info);
->  		aer_firmware_first = info.firmware_first;
->  		parsed = true;
-> +		if (pcie_ports_native)
-> +			aer_firmware_first = 0;
 
-Trivial comment for both of these hunks: if we test for
-pcie_ports_native *first*, we won't have to run apei_hest_parse().
-It's fairly obvious that we ignore the result of apei_hest_parse()
-anyway, but I think it's a courtesy to the reader if we don't run it
-at all, so we don't have to worry about side effects.
 
-> +
->  	}
->  	return aer_firmware_first;
->  }
-> -- 
-> 2.14.3
+On 07/01/2018 08:35 PM, Masahiro Yamada wrote:
+> Hi Dinh,
 > 
+> 2018-06-27 23:55 GMT+09:00 Dinh Nguyen <dinguyen@kernel.org>:
+>> Hi Masahiro,
+>>
+>> On 06/26/2018 09:52 PM, Masahiro Yamada wrote:
+>>> 2018-06-27 3:09 GMT+09:00 Miquel Raynal <miquel.raynal@bootlin.com>:
+>>>> Hi Masahiro,
+>>>>
+>>>> On Tue, 26 Jun 2018 11:38:21 +0900, Masahiro Yamada
+>>>> <yamada.masahiro@socionext.com> wrote:
+>>>>
+>>>>> 2018-06-25 23:55 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+>>>>>> On Mon, 25 Jun 2018 09:50:18 -0500
+>>>>>> Dinh Nguyen <dinguyen@kernel.org> wrote:
+>>>>>>
+>>>>>>> On 06/22/2018 10:58 AM, Richard Weinberger wrote:
+>>>>>>>> Masahiro,
+>>>>>>>>
+>>>>>>>> Am Freitag, 22. Juni 2018, 16:37:21 CEST schrieb Masahiro Yamada:
+>>>>>>>>> Hi Richard,
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> 2018-06-19 21:07 GMT+09:00 Richard Weinberger <richard@nod.at>:
+>>>>>>>>>> The denali NAND flash controller needs at least two clocks to operate,
+>>>>>>>>>> nand_clk and nand_x_clk.
+>>>>>>>>>> Since 1bb88666775e ("mtd: nand: denali: handle timing parameters by
+>>>>>>>>>> setup_data_interface()") nand_x_clk is used to derive timing settings.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Richard Weinberger <richard@nod.at>
+>>>>>>>>>> ---
+>>>>>>>>>> Strictly speaking denali needs a ecc_clk too, but AFAIK such a clock
+>>>>>>>>>> is not present on this SoC.
+>>>>>>>>>> But my SoCFPGA knowledge is very limited.
+>>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>> //richard
+>>>>>>>>>> ---
+>>>>>>>>>>  arch/arm/boot/dts/socfpga.dtsi | 3 ++-
+>>>>>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+>>>>>>>>>> index 486d4e7433ed..562f7b375bbd 100644
+>>>>>>>>>> --- a/arch/arm/boot/dts/socfpga.dtsi
+>>>>>>>>>> +++ b/arch/arm/boot/dts/socfpga.dtsi
+>>>>>>>>>> @@ -754,7 +754,8 @@
+>>>>>>>>>>                         reg-names = "nand_data", "denali_reg";
+>>>>>>>>>>                         interrupts = <0x0 0x90 0x4>;
+>>>>>>>>>>                         dma-mask = <0xffffffff>;
+>>>>>>>>>> -                       clocks = <&nand_clk>;
+>>>>>>>>>> +                       clocks = <&nand_clk>, <&nand_x_clk>;
+>>>>>>>>>> +                       clock-names = "nand", "nand_x";
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> IMHO, this should be
+>>>>>>>>>
+>>>>>>>>>                           clocks = <&nand_clk>, <&nand_x_clk>, <&nand_x_clk>;
+>>>>>>>>>                           clock-names = "nand", "nand_x", "ecc";
+>>>>>>>
+>>>>>>> No, it should be just the nand_x and ecc.
+>>>>>>>
+>>>>>>> There's already a patch to use the nand_x_clk and not the nand_clk.
+>>>>>
+>>>>>
+>>>>> Different people try to fix the problem in different ways.
+>>>>>
+>>>>> I think it is due to miscommunication across sub-systems.
+>>>>
+>>>> Is the series named
+>>>>
+>>>>         mtd: rawnand: denali: add new clocks and improve
+>>>>                               setup_data_interface
+>>>>
+>>>> still valid?
+>>>
+>>> Yes.
+>>> I believe V4 is valid.
+>>>
+>>>
+>>> Information for Dinh Nguyen:
+>>>
+>>> http://patchwork.ozlabs.org/patch/933507/
+>>> http://patchwork.ozlabs.org/patch/933487/
+>>> http://patchwork.ozlabs.org/patch/933494/
+>>> http://patchwork.ozlabs.org/patch/933506/
+>>>
+>>>
+>>> If he is not convinced, I am open to discussion, though.
+>>
+>> I wasn't aware of these patches. This patch is staged to go into
+>> v4.17-rc3 through the arm-soc:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/arch/arm/boot/dts/socfpga.dtsi?h=fixes&id=4eda9b766b042ea38d84df91581b03f6145a2ab0
+>>
+>> I think your patch will handle a case where only 1 clock is passed in,
+>> so it should be okay right?
+>>
+> 
+> I should be OK,
+> but please consider the proper fix for v4.19
+> as Boris suggested.
+> 
+
+Yes, I will spin up a patch.
+
+Dinh
