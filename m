@@ -6,110 +6,105 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33AAC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD10C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DA6F25081
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077A425054
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:31:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjTNHbTs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA6F25081
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DAqYNOSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077A425054
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752881AbeGBTZb (ORCPT
+        id S1752786AbeGBTbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:25:31 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39556 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752292AbeGBTZ3 (ORCPT
+        Mon, 2 Jul 2018 15:31:50 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50241 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeGBTbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:25:29 -0400
-Received: by mail-wm0-f66.google.com with SMTP id p11-v6so9760171wmc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:25:28 -0700 (PDT)
+        Mon, 2 Jul 2018 15:31:48 -0400
+Received: by mail-it0-f66.google.com with SMTP id u4-v6so13696015itg.0;
+        Mon, 02 Jul 2018 12:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tUnif5yH6Usb3sc0P6gTSL8F/AZ4ZoABmyDKr/7WYc8=;
-        b=HjTNHbTsm8MB6PPpujVezpqEGLnRv2xLonbZ9GJ+8uJPd5wXgp7jsCufUnoYTTcLgG
-         fY5CfmMi7iAXha6zFpV+++ny7vNsabr6LMxgQU1/HEau8vdJxKgkxOHq7y/24tfmUgFu
-         iV4UL19clBXdZzRZTjjdo2XutuLE9OIDAkFBk=
+        bh=PA6fbHKUMz0HyB7Bklan1B17cB1qjPP71a/deWVQ168=;
+        b=DAqYNOSO/BC6yimakv/Uqhtly7Czgp+rrdeK/j9+Tekxgxdvg81fSMOVVOuOvCddCN
+         YicAXiR8ufq4D++xeqy/XFOjsyObMaNtBjdHzN9dRuTR2WzHuFJtQzJ8xGMxNZIytd6W
+         m7BOB6Jzcb0+FD7TEG1CGOqyDkkXE24ubDdvs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tUnif5yH6Usb3sc0P6gTSL8F/AZ4ZoABmyDKr/7WYc8=;
-        b=JsNlnAncCX4b8AzVsSmZzGHcebcQE8mjTwMmHEK0q/j66Lt3MrLVD8k84nRgD37YIs
-         VZ+d+TRl+PIgQCHmnRl/xiUypfK0s8IW4W9cOn1wZOxZ57Z7EFboW5b1QvAiMBZ/7+tw
-         8ZM5dQqNerM9a2uNi3IXiN/1gVYuvxEr9EAP9wOxhpYBc5Dv1SI3I63PJLEYh5aC+bMq
-         5IwlOGKW2JKLTENEVUxGe8KTyQkw5E1KMv898zSzliqdBKLZ8jjPJGe8oVCutP9ItJT1
-         nfpELq9TWoypFALrCb7INZyc84pjUettFcAbEzi3i/ipuxw8I8JEOmQkxB2kXObpbkFh
-         TViQ==
-X-Gm-Message-State: APt69E1PB0vGpYs3nPXV6f5BC50rkiBPpciNjuu3jeb4JJ3rZ7WJI4BJ
-        HatVlZ+Q/Ooy4r8hqpbHuFtgk7XP+T8Hu1sbNCs06g==
-X-Google-Smtp-Source: AAOMgpfZuKIZnyv/e2HmKqeQEELKegcImz8RocjnImp5kkn5GnFDbutjt+4s8i5m73azwMTPB4l0E7nNlA/e9ifEqO0=
-X-Received: by 2002:a1c:1e4b:: with SMTP id e72-v6mr7968812wme.155.1530559527912;
- Mon, 02 Jul 2018 12:25:27 -0700 (PDT)
+        bh=PA6fbHKUMz0HyB7Bklan1B17cB1qjPP71a/deWVQ168=;
+        b=qnulf1XP8VQa3256J8Szj/YlmXUvQIOQu7tRPDSx2j3CcL2NRYpprF3hw5gKqYLtyd
+         MFSYH9wcPwhXzTVHs7i2+gBG01LpsDahp8JeqXUn3TabZqsiFIMFsfnnDP9ay3v7kNqY
+         56oeIQ9g9D2zi1+9xyPyR+6jYkXyLV2BPWxSMJxql4kS43mDI3XC5OHJIZLzgpFh7UnT
+         ImZca0VEMbNPG0rD/Axbq+dv2UiZGV6azJP760otM4/ooFgfKHLoJ987nJvOKn18vjyP
+         +90egv4KrJMTT2Ya1TPig0D/zB18+qrC/y+UDPsS+XVxwhBCPOfTD4pijkIOcuxfMad7
+         kwAg==
+X-Gm-Message-State: APt69E1K3SXNqpuhmq13LfZLneA1E0/tcUBVFgpm6BZj4tD7w3Cp8RPL
+        LTM/vMIPKOeO0lfcIfr5A3mOJXZ0OUQW+1pnD8g=
+X-Google-Smtp-Source: AAOMgpcvdn3ea/muzC2Gi+HYK5e2TYa6GfjdGp4OPAVfugXPuXBuSt/Ic5gmDHVe+8wDGB35z6XowxV5vI3raCaR9yA=
+X-Received: by 2002:a24:94f:: with SMTP id 76-v6mr2262832itm.113.1530559907950;
+ Mon, 02 Jul 2018 12:31:47 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:c202:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 12:25:27 -0700 (PDT)
-In-Reply-To: <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
-References: <12e6da4e-7681-771f-38d3-3c1abf943c24@huawei.com> <43d78927-3955-acde-a2d1-d2b82932a7a6@huawei.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 2 Jul 2018 12:25:27 -0700
-Message-ID: <CALAqxLVK=EghPr=GVTKzX511XMO2NM4Ehh3pVP9QumpKRBP+rA@mail.gmail.com>
-Subject: Re: hrtimer become inaccurate with RT patch
-To:     gengdongjiu <gengdongjiu@huawei.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, anna-maria@linutronix.de,
-        Hangaohuai <hangaohuai@huawei.com>,
-        "zhangjianwei (D)" <zhangjianwei8@huawei.com>,
-        yangchuanlong@huawei.com,
-        "Zhangbin (EulerOS)" <zhangbin46@huawei.com>,
-        liupeifeng3@huawei.com
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
+ <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com>
+ <CA+55aFz8KyVqFsVnp-6g+thz7vmm5nK_FSdRTPSks7gsNVNRdQ@mail.gmail.com>
+ <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com>
+ <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com>
+ <1527399163.10673.1530541966296.JavaMail.zimbra@efficios.com>
+ <CALCETrVeu_V-3K8OfKv9QixrWBJs+q866yb=e96sC76SS4hxYg@mail.gmail.com>
+ <84003252.10754.1530558015813.JavaMail.zimbra@efficios.com> <CALCETrVMhU8SrZBXOXxJerrZpQ71A_f_cRBCU=Lmj_KPV0+rRA@mail.gmail.com>
+In-Reply-To: <CALCETrVMhU8SrZBXOXxJerrZpQ71A_f_cRBCU=Lmj_KPV0+rRA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 12:31:36 -0700
+Message-ID: <CA+55aFy2rxnLhbqGtz0wxW_u=x_A1zHZBNP8ZC5P12_AHyb3PA@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 2:34 AM, gengdongjiu <gengdongjiu@huawei.com> wrote:
-> Hi Thomas/Anna/John,
+On Mon, Jul 2, 2018 at 12:02 PM Andy Lutomirski <luto@amacapital.net> wrote:
 >
->   Recently I found that the hrtimer become inaccurate when there is a RT
-> process runs on the same cpu core, and the kernel has applied preempt_rt
-> patch.
->   The Linux kernel version is v4.1.46, and the preempt_rt patch is
-> patch-4.1.46-rt52.patch.
->   I know that in the preempt_rt environment the interrupt handlers no
-> longer run in interrupt context but in process context, so that RT
-> process will not be interrupt. But if the hrtimer is also runs in
-> process context the timer is useless when it's inaccurate. so I want to
-> consult you whether this is expected behavior? whether is reasonable to move the timer IRQ
-> handling to a thread?
+> Works for me.  Linus, any objection?
 
-I've not looked at the PREEMPT_RT code in a long time, but years ago
-there was a tension in that there is not an easy way track ownership
-of timers. Thus timers all fired at the same priority of the hrtimer
-irq thread. This thread could be moved up or down in priority, but the
-problem was all timers would fire with the same priority. So either
-the thread priority was so high that low-priority process could
-generate a bunch of timers which would interrupt higher priority
-tasks, or the thread priority was lower, so a high priority task could
-block all timers.
+I think the 4.19 stage may be overkill, but I don't hate it, so no
+real objections.
 
-There was some handwavy talk of trying to keep per-process timer
-lists, so the hrtimer irq could still be in irq context but the firing
-logic it didn't do anything but mark its task as runnable and do the
-the actual timer firing logic before we eventually run the task (in
-proper rt priority order), in a fashion similar to signals. But I'm
-not sure if any attempts were made in that direction. I also think it
-was an open question if there's any logic in kernel that depend on
-strict in-order kernel timer processing, so its possible there could
-be odd inversion issues where high priority timer logic is waiting on
-/expecting lower priority timers to fire, etc, so its probably an area
-of research.
+If the main reason for this is that we silently clear the upper bits
+when returning to compat mode, I actually think that a better fix
+would be to just fix that. We shouldn't silently ignore bogus data in
+the return path.
 
-thanks
--john
+But I don't care enough, I think.
+
+            Linus
