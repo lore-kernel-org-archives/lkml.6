@@ -3,117 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF83C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:19:16 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4BEC2523A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D377FC3279B
 	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:19:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BEC2523A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 86E1625489
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 04:19:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E1625489
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeGBETM (ORCPT
+        id S1752211AbeGBEQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 00:19:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9189 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752294AbeGBETI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 00:19:08 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DCF72E9C4A0A7;
-        Mon,  2 Jul 2018 12:18:53 +0800 (CST)
-Received: from [127.0.0.1] (10.142.68.147) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.382.0; Mon, 2 Jul 2018
- 12:18:51 +0800
-Subject: Re: [PATCH v5 2/2] arm64: KVM: export the capability to set guest
- SError syndrome
-To:     James Morse <james.morse@arm.com>
-CC:     <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-References: <1529960309-2513-1-git-send-email-gengdongjiu@huawei.com>
- <1529960309-2513-3-git-send-email-gengdongjiu@huawei.com>
- <bca12032-c465-1d10-f7d4-71fc044ac695@arm.com>
-From:   gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <fd33f8b6-db05-f956-a1fc-ecb4fa3f1b79@huawei.com>
-Date:   Mon, 2 Jul 2018 12:18:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 2 Jul 2018 00:16:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:45701 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751443AbeGBEQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 00:16:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Jv8N2J94z9s3q;
+        Mon,  2 Jul 2018 14:16:36 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Update] Regression in 4.18 - 32-bit PowerPC crashes on boot - bisected to commit 1d40a5ea01d5
+In-Reply-To: <CA+55aFzZ7PND2Xvz9wB1jaCmp0rBMTSmJtKiFwSeOWy9iLSd8Q@mail.gmail.com>
+References: <99169786-61dd-b19c-ac81-84bcd0a67de4@lwfinger.net> <CA+55aFzZ7PND2Xvz9wB1jaCmp0rBMTSmJtKiFwSeOWy9iLSd8Q@mail.gmail.com>
+Date:   Mon, 02 Jul 2018 14:16:33 +1000
+Message-ID: <87d0w6mfvi.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <bca12032-c465-1d10-f7d4-71fc044ac695@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-
-On 2018/6/29 23:58, James Morse wrote:
-> Hi Dongjiu Geng,
-> 
-> This patch doesn't apply on v4.18-rc2.
-> 
-> Documentation/virtual/kvm/api.txt already has a 8.18 section. I guess you based
-> this on v4.17.
-
-Yes, indeed I based on v4.17.
-
-> 
-> For posting patches, please use the latest 'rc' from Linus' tree, (or the
-> maintainer's tree listed in MAINTAINERS for the tree you are targeting if the
-> maintainer has started to pick up patches).
-Ok, I will rebase it using the latest 'rc' from Linus' tree. thanks for the reminder.
-
-
-> 
-> 
-> Thanks,
-> 
-> James
-> 
-> 
-> On 25/06/18 21:58, Dongjiu Geng wrote:
->> For the arm64 RAS Extension, user space can inject a virtual-SError
->> with specified ESR. So user space needs to know whether KVM support
->> to inject such SError, this interface adds this query for this capability.
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Fri, Jun 29, 2018 at 1:42 PM Larry Finger <Larry.Finger@lwfinger.net> wrote:
 >>
->> KVM will check whether system support RAS Extension, if supported, KVM
->> returns true to user space, otherwise returns false.
-> 
-> 
->> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->> index 3732097..86b3808 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -4628,3 +4628,14 @@ Architectures: s390
->>  This capability indicates that kvm will implement the interfaces to handle
->>  reset, migration and nested KVM for branch prediction blocking. The stfle
->>  facility 82 should not be provided to the guest without this capability.
->> +
->> +8.14 KVM_CAP_ARM_SET_SERROR_ESR
->> +
->> +Architectures: arm, arm64
->> +
->> +This capability indicates that userspace can specify the syndrome value reported
->> +to the guest OS when guest takes a virtual SError interrupt exception.
->> +If KVM has this capability, userspace can only specify the ISS field for the ESR
->> +syndrome, it can not specify the EC field which is not under control by KVM.
->> +If this virtual SError is taken to EL1 using AArch64, this value will be reported
->> +in ISS filed of ESR_EL1.
-> 
-> 
-> 
-> 
-> .
-> 
+>> I have more information regarding this BUG. Line 700 of page-flags.h is the
+>> macro PAGE_TYPE_OPS(Table, table). For further debugging, I manually expanded
+>> the macro, and found that the bug line is VM_BUG_ON_PAGE(!PageTable(page), page)
+>> in routine __ClearPageTable(), which is called from pgtable_page_dtor() in
+>> include/linux/mm.h. I also added a printk call to PageTable() that logs
+>> page->page_type. The routine was called twice. The first had page_type of
+>> 0xfffffbff, which would have been expected for a . The second call had
+>> 0xffffffff, which led to the BUG.
+>
+> So it looks to me like the tear-down of the page tables first found a
+> page that is indeed a page table, and cleared the page table bit
+> (well, it set it - the bits are reversed).
+...
+>
+> That said, can some ppc person who knows the 32-bit ppc code and maybe
+> knows what that "interrupt: 700" means talk about that oddity in the
+> trace, please?
 
+I think everyone else answered your questions here, and it should be
+fixed now in your tree.
+
+Larry let me know if you're still seeing a crash with 4.18-rc3.
+
+cheers
