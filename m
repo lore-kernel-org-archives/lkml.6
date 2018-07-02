@@ -2,96 +2,85 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD2AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83899C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27D425530
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:06:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="M4sc7AkO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27D425530
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C40E25530
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C40E25530
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754609AbeGBKGu (ORCPT
+        id S1754630AbeGBKG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:06:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36084 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752954AbeGBKGr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 06:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dhYL2KhVHTcYscNzOEtsaJCKecqREW9UCKeVmPiyl+o=; b=M4sc7AkOL505QDPT3zQI7Tsxj
-        l4YH4vxgcWYq90CvWii8YkNyK+iHujBtODSOTDeuU+ocCd9hKhvyyr9f/bt+uUhfBw+NZO5PAJlWg
-        5Sqm1nYaK/i9DeHr00h3GwezZemeDL2gnpOZwNXSMeQSJFCANEMdE/QGpR0QNC6VgNnCI=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fZvjJ-00042b-OV; Mon, 02 Jul 2018 10:06:45 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fZvjJ-0006BP-9v; Mon, 02 Jul 2018 11:06:45 +0100
-Date:   Mon, 2 Jul 2018 11:06:45 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] ASoC: es7241: add dt-bindings documentation for
- the es7241 adc
-Message-ID: <20180702100645.GE18211@sirena.org.uk>
-References: <20180630172241.10806-1-jbrunet@baylibre.com>
- <20180630172241.10806-2-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VUDLurXRWRKrGuMn"
-Content-Disposition: inline
-In-Reply-To: <20180630172241.10806-2-jbrunet@baylibre.com>
-X-Cookie: A good memory does not equal pale ink.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 2 Jul 2018 06:06:58 -0400
+Received: from mga01.intel.com ([192.55.52.88]:47686 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752954AbeGBKGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:06:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 03:06:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,298,1526367600"; 
+   d="scan'208";a="61657256"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Jul 2018 03:06:39 -0700
+Message-ID: <048c10a3acb3dec624d1064e84ffd4957648949b.camel@linux.intel.com>
+Subject: Re: [PATCH] fbcon: introduce for_each_registered_fb() helper
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Yisheng Xie <ysxie@foxmail.com>, b.zolnierkie@samsung.com,
+        keescook@chromium.org, j.w.r.degoede@gmail.com,
+        david@lechnology.com, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Date:   Mon, 02 Jul 2018 13:06:38 +0300
+In-Reply-To: <20180702073028.GZ13978@phenom.ffwll.local>
+References: <1530202809-24105-1-git-send-email-ysxie@foxmail.com>
+         <ffe03b382ee84dbef8567b7377b929e4a8d6c23c.camel@linux.intel.com>
+         <20180702073028.GZ13978@phenom.ffwll.local>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-07-02 at 09:30 +0200, Daniel Vetter wrote:
+> On Fri, Jun 29, 2018 at 07:20:13PM +0300, Andy Shevchenko wrote:
+> > On Fri, 2018-06-29 at 00:20 +0800, Yisheng Xie wrote:
 
---VUDLurXRWRKrGuMn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > LGTM except macro implementation. That's why I have mentioned
+> > for_each_pci_bridge() to look at.
+> > 
+> > > +#define for_each_registered_fb(i)		\
+> > > +	for (i = 0; i < FB_MAX; i++)		\
+> > > +		if (registered_fb[i])
+> > > +
+> > 
+> > This needs to be protected against nested conditionals.
+> > Otherwise compiler issues a warning and even may generate wrong
+> > code.
+> 
+> See for_each_if() in include/drm/drmP.h ... we should probably lift
+> that
+> into a general header. The for_each_if() is used all over drm in
+> iterator
+> macros, exactly to avoid surprises.
 
-On Sat, Jun 30, 2018 at 07:22:40PM +0200, Jerome Brunet wrote:
+Wow, didn't know we have a such. It's a good idea to forelift it for
+wider use.
 
-> +Optional properties:
-> +- VDDP-supply: regulator phandle for the VDDA supply
-> +- VDDA-supply: regulator phandle for the VDDP supply
-> +- VDDD-supply: regulator phandle for the VDDD supply
+Yisheng, it seems you may use it in your patch directly.
 
-Same issue as with the other binding: power isn't optional in the
-hardware so shouldn't be optional in the binding.
-
---VUDLurXRWRKrGuMn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls5+TQACgkQJNaLcl1U
-h9Cc6wf+NZEPaRFu73AMwKwM3gRUSniFTZwz4wGM7Gc/fZIQDORCh96O01cl2eev
-EzzT8jy5qZLpRTae4Dth7r2jhMkrk+DUVDeitb/47p53ownbhJnLkj2nOTfo+HIP
-4Uv8mXb7nk5pQ7/u1s7cIse45X12DDKipsMbdlqa4N84N0Yu6k2IMyNd1TXFKsSi
-/XXJ+vHEbCjZOEODe1FAMTElgwb57fJzSJsV+4xRaz+icVNH+9NwbXK6+wbsHXls
-/rdejm5M5OMUsOCbVNmqasS1ey69RtuiyXzH4fPNaav9bsNraEVm8JTcPdyWMmsS
-IVzkHIf1yrdYSXxYb5LcaLeFDHnDjA==
-=lr+8
------END PGP SIGNATURE-----
-
---VUDLurXRWRKrGuMn--
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
