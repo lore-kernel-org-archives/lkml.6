@@ -2,172 +2,95 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D8AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A36DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD64248BD
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:03:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ZQkdpgR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD64248BD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id C052722ACD
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C052722ACD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753382AbeGBVDs (ORCPT
+        id S1753076AbeGBVFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:03:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:39390 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeGBVDq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:03:46 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8DA1E22F835;
-        Mon,  2 Jul 2018 17:03:45 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ZMdIVMDTBgO2; Mon,  2 Jul 2018 17:03:45 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 108E522F82E;
-        Mon,  2 Jul 2018 17:03:45 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 108E522F82E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530565425;
-        bh=wvl4uJHURxP1UylxkJHiv1sYHYCnRrI4bCo/tUz8HOw=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=ZQkdpgR8PW/JlIwxPRBpKW5jruN6L9Iw4yqOrPsaO2RDqQwqM4HX5QeRkiF35b2Dr
-         t8hsn9X9sYlTH/zUDtq7HF7cZMGqNTTj2tzacJKT4vZj0tyN5BP3V09YIF+MFFhVEl
-         ngjYGlkyLf6JjZlOSZO6rM1Pzdm9sRGK/Yv8ejl4hudV5IAESRFFsga6QPA4Sil68l
-         7+52MQJRaAdRyW0oyjMybNnWEvZ0PzyLqHrTiRMJMBFwMv1cW9wVF/OAF2XQ6+kKtR
-         Udeqkhkjn8gKf/WU6FLFsHsOGK3WPns2IySUCCmWVxobdNdeVxeG7eK1y9u4f/1shm
-         PzEAtz1NUwNUQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id uwL21qBLVeRt; Mon,  2 Jul 2018 17:03:44 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id E85AE22F827;
-        Mon,  2 Jul 2018 17:03:44 -0400 (EDT)
-Date:   Mon, 2 Jul 2018 17:03:44 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1307337131.10790.1530565424717.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFzH+4=Aeh_P1ptFn5nVm7yFuEGpxUJ0kNB-sUHVOv8rcw@mail.gmail.com>
-References: <20180702204058.819-1-mathieu.desnoyers@efficios.com> <CA+55aFzH+4=Aeh_P1ptFn5nVm7yFuEGpxUJ0kNB-sUHVOv8rcw@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: use __u64 for rseq_cs fields,
- validate abort_ip < TASK_SIZE
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: use __u64 for rseq_cs fields, validate abort_ip < TASK_SIZE
-Thread-Index: JNOpKk/IeSrVNfOAIkDLHe4DdDI+MA==
+        Mon, 2 Jul 2018 17:05:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752391AbeGBVFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 17:05:13 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFEA281A4EB9;
+        Mon,  2 Jul 2018 21:05:12 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 567C12026D5B;
+        Mon,  2 Jul 2018 21:05:11 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kees Cook <keescook@chromium.org>,
+        =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] video/console/vgacon: Print big fat warning with nomodeset
+Date:   Mon,  2 Jul 2018 17:04:40 -0400
+Message-Id: <20180702210442.18648-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 21:05:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 21:05:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 2, 2018, at 4:52 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
+It's been a pretty good while since kernel modesetting was introduced.
+It has almost entirely replaced previous solutions which required
+userspace modesetting, and I can't even recall any drivers off the top
+of my head for modern day hardware that don't only support one or the
+other. Even nvidia's ugly blob does not require the use of nomodeset,
+and only requires that nouveau be blacklisted.
 
-> On Mon, Jul 2, 2018 at 1:41 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> -       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
->> +       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)) ||
->> +           rseq_cs->abort_ip >= TASK_SIZE)
->>                 return -EFAULT;
-> 
-> I think the abort_ip check should have the same error value as the
-> other sanity checks, ie just be of this format:
-> 
->>         if (rseq_cs->version > 0)
->>                 return -EINVAL;
+Effectively, the only thing nomodeset does in the year 2018 is disable
+your graphics drivers. Since VESA is a thing, this will give many users
+the false impression that they've actually fixed an issue they were
+having with their machine simply because the laptop will boot up to a
+degraded GUI. This of course, is never actually the case.
 
-OK, so I'll go for -EINVAL.
+Things get even worse when you consider that there's still an enormous
+amount of tutorials users find on the internet that still suggest adding
+nomodeset, along with various users who have been around long enough to
+still suggest it.
 
-> 
-> also, I think you should check start_ip to be consistent. You kind of
-> accidentally do it with the check for
-> 
->        if (rseq_cs->abort_ip - rseq_cs->start_ip - rseq_cs->post_commit_offset)
+There really isn't any legitimate reason I can see for this to be an
+option that's used by anyone else other then developers, or properly
+informed users. So, let's end the confusion and start printing warnings
+whenever it's enabled.
 
-The check is actually:
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/video/console/vgacon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-        /* Ensure that abort_ip is not in the critical section. */
-        if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
-                return -EINVAL;
-
-> 
-> but honestly, that has underflow issues already, so I think you want
-> to basically make the check be
-> 
->        if (rseq_cs->abort_ip >= TASK_SIZE)
->                return -EINVAL;
-
-that works.
-
-> 
->        if (rseq_cs->start_ip >= rseq_cs->abort_ip)
->                return -EINVAL;
-
-this one does not work. We need to ensure that abort_ip
-is not between [ start_ip, start_ip + post_commit_offset ]. The
-check you propose validates that start_ip is below abort_ip,
-which is bogus. For instance, abort_ip can very well be in a
-different section of the binary, at an address either below
-or above start_ip.
-
-
-> 
-> which takes care of checkint  start_ip, and also the underflow for the
-> post_commit_offset check.
-
-What underflow issues are you concerned with ?
-
-> 
-> If somebody is depending on negative offsets, then that
-> post_commit_offset logic is already wrong.
-> 
->> +       usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
->>         ret = get_user(sig, usig);
-> 
-> That can underflow too, but I guess we can just rely on get_user()
-> getting it right.
-
-Yes, get_user() should handle that one properly.
-
-Thanks,
-
-Mathieu
-
-> 
->                Linus
-
+diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgacon.c
+index f09e17b60e45..09731b2f6815 100644
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -112,6 +112,11 @@ EXPORT_SYMBOL(vgacon_text_force);
+ static int __init text_mode(char *str)
+ {
+ 	vgacon_text_mode_force = true;
++
++	pr_warning("You have booted with nomodeset. This means your GPU drivers are DISABLED\n");
++	pr_warning("Any video related functionality will be severely degraded, and you may not even be able to suspend the system properly\n");
++	pr_warning("Unless you actually understand what nomodeset does, you should reboot without enabling it\n");
++
+ 	return 1;
+ }
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.17.1
+
