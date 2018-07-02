@@ -3,109 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E15C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEFFC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A54222518F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 723F925182
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FggABiQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54222518F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hebjMOzB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 723F925182
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752769AbeGBP41 (ORCPT
+        id S1752810AbeGBP4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:56:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38011 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeGBP4Y (ORCPT
+        Mon, 2 Jul 2018 11:56:38 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39322 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752736AbeGBP4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:56:24 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j17-v6so7711421pfn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 08:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=7sgR3XWb0ZjhnXliIyW3/K457TTRxSTFst5nLbjcNV8=;
-        b=FggABiQqwWjx5dBkx9/Xc0dLo9ZCFmCWp4XNprXC5r9MTEGWSaQLjjLoI6bxwAEbq/
-         JpkZ+DT/cN/SPVcc0Sqic0F4+x6gJjdbZ2qEwDTDmC5/ry8T6X95OkqT/GOwADGWDZHi
-         8uIPegkjPgSR3wtqNiAdF25VnxNdPs3cTy/5Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=7sgR3XWb0ZjhnXliIyW3/K457TTRxSTFst5nLbjcNV8=;
-        b=a6wJwhkEU1wnDaAq8MJU4CiUmhskcSulDjafwWJHRcSbPe0TCYIXgUb4a3NVosDRcs
-         neNWbRp56JupGzPDxZNHHerPkdyjgmWfVgWEPDeT/A1g71UnCNwkAHi239lXuE1M92QR
-         fTeY+Vv27omDUHkDJjmkznn4pCuKp57pNaKT3ZPZX5ascX2oAX4kWzhVKXnKcTzFb8oq
-         AKvLcEDir53QBBLZzB9bc+seuHyTaR7yjg04x+yK55KJuDoIFoGyJlY0jCtUsW8xRotD
-         NZY9SxbfUNpZdf01W2lN23JL7EcPKA5bf7yVMpe7KoLnEm2tbYjDPBa4THAKQKsvdNZH
-         21Lg==
-X-Gm-Message-State: APt69E0PuGIEnxsvxGBCy6sE0kEPB9E6MPxjljOOmCDdE5XjS3+uokeJ
-        sL+sQPjUMy26AYBOjznZ9LUbAOjcue4=
-X-Google-Smtp-Source: AAOMgpdUedS5JSPLBHQOIbAFBycB1rD2VZwUQcHr++db/twPxBRfGwHDkdy3yW21y0JHhupq+srRoQ==
-X-Received: by 2002:a65:6398:: with SMTP id h24-v6mr5576172pgv.245.1530546984098;
-        Mon, 02 Jul 2018 08:56:24 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm26084830pfj.123.2018.07.02.08.56.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 08:56:22 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 08:56:21 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Anatolij Gustschin <agust@denx.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2] powerpc: mpc5200: Remove VLA usage
-Message-ID: <20180702155621.GA16047@beast>
+        Mon, 2 Jul 2018 11:56:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62FnJCc072743;
+        Mon, 2 Jul 2018 15:56:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=k3CZv0CyYj5+8n3FTZ6PYfgRMnrX4kUGPOFEYG5dMGg=;
+ b=hebjMOzBUcNYa2PbqQ+iWJVjehUIk0y3bIOgI7pcFcw39xjTV0VF0ESejYvtWpIzYYFe
+ CIfIU0U9qM92d1CNh7gs6FnJvAC7NDngOZkPa062/KnVcyolvCJ2IavzVv752xVSn9NX
+ Gs1RcA2v3BjfUMNv7rEKv9e4fcKj/k6B5Te5B7YcJej/wbvSdkPsx8e0rfuDaFa5zAuQ
+ 8qcO5UDKEmAjs8VZIwojCUnrEEfR4sbFHbCqxkK9Zd4O36Qx46g4WrOyZnPz/4+QM0X4
+ zEGJcmklKDSJtGwVCW78pGavL3cD1T0DoRPhdHezzquJcX8iU4GnS3scRMTgusUw2JhY vQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2jx19sn53x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Jul 2018 15:56:11 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w62FuBKP028921
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Jul 2018 15:56:11 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w62FuA1g029794;
+        Mon, 2 Jul 2018 15:56:10 GMT
+Received: from [192.168.100.186] (/92.39.186.148)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Jul 2018 08:56:10 -0700
+Subject: Re: [PATCH] kvmclock: remove redundant variable 'size'
+To:     Colin King <colin.king@canonical.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180702070623.4769-1-colin.king@canonical.com>
+From:   Liam Merwick <liam.merwick@oracle.com>
+Message-ID: <36bf55ec-1937-6c3c-49fc-329a1309a815@oracle.com>
+Date:   Mon, 2 Jul 2018 16:57:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20180702070623.4769-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=698
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-switches to using a stack size large enough for the saved routine and
-adds a sanity check making sure the routine doesn't overflow into the
-0x600 exception handler.
-
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: use "0x600-0x500" for size calculation to illustrate handler sizes
----
- arch/powerpc/platforms/52xx/mpc52xx_pm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/platforms/52xx/mpc52xx_pm.c b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
-index 31d3515672f3..b1d208ded981 100644
---- a/arch/powerpc/platforms/52xx/mpc52xx_pm.c
-+++ b/arch/powerpc/platforms/52xx/mpc52xx_pm.c
-@@ -117,7 +117,10 @@ int mpc52xx_pm_enter(suspend_state_t state)
- 	u32 intr_main_mask;
- 	void __iomem * irq_0x500 = (void __iomem *)CONFIG_KERNEL_START + 0x500;
- 	unsigned long irq_0x500_stop = (unsigned long)irq_0x500 + mpc52xx_ds_cached_size;
--	char saved_0x500[mpc52xx_ds_cached_size];
-+	char saved_0x500[0x600-0x500];
-+
-+	if (WARN_ON(mpc52xx_ds_cached_size > sizeof(saved_0x500)))
-+		return -ENOMEM;
- 
- 	/* disable all interrupts in PIC */
- 	intr_main_mask = in_be32(&intr->main_mask);
--- 
-2.17.1
 
 
--- 
-Kees Cook
-Pixel Security
+On 02/07/18 08:06, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable size is being assigned but is never used hence it is redundant
+> and can be removed.
+> 
+> Cleans up clang warning:
+> warning: variable ‘size’ set but not used [-Wunused-but-set-variable]
+> 
+
+Is it worth adding
+
+Fixes: cc1e24fdb064 ("x86/vdso: Remove pvclock fixmap machinery")
+
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+either way
+
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+
+> ---
+>   arch/x86/kernel/kvmclock.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+> index bf8d1eb7fca3..45c22ce941c1 100644
+> --- a/arch/x86/kernel/kvmclock.c
+> +++ b/arch/x86/kernel/kvmclock.c
+> @@ -354,13 +354,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+>   	int cpu;
+>   	u8 flags;
+>   	struct pvclock_vcpu_time_info *vcpu_time;
+> -	unsigned int size;
+>   
+>   	if (!hv_clock)
+>   		return 0;
+>   
+> -	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+> -
+>   	cpu = get_cpu();
+>   
+>   	vcpu_time = &hv_clock[cpu].pvti;
+> 
