@@ -2,207 +2,135 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E2FC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A620C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E2222522
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:09:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cpU/IBrO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E2222522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 47DE924212
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DE924212
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753225AbeGBGJW (ORCPT
+        id S1753273AbeGBGLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:09:22 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48126 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752303AbeGBGJU (ORCPT
+        Mon, 2 Jul 2018 02:11:11 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14716 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753148AbeGBGLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:09:20 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6269HAA031563;
-        Mon, 2 Jul 2018 06:09:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2017-10-26; bh=KXLDu1dnZtiOyM3Bzd3rbYE/dZNZK0pG7raQGUX85dw=;
- b=cpU/IBrOAejzlOyqo3i36NbtZiPrWOGlXpUuKD1Q4WSSiHg2O50YN5TgcXOOS6rS/nVX
- +pULqoBIqQLrvUfmnQo9NVGFIWGd02VMS9FWVS7rrDx7r23tOcgQ6n+EF9DycISHdKGH
- UftEAphAii1/XOJXsO6eGtM0+LXjzPhPlrvPCqfmopBY3CoGpjap/TRzJEau/O4tNxZl
- eqCcgc0z0ljEh11W5TSpHQdP2Qr4Qui3p2/e7hVm7fVKIBh6a+zlrZJYKFipKRp8XcR0
- QU2C8W4q06g/wK+bf5cSh209fGqFieRS5m9LZeNEw9OK3axG1dW1tQZxfvyMkaHpx4As aA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jx2gptwsd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Jul 2018 06:09:17 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6269GXB023797
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Jul 2018 06:09:16 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6269FvS020088;
-        Mon, 2 Jul 2018 06:09:15 GMT
-Received: from mwanda (/197.157.34.167)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 01 Jul 2018 23:09:14 -0700
-Date:   Mon, 2 Jul 2018 09:09:07 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@01.org, Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     kbuild-all@01.org, linux-media@vger.kernel.org,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 15/17] media: platform: Switch to
- v4l2_async_notifier_add_subdev
-Message-ID: <20180702060907.xlghcxtsj5eepdxu@mwanda>
+        Mon, 2 Jul 2018 02:11:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b39c1d70000>; Sun, 01 Jul 2018 23:10:32 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 01 Jul 2018 23:11:06 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 01 Jul 2018 23:11:06 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Jul
+ 2018 06:11:05 +0000
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+To:     Leon Romanovsky <leon@kernel.org>, Jan Kara <jack@suse.cz>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>, Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+References: <20180626134757.GY28965@dhcp22.suse.cz>
+ <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+ <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+ <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+ <20180702055251.GV3014@mtr-leonro.mtl.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <235a23e3-6e02-234c-3e20-b2dddc93e568@nvidia.com>
+Date:   Sun, 1 Jul 2018 23:10:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530298220-5097-16-git-send-email-steve_longerbeam@mentor.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8941 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807020072
+In-Reply-To: <20180702055251.GV3014@mtr-leonro.mtl.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On 07/01/2018 10:52 PM, Leon Romanovsky wrote:
+> On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
+>> On Wed 27-06-18 19:42:01, John Hubbard wrote:
+>>> On 06/27/2018 10:02 AM, Jan Kara wrote:
+>>>> On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
+>>>>> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
+>>>>>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+>>>>>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+>>>>>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+>>>>>>> [...]
+>>> One question though: I'm still vague on the best actions to take in the
+>>> following functions:
+>>>
+>>>     page_mkclean_one
+>>>     try_to_unmap_one
+>>>
+>>> At the moment, they are both just doing an evil little early-out:
+>>>
+>>> 	if (PageDmaPinned(page))
+>>> 		return false;
+>>>
+>>> ...but we talked about maybe waiting for the condition to clear, instead?
+>>> Thoughts?
+>>
+>> What needs to happen in page_mkclean() depends on the caller. Most of the
+>> callers really need to be sure the page is write-protected once
+>> page_mkclean() returns. Those are:
+>>
+>>   pagecache_isize_extended()
+>>   fb_deferred_io_work()
+>>   clear_page_dirty_for_io() if called for data-integrity writeback - which
+>>     is currently known only in its caller (e.g. write_cache_pages()) where
+>>     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
+>>     information into page_mkclean() will require some plumbing and
+>>     clear_page_dirty_for_io() has some 50 callers but it's doable.
+>>
+>> clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
+>> WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
+>> otherwise memory cleaning would get stuck on pinned pages until RDMA
+>> drivers release its pins.
+> 
+> Sorry for naive question, but won't it create too much dirty pages
+> so writeback will be called "non-stop" to rebalance watermarks without
+> ability to progress?
+> 
 
-I love your patch! Perhaps something to improve:
+That is an interesting point. 
 
-url:    https://github.com/0day-ci/linux/commits/Steve-Longerbeam/media-imx-Switch-to-subdev-notifiers/20180630-035625
-base:   git://linuxtv.org/media_tree.git master
+Holding off page writeback of this region does seem like it could cause
+problems under memory pressure. Maybe adjusting the watermarks so that we
+tell the writeback  system, "all is well, just ignore this region until
+we're done with it" might help? Any ideas here are welcome...
 
-New smatch warnings:
-drivers/media/platform/xilinx/xilinx-vipp.c:97 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
-drivers/media/platform/xilinx/xilinx-vipp.c:335 xvip_graph_notify_bound() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
+Longer term, maybe some additional work could allow the kernel to be able
+to writeback the gup-pinned pages (while DMA is happening--snapshots), but
+that seems like a pretty big overhaul.
 
-Old smatch warnings:
-drivers/media/platform/xilinx/xilinx-vipp.c:106 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 4 has type 'struct fwnode_handle*'
-drivers/media/platform/xilinx/xilinx-vipp.c:133 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 3 has type 'struct fwnode_handle*'
-drivers/media/platform/xilinx/xilinx-vipp.c:143 xvip_graph_build_one() error: '%pOF' expects argument of type 'struct device_node*', argument 4 has type 'struct fwnode_handle*'
-
-# https://github.com/0day-ci/linux/commit/86ede05d30b3cad4b07c2df915fc83b94d3327f1
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 86ede05d30b3cad4b07c2df915fc83b94d3327f1
-vim +97 drivers/media/platform/xilinx/xilinx-vipp.c
-
-df3305156 Laurent Pinchart      2013-05-15   70  
-df3305156 Laurent Pinchart      2013-05-15   71  static int xvip_graph_build_one(struct xvip_composite_device *xdev,
-df3305156 Laurent Pinchart      2013-05-15   72  				struct xvip_graph_entity *entity)
-df3305156 Laurent Pinchart      2013-05-15   73  {
-df3305156 Laurent Pinchart      2013-05-15   74  	u32 link_flags = MEDIA_LNK_FL_ENABLED;
-df3305156 Laurent Pinchart      2013-05-15   75  	struct media_entity *local = entity->entity;
-df3305156 Laurent Pinchart      2013-05-15   76  	struct media_entity *remote;
-df3305156 Laurent Pinchart      2013-05-15   77  	struct media_pad *local_pad;
-df3305156 Laurent Pinchart      2013-05-15   78  	struct media_pad *remote_pad;
-df3305156 Laurent Pinchart      2013-05-15   79  	struct xvip_graph_entity *ent;
-859969b38 Sakari Ailus          2016-08-26   80  	struct v4l2_fwnode_link link;
-86ede05d3 Steve Longerbeam      2018-06-29   81  	struct fwnode_handle *ep = NULL;
-df3305156 Laurent Pinchart      2013-05-15   82  	int ret = 0;
-df3305156 Laurent Pinchart      2013-05-15   83  
-df3305156 Laurent Pinchart      2013-05-15   84  	dev_dbg(xdev->dev, "creating links for entity %s\n", local->name);
-df3305156 Laurent Pinchart      2013-05-15   85  
-df3305156 Laurent Pinchart      2013-05-15   86  	while (1) {
-df3305156 Laurent Pinchart      2013-05-15   87  		/* Get the next endpoint and parse its link. */
-86ede05d3 Steve Longerbeam      2018-06-29   88  		ep = fwnode_graph_get_next_endpoint(entity->asd.match.fwnode,
-86ede05d3 Steve Longerbeam      2018-06-29   89  						    ep);
-ef94711a0 Akinobu Mita          2017-10-12   90  		if (ep == NULL)
-df3305156 Laurent Pinchart      2013-05-15   91  			break;
-df3305156 Laurent Pinchart      2013-05-15   92  
-68d9c47b1 Rob Herring           2017-07-21   93  		dev_dbg(xdev->dev, "processing endpoint %pOF\n", ep);
-df3305156 Laurent Pinchart      2013-05-15   94  
-86ede05d3 Steve Longerbeam      2018-06-29   95  		ret = v4l2_fwnode_parse_link(ep, &link);
-df3305156 Laurent Pinchart      2013-05-15   96  		if (ret < 0) {
-68d9c47b1 Rob Herring           2017-07-21  @97  			dev_err(xdev->dev, "failed to parse link for %pOF\n",
-68d9c47b1 Rob Herring           2017-07-21   98  				ep);
-df3305156 Laurent Pinchart      2013-05-15   99  			continue;
-df3305156 Laurent Pinchart      2013-05-15  100  		}
-df3305156 Laurent Pinchart      2013-05-15  101  
-df3305156 Laurent Pinchart      2013-05-15  102  		/* Skip sink ports, they will be processed from the other end of
-df3305156 Laurent Pinchart      2013-05-15  103  		 * the link.
-df3305156 Laurent Pinchart      2013-05-15  104  		 */
-df3305156 Laurent Pinchart      2013-05-15  105  		if (link.local_port >= local->num_pads) {
-68d9c47b1 Rob Herring           2017-07-21  106  			dev_err(xdev->dev, "invalid port number %u for %pOF\n",
-86ede05d3 Steve Longerbeam      2018-06-29  107  				link.local_port, link.local_node);
-859969b38 Sakari Ailus          2016-08-26  108  			v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  109  			ret = -EINVAL;
-df3305156 Laurent Pinchart      2013-05-15  110  			break;
-df3305156 Laurent Pinchart      2013-05-15  111  		}
-df3305156 Laurent Pinchart      2013-05-15  112  
-df3305156 Laurent Pinchart      2013-05-15  113  		local_pad = &local->pads[link.local_port];
-df3305156 Laurent Pinchart      2013-05-15  114  
-df3305156 Laurent Pinchart      2013-05-15  115  		if (local_pad->flags & MEDIA_PAD_FL_SINK) {
-68d9c47b1 Rob Herring           2017-07-21  116  			dev_dbg(xdev->dev, "skipping sink port %pOF:%u\n",
-86ede05d3 Steve Longerbeam      2018-06-29  117  				link.local_node, link.local_port);
-859969b38 Sakari Ailus          2016-08-26  118  			v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  119  			continue;
-df3305156 Laurent Pinchart      2013-05-15  120  		}
-df3305156 Laurent Pinchart      2013-05-15  121  
-df3305156 Laurent Pinchart      2013-05-15  122  		/* Skip DMA engines, they will be processed separately. */
-859969b38 Sakari Ailus          2016-08-26  123  		if (link.remote_node == of_fwnode_handle(xdev->dev->of_node)) {
-68d9c47b1 Rob Herring           2017-07-21  124  			dev_dbg(xdev->dev, "skipping DMA port %pOF:%u\n",
-86ede05d3 Steve Longerbeam      2018-06-29  125  				link.local_node, link.local_port);
-859969b38 Sakari Ailus          2016-08-26  126  			v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  127  			continue;
-df3305156 Laurent Pinchart      2013-05-15  128  		}
-df3305156 Laurent Pinchart      2013-05-15  129  
-df3305156 Laurent Pinchart      2013-05-15  130  		/* Find the remote entity. */
-86ede05d3 Steve Longerbeam      2018-06-29  131  		ent = xvip_graph_find_entity(xdev, link.remote_node);
-df3305156 Laurent Pinchart      2013-05-15  132  		if (ent == NULL) {
-68d9c47b1 Rob Herring           2017-07-21  133  			dev_err(xdev->dev, "no entity found for %pOF\n",
-86ede05d3 Steve Longerbeam      2018-06-29  134  				link.remote_node);
-859969b38 Sakari Ailus          2016-08-26  135  			v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  136  			ret = -ENODEV;
-df3305156 Laurent Pinchart      2013-05-15  137  			break;
-df3305156 Laurent Pinchart      2013-05-15  138  		}
-df3305156 Laurent Pinchart      2013-05-15  139  
-df3305156 Laurent Pinchart      2013-05-15  140  		remote = ent->entity;
-df3305156 Laurent Pinchart      2013-05-15  141  
-df3305156 Laurent Pinchart      2013-05-15  142  		if (link.remote_port >= remote->num_pads) {
-68d9c47b1 Rob Herring           2017-07-21  143  			dev_err(xdev->dev, "invalid port number %u on %pOF\n",
-86ede05d3 Steve Longerbeam      2018-06-29  144  				link.remote_port, link.remote_node);
-859969b38 Sakari Ailus          2016-08-26  145  			v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  146  			ret = -EINVAL;
-df3305156 Laurent Pinchart      2013-05-15  147  			break;
-df3305156 Laurent Pinchart      2013-05-15  148  		}
-df3305156 Laurent Pinchart      2013-05-15  149  
-df3305156 Laurent Pinchart      2013-05-15  150  		remote_pad = &remote->pads[link.remote_port];
-df3305156 Laurent Pinchart      2013-05-15  151  
-859969b38 Sakari Ailus          2016-08-26  152  		v4l2_fwnode_put_link(&link);
-df3305156 Laurent Pinchart      2013-05-15  153  
-df3305156 Laurent Pinchart      2013-05-15  154  		/* Create the media link. */
-df3305156 Laurent Pinchart      2013-05-15  155  		dev_dbg(xdev->dev, "creating %s:%u -> %s:%u link\n",
-df3305156 Laurent Pinchart      2013-05-15  156  			local->name, local_pad->index,
-df3305156 Laurent Pinchart      2013-05-15  157  			remote->name, remote_pad->index);
-df3305156 Laurent Pinchart      2013-05-15  158  
-8df00a158 Mauro Carvalho Chehab 2015-08-07  159  		ret = media_create_pad_link(local, local_pad->index,
-df3305156 Laurent Pinchart      2013-05-15  160  					       remote, remote_pad->index,
-df3305156 Laurent Pinchart      2013-05-15  161  					       link_flags);
-df3305156 Laurent Pinchart      2013-05-15  162  		if (ret < 0) {
-df3305156 Laurent Pinchart      2013-05-15  163  			dev_err(xdev->dev,
-df3305156 Laurent Pinchart      2013-05-15  164  				"failed to create %s:%u -> %s:%u link\n",
-df3305156 Laurent Pinchart      2013-05-15  165  				local->name, local_pad->index,
-df3305156 Laurent Pinchart      2013-05-15  166  				remote->name, remote_pad->index);
-df3305156 Laurent Pinchart      2013-05-15  167  			break;
-df3305156 Laurent Pinchart      2013-05-15  168  		}
-df3305156 Laurent Pinchart      2013-05-15  169  	}
-df3305156 Laurent Pinchart      2013-05-15  170  
-86ede05d3 Steve Longerbeam      2018-06-29  171  	fwnode_handle_put(ep);
-df3305156 Laurent Pinchart      2013-05-15  172  	return ret;
-df3305156 Laurent Pinchart      2013-05-15  173  }
-df3305156 Laurent Pinchart      2013-05-15  174  
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+thanks,
+-- 
+John Hubbard
+NVIDIA
