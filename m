@@ -2,142 +2,132 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CACC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FCEC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9866E25BB4
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ED0E25BB6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:51:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d62rCpti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9866E25BB4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="stIgPHm2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED0E25BB6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933740AbeGBIuI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:50:08 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37317 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753387AbeGBIuB (ORCPT
+        id S1753144AbeGBIvO (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:51:14 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41026 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753375AbeGBIvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:50:01 -0400
-Received: by mail-pg0-f68.google.com with SMTP id n15-v6so3599217pgv.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:50:00 -0700 (PDT)
+        Mon, 2 Jul 2018 04:51:11 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a17-v6so8806841ljd.8;
+        Mon, 02 Jul 2018 01:51:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=KKaFUVhtuRqtVBV3i0eeLybqPWvydvRsjt797gmNCFU=;
-        b=d62rCptixIqXQHkYV9WyI97h3un2L1W/c291kBG+rb/3xpqY56wr/BATX2nZpQLgP7
-         oqsWjqJ3pPnro2dvCyPWOBmjzY9yASaAnv8bfkyDYY5GDij4b/4n49f3ZMtUSAlthMYZ
-         d+otlrqNlc6eRE26iFlUCAYAvtWCGQK07GHGk=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3My401lb/sQB3l5NERJxMDxI2gKqsok/1mh22W65fIA=;
+        b=stIgPHm2/2T+yfAe+qBo5/cGRt2q6+4KWmwfvgDdxM39kfIkKVO009hJMzfGzh+ykO
+         w8egvmAvAniCKx3KWzWNLOETBHHwRLeU1ZFgLZAtEYji7fdhW7xq90/GMgmh2QKZXEEV
+         4GP1lEraemG8GZoezzdOum3Z3DZ51wbs7KmJkSZuiSDrYRTJHaNYU7scZp/d3630ZhT6
+         HayXDNPsXS+xSAMVHLTdfh1geYScqdaANsAW5o4+R3TIwByxZnNzEa1Jd5DuK+Fq0eeM
+         zjOkGUKlbJZ/W63SaIsHmVdfj8me/S98QQVnPqpwhnd3qcleRxxhusPsaGOyKl3rwZE7
+         aTCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KKaFUVhtuRqtVBV3i0eeLybqPWvydvRsjt797gmNCFU=;
-        b=UgYipGqBDhYusPcySP3cWOAzHnV5fo00MG4E4T9NYXyle5fkkxTG5FCHATXaZMFRve
-         NpGc5ZQW56RKJlCOwco5YYOQ9Oeyt0bKVUGPFklntAq9cWhkEuGJHeBRJYNrU6+Gr9IF
-         Ipk1+9yLVoMFZdUHfsPfPhOUXJGENXyWM2/uSKwfgGOfeXmFRAzz1cKIgC8Dg9gIEz52
-         g/PdLG96LkOuHXlpulIPtP9OwtwzBTKBWWVAB96un2fd1EFJbLwHYlMZbvmUxpRxlnNM
-         SXNeiMHIB3a8RWYV3RrftAYf9XzuKHEHamNUeoFXpXckvNvsBITndhu2l3sOSoqhqn32
-         USug==
-X-Gm-Message-State: APt69E2Y57+WTxQWcfdGhCco2g+hSWzoMobeeCZ3exg8V3OniJoxzNjl
-        jV1ZkuULcC/IjVdXJPdQB4Gefw==
-X-Google-Smtp-Source: AAOMgpdepbLyiBWjzPQwtQentLMvHi8FWchd7Onz7ZJzzge2ZVOdUNRtHCTW5EgYsfoWBZLN/TNKkQ==
-X-Received: by 2002:a65:4d85:: with SMTP id p5-v6mr21103058pgq.249.1530521400577;
-        Mon, 02 Jul 2018 01:50:00 -0700 (PDT)
-Received: from localhost ([122.172.117.17])
-        by smtp.gmail.com with ESMTPSA id p76-v6sm29441810pfk.147.2018.07.02.01.49.59
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3My401lb/sQB3l5NERJxMDxI2gKqsok/1mh22W65fIA=;
+        b=A34QsN3SHY2h1yiAf77CxSOLA4DXoB24cg4ofkjVeeUcGgd5sYTYER4+l4KwjIjPWV
+         4mzuIqmIXKgnfCkfwoXoUCs6u+JDwtHO2lPCXajWQ4trFFgqRWhXihG1ILTw2dQNMdJo
+         DesQod0KTfT74LU2e+Z8tTF0w8pAEXz44j2L1zcl73TFNRexNvM79wUnAbKWQ/tYfHkE
+         SLqOEVYQ+BmBxZw9b175zUKZ8AxoIkkdsGa+4qY3IhwkfwevffmEVWE/x9tgeAA6g4M+
+         Qd20zaR+6X4+3vDNz5eL7rIMeHtiDruqdtoBKHRs2sWX+IltHEec7FnDQbjJ4poLgLSP
+         cpyQ==
+X-Gm-Message-State: APt69E0WIaalu6PT9D2IB9zu96/ADUSMPgEtqx9gxXfcKgOjvHMmJzQw
+        voccmChUgXBPQhsWfuSu1tw=
+X-Google-Smtp-Source: ADUXVKJZJpe0Dzd7Q4uxGE1ByD8e9Q43kqCj+NyzjVc2VVM0DV5jrVxW6YvWh2en6cmt4Wp+VRls0w==
+X-Received: by 2002:a2e:5c41:: with SMTP id q62-v6mr15606071ljb.77.1530521469690;
+        Mon, 02 Jul 2018 01:51:09 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id j7-v6sm2529504ljg.48.2018.07.02.01.51.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 01:49:59 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>,
-        "4 . 6+" <stable@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v4.9] PM / OPP: Update voltage in case freq == old_freq
-Date:   Mon,  2 Jul 2018 14:19:47 +0530
-Message-Id: <3717ee50c1f1f48cffcb1a2e41c04e28881776d1.1530521347.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a2c
+        Mon, 02 Jul 2018 01:51:08 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fZuY0-000836-OW; Mon, 02 Jul 2018 10:51:00 +0200
+Date:   Mon, 2 Jul 2018 10:51:00 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: io_edgeport: mark expected switch
+ fall-throughs
+Message-ID: <20180702085100.GF9802@localhost>
+References: <20180628184030.GA23656@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628184030.GA23656@embeddedor.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+On Thu, Jun 28, 2018 at 01:40:30PM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/usb/serial/io_edgeport.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+> index 97c69d3..441dab6 100644
+> --- a/drivers/usb/serial/io_edgeport.c
+> +++ b/drivers/usb/serial/io_edgeport.c
+> @@ -1760,7 +1760,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
+>  				edge_serial->rxState = EXPECT_HDR2;
+>  				break;
+>  			}
+> -			/* otherwise, drop on through */
+> +			/* else: fall through */
 
-Original commit c5c2a97b3ac7 ("PM / OPP: Update voltage in case freq ==
-old_freq").
+This doesn't silence the compiler warning with gcc 7.2.0 as the "else: "
+pattern isn't recognised.
 
-This commit fixes a rare but possible case when the clk rate is updated
-without update of the regulator voltage.
+>  		case EXPECT_HDR2:
+>  			edge_serial->rxHeader2 = *buffer;
+>  			++buffer;
+> @@ -1820,7 +1820,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
+>  					edge_serial->rxState = EXPECT_DATA;
+>  					break;
+>  				}
+> -				/* Else, drop through */
+> +				/* else: fall through */
+>  			}
 
-At boot up, CPUfreq checks if the system is running at the right freq. This
-is a sanity check in case a bootloader set clk rate that is outside of freq
-table present with cpufreq core. In such cases system can be unstable so
-better to change it to a freq that is preset in freq-table.
+And this doesn't work either due to the "else: " as well as the fact
+that the compiler expects the fallthrough comment to precede the case
+statement directly (e.g. it would need to be moved out of the else
+block, but that isn't necessarily desirable as we discussed last year: 
 
-The CPUfreq takes next freq that is >= policy->cur and this is our
-target_freq that needs to be set now.
+	lkml.kernel.org/r/20171027203906.GA7054@embeddedor.com
 
-dev_pm_opp_set_rate(dev, target_freq) checks the target_freq and the
-old_freq (a current rate). If these are equal it returns early. If not,
-it searches for OPP (old_opp) that fits best to old_freq (not listed in
-the table) and updates old_freq (!).
+)
 
-Here, we can end up with old_freq = old_opp.rate = target_freq, which
-is not handled in _generic_set_opp_regulator(). It's supposed to update
-voltage only when freq > old_freq  || freq > old_freq.
+>  		case EXPECT_DATA: /* Expect data */
+>  			if (bufferLength < edge_serial->rxBytesRemaining) {
 
-if (freq > old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-[...]
-if (freq < old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-		if (ret)
+How do you compile test these these patches?
 
-It results in, no voltage update while clk rate is updated.
-
-Example:
-freq-table = {
-	1000MHz   1.15V
-	 666MHZ   1.10V
-	 333MHz   1.05V
-}
-boot-up-freq        = 800MHz   # not listed in freq-table
-freq = target_freq  = 1GHz
-old_freq            = 800Mhz
-old_opp = _find_freq_ceil(opp_table, &old_freq);  #(old_freq is modified!)
-old_freq            = 1GHz
-
-Fixes: 6a0712f6f199 ("PM / OPP: Add dev_pm_opp_set_rate()")
-Cc: 4.6+ <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Sending it for stable kernels from 4.6 until 4.9.
-
- drivers/base/power/opp/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
-index 4c7c6da7a989..0580cbe5bd1c 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -642,7 +642,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 	rcu_read_unlock();
- 
- 	/* Scaling up? Scale voltage before frequency */
--	if (freq > old_freq) {
-+	if (freq >= old_freq) {
- 		ret = _set_opp_voltage(dev, reg, u_volt, u_volt_min,
- 				       u_volt_max);
- 		if (ret)
--- 
-2.18.0.rc1.242.g61856ae69a2c
-
+Thanks,
+Johan
