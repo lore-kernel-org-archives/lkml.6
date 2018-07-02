@@ -2,123 +2,111 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4648CC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA5AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F35DB24A5D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE0C2124D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:27:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ULoY+Qaj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35DB24A5D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vlBoBw5X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE0C2124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933952AbeGBJXt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:23:49 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35860 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933829AbeGBJXm (ORCPT
+        id S933423AbeGBJ1g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:27:36 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33165 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbeGBJ1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:23:42 -0400
-Received: by mail-yb0-f195.google.com with SMTP id s1-v6so4854629ybk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:23:42 -0700 (PDT)
+        Mon, 2 Jul 2018 05:27:33 -0400
+Received: by mail-wr0-f195.google.com with SMTP id k7-v6so11277136wrq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:27:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2/EaDmROs0e3m2MKWJzIWMnwLyCQ7ElXJjfcbhG3Dko=;
-        b=ULoY+QajKjjZYYNEOg/eWQxzpRs8ZT3JTtjjFHC6zvuhfGSifFN9i51qvC2q0/+Rnp
-         QVBNGDUeNck3NoHhdVz8fGzlQXGEJvN8UihpuBjBiXmKUxxAPJKdvIED3LMhx6emO5K1
-         aJjmG7u005TzSY+qywZPP1u15+4oJXPzOM1F0=
+         :cc;
+        bh=XTi8UeNVbU/dn7KsDmydJUHAIRnifNvp0yct7YRuGeA=;
+        b=vlBoBw5X2mSOHvvpkLk068FsyRDS+HesyOLNOfHqsnkfLZc63IXuuVFTdUJUSqh0hC
+         2vmRFRRdxqNN/97Se1w0JuJTBAVqTpXnMvQTCgvB8ZB8h4OYFNwS1Fxynl5HPMOg/XBY
+         MNPR4JCTbVBPMVjuKplXt8fMycN/mGke68HV2gO7Nl/aYawN+7erpr1FWolMztDhTPaF
+         8Cyz1iKh52hFPDqoWdzvku3UzqUQLjXWCiNcMNOUW0KmuSJgLVajJhrq5i+LBycCpBGD
+         3dE9g3UmY6CLrRE8XJIkWGm3SnhEsbmkDO9X1iAoQWs7jDD9QwCcMsodYPEpuXVnQB60
+         Fn0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2/EaDmROs0e3m2MKWJzIWMnwLyCQ7ElXJjfcbhG3Dko=;
-        b=jONOtzGAxCwquT2Ta2Ucml++Ane+RW3Zx7myS3i2S0ykfrE1MXsYNy3Z2eI9QniJex
-         mOfWhYKOkw0RWb+TVuEQU3y2VzqmTECWxWXYC1OdUo/YF9dldj0OoNxDEBm/HOQ6FAkX
-         CstSUo2KsZW/v3M2+TqKnYCVbiCflIsUMCahFRWQZ15UC1VCEEGfmtdnexeP+KeZhLvd
-         p8bfiuxg1W48SkTmoGN6HxqGc6DFt2ZW2heN3IAOV3SaqLGDTm9L6j89Pfb1KfnaqhzH
-         zlp80kf7dsXaUUxVJncPDm9btuzcnuYBAp5j9LLeBsX6QFyuNPWxRPxa4rTVfg08yYLN
-         NlSA==
-X-Gm-Message-State: APt69E1lGXaO4+Lu8Fu94ecLjOVpdZ8LAZfBa7maTbowugXh9LtzML6a
-        GsDTT3JB5Gr7kSdsleGCwK86SIk//3c=
-X-Google-Smtp-Source: AAOMgpeld1cRh+auKIm5EcXnuSXqqrTUlzIqCx1Ze4tEZnIbSpD/c82Zr1diCbyitYQLa/HsM5+TmA==
-X-Received: by 2002:a25:84d0:: with SMTP id x16-v6mr10786193ybm.307.1530523421568;
-        Mon, 02 Jul 2018 02:23:41 -0700 (PDT)
-Received: from mail-yb0-f175.google.com (mail-yb0-f175.google.com. [209.85.213.175])
-        by smtp.gmail.com with ESMTPSA id p124-v6sm4521058ywf.85.2018.07.02.02.23.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 02:23:40 -0700 (PDT)
-Received: by mail-yb0-f175.google.com with SMTP id e9-v6so4850737ybq.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:23:40 -0700 (PDT)
-X-Received: by 2002:a25:207:: with SMTP id 7-v6mr2365584ybc.7.1530523419960;
- Mon, 02 Jul 2018 02:23:39 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=XTi8UeNVbU/dn7KsDmydJUHAIRnifNvp0yct7YRuGeA=;
+        b=kdpOSyx+dyfC6pawC/SYUe0l65UNKoW4Hp3naVaWM6nZT1idu0VpFMwNw9SpgHGEc0
+         2h/CzvX0HZwfI2hIdDG7GytPbXWyns0kgVwgbCScUVBoPJd1weqqVTKJ1Y94DQUS7gk9
+         bybdzWOc5n9R3ssbZWKWrRIJxnU7E/JK+hsR2to5E/imzeFBo3C9xdRprRx7bJCmuyp8
+         5priHPvRVbdq4VKRR1N7ziFJB7FaAkmaCTYp8+HlfkDuk88oJfpeYtj+utzyVX7jAxQX
+         f0k2xRNG0DPn2q7DbC437PhWYBDCdHd+TZI8F2KtBYooFBmfv8tlGZxj5yJSuKxiKjcy
+         z9EQ==
+X-Gm-Message-State: APt69E1xirK1eslHj4j1ziEYNz8OZmbv0COrTVWImGy9foKimKSgDOfB
+        cyq/YzwlM0haObhkCTcr2qdLFmDOgNiu4C3L8amwndcp
+X-Google-Smtp-Source: AAOMgpcCERk5sKnifqtEhWUkUJRhUXJaAdLm4sA5/JdYzaWljVujnm3VyDAsxywPgHSK1ru93zKDtrgcAU5Sz9hZlrU=
+X-Received: by 2002:adf:a094:: with SMTP id m20-v6mr1562164wrm.125.1530523652522;
+ Mon, 02 Jul 2018 02:27:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
- <20180515075859.17217-13-stanimir.varbanov@linaro.org> <CAAFQd5Bj73zyi0vsaSJ2sam2TGm7agshXg+n+sa2c7HoqLRGUw@mail.gmail.com>
- <13c7aec1-2bb9-f449-6b7d-7ec93be4ec71@linaro.org> <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
-In-Reply-To: <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 2 Jul 2018 18:23:28 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
-Message-ID: <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/29] venus: add common capability parser
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        vgarodia@codeaurora.org
+References: <201807021228.PZ5wzCyl%fengguang.wu@intel.com>
+In-Reply-To: <201807021228.PZ5wzCyl%fengguang.wu@intel.com>
+From:   Martijn Coenen <maco@google.com>
+Date:   Mon, 2 Jul 2018 11:27:20 +0200
+Message-ID: <CA+_MTtzgL2pNY3nu6xTAKWdSYKWHEyWXM6PSA8iFMK-Pub2z1w@mail.gmail.com>
+Subject: Re: drivers/android/.tmp_gl_binder.o:undefined reference to `__user_bad'
+To:     monstr@monstr.eu
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 4:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> On Thu, May 31, 2018 at 1:21 AM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
-> >
-> > Hi Tomasz,
-> >
-> > On 05/24/2018 05:16 PM, Tomasz Figa wrote:
-> > > Hi Stanimir,
-> > >
-> > > On Tue, May 15, 2018 at 5:08 PM Stanimir Varbanov <
-[snip]
-> > >
-> > >> +                       break;
-> > >> +               }
-> > >> +
-> > >> +               word++;
-> > >> +               words_count--;
-> > >
-> > > If data is at |word + 1|, shouldn=E2=80=99t we increment |word| by |1=
- + |data
-> > > size||?
-> >
-> > yes, that could be possible but the firmware packets are with variable
-> > data length and don't want to make the code so complex.
-> >
-> > The idea is to search for HFI_PROPERTY_PARAM* key numbers. Yes it is no=
-t
-> > optimal but this enumeration is happen only once during driver probe.
-> >
->
-> Hmm, do we have a guarantee that we will never find a value that
-> matches HFI_PROPERTY_PARAM*, but would be actually just some data
-> inside the payload?
+Hi Michal,
 
-Ping?
+See below - this error was introduced because the binder driver uses a
+64-bit get_user(), even on a 32-bit architecture. Would it be possible
+to implement a 64-bit get_user() for microblaze?
 
-Best regards,
-Tomasz
+Thanks,
+Martijn
+
+On Mon, Jul 2, 2018 at 6:53 AM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Martijn,
+>
+> FYI, the error/warning still remains.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   021c91791a5e7e85c567452f1be3e4c2c6cb6063
+> commit: 1190b4e38f97023154e6b3bef61b251aa5f970d0 ANDROID: binder: remove 32-bit binder interface.
+> date:   7 weeks ago
+> config: microblaze-allmodconfig (attached as .config)
+> compiler: microblaze-linux-gcc (GCC) 8.1.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 1190b4e38f97023154e6b3bef61b251aa5f970d0
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=8.1.0 make.cross ARCH=microblaze
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/android/binder.o: In function `binder_thread_write':
+> >> drivers/android/.tmp_gl_binder.o:(.text+0xcbb0): undefined reference to `__user_bad'
+>    drivers/android/.tmp_gl_binder.o:(.text+0xcbdc): undefined reference to `__user_bad'
+>    drivers/android/.tmp_gl_binder.o:(.text+0xcfc4): undefined reference to `__user_bad'
+>    drivers/android/.tmp_gl_binder.o:(.text+0xd650): undefined reference to `__user_bad'
+>    drivers/android/.tmp_gl_binder.o:(.text+0xdbc8): undefined reference to `__user_bad'
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
