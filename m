@@ -6,89 +6,96 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13C2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93942C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B0D2552D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43B0D2552D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 591332552D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:58:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591332552D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754476AbeGBJ5v (ORCPT
+        id S1754551AbeGBJ57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:57:51 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:36398 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753155AbeGBJ5s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:57:48 -0400
-Received: by mail-ua0-f193.google.com with SMTP id y8-v6so9699802uan.3;
-        Mon, 02 Jul 2018 02:57:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nkqZySkkwFGFBs/6o0nEhafrtDGdc5kHW9C0LRVHpPQ=;
-        b=db2U8GIEeAffhIv/6InIGVSZdMnMtzZsgVC9H3PyoPpsyS9RkSAgnzEAy3+wgjSQUd
-         079903yDbitmr5f2Qo4nXrXWQpKaZrKeHbmMDglEXA/whj4ZZLhrj4+Dcf8UKCdLy4wx
-         JZGvzB1dIi2Q7qOmN1TEnM4x0kU2BP9TKJvTLkkT9OeGczlq96k1uN9LVyaPoihCYEuW
-         Y3UeFaWuNOWt2TdFPRDbXrABBf22UGpQTLAYH35bqbCFfYxECmESGlJxQa1EjO0VtISm
-         lSqq649JLoQS1aIDkFHhVDpVyQ4cD6ft35YgK6hybv3G5U0+W4RrMU3hdy6GA70BZvEA
-         IxCQ==
-X-Gm-Message-State: APt69E2kzRPQROqzM8vdxAwkqD7N/jRaIUteaB96g3x8OQZj992z1hGF
-        o/NdGx5fMuBsLra2LYDdmkpY1nY8d3KN9ZJL9TXRzA==
-X-Google-Smtp-Source: AAOMgpfmgyft5wip0G+KE3EX4ZTtJPURNOoUB1sCmt4hb5uCI/FUbDy02Qa0KgB9VEEvpw1ZtUMLSU/JathYbTTzZAk=
-X-Received: by 2002:ab0:1b6c:: with SMTP id n44-v6mr9777640uai.4.1530525468062;
- Mon, 02 Jul 2018 02:57:48 -0700 (PDT)
+        Mon, 2 Jul 2018 05:57:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56262 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753155AbeGBJ5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 05:57:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A73DB18A;
+        Mon,  2 Jul 2018 02:57:51 -0700 (PDT)
+Received: from [10.1.210.28] (e107155-lin.cambridge.arm.com [10.1.210.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0941B3F5BA;
+        Mon,  2 Jul 2018 02:57:48 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        shunyong.yang@hxt-semitech.com, yu.zheng@hxt-semitech.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] ACPI/PPTT: use ACPI ID whenever
+ ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1530289077-2444-1-git-send-email-sudeep.holla@arm.com>
+ <CAJZ5v0gnspK3soa5j8iqU9QDM78MMBbz8YC9s7TOJ5Qwh7=mZg@mail.gmail.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <3895a0d8-9cca-2512-a06e-0ee2ac7db773@arm.com>
+Date:   Mon, 2 Jul 2018 10:57:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180701160757.138608453@linuxfoundation.org>
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Jul 2018 11:57:36 +0200
-Message-ID: <CAMuHMdVcSkXAmuD2qsc0mk9pDx_Fd0Q_peBmZY6Mpfkq6gMQZg@mail.gmail.com>
-Subject: Re: [PATCH 4.9 000/101] 4.9.111-stable review
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJZ5v0gnspK3soa5j8iqU9QDM78MMBbz8YC9s7TOJ5Qwh7=mZg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
 
-On Sun, Jul 1, 2018 at 6:26 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.9.111 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
 
-Thank you for your hard work on -stable!
+On 02/07/18 10:06, Rafael J. Wysocki wrote:
+> On Fri, Jun 29, 2018 at 6:17 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> Currently we use the ACPI processor ID only for the leaf/processor nodes
+>> as the specification states it must match the value of ACPI processor ID
+>> field in the processor’s entry in the MADT.
+>>
+>> However, if a PPTT structure represents processors group, it match a
+>> processor container UID in the namespace and ACPI_PPTT_ACPI_PROCESSOR_ID_VALID
+>> flag describe whether the ACPI processor ID is valid.
+>>
+>> Lets use UID whenever ACPI_PPTT_ACPI_PROCESSOR_ID_VALID is set to be
+>> consistent instead of using table offset as it's currently done for non
+>> leaf nodes.
+>>
+>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> ---
+>>  drivers/acpi/pptt.c | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> Hi,
+>>
+>> There's ongoing discussion on assigning ID based in OS using simple
+>> counters. It can never be consistent with firmware's view. So if the
+>> firmware provides valid UID for non-processors node, we must use it.
+> 
+> OK
+> 
+> Do you regard this as a fix for the recently merged PPTT material?  If
+> so, I should apply it as a fix for 4.18.
+> 
 
-> Pseudo-Shortlog of commits:
-
-Given you do publish a git tree with these changes, is there any specific reason
-you're not using a real shortlog? Sorting and grouping would make it
-easier to see
-which patches of mine you have backported.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Yes, it should be considered as fix IMO.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Sudeep
