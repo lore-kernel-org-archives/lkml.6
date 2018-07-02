@@ -2,166 +2,133 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FDEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0085C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB0624443
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8EB024443
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aAkJaBoZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB0624443
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="n6fZAziY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cJVvnzAo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EB024443
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932181AbeGBStF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:49:05 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39799 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbeGBStD (ORCPT
+        id S932218AbeGBStO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 14:49:14 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:38532 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeGBStM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:49:03 -0400
-Received: by mail-pl0-f65.google.com with SMTP id s24-v6so8350318plq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:49:02 -0700 (PDT)
+        Mon, 2 Jul 2018 14:49:12 -0400
+Received: by mail-yb0-f195.google.com with SMTP id i9-v6so1860313ybo.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8DcgL7ZJO88FRHNOZCvhy917idLbcarXVnpvSeJ0Lrs=;
-        b=aAkJaBoZ0c+FYSqw+vcnSzfBUH1X4VgdUl2DO733jsLjNYORFnPKG9tCKG29NyrKfa
-         b7zkGOALkbbP1qjxqWr3XleF2S3cbKLZFvfj/ks+3rYP1aAJaLiEMXKprxsVoF5sRM1y
-         aIx5c+H/a8ZCv4qVUX5TzVgp4/YpKFI7kF5+c=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=j6X9iMYS8KjJrMdo5EclT36D0jsHAsEql0Ir6ZqnGEw=;
+        b=n6fZAziYaNpsP8ebKNkRHcbg2LSSkyRbqQdsbrRIa+RQXq0AAR9sCgg5wjJbbbYdla
+         oT4X7I9o+nSN4xq0AT79+wujVu/4oCwU1GWOuj7j4rSQ6Jq6PJ2MWoJPsR4VAoNJkm7V
+         3nk8VaT9CgHQZiOAKJDZ1wAPVTznz2fhiWknv19ZMg/ZeglXnG/VXTIK4XzgHD3ccVX5
+         CK0M/IrpW9hv1yp2XzIpSWdkC1gXgwnm1mtchjkEg/6Hv2Spz1OccmZMW0nhT0GuT7is
+         YdUL2qvMYQPu8eJeGuf96MnVlcQFzpa3tYtdYVYO8NMHYC3pIQDlFQULDjJ92zYYYljG
+         cy4g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=j6X9iMYS8KjJrMdo5EclT36D0jsHAsEql0Ir6ZqnGEw=;
+        b=cJVvnzAoOv7/OgSCz3Ms/8M/uS72WX9l5ZKcJ8N27QMzDDcUYvCpnUQp8LPGZrOAnt
+         dwbm7rwhl4iGrggFv8UM3HRn5FafE7G/WlBr48Px+nmUVMwEfwf8v0LhIb2X5LuMqP30
+         qPpxzcV3gVdGTuZHBwUDc/DZQ760/17WvrHRI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8DcgL7ZJO88FRHNOZCvhy917idLbcarXVnpvSeJ0Lrs=;
-        b=SF4NviQ/4RaLKQOky+QXnFowiQ9przuSVdYw4KnZ9ibjq4lwKkjs+eyg3B5jSCC1Gx
-         yactYFRetbuSLOlbT6wL2V/K9nSzJdWSbocvFB7nv/tGDU+WuZtW0OkQqgvNEAIKHCSC
-         VS2563dc3UiDvXZOiHIlHg7EsV6Y2LCCPAjVSjdc3RCE8nQ1Lw/CBx1YIRn0vG7Eokyd
-         9PN8UqvY9Ec0apn9tK/ZEuUwvdWikwI/VCqkU0rIoXpqnp20pTi6Y0zxMdocxNcG5IVX
-         QBMPZ4Rf/viccIoficaT8WqJumbChhxv2F9c7tet0U4RTz5m0Ts2hhZMdZlXJJAzlSlW
-         A7vw==
-X-Gm-Message-State: APt69E1eM1OqHwBgxY+NqdYV7i5L6DypmYcs+wVKTY8EUTkOAqofuAoA
-        sCwwqTA39uI5E5tAWKRiUWmd8A==
-X-Google-Smtp-Source: ADUXVKKrnXRBvsl3joEvQXtzmiog1C/Uh4URtytblLHtMZZ57pLqua6aBTKrUv7udbHGFtli0q/9qg==
-X-Received: by 2002:a17:902:622:: with SMTP id 31-v6mr26721154plg.135.1530557342394;
-        Mon, 02 Jul 2018 11:49:02 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w7-v6sm22322639pgs.68.2018.07.02.11.49.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 11:49:01 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 11:51:32 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] thermal: tsens: Add support for SDM845
-Message-ID: <20180702185132.GC2050@tuxbook-pro>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <43e3ae530334efab3fa0151430879f03731e9daa.1530533998.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=j6X9iMYS8KjJrMdo5EclT36D0jsHAsEql0Ir6ZqnGEw=;
+        b=blHIcGoI/DXuvy6eVe75o38t4uvOy0qrsRlQC9iVBbz/ILCqS4EdGdt+guoN5eAskQ
+         b1jzvS1EWDmkuBOTYMeLhjVazlTQ/9xMdbY3ZOQpd452RvwrGSDoHV52/Z2dHdlXa1GQ
+         F/yYh5O6dO5e+7DnVc7e8QC8GuAMuLoOhG5LgXw2681G8K7l2JEix2UxmKOvLqQgtN7a
+         jrCRJBSoWfqPSsQyhSMnY8dN/ngbIl+0jv7G0KWqZwKl0M/USjzTrjJpf6gYAdz1zwJB
+         osJy2OwBCJcSO1PEEc/PYSjZripLYtCqtgcjAHzkJOeuEzzdxUF9UOBkhtKglxThHK3o
+         Bbkg==
+X-Gm-Message-State: APt69E3XazwJ9j6X41Cb9ceT2J53dkOc18ORt0haDylWKXG1a8eWoxQD
+        QCN6CJeIrQgar1N9gzBX94k54e4CWoe6U+ZaG/0aHg==
+X-Google-Smtp-Source: ADUXVKKHq5UZcYmy+Y3RMJ/LuA+ll6yKCGNS0Zsw1JaZAa9Bd8hD/AzxaqUJF912hBXulHk/PrxHjJbukHXosfJMhX0=
+X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr13186357ybj.343.1530556879229;
+ Mon, 02 Jul 2018 11:41:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <43e3ae530334efab3fa0151430879f03731e9daa.1530533998.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 11:41:18 -0700 (PDT)
+In-Reply-To: <bb09a8b9-f984-6dd4-b07b-3ecaf200862e@infradead.org>
+References: <bb09a8b9-f984-6dd4-b07b-3ecaf200862e@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 2 Jul 2018 11:41:18 -0700
+X-Google-Sender-Auth: b6ZdMLsCyDjmGECV8mofKjBWiWI
+Message-ID: <CAGXu5jL-GUwgL7XLJS6=9BFuidbCAcUpDKgJV8dq41zd3yvA7A@mail.gmail.com>
+Subject: Re: [PATCH] sysctl: fix typos in comments
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Jul 05:44 PDT 2018, Amit Kucheria wrote:
+On Sun, Jul 1, 2018 at 11:22 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> Fix a few typos/spellos in kernel/sysctl.c.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
 
-> SDM845 uses v2.4.0 of the TSENS IP block but the get_temp() function
-> appears to be identical across v2.x.y in code seen so far. We use the
-> generic get_temp() function.
-> 
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+-Kees
 
-Regards,
-Bjorn
-
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 2 ++
->  drivers/thermal/qcom/tsens-v2.c                          | 6 +++++-
->  drivers/thermal/qcom/tsens.c                             | 6 ++++++
->  drivers/thermal/qcom/tsens.h                             | 5 ++++-
->  4 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> index 06195e8..075182e 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> @@ -5,6 +5,8 @@ Required properties:
->   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
->   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
->   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
-> + - "qcom,tsens-v2.4.0"  : For SDM845 Family of SoCs
-> + - "qcom,tsens-v2"      : Generic fallback binding for any Soc using 2.x.y version of the tsens IP
->  
->  - reg: Address range of the thermal registers
->  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
-> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-> index 2eca7ff..1871945 100644
-> --- a/drivers/thermal/qcom/tsens-v2.c
-> +++ b/drivers/thermal/qcom/tsens-v2.c
-> @@ -69,8 +69,12 @@ static const struct tsens_ops ops_generic_v2 = {
->  	.get_temp	= get_temp_tsens_v2,
->  };
->  
-> +const struct tsens_data data_tsens_v2 = {
-> +	.ops            = &ops_generic_v2,
-> +};
-> +
-> +/* Kept around for backward compatibility with old msm8996.dtsi */
->  const struct tsens_data data_8996 = {
->  	.num_sensors	= 13,
->  	.ops		= &ops_generic_v2,
->  };
-> -
-> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-> index 3440166c..992ed17 100644
-> --- a/drivers/thermal/qcom/tsens.c
-> +++ b/drivers/thermal/qcom/tsens.c
-> @@ -72,6 +72,12 @@ static const struct of_device_id tsens_table[] = {
->  	}, {
->  		.compatible = "qcom,msm8996-tsens",
->  		.data = &data_8996,
-> +	}, {
-> +		.compatible = "qcom,tsens-v2.4.0",
-> +		.data = &data_tsens_v2,
-> +	}, {
-> +		.compatible = "qcom,tsens-v2",
-> +		.data = &data_tsens_v2,
->  	},
->  	{}
->  };
-> diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-> index dc56e1e..69212cb 100644
-> --- a/drivers/thermal/qcom/tsens.h
-> +++ b/drivers/thermal/qcom/tsens.h
-> @@ -87,6 +87,9 @@ void compute_intercept_slope(struct tsens_device *, u32 *, u32 *, u32);
->  int init_common(struct tsens_device *);
->  int get_temp_common(struct tsens_device *, int, int *);
->  
-> -extern const struct tsens_data data_8916, data_8974, data_8960, data_8996;
-> +/* TSENS v1 targets */
-> +extern const struct tsens_data data_8916, data_8974, data_8960;
-> +/* TSENS v2 targets */
-> +extern const struct tsens_data data_8996, data_tsens_v2;
->  
->  #endif /* __QCOM_TSENS_H__ */
-> -- 
-> 2.7.4
-> 
+>  kernel/sysctl.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> --- lnx-418-rc2.orig/kernel/sysctl.c
+> +++ lnx-418-rc2/kernel/sysctl.c
+> @@ -222,7 +222,7 @@ static int proc_dopipe_max_size(struct c
+>                 void __user *buffer, size_t *lenp, loff_t *ppos);
+>
+>  #ifdef CONFIG_MAGIC_SYSRQ
+> -/* Note: sysrq code uses it's own private copy */
+> +/* Note: sysrq code uses its own private copy */
+>  static int __sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
+>
+>  static int sysrq_sysctl_handler(struct ctl_table *table, int write,
+> @@ -1973,13 +1973,13 @@ static void warn_sysctl_write(struct ctl
+>  }
+>
+>  /**
+> - * proc_first_pos_non_zero_ignore - check if firs position is allowed
+> + * proc_first_pos_non_zero_ignore - check if first position is allowed
+>   * @ppos: file position
+>   * @table: the sysctl table
+>   *
+>   * Returns true if the first position is non-zero and the sysctl_writes_strict
+>   * mode indicates this is not allowed for numeric input types. String proc
+> - * hadlers can ignore the return value.
+> + * handlers can ignore the return value.
+>   */
+>  static bool proc_first_pos_non_zero_ignore(loff_t *ppos,
+>                                            struct ctl_table *table)
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
