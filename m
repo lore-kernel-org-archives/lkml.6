@@ -2,133 +2,142 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B24C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28036C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A61F22C99
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D874D21D62
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sOh2uIsC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A61F22C99
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lFM66/yL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D874D21D62
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932518AbeGBWep (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:34:45 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42136 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932169AbeGBWen (ORCPT
+        id S932580AbeGBWfF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 18:35:05 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38188 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932134AbeGBWfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:34:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6BB718EE212;
-        Mon,  2 Jul 2018 15:34:42 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YTk494eEY-d8; Mon,  2 Jul 2018 15:34:42 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9CBE88EE01C;
-        Mon,  2 Jul 2018 15:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1530570882;
-        bh=feAuKWkmWjasJ6F/B0/Dyjz4Vu4nNzQzGl24sjNWStE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sOh2uIsCuYXait7i4tMrUl0ktwgC0SndZN++P/QaFSrv+lp54ZNaCkP4IJeoctfTa
-         GDp08qcFZ/pQbrLNDdOYtfUlai3gTLMqsSskKR5b2+y6cH3+jOPJ/EDRsE2n3QsrBI
-         j/2HJqOM4IR3ziJOTnddaLoDTBP/juUsSYPV8960=
-Message-ID: <1530570880.3179.9.camel@HansenPartnership.com>
-Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@kernel.org>
-Date:   Mon, 02 Jul 2018 15:34:40 -0700
-In-Reply-To: <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org>
-References: <1530510723-24814-1-git-send-email-longman@redhat.com>
-         <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
-         <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        Mon, 2 Jul 2018 18:35:02 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c9-v6so626pgf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HeBeG/Xqg3Duyw82mH81hYPODDYgmMLvp1NhGLt5psY=;
+        b=lFM66/yLh5qBcH3Zn5fhEb8LCBAXNZHIQsaewuZOUw0IVXUguYiQnqbw6h2k/+LOQH
+         exrBxcAMbQww948aZ+swuZUtqbL0aOZY8uUbVEs9J/Jfnd/QmDgV7qNoxjDTHp9mOvlW
+         VbRq4LPVk4yyVR+mZRI0ESBFfC0nnWgf8sY8M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=HeBeG/Xqg3Duyw82mH81hYPODDYgmMLvp1NhGLt5psY=;
+        b=P62k2cgxsjDXuAM+CvKoKL2BRVTEnxzxlYnBR3lKcQnbanfc7Lk39BPo/sjT3tKnE0
+         x2TRL+fOrO6cTYfYsNFSUW2ZEFuTZp/5Hpxjxy6E1tzP2iMn25WJt9DPO34AchM5GA6y
+         F6tB/hquqeT4nKLoXhiD96YQbcZXjrIYlchgYNoya6AhxmBGvcPuf03THL8V0Rpeu5vD
+         7e9JhVhvxowBwRfWPJkFDP6Dksi77j/PleZsAh2kroLRVMC71kkj8K0pvpOHguA9uhTw
+         3FJt9US60zBD+d4nWHN2grE/Gq6Z/UxLaoLyM4sdl6q55tItCF/fCAv17+gU+NX9f9Iv
+         PVSA==
+X-Gm-Message-State: APt69E08T2oYOvuz3H5hjhuGeijdbN1tw1GYaAcO60fr6YTxY6KFSiSL
+        j7yQt/8g5M69Q/7mrPRkKCQrPA==
+X-Google-Smtp-Source: ADUXVKInemWke+6MJEAkR4uAciPH24Nh9HdGdEGGj7gKaqnLOgTH8QUIt6dkTItnOijegXYuEvBw3w==
+X-Received: by 2002:a63:7c5c:: with SMTP id l28-v6mr23565146pgn.352.1530570901982;
+        Mon, 02 Jul 2018 15:35:01 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id a23-v6sm25154541pfn.113.2018.07.02.15.35.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 15:35:01 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 15:35:00 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
+Message-ID: <20180702223500.GB129942@google.com>
+References: <20180702181005.18247-1-mka@chromium.org>
+ <20180702181005.18247-2-mka@chromium.org>
+ <CAD=FV=WH8q-3Rt89Get0N357+hWmKiEsruaKtWzo_JoE6gd_3g@mail.gmail.com>
+ <20180702204611.GZ129942@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180702204611.GZ129942@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 14:18 -0700, Andrew Morton wrote:
-> On Mon, 2 Jul 2018 12:34:00 -0700 Linus Torvalds <torvalds@linux-foun
-> dation.org> wrote:
-> 
-> > On Sun, Jul 1, 2018 at 10:52 PM Waiman Long <longman@redhat.com>
-> > wrote:
-> > > 
-> > > A rogue application can potentially create a large number of
-> > > negative
-> > > dentries in the system consuming most of the memory available if
-> > > it
-> > > is not under the direct control of a memory controller that
-> > > enforce
-> > > kernel memory limit.
+On Mon, Jul 02, 2018 at 01:46:11PM -0700, Matthias Kaehlcke wrote:
+> On Mon, Jul 02, 2018 at 12:53:44PM -0700, Doug Anderson wrote:
+> > Hi,
 > > 
-> > I certainly don't mind the patch series, but I would like it to be
-> > accompanied with some actual example numbers, just to make it all a
-> > bit more concrete.
+> > On Mon, Jul 2, 2018 at 11:10 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> > > The thermal zone uses spmi-temp-alarm as sensor. If the sensor is
+> > > configured without an IIO input it always reports 37°C for temperatures
+> > > below the first hardware trip point at 105°C. This hardware trip point
+> > > is configured as critical trip point, to initiate a system shutdown
+> > > before the temperature reaches the next hardware trip point at 125°C,
+> > > where the PMIC performs a partial shutdown.
+> > >
+> > > The temperature of the critical trip point can be raised after adding
+> > > the die temperature ADC as IIO input for spmi-temp-alarm, which
+> > > significantly increases the precision of the temperature measurements.
+> > >
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > > Changes in v2:
+> > > - defined 'thermal-zones' node in pm8998.dtsi instead of using a label
+> > >   to refer to it
+> > > - use 105°C hardware trip point as critical trip point
 > > 
-> > Maybe even performance numbers showing "look, I've filled the
-> > dentry
-> > lists with nasty negative dentries, now it's all slower because we
-> > walk those less interesting entries".
+> > I'm not sure this was right.  I guess you're trying to avoid
+> > Temperature Stage 2?
+> 
+> Indeed
+> 
+> > From Davi'd email in response to v1:
 > > 
+> > > The PMIC TEMP_ALARM hardware peripheral will perform an automatic partial
+> > > PMIC shutdown upon hitting over-temperature stage 2 (125 C).  This turns
+> > > off peripherals within the PMIC that are expected to draw significant
+> > > current.  The set of peripherals included varies between PMICs.  This
+> > > partial shutdown will occur simultaneously with the triggering of an
+> > > interrupt to the APPS processor that informs the qcom-spmi-temp-alarm
+> > > driver that an over-temperature threshold has been crossed.
+> > 
+> > I think it's actually OK to use Temperature Stage 2 as the "critical"
+> > point, which is why it still interrupts the CPU.  At "critical" the
+> > system will shut down, right?  ...so presumably it's OK if the drivers
+> > can't recover from having the power yanked out from underneath them as
+> > long as they don't hang/crash the system in this case.  If I had to
+> > guess the whole point of this stage is to give the system shutdown a
+> > better chance of succeeding without getting to stage 3.
 > 
-> (Please cc linux-mm@kvack.org on this work)
-> 
-> Yup.  The description of the user-visible impact of current behavior
-> is far too vague.
-> 
-> In the [5/6] changelog it is mentioned that a large number of -ve
-> dentries can lead to oom-killings.  This sounds bad - -ve dentries
-> should be trivially reclaimable and we shouldn't be oom-killing in
-> such a situation.
+> That was my starting point, however in my tests the system reset
+> several times when the temperature got close to 125°C, not allowing
+> for a proper shutdown. Apparently the partial shutdown of the PMIC can
+> result in a full reset at least on some systems.
 
-If you're old enough, it's déjà vu; Andrea went on a negative dentry
-rampage about 15 years ago:
-
-https://lkml.org/lkml/2002/5/24/71
-
-I think the summary of the thread is that it's not worth it because
-dentries are a clean cache, so they're immediately shrinkable.
-
-> Dumb question: do we know that negative dentries are actually
-> worthwhile?  Has anyone checked in the past couple of
-> decades?  Perhaps our lookups are so whizzy nowadays that we don't
-> need them?
-
-There are still a lot of applications that keep looking up non-existent 
-files, so I think it's still beneficial to keep them.  Apparently
-apache still looks for a .htaccess file in every directory it
-traverses, for instance.  Round tripping every one of these to disk
-instead of caching it as a negative dentry would seem to be a
-performance loser here.
-
-However, actually measuring this again might be useful.
-
-James
-
+For the record: Linux does a proper shutdown when software override
+for stage 2 is enabled (bit OVRD_ST2_EN in TEMP_ALARM_SHUTDOWN_CTL1).
