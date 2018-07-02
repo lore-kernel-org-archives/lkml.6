@@ -2,111 +2,203 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA5AC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D371CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE0C2124D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77D1223CA7
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:30:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vlBoBw5X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE0C2124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wjf9358z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D1223CA7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933423AbeGBJ1g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:27:36 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33165 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752756AbeGBJ1d (ORCPT
+        id S933953AbeGBJa1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:30:27 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:40124 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933453AbeGBJaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:27:33 -0400
-Received: by mail-wr0-f195.google.com with SMTP id k7-v6so11277136wrq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:27:33 -0700 (PDT)
+        Mon, 2 Jul 2018 05:30:24 -0400
+Received: by mail-yb0-f194.google.com with SMTP id y11-v6so1350984ybm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:30:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XTi8UeNVbU/dn7KsDmydJUHAIRnifNvp0yct7YRuGeA=;
-        b=vlBoBw5X2mSOHvvpkLk068FsyRDS+HesyOLNOfHqsnkfLZc63IXuuVFTdUJUSqh0hC
-         2vmRFRRdxqNN/97Se1w0JuJTBAVqTpXnMvQTCgvB8ZB8h4OYFNwS1Fxynl5HPMOg/XBY
-         MNPR4JCTbVBPMVjuKplXt8fMycN/mGke68HV2gO7Nl/aYawN+7erpr1FWolMztDhTPaF
-         8Cyz1iKh52hFPDqoWdzvku3UzqUQLjXWCiNcMNOUW0KmuSJgLVajJhrq5i+LBycCpBGD
-         3dE9g3UmY6CLrRE8XJIkWGm3SnhEsbmkDO9X1iAoQWs7jDD9QwCcMsodYPEpuXVnQB60
-         Fn0A==
+        bh=QwG59Y4SyS5DN9V37rL+oOQ9FcbHkbYhl1mEdNZ+zHw=;
+        b=Wjf9358z5Sl7IQdPBmtoa1bha5mA/7DLjtHkJqQ1A6I3jpL54JG7cuU4sxiEBD1dTu
+         DK0pJY3M4KKHTkpP6v8JASSy9WXDNlqmmmLh/Qm1YWWFHh/OTEBBVLYqPK+tebokAgBQ
+         ThUvNesBjA3mZ7UBFJyiILzml9SgA/a0bY3Fk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XTi8UeNVbU/dn7KsDmydJUHAIRnifNvp0yct7YRuGeA=;
-        b=kdpOSyx+dyfC6pawC/SYUe0l65UNKoW4Hp3naVaWM6nZT1idu0VpFMwNw9SpgHGEc0
-         2h/CzvX0HZwfI2hIdDG7GytPbXWyns0kgVwgbCScUVBoPJd1weqqVTKJ1Y94DQUS7gk9
-         bybdzWOc5n9R3ssbZWKWrRIJxnU7E/JK+hsR2to5E/imzeFBo3C9xdRprRx7bJCmuyp8
-         5priHPvRVbdq4VKRR1N7ziFJB7FaAkmaCTYp8+HlfkDuk88oJfpeYtj+utzyVX7jAxQX
-         f0k2xRNG0DPn2q7DbC437PhWYBDCdHd+TZI8F2KtBYooFBmfv8tlGZxj5yJSuKxiKjcy
-         z9EQ==
-X-Gm-Message-State: APt69E1xirK1eslHj4j1ziEYNz8OZmbv0COrTVWImGy9foKimKSgDOfB
-        cyq/YzwlM0haObhkCTcr2qdLFmDOgNiu4C3L8amwndcp
-X-Google-Smtp-Source: AAOMgpcCERk5sKnifqtEhWUkUJRhUXJaAdLm4sA5/JdYzaWljVujnm3VyDAsxywPgHSK1ru93zKDtrgcAU5Sz9hZlrU=
-X-Received: by 2002:adf:a094:: with SMTP id m20-v6mr1562164wrm.125.1530523652522;
- Mon, 02 Jul 2018 02:27:32 -0700 (PDT)
+        bh=QwG59Y4SyS5DN9V37rL+oOQ9FcbHkbYhl1mEdNZ+zHw=;
+        b=XZIwp+uEeJP4SO9kX/y2ur2JBOABDySuan03Ebum3yUwU99MWmAlGtjhDNcszEos5o
+         Gpb4sGRdyPH016nQBAsmtraQarlXnRzdc5FnUarOnrfvZ2QM5rhXh7cBg+4pYir3PmrR
+         pnyIpZi7+pFLTFgPow+OA5i+np0MMlJVZ665ipshdKYsRJAwi4hBNzqLbFjIudc9TWoS
+         avlWFUskzofB5FBkiob5MZBMzFyXOZgMNXk7OgA8Colm0wG1krMVfVp5dOarNhKyYEru
+         d+4zFGkjEuRu7GaS0ICV+QNwhDxFHVFpAB1HiVaQQX9a20SsUONrjcu2B0WTLb3ssZoy
+         a85A==
+X-Gm-Message-State: APt69E2N+R4U1Qn8vRot7Gdgaq423VKnpo+mpaRi+MqJBJVnXbkC6Wif
+        RDzShHhlRZRKL7sr/wWKc+k5aUHmi/g=
+X-Google-Smtp-Source: AAOMgpcYYHT7tqppfvAeUNVKpMi47yZvz42Cq99WN5HyVGfaeYEqU8fJDV/Lrib1/c4DyvXL8DD53Q==
+X-Received: by 2002:a25:b6cd:: with SMTP id f13-v6mr6688714ybm.506.1530523823553;
+        Mon, 02 Jul 2018 02:30:23 -0700 (PDT)
+Received: from mail-yw0-f181.google.com (mail-yw0-f181.google.com. [209.85.161.181])
+        by smtp.gmail.com with ESMTPSA id q131-v6sm8207341ywq.8.2018.07.02.02.30.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 02:30:22 -0700 (PDT)
+Received: by mail-yw0-f181.google.com with SMTP id w76-v6so4048215ywg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:30:22 -0700 (PDT)
+X-Received: by 2002:a81:6c04:: with SMTP id h4-v6mr8363494ywc.273.1530523821716;
+ Mon, 02 Jul 2018 02:30:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <201807021228.PZ5wzCyl%fengguang.wu@intel.com>
-In-Reply-To: <201807021228.PZ5wzCyl%fengguang.wu@intel.com>
-From:   Martijn Coenen <maco@google.com>
-Date:   Mon, 2 Jul 2018 11:27:20 +0200
-Message-ID: <CA+_MTtzgL2pNY3nu6xTAKWdSYKWHEyWXM6PSA8iFMK-Pub2z1w@mail.gmail.com>
-Subject: Re: drivers/android/.tmp_gl_binder.o:undefined reference to `__user_bad'
-To:     monstr@monstr.eu
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-28-stanimir.varbanov@linaro.org> <CAAFQd5Cyk2=YG+LVGt0qEcrRGdarpHJDJ73AzG1iWBbyhr+nAA@mail.gmail.com>
+In-Reply-To: <CAAFQd5Cyk2=YG+LVGt0qEcrRGdarpHJDJ73AzG1iWBbyhr+nAA@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 2 Jul 2018 18:30:10 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5C=__+qTXsCtr7uS+7T6Dpgpeh8m6TuNEiYe5W2K2gaSw@mail.gmail.com>
+Message-ID: <CAAFQd5C=__+qTXsCtr7uS+7T6Dpgpeh8m6TuNEiYe5W2K2gaSw@mail.gmail.com>
+Subject: Re: [PATCH v2 27/29] venus: implementing multi-stream support
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        vgarodia@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Hi Stanimir,
 
-See below - this error was introduced because the binder driver uses a
-64-bit get_user(), even on a 32-bit architecture. Would it be possible
-to implement a 64-bit get_user() for microblaze?
+On Thu, May 31, 2018 at 6:51 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> On Tue, May 15, 2018 at 5:00 PM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
+> >
+> > This is implementing a multi-stream decoder support. The multi
+> > stream gives an option to use the secondary decoder output
+> > with different raw format (or the same in case of crop).
+> >
+> > Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> > ---
+> >  drivers/media/platform/qcom/venus/core.h    |   1 +
+> >  drivers/media/platform/qcom/venus/helpers.c | 204 +++++++++++++++++++++++++++-
+> >  drivers/media/platform/qcom/venus/helpers.h |   6 +
+> >  drivers/media/platform/qcom/venus/vdec.c    |  91 ++++++++++++-
+> >  drivers/media/platform/qcom/venus/venc.c    |   1 +
+> >  5 files changed, 299 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> > index 4d6c05f156c4..85e66e2dd672 100644
+> > --- a/drivers/media/platform/qcom/venus/core.h
+> > +++ b/drivers/media/platform/qcom/venus/core.h
+> > @@ -259,6 +259,7 @@ struct venus_inst {
+> >         struct list_head list;
+> >         struct mutex lock;
+> >         struct venus_core *core;
+> > +       struct list_head dpbbufs;
+> >         struct list_head internalbufs;
+> >         struct list_head registeredbufs;
+> >         struct list_head delayed_process;
+> > diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> > index ed569705ecac..87dcf9973e6f 100644
+> > --- a/drivers/media/platform/qcom/venus/helpers.c
+> > +++ b/drivers/media/platform/qcom/venus/helpers.c
+> > @@ -85,6 +85,112 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+> >  }
+> >  EXPORT_SYMBOL_GPL(venus_helper_check_codec);
+> >
+> > +static int venus_helper_queue_dpb_bufs(struct venus_inst *inst)
+> > +{
+> > +       struct intbuf *buf;
+> > +       int ret = 0;
+> > +
+> > +       if (list_empty(&inst->dpbbufs))
+> > +               return 0;
+>
+> Does this special case give us anything other than few more source lines?
+>
+> > +
+> > +       list_for_each_entry(buf, &inst->dpbbufs, list) {
+> > +               struct hfi_frame_data fdata;
+> > +
+> > +               memset(&fdata, 0, sizeof(fdata));
+> > +               fdata.alloc_len = buf->size;
+> > +               fdata.device_addr = buf->da;
+> > +               fdata.buffer_type = buf->type;
+> > +
+> > +               ret = hfi_session_process_buf(inst, &fdata);
+> > +               if (ret)
+> > +                       goto fail;
+> > +       }
+> > +
+> > +fail:
+> > +       return ret;
+> > +}
+> > +
+> > +int venus_helper_free_dpb_bufs(struct venus_inst *inst)
+> > +{
+> > +       struct intbuf *buf, *n;
+> > +
+> > +       if (list_empty(&inst->dpbbufs))
+> > +               return 0;
+>
+> Ditto.
+>
+> > +
+> > +       list_for_each_entry_safe(buf, n, &inst->dpbbufs, list) {
+> > +               list_del_init(&buf->list);
+> > +               dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
+> > +                              buf->attrs);
+> > +               kfree(buf);
+> > +       }
+> > +
+> > +       INIT_LIST_HEAD(&inst->dpbbufs);
+> > +
+> > +       return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(venus_helper_free_dpb_bufs);
+> [snip]
+> > +int venus_helper_get_out_fmts(struct venus_inst *inst, u32 v4l2_fmt,
+> > +                             u32 *out_fmt, u32 *out2_fmt, bool ubwc)
+> > +{
+> > +       struct venus_core *core = inst->core;
+> > +       struct venus_caps *caps;
+> > +       u32 ubwc_fmt, fmt = to_hfi_raw_fmt(v4l2_fmt);
+> > +       bool found, found_ubwc;
+> > +
+> > +       *out_fmt = *out2_fmt = 0;
+> > +
+> > +       if (!fmt)
+> > +               return -EINVAL;
+> > +
+> > +       caps = venus_caps_by_codec(core, inst->hfi_codec, inst->session_type);
+> > +       if (!caps)
+> > +               return -EINVAL;
+> > +
+> > +       if (ubwc) {
+> > +               ubwc_fmt = fmt | HFI_COLOR_FORMAT_UBWC_BASE;
+>
+> Does the UBWC base format have to be the same as fmt? Looking at
+> HFI_COLOR_FORMAT_* macros, UBWC variants seem to exist only for few
+> selected raw formats, for example there is none for NV21.
 
-Thanks,
-Martijn
+Ping.
 
-On Mon, Jul 2, 2018 at 6:53 AM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Martijn,
->
-> FYI, the error/warning still remains.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   021c91791a5e7e85c567452f1be3e4c2c6cb6063
-> commit: 1190b4e38f97023154e6b3bef61b251aa5f970d0 ANDROID: binder: remove 32-bit binder interface.
-> date:   7 weeks ago
-> config: microblaze-allmodconfig (attached as .config)
-> compiler: microblaze-linux-gcc (GCC) 8.1.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 1190b4e38f97023154e6b3bef61b251aa5f970d0
->         # save the attached .config to linux build tree
->         GCC_VERSION=8.1.0 make.cross ARCH=microblaze
->
-> All errors (new ones prefixed by >>):
->
->    drivers/android/binder.o: In function `binder_thread_write':
-> >> drivers/android/.tmp_gl_binder.o:(.text+0xcbb0): undefined reference to `__user_bad'
->    drivers/android/.tmp_gl_binder.o:(.text+0xcbdc): undefined reference to `__user_bad'
->    drivers/android/.tmp_gl_binder.o:(.text+0xcfc4): undefined reference to `__user_bad'
->    drivers/android/.tmp_gl_binder.o:(.text+0xd650): undefined reference to `__user_bad'
->    drivers/android/.tmp_gl_binder.o:(.text+0xdbc8): undefined reference to `__user_bad'
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+None of the comments I posted above have been addressed in v4.
+
+Best regards,
+Tomasz
