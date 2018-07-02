@@ -2,121 +2,130 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5546C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FAAC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AA4D24FC7
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:41:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA4D24FC7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A25C3252B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVEoxr6d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25C3252B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752721AbeGBPlP (ORCPT
+        id S1752757AbeGBPl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:41:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58608 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752282AbeGBPlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:41:14 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 47B5477885;
-        Mon,  2 Jul 2018 15:41:13 +0000 (UTC)
-Received: from gondolin (ovpn-117-51.ams2.redhat.com [10.36.117.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 61D28111AF34;
-        Mon,  2 Jul 2018 15:41:06 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 17:41:03 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
- virtualization
-Message-ID: <20180702174103.5d1ce603.cohuck@redhat.com>
-In-Reply-To: <276b5ae7-7f27-faae-1e5a-0d4c084139e9@linux.ibm.com>
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
-        <276b5ae7-7f27-faae-1e5a-0d4c084139e9@linux.ibm.com>
-Organization: Red Hat GmbH
+        Mon, 2 Jul 2018 11:41:28 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37312 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752201AbeGBPl0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:41:26 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 31-v6so8134813plc.4;
+        Mon, 02 Jul 2018 08:41:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wyAiK4Z73klJn/XY6stySBJ5Zv9xD+y8C3/SF2thd7A=;
+        b=gVEoxr6dIHWnPFZkBbXJT12Kxjg/uE3p9ebSSP5iAkcID2OI/GViEKLrQamyGsm697
+         rhIVgMfIzYn9YTI2pMbUCkCQGQPBzBGpFqLxUEjccJV9g9F6u7yP3nJJBkx8ZS0l27OW
+         vbfTh3yDh89+L9UeFpj0sAIS9rphwdc30UyTPmApmPdEmEx5vnEdJIL85TtrdPQP0zsP
+         eNvR+8cL+++q+PsD+xpwrJ6YKjWDgyFjgx9A3oI/v/INxbbO8P46+UCgxUddUdyTP8mm
+         wv+WldYsFFKl0v2TAEdXFX5CTnStzqgDhz5l/uITJne0tZLfHOLs9H76kRBMvvb5A02a
+         3q0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wyAiK4Z73klJn/XY6stySBJ5Zv9xD+y8C3/SF2thd7A=;
+        b=Am1KVYeBnp4to3ojtWwyW6hv9wSd1HhHHFGuHwV87y6OAzHs0vqPNPGbwxSwszHvp8
+         xpRVhfRXsrZp9XLTI6l9Fh8Qt3Sroy/qafdqoh4muS/ioA/PGpSvE1sx7g3EjqDyOjsy
+         NxG+jlVU2FI4Cy+avXn0VAxJD0bU0MidO6cGZML0qrMRWw4hfVu5Sqlem1bUaCwLru2a
+         ifOs+PDITdXnayXhxKc4HoXXo4GqgMYUO8wXHg2wcmyql2XfJArWcZFHotHbdWzZBABq
+         5hMZUuXKrtvrnuyy3/s0fgiPaN+yTj57fKaqIFKOi4NnBogp/F9HpzSdvP0UKxyErk8K
+         NZww==
+X-Gm-Message-State: APt69E1ApLBOG/fu8GLQrKdCvLI/zlZEZ1BS7OswJyDmW2yvSOU+Skye
+        OEIfeZFclgTvxWppA9Y477M=
+X-Google-Smtp-Source: ADUXVKJiuc2tbs9m3AmauVa6nn3wbh8h0DjrmMpX4b8gswDb961tPSbQZmVh8Bv4S9mB493iTP8F3w==
+X-Received: by 2002:a17:902:b604:: with SMTP id b4-v6mr26291353pls.18.1530546085692;
+        Mon, 02 Jul 2018 08:41:25 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.216.114])
+        by smtp.gmail.com with ESMTPSA id z123-v6sm24747606pfz.16.2018.07.02.08.41.23
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Jul 2018 08:41:24 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 21:13:54 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     viro@zeniv.linux.org.uk, darrick.wong@oracle.com,
+        agruenba@redhat.com, jack@suse.cz, dchinner@redhat.com,
+        tytso@mit.edu, rpeterso@redhat.com, gregkh@linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH] fs: iomap: Change return type to vm_fault_t
+Message-ID: <20180702154354.GA3919@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 15:41:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 15:41:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 11:37:11 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+Return type has been changed to vm_fault_t type for
+iomap_page_mkwrite().
 
-> On 07/02/2018 10:38 AM, Christian Borntraeger wrote:
-> >
-> > On 06/29/2018 11:11 PM, Tony Krowiak wrote:  
-> >> Introduces a new CPU model feature and two CPU model
-> >> facilities to support AP virtualization for KVM guests.
-> >>
-> >> CPU model feature:
-> >>
-> >> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
-> >> AP instructions are available on the guest. This
-> >> feature will be enabled by the kernel only if the AP
-> >> instructions are installed on the linux host. This feature
-> >> must be specifically turned on for the KVM guest from
-> >> userspace to use the VFIO AP device driver for guest
-> >> access to AP devices.
-> >>
-> >> CPU model facilities:
-> >>
-> >> 1. AP Query Configuration Information (QCI) facility is installed.
-> >>
-> >>     This is indicated by setting facilities bit 12 for
-> >>     the guest. The kernel will not enable this facility
-> >>     for the guest if it is not set on the host. This facility
-> >>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
-> >>     feature is not installed.
-> >>
-> >>     If this facility is not set for the KVM guest, then only
-> >>     APQNs with an APQI less than 16 will be available to the
-> >>     guest regardless of the guest's matrix configuration. This
-> >>     is a limitation of the AP bus running on the guest.
-> >>
-> >> 2. AP Facilities Test facility (APFT) is installed.
-> >>
-> >>     This is indicated by setting facilities bit 15 for
-> >>     the guest. The kernel will not enable this facility for
-> >>     the guest if it is not set on the host. This facility
-> >>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
-> >>     feature is not installed.
-> >>
-> >>     If this facility is not set for the KVM guest, then no
-> >>     AP devices will be available to the guest regardless of
-> >>     the guest's matrix configuration. This is a limitation
-> >>     of the AP bus running under the guest.
-> >>
-> >> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> >> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> >> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>  
-> > I think it probably should be at the end of the series, other than that its good.  
-> 
-> If I move this to the end of the series, the very next patch checks the
-> 
-> KVM_S390_VM_CPU_FEAT_AP feature?
+see commit 1c8f422059ae ("mm: change return type to
+vm_fault_t") for reference.
 
-Introduce it here, offer it only with the last patch?
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/iomap.c            | 2 +-
+ include/linux/iomap.h | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/iomap.c b/fs/iomap.c
+index afd1635..58477ee 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -443,7 +443,7 @@ static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
+ 	return length;
+ }
+ 
+-int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
++vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+ {
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 19a07de..666b717 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -3,6 +3,7 @@
+ #define LINUX_IOMAP_H 1
+ 
+ #include <linux/types.h>
++#include <linux/mm_types.h>
+ 
+ struct fiemap_extent_info;
+ struct inode;
+@@ -88,7 +89,8 @@ int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+ 		bool *did_zero, const struct iomap_ops *ops);
+ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ 		const struct iomap_ops *ops);
+-int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops);
++vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
++			const struct iomap_ops *ops);
+ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		loff_t start, loff_t len, const struct iomap_ops *ops);
+ loff_t iomap_seek_hole(struct inode *inode, loff_t offset,
+-- 
+1.9.1
+
