@@ -2,72 +2,72 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD7C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86971C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0214C25B99
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D70225BB8
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K/iAEDA6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0214C25B99
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ahxezsse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D70225BB8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933696AbeGBIrZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:47:25 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42548 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754327AbeGBIqG (ORCPT
+        id S933728AbeGBIsA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:48:00 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53884 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754302AbeGBIp4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:46:06 -0400
-Received: by mail-io0-f195.google.com with SMTP id r24-v6so14034384ioh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:46:06 -0700 (PDT)
+        Mon, 2 Jul 2018 04:45:56 -0400
+Received: by mail-it0-f66.google.com with SMTP id a195-v6so11059767itd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IuLV5DB13L6aLqWiOwSpfBC/YgWJABmU9rsUs1091zo=;
-        b=K/iAEDA6lhhGRNIbGCzArR+7j/svN5dbJOiXxuVTtio3RPHedwUIorulmJBqfVDK2W
-         eUwFOIQKzy5uB3EPUN986f4sVb0AltMYBoyleAzNp5cPWTtZ8J4Qo00EZVfesDpOl8Dz
-         vvg/8e2ecevuftst74znOJvx8grrTMdddfzeA=
+        bh=EzbfFlLGL6r9jz1AON5q4rgDiAotjcsVfF9sgRBmedU=;
+        b=AhxezsseKESV4lSPMP3VDEcNdL/q2sNqfv+KFVFY0dX3Ojbaws6D8ArGqluTIYNVGc
+         LIWbSnsRicYBeWnKzPeCl7oS0o5P7fiV1dCykv9Apx7orp9cixij+8q9qAbjgpCr2eOb
+         hEbGI5elr5V5gjMoHqP9l+PAIl45VUdNpnPPQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IuLV5DB13L6aLqWiOwSpfBC/YgWJABmU9rsUs1091zo=;
-        b=IsdfmX40pVz74k96z8pG8Kf+Opox5OU0Opz1mSwcikBKoInerC4y98NvaX73dozRG3
-         OGJDSsgFpzXzOgiW7Gv0uV+2Mxsw27p4653DawJaB/2VhackTF8gmNeFqLW8vuCn2HVg
-         RTuVqJOFPk/41KfGbbmC5mRe5duszi6eLlhiwIWDEY+9vZWk1vLAUr52iGVhp3hYsCC2
-         /De2qZ9KvjdUKZAcw8RsgU9BJEKULGNlNgCszu4Y5ugXevkGiekmtoJnyH7EzVa1TrqZ
-         2Gt0sm1b9btB1eh6QbihmktRG6mCs+7HMzXekQ35PWWmr+/+AVGRZpw1NJ0Y87I0DX55
-         xViw==
-X-Gm-Message-State: APt69E0N1Q01DgVX4tsmO+SY5/2bwTZbJ/gDxf8WbjXiqjKg5BOQov7J
-        ofxowmxYm6NsRNOvZ5O4OHJ0pofXuko=
-X-Google-Smtp-Source: AAOMgpeNTVsMF3GzA0GLK+ni7YWAwitinUWqdXOeVF3V5sH0tTA2Tffl5E9A3E7RtzKmnv5tMx/sqA==
-X-Received: by 2002:a6b:f00a:: with SMTP id w10-v6mr6364620ioc.65.1530521165746;
-        Mon, 02 Jul 2018 01:46:05 -0700 (PDT)
-Received: from mail-it0-f48.google.com (mail-it0-f48.google.com. [209.85.214.48])
-        by smtp.gmail.com with ESMTPSA id o71-v6sm1767475ita.37.2018.07.02.01.46.04
+        bh=EzbfFlLGL6r9jz1AON5q4rgDiAotjcsVfF9sgRBmedU=;
+        b=a+RxLYMIcc1PFu7umOzDoqoJuEYs/C2xAMZJQVDuaAfhjUCeWN00yadC0HeQcl5H54
+         CTknIIMKEnAIID8ZKOkWS3x9EjV+QdwiSwA42sAZX/loowpbTHWW8Y2vKX1oRLpIwWM4
+         y3Tzt9TNtsZVrOmRp17v+jnv/KgkLdvMuxBPsOvF4iOqvOCJikJ07qwTGyafsTWfyiSF
+         QzKW2neazn3Blq3Saa4teqC2CP+YZc9mUwHo4hux9oBhbdkH9L/PFRfLOcHz3Q3g6UoR
+         uj+r9mamT62rToTxdlko2nFRT339k6WFME+OIOZ3/yfkyXkDR7Wym8fX2z/ABJFl2eV9
+         /I3Q==
+X-Gm-Message-State: APt69E37LTBpTnw1H3RVvFKyM9i2BJLyaNpd47e32umd5309bCEQA942
+        F772pvCs8xmugOxVCEicEKtAef9MBDc=
+X-Google-Smtp-Source: AAOMgpcjCn16BohpvDwrQ1TkdVbnXnaLZ96DBA9uja4EKW7w+xmZY7lnhUpDztB4M/33afr/1g5kmg==
+X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr9866745itc.102.1530521155889;
+        Mon, 02 Jul 2018 01:45:55 -0700 (PDT)
+Received: from mail-io0-f171.google.com (mail-io0-f171.google.com. [209.85.223.171])
+        by smtp.gmail.com with ESMTPSA id u127-v6sm6936927iod.54.2018.07.02.01.45.54
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 01:46:04 -0700 (PDT)
-Received: by mail-it0-f48.google.com with SMTP id p17-v6so10988595itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:46:04 -0700 (PDT)
-X-Received: by 2002:a02:9281:: with SMTP id b1-v6mr20393608jah.33.1530521164026;
- Mon, 02 Jul 2018 01:46:04 -0700 (PDT)
+        Mon, 02 Jul 2018 01:45:55 -0700 (PDT)
+Received: by mail-io0-f171.google.com with SMTP id d185-v6so14046354ioe.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:45:54 -0700 (PDT)
+X-Received: by 2002:a6b:b342:: with SMTP id c63-v6mr19633438iof.204.1530521154609;
+ Mon, 02 Jul 2018 01:45:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180627152725.9783-1-stanimir.varbanov@linaro.org> <20180627152725.9783-15-stanimir.varbanov@linaro.org>
-In-Reply-To: <20180627152725.9783-15-stanimir.varbanov@linaro.org>
+References: <20180627152725.9783-1-stanimir.varbanov@linaro.org> <20180627152725.9783-12-stanimir.varbanov@linaro.org>
+In-Reply-To: <20180627152725.9783-12-stanimir.varbanov@linaro.org>
 From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Mon, 2 Jul 2018 17:45:52 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWr2d3uADf23VMC92o=YDV6uS4a2Y3ErDFbwQkQhog_hg@mail.gmail.com>
-Message-ID: <CAPBb6MWr2d3uADf23VMC92o=YDV6uS4a2Y3ErDFbwQkQhog_hg@mail.gmail.com>
-Subject: Re: [PATCH v4 14/27] venus: helpers: add a helper function to set
- dynamic buffer mode
+Date:   Mon, 2 Jul 2018 17:45:43 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MVToYzWhmbjU-M6g2CjwMzWyF97k2WqcUBFA+zTq6uhdg@mail.gmail.com>
+Message-ID: <CAPBb6MVToYzWhmbjU-M6g2CjwMzWyF97k2WqcUBFA+zTq6uhdg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/27] venus: core,helpers: add two more clocks found
+ in Venus 4xx
 To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -81,94 +81,306 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 12:31 AM Stanimir Varbanov
+On Thu, Jun 28, 2018 at 12:34 AM Stanimir Varbanov
 <stanimir.varbanov@linaro.org> wrote:
 >
-> Adds a new helper function to set dynamic buffer mode if it is
-> supported by current HFI version. The dynamic buffer mode is
-> set unconditionally for both decoder outputs.
+> Add two more clocks for Venus 4xx in core structure and create
+> a new power enable function to handle it for 3xx/4xx versions.
 >
 > Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/media/platform/qcom/venus/helpers.c | 22 ++++++++++++++++++++++
->  drivers/media/platform/qcom/venus/helpers.h |  1 +
->  drivers/media/platform/qcom/venus/vdec.c    | 15 +++------------
->  3 files changed, 26 insertions(+), 12 deletions(-)
+>  drivers/media/platform/qcom/venus/core.h    |  4 +++
+>  drivers/media/platform/qcom/venus/helpers.c | 51 +++++++++++++++++++++++++++++
+>  drivers/media/platform/qcom/venus/helpers.h |  2 ++
+>  drivers/media/platform/qcom/venus/vdec.c    | 44 ++++++++++++++++++++-----
+>  drivers/media/platform/qcom/venus/venc.c    | 44 ++++++++++++++++++++-----
+>  5 files changed, 129 insertions(+), 16 deletions(-)
 >
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 8d3e150800c9..2bf8839784fa 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -65,6 +65,8 @@ struct venus_format {
+>   * @clks:      an array of struct clk pointers
+>   * @core0_clk: a struct clk pointer for core0
+>   * @core1_clk: a struct clk pointer for core1
+> + * @core0_bus_clk: a struct clk pointer for core0 bus clock
+> + * @core1_bus_clk: a struct clk pointer for core1 bus clock
+>   * @vdev_dec:  a reference to video device structure for decoder instances
+>   * @vdev_enc:  a reference to video device structure for encoder instances
+>   * @v4l2_dev:  a holder for v4l2 device structure
+> @@ -94,6 +96,8 @@ struct venus_core {
+>         struct clk *clks[VIDC_CLKS_NUM_MAX];
+>         struct clk *core0_clk;
+>         struct clk *core1_clk;
+> +       struct clk *core0_bus_clk;
+> +       struct clk *core1_bus_clk;
+>         struct video_device *vdev_dec;
+>         struct video_device *vdev_enc;
+>         struct v4l2_device v4l2_dev;
 > diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index 03121dbb4175..e3dc2772946f 100644
+> index d9065cc8a7d3..228084e72fb7 100644
 > --- a/drivers/media/platform/qcom/venus/helpers.c
 > +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -519,6 +519,28 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 pixfmt)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_set_color_format);
+> @@ -13,6 +13,7 @@
+>   *
+>   */
+>  #include <linux/clk.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/list.h>
+>  #include <linux/mutex.h>
+>  #include <linux/pm_runtime.h>
+> @@ -24,6 +25,7 @@
+>  #include "core.h"
+>  #include "helpers.h"
+>  #include "hfi_helper.h"
+> +#include "hfi_venus_io.h"
 >
-> +int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
+>  struct intbuf {
+>         struct list_head list;
+> @@ -781,3 +783,52 @@ void venus_helper_init_instance(struct venus_inst *inst)
+>         }
+>  }
+>  EXPORT_SYMBOL_GPL(venus_helper_init_instance);
+> +
+> +int venus_helper_power_enable(struct venus_core *core, u32 session_type,
+> +                             bool enable)
 > +{
-> +       u32 ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
-
-This could be const u32.
-
-> +       struct hfi_buffer_alloc_mode mode;
+> +       void __iomem *ctrl, *stat;
+> +       u32 val;
 > +       int ret;
 > +
-> +       if (!is_dynamic_bufmode(inst))
+> +       if (!IS_V3(core) && !IS_V4(core))
 > +               return 0;
 > +
-> +       mode.type = HFI_BUFFER_OUTPUT;
-> +       mode.mode = HFI_BUFFER_MODE_DYNAMIC;
+> +       if (IS_V3(core)) {
+> +               if (session_type == VIDC_SESSION_TYPE_DEC)
+> +                       ctrl = core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL;
+> +               else
+> +                       ctrl = core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL;
+> +               if (enable)
+> +                       writel(0, ctrl);
+> +               else
+> +                       writel(1, ctrl);
 > +
-> +       ret = hfi_session_set_property(inst, ptype, &mode);
-> +       if (ret)
-> +               return ret;
+> +               return 0;
+> +       }
 > +
-> +       mode.type = HFI_BUFFER_OUTPUT2;
+> +       if (session_type == VIDC_SESSION_TYPE_DEC) {
+> +               ctrl = core->base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
+> +               stat = core->base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
+> +       } else {
+> +               ctrl = core->base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL;
+> +               stat = core->base + WRAPPER_VCODEC1_MMCC_POWER_STATUS;
+> +       }
 > +
-> +       return hfi_session_set_property(inst, ptype, &mode);
+> +       if (enable) {
+> +               writel(0, ctrl);
+> +
+> +               ret = readl_poll_timeout(stat, val, val & BIT(1), 1, 100);
+> +               if (ret)
+> +                       return ret;
+> +       } else {
+> +               writel(1, ctrl);
+> +
+> +               ret = readl_poll_timeout(stat, val, !(val & BIT(1)), 1, 100);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       return 0;
 > +}
-> +EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
-> +
->  static void delayed_process_buf_func(struct work_struct *work)
->  {
->         struct venus_buffer *buf, *n;
+> +EXPORT_SYMBOL_GPL(venus_helper_power_enable);
 > diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-> index 0e64aa95624a..52b961ed491e 100644
+> index 971392be5df5..0e64aa95624a 100644
 > --- a/drivers/media/platform/qcom/venus/helpers.h
 > +++ b/drivers/media/platform/qcom/venus/helpers.h
-> @@ -40,6 +40,7 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
->  int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
->                               unsigned int output_bufs);
->  int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-> +int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
+> @@ -43,4 +43,6 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
 >  void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
 >  void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
 >  void venus_helper_init_instance(struct venus_inst *inst);
+> +int venus_helper_power_enable(struct venus_core *core, u32 session_type,
+> +                             bool enable);
+>  #endif
 > diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 31a240ab142b..92669a358a90 100644
+> index 261a51adeef2..3cf243ddcdb8 100644
 > --- a/drivers/media/platform/qcom/venus/vdec.c
 > +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -557,18 +557,9 @@ static int vdec_set_properties(struct venus_inst *inst)
->                         return ret;
+> @@ -1081,12 +1081,18 @@ static int vdec_probe(struct platform_device *pdev)
+>         if (!core)
+>                 return -EPROBE_DEFER;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> +       if (IS_V3(core) || IS_V4(core)) {
+>                 core->core0_clk = devm_clk_get(dev, "core");
+>                 if (IS_ERR(core->core0_clk))
+>                         return PTR_ERR(core->core0_clk);
 >         }
 >
-> -       if (core->res->hfi_version == HFI_VERSION_3XX ||
-> -           inst->cap_bufs_mode_dynamic) {
-> -               struct hfi_buffer_alloc_mode mode;
-> -
-> -               ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
-> -               mode.type = HFI_BUFFER_OUTPUT;
-> -               mode.mode = HFI_BUFFER_MODE_DYNAMIC;
-> -
-> -               ret = hfi_session_set_property(inst, ptype, &mode);
-> -               if (ret)
-> -                       return ret;
-> -       }
-> +       ret = venus_helper_set_dyn_bufmode(inst);
+> +       if (IS_V4(core)) {
+> +               core->core0_bus_clk = devm_clk_get(dev, "bus");
+> +               if (IS_ERR(core->core0_bus_clk))
+> +                       return PTR_ERR(core->core0_bus_clk);
+> +       }
+> +
+>         platform_set_drvdata(pdev, core);
+>
+>         vdev = video_device_alloc();
+> @@ -1131,15 +1137,21 @@ static int vdec_remove(struct platform_device *pdev)
+>  static __maybe_unused int vdec_runtime_suspend(struct device *dev)
+>  {
+>         struct venus_core *core = dev_get_drvdata(dev);
+> +       int ret;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                 return 0;
+>
+> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, true);
+> +
+> +       if (IS_V4(core))
+> +               clk_disable_unprepare(core->core0_bus_clk);
+> +
+>         clk_disable_unprepare(core->core0_clk);
+> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+>
+> -       return 0;
+> +       ret |= venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
+
+Is it safe to OR two potentially different error messages, at the risk
+of getting a third one that is different?
+
+If venus_helper_power_enable() fails, shouldn't we just exit early and
+signify that the suspend operation failed?
+
+> +
+> +       return ret;
+>  }
+>
+>  static __maybe_unused int vdec_runtime_resume(struct device *dev)
+> @@ -1147,13 +1159,29 @@ static __maybe_unused int vdec_runtime_resume(struct device *dev)
+>         struct venus_core *core = dev_get_drvdata(dev);
+>         int ret;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                 return 0;
+>
+> -       writel(0, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, true);
 > +       if (ret)
 > +               return ret;
+
+... similarly to what it done here, actually.
+
+> +
+>         ret = clk_prepare_enable(core->core0_clk);
+> -       writel(1, core->base + WRAPPER_VDEC_VCODEC_POWER_CONTROL);
+> +       if (ret)
+> +               goto err_power_disable;
+> +
+> +       if (IS_V4(core))
+> +               ret = clk_prepare_enable(core->core0_bus_clk);
 >
->         if (ctr->post_loop_deb_mode) {
->                 ptype = HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER;
+> +       if (ret)
+> +               goto err_unprepare_core0;
+> +
+> +       return venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
+> +
+> +err_unprepare_core0:
+> +       clk_disable_unprepare(core->core0_clk);
+> +err_power_disable:
+> +       venus_helper_power_enable(core, VIDC_SESSION_TYPE_DEC, false);
+>         return ret;
+>  }
+>
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index 947001170a77..2cd7b342b208 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1225,12 +1225,18 @@ static int venc_probe(struct platform_device *pdev)
+>         if (!core)
+>                 return -EPROBE_DEFER;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_3XX) {
+> +       if (IS_V3(core) || IS_V4(core)) {
+>                 core->core1_clk = devm_clk_get(dev, "core");
+>                 if (IS_ERR(core->core1_clk))
+>                         return PTR_ERR(core->core1_clk);
+>         }
+>
+> +       if (IS_V4(core)) {
+> +               core->core1_bus_clk = devm_clk_get(dev, "bus");
+> +               if (IS_ERR(core->core1_bus_clk))
+> +                       return PTR_ERR(core->core1_bus_clk);
+> +       }
+> +
+>         platform_set_drvdata(pdev, core);
+>
+>         vdev = video_device_alloc();
+> @@ -1275,15 +1281,21 @@ static int venc_remove(struct platform_device *pdev)
+>  static __maybe_unused int venc_runtime_suspend(struct device *dev)
+>  {
+>         struct venus_core *core = dev_get_drvdata(dev);
+> +       int ret;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                 return 0;
+>
+> -       writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, true);
+> +
+> +       if (IS_V4(core))
+> +               clk_disable_unprepare(core->core1_bus_clk);
+> +
+>         clk_disable_unprepare(core->core1_clk);
+> -       writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+>
+> -       return 0;
+> +       ret |= venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
+
+Same question for this function.
+
+> +
+> +       return ret;
+>  }
+>
+>  static __maybe_unused int venc_runtime_resume(struct device *dev)
+> @@ -1291,13 +1303,29 @@ static __maybe_unused int venc_runtime_resume(struct device *dev)
+>         struct venus_core *core = dev_get_drvdata(dev);
+>         int ret;
+>
+> -       if (core->res->hfi_version == HFI_VERSION_1XX)
+> +       if (IS_V1(core))
+>                 return 0;
+>
+> -       writel(0, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       ret = venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, true);
+> +       if (ret)
+> +               return ret;
+> +
+>         ret = clk_prepare_enable(core->core1_clk);
+> -       writel(1, core->base + WRAPPER_VENC_VCODEC_POWER_CONTROL);
+> +       if (ret)
+> +               goto err_power_disable;
+> +
+> +       if (IS_V4(core))
+> +               ret = clk_prepare_enable(core->core1_bus_clk);
+>
+> +       if (ret)
+> +               goto err_unprepare_core1;
+> +
+> +       return venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
+> +
+> +err_unprepare_core1:
+> +       clk_disable_unprepare(core->core1_clk);
+> +err_power_disable:
+> +       venus_helper_power_enable(core, VIDC_SESSION_TYPE_ENC, false);
+>         return ret;
+>  }
+>
 > --
 > 2.14.1
 >
