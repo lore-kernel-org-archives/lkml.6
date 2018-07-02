@@ -2,85 +2,94 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9761AC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8A3C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1642526C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1642526C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 24D45252B9
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:15:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D45252B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752567AbeGBMPe (ORCPT
+        id S1752610AbeGBMPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:15:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56710 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751761AbeGBMPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:15:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8D935AD06;
-        Mon,  2 Jul 2018 12:15:29 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 14:15:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
-Message-ID: <20180702121528.GM19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
- <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 2 Jul 2018 08:15:36 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56751 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751504AbeGBMPc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 08:15:32 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fZxji-0005ZW-Lh; Mon, 02 Jul 2018 14:15:18 +0200
+Message-ID: <1530533718.22468.87.camel@pengutronix.de>
+Subject: Re: [PATCH 0/2] soc: imx: gpc: Power off PU domain in
+ suspend/resume on 6qp
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Robin Gong <yibin.gong@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Date:   Mon, 02 Jul 2018 14:15:18 +0200
+In-Reply-To: <cover.1530530881.git.leonard.crestez@nxp.com>
+References: <cover.1530530881.git.leonard.crestez@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02-07-18 10:45:03, Laurent Dufour wrote:
-> On 30/06/2018 00:39, Yang Shi wrote:
-> > Check VM_DEAD flag of vma in page fault handler, if it is set, trigger
-> > SIGSEGV.
-> > 
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> > ---
-> >  arch/x86/mm/fault.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > index 9a84a0d..3fd2da5 100644
-> > --- a/arch/x86/mm/fault.c
-> > +++ b/arch/x86/mm/fault.c
-> > @@ -1357,6 +1357,10 @@ static inline bool smap_violation(int error_code, struct pt_regs *regs)
-> >  		bad_area(regs, error_code, address);
-> >  		return;
-> >  	}
-> > +	if (unlikely(vma->vm_flags & VM_DEAD)) {
-> > +		bad_area(regs, error_code, address);
-> > +		return;
-> > +	}
+Am Montag, den 02.07.2018, 14:52 +0300 schrieb Leonard Crestez:
+> Tested by doing `rtcwake -s 5 -m mem` while running glxgears on
+> etnaviv.
 > 
-> This will have to be done for all the supported architectures, what about doing
-> this check in handle_mm_fault() and return VM_FAULT_SIGSEGV ?
+> The first patch is required because otherwise it is not easy to reach
+> pgc
+> domains from the gpc itself when using new-style bindings. It's also
+> easier to understand.
+> 
+> The use of dynamic allocation in this driver is strange. Since there
+> is
+> only one GPC physically present in each soc my impulse would be to
+> make
+> most things global and delete imx_gpc_driver.remove entirely.
+> 
+> With current code (even without my patches) attempting to dynamically
+> remove/probe the GPC fils since since the per-pgc platform_device
+> instances are not removed. I'm trying something like this:
+> 
+> echo 130000.gpu > /sys/bus/platform/drivers/etnaviv-gpu/unbind
+> echo 134000.gpu > /sys/bus/platform/drivers/etnaviv-gpu/unbind
+> echo 20dc000.gpc  > /sys/bus/platform/drivers/imx-gpc/unbind
+> echo 20dc000.gpc  > /sys/bus/platform/drivers/imx-gpc/bind
+> 
+> But is there any usecase for dynamically removing the GPC? Instead of
+> trying to fix it I'd rather delete imx_gpc_driver.remove, just like
+> for gpcv2. Would anyone object to a patch doing this?
 
-We already do have a model for that. Have a look at MMF_UNSTABLE.
+Yes, as this is taking things in wrong direction. With device-links we
+are able to unbind consumer devices when a provider is removed. As the
+GPC is a consumer of a regulator, not having the ability to unbind it
+would break that use case.
 
--- 
-Michal Hocko
-SUSE Labs
+We might still have bugs in some of those functions, but then those
+should really be fixed instead of removed.
+
+Regards,
+Lucas
