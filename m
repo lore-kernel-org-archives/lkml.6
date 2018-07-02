@@ -2,209 +2,119 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DABC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EDCC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D47242D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:01:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D47242D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 5C3B8248D1
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:02:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="chbA8unZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3B8248D1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933544AbeGBIBR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:01:17 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:59238 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753665AbeGBIBQ (ORCPT
+        id S1754067AbeGBICw (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:02:52 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43446 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeGBICq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:01:16 -0400
-Received: from [IPv6:2001:983:e9a7:1:211d:3901:19f1:80d] ([IPv6:2001:983:e9a7:1:211d:3901:19f1:80d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id Ztlpf4yNWEJtcZtlqfuVpw; Mon, 02 Jul 2018 10:01:14 +0200
-Subject: Re: [PATCH 00/32] Qualcomm Camera Subsystem driver - 8x96 support
-To:     Todor Tomov <todor.tomov@linaro.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6cffd2ac-d241-1653-1afa-bc623375442d@xs4all.nl>
-Date:   Mon, 2 Jul 2018 10:01:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 04:02:46 -0400
+Received: by mail-lf0-f65.google.com with SMTP id m12-v6so10704654lfc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1849dU4tG59McCnf2+NkKCCjXyKjWmv/jftBj2/tZ8A=;
+        b=chbA8unZ5vuTHwgR4Egg8bzm1Q+v6UmYVlENtQTOSkMuAOk69qDF9zAV7RVzrsGcf3
+         LvXtD0Tpe1H/DqfANLL8L/MyJcYYcVgnKKSXf4JuUDn9PYef6n5aVtLPlTK4EuVmqCkJ
+         7+EIhgu6/lgHFSXTe8sV6vm2SVOqYvDybnaiKnRDMDgc6NqIzdhkmGCORjUlpu/ywuTp
+         WeZvR4zjS9bQAKQNtYowrpHOk9kQ+LlhJBSZu+akx6gf84NgEaL3KpVchw9JlT5yauA+
+         6EhUkxD/pfvS6C5z9sSE2Yv6G3brS4Lhb0vdAQA3px+ucswrIR5suq6SSarHDHUoxZ5Y
+         y1OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1849dU4tG59McCnf2+NkKCCjXyKjWmv/jftBj2/tZ8A=;
+        b=t7u19B/XhVxdF+CKGiqLqmwe/fFYhVHhlauFMnEEsHIKLU6BbAOsL46EeqmccWYb7O
+         k25Xm5DyYIZuOq39YOTFeiK3FIdc+ZGOt2j2HZp+bo0TqgSG7iwnTv3d3t6QetD9scru
+         /+jN+aDzVtboqJE8mSFiccnJXe85Xh+qgtz2KCaNFG4J5QsTJVb/FhC1B4K9iUt3nGdx
+         i2OyhaCcldUxoD40C76J0mR+AynLeUla+AiLjQ8g4BPGorqG52PQsCY4fQgRpAT913FT
+         wR5/P3W5TTvrCnSs+45T6TdKRhATijP4QYCx7RtjoVryt4nQ6G/JBXzHmfIto7nzMmPu
+         9uvA==
+X-Gm-Message-State: APt69E3NPlrZBejz4Mw1FGfoMygH2jlg6HBESvk2eYgNZaYphzP7c9lt
+        g5Bt8lJ007OOJkyoSORpKJJTyQ==
+X-Google-Smtp-Source: AAOMgpfOo9PR5tBkImaHkHp1HlpHr8nStHBPXrRi6T7G1KSpbGhGPVowWhQvs0LC+40kUbgIhyqdLQ==
+X-Received: by 2002:a19:c301:: with SMTP id t1-v6mr14037606lff.45.1530518564857;
+        Mon, 02 Jul 2018 01:02:44 -0700 (PDT)
+Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm595041ljd.11.2018.07.02.01.02.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 01:02:43 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: limit get chunk meta request size
+Date:   Mon,  2 Jul 2018 10:02:23 +0200
+Message-Id: <20180702080223.13214-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMarJxz2T+NRsCp1Bpq57ilqDtzu55/GTC1spMKlU6FnVxJCCs5YIUXjsYDVGLNScwEbrPGkRdqnxTLebq2OxOwsLyeNsOxUMZOpIQlnTrz1bhnCXTJx
- PPVs0nRhKeVfhdr62f2QyJ6gSzSnNA/jU2UWaHDqKqgShMuN9RM0mkvC9RLSsHk+0X2gqXpR9T+ZYxxhwbhmsempt8U+97Kk/qkfagIvG8eyNifL3hfUT673
- 0Vfv66E6kZDkgW9AeEepGKtZw/qYANCKn9gBPA4hdGagbItEpTQ2cQKj1ZBnHS1WhFxkiLEPAQxMP+fijSF/paHGjGl4POqnU0EkeTMySkxlI8XZk5Qvh21Z
- nPAtXl97wO+idVrL8k0cXt1NumYuCUDWYxPM5WvJV2J4V9iDx6xlYt/uHQ3AYibhAgZsih8Qp1oKjYV5Axee5p+WIX39A143u/5Ju5BVoTeCnUBWdiA6n+Tt
- 4NlwBOyXeTrOOOB2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
+For devices that does not specify a limit on its transfer size, the
+get_chk_meta command may send down a single I/O retrieving the full
+chunk metadata table. Resulting in large 2-4MB I/O requests. Instead,
+split up the I/Os to a maximum of 256KB and issue them separately to
+reduce memory requirements.
 
-On 22/06/18 17:33, Todor Tomov wrote:
-> This patchset adds support for the Qualcomm Camera Subsystem found
-> on Qualcomm MSM8996 and APQ8096 SoC to the existing driver which
-> used to support MSM8916 and APQ8016.
-> 
-> The camera subsystem hardware on 8x96 is similar to 8x16 but
-> supports more cameras and features. More details are added in the
-> driver document by the last patch.
-> 
-> The first 3 patches are dependencies which have already been on
-> the mainling list but I'm adding them here for completeness.
-> 
-> The following 11 patches add general updates and fixes to the driver.
-> Then the rest add the support for the new hardware.
-> 
-> The driver is tested on Dragonboard 410c (APQ8016) and Dragonboard 820c
-> (APQ8096) with OV5645 camera sensors. media-ctl [1], yavta [2] and
-> GStreamer were used for testing.
-> 
-> [1] https://git.linuxtv.org//v4l-utils.git
-> [2] http://git.ideasonboard.org/yavta.git
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/nvme/host/lightnvm.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-I did a quick review of this series and it looked good to me. So once I
-have Acked-by's for the bindings changes I can make a pull request.
-
-One thing I would like to have before I do that is the output of
-'v4l2-compliance -m /dev/mediaX -v' (probably media0) for both 8x16 and
-the new 8x96. Make sure you use the latest v4l2-compliance since I have
-been adding new tests for the media controller.
-
-Thanks!
-
-	Hans
-
-> 
-> 
-> Sakari Ailus (1):
->   doc-rst: Add packed Bayer raw14 pixel formats
-> 
-> Todor Tomov (31):
->   media: v4l: Add new 2X8 10-bit grayscale media bus code
->   media: v4l: Add new 10-bit packed grayscale format
->   media: Rename CAMSS driver path
->   media: camss: Use SPDX license headers
->   media: camss: Fix OF node usage
->   media: camss: csiphy: Ensure clock mux config is done before the rest
->   media: camss: Unify the clock names
->   media: camss: csiphy: Update settle count calculation
->   media: camss: csid: Configure data type and decode format properly
->   media: camss: vfe: Fix to_vfe() macro member name
->   media: camss: vfe: Get line pointer as container of video_out
->   media: camss: vfe: Do not disable CAMIF when clearing its status
->   media: dt-bindings: media: qcom,camss: Fix whitespaces
->   media: dt-bindings: media: qcom,camss: Add 8996 bindings
->   media: camss: Add 8x96 resources
->   media: camss: Add basic runtime PM support
->   media: camss: csiphy: Split to hardware dependent and independent
->     parts
->   media: camss: csiphy: Unify lane handling
->   media: camss: csiphy: Add support for 8x96
->   media: camss: csid: Add support for 8x96
->   media: camss: ispif: Add support for 8x96
->   media: camss: vfe: Split to hardware dependent and independent parts
->   media: camss: vfe: Add support for 8x96
->   media: camss: Format configuration per hardware version
->   media: camss: vfe: Different format support on source pad
->   media: camss: vfe: Add support for UYVY output from VFE on 8x96
->   media: camss: csid: Different format support on source pad
->   media: camss: csid: MIPI10 to Plain16 format conversion
->   media: camss: Add support for RAW MIPI14 on 8x96
->   media: camss: Add support for 10-bit grayscale formats
->   media: doc: media/v4l-drivers: Update Qualcomm CAMSS driver document
->     for 8x96
-> 
->  .../devicetree/bindings/media/qcom,camss.txt       |  128 +-
->  Documentation/media/uapi/v4l/pixfmt-rgb.rst        |    1 +
->  Documentation/media/uapi/v4l/pixfmt-srggb14p.rst   |  127 +
->  Documentation/media/uapi/v4l/pixfmt-y10p.rst       |   33 +
->  Documentation/media/uapi/v4l/subdev-formats.rst    |   72 +
->  Documentation/media/uapi/v4l/yuv-formats.rst       |    1 +
->  Documentation/media/v4l-drivers/qcom_camss.rst     |   93 +-
->  .../media/v4l-drivers/qcom_camss_8x96_graph.dot    |  104 +
->  MAINTAINERS                                        |    2 +-
->  drivers/media/platform/Kconfig                     |    2 +-
->  drivers/media/platform/Makefile                    |    2 +-
->  drivers/media/platform/qcom/camss-8x16/Makefile    |   11 -
->  .../media/platform/qcom/camss-8x16/camss-csid.c    | 1094 -------
->  .../media/platform/qcom/camss-8x16/camss-csid.h    |   82 -
->  .../media/platform/qcom/camss-8x16/camss-csiphy.c  |  893 ------
->  .../media/platform/qcom/camss-8x16/camss-csiphy.h  |   77 -
->  .../media/platform/qcom/camss-8x16/camss-ispif.c   | 1178 --------
->  .../media/platform/qcom/camss-8x16/camss-ispif.h   |   85 -
->  drivers/media/platform/qcom/camss-8x16/camss-vfe.c | 3093 --------------------
->  drivers/media/platform/qcom/camss-8x16/camss-vfe.h |  123 -
->  .../media/platform/qcom/camss-8x16/camss-video.c   |  859 ------
->  .../media/platform/qcom/camss-8x16/camss-video.h   |   70 -
->  drivers/media/platform/qcom/camss-8x16/camss.c     |  751 -----
->  drivers/media/platform/qcom/camss-8x16/camss.h     |  106 -
->  drivers/media/platform/qcom/camss/Makefile         |   15 +
->  drivers/media/platform/qcom/camss/camss-csid.c     | 1376 +++++++++
->  drivers/media/platform/qcom/camss/camss-csid.h     |   77 +
->  .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     |  177 ++
->  .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     |  256 ++
->  drivers/media/platform/qcom/camss/camss-csiphy.c   |  761 +++++
->  drivers/media/platform/qcom/camss/camss-csiphy.h   |   89 +
->  drivers/media/platform/qcom/camss/camss-ispif.c    | 1367 +++++++++
->  drivers/media/platform/qcom/camss/camss-ispif.h    |   78 +
->  drivers/media/platform/qcom/camss/camss-vfe-4-1.c  | 1018 +++++++
->  drivers/media/platform/qcom/camss/camss-vfe-4-7.c  | 1140 ++++++++
->  drivers/media/platform/qcom/camss/camss-vfe.c      | 2341 +++++++++++++++
->  drivers/media/platform/qcom/camss/camss-vfe.h      |  183 ++
->  drivers/media/platform/qcom/camss/camss-video.c    |  958 ++++++
->  drivers/media/platform/qcom/camss/camss-video.h    |   62 +
->  drivers/media/platform/qcom/camss/camss.c          | 1027 +++++++
->  drivers/media/platform/qcom/camss/camss.h          |  115 +
->  drivers/media/v4l2-core/v4l2-ioctl.c               |    1 +
->  include/uapi/linux/media-bus-format.h              |    3 +-
->  include/uapi/linux/videodev2.h                     |    6 +
->  44 files changed, 11530 insertions(+), 8507 deletions(-)
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
->  create mode 100644 Documentation/media/v4l-drivers/qcom_camss_8x96_graph.dot
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/Makefile
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csid.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csid.h
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csiphy.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-csiphy.h
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-ispif.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-ispif.h
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-vfe.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-vfe.h
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-video.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss-video.h
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss.c
->  delete mode 100644 drivers/media/platform/qcom/camss-8x16/camss.h
->  create mode 100644 drivers/media/platform/qcom/camss/Makefile
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csid.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csid.h
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-csiphy.h
->  create mode 100644 drivers/media/platform/qcom/camss/camss-ispif.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-ispif.h
->  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-4-1.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-4-7.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-vfe.h
->  create mode 100644 drivers/media/platform/qcom/camss/camss-video.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss-video.h
->  create mode 100644 drivers/media/platform/qcom/camss/camss.c
->  create mode 100644 drivers/media/platform/qcom/camss/camss.h
-> 
+diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+index b9989717418d..3b644b0e9713 100644
+--- a/drivers/nvme/host/lightnvm.c
++++ b/drivers/nvme/host/lightnvm.c
+@@ -583,7 +583,13 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	struct ppa_addr ppa;
+ 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+ 	size_t log_pos, offset, len;
+-	int ret, i;
++	int ret, i, max_len;
++
++	/*
++	 * limit requests to maximum 256K to avoid issuing arbitrary large
++	 * requests when the device does not specific a maximum transfer size.
++	 */
++	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
+ 
+ 	/* Normalize lba address space to obtain log offset */
+ 	ppa.ppa = slba;
+@@ -596,7 +602,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+ 	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
+ 
+ 	while (left) {
+-		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
++		len = min_t(unsigned int, left, max_len);
+ 
+ 		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
+ 				dev_meta, len, offset);
+-- 
+2.11.0
 
