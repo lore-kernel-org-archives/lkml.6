@@ -2,121 +2,126 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE5CC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65CBC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A04E24A5D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:52:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A04E24A5D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 63E4D2172F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:53:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="OTh/wn2I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E4D2172F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753192AbeGBRwo (ORCPT
+        id S1753223AbeGBRxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:52:44 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40509 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeGBRwm (ORCPT
+        Mon, 2 Jul 2018 13:53:38 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55689 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753156AbeGBRxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:52:42 -0400
-Received: by mail-it0-f66.google.com with SMTP id 188-v6so13083311ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:52:42 -0700 (PDT)
+        Mon, 2 Jul 2018 13:53:36 -0400
+Received: by mail-it0-f68.google.com with SMTP id 16-v6so13261375itl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=BHY6ZYxXh/5SIU0rqcfR0+xK86kbiJ6vjr2Qlu+kZKA=;
+        b=OTh/wn2IC0mPu07QAxDO8vnUZOEcYbhXsepIjGzVoSw7c2iObjlE6hLZAFqrhRNhCO
+         Y2TAnapW43ANw9UWAIZd914chvBUrfO/HY5kxwRAA9/V4B5nj+eaFIJhVXwZWJ1JYrKK
+         8gO4nAFiYwVC0NBseiZ7fE0B4frJ//C/+Fy5YJSIGEESHVkvx9hvYZIgHhRuz1htxH+t
+         P0HmyiX3epHnt+r3jztuCzASpoUcCGgznb4lpLg8astq5dMGVSaKoXUnXIvb54Pq14XB
+         sYkIPWglQeg7+P2E5SfGCWVOAvUhJB7r9o66gtYeM40QXf0o0npuvqZhl9hjhIPulR7E
+         k8CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yOlBoc0ZpzuUaB545V9h0qZmwcxepsk02o/wZ9V2z0o=;
-        b=AfOmmgm76iptRmMGSyH7RjaF9eCsCIdxJEpTvZDH4mWQTe7C6soQofLzU6f7GXrBGR
-         V64uVs298o6ukWEUOk2KBCcTSaHXMA++TcRy+GDRjgJWJYL0Nsj0K7FO2zIiiOrJ30Sb
-         p+ywQhYlOVsLlwcnr6uryAPhT+t3T2Bn2JpcqqwzISq5T4L2QTSvGQeksL/dTw9NwUrO
-         Tvl60Rt5yWWInmWoailRFFbqWzKCneMYwcUHmoL1VN0FIKrJcWyTGykvyUghce5GpBi4
-         UulNmwVoqaSBcW7+bvW6Hab4vAQHgJVXmBGOEWyMvDR8lW4FXM6iqdU6wrK+RI97L9G/
-         j+jQ==
-X-Gm-Message-State: APt69E3Mz+kCOQUSqKqM6C0yGLf5qYneWF18X4pRhCT/j8aSNu1RiLrv
-        KIg+uH754yLyf8EgnfsAEefmlVmecCrFKNzIIwbSUg==
-X-Google-Smtp-Source: AAOMgpetjZeleNOuCslqgkoqmJjVBBsz917qXEfajz3nKzWmizX9y02wGUlpY72rMtpKUHt72w6jOt+AJkpRDn1T+14=
-X-Received: by 2002:a24:d484:: with SMTP id x126-v6mr6249779itg.64.1530553962166;
- Mon, 02 Jul 2018 10:52:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=BHY6ZYxXh/5SIU0rqcfR0+xK86kbiJ6vjr2Qlu+kZKA=;
+        b=Gqmvred3JlDShb7M1/Yrj/h+IF7UKq33ZajDOE1kpjUtwphlXMNFAFnyHTuAjtECbK
+         PMAL+PoNpLMUOO49lLOLjBa73B775oWPhP3Gfb6u8O0JoY3TOLlymJCEFJu3PSjJEIEP
+         /xn2Way7G1RfHcHg2wGVrHkB+l/NXxNFmNfnijc3tYK2YLSWzZ7xQbyTPMXR6X+Lofck
+         4r9vRDpKHLJAsdQjwN7lltN928soWqXZTVP0g74zOnvtvpTnRXMsp2pqVRi5rRe71E76
+         dPun1sc8LiVMyceyaktMNJUr3Ps4zCLss33sQ8c5CfBn+CT8fIcyKK8pElr5YjTDCf2r
+         176A==
+X-Gm-Message-State: APt69E2/i/xA6/ycjcsRGXtnRjD/tJa9bjY1GxUxatsDuquDXtPTW0Fx
+        xiAFazQwtTE/WOaejKmsi0Eb7A==
+X-Google-Smtp-Source: AAOMgpe8iAkN0TEqc56IV+xavZTooEXsJVwJIuzrpRE11wcB65xP6SpmRGBh7J7+FWxT1gSWsg2A9A==
+X-Received: by 2002:a24:ce41:: with SMTP id v62-v6mr6452250itg.57.1530554015668;
+        Mon, 02 Jul 2018 10:53:35 -0700 (PDT)
+Received: from x220t ([64.26.149.125])
+        by smtp.gmail.com with ESMTPSA id g81-v6sm6889874iof.13.2018.07.02.10.53.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 10:53:34 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 13:53:29 -0400
+From:   Alexander Aring <aring@mojatatu.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Romuald Cari <romuald.cari@devialet.com>,
+        linux-wpan@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?Q?Cl=C3=A9ment?= Peron <clement.peron@devialet.com>
+Subject: Re: [PATCH] ieee802154: add rx LQI from userspace
+Message-ID: <20180702175329.lobhttvi6z6nkdzq@x220t>
+References: <20180607140802.22666-1-peron.clem@gmail.com>
+ <CAJiuCcdCE42FvWc0svNpQDD0rczYi7Xz-RW5PbbjAuvZe9dgwg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:5186:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 10:52:41 -0700 (PDT)
-In-Reply-To: <20180702154354.GA3919@jordon-HP-15-Notebook-PC>
-References: <20180702154354.GA3919@jordon-HP-15-Notebook-PC>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Mon, 2 Jul 2018 19:52:41 +0200
-Message-ID: <CAHc6FU6CVaT3W15n4jSiy6F4cZEFa9HdrZ8NRrU2GppTXr7p8A@mail.gmail.com>
-Subject: Re: [PATCH] fs: iomap: Change return type to vm_fault_t
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <dchinner@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJiuCcdCE42FvWc0svNpQDD0rczYi7Xz-RW5PbbjAuvZe9dgwg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 July 2018 at 17:43, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> Return type has been changed to vm_fault_t type for
-> iomap_page_mkwrite().
->
-> see commit 1c8f422059ae ("mm: change return type to
-> vm_fault_t") for reference.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-> ---
->  fs/iomap.c            | 2 +-
->  include/linux/iomap.h | 4 +++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/iomap.c b/fs/iomap.c
-> index afd1635..58477ee 100644
-> --- a/fs/iomap.c
-> +++ b/fs/iomap.c
-> @@ -443,7 +443,7 @@ static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
->         return length;
->  }
->
-> -int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
-> +vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
->  {
->         struct page *page = vmf->page;
->         struct inode *inode = file_inode(vmf->vma->vm_file);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 19a07de..666b717 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -3,6 +3,7 @@
->  #define LINUX_IOMAP_H 1
->
->  #include <linux/types.h>
-> +#include <linux/mm_types.h>
->
->  struct fiemap_extent_info;
->  struct inode;
-> @@ -88,7 +89,8 @@ int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
->                 bool *did_zero, const struct iomap_ops *ops);
->  int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
->                 const struct iomap_ops *ops);
-> -int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops);
-> +vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
-> +                       const struct iomap_ops *ops);
->  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->                 loff_t start, loff_t len, const struct iomap_ops *ops);
->  loff_t iomap_seek_hole(struct inode *inode, loff_t offset,
-> --
-> 1.9.1
+Hi,
+
+On Mon, Jul 02, 2018 at 03:28:04PM +0200, Clément Péron wrote:
+> Could you review it please ?
 >
 
-Added to for-next, thanks.
+sorry... I was thinking a lot what I can contribute to this patch, I
+want to make it short.
 
-Andreas
+I see your use case and your use case has of course a valid point.
+
+
+What I can say about the code? This socket layer was contributed a lot
+in a time where the subsystem was unmaintained. Stefan has some
+experience with this socket layer by doing some examples [0].
+
+In my opinion I am confused that a lot of netlink handling is needed to
+do "something" with this socket layer. I already thought that we need
+some af802154ng for next generation.
+
+Known bug is also RAW sockets on af802154 are totally messed up... but
+we don't need them, this can be done by AF_PACKET (just need to think
+about similar handling there).
+
+---
+
+Now to your patch, you use skb->cb there. The tc ingress part can
+_maybe_? use this control block information. I think this issue is out
+of scope because we have also other parts in the code how we pass data
+between driver and packet layer with skb->cb -> we simply do it wrong.
+
+I have no problems to have this patch inside but for future we should
+tackle a af802154ng with a better UAPI handling.
+
+If we fix skb->cb we just need to think about how to pass such data up
+to socket layer.
+
+- Alex
+
+[0] https://github.com/linux-wpan/wpan-tools/tree/master/examples
