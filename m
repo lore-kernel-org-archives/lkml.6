@@ -2,200 +2,443 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BD9C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF1EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A77D025D0D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:42:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U56n9zGS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A77D025D0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A22425D0D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A22425D0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030724AbeGBLmn (ORCPT
+        id S1030737AbeGBLnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:42:43 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52787 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030707AbeGBLmi (ORCPT
+        Mon, 2 Jul 2018 07:43:18 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11159 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752862AbeGBLlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:42:38 -0400
-Received: by mail-it0-f67.google.com with SMTP id p4-v6so11680227itf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 04:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=saIqLOPvwRJWVTv55+gmP2/Kn7dzHTktH2Bg8CKQkmQ=;
-        b=U56n9zGSINQfDgMYIA1evHoTL4tKoRhy8znCvZZ+jIogbVNkc7SEpnemQ/Oni7zUW0
-         Xvjox1snpDMAnCDDaiRk66h/4zx7Zyt9kz5TOQ+MonjB4Y1Z0i/YU/kFOF11C0sq2sck
-         ueo/hMwyoza525t0q8dyrbKYLtk3QnILx1UMA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=saIqLOPvwRJWVTv55+gmP2/Kn7dzHTktH2Bg8CKQkmQ=;
-        b=m1dccD/WjlRhQtipkHWRe/93bHU1aA+glDCdFakvY9vfblIhiLS3cDKG97GqDHbhZo
-         KeZFLUwOhF/NC0DfHWm+YZ3gF+Y5PymjtbcEwdcCqre7BNJNKAlC+MSlLJbAVk3bWunt
-         hhYFEQBNhCA03y8ODtSGOskAaoM/noGwbKYQUeTaeXPycv5FEOqW5vw/Evz1aT4LRM/3
-         QVigPbI0OtkBQfXaodLvOJ2JlBP2LSk+J8cLG4xJOttNBb52x7FLaT9ila2H9D8ySutt
-         NNzBAqcCB8X5C/kUTTPtca1VFlg0++oyOeSBUk2WxlHQQ9JxdtSzIIH2ulrswRkJpkqa
-         ePKA==
-X-Gm-Message-State: APt69E0G9tsJ6ZAkxwEDwelSF4zf3NmU4+WC2FkeLve2nePWa4G7u5eK
-        JNWOtPSw69R1xVc+0LKm1TtI2ku5vnZXQhx9icHNSg==
-X-Google-Smtp-Source: AAOMgpdh5IZdaWK3qYGicLwXvkDUrJdkAlSdBwE5AjE3QlWw/H1+wCIh9tlCuiEiEY6OHzZsS4BbeI/FnK3ZP1WmeNQ=
-X-Received: by 2002:a24:ad01:: with SMTP id c1-v6mr5240612itf.70.1530531757933;
- Mon, 02 Jul 2018 04:42:37 -0700 (PDT)
+        Mon, 2 Jul 2018 07:41:53 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3a0f810000>; Mon, 02 Jul 2018 04:41:53 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 02 Jul 2018 04:41:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 02 Jul 2018 04:41:52 -0700
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Jul
+ 2018 11:41:52 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 2 Jul
+ 2018 11:41:52 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Mon, 2 Jul 2018 11:41:52 +0000
+Received: from mperttunen-lnx.Nvidia.com (Not Verified[10.21.26.144]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b3a0f7d0001>; Mon, 02 Jul 2018 04:41:51 -0700
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+To:     <jassisinghbrar@gmail.com>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH v3 6/8] serial: Add Tegra Combined UART driver
+Date:   Mon, 2 Jul 2018 14:40:31 +0300
+Message-ID: <20180702114033.15654-7-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180702114033.15654-1-mperttunen@nvidia.com>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <1530494867-15015-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1530494867-15015-1-git-send-email-Anson.Huang@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 2 Jul 2018 13:42:26 +0200
-Message-ID: <CACRpkdZOCJXHxcYv0CU76J0r2OpxdtDuOiJ9cenrvJCHVsBeAA@mail.gmail.com>
-Subject: Re: [PATCH V2] mmc: core: cd_label must be last entry of mmc_gpio struct
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Adrian Hunter <adrian.hunter@intel.com>, evgreen@chromium.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 3:32 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+multiplexing multiple "virtual UARTs" into a single hardware serial
+port. The TCU is the primary serial port on Tegra194 devices.
 
-> commit bfd694d5e21c ("mmc: core: Add tunable delay
-> before detecting card after card is inserted") adds
-> "u32 cd_debounce_delay_ms" to the last of mmc_gpio
-> struct and cause "char cd_label[0]" NOT work as string
-> pointer of card detect label, when "cat /proc/interrupts",
-> the devname for card detect gpio is incorrect as below:
->
-> 144:          0  gpio-mxc  22 Edge      =E2=96=92
-> 161:          0  gpio-mxc   7 Edge      =E2=96=92
->
-> Move the cd_label field down to fix this, and drop the
-> zero from the array size to prevent future similar bugs,
-> the result is correct as below:
->
-> 144:          0  gpio-mxc  22 Edge      2198000.mmc cd
-> 161:          0  gpio-mxc   7 Edge      2190000.mmc cd
->
-> Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card =
-after card is inserted")
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Tested-by: Fabio Estevam <fabio.estevam@nxp.com>
+Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+are part of Tegra HSP blocks that are already controlled by the Tegra
+HSP mailbox driver.
 
-Curious.
-
-> --- a/drivers/mmc/core/slot-gpio.c
-> +++ b/drivers/mmc/core/slot-gpio.c
-> @@ -27,8 +27,8 @@ struct mmc_gpio {
->         bool override_cd_active_level;
->         irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
->         char *ro_label;
-> -       char cd_label[0];
->         u32 cd_debounce_delay_ms;
-> +       char cd_label[];
-
-Not that I am the smartest in the world when it comes to how the
-C compilers work this out.
-
-But isn't that equivalent to:
-char *cd_label;
-?
-
-Look at this from drivers/mmc/core/slot-gpio.c:
-
-ctx->ro_label =3D ctx->cd_label + len;
-ctx->cd_debounce_delay_ms =3D 200;
-snprintf(ctx->cd_label, len, "%s cd", dev_name(host->parent));
-snprintf(ctx->ro_label, len, "%s ro", dev_name(host->parent));
-host->slot.handler_priv =3D ctx;
-host->slot.cd_irq =3D -EINVAL;
-
-So now that ro_label is char * that points len chars into the
-struct and that is all fine as the ctx is allocated like that:
-
-struct mmc_gpio *ctx =3D devm_kzalloc(host->parent,
-                               sizeof(*ctx) + 2 * len, GFP_KERNEL);
-
-And I've seen this being done to allocate a state with
-some dynamic strings after it.
-
-But I just don't like this, it seems fragile and now it broke.
-
-What about this:
-
-From facb3799f479bfd4dad99c25c9c5d4c77b14c9b0 Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 2 Jul 2018 13:35:01 +0200
-Subject: [PATCH] mmc: slot-gpio: Allocate GPIO labels dynamically
-
-The use of string pointers in the MMC slot GPIO context is
-pretty dubious, allocating some 2*len extra bytes for each
-label of the ro and wp pins.
-
-Tidy this up using kasprintf() with dynamic allocation of
-labels for these strings.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/mmc/core/slot-gpio.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
-index ef05e0039378..c417801b366e 100644
---- a/drivers/mmc/core/slot-gpio.c
-+++ b/drivers/mmc/core/slot-gpio.c
-@@ -27,7 +27,7 @@ struct mmc_gpio {
-     bool override_cd_active_level;
-     irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
-     char *ro_label;
--    char cd_label[0];
-+    char *cd_label;
-     u32 cd_debounce_delay_ms;
- };
+Notes:
+    v2:
+    - Removed (void) casts for unused variables.
+    - Changed the uart_set_options() call to be on one line, even if its
+      over 80 characters.
+    - Added defines for magic numbers.
+    - Style fixes.
+    - Changed Kconfig entry to depend on the Tegra HSP driver instead of
+      just the mailbox framework.
+    
+    v3:
+    - Removed FLUSH bit, as it's unnecessary and slows down printing
+    - Removed call to uart_set_options
+    - Added mbox_free_channel calls to remove()
 
-@@ -47,13 +47,18 @@ int mmc_gpio_alloc(struct mmc_host *host)
- {
-     size_t len =3D strlen(dev_name(host->parent)) + 4;
-     struct mmc_gpio *ctx =3D devm_kzalloc(host->parent,
--                sizeof(*ctx) + 2 * len,    GFP_KERNEL);
-+                        sizeof(*ctx), GFP_KERNEL);
+ drivers/tty/serial/Kconfig       |   9 ++
+ drivers/tty/serial/Makefile      |   1 +
+ drivers/tty/serial/tegra-tcu.c   | 291 +++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/serial_core.h |   3 +
+ 4 files changed, 304 insertions(+)
+ create mode 100644 drivers/tty/serial/tegra-tcu.c
 
-     if (ctx) {
--        ctx->ro_label =3D ctx->cd_label + len;
-         ctx->cd_debounce_delay_ms =3D 200;
--        snprintf(ctx->cd_label, len, "%s cd", dev_name(host->parent));
--        snprintf(ctx->ro_label, len, "%s ro", dev_name(host->parent));
-+        ctx->cd_label =3D devm_kasprintf(host->parent, GFP_KERNEL,
-+                "%s cd", dev_name(host->parent));
-+        if (!ctx->cd_label)
-+            return -ENOMEM;
-+        ctx->ro_label =3D devm_kasprintf(host->parent, GFP_KERNEL,
-+                "%s ro", dev_name(host->parent));
-+        if (!ctx->ro_label)
-+            return -ENOMEM;
-         host->slot.handler_priv =3D ctx;
-         host->slot.cd_irq =3D -EINVAL;
-     }
---=20
-2.17.0
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index df8bd0c7b97d..5fdd336e8937 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -322,6 +322,15 @@ config SERIAL_TEGRA
+ 	  are enabled). This driver uses the APB DMA to achieve higher baudrate
+ 	  and better performance.
+ 
++config SERIAL_TEGRA_TCU
++	tristate "NVIDIA Tegra Combined UART"
++	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
++	select SERIAL_CORE
++	help
++	  Support for the mailbox-based TCU (Tegra Combined UART) serial port.
++	  TCU is a virtual serial port that allows multiplexing multiple data
++	  streams into a single hardware serial port.
++
+ config SERIAL_MAX3100
+ 	tristate "MAX3100 support"
+ 	depends on SPI
+diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+index daac675612df..4ad82231ff8a 100644
+--- a/drivers/tty/serial/Makefile
++++ b/drivers/tty/serial/Makefile
+@@ -76,6 +76,7 @@ obj-$(CONFIG_SERIAL_LANTIQ)	+= lantiq.o
+ obj-$(CONFIG_SERIAL_XILINX_PS_UART) += xilinx_uartps.o
+ obj-$(CONFIG_SERIAL_SIRFSOC) += sirfsoc_uart.o
+ obj-$(CONFIG_SERIAL_TEGRA) += serial-tegra.o
++obj-$(CONFIG_SERIAL_TEGRA_TCU) += tegra-tcu.o
+ obj-$(CONFIG_SERIAL_AR933X)   += ar933x_uart.o
+ obj-$(CONFIG_SERIAL_EFM32_UART) += efm32-uart.o
+ obj-$(CONFIG_SERIAL_ARC)	+= arc_uart.o
+diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
+new file mode 100644
+index 000000000000..de58815bb215
+--- /dev/null
++++ b/drivers/tty/serial/tegra-tcu.c
+@@ -0,0 +1,291 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#include <linux/console.h>
++#include <linux/mailbox_client.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/serial.h>
++#include <linux/serial_core.h>
++#include <linux/slab.h>
++#include <linux/tty.h>
++#include <linux/tty_flip.h>
++
++#define TCU_MBOX_BYTE(i, x)			((x) << (i*8))
++#define TCU_MBOX_BYTE_V(x, i)			(((x) >> (i*8)) & 0xff)
++#define TCU_MBOX_NUM_BYTES(x)			((x) << 24)
++#define TCU_MBOX_NUM_BYTES_V(x)			(((x) >> 24) & 0x3)
++
++static struct uart_driver tegra_tcu_uart_driver;
++static struct uart_port tegra_tcu_uart_port;
++
++struct tegra_tcu {
++	struct mbox_client tx_client, rx_client;
++	struct mbox_chan *tx, *rx;
++};
++
++static unsigned int tegra_tcu_uart_tx_empty(struct uart_port *port)
++{
++	return TIOCSER_TEMT;
++}
++
++static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
++{
++}
++
++static unsigned int tegra_tcu_uart_get_mctrl(struct uart_port *port)
++{
++	return 0;
++}
++
++static void tegra_tcu_uart_stop_tx(struct uart_port *port)
++{
++}
++
++static void tegra_tcu_write(const char *s, unsigned int count)
++{
++	struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
++	unsigned int written = 0, i = 0;
++	bool insert_nl = false;
++	uint32_t value = 0;
++
++	while (i < count) {
++		if (insert_nl) {
++			value |= TCU_MBOX_BYTE(written++, '\n');
++			insert_nl = false;
++			i++;
++		} else if (s[i] == '\n') {
++			value |= TCU_MBOX_BYTE(written++, '\r');
++			insert_nl = true;
++		} else {
++			value |= TCU_MBOX_BYTE(written++, s[i++]);
++		}
++
++		if (written == 3) {
++			value |= TCU_MBOX_NUM_BYTES(3);
++			mbox_send_message(tcu->tx, &value);
++			value = 0;
++			written = 0;
++		}
++	}
++
++	if (written) {
++		value |= TCU_MBOX_NUM_BYTES(written);
++		mbox_send_message(tcu->tx, &value);
++	}
++}
++
++static void tegra_tcu_uart_start_tx(struct uart_port *port)
++{
++	struct circ_buf *xmit = &port->state->xmit;
++	unsigned long count;
++
++	for (;;) {
++		count = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
++		if (!count)
++			break;
++
++		tegra_tcu_write(&xmit->buf[xmit->tail], count);
++		xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
++	}
++
++	uart_write_wakeup(port);
++}
++
++static void tegra_tcu_uart_stop_rx(struct uart_port *port)
++{
++}
++
++static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
++{
++}
++
++static int tegra_tcu_uart_startup(struct uart_port *port)
++{
++	return 0;
++}
++
++static void tegra_tcu_uart_shutdown(struct uart_port *port)
++{
++}
++
++static void tegra_tcu_uart_set_termios(struct uart_port *port,
++				       struct ktermios *new,
++				       struct ktermios *old)
++{
++}
++
++static const struct uart_ops tegra_tcu_uart_ops = {
++	.tx_empty = tegra_tcu_uart_tx_empty,
++	.set_mctrl = tegra_tcu_uart_set_mctrl,
++	.get_mctrl = tegra_tcu_uart_get_mctrl,
++	.stop_tx = tegra_tcu_uart_stop_tx,
++	.start_tx = tegra_tcu_uart_start_tx,
++	.stop_rx = tegra_tcu_uart_stop_rx,
++	.break_ctl = tegra_tcu_uart_break_ctl,
++	.startup = tegra_tcu_uart_startup,
++	.shutdown = tegra_tcu_uart_shutdown,
++	.set_termios = tegra_tcu_uart_set_termios,
++};
++
++static void tegra_tcu_console_write(struct console *cons, const char *s,
++				    unsigned int count)
++{
++	tegra_tcu_write(s, count);
++}
++
++static int tegra_tcu_console_setup(struct console *cons, char *options)
++{
++	return 0;
++}
++
++static struct console tegra_tcu_console = {
++	.name = "ttyTCU",
++	.device = uart_console_device,
++	.flags = CON_PRINTBUFFER | CON_ANYTIME,
++	.index = -1,
++	.write = tegra_tcu_console_write,
++	.setup = tegra_tcu_console_setup,
++	.data = &tegra_tcu_uart_driver,
++};
++
++static struct uart_driver tegra_tcu_uart_driver = {
++	.owner = THIS_MODULE,
++	.driver_name = "tegra-tcu",
++	.dev_name = "ttyTCU",
++	.cons = &tegra_tcu_console,
++	.nr = 1,
++};
++
++static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
++{
++	struct tty_port *port = &tegra_tcu_uart_port.state->port;
++	uint32_t msg = *(uint32_t *)msg_p;
++	unsigned int num_bytes;
++	int i;
++
++	num_bytes = TCU_MBOX_NUM_BYTES_V(msg);
++	for (i = 0; i < num_bytes; i++)
++		tty_insert_flip_char(port, TCU_MBOX_BYTE_V(msg, i), TTY_NORMAL);
++
++	tty_flip_buffer_push(port);
++}
++
++static int tegra_tcu_probe(struct platform_device *pdev)
++{
++	struct uart_port *port = &tegra_tcu_uart_port;
++	struct tegra_tcu *tcu;
++	int err;
++
++	tcu = devm_kzalloc(&pdev->dev, sizeof(*tcu), GFP_KERNEL);
++	if (!tcu)
++		return -ENOMEM;
++
++	tcu->tx_client.dev = &pdev->dev;
++	tcu->rx_client.dev = &pdev->dev;
++	tcu->rx_client.rx_callback = tegra_tcu_receive;
++
++	tcu->tx = mbox_request_channel_byname(&tcu->tx_client, "tx");
++	if (IS_ERR(tcu->tx)) {
++		err = PTR_ERR(tcu->tx);
++		dev_err(&pdev->dev, "failed to get tx mailbox: %d\n", err);
++		return err;
++	}
++
++	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
++	if (IS_ERR(tcu->rx)) {
++		err = PTR_ERR(tcu->rx);
++		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
++		goto free_tx;
++	}
++
++	err = uart_register_driver(&tegra_tcu_uart_driver);
++	if (err) {
++		dev_err(&pdev->dev, "failed to register UART driver: %d\n",
++			err);
++		goto free_rx;
++	}
++
++	spin_lock_init(&port->lock);
++	port->dev = &pdev->dev;
++	port->type = PORT_TEGRA_TCU;
++	port->ops = &tegra_tcu_uart_ops;
++	port->fifosize = 1;
++	port->iotype = UPIO_MEM;
++	port->flags = UPF_BOOT_AUTOCONF;
++	port->private_data = tcu;
++
++	err = uart_add_one_port(&tegra_tcu_uart_driver, port);
++	if (err) {
++		dev_err(&pdev->dev, "failed to add UART port: %d\n", err);
++		goto unregister_uart;
++	}
++
++	platform_set_drvdata(pdev, tcu);
++
++	return 0;
++
++unregister_uart:
++	uart_unregister_driver(&tegra_tcu_uart_driver);
++free_rx:
++	mbox_free_channel(tcu->rx);
++free_tx:
++	mbox_free_channel(tcu->tx);
++
++	return err;
++}
++
++static int tegra_tcu_remove(struct platform_device *pdev)
++{
++	struct tegra_tcu *tcu = platform_get_drvdata(pdev);
++
++	uart_remove_one_port(&tegra_tcu_uart_driver, &tegra_tcu_uart_port);
++	uart_unregister_driver(&tegra_tcu_uart_driver);
++	mbox_free_channel(tcu->rx);
++	mbox_free_channel(tcu->tx);
++
++	return 0;
++}
++
++static const struct of_device_id tegra_tcu_match[] = {
++	{ .compatible = "nvidia,tegra194-tcu" },
++	{ }
++};
++
++static struct platform_driver tegra_tcu_driver = {
++	.driver = {
++		.name = "tegra-tcu",
++		.of_match_table = tegra_tcu_match,
++	},
++	.probe = tegra_tcu_probe,
++	.remove = tegra_tcu_remove,
++};
++
++static int __init tegra_tcu_init(void)
++{
++	int err;
++
++	err = platform_driver_register(&tegra_tcu_driver);
++	if (err)
++		return err;
++
++	register_console(&tegra_tcu_console);
++
++	return 0;
++}
++module_init(tegra_tcu_init);
++
++static void __exit tegra_tcu_exit(void)
++{
++	unregister_console(&tegra_tcu_console);
++	platform_driver_unregister(&tegra_tcu_driver);
++}
++module_exit(tegra_tcu_exit);
++
++MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
+diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+index dce5f9dae121..69883c32cb98 100644
+--- a/include/uapi/linux/serial_core.h
++++ b/include/uapi/linux/serial_core.h
+@@ -79,6 +79,9 @@
+ /* Nuvoton UART */
+ #define PORT_NPCM	40
+ 
++/* NVIDIA Tegra Combined UART */
++#define PORT_TEGRA_TCU	41
++
+ /* Intel EG20 */
+ #define PORT_PCH_8LINE	44
+ #define PORT_PCH_2LINE	45
+-- 
+2.16.1
 
-I can send it as a separate patch if you like it.
-
-Yours,
-Linus Walleij
