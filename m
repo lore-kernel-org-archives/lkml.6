@@ -2,98 +2,101 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8CAC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC27C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3FD225469
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3FD225469
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A11FC25471
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:12:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F64Ns4HY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11FC25471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752456AbeGBQMd (ORCPT
+        id S1752700AbeGBQMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:12:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60012 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752167AbeGBQMc (ORCPT
+        Mon, 2 Jul 2018 12:12:53 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:44188 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752137AbeGBQMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:12:32 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04B88E65;
-        Mon,  2 Jul 2018 16:12:31 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 18:12:29 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     airlied@linux.ie, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2] char: agp: Change return type to vm_fault_t
-Message-ID: <20180702161229.GC11874@kroah.com>
-References: <20180521181704.GA19646@jordon-HP-15-Notebook-PC>
- <CAFqt6zZdb5+32CvvU_4Pmb1u-d15-iAFb3ab0ftBLP95257Z-Q@mail.gmail.com>
- <CAFqt6zYX-BsGsTHzEzWHWTLGA=7VtSMWYy7w8dBx+hTzxyhyfw@mail.gmail.com>
- <CAFqt6zYKOaieNEQE3TrXLoh9uXwcWH496EyuT_Tuyf8nZ1zd=w@mail.gmail.com>
+        Mon, 2 Jul 2018 12:12:51 -0400
+Received: by mail-yb0-f196.google.com with SMTP id a2-v6so5281977ybe.11;
+        Mon, 02 Jul 2018 09:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BeOym/X0eW2zhuAmx2p3zkQtPQUt6tvuBgE0tx9T5Xo=;
+        b=F64Ns4HYy4arQveBhZr1Vyv+6LBvEPedW/5iti/pfwUWc4ZCggh9aPuw88UkJ+UMdX
+         2gMMkLI3IJhbUmVdt2bEj5kI8B9qrhNAsXlOH03bvAq0IW1K+nDcuY4ObKfpJfzRo1Lb
+         XlaBJK1WlPBqob9pNImAYN5ymYcYFVGjhWPyT4pC8XStLok7aSMZAuAzvWrUPMWqmTIN
+         FS95dDZ6EtMv/XKUYqIGrKu0O8FcQhxa3CKauvLNCBuVP3lJxYfNFZuffR979lMU5agP
+         8ApR5IckV5QqZeT/mqyNBZ+B4GWvM2nZeIspKUIt5HkBpKbnVCQQuKvZY9Mep66uyt7o
+         9MeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BeOym/X0eW2zhuAmx2p3zkQtPQUt6tvuBgE0tx9T5Xo=;
+        b=gpdFZdBkRH+9CQHxoK1JDc5217rjAbn1m578mQZwVaMlKKo9uaKqFj+6N3+Nu61geT
+         +T9PLq7IXN88402tagvT+4MSPwbz1/ptwox5KF6ZDVzkRFW6RvGoV/2yHaHk7p63BMq9
+         hDYFdAK5FVwf3nrkFLq/bh4Eo+nU2bHYmDzptkGPq+dXQ8IzAQYdEr5naZQwK461WWOc
+         c8mLF81aPDBLbEYj7anVmC3sUIZVIyUESDPrisKIakZ9356emJEp2Iw1MV7v06VUgZNT
+         +LN0sfpl3p6OymHosfd8Dicnvwz4OR3WU0C9tVIzjjGzkiadHDlBWtrY+5f8TMEwdAAR
+         f+8w==
+X-Gm-Message-State: APt69E3CTJRoZxOqxi43SSI8srnv7RgQcm1ebmSiPQSxLDknBvWTSkFz
+        SWgMYIwPniHCvnoXfPexyNs=
+X-Google-Smtp-Source: ADUXVKIPtyUPG/htUnDB0vXtO+hnrSnioEKzo1ISQgMYwUjJAI8AaUkGfsTLM3zMYd9Fda/WSaLmMQ==
+X-Received: by 2002:a25:a321:: with SMTP id d30-v6mr14085246ybi.519.1530547970622;
+        Mon, 02 Jul 2018 09:12:50 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2b6f])
+        by smtp.gmail.com with ESMTPSA id p15-v6sm6895363ywg.40.2018.07.02.09.12.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 09:12:49 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 09:12:48 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ata: Remove depends on HAS_DMA in case of platform
+ dependency
+Message-ID: <20180702161248.GG533219@devbig577.frc2.facebook.com>
+References: <20180622110307.31523-1-geert@linux-m68k.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zYKOaieNEQE3TrXLoh9uXwcWH496EyuT_Tuyf8nZ1zd=w@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180622110307.31523-1-geert@linux-m68k.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 09:33:19PM +0530, Souptick Joarder wrote:
-> On Mon, Jun 18, 2018 at 5:07 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > On Thu, May 31, 2018 at 10:38 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >> On Mon, May 21, 2018 at 11:47 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >>> Use new return type vm_fault_t for fault handler. For now,
-> >>> this is just documenting that the function returns a
-> >>> VM_FAULT value rather than an errno. Once all instances are
-> >>> converted, vm_fault_t will become a distinct type.
-> >>>
-> >>> Ref-> commit 1c8f422059ae ("mm: change return type to
-> >>> vm_fault_t") was added in 4.17-rc1 to introduce the new
-> >>> typedef vm_fault_t. Currently we are making change to all
-> >>> drivers to return vm_fault_t for page fault handlers. As
-> >>> part of that char/agp driver is also getting changed to
-> >>> return vm_fault_t type from fault handler.
-> >>>
-> >>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-> >>> ---
-> >>>  drivers/char/agp/alpha-agp.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/char/agp/alpha-agp.c b/drivers/char/agp/alpha-agp.c
-> >>> index 53fe633..c9bf2c2 100644
-> >>> --- a/drivers/char/agp/alpha-agp.c
-> >>> +++ b/drivers/char/agp/alpha-agp.c
-> >>> @@ -11,7 +11,7 @@
-> >>>
-> >>>  #include "agp.h"
-> >>>
-> >>> -static int alpha_core_agp_vm_fault(struct vm_fault *vmf)
-> >>> +static vm_fault_t alpha_core_agp_vm_fault(struct vm_fault *vmf)
-> >>>  {
-> >>>         alpha_agp_info *agp = agp_bridge->dev_private_data;
-> >>>         dma_addr_t dma_addr;
-> >>> --
-> >>> 1.9.1
-> >>>
-> >>
-> >> Any comment for this patch ?
-> >
-> > Any further comment on this patch ?
+On Fri, Jun 22, 2018 at 01:03:07PM +0200, Geert Uytterhoeven wrote:
+> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+> In most cases this other symbol is an architecture or platform specific
+> symbol, or PCI.
 > 
-> Greg, Can we get this patch in queue for 4.19 ?
+> Generic symbols and drivers without platform dependencies keep their
+> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+> cannot work anyway.
+> 
+> This simplifies the dependencies, and allows to improve compile-testing.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-I am not the agp maintainer, am I?  That would be David...
+This looks fine to me but how do you wanna route it?  Should I apply
+it to for-4.18-fixes or should it go with arch changes in some other
+tree?
 
-thanks,
+Thanks.
 
-greg k-h
+-- 
+tejun
