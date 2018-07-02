@@ -6,160 +6,144 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3DDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6755C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53978215FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:22:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53978215FA
+	by mail.kernel.org (Postfix) with ESMTP id 744E82175E
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744E82175E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964887AbeGBIWK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:22:10 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48868 "EHLO
+        id S964915AbeGBIWa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:22:30 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48856 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933657AbeGBIVZ (ORCPT
+        with ESMTP id S933647AbeGBIVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:21:25 -0400
+        Mon, 2 Jul 2018 04:21:24 -0400
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 84A48293A9; Mon,  2 Jul 2018 04:21:19 -0400 (EDT)
+        id 760D7293A8; Mon,  2 Jul 2018 04:21:19 -0400 (EDT)
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc:     Michael Schmitz <schmitzmic@gmail.com>,
         <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
         <linux-kernel@vger.kernel.org>
-Message-Id: <4387790ecb4e8aab19582e7560f43500099982d6.1530519301.git.fthain@telegraphics.com.au>
+Message-Id: <3aaf05c25cc54ee3335bae315ffe181d5c751e55.1530519301.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1530519301.git.fthain@telegraphics.com.au>
 References: <cover.1530519301.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v4 11/11] macintosh/via-pmu: Disambiguate interrupt statistics
+Subject: [PATCH v4 10/11] macintosh/via-pmu: Clean up interrupt statistics
 Date:   Mon,  2 Jul 2018 04:21:19 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the event counters are overloaded which makes it very
-difficult to interpret their values.
-
-Counter 0 is supposed to report CB1 interrupts but it can also count
-PMU_INT_WAITING_CHARGER events.
-
-Counter 1 is supposed to report GPIO interrupts but it can also count
-other events (depending upon the value of the PMU_INT_ADB bit).
-
-Disambiguate these statistics with dedicated counters for GPIO and
-CB1 interrupts.
-
-Comments in the MkLinux source code say that the type 0 and type 1
-interrupts are model-specific. Label them as "unknown".
-
-This change to the contents of /proc/pmu/interrupts is by necessity
-visible in userland. However, packages which interact with the PMU
-(that is, pbbuttonsd, pmac-utils and pmud) don't open this file.
-AFAIK, user software has no need to poll these counters.
+Replace an open-coded ffs() with the function call.
+Simplify an if-else cascade using a switch statement.
+Correct a typo and an indentation issue.
 
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-The file now looks like this,
-
-  0:          0 (Unknown interrupt (type 0))
-  1:          0 (Unknown interrupt (type 1))
-  2:          0 (PC-Card eject button)
-  3:         23 (Sound/Brightness button)
-  4:         74 (ADB message)
-  5:          0 (Battery state change)
-  6:          0 (Environment interrupt)
-  7:        121 (Tick timer)
-  8:          0 (Ghost interrupt (zero len))
-  9:          1 (Empty interrupt (empty mask))
- 10:          2 (Max irqs in a row)
- 11:        194 (Total CB1 triggered events)
- 12:          0 (Total GPIO1 triggered events)
-
-rather than this,
-
-  0:        194 (Total CB1 triggered events)
-  1:          0 (Total GPIO1 triggered events)
-  2:          0 (PC-Card eject button)
-  3:         23 (Sound/Brightness button)
-  4:         74 (ADB message)
-  5:          0 (Battery state change)
-  6:          0 (Environment interrupt)
-  7:        121 (Tick timer)
-  8:          0 (Ghost interrupt (zero len))
-  9:          1 (Empty interrupt (empty mask))
- 10:          2 (Max irqs in a row)
-
-If some parser exists for this file, and if this change is problematic,
-we could increment the driver version number in /proc/pmu/info, to
-correspond with the format change.
----
- drivers/macintosh/via-pmu.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/macintosh/via-pmu.c | 39 ++++++++++++++++++++++-----------------
+ 1 file changed, 22 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-index 3da5d40309d4..d72c450aebe5 100644
+index a68e7a6f00cc..3da5d40309d4 100644
 --- a/drivers/macintosh/via-pmu.c
 +++ b/drivers/macintosh/via-pmu.c
-@@ -172,7 +172,9 @@ static int drop_interrupts;
- static int option_lid_wakeup = 1;
- #endif /* CONFIG_SUSPEND && CONFIG_PPC32 */
- static unsigned long async_req_locks;
--static unsigned int pmu_irq_stats[11];
-+
-+#define NUM_IRQ_STATS 13
-+static unsigned int pmu_irq_stats[NUM_IRQ_STATS];
- 
- static struct proc_dir_entry *proc_pmu_root;
- static struct proc_dir_entry *proc_pmu_info;
-@@ -873,9 +875,9 @@ static int pmu_info_proc_show(struct seq_file *m, void *v)
- static int pmu_irqstats_proc_show(struct seq_file *m, void *v)
+@@ -1355,7 +1355,8 @@ pmu_resume(void)
+ static void
+ pmu_handle_data(unsigned char *data, int len)
  {
- 	int i;
--	static const char *irq_names[] = {
--		"Total CB1 triggered events",
--		"Total GPIO1 triggered events",
-+	static const char *irq_names[NUM_IRQ_STATS] = {
-+		"Unknown interrupt (type 0)",
-+		"Unknown interrupt (type 1)",
- 		"PC-Card eject button",
- 		"Sound/Brightness button",
- 		"ADB message",
-@@ -884,10 +886,12 @@ static int pmu_irqstats_proc_show(struct seq_file *m, void *v)
- 		"Tick timer",
- 		"Ghost interrupt (zero len)",
- 		"Empty interrupt (empty mask)",
--		"Max irqs in a row"
-+		"Max irqs in a row",
-+		"Total CB1 triggered events",
-+		"Total GPIO1 triggered events",
-         };
+-	unsigned char ints, pirq;
++	unsigned char ints;
++	int idx;
+ 	int i = 0;
  
--	for (i=0; i<11; i++) {
-+	for (i = 0; i < NUM_IRQ_STATS; i++) {
- 		seq_printf(m, " %2u: %10u (%s)\n",
- 			     i, pmu_irq_stats[i], irq_names[i]);
+ 	asleep = 0;
+@@ -1377,25 +1378,24 @@ pmu_handle_data(unsigned char *data, int len)
+ 		ints &= ~(PMU_INT_ADB_AUTO | PMU_INT_AUTO_SRQ_POLL);
+ 
+ next:
+-
+ 	if (ints == 0) {
+ 		if (i > pmu_irq_stats[10])
+ 			pmu_irq_stats[10] = i;
+ 		return;
  	}
-@@ -1622,7 +1626,7 @@ via_pmu_interrupt(int irq, void *arg)
+-
+-	for (pirq = 0; pirq < 8; pirq++)
+-		if (ints & (1 << pirq))
+-			break;
+-	pmu_irq_stats[pirq]++;
+ 	i++;
+-	ints &= ~(1 << pirq);
++
++	idx = ffs(ints) - 1;
++	ints &= ~BIT(idx);
++
++	pmu_irq_stats[idx]++;
+ 
+ 	/* Note: for some reason, we get an interrupt with len=1,
+ 	 * data[0]==0 after each normal ADB interrupt, at least
+ 	 * on the Pismo. Still investigating...  --BenH
+ 	 */
+-	if ((1 << pirq) & PMU_INT_ADB) {
++	switch (BIT(idx)) {
++	case PMU_INT_ADB:
+ 		if ((data[0] & PMU_INT_ADB_AUTO) == 0) {
+ 			struct adb_request *req = req_awaiting_reply;
+ 			if (!req) {
+@@ -1433,25 +1433,28 @@ pmu_handle_data(unsigned char *data, int len)
+ 				adb_input(data+1, len-1, 1);
+ #endif /* CONFIG_ADB */		
  		}
- 		if (intr & CB1_INT) {
- 			adb_int_pending = 1;
--			pmu_irq_stats[0]++;
-+			pmu_irq_stats[11]++;
+-	}
++		break;
++
+ 	/* Sound/brightness button pressed */
+-	else if ((1 << pirq) & PMU_INT_SNDBRT) {
++	case PMU_INT_SNDBRT:
+ #ifdef CONFIG_PMAC_BACKLIGHT
+ 		if (len == 3)
+ 			pmac_backlight_set_legacy_brightness_pmu(data[1] >> 4);
+ #endif
+-	}
++		break;
++
+ 	/* Tick interrupt */
+-	else if ((1 << pirq) & PMU_INT_TICK) {
+-		/* Environement or tick interrupt, query batteries */
++	case PMU_INT_TICK:
++		/* Environment or tick interrupt, query batteries */
+ 		if (pmu_battery_count) {
+ 			if ((--query_batt_timer) == 0) {
+ 				query_battery_state();
+ 				query_batt_timer = BATTERY_POLLING_COUNT;
+ 			}
  		}
- 		if (intr & SR_INT) {
- 			req = pmu_sr_intr();
-@@ -1709,7 +1713,7 @@ gpio1_interrupt(int irq, void *arg)
- 			disable_irq_nosync(gpio_irq);
- 			gpio_irq_enabled = 0;
+-        }
+-	else if ((1 << pirq) & PMU_INT_ENVIRONMENT) {
++		break;
++
++	case PMU_INT_ENVIRONMENT:
+ 		if (pmu_battery_count)
+ 			query_battery_state();
+ 		pmu_pass_intr(data, len);
+@@ -1461,7 +1464,9 @@ pmu_handle_data(unsigned char *data, int len)
+ 			via_pmu_event(PMU_EVT_POWER, !!(data[1]&8));
+ 			via_pmu_event(PMU_EVT_LID, data[1]&1);
  		}
--		pmu_irq_stats[1]++;
-+		pmu_irq_stats[12]++;
- 		adb_int_pending = 1;
- 		spin_unlock_irqrestore(&pmu_lock, flags);
- 		via_pmu_interrupt(0, NULL);
+-	} else {
++		break;
++
++	default:
+ 	       pmu_pass_intr(data, len);
+ 	}
+ 	goto next;
 -- 
 2.16.4
 
