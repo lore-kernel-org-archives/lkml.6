@@ -2,130 +2,335 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68645C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AFFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1391221D08
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1391221D08
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 2C3B824110
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:20:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3B824110
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeGBRTr (ORCPT
+        id S1753107AbeGBRT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:19:47 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:39506 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752445AbeGBRTq (ORCPT
+        Mon, 2 Jul 2018 13:19:59 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:43530 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753083AbeGBRT5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:19:46 -0400
-Received: (qmail 4343 invoked by uid 2102); 2 Jul 2018 13:19:45 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 2 Jul 2018 13:19:45 -0400
-Date:   Mon, 2 Jul 2018 13:19:45 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb/host/pci-quirks: Only reset USB bus on NVIDIA devices
-In-Reply-To: <Pine.LNX.4.44L0.1807021233400.1574-100000@iolanthe.rowland.org>
-Message-ID: <Pine.LNX.4.44L0.1807021302210.1574-100000@iolanthe.rowland.org>
+        Mon, 2 Jul 2018 13:19:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0T3qiPqX_1530551977;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3qiPqX_1530551977)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Jul 2018 01:19:45 +0800
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180702123350.dktmzlmztulmtrae@kshutemo-mobl1>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <17c04c38-9569-9b02-2db2-7913a7debb46@linux.alibaba.com>
+Date:   Mon, 2 Jul 2018 10:19:32 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180702123350.dktmzlmztulmtrae@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018, Alan Stern wrote:
-
-> > >> The problem is, that currently 100 ms sleep is over 10 % of the overall
-> > >> execution time of the Linux kernel here. So I really like to not sleep
-> > >> if it’s not needed.
-> > > 
-> > > It would be nice to execute the probes in parallel; that would reduce
-> > > the total delay to 50 ms.  However, that is the subject of a separate
-> > > discussion.
-> > > 
-> > >>> Besides, doesn't it seem like a bad idea to reset the controller while
-> > >>> leaving devices on the USB bus in whatever state they happened to be?
-> > >>
-> > >> Yes, it’s probably not optimal.
-> > >>
-> > >> I wonder if the reset is needed, if the firmware has already initialized
-> > >> the device.
-> > > 
-> > > The devices on the bus need to be reset, because the OS has no idea of
-> > > what they are and what the firmware has them doing.
-> > > 
-> > > For example, the firmware may have assigned bus address 2 to a
-> > > keyboard.  But the OS can initialize the devices in a different order,
-> > > and it might want to assign bus address 2 to a USB drive.  Then you'd
-> > > have two devices trying to use the same address at the same time, which
-> > > would not be a good thing.
-> > 
-> > Understood.
-> > 
-> > So, what would be a way forward? Add a whitelist for boards or chipsets
-> > not needing the 50 ms delay?
-> 
-> The 50-ms delay isn't for the board or the chipset; it is for the USB 
-> devices that are plugged into the controller.  It is required by the 
-> USB spec, so we can't get rid of it.
-
-I may have been too hasty.  The drivers for other types of USB host
-controllers do not perform a USB bus reset during startup, so maybe
-OHCI doesn't really need it either.
-
-We still need to put the controller into the correct state, but what 
-happens to the bus shouldn't matter.  This is because reinitializing 
-the controller disables all its ports, and the only way to enable a 
-port is by sending a reset signal through it.  So the attached devices 
-will end up getting reset one way or another, even if we don't do it 
-explicitly during the handoff.
-
-Therefore in theory we should be okay without the 50-ms delay at all.  
-And we might as well tell the controller to go into the USB_RESET even
-if it already is in that state; testing the current state is more
-effort than just doing setting it.  Something like the patch below
-ought to work, although I wouldn't submit it for the -stable kernels
-since it doesn't fix a real bug.
-
-It's not clear why OHCI has both a USB_RESET state and a 
-HostControllerReset command, especially since the command changes the 
-state to USB_SUSPEND instead of USB_RESET.  This is just one of several 
-odd things in the OHCI specification.
-
-Alan Stern
 
 
+On 7/2/18 5:33 AM, Kirill A. Shutemov wrote:
+> On Sat, Jun 30, 2018 at 06:39:44AM +0800, Yang Shi wrote:
+>> When running some mmap/munmap scalability tests with large memory (i.e.
+>>> 300GB), the below hung task issue may happen occasionally.
+>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>> message.
+>>   ps              D    0 14018      1 0x00000004
+>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>   Call Trace:
+>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>    [<ffffffff817159e6>] schedule+0x36/0x80
+>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>    [<ffffffff81717db0>] down_read+0x20/0x40
+>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>    [<ffffffff81242266>] vfs_read+0x96/0x130
+>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>>
+>> It is because munmap holds mmap_sem from very beginning to all the way
+>> down to the end, and doesn't release it in the middle. When unmapping
+>> large mapping, it may take long time (take ~18 seconds to unmap 320GB
+>> mapping with every single page mapped on an idle machine).
+>>
+>> It is because munmap holds mmap_sem from very beginning to all the way
+>> down to the end, and doesn't release it in the middle. When unmapping
+>> large mapping, it may take long time (take ~18 seconds to unmap 320GB
+>> mapping with every single page mapped on an idle machine).
+>>
+>> Zapping pages is the most time consuming part, according to the
+>> suggestion from Michal Hock [1], zapping pages can be done with holding
+>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
+>> mmap_sem to cleanup vmas. All zapped vmas will have VM_DEAD flag set,
+>> the page fault to VM_DEAD vma will trigger SIGSEGV.
+>>
+>> Define large mapping size thresh as PUD size or 1GB, just zap pages with
+>> read mmap_sem for mappings which are >= thresh value.
+>>
+>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, then just
+>> fallback to regular path since unmapping those mappings need acquire
+>> write mmap_sem.
+>>
+>> For the time being, just do this in munmap syscall path. Other
+>> vm_munmap() or do_munmap() call sites remain intact for stability
+>> reason.
+>>
+>> The below is some regression and performance data collected on a machine
+>> with 32 cores of E5-2680 @ 2.70GHz and 384GB memory.
+>>
+>> With the patched kernel, write mmap_sem hold time is dropped to us level
+>> from second.
+>>
+>> [1] https://lwn.net/Articles/753269/
+>>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> ---
+>>   mm/mmap.c | 136 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 134 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index 87dcf83..d61e08b 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -2763,6 +2763,128 @@ static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
+>>   	return 1;
+>>   }
+>>   
+>> +/* Consider PUD size or 1GB mapping as large mapping */
+>> +#ifdef HPAGE_PUD_SIZE
+>> +#define LARGE_MAP_THRESH	HPAGE_PUD_SIZE
+>> +#else
+>> +#define LARGE_MAP_THRESH	(1 * 1024 * 1024 * 1024)
+>> +#endif
+> PUD_SIZE is defined everywhere.
 
-Index: usb-4.x/drivers/usb/host/pci-quirks.c
-===================================================================
---- usb-4.x.orig/drivers/usb/host/pci-quirks.c
-+++ usb-4.x/drivers/usb/host/pci-quirks.c
-@@ -783,15 +783,9 @@ static void quirk_usb_handoff_ohci(struc
- 	/* disable interrupts */
- 	writel((u32) ~0, base + OHCI_INTRDISABLE);
- 
--	/* Reset the USB bus, if the controller isn't already in RESET */
--	if (control & OHCI_HCFS) {
--		/* Go into RESET, preserving RWC (and possibly IR) */
--		writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
--		readl(base + OHCI_CONTROL);
--
--		/* drive bus reset for at least 50 ms (7.1.7.5) */
--		msleep(50);
--	}
-+	/* Go into the USB_RESET state, preserving RWC (and possibly IR) */
-+	writel(control & OHCI_CTRL_MASK, base + OHCI_CONTROL);
-+	readl(base + OHCI_CONTROL);
- 
- 	/* software reset of the controller, preserving HcFmInterval */
- 	if (!no_fminterval)
+If THP is defined, otherwise it is:
+
+#define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
+
+>
+>> +
+>> +/* Unmap large mapping early with acquiring read mmap_sem */
+>> +static int do_munmap_zap_early(struct mm_struct *mm, unsigned long start,
+>> +			       size_t len, struct list_head *uf)
+>> +{
+>> +	unsigned long end = 0;
+>> +	struct vm_area_struct *vma = NULL, *prev, *tmp;
+>> +	bool success = false;
+>> +	int ret = 0;
+>> +
+>> +	if (!munmap_addr_sanity(start, len))
+>> +		return -EINVAL;
+>> +
+>> +	len = PAGE_ALIGN(len);
+>> +
+>> +	end = start + len;
+>> +
+>> +	/* Just deal with uf in regular path */
+>> +	if (unlikely(uf))
+>> +		goto regular_path;
+>> +
+>> +	if (len >= LARGE_MAP_THRESH) {
+>> +		/*
+>> +		 * need write mmap_sem to split vma and set VM_DEAD flag
+>> +		 * splitting vma up-front to save PITA to clean if it is failed
+> What errors do you talk about? ENOMEM on VMA split? Anything else?
+
+Yes, ENOMEM on vma split.
+
+>
+>> +		 */
+>> +		down_write(&mm->mmap_sem);
+>> +		ret = munmap_lookup_vma(mm, &vma, &prev, start, end);
+>> +		if (ret != 1) {
+>> +			up_write(&mm->mmap_sem);
+>> +			return ret;
+>> +		}
+>> +		/* This ret value might be returned, so reset it */
+>> +		ret = 0;
+>> +
+>> +		/*
+>> +		 * Unmapping vmas, which has VM_LOCKED|VM_HUGETLB|VM_PFNMAP
+>> +		 * flag set or has uprobes set, need acquire write map_sem,
+>> +		 * so skip them in early zap. Just deal with such mapping in
+>> +		 * regular path.
+>> +		 * Borrow can_madv_dontneed_vma() to check the conditions.
+>> +		 */
+>> +		tmp = vma;
+>> +		while (tmp && tmp->vm_start < end) {
+>> +			if (!can_madv_dontneed_vma(tmp) ||
+>> +			    vma_has_uprobes(tmp, start, end)) {
+>> +				up_write(&mm->mmap_sem);
+>> +				goto regular_path;
+>> +			}
+>> +			tmp = tmp->vm_next;
+>> +		}
+>> +		/*
+>> +		 * set VM_DEAD flag before tear down them.
+>> +		 * page fault on VM_DEAD vma will trigger SIGSEGV.
+>> +		 */
+>> +		tmp = vma;
+>> +		for ( ; tmp && tmp->vm_start < end; tmp = tmp->vm_next)
+>> +			tmp->vm_flags |= VM_DEAD;
+> I probably miss the explanation somewhere, but what's wrong with allowing
+> other thread to re-populate the VMA?
+>
+> I would rather allow the VMA to be re-populated by other thread while we
+> are zapping the range. And later zap the range again under down_write.
+>
+> It should also lead to consolidated regular path: take mmap_sem for write
+> and call do_munmap().
+>
+> On the first path we just skip VMA we cannot deal with under
+> down_read(mmap_sem), regular path will take care of them.
+>
+>
+>> +		up_write(&mm->mmap_sem);
+>> +
+>> +		/* zap mappings with read mmap_sem */
+>> +		down_read(&mm->mmap_sem);
+> Yeah. There's race between up_write() and down_read().
+> Use downgrade, as Andrew suggested.
+>
+>> +		zap_page_range(vma, start, len);
+>> +		/* indicates early zap is success */
+>> +		success = true;
+>> +		up_read(&mm->mmap_sem);
+> And here again.
+>
+> This race can be avoided if we wouldn't carry vma to regular_path, but
+> just go directly to do_munmap().
+
+Thanks, Kirill. Yes, I did think about re-validating vmas before. This 
+sounds reasonable to avoid the race. Although we spend more time in 
+re-looking up vmas, but it should be very short, and the duplicate zap 
+should be very short too.
+
+Yang
+
+>
+>> +	}
+>> +
+>> +regular_path:
+>> +	/* hold write mmap_sem for vma manipulation or regular path */
+>> +	if (down_write_killable(&mm->mmap_sem))
+>> +		return -EINTR;
+>> +	if (success) {
+>> +		/* vmas have been zapped, here clean up pgtable and vmas */
+>> +		struct vm_area_struct *next = prev ? prev->vm_next : mm->mmap;
+>> +		struct mmu_gather tlb;
+>> +		tlb_gather_mmu(&tlb, mm, start, end);
+>> +		free_pgtables(&tlb, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
+>> +			      next ? next->vm_start : USER_PGTABLES_CEILING);
+>> +		tlb_finish_mmu(&tlb, start, end);
+>> +
+>> +		detach_vmas_to_be_unmapped(mm, vma, prev, end);
+>> +		arch_unmap(mm, vma, start, end);
+>> +		remove_vma_list(mm, vma);
+>> +	} else {
+>> +		/* vma is VM_LOCKED|VM_HUGETLB|VM_PFNMAP or has uprobe */
+>> +		if (vma) {
+>> +			if (unlikely(uf)) {
+>> +				int ret = userfaultfd_unmap_prep(vma, start,
+>> +								 end, uf);
+>> +				if (ret)
+>> +					goto out;
+>> +			}
+>> +			if (mm->locked_vm) {
+>> +				tmp = vma;
+>> +				while (tmp && tmp->vm_start < end) {
+>> +					if (tmp->vm_flags & VM_LOCKED) {
+>> +						mm->locked_vm -= vma_pages(tmp);
+>> +						munlock_vma_pages_all(tmp);
+>> +					}
+>> +					tmp = tmp->vm_next;
+>> +				}
+>> +			}
+>> +			detach_vmas_to_be_unmapped(mm, vma, prev, end);
+>> +			unmap_region(mm, vma, prev, start, end);
+>> +			remove_vma_list(mm, vma);
+>> +		} else
+>> +			/* When mapping size < LARGE_MAP_THRESH */
+>> +			ret = do_munmap(mm, start, len, uf);
+>> +	}
+>> +
+>> +out:
+>> +	up_write(&mm->mmap_sem);
+>> +	return ret;
+>> +}
+>> +
+>>   /* Munmap is split into 2 main parts -- this part which finds
+>>    * what needs doing, and the areas themselves, which do the
+>>    * work.  This now handles partial unmappings.
+>> @@ -2829,6 +2951,17 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>>   	return 0;
+>>   }
+>>   
+>> +static int vm_munmap_zap_early(unsigned long start, size_t len)
+>> +{
+>> +	int ret;
+>> +	struct mm_struct *mm = current->mm;
+>> +	LIST_HEAD(uf);
+>> +
+>> +	ret = do_munmap_zap_early(mm, start, len, &uf);
+>> +	userfaultfd_unmap_complete(mm, &uf);
+>> +	return ret;
+>> +}
+>> +
+>>   int vm_munmap(unsigned long start, size_t len)
+>>   {
+>>   	int ret;
+>> @@ -2848,10 +2981,9 @@ int vm_munmap(unsigned long start, size_t len)
+>>   SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
+>>   {
+>>   	profile_munmap(addr);
+>> -	return vm_munmap(addr, len);
+>> +	return vm_munmap_zap_early(addr, len);
+>>   }
+>>   
+>> -
+>>   /*
+>>    * Emulation of deprecated remap_file_pages() syscall.
+>>    */
+>> -- 
+>> 1.8.3.1
+>>
 
