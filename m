@@ -2,119 +2,111 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EDCC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632A1C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3B8248D1
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:02:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="chbA8unZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3B8248D1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 1E7F02540D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 08:05:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7F02540D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754067AbeGBICw (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 04:02:52 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43446 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753025AbeGBICq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:02:46 -0400
-Received: by mail-lf0-f65.google.com with SMTP id m12-v6so10704654lfc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 01:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1849dU4tG59McCnf2+NkKCCjXyKjWmv/jftBj2/tZ8A=;
-        b=chbA8unZ5vuTHwgR4Egg8bzm1Q+v6UmYVlENtQTOSkMuAOk69qDF9zAV7RVzrsGcf3
-         LvXtD0Tpe1H/DqfANLL8L/MyJcYYcVgnKKSXf4JuUDn9PYef6n5aVtLPlTK4EuVmqCkJ
-         7+EIhgu6/lgHFSXTe8sV6vm2SVOqYvDybnaiKnRDMDgc6NqIzdhkmGCORjUlpu/ywuTp
-         WeZvR4zjS9bQAKQNtYowrpHOk9kQ+LlhJBSZu+akx6gf84NgEaL3KpVchw9JlT5yauA+
-         6EhUkxD/pfvS6C5z9sSE2Yv6G3brS4Lhb0vdAQA3px+ucswrIR5suq6SSarHDHUoxZ5Y
-         y1OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1849dU4tG59McCnf2+NkKCCjXyKjWmv/jftBj2/tZ8A=;
-        b=t7u19B/XhVxdF+CKGiqLqmwe/fFYhVHhlauFMnEEsHIKLU6BbAOsL46EeqmccWYb7O
-         k25Xm5DyYIZuOq39YOTFeiK3FIdc+ZGOt2j2HZp+bo0TqgSG7iwnTv3d3t6QetD9scru
-         /+jN+aDzVtboqJE8mSFiccnJXe85Xh+qgtz2KCaNFG4J5QsTJVb/FhC1B4K9iUt3nGdx
-         i2OyhaCcldUxoD40C76J0mR+AynLeUla+AiLjQ8g4BPGorqG52PQsCY4fQgRpAT913FT
-         wR5/P3W5TTvrCnSs+45T6TdKRhATijP4QYCx7RtjoVryt4nQ6G/JBXzHmfIto7nzMmPu
-         9uvA==
-X-Gm-Message-State: APt69E3NPlrZBejz4Mw1FGfoMygH2jlg6HBESvk2eYgNZaYphzP7c9lt
-        g5Bt8lJ007OOJkyoSORpKJJTyQ==
-X-Google-Smtp-Source: AAOMgpfOo9PR5tBkImaHkHp1HlpHr8nStHBPXrRi6T7G1KSpbGhGPVowWhQvs0LC+40kUbgIhyqdLQ==
-X-Received: by 2002:a19:c301:: with SMTP id t1-v6mr14037606lff.45.1530518564857;
-        Mon, 02 Jul 2018 01:02:44 -0700 (PDT)
-Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm595041ljd.11.2018.07.02.01.02.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 01:02:43 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
-        youngtack.jin@circuitblvd.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH] lightnvm: limit get chunk meta request size
-Date:   Mon,  2 Jul 2018 10:02:23 +0200
-Message-Id: <20180702080223.13214-1-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
+        id S933467AbeGBIFM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 04:05:12 -0400
+Received: from muru.com ([72.249.23.125]:49434 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752607AbeGBIFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 04:05:08 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 5B9EA8047;
+        Mon,  2 Jul 2018 08:08:03 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 01:05:05 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Maciej Purski <m.purski@samsung.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] regulator: core: Pass max_uV value to
+ regulator_set_voltage_rdev
+Message-ID: <20180702080505.GN112168@atomide.com>
+References: <20180615112916.GK112168@atomide.com>
+ <CGME20180618140856eucas1p281619f9bf003655a3c2eac356216ab25@eucas1p2.samsung.com>
+ <1529330913-11152-1-git-send-email-m.purski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529330913-11152-1-git-send-email-m.purski@samsung.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For devices that does not specify a limit on its transfer size, the
-get_chk_meta command may send down a single I/O retrieving the full
-chunk metadata table. Resulting in large 2-4MB I/O requests. Instead,
-split up the I/Os to a maximum of 256KB and issue them separately to
-reduce memory requirements.
+* Maciej Purski <m.purski@samsung.com> [180618 14:11]:
+> If the regulator is not coupled, balance_voltage() should preserve
+> its desired max uV, instead of setting the exact value like in
+> coupled regulators case.
+> 
+> Remove debugs, which are not necessary for now.
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
----
- drivers/nvme/host/lightnvm.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Sorry for the delay in testing. I gave your series with this one
+a quick boot test on beagleboard-x15 and now the output is
+different. So instead of just hanging it seems to be stuck in
+some eternal loop see below.
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index b9989717418d..3b644b0e9713 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -583,7 +583,13 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	struct ppa_addr ppa;
- 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
- 	size_t log_pos, offset, len;
--	int ret, i;
-+	int ret, i, max_len;
-+
-+	/*
-+	 * limit requests to maximum 256K to avoid issuing arbitrary large
-+	 * requests when the device does not specific a maximum transfer size.
-+	 */
-+	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
- 
- 	/* Normalize lba address space to obtain log offset */
- 	ppa.ppa = slba;
-@@ -596,7 +602,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
- 
- 	while (left) {
--		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
-+		len = min_t(unsigned int, left, max_len);
- 
- 		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
- 				dev_meta, len, offset);
--- 
-2.11.0
+Regards,
 
+Tony
+
+8< -------
+ * Loading modules ...[   14.490595] omap-mailbox 48840000.mailbox: omap mailbox rev 0x400
+[   14.498515] omap-mailbox 48842000.mailbox: omap mailbox rev 0x400
+[   14.535853] omap_wdt: OMAP Watchdog Timer Rev 0x01: initial timeout 60 sec
+[   14.937029] lib80211: common routines for IEEE802.11 drivers
+[   15.350565] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   15.448875] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   15.460831] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   15.469916] cfg80211: failed to load regulatory.db
+[   16.092151] cpu cpu0: regulator_set_voltage: 3387
+[   16.097313] smps12: regulator_set_voltage_unlocked:  3040
+[   16.109880] smps12: optimal uV: 1154000 current uV: 970000, max uV: 1250000
+[   16.117085] smps12: regulator_set_voltage_rdev: 3110
+[   16.122696] smps12: _regulator_do_set_voltage: 2907
+[   16.130443] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.137824] smps12: regulator_set_voltage_rdev: 3110
+[   16.143334] smps12: _regulator_do_set_voltage: 2907
+[   16.149849] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.157174] smps12: regulator_set_voltage_rdev: 3110
+[   16.162683] smps12: _regulator_do_set_voltage: 2907
+[   16.169069] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.176391] smps12: regulator_set_voltage_rdev: 3110
+[   16.181932] smps12: _regulator_do_set_voltage: 2907
+[   16.188353] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.195614] smps12: regulator_set_voltage_rdev: 3110
+[   16.201199] smps12: _regulator_do_set_voltage: 2907
+[   16.207676] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.214931] smps12: regulator_set_voltage_rdev: 3110
+[   16.220614] smps12: _regulator_do_set_voltage: 2907
+[   16.227159] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.234379] smps12: regulator_set_voltage_rdev: 3110
+[   16.239961] smps12: _regulator_do_set_voltage: 2907
+[   16.246494] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.253746] smps12: regulator_set_voltage_rdev: 3110
+[   16.259890] smps12: _regulator_do_set_voltage: 2907
+[   16.267013] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.274114] smps12: regulator_set_voltage_rdev: 3110
+[   16.279565] smps12: _regulator_do_set_voltage: 2907
+[   16.288426] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.295562] smps12: regulator_set_voltage_rdev: 3110
+[   16.301580] smps12: _regulator_do_set_voltage: 2907
+[   16.308331] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.315655] smps12: regulator_set_voltage_rdev: 3110
+[   16.321328] smps12: _regulator_do_set_voltage: 2907
+[   16.327686] smps12: optimal uV: 1154000 current uV: 1160000, max uV: 1250000
+[   16.334945] smps12: regulator_set_voltage_rdev: 3110
+[   16.340662] smps12: _regulator_do_set_voltage: 2907
