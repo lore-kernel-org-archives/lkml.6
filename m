@@ -3,86 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2975C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A476C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EBE225220
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBE225220
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id E40C12522C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:44:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40C12522C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933019AbeGBHn7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:43:59 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:43100 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbeGBHn4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:43:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 434D760A04A9;
-        Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 02aiSv2Im7sn; Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 0571060B3040;
-        Mon,  2 Jul 2018 09:43:55 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id cIENoVzzsvTG; Mon,  2 Jul 2018 09:43:54 +0200 (CEST)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id DB9C160A04AC;
-        Mon,  2 Jul 2018 09:43:54 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     dedekind1@gmail.com
-Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v3 1/2] ubi: provide a way to skip CRC checks
-Date:   Mon, 02 Jul 2018 09:43:48 +0200
-Message-ID: <1814021.2UnKZ8bNR8@blindfold>
-In-Reply-To: <1530516625.469.82.camel@gmail.com>
-References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com> <3f9cef553d4f5da3fe2d76113d79ada1f0fe5224.1530169759.git-series.quentin.schulz@bootlin.com> <1530516625.469.82.camel@gmail.com>
+        id S933324AbeGBHoK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:44:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54914 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933055AbeGBHoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 03:44:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34E317A9;
+        Mon,  2 Jul 2018 00:44:08 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0F533F5AD;
+        Mon,  2 Jul 2018 00:44:06 -0700 (PDT)
+Subject: Re: [PATCH 4.14 088/157] irqchip/gic-v3-its: Dont bind LPI to
+ unavailable NUMA node
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sumit Garg <sumit.garg@linaro.org>
+References: <20180701160852.287307684@linuxfoundation.org>
+ <20180701160856.970708088@linuxfoundation.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <b7959075-2874-c774-9e01-221cb5e4e18c@arm.com>
+Date:   Mon, 2 Jul 2018 08:44:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180701160856.970708088@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Artem,
-
-Am Montag, 2. Juli 2018, 09:30:25 CEST schrieb Artem Bityutskiy:
-> Hi,
+On 01/07/18 17:22, Greg Kroah-Hartman wrote:
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
 > 
-> On Thu, 2018-06-28 at 09:40 +0200, Quentin Schulz wrote:
-> > diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
-> > index d4b2e87..e9e9ecb 100644
-> > --- a/drivers/mtd/ubi/kapi.c
-> > +++ b/drivers/mtd/ubi/kapi.c
-> > @@ -202,7 +202,7 @@ struct ubi_volume_desc *ubi_open_volume(int ubi_num, int vol_id, int mode)
-> >  	desc->mode = mode;
-> >  
-> >  	mutex_lock(&ubi->ckvol_mutex);
-> > -	if (!vol->checked) {
-> > +	if (!vol->checked && !vol->skip_check) {
-> >  		/* This is the first open - check the volume */
-> >  		err = ubi_check_volume(ubi, vol_id);
-> >  		if (err < 0) {
+> ------------------
 > 
-> Did you deliberately did not add a similar check to 'vol_cdev_write()' ?
-> You want to skip checking on load but do have the checking after volume update ?
-> Looks a bit inconsistent to me. At the very least deserves a comment in
-> 'vol_cdev_write()' about why 'skip_check' flag is ignored there.
+> From: Yang Yingliang <yangyingliang@huawei.com>
+> 
+> commit c1797b11a09c8323c92b074fd48b89a936c991d0 upstream.
+> 
+> On a NUMA system, if an ITS is local to an offline node, the ITS driver may
+> pick an offline CPU to bind the LPI.  In this case, pick an online CPU (and
+> the first one will do).
+> 
+> But on some systems, binding an LPI to non-local node CPU may cause
+> deadlock (see Cavium erratum 23144).  In this case, just fail the activate
+> and return an error code.
+> 
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Sumit Garg <sumit.garg@linaro.org>
+> Cc: stable@vger.kernel.org
+> Link: https://lkml.kernel.org/r/20180622095254.5906-5-marc.zyngier@arm.com
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -2221,7 +2221,14 @@ static void its_irq_domain_activate(stru
+>  		cpu_mask = cpumask_of_node(its_dev->its->numa_node);
+>  
+>  	/* Bind the LPI to the first possible CPU */
+> -	cpu = cpumask_first(cpu_mask);
+> +	cpu = cpumask_first_and(cpu_mask, cpu_online_mask);
+> +	if (cpu >= nr_cpu_ids) {
+> +		if (its_dev->its->flags & ITS_FLAGS_WORKAROUND_CAVIUM_23144)
+> +			return -EINVAL;
 
-Well, the idea is skipping the check, not the crc32 on the medium.
-That way we can later, if needed, offer a way to drop the flag but
-and don't have to rewrite with crc32-enabled.
+As reported by the kbuild robot, you need to drop the return value here
+(the prototype was changed post 4.14). A WARN_ON() could be useful to
+detect the case though.
 
 Thanks,
-//richard
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
