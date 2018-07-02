@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4FDC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDE5C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE8124222
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E4F24FE3
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ocLWewXH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE8124222
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="USCKgRRH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E4F24FE3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753467AbeGBVUM (ORCPT
+        id S1753529AbeGBVUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:20:12 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46379 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeGBVUI (ORCPT
+        Mon, 2 Jul 2018 17:20:18 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55602 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753404AbeGBVUM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:20:08 -0400
-Received: by mail-io0-f195.google.com with SMTP id p7-v6so3568960ioh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:20:07 -0700 (PDT)
+        Mon, 2 Jul 2018 17:20:12 -0400
+Received: by mail-it0-f66.google.com with SMTP id 16-v6so255025itl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dX9pP/dh5n477QsEVY5f6zeNdJXdS406ea9F9OtRySo=;
-        b=ocLWewXH1FUa0J+jePdoJA8yu0+MG3C6DIwhwj8byaUcjsOiLvHUJOiU/CjJXJc/1r
-         +AI4cNtmpBYCmPKNVE/OqugGfZLpmT97H1bV7QbW5vxNON5NGdT2fmXHAugO4wlp+Wyu
-         gscxm/YOfiAwt9exfePToXjWtxdnnR82QnUF4=
+        bh=d5e+YRQymzw8XOzquPKh8N+zTFcrUq+WIpxNeYloeNo=;
+        b=USCKgRRHMh5VbtllZ5qgJKGDchqQkrQVKiQ9R214ghtni9C30/RUxJbyRKa6ihqX4Z
+         xtbK78M9qkUkfV2hIrUAoEViTTHigm7D2PvxJ0dPEiElQXQo38glsbwdTz/SEFYbZakO
+         H54/Q+m51o5iu42Zu+m9hB49MVaGjPs+OSVVk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=dX9pP/dh5n477QsEVY5f6zeNdJXdS406ea9F9OtRySo=;
-        b=d1QiToE8Eie6iF39DTqtGBJC+fhThfnAdO2l58O+uyUKyeLqZ0kKsh9oVsjhu8NCLh
-         O6kfKr4qGSLLBwueWJG3WZgalpcorROJfOoGiYauVCRwEkwsfPHPK1hlr02BAthQbNWy
-         29YR0awlUgnp+ypAr+KTW36x5EVXS+jdq+ztwnl/dj1qeaOpKrQrlEgmiB7TDLQ9C9nA
-         hnYaN7jZ+03Yv9MIRa+ENS7O/8a91qY6fjVhVDMZgJ59rlPYKP8ym7MPqcBoWFfmIp1r
-         r73q22IH2b4vwkunqGzt8xSLmnsFEa0AZFPJiXSFYafXaoRX7feyMhzBnnHi9Rbkea4i
-         /wqw==
-X-Gm-Message-State: APt69E2yxcQ9wxmMqN8QFOyteYxhTL3omFpzpOynj7W7c3Gi5P+TydJD
-        kOmGc9RP7LPviZ06t0GE6cuRng==
-X-Google-Smtp-Source: AAOMgpdwqnNtLpHUfUHBQGNc55kHh6kr0NaR0VxQHNzfX+LfyR5eXgDDaYGVXW8znqhdIj/m6i3s4g==
-X-Received: by 2002:a6b:28c6:: with SMTP id o189-v6mr22006296ioo.149.1530566407366;
-        Mon, 02 Jul 2018 14:20:07 -0700 (PDT)
+        bh=d5e+YRQymzw8XOzquPKh8N+zTFcrUq+WIpxNeYloeNo=;
+        b=nwBbGKekmnz6yIz//YBHJYY0uDwqrxHZnR+xew5zabJueRHPpwJu6pgpfQCKM8EOrZ
+         VkAXVV011RUtnC678teYuuQ36JaVqQyy4mZRS9ej19DyYWPT/GmuJECyHKoObwv7/0Sv
+         1ivDKOujFjJsDGwujXOb7aMpkH0F1D9Ebc2gANKXECd4Rn9qRuKrZqZ/0IGjvZ0iDwWv
+         i6xUuvfL5kxIXFZAwddrtHNCp3cVO5sMr+fzKvJONP4tHNVnvUbx8Y/ipXwver0uX15L
+         0YHOaX9zZx/EHyexa/jL9HrJghVUuFrGEA6j3CDGMzkh4liSNbYZk/33p/pvgDoKHfWO
+         Ty1Q==
+X-Gm-Message-State: APt69E05clBbhGjXB/S6iGVUAW9IApYMVX7b2tEBFh5rDZtRdkvL8Dim
+        meeYsNWVcl0ZAU0T/8QOYJeWjA==
+X-Google-Smtp-Source: AAOMgpcK1ewCqq6odrwJhFpkSrexBENdFrCFrGon7HVnL3WEzRaBixZ9j2u6sWU6fE7Le4EpcywDCw==
+X-Received: by 2002:a24:eb0e:: with SMTP id h14-v6mr7899414itj.69.1530566411606;
+        Mon, 02 Jul 2018 14:20:11 -0700 (PDT)
 Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
-        by smtp.gmail.com with ESMTPSA id h75-v6sm776729ioh.50.2018.07.02.14.20.06
+        by smtp.gmail.com with ESMTPSA id h75-v6sm776729ioh.50.2018.07.02.14.20.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 14:20:06 -0700 (PDT)
+        Mon, 02 Jul 2018 14:20:11 -0700 (PDT)
 From:   Daniel Kurtz <djkurtz@chromium.org>
 Cc:     Daniel Kurtz <djkurtz@chromium.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
@@ -64,11 +64,12 @@ Cc:     Daniel Kurtz <djkurtz@chromium.org>,
         Alex Deucher <alexander.deucher@amd.com>,
         Akshu Agrawal <akshu.agrawal@amd.com>,
         Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
         AUDIO POWER MANAGEM...), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/6] ASoC: AMD: Always subtract bytescount
-Date:   Mon,  2 Jul 2018 15:19:52 -0600
-Message-Id: <20180702211956.149355-3-djkurtz@chromium.org>
+Subject: [PATCH 4/6] ASoC: AMD: Fix Capture DMA channel names
+Date:   Mon,  2 Jul 2018 15:19:53 -0600
+Message-Id: <20180702211956.149355-4-djkurtz@chromium.org>
 X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
 In-Reply-To: <20180702211956.149355-1-djkurtz@chromium.org>
 References: <20180702211956.149355-1-djkurtz@chromium.org>
@@ -78,29 +79,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is always correct to subtract out the starting bytescount value.  Even
-in the case of 2^64 byte rollover (292 Million Years in the future
-@ 48000 Hz) the math still works out.
+On capture, audio data is first copied from I2S to ACP memory, and then
+to SYSRAM.  For each step the channel number increases, so the names in
+the driver were wrong.
 
 Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/amd/acp-pcm-dma.c | 24 ++++++++++++------------
+ sound/soc/amd/acp.h         |  8 ++++----
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index e6f85f2e5ac2a..224383fef0c3a 100644
+index 224383fef0c3a..2a6a6e65e27c3 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -995,8 +995,7 @@ static snd_pcm_uframes_t acp_dma_pointer(struct snd_pcm_substream *substream)
- 	buffersize = frames_to_bytes(runtime, runtime->buffer_size);
- 	bytescount = acp_get_byte_count(rtd);
+@@ -697,31 +697,31 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
  
--	if (bytescount > rtd->bytescount)
--		bytescount -= rtd->bytescount;
-+	bytescount -= rtd->bytescount;
- 	pos = do_div(bytescount, buffersize);
- 	return bytes_to_frames(runtime, pos);
- }
+-	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
++	if ((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) != 0) {
+ 		valid_irq = true;
+ 		snd_pcm_period_elapsed(irq_data->capture_i2ssp_stream);
+-		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
++		acp_reg_write((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+-	if ((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) != 0) {
++	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
+ 		valid_irq = true;
+-		acp_reg_write((intr_flag & BIT(ACP_TO_SYSRAM_CH_NUM)) << 16,
++		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+-	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
++	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
+ 		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
+ 		acp_reg_write((intr_flag &
+-			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
++			      BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+-	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
++	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
+ 		valid_irq = true;
+ 		acp_reg_write((intr_flag &
+-			      BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) << 16,
++			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
+ 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
+ 	}
+ 
+@@ -899,8 +899,8 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 		switch (rtd->i2s_instance) {
+ 		case I2S_BT_INSTANCE:
+ 			rtd->pte_offset = ACP_ST_BT_CAPTURE_PTE_OFFSET;
+-			rtd->ch1 = ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM;
+-			rtd->ch2 = I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM;
++			rtd->ch1 = I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM;
++			rtd->ch2 = ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM;
+ 			rtd->sram_bank = ACP_SRAM_BANK_4_ADDRESS;
+ 			rtd->destination = FROM_BLUETOOTH;
+ 			rtd->dma_dscr_idx_1 = CAPTURE_START_DMA_DESCR_CH10;
+@@ -914,8 +914,8 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 		case I2S_SP_INSTANCE:
+ 		default:
+ 			rtd->pte_offset = ACP_CAPTURE_PTE_OFFSET;
+-			rtd->ch1 = ACP_TO_SYSRAM_CH_NUM;
+-			rtd->ch2 = I2S_TO_ACP_DMA_CH_NUM;
++			rtd->ch1 = I2S_TO_ACP_DMA_CH_NUM;
++			rtd->ch2 = ACP_TO_SYSRAM_CH_NUM;
+ 			switch (adata->asic_type) {
+ 			case CHIP_STONEY:
+ 				rtd->pte_offset = ACP_ST_CAPTURE_PTE_OFFSET;
+diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
+index 3190fdce63074..0a2240bff62e1 100644
+--- a/sound/soc/amd/acp.h
++++ b/sound/soc/amd/acp.h
+@@ -74,16 +74,16 @@
+ #define ACP_TO_I2S_DMA_CH_NUM 13
+ 
+ /* Capture DMA channels */
+-#define ACP_TO_SYSRAM_CH_NUM 14
+-#define I2S_TO_ACP_DMA_CH_NUM 15
++#define I2S_TO_ACP_DMA_CH_NUM 14
++#define ACP_TO_SYSRAM_CH_NUM 15
+ 
+ /* Playback DMA Channels for I2S BT instance */
+ #define SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM  8
+ #define ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM 9
+ 
+ /* Capture DMA Channels for I2S BT Instance */
+-#define ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM 10
+-#define I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM 11
++#define I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM 10
++#define ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM 11
+ 
+ #define NUM_DSCRS_PER_CHANNEL 2
+ 
 -- 
 2.18.0.399.gad0ab374a1-goog
 
