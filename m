@@ -2,139 +2,132 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB64C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5E4C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6784724176
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6784724176
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id C555224176
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C555224176
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752702AbeGBPAq (ORCPT
+        id S1752664AbeGBPBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:00:46 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:30175 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751443AbeGBPAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:00:45 -0400
-X-IronPort-AV: E=Sophos;i="5.51,299,1526342400"; 
-   d="scan'208";a="59246822"
-From:   Anoob Soman <anoob.soman@citrix.com>
-To:     <lduncan@suse.com>, <cleech@redhat.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>, <open-iscsi@googlegroups.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Anoob Soman <anoob.soman@citrix.com>
-Subject: [RFC 1/1] libiscsi: Fix race between iscsi_xmit_task and iscsi_complete_task
-Date:   Mon, 2 Jul 2018 16:00:24 +0100
-Message-ID: <1530543624-130587-1-git-send-email-anoob.soman@citrix.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 2 Jul 2018 11:01:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752055AbeGBPBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:01:34 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 162247A7E5;
+        Mon,  2 Jul 2018 15:01:34 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-57.ams2.redhat.com [10.36.116.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 217B82026D5B;
+        Mon,  2 Jul 2018 15:01:32 +0000 (UTC)
+Subject: Re: [PATCH v3 08/20] kvm: arm/arm64: Abstract stage2 pgd table
+ allocation
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-9-git-send-email-suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <ac15d082-22eb-54d1-d695-6a0a3ac2d1eb@redhat.com>
+Date:   Mon, 2 Jul 2018 17:01:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1530270944-11351-9-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 15:01:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 02 Jul 2018 15:01:34 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a target sends Check Condition, whilst initiator is busy xmiting
-re-queued data, could lead to race between iscsi_complete_task() and
-iscsi_xmit_task() and eventually crashing with the following kernel
-backtrace.
+Hi Suzuki
 
-[3326150.987523] ALERT: BUG: unable to handle kernel NULL pointer dereference at 0000000000000078
-[3326150.987549] ALERT: IP: [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
-[3326150.987571] WARN: PGD 569c8067 PUD 569c9067 PMD 0
-[3326150.987582] WARN: Oops: 0002 [#1] SMP
-[3326150.987593] WARN: Modules linked in: tun nfsv3 nfs fscache dm_round_robin
-[3326150.987762] WARN: CPU: 2 PID: 8399 Comm: kworker/u32:1 Tainted: G O 4.4.0+2 #1
-[3326150.987774] WARN: Hardware name: Dell Inc. PowerEdge R720/0W7JN5, BIOS 2.5.4 01/22/2016
-[3326150.987790] WARN: Workqueue: iscsi_q_13 iscsi_xmitworker [libiscsi]
-[3326150.987799] WARN: task: ffff8801d50f3800 ti: ffff8801f5458000 task.ti: ffff8801f5458000
-[3326150.987810] WARN: RIP: e030:[<ffffffffa05ce70d>] [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
-[3326150.987825] WARN: RSP: e02b:ffff8801f545bdb0 EFLAGS: 00010246
-[3326150.987831] WARN: RAX: 00000000ffffffc3 RBX: ffff880282d2ab20 RCX: ffff88026b6ac480
-[3326150.987842] WARN: RDX: 0000000000000000 RSI: 00000000fffffe01 RDI: ffff880282d2ab20
-[3326150.987852] WARN: RBP: ffff8801f545bdc8 R08: 0000000000000000 R09: 0000000000000008
-[3326150.987862] WARN: R10: 0000000000000000 R11: 000000000000fe88 R12: 0000000000000000
-[3326150.987872] WARN: R13: ffff880282d2abe8 R14: ffff880282d2abd8 R15: ffff880282d2ac08
-[3326150.987890] WARN: FS: 00007f5a866b4840(0000) GS:ffff88028a640000(0000) knlGS:0000000000000000
-[3326150.987900] WARN: CS: e033 DS: 0000 ES: 0000 CR0: 0000000080050033
-[3326150.987907] WARN: CR2: 0000000000000078 CR3: 0000000070244000 CR4: 0000000000042660
-[3326150.987918] WARN: Stack:
-[3326150.987924] WARN: ffff880282d2ad58 ffff880282d2ab20 ffff880282d2abe8 ffff8801f545be18
-[3326150.987938] WARN: ffffffffa05cea90 ffff880282d2abf8 ffff88026b59cc80 ffff88026b59cc00
-[3326150.987951] WARN: ffff88022acf32c0 ffff880289491800 ffff880255a80800 0000000000000400
-[3326150.987964] WARN: Call Trace:
-[3326150.987975] WARN: [<ffffffffa05cea90>] iscsi_xmitworker+0x2f0/0x360 [libiscsi]
-[3326150.987988] WARN: [<ffffffff8108862c>] process_one_work+0x1fc/0x3b0
-[3326150.987997] WARN: [<ffffffff81088f95>] worker_thread+0x2a5/0x470
-[3326150.988006] WARN: [<ffffffff8159cad8>] ? __schedule+0x648/0x870
-[3326150.988015] WARN: [<ffffffff81088cf0>] ? rescuer_thread+0x300/0x300
-[3326150.988023] WARN: [<ffffffff8108ddf5>] kthread+0xd5/0xe0
-[3326150.988031] WARN: [<ffffffff8108dd20>] ? kthread_stop+0x110/0x110
-[3326150.988040] WARN: [<ffffffff815a0bcf>] ret_from_fork+0x3f/0x70
-[3326150.988048] WARN: [<ffffffff8108dd20>] ? kthread_stop+0x110/0x110
-[3326150.988127] ALERT: RIP [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
-[3326150.988138] WARN: RSP <ffff8801f545bdb0>
-[3326150.988144] WARN: CR2: 0000000000000078
-[3326151.020366] WARN: ---[ end trace 1c60974d4678d81b ]---
+On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+> Abstract the allocation of stage2 entry level tables for
+> given VM, so that later we can choose to fall back to the
+> normal page table levels (i.e, avoid entry level table
+> concatenation) on arm64.
 
-Commit 6f8830f5bbab (scsi: libiscsi: add lock around task lists to fix list
-corruption regression) introduced "taskqueuelock" to fix list corruption during
-the race, but this wasn't enough.
+the justification is not crystal clear to me but it does no harm I think.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+> Changes since V2:
+>  - New patch
+> ---
+>  arch/arm/include/asm/kvm_mmu.h   | 6 ++++++
+>  arch/arm64/include/asm/kvm_mmu.h | 6 ++++++
+>  virt/kvm/arm/mmu.c               | 2 +-
+>  3 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index f36eb20..b2da5a4 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -372,6 +372,12 @@ static inline int hyp_map_aux_data(void)
+>  	return 0;
+>  }
+>  
+> +static inline void *stage2_alloc_pgd(struct kvm *kvm)
+> +{
+> +	return alloc_pages_exact(stage2_pgd_size(kvm),
+> +				 GFP_KERNEL | __GFP_ZERO);
+> +}
+> +
+>  #define kvm_phys_to_vttbr(addr)		(addr)
+>  
+>  #endif	/* !__ASSEMBLY__ */
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 5da8f52..dbaf513 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -501,5 +501,11 @@ static inline int hyp_map_aux_data(void)
+>  
+>  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+>  
+> +static inline void *stage2_alloc_pgd(struct kvm *kvm)
+> +{
+> +	return alloc_pages_exact(stage2_pgd_size(kvm),
+> +				 GFP_KERNEL | __GFP_ZERO);
+> +}
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ARM64_KVM_MMU_H__ */
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 82dd571..a339e00 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -868,7 +868,7 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
+>  	}
+>  
+>  	/* Allocate the HW PGD, making sure that each page gets its own refcount */
+> -	pgd = alloc_pages_exact(stage2_pgd_size(kvm), GFP_KERNEL | __GFP_ZERO);
+> +	pgd = stage2_alloc_pgd(kvm);
+>  	if (!pgd)
+>  		return -ENOMEM;
+>  
+> 
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Re-setting of conn->task to NULL, could race with iscsi_xmit_task().
-iscsi_complete_task()
-{
-    ....
-    if (conn->task == task)
-        conn->task = NULL;
-}
+Thanks
 
-conn->task in iscsi_xmit_task() could be NULL and so will be task.
-__iscsi_get_task(task) will crash (NullPtr de-ref), trying to access refcount.
-
-iscsi_xmit_task()
-{
-    struct iscsi_task *task = conn->task;
-
-    __iscsi_get_task(task);
-}
-
-This commit will take extra conn->session->back_lock in iscsi_xmit_task()
-to ensure iscsi_xmit_task() waits for iscsi_complete_task(), if
-iscsi_complete_task() wins the race.
-If iscsi_xmit_task() wins the race, iscsi_xmit_task() increments task->refcount
-(__iscsi_get_task) ensuring iscsi_complete_task() will not iscsi_free_task().
-
-Signed-off-by: Anoob Soman <anoob.soman@citrix.com>
----
- drivers/scsi/libiscsi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index d609383..aa3be6f 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -1449,7 +1449,13 @@ static int iscsi_xmit_task(struct iscsi_conn *conn)
- 	if (test_bit(ISCSI_SUSPEND_BIT, &conn->suspend_tx))
- 		return -ENODATA;
- 
-+	spin_lock_bh(&conn->session->back_lock);
-+	if (conn->task == NULL) {
-+		spin_unlock_bh(&conn->session->back_lock);
-+		return -ENODATA;
-+	}
- 	__iscsi_get_task(task);
-+	spin_unlock_bh(&conn->session->back_lock);
- 	spin_unlock_bh(&conn->session->frwd_lock);
- 	rc = conn->session->tt->xmit_task(task);
- 	spin_lock_bh(&conn->session->frwd_lock);
--- 
-1.8.3.1
-
+Eric
