@@ -2,67 +2,100 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8AFC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BC8C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B21525DC9
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C12B25DD2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:45:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rMrryhMq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B21525DC9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R6Q7R6a/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C12B25DD2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752423AbeGBNp1 (ORCPT
+        id S1752567AbeGBNpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:45:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35772 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752110AbeGBNpP (ORCPT
+        Mon, 2 Jul 2018 09:45:54 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40807 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751912AbeGBNpv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:45:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RBPLWCPZWmnWTMJFM42/nqLJcS0qQPCj9uGOkkEVNBw=; b=rMrryhMqciz3/kxpIYOrqXxmY
-        HkgZZ2IidmW+K13HMLN1A51QsjC7fVgzqViRalXn0cgXg0jhLvdPPoKn2HRSwUbF/TCmRc67QNrhm
-        1K9JhCG8g5aFV8Ps9+h861k0e5TLGX0J5nwpSI5j/RtbSUuB6UX7VDWkfc9bzNegmHb7ibFclbQYD
-        IMvzaLjavGch+Cad8S+8bVkPtWxDQqERLgtqpsryblTK2xyWaTrnrGwr7Ek50ZnkALfmyMGhtEWNH
-        cQHFgiI/K3Ff1XUYsBL7vj0pqvS0xLW6DLqh8lRj23nUp+jtSy3XEs52iUWb2+nyLLbq4IpesETzq
-        t2cOzqCZg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fZytH-0004Cl-RU; Mon, 02 Jul 2018 13:29:15 +0000
-Date:   Mon, 2 Jul 2018 06:29:15 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 07/19] csky: MMU and page table management
-Message-ID: <20180702132915.GA6578@infradead.org>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <d07f919cb41ebb500c2e6f6defa6ea5760c22dc5.1530465326.git.ren_guo@c-sky.com>
+        Mon, 2 Jul 2018 09:45:51 -0400
+Received: by mail-io0-f195.google.com with SMTP id t135-v6so14794018iof.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 06:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4jRjxnP1VjNBh2JMbUYte+iCD6AV3eMohS9E3Aeigt4=;
+        b=R6Q7R6a/pu6wPIOKoL2Jf0A7OH6m1kgyfwzHriPQUhQV/xY4lMd+LRHMtPxvXdQcnb
+         HWRq8PdcCNMY7xth9sNbIic1fi/gKjIUt9D4GEy7uKAUx5P40iLNA4jsCqvh/MK/2axd
+         d5kP2cn4aodkW+mLJojruuzl+ZB+/eek2NplU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4jRjxnP1VjNBh2JMbUYte+iCD6AV3eMohS9E3Aeigt4=;
+        b=k7JeLJIT+Wo0CWgNX5B6KmCtNyZQu5Sx/4VnnohftnsOqcdfiQg2oVpkqEmhxCNkbv
+         oJXAoqXYB71AIRswaHd08xOtn/zUpEvsriXrDeIeneJCetAqEnjEte1WHRoJkuWrqqSe
+         tRXK5cSEg5ocGOy+VJJ0XEJ4BDeppNSHEjFuHXYNLrYh5zh01liv6dXOmGIm4WrMHm8d
+         J1iPcFw67TRgohtKqR2Ztv2tuyXW5JYn7I4s2gCv3wsXw/DPK2flAN8hbukTImieuTSa
+         jlYsdlKo2CdvSD+4RCsFHpfhchmf0YRiZuC1KenpJH49sp0w9fD1tn5B40lA/z08klxB
+         Jfng==
+X-Gm-Message-State: APt69E287HmEDiscXp9YwFupTB7A2rGOcvRuCyqUlJCL0AuL6NCJuqaf
+        wJe/MyRzSj3rH78xm0+29QERlBVai9zztCD6710Eug==
+X-Google-Smtp-Source: AAOMgpcl70LiVbShlrhavbY6tRFYXjpgdcKW/gPWvuoLlyPvAMHu8apE0z1ZHC13aewvjuzj5T9OtnXbDgAMgaYllT8=
+X-Received: by 2002:a6b:1902:: with SMTP id 2-v6mr20495267ioz.304.1530539150889;
+ Mon, 02 Jul 2018 06:45:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d07f919cb41ebb500c2e6f6defa6ea5760c22dc5.1530465326.git.ren_guo@c-sky.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1530243004-10529-1-git-send-email-Anson.Huang@nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 2 Jul 2018 15:45:39 +0200
+Message-ID: <CACRpkdbbbbO-94i-ZTSunzuUQcJ8dQpuPHBYODrvdWQyuri7yw@mail.gmail.com>
+Subject: Re: [PATCH] bindings: add clocks optional binding for imx gpio
+To:     Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit is missing an explanation.
+On Fri, Jun 29, 2018 at 5:34 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 
-For the dma-mapping code please use the generic kernel/dma/noncoherent.c
-code instead of duplicating it.
+> Some i.MX SoCs have GPIO clock gate in CCM, accessing
+> GPIO registers needs to enable GPIO clock gate first,
+> i.MX GPIO driver will enable clock gate if there is
+> clock property in GPIO node of dtb, add optional property
+> to i.MX GPIO binding doc.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+
+Make sense since the gpio-mxc driver already supports this :)
+
+> +Optional properties:
+> +- clocks: the clocks used by gpio bank
+
+Should the text be "the clock for clocking the GPIO silicon"
+I guess that is what it is. And singularis?
+
+Does it hurt to give the clock a name? Like the common
+"pclk" for peripheral clock or something similar that other
+i.MX silicon uses?
+
+Fabio: can we have your ACK on this too.
+
+Yours,
+Linus Walleij
