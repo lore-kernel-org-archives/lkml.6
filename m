@@ -2,373 +2,141 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CF2C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766C6C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659AD25A2F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E4CB25A60
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:23:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxjARWJc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659AD25A2F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KzjV7nkO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4CB25A60
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753457AbeGBUWw (ORCPT
+        id S1753471AbeGBUXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:22:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752684AbeGBUWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:22:47 -0400
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FF0525A24;
-        Mon,  2 Jul 2018 20:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530562966;
-        bh=DM0OKhM3dd8srILFbcdA7n8PxjrOZ53rCEI0dCNXhuk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=gxjARWJcxAtcYR8TblPfeWhyLc7Ga8vYm5JNwABIDy4oD8VFJM6gv2XIIxRqVWV2k
-         FL7/TbZyRqKP2xJlz8tR+VVwgWmsmdGhg+M/qs0g5+qzq7JjElLgAaAb304L9dosaT
-         NQVkuD9oa8QQ2xlRWV93/PjEDFEc26dpiufAkTO4=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v2 7/7] tracing: Add hist trigger onchange() handler
-Date:   Mon,  2 Jul 2018 15:22:26 -0500
-Message-Id: <d20f58d7d481cebcae9263a5c96c32642c0a989c.1530561352.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1530561352.git.tom.zanussi@linux.intel.com>
-References: <cover.1530561352.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1530561352.git.tom.zanussi@linux.intel.com>
-References: <cover.1530561352.git.tom.zanussi@linux.intel.com>
+        Mon, 2 Jul 2018 16:23:03 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45594 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752684AbeGBUXB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 16:23:01 -0400
+Received: by mail-io0-f193.google.com with SMTP id l25-v6so15794547ioh.12;
+        Mon, 02 Jul 2018 13:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7QF5l3yU2aMDNxSqAlUSxWtCE9gKfVxcgj2EprIdGy8=;
+        b=KzjV7nkOpoylKEVuDgEWoHdX2pAaquTUHU228ie3kbhD56MOAuiOXBl3ABlu0ssVOr
+         fxHClaQodcjIc2bRA4pp9d8ZmCqmGPL4wYyKnEqxkffKQr0Mo7ZB8rnCBeowGJyLhvwC
+         96m7rgj2OVIq5B5sIozmgdpPtKslDgePOuz18=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7QF5l3yU2aMDNxSqAlUSxWtCE9gKfVxcgj2EprIdGy8=;
+        b=AXuf2ZZ+jHNP+Wm+q+koO0V4Cgxr9WJB673p6Ld7iK+8mr4cLF+upCPDKtjTpAEtSC
+         1EA015IYyTjifZ2piv7Z4Sc5NrplmZgA/1wivCEvWmfo84KbVv+1oq/gTIb6UwYYi64C
+         NIJ0PcieeXzHED6vKg8vy/E04ui0G0TB4gadNsheyiYPMBFHRwmcR6U+uEwtPMC9dMi/
+         EIYZJPCygHmScbqq45FZptkXnIZM+NYP2O69hvLdQ1ppGtyEhehypkgUCYxnoQ+wc6Da
+         ZHHbzfrg9y07rlpeX/Gv6r8cf7f6QEUx05Ni0AgLa34tKntRGDOE4hflzthiFIhxsQTs
+         fV3A==
+X-Gm-Message-State: APt69E1a8RLdPng79Ia4r6W8kIFLbH46jXitj2SplS+5JY2YmknSiiM6
+        3BMdG+O14+wtmK0t1ph2DHNzhW7YzGzIL2h0xyA=
+X-Google-Smtp-Source: AAOMgpcsWGs6vnUNAGcmFF+yDPdRv0SRzJRdQ2HvvLDpY4wWhic+nlcXFw288kkTwqIIbtsEMrlMpYvL7WwkfNI0iw0=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr23230886ion.259.1530562980936;
+ Mon, 02 Jul 2018 13:23:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
+ <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
+ <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com>
+ <CA+55aFz8KyVqFsVnp-6g+thz7vmm5nK_FSdRTPSks7gsNVNRdQ@mail.gmail.com>
+ <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com>
+ <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com>
+ <1527399163.10673.1530541966296.JavaMail.zimbra@efficios.com>
+ <CALCETrVeu_V-3K8OfKv9QixrWBJs+q866yb=e96sC76SS4hxYg@mail.gmail.com>
+ <84003252.10754.1530558015813.JavaMail.zimbra@efficios.com>
+ <CALCETrVMhU8SrZBXOXxJerrZpQ71A_f_cRBCU=Lmj_KPV0+rRA@mail.gmail.com>
+ <CA+55aFy2rxnLhbqGtz0wxW_u=x_A1zHZBNP8ZC5P12_AHyb3PA@mail.gmail.com> <CALCETrWps4Bvd_hGviEZ+60nQFr5ovp2A0+afDWg-QOHB9x7cA@mail.gmail.com>
+In-Reply-To: <CALCETrWps4Bvd_hGviEZ+60nQFr5ovp2A0+afDWg-QOHB9x7cA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 13:22:49 -0700
+Message-ID: <CA+55aFwvsNY7eLm3OevWQvijPN_HQA4KgfZ5k-RTVPjD8MKppg@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Mon, Jul 2, 2018 at 1:13 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> Like this:
+>
+> diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+> index 3b2490b81918..ec40223c8856 100644
+> --- a/arch/x86/entry/common.c
+> +++ b/arch/x86/entry/common.c
+> @@ -170,6 +170,26 @@ static void exit_to_usermode_loop(struct pt_regs
+> *regs, u32 cached_flags)
+>          if (cached_flags & _TIF_USER_RETURN_NOTIFY)
+>              fire_user_return_notifiers();
+>
+> +        if (unlikely(!user_64bit_mode(regs) &&
+> +                 (regs->ip & 0xffffffff00000000ull))) {
 
-Add support for a hist:onchange($var) handler, similar to the onmax()
-handler but triggering whenever there's any change in $var, not just a
-max.
+I'd be afraid that code generation is atrocious. So more something like this:
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- Documentation/trace/histogram.txt | 97 +++++++++++++++++++++++++++++++++++++++
- kernel/trace/trace_events_hist.c  | 68 +++++++++++++++++++++------
- 2 files changed, 152 insertions(+), 13 deletions(-)
+    static noinline send_sigsegv(..) { }
 
-diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
-index e14a87f4e13f..eff71da3eda5 100644
---- a/Documentation/trace/histogram.txt
-+++ b/Documentation/trace/histogram.txt
-@@ -2102,6 +2102,103 @@ hist trigger specification.
-       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
- 
-+  - onchange(var).save(field,..	.)
-+
-+    The 'onchange(var).save(field,...)' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that the trace event fields specified as the
-+    onchange.save() params will be saved if 'var' changes for that
-+    hist trigger entry.  This allows context from the event that
-+    changed the value to be saved for later reference.  When the
-+    histogram is displayed, additional fields displaying the saved
-+    values will be printed.
-+
-+  - onchange(var).snapshot()
-+
-+    The 'onchange(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' changes for any
-+    hist trigger entry.
-+
-+    Note that in this case the changed value is a global variable
-+    associated withe current trace instance.  The key of the specific
-+    trace event that caused the value to change and the global value
-+    itself are displayed, along with a message stating that a snapshot
-+    has been taken and where to find it.  The user can use the key
-+    information displayed to locate the corresponding bucket in the
-+    histogram for even more detail.
-+
-+    As an example the below defines a hist trigger on the tcp_probe
-+    event, keyed on dport.  Whenever a tcp_probe event occurs, the
-+    cwnd field is checked against the current value stored in the
-+    $cwnd variable.  If the value has changed, a snapshot is taken.
-+    As part of the setup, all the scheduler and tcp events are also
-+    enabled, which are the events that will show up in the snapshot
-+    when it is taken at some point:
-+
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-+    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
-+
-+    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
-+            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
-+	    onchange($cwnd).snapshot()' >> \
-+	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
-+
-+    When the histogram is displayed, for each bucket the tracked value
-+    and the saved values corresponding to that value are displayed
-+    following the rest of the fields.
-+
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
-+      { dport:       1521 } hitcount:          8
-+	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
-+
-+      { dport:         80 } hitcount:         23
-+	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
-+
-+      { dport:       9001 } hitcount:        172
-+	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
-+
-+      { dport:        443 } hitcount:        211
-+	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
-+
-+    Snapshot taken (see tracing/snapshot).  Details:
-+        triggering value { onchange($cwnd) }:         10
-+        triggered by event with key: { dport:         80 }
-+
-+    Totals:
-+        Hits: 414
-+        Entries: 4
-+        Dropped: 0
-+
-+    In the above case, the event that triggered the snapshot has the
-+    key with dport == 80.  If you look at the bucket that has 80 as
-+    the key, you'll find the additional values save()'d along with the
-+    changed value for that bucket, which should be the same as the
-+    global changed value (since that was the same value that triggered
-+    the global snapshot).
-+
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/snapshot
-+
-+       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
-+     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
-+       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
-+       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
-+       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
-+            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
-+
- 3. User space creating a trigger
- --------------------------------
- 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 710ff6e5da5f..281395bd4ae7 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -340,6 +340,7 @@ typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
- enum handler_id {
- 	HANDLER_ONMATCH = 1,
- 	HANDLER_ONMAX,
-+	HANDLER_ONCHANGE,
- };
- 
- enum action_id {
-@@ -1895,7 +1896,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
- 		return ret;
- 
- 	if ((strncmp(str, "onmatch(", strlen("onmatch(")) == 0) ||
--	    (strncmp(str, "onmax(", strlen("onmax(")) == 0)) {
-+	    (strncmp(str, "onmax(", strlen("onmax(")) == 0) ||
-+	    (strncmp(str, "onchange(", strlen("onchange(")) == 0)) {
- 		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
- 		if (!attrs->action_str[attrs->n_actions]) {
- 			ret = -ENOMEM;
-@@ -3355,6 +3357,14 @@ static bool check_track_val_max(u64 track_val, u64 var_val)
- 	return true;
- }
- 
-+static bool check_track_val_changed(u64 track_val, u64 var_val)
-+{
-+	if (var_val == track_val)
-+		return false;
-+
-+	return true;
-+}
-+
- static u64 get_track_val_local(struct hist_trigger_data *hist_data,
- 			       struct tracing_map_elt *elt,
- 			       struct action_data *data)
-@@ -3529,6 +3539,8 @@ static void track_data_print(struct seq_file *m,
- 
- 	if (data->handler == HANDLER_ONMAX)
- 		seq_printf(m, "\n\tmax: %10llu", track_val);
-+	else if (data->handler == HANDLER_ONCHANGE)
-+		seq_printf(m, "\n\tchanged: %10llu", track_val);
- 
- 	if (data->action == ACTION_SNAPSHOT)
- 		return;
-@@ -3559,10 +3571,10 @@ static void ontrack_save(struct hist_trigger_data *hist_data,
- 		update_save_vars(hist_data, elt, rbe, rec);
- }
- 
--static void onmax_snapshot(struct hist_trigger_data *hist_data,
--			   struct tracing_map_elt *elt, void *rec,
--			   struct ring_buffer_event *rbe,
--			   struct action_data *data, u64 *var_ref_vals)
-+static void ontrack_snapshot(struct hist_trigger_data *hist_data,
-+			     struct tracing_map_elt *elt, void *rec,
-+			     struct ring_buffer_event *rbe,
-+			     struct action_data *data, u64 *var_ref_vals)
- {
- 	update_track_val(hist_data, elt, data, var_ref_vals);
- }
-@@ -3612,14 +3624,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- 
- 	track_data_var_str = data->track_data.var_str;
- 	if (track_data_var_str[0] != '$') {
--		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
-+		hist_err("For onmax(x) or onchange(x), x must be a variable: ", track_data_var_str);
- 		return -EINVAL;
- 	}
- 	track_data_var_str++;
- 
- 	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
- 	if (!var_field) {
--		hist_err("Couldn't find onmax variable: ", track_data_var_str);
-+		hist_err("Couldn't find onmax or onchange variable: ", track_data_var_str);
- 		return -EINVAL;
- 	}
- 
-@@ -3646,6 +3658,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- 		ret = PTR_ERR(track_var);
- 		goto out;
- 	}
-+
-+	if (data->handler == HANDLER_ONCHANGE)
-+		track_var = create_var(hist_data, file, "__change", sizeof(u64), "u64");
-+	if (IS_ERR(track_var)) {
-+		hist_err("Couldn't create onchange variable: ", "__change");
-+		ret = PTR_ERR(track_var);
-+		goto out;
-+	}
- 	data->track_data.track_var = track_var;
- 
- 	ret = action_create(hist_data, data);
-@@ -3726,6 +3746,9 @@ static int action_parse(char *str, struct action_data *data,
- 		if (handler == HANDLER_ONMAX) {
- 			data->fn = ontrack_save;
- 			data->track_data.check_val = check_track_val_max;
-+		} else if (handler == HANDLER_ONCHANGE) {
-+			data->fn = ontrack_save;
-+			data->track_data.check_val = check_track_val_changed;
- 		}
- 
- 		data->track_data.save_val = save_track_val_local;
-@@ -3742,8 +3765,11 @@ static int action_parse(char *str, struct action_data *data,
- 		}
- 
- 		if (handler == HANDLER_ONMAX) {
--			data->fn = onmax_snapshot;
-+			data->fn = ontrack_snapshot;
- 			data->track_data.check_val = check_track_val_max;
-+		} else if (handler == HANDLER_ONCHANGE) {
-+			data->fn = ontrack_snapshot;
-+			data->track_data.check_val = check_track_val_changed;
- 		}
- 
- 		data->track_data.save_val = save_track_val_snapshot;
-@@ -4634,7 +4660,8 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
- 
- 		if (data->handler == HANDLER_ONMATCH)
- 			onmatch_destroy(data);
--		else if (data->handler == HANDLER_ONMAX)
-+		else if (data->handler == HANDLER_ONMAX ||
-+			 data->handler == HANDLER_ONCHANGE)
- 			track_data_destroy(hist_data, data);
- 		else
- 			kfree(data);
-@@ -4669,6 +4696,15 @@ static int parse_actions(struct hist_trigger_data *hist_data)
- 				ret = PTR_ERR(data);
- 				break;
- 			}
-+		} else if (strncmp(str, "onchange(", strlen("onchange(")) == 0) {
-+			char *action_str = str + strlen("onchange(");
-+
-+			data = track_data_parse(hist_data, action_str,
-+						HANDLER_ONCHANGE);
-+			if (IS_ERR(data)) {
-+				ret = PTR_ERR(data);
-+				break;
-+			}
- 		} else {
- 			ret = -EINVAL;
- 			break;
-@@ -4693,7 +4729,8 @@ static int create_actions(struct hist_trigger_data *hist_data)
- 			ret = onmatch_create(hist_data, data);
- 			if (ret)
- 				return ret;
--		} else if (data->handler == HANDLER_ONMAX) {
-+		} else if (data->handler == HANDLER_ONMAX ||
-+			   data->handler == HANDLER_ONCHANGE) {
- 			ret = track_data_create(hist_data, data);
- 			if (ret)
- 				return ret;
-@@ -4721,7 +4758,8 @@ static void print_actions(struct seq_file *m,
- 			continue;
- 		}
- 
--		if (data->handler == HANDLER_ONMAX)
-+		if (data->handler == HANDLER_ONMAX ||
-+		    data->handler == HANDLER_ONCHANGE)
- 			track_data_print(m, hist_data, elt, data);
- 	}
- }
-@@ -4734,6 +4772,8 @@ static void print_track_data_spec(struct seq_file *m,
- 
- 	if (data->handler == HANDLER_ONMAX)
- 		seq_puts(m, ":onmax(");
-+	else if (data->handler == HANDLER_ONCHANGE)
-+		seq_puts(m, ":onchange(");
- 	seq_printf(m, "%s", data->track_data.var_str);
- 	seq_printf(m, ").%s(", data->action_name);
- 
-@@ -4805,7 +4845,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 			if (strcmp(data->match_data.event,
- 				   data_test->match_data.event) != 0)
- 				return false;
--		} else if (data->handler == HANDLER_ONMAX) {
-+		} else if (data->handler == HANDLER_ONMAX ||
-+			   data->handler == HANDLER_ONCHANGE) {
- 			if (strcmp(data->track_data.var_str,
- 				   data_test->track_data.var_str) != 0)
- 				return false;
-@@ -4826,7 +4867,8 @@ static void print_actions_spec(struct seq_file *m,
- 
- 		if (data->handler == HANDLER_ONMATCH)
- 			print_onmatch_spec(m, hist_data, data);
--		else if (data->handler == HANDLER_ONMAX)
-+		else if (data->handler == HANDLER_ONMAX ||
-+			 data->handler == HANDLER_ONCHANGE)
- 			print_track_data_spec(m, hist_data, data);
- 	}
- }
--- 
-2.14.1
+    ...
+    if (unlikely(!user_64bit_mode(regs)) {
+        if (unlikely(*(1+(u32 *)&regs->ip)))
+            send_sigsegv(tsk);
 
+to make sure it doesn't do crazy big constants in the normal path, and
+doesn't allocate silly stack frames.
+
+But as mentioned, I'm not entirely convinced this is worth it. But I
+wasn't sure it's worth it for rseq.
+
+So basically, *if* we do these kinds of checks, I'd personally rather
+do a *generic* "we don't return to garbage 64-bit values in compat
+mode" than have special case code that is only for rseq and is truly
+irrelevant to all normal cases.
+
+The generic case might even be worth a test-case. And if we do that,
+we should probably check that we don't do something odd like
+sign-extending the %rip value we load from stack for signal return
+etc, that just happens to work because nobody cared about the upper
+bits.
+
+So there's a lot of these kinds of small details that are of
+questionable importance, but might in theory be worth it.
+
+                  Linus
