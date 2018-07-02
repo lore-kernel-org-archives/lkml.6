@@ -2,105 +2,145 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA88C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E359C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A8DC25615
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E903A2554C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:13:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bj/e31br"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8DC25615
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pOqB8lmr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E903A2554C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752367AbeGBNMw (ORCPT
+        id S1752484AbeGBNNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:12:52 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37014 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeGBNMr (ORCPT
+        Mon, 2 Jul 2018 09:13:12 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51901 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751415AbeGBNNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:12:47 -0400
-Received: by mail-lf0-f68.google.com with SMTP id j8-v6so2396104lfb.4;
-        Mon, 02 Jul 2018 06:12:46 -0700 (PDT)
+        Mon, 2 Jul 2018 09:13:08 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s12-v6so26181wmc.1;
+        Mon, 02 Jul 2018 06:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=wGlNGRnHPJK7uXfkYvk3OVaclKl1mVLlyCpryQEOX08=;
-        b=bj/e31br6PAhA3myUt4wMlxvMgOU0AGqKFk/CzdPGM2ZWszdDIRS0CRDZBy7pGIKl/
-         a9/jChOCcI8P/EDtkKRviLwyfQUBk9gz8IUm+JDpUISbYDorGXwYdDoLpKhlJIQGj1op
-         pmZn0agDf49sxggeB9LEyWBQ8ffIqkXua+nlDWr6/4xSthO31sEmusXllJrzYm1D8B0w
-         WjHsudz6VXDaE74Xa6CXu8paXxlFh24xoLNefoifFVEn1Xzc13RU7QlEUKWRW2g9GLFE
-         h/mY3Pxq2XL+BjVErl4uPBjenHzUrU2AsM1WTARpWzkKCo6Rf9Wzohn+wgTbGyY8ygdD
-         B6gw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o4nJgI+imDZdy4rScghFt+ot0iXHv7SPVsNFLE0AYR4=;
+        b=pOqB8lmrRhggBqey0jv/9jkw+2aP3N6HO1a/gOFQo9irjZZVPk4Q29qydgkxjl7+ln
+         4XsFGjKX8mi669WwNtDjZ9yr5pGy87sNHpg4m8lhTlDsA/wepNrZDETjVRiLuZO1hsCV
+         2J3tJjCJV2o7CLPcIajwi8vjva5qPCS/S/EELqqPJ0CGggxQ4VyK6SX9ArKfPvmnu0hE
+         DfCaueRd3jww9w/hcU42O7oewAhxx+ePyaY0HmMpksGeQZ97y4X+Uc38haHUVNyhLWQ0
+         QN6KmHoF8142V88fFX6eDn/OsNv2xRCk8udUuQ4/kiVMIWI8CKLBPFIzJ6XJQftpwBsO
+         f/fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=wGlNGRnHPJK7uXfkYvk3OVaclKl1mVLlyCpryQEOX08=;
-        b=RN6zIXqsEroLZsVw/NB4Xfrq4Dtdclz9DISOVBgW9m8U6aJWNn8807E0yZE5qmnZlM
-         fW4BjaI8atVa3bmsrblCYF++mMf70CLu27oipJ5vJM1o8LqraAQKXKP/jbfzqyXgNsxu
-         wZ140mr59r2cfDOy9YFeyQ2YwYakBHlydq6ovjSQrwUNIOwIAzj++BiyWrzFtKlGb67Y
-         YjtIXdJB+NhElfki2QNNhghP4v0XXsmtugcxKDP6DZYGqrGdYL5b4yd43L+nifgyS48r
-         R4JGzyVFvc+4OS+jIG/Cxt9OAH19seliBvf7Xpqj0BjlvmUEyiJtd0mTSHSolMRdIhCs
-         eb+g==
-X-Gm-Message-State: APt69E3LmsmEDRfZxPEwW7sNLc/yMtHYk/zuOqDv89pz0iuu03Srk2Yf
-        R38CEt6LAxyu9FFfzVpAPXY=
-X-Google-Smtp-Source: AAOMgpd9LgB8dODJjvAPDK9Uz2Id14rnilV4vhgJnPdgKr8mvWslzg2PzMSg6KNYQstR1CLUjCPnNA==
-X-Received: by 2002:a19:c742:: with SMTP id x63-v6mr16006370lff.9.1530537165826;
-        Mon, 02 Jul 2018 06:12:45 -0700 (PDT)
-Received: from [10.17.182.9] (ll-53.209.223.85.sovam.net.ua. [85.223.209.53])
-        by smtp.gmail.com with ESMTPSA id l25-v6sm2600970ljj.30.2018.07.02.06.12.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 06:12:44 -0700 (PDT)
-Subject: Re: [PATCH v4 0/9] xen: dma-buf support for grant device
-To:     Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        konrad.wilk@oracle.com, daniel.vetter@intel.com,
-        dongwon.kim@intel.com, matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180615062753.9229-1-andr2000@gmail.com>
- <0d314f2f-e0c1-1017-5ba9-83489038b544@gmail.com>
- <ae597938-6d2a-9b4c-de7f-ec66429847bd@suse.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <1b714e02-8225-b091-bd14-079a35d02a12@gmail.com>
-Date:   Mon, 2 Jul 2018 16:12:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o4nJgI+imDZdy4rScghFt+ot0iXHv7SPVsNFLE0AYR4=;
+        b=Kq6NZ5jp178yraSkAiZ/Wbai48sfsMkE7rspfgohdtTiwBxBSejDw/gi7mTTcIZ6c4
+         M3bYNhqJgoPodU4KcWVE6X3SuWQrO0XRrUMY4gVAykW2a+Fj56H/8PP25yryMxrZjTZv
+         AmIvApiSHn1SX4w1cPYeAJQT9WKBhXZLOzYL5H55z9zzmJA074n5wlRT8FTWicJEI05C
+         xbrJeQpCcyeYKy52Xx4MuBWLZKKju34DtYICaUw/SzV3jepEKN23ou0a0wBB5Jz9ZeX8
+         yq/Sm3nibpktrkMm4mfO8SPfgwftScsI1HKRhd0wEnyfnJLWXR98dD3vSWw7kZJiCssp
+         G7iw==
+X-Gm-Message-State: APt69E1CcwIrvwxZ+xn/UiII3WTGHLBiyS7vEnf7yxtQZOUGNs/ghOQB
+        tGwYlzt4zJ6TNAk7HCd+lIE=
+X-Google-Smtp-Source: AAOMgpcSObLcyKKO3AxCPE8apAlB/yubalaA/506HHqMJs/usH+962KB6KTlQjVkSxWuo2juDLh9Vw==
+X-Received: by 2002:a1c:2dc8:: with SMTP id t191-v6mr8551897wmt.94.1530537182639;
+        Mon, 02 Jul 2018 06:13:02 -0700 (PDT)
+Received: from localhost (pD9E51838.dip0.t-ipconnect.de. [217.229.24.56])
+        by smtp.gmail.com with ESMTPSA id c4-v6sm11826219wrm.65.2018.07.02.06.13.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 06:13:01 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 15:13:00 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Mikko Perttunen <mperttunen@nvidia.com>
+Cc:     jassisinghbrar@gmail.com, gregkh@linuxfoundation.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] mailbox: tegra-hsp: Add support for shared
+ mailboxes
+Message-ID: <20180702131300.GG13096@ulmo>
+References: <20180702114033.15654-1-mperttunen@nvidia.com>
+ <20180702114033.15654-6-mperttunen@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <ae597938-6d2a-9b4c-de7f-ec66429847bd@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Wtrm9ATX0sn6fFKv"
+Content-Disposition: inline
+In-Reply-To: <20180702114033.15654-6-mperttunen@nvidia.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 11:20 AM, Juergen Gross wrote:
-> On 02/07/18 09:10, Oleksandr Andrushchenko wrote:
->> Hello, Boris, Juergen!
->>
->> Do you think I can re-base the series (which already has
->> all required R-b's from Xen community) onto the latest kernel
->> with API changes to patches 5 (of_dma_configure) and 8
->> (dma-buf atomic ops) and we can merge it to the Xen's kernel tree?
-> Rebase: yes.
->
-> Merging to the Xen kernel tree: only after setting up the
-> for-linus-4.19 branch, which will be done by Boris later this
-> month.
-Then I'll probably have to wait until for-linus-4.19 branch
-Boris, do you have any dates in mind for that?
->
-> Juergen
-Thank you,
-Oleksandr
+
+--Wtrm9ATX0sn6fFKv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 02, 2018 at 02:40:30PM +0300, Mikko Perttunen wrote:
+> The Tegra HSP block supports 'shared mailboxes' that are simple 32-bit
+> registers consisting of a FULL bit in MSB position and 31 bits of data.
+> The hardware can be configured to trigger interrupts when a mailbox
+> is empty or full. Add support for these shared mailboxes to the HSP
+> driver.
+>=20
+> The initial use for the mailboxes is the Tegra Combined UART. For this
+> purpose, we use interrupts to receive data, and spinning to wait for
+> the transmit mailbox to be emptied to minimize unnecessary overhead.
+>=20
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>=20
+> Notes:
+>     v3:
+>     - Added define HSP_INT0_IE_FULL_SHIFT
+>     - Added Jon's Reviewed-by
+>    =20
+>     v2:
+>     - Added defines for some register fields
+>     - Simplified bit looping logic in interrupt handler
+>     - Changed write done polling to use readl_poll_timeout
+>     - Removed unnecessary zero assignments
+>     - Fixed two error cases in probe to do proper cleanup
+>=20
+>  drivers/mailbox/tegra-hsp.c | 211 ++++++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 191 insertions(+), 20 deletions(-)
+
+Looks good to me:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--Wtrm9ATX0sn6fFKv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAls6JNwACgkQ3SOs138+
+s6GWoRAAjMSzFRnjIqmYTKNAlC3+zWjnHI329p0ETq4v9BEhKuDXsCKv490meKDp
++OFZOvgs7InvdNKX9sUmFYsiHNx7z0AjfyMhbLq2QqFQLJVxLG+h5I1oYdrhIaZ6
+PIhOlQNEgrr5b7wYnj/2CvVtANCNB/3uw23gkhQVCvvV0V2SI/SFZzp+JvO4JUT6
+KLSvQEGrmialeqaLvDi47nZswcrjh6w28O6YALiJHQWnx66dk3jQFxqS8Ck+4YXk
+ihTUSlkG3Qy5PzZQQ/zFESL/S6bh9dLeUkGeFeigsV5B2sBBrcsffP0Sj2Ox3TIQ
+LpFHSu9yXAsRRlSxWpeLDVox+AaTrzNNf+earyvItB9tAHKDl1mCLLqAuWrkKyye
+AX1hvhLSuT2oXCfvtx/Xiw2XvI19gvXFtuAsMYb1S7fliIcEkuZqruLKT2yeOMLh
+3alEYF1QYnVzh7JwInY16Kq7lJ2bHLBOZ01SFVFCAoyZR/Or/yVapoHaHk6LQMwW
+vuYBZE7zCWw670+3OS7qRdIwhtt4S1qd5MAoodyu3oA8ZV0C052EhkXASEVG+d0r
+QbJCpeNcTfbDnBUnANJ/saLmTe2EAGhmYN4NxR9VKNyH9oKjS9zVr2p42uNvruLq
+z+xo5qXKOavNVYhVA93k4MQfEEASqltcqr90nE9/0KeO0u0rdDM=
+=30K8
+-----END PGP SIGNATURE-----
+
+--Wtrm9ATX0sn6fFKv--
