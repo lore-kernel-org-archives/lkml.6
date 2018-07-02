@@ -2,114 +2,160 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B785C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 362A6C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C66D525534
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6658257A9
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:22:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlIocv7x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66D525534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RQw33hFZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6658257A9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeGBUV4 (ORCPT
+        id S1753189AbeGBUW3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:21:56 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:44172 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752437AbeGBUVy (ORCPT
+        Mon, 2 Jul 2018 16:22:29 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:34783 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752208AbeGBUW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:21:54 -0400
-Received: by mail-yb0-f194.google.com with SMTP id a2-v6so5560725ybe.11;
-        Mon, 02 Jul 2018 13:21:54 -0700 (PDT)
+        Mon, 2 Jul 2018 16:22:26 -0400
+Received: by mail-ua0-f193.google.com with SMTP id r10-v6so10849172uao.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KyA6ERUrQi2t2FjssBoQE7hY9B4Uye4FUZD8AuhFbUk=;
-        b=mlIocv7xd7WpBixG8FRt5kB81fOGYBR1CSbiYRNcyTEgSPmiXWZracIHS1h02iCLY7
-         MUO1itFLSAF+la3tWsXpYDXzdmsNpFyIwwQZISNp5TtFCYMdD7tsjV38IF+O7w92i4oh
-         OpgnZpJFMFxTcvqm4UvuVfzhMGnrypsiS+hsAQjRynO/6NEO2gk2diwvAla3BYM38Kq7
-         1xOQ93E9OPxiUa5OvBg9MKIbJ5FnneFBSADJnl1Itfaomn/027Pqgz/18ZLjIKWevhmV
-         GkFvbRPsNpOnOBCCYUwyNIvGqZvuHlFjRut5NIRgOlQ0u2P1RcFYaUr+2yb/cUYUn8X0
-         tArQ==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DZTBWkBvc3s6b5/8FNQDgU2F5m6kB0RUONZYE0rCNzA=;
+        b=RQw33hFZlr62q4fW1W2GrPeZcbVZLDaSJZoa6oo6OSrbiwuPJlR+B6Y6kTyRV/x7Rq
+         +cXPwxjfqVPND/f2uASUgl1r2G/ouYqIsQlZVhPMcLoAQ1gApxM9qLOYag6N9AJJLEty
+         AloaAEHgghdna0/N4yziYab+v5aN3wlXPwiyzRczljNB+0Iw6gw/NEYxnVVGSX6OKnRO
+         RHZUGKMDU81fmvN+AGwGSHlfmo8p4iG2IEUP65SgbVeDJXeDO2ZKQAwUdW1TnGTWeRNx
+         qMJvh3ANDyKYWnnAaaWWJkPr76bgLsRqNWuIYtfRPjrpfkongRWdgIY2Z5w/UGWQmszd
+         lR+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KyA6ERUrQi2t2FjssBoQE7hY9B4Uye4FUZD8AuhFbUk=;
-        b=QKE+tNFd200Zcu8n/c7BUPTvGJQU1rhQDKxBdJbKFevdetwbLL4AZluOhvjAtVIore
-         nSNVzn1/3IlLLLBZ7mRQN399CiRnA9cu7MC+zq7B/pr5D3C7W4OBrN+jGKIpQBCToppS
-         bHS9dz26tSzaely/jO/YFBR3cADRg3dPriAV+RSqM3Vypi+T4g+uHpY4b+yO+QwYAAyI
-         VoxVtT2yyP6e+MHDaw/FHLFyseM4DcQU3ykfnn5YR6t8J0H9YljMYWhoCoE7e3z8zTdh
-         kqFhZt0fKllxwVGA5habdFe3jozZFLRnfIVyAFmXhd7Dyo+KJHVFcprqhDaqcLZ8RvJ6
-         BylQ==
-X-Gm-Message-State: APt69E21t3GZhst3TltZyKsT7DhKlJFhGj2dCxkMLD/o0pEvocL9GIbd
-        rjHz2NvtAVYJycrFySHqWdWx68VD
-X-Google-Smtp-Source: AAOMgpeYjzhWtcxFKRaA7/Bgc9Tfi+RkfM2qAHKGs+7knC3PE0CFBsd1yfiLkx26L/kW7I5zGC3KZQ==
-X-Received: by 2002:a25:bdd3:: with SMTP id g19-v6mr9972466ybk.134.1530562913556;
-        Mon, 02 Jul 2018 13:21:53 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2b6f])
-        by smtp.gmail.com with ESMTPSA id u126-v6sm6363186ywa.99.2018.07.02.13.21.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 13:21:52 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 13:21:51 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     hdegoede@redhat.com, rjw@rjwysocki.net, alan.cox@intel.com,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Mario.Limonciello@dell.com
-Subject: Re: [RFC PATCH] ata: ahci: Enable DEVSLP by default on x86 modern
- standby platform
-Message-ID: <20180702202151.GK533219@devbig577.frc2.facebook.com>
-References: <20180702190845.7456-1-srinivas.pandruvada@linux.intel.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DZTBWkBvc3s6b5/8FNQDgU2F5m6kB0RUONZYE0rCNzA=;
+        b=QOG6NduhjO6YLb/Wunhcz1OthlJf/lgr342PiFyzNrEJ4QRKCiiIu4PQ6dB2cw+GU6
+         x22pqnTk3MuXrFbnWH0S+eZM7zY5xhkLYbogdPmrG0e78/HVPf92GhorHHRKnYZR/ljP
+         4S9OJsfCu62N1Hm643pfz0O+YWQuLi33ZWOESrf0s9QoxXG+xXQc+Ak6Km0bstBBn+XY
+         2Qo8+qHff4+jm0u6FOkz9X5KY2XVzAj2aSFm9lfiiUpTvf/4Kj829g2WVMINv/maLNbu
+         4mFjKYxVaNNxwWe6BCZXD9r4giqD1Zz7hkD2dafKFlHIiqkHmL7CVq8XpC0mQjJzzu3Y
+         s/Fg==
+X-Gm-Message-State: APt69E10eRUBgq+8TFwMd+umb8C4aRkTUOtrUYtmzlsdg3UbWLPrvCcu
+        G78FB07t/VOAgEtNiVR4hwG4kHLTHC3xYmfeqU8C2g==
+X-Google-Smtp-Source: AAOMgpccMptwiPW//Pk+1Cld7aNqUNL72OwwXGoGFwr2HD6EG3Je2acSfBi9JXQ/aYcB2KI3ZBvmP7elwYKfXvk23S0=
+X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr16664810uai.17.1530562944456;
+ Mon, 02 Jul 2018 13:22:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702190845.7456-1-srinivas.pandruvada@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a1f:9d83:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 13:22:23 -0700 (PDT)
+In-Reply-To: <20180702122112.267261b1e1609cf522753cf3@linux-foundation.org>
+References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
+ <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
+ <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
+ <CAAeHK+xsBOKghUp9XhpfXGqU=gjSYuy3G2GH14zWNEmaLPy8_w@mail.gmail.com>
+ <20180629194117.01b2d31e805808eee5c97b4d@linux-foundation.org>
+ <CAFKCwrjxGEa6CLJnjmNy+92d2GSUkoymQ6Sm91CDpMZcJCcWCA@mail.gmail.com> <20180702122112.267261b1e1609cf522753cf3@linux-foundation.org>
+From:   Evgenii Stepanov <eugenis@google.com>
+Date:   Mon, 2 Jul 2018 13:22:23 -0700
+Message-ID: <CAFKCwri_W8qEw-qMs+gXGqMGdZO82WpCiVpzcG4kinEyL7+zGg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 12:08:45PM -0700, Srinivas Pandruvada wrote:
-> From: Srinivas <srinivas.pandruvada@linux.intel.com>
-> 
-> One of the requirement for modern x86 system to enter lowest power mode
-> (SLP_S0) is SATA IP block to be off. This is true even during when
-> platform is suspended to idle and not only in opportunistic (runtime)
-> suspend.
-> 
-> Several of these system don't have traditional ACPI S3, so it is
-> important that they enter SLP_S0 state, to avoid draining battery even
-> during suspend even with out of the box Linux installation.
-> 
-> SATA IP block doesn't get turned off till SATA is in DEVSLP mode. Here
-> user has to either use scsi-host sysfs or tools like powertop to set
-> the sata-host link_power_management_policy to min_power.
-> 
-> This change sets by default link power management policy to min_power
-> for some platforms.  To avoid regressions, the following conditions
-> are used:
-> - The kernel config is already set to use med_power_with_dipm or deeper
-> - System is a modern standby system using ACPI low power idle flag
-> - The platform is not blacklisted for Suspend to Idle and suspend
-> to idle is used instead of S3
-> This combination will make sure that systems are fairly recent and
-> since getting shipped with modern standby standby, the DEVSLP function
-> is already validated.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On Mon, Jul 2, 2018 at 12:21 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Mon, 2 Jul 2018 12:16:42 -0700 Evgenii Stepanov <eugenis@google.com> wrote:
+>
+>> On Fri, Jun 29, 2018 at 7:41 PM, Andrew Morton
+>> <akpm@linux-foundation.org> wrote:
+>> > On Fri, 29 Jun 2018 14:45:08 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
+>> >
+>> >> >> What kind of memory consumption testing would you like to see?
+>> >> >
+>> >> > Well, 100kb or so is a teeny amount on virtually any machine.  I'm
+>> >> > assuming the savings are (much) more significant once the machine gets
+>> >> > loaded up and doing work?
+>> >>
+>> >> So with clean kernel after boot we get 40 kb memory usage. With KASAN
+>> >> it is ~120 kb, which is 200% overhead. With KHWASAN it's 50 kb, which
+>> >> is 25% overhead. This should approximately scale to any amounts of
+>> >> used slab memory. For example with 100 mb memory usage we would get
+>> >> +200 mb for KASAN and +25 mb with KHWASAN. (And KASAN also requires
+>> >> quarantine for better use-after-free detection). I can explicitly
+>> >> mention the overhead in %s in the changelog.
+>> >>
+>> >> If you think it makes sense, I can also make separate measurements
+>> >> with some workload. What kind of workload should I use?
+>> >
+>> > Whatever workload people were running when they encountered problems
+>> > with KASAN memory consumption ;)
+>> >
+>> > I dunno, something simple.  `find / > /dev/null'?
+>> >
+>>
+>> Looking at a live Android device under load, slab (according to
+>> /proc/meminfo) + kernel stack take 8-10% available RAM (~350MB).
+>> Kasan's overhead of 2x - 3x on top of it is not insignificant.
+>>
+>
+> (top-posting repaired.  Please don't)
+>
+> For a debugging, not-for-production-use feature, that overhead sounds
+> quite acceptable to me.  What problems is it known to cause?
 
-Seems sane to me.  Hans, what do you think?
+Not having this overhead enables near-production use - ex. running
+kasan/khasan kernel on a personal, daily-use device to catch bugs that
+do not reproduce in test configuration. These are the ones that often
+cost the most engineering time to track down.
 
-Thanks.
-
--- 
-tejun
+CPU overhead is bad, but generally tolerable. RAM is critical, in our
+experience. Once it gets low enough, OOM-killer makes your life
+miserable.
