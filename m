@@ -3,111 +3,431 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FE0C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB6CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E8B524EA8
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A4E24EAB
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:47:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kTXKcHH/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8B524EA8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="aaC/R18g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A4E24EAB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753096AbeGBRrF (ORCPT
+        id S1753172AbeGBRrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:47:05 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59390 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeGBRrE (ORCPT
+        Mon, 2 Jul 2018 13:47:22 -0400
+Received: from mail.efficios.com ([167.114.142.138]:55676 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753124AbeGBRrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:47:04 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62HiI2I164296
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 17:47:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=iDJicNXhlWReHp/6IH3IWSQ46flq9ImK8876AYI34Uc=;
- b=kTXKcHH/4uTBLxWo8jmwfDUVyRV17u/xo3vVIR24wRRiovWfxHgsGcCuP8FxPWQvglIk
- qwc9Xxm3yUhr1wCpy3o5kAAWt5nELbocsqgeBQlmGseWxIf0guJ+QUMeBXTx9XamFH9e
- 5P1AEvcEJKSH/SjEuWwMSshozBEy9yCyhO0y8DyRQe1XdRosi41Gb/YiXOwe2T9DNreH
- MBrjmrJ7ZDE2UoqxD4wkNFSXVjurXimT6eOq3B8Kisd8KbliySY1vS4953MqKx6ZwClv
- hGwzCAx5Ld2i5CdA9Q13I5NbP3j/qRvBKaAwvedMRUHIzrUYPdVFGFcw5OwfGk4oVb++ jw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jx2gpwe4r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 17:47:03 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w62Hl14r001198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 17:47:02 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w62Hl105001200
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 17:47:01 GMT
-Received: from mail-oi0-f53.google.com (/209.85.218.53)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Jul 2018 10:47:01 -0700
-Received: by mail-oi0-f53.google.com with SMTP id y207-v6so17926607oie.13
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:47:01 -0700 (PDT)
-X-Gm-Message-State: APt69E0JJryThYueFyT7B1eiDm1/Ffb/MP4KBfrjdAmUMF8LunKiRcgf
-        JN8qN43Cr9doQ8T0iMVbjw0PyoELw+ceTQPoC5Q=
-X-Google-Smtp-Source: AAOMgpfVg5b7pYT35ynd+pTuSKNEiEPxGN2zU4rhanFp93mryKDc4upGAjYrVzEO5zUIYRnZKKWt9OhbDzpZtR/DvTw=
-X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr11159138oig.221.1530553621119;
- Mon, 02 Jul 2018 10:47:01 -0700 (PDT)
+        Mon, 2 Jul 2018 13:47:20 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0382422F406;
+        Mon,  2 Jul 2018 13:47:20 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id GVfh_SnUrwlU; Mon,  2 Jul 2018 13:47:19 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2528922F401;
+        Mon,  2 Jul 2018 13:47:19 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2528922F401
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530553639;
+        bh=dxqSoqwOcWq0sSZYWSNItyV7hjAiw9dOvMdTgUzkm2g=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=aaC/R18gUQ8JUi6jEHrL4ptW7UdA4eoE7okJE8dcxW/OQhTXKqVd+ZceFuqXydHVe
+         gG+MyIzsiG2jzYj2wvwCgz3P/xUJY7F8tEVhkY3IGok0Eys4bWnYsfsiLI1Gpi5eId
+         BCpLqZ7bqrC5KqaUpGXzOrgtxV5ZOtFIMW3BVTjtmLaCvxPelij8IPzIywLLvNBQ9u
+         A+PZ4vslDK6xhzCdukbfUpOdSHE1o2DPQ6xh07uOGejSMNnHhDZcVgpr+VRppnGLcO
+         6ImFFOn4fMwvQSmtNe0jxWJ3g81DZl10PKiPK3KIJbw2XM6GNOk95vKQDgL1bDCjIO
+         p4xSe4w86y35w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id c4QeowdcqP5Z; Mon,  2 Jul 2018 13:47:19 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 0DF5922F3FB;
+        Mon,  2 Jul 2018 13:47:19 -0400 (EDT)
+Date:   Mon, 2 Jul 2018 13:47:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        peter maydell <peter.maydell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Message-ID: <1727725013.10723.1530553638918.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180702164937.GA23687@arm.com>
+References: <1529949285-11013-1-git-send-email-will.deacon@arm.com> <1529949285-11013-4-git-send-email-will.deacon@arm.com> <501929863.3051.1529950210436.JavaMail.zimbra@efficios.com> <20180626151427.GF23375@arm.com> <1763491947.3520.1530029512923.JavaMail.zimbra@efficios.com> <20180628164700.GD10751@arm.com> <176714835.9396.1530219040151.JavaMail.zimbra@efficios.com> <20180702164937.GA23687@arm.com>
+Subject: Re: [PATCH 3/3] rseq/selftests: Add support for arm64
 MIME-Version: 1.0
-References: <20180702020417.21281-1-pasha.tatashin@oracle.com> <de99ae79-8d68-e8d6-5243-085fd106e1e5@intel.com>
-In-Reply-To: <de99ae79-8d68-e8d6-5243-085fd106e1e5@intel.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Mon, 2 Jul 2018 13:46:25 -0400
-X-Gmail-Original-Message-ID: <CAGM2reYVkvVPgj+_upEdpjUL5noS=0ObGxnxXH3gAz+cJosEjA@mail.gmail.com>
-Message-ID: <CAGM2reYVkvVPgj+_upEdpjUL5noS=0ObGxnxXH3gAz+cJosEjA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] sparse_init rewrite
-To:     dave.hansen@intel.com
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, rientjes@google.com,
-        mingo@kernel.org, osalvador@techadventures.net
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=436
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807020198
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq/selftests: Add support for arm64
+Thread-Index: 09ZsQdXeCb9mnQuluRuBOTjJc6PatA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 12:20 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 07/01/2018 07:04 PM, Pavel Tatashin wrote:
-> >  include/linux/mm.h  |   9 +-
-> >  mm/sparse-vmemmap.c |  44 ++++---
-> >  mm/sparse.c         | 279 +++++++++++++++-----------------------------
-> >  3 files changed, 125 insertions(+), 207 deletions(-)
->
-> FWIW, I'm not a fan of rewrites, but this is an awful lot of code to remove.
->
-> I assume from all the back-and-forth, you have another version
-> forthcoming.  I'll take a close look through that one.
+----- On Jul 2, 2018, at 12:49 PM, Will Deacon will.deacon@arm.com wrote:
 
-The removed code is a benefit, but once you review it, you will see
-that it was necessary to re-write in order to get rid of the temporary
-buffers. Please review the current version. The only change that is
-going to be in the next version is added "nid" to pr_err() in
-sparse_init_nid() for more detailed error.
+> On Thu, Jun 28, 2018 at 04:50:40PM -0400, Mathieu Desnoyers wrote:
+>> ----- On Jun 28, 2018, at 12:47 PM, Will Deacon will.deacon@arm.com wrote:
+>> > On Tue, Jun 26, 2018 at 12:11:52PM -0400, Mathieu Desnoyers wrote:
+>> >> ----- On Jun 26, 2018, at 11:14 AM, Will Deacon will.deacon@arm.com wrote:
+>> >> > On Mon, Jun 25, 2018 at 02:10:10PM -0400, Mathieu Desnoyers wrote:
+>> >> >> I notice you are using the instructions
+>> >> >> 
+>> >> >>   adrp
+>> >> >>   add
+>> >> >>   str
+>> >> >> 
+>> >> >> to implement RSEQ_ASM_STORE_RSEQ_CS(). Did you compare
+>> >> >> performance-wise with an approach using a literal pool
+>> >> >> near the instruction pointer like I did on arm32 ?
+>> >> > 
+>> >> > I didn't, no. Do you have a benchmark to hand so I can give this a go?
+>> >> 
+>> >> see tools/testing/selftests/rseq/param_test_benchmark --help
+>> >> 
+>> >> It's a stripped-down version of param_test, without all the code for
+>> >> delay loops and testing checks.
+>> >> 
+>> >> Example use for counter increment with 4 threads, doing 5G counter
+>> >> increments per thread:
+>> >> 
+>> >> time ./param_test_benchmark -T i -t 4 -r 5000000000
+>> > 
+>> > Thanks. I ran that on a few arm64 systems I have access to, with three
+>> > configurations of the selftest:
+>> > 
+>> > 1. As I posted
+>> > 2. With the abort signature and branch in-lined, so as to avoid the CBNZ
+>> >   address limitations in large codebases
+>> > 3. With both the abort handler and the table inlined (i.e. the same thing
+>> >   as 32-bit).
+>> > 
+>> > There isn't a reliably measurable difference between (1) and (2), but I take
+>> > between 12% and 27% hit between (2) and (3).
+>> 
+>> Those results puzzle me. Do you have the actual code snippets of each
+>> implementation nearby ?
+> 
+> Sure, I've included the diffs for (2) and (3) below. They both apply on top
+> of my branch at:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git rseq
+> 
+> Will
 
-Thank you,
-Pavel
+I figured out that ADRP+ADD are optimized on Cortex A57 to have a 1 cycle
+latency. This would explain why they are doing comparatively well compared
+to ADR.
+
+And I guess having more compact code wins here.
+
+So I'm OK with your patchset with the modification for (2), which ensures
+the abort label is not too far away on large code-bases.
+
+Thanks!
+
+Mathieu
+
+> 
+> --->8
+> 
+> diff --git a/tools/testing/selftests/rseq/rseq-arm64.h
+> b/tools/testing/selftests/rseq/rseq-arm64.h
+> index 599788f74137..954f34671ca6 100644
+> --- a/tools/testing/selftests/rseq/rseq-arm64.h
+> +++ b/tools/testing/selftests/rseq/rseq-arm64.h
+> @@ -104,11 +104,11 @@ do {										\
+> 	__rseq_str(label) ":\n"
+> 
+> #define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
+> -	"	.pushsection	__rseq_failure, \"ax\"\n"			\
+> -	"	.long 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> +	"	b	222f\n"							\
+> +	"	.inst 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> 	__rseq_str(label) ":\n"							\
+> 	"	b	%l[" __rseq_str(abort_label) "]\n"			\
+> -	"	.popsection\n"
+> +	"222:\n"
+> 
+> #define RSEQ_ASM_OP_STORE(value, var)						\
+> 	"	str	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
+> 
+> --->8
+> 
+> diff --git a/tools/testing/selftests/rseq/rseq-arm64.h
+> b/tools/testing/selftests/rseq/rseq-arm64.h
+> index 599788f74137..2554aa17acf3 100644
+> --- a/tools/testing/selftests/rseq/rseq-arm64.h
+> +++ b/tools/testing/selftests/rseq/rseq-arm64.h
+> @@ -80,35 +80,37 @@ do {										\
+> #define RSEQ_ASM_TMP_REG	"x15"
+> #define RSEQ_ASM_TMP_REG_2	"x14"
+> 
+> -#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
+> +#define __RSEQ_ASM_DEFINE_TABLE(version, flags, start_ip,			\
+> 				post_commit_offset, abort_ip)			\
+> -	"	.pushsection	__rseq_table, \"aw\"\n"				\
+> -	"	.balign	32\n"							\
+> -	__rseq_str(label) ":\n"							\
+> 	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
+> 	"	.quad	" __rseq_str(start_ip) ", "				\
+> 			  __rseq_str(post_commit_offset) ", "			\
+> -			  __rseq_str(abort_ip) "\n"				\
+> -	"	.popsection\n"
+> +			  __rseq_str(abort_ip) "\n"
+> 
+> -#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
+> -	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
+> -				(post_commit_ip - start_ip), abort_ip)
+> +#define RSEQ_ASM_DEFINE_TABLE(start_ip, post_commit_ip, abort_ip)		\
+> +	"	.pushsection	__rseq_table, \"aw\"\n"				\
+> +	"	.balign	32\n"							\
+> +	__RSEQ_ASM_DEFINE_TABLE(0x0, 0x0, start_ip,				\
+> +				(post_commit_ip - start_ip), abort_ip)		\
+> +	"	.popsection\n"
+> 
+> -#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
+> +#define RSEQ_ASM_STORE_RSEQ_CS(label, table_label, rseq_cs)			\
+> 	RSEQ_INJECT_ASM(1)							\
+> -	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
+> -	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
+> -			", :lo12:" __rseq_str(cs_label) "\n"			\
+> +	"	adr	" RSEQ_ASM_TMP_REG ", " __rseq_str(table_label) "\n"	\
+> 	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
+> 	__rseq_str(label) ":\n"
+> 
+> -#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
+> -	"	.pushsection	__rseq_failure, \"ax\"\n"			\
+> -	"	.long 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> +#define RSEQ_ASM_DEFINE_ABORT(table_label, start_ip, post_commit_ip, label,	\
+> +			      abort_label)					\
+> +	"	b	222f\n"							\
+> +	"	.balign 32\n"							\
+> +	__rseq_str(table_label) ":\n"						\
+> +	__RSEQ_ASM_DEFINE_TABLE(0x0, 0x0, start_ip,				\
+> +				(post_commit_ip - start_ip), label ## f)	\
+> +	"	.inst 	"	__rseq_str(RSEQ_SIG) "\n"			\
+> 	__rseq_str(label) ":\n"							\
+> 	"	b	%l[" __rseq_str(abort_label) "]\n"			\
+> -	"	.popsection\n"
+> +	"222:\n"
+> 
+> #define RSEQ_ASM_OP_STORE(value, var)						\
+> 	"	str	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
+> @@ -181,8 +183,8 @@ int rseq_cmpeqv_storev(intptr_t *v, intptr_t expect,
+> intptr_t newv, int cpu)
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -191,9 +193,9 @@ int rseq_cmpeqv_storev(intptr_t *v, intptr_t expect,
+> intptr_t newv, int cpu)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
+> #endif
+> -		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -230,8 +232,8 @@ int rseq_cmpnev_storeoffp_load(intptr_t *v, intptr_t
+> expectnot,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPNE(v, expectnot, %l[cmpfail])
+> @@ -243,9 +245,9 @@ int rseq_cmpnev_storeoffp_load(intptr_t *v, intptr_t
+> expectnot,
+> 		RSEQ_ASM_OP_R_LOAD(v)
+> 		RSEQ_ASM_OP_R_STORE(load)
+> 		RSEQ_ASM_OP_R_LOAD_OFF(voffp)
+> -		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
+> +		RSEQ_ASM_OP_R_FINAL_STORE(v, 2)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -281,8 +283,8 @@ int rseq_addv(intptr_t *v, intptr_t count, int cpu)
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> #ifdef RSEQ_COMPARE_TWICE
+> @@ -290,9 +292,9 @@ int rseq_addv(intptr_t *v, intptr_t count, int cpu)
+> #endif
+> 		RSEQ_ASM_OP_R_LOAD(v)
+> 		RSEQ_ASM_OP_R_ADD(count)
+> -		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
+> +		RSEQ_ASM_OP_R_FINAL_STORE(v, 2)
+> 		RSEQ_INJECT_ASM(4)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -324,8 +326,8 @@ int rseq_cmpeqv_trystorev_storev(intptr_t *v, intptr_t
+> expect,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -336,9 +338,9 @@ int rseq_cmpeqv_trystorev_storev(intptr_t *v, intptr_t
+> expect,
+> #endif
+> 		RSEQ_ASM_OP_STORE(newv2, v2)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(6)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -378,8 +380,8 @@ int rseq_cmpeqv_trystorev_storev_release(intptr_t *v,
+> intptr_t expect,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -390,9 +392,9 @@ int rseq_cmpeqv_trystorev_storev_release(intptr_t *v,
+> intptr_t expect,
+> #endif
+> 		RSEQ_ASM_OP_STORE(newv2, v2)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(6)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -432,8 +434,8 @@ int rseq_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -445,9 +447,9 @@ int rseq_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
+> 		RSEQ_ASM_OP_CMPEQ(v2, expect2, %l[error3])
+> #endif
+> -		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(6)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -489,8 +491,8 @@ int rseq_cmpeqv_trymemcpy_storev(intptr_t *v, intptr_t
+> expect,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -501,9 +503,9 @@ int rseq_cmpeqv_trymemcpy_storev(intptr_t *v, intptr_t
+> expect,
+> #endif
+> 		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(6)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+> 		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+> @@ -544,8 +546,8 @@ int rseq_cmpeqv_trymemcpy_storev_release(intptr_t *v,
+> intptr_t expect,
+> 	RSEQ_INJECT_C(9)
+> 
+> 	__asm__ __volatile__ goto (
+> -		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
+> -		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
+> +		RSEQ_ASM_DEFINE_TABLE(1f, 2f, 4f)
+> +		RSEQ_ASM_STORE_RSEQ_CS(1, 3f, rseq_cs)
+> 		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
+> 		RSEQ_INJECT_ASM(3)
+> 		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
+> @@ -556,9 +558,9 @@ int rseq_cmpeqv_trymemcpy_storev_release(intptr_t *v,
+> intptr_t expect,
+> #endif
+> 		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
+> 		RSEQ_INJECT_ASM(5)
+> -		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
+> +		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 2)
+> 		RSEQ_INJECT_ASM(6)
+> -		RSEQ_ASM_DEFINE_ABORT(4, abort)
+> +		RSEQ_ASM_DEFINE_ABORT(3, 1b, 2b, 4, abort)
+> 		: /* gcc asm goto does not allow outputs */
+> 		: [cpu_id]		"r" (cpu),
+>  		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
