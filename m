@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF35C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1044FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B81C23E09
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B55A124EFE
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 22:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B9iJPEF9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B81C23E09
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtMKy3NQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55A124EFE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932323AbeGBWdl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 18:33:41 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35392 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932100AbeGBWdi (ORCPT
+        id S932379AbeGBWds (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 18:33:48 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43689 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932100AbeGBWdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 18:33:38 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z9-v6so2053pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:33:38 -0700 (PDT)
+        Mon, 2 Jul 2018 18:33:43 -0400
+Received: by mail-pl0-f65.google.com with SMTP id c41-v6so8581279plj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 15:33:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DQAmyMFajI++8HwoDa2U9XFg2UmDhXlRNwslkHRjsDM=;
-        b=B9iJPEF9XQXHuelfEi4/d9Hq5rjgt9W7TwvbSTapRurTpsFC9dODOqp3eqL2VsHqPD
-         YeEfFT//XlDlhY9sFRnUAAOa99xyIo5rveYJsEnsXiAdFjSQa/JEHbg415PgRYx/QbV+
-         6AsuDVTXjYwc+aC8Nz+eyVNvCGprL0Fi0HNWo=
+        bh=LYBWjD9MwZq6AeXds2cnbJ8nNRd/Ae3mKj4z54DE1Zs=;
+        b=AtMKy3NQmBdR9DRsALEIXaFSpIUgdc/SJ8gjwuATA71vLVImd02gY8iqPxZ+lzyH4c
+         RekUEJmI3/Zb0q5IqvJ0Bw1x+73Tq+SYyPvCKR9bdKteSheDI6PMB4+7B6AUVdP4af0i
+         qXPwUL6fdrsUn9rQI2ij7H1+EwhH9MTYTLxIk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DQAmyMFajI++8HwoDa2U9XFg2UmDhXlRNwslkHRjsDM=;
-        b=SBc8C9It2OHc5H6YZgfFqsNfsk4dfw2uZgnYm/WxtPF5sgcw0u/yfL2FjSjUQVS+uf
-         5k9LZeJGajFHcnKI8BnevXHccHCJWrq7fqZlTBLZ4yH1M7MJgJJTOuzynjxTQ2/BI8N1
-         wwmXEeq7JOjLqtHHaj0NsluoGOzWQ2CdddaFA/0OlXD5QF3mPZGIMCe0F9K/e8rDM5JI
-         bdxr7OKZ5U3ZkPU+sb8r5Rug0FxS6RgXQhdx5sdPhHaNrd95D71G4FFutgwbFr6RZa6Q
-         VRzHJ+v8Rm4GSBIe9NDuQ8lsW/HNb0vp0iE19XKPX6s23nrv+tLao24WB0PiuChdxGn9
-         LlFA==
-X-Gm-Message-State: APt69E1PXa12MHEkKvg4Ph33t58QvktxS8J6ftIVzNbwqjs2WcyZNJx0
-        clv60ZKX0vpce6KD7jUFieunUQ==
-X-Google-Smtp-Source: AAOMgpfEZ4XvgWQ6+nebAlWStYnZ9jCNehcUJlJJLoG/scS3bWjhnnnNyQ0qe74bPt3RFnr8pOuLzg==
-X-Received: by 2002:a62:df82:: with SMTP id d2-v6mr26302759pfl.189.1530570818156;
-        Mon, 02 Jul 2018 15:33:38 -0700 (PDT)
+        bh=LYBWjD9MwZq6AeXds2cnbJ8nNRd/Ae3mKj4z54DE1Zs=;
+        b=t0ApM0VcHfMldFrcTyRjlyKHcrRmsuI+Z6ARQTjxiISEZvAdGSwqerKs5MiXwcGLif
+         0GvAc7h60F5ANdkeEQDV6w/gc2cCTW0S+AWG2SVLnsGFB9/cLoQFptQ+gOK3wfvN71TJ
+         7JyH+NuC1zvJVNbp2XklqH4khWFN+wIyo7ooxibe2Na0Y2/gLd/IYMscupHNpn8mrVL3
+         z1fcA1u3kpXpjOf8yW485wS5gH22/mKa7QnCRj3bM+j1WFWjbHmoBl/bZPWh9lJxRnxo
+         /NfAyf3ByLSkRIZqRchCFa4yyoNHWFRTIPLeQrIgCoTx/fAa3j0TNfZpyaWuXdW132Tl
+         uKcQ==
+X-Gm-Message-State: APt69E0T74wQyBkP/j0QUWr0MP6t5+zaihuZ1J63Nyo067j0zq+WqAy1
+        +U+I8aw7MXW8ZBn2NnVbFbVp9Q==
+X-Google-Smtp-Source: ADUXVKLK18tZmCuXH7mYlDlCFLc04gDg2/5EoDmkNGcyaXU5PYQLciOtfS2V1VwmFvobnTYQT6zhpQ==
+X-Received: by 2002:a17:902:6ac7:: with SMTP id i7-v6mr28197745plt.288.1530570822617;
+        Mon, 02 Jul 2018 15:33:42 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm21764132pgu.16.2018.07.02.15.33.36
+        by smtp.gmail.com with ESMTPSA id p11-v6sm21764132pgu.16.2018.07.02.15.33.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 15:33:37 -0700 (PDT)
+        Mon, 02 Jul 2018 15:33:41 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     peterz@infradead.org, acme@kernel.org
 Cc:     mingo@redhat.com, tglx@linutronix.de,
@@ -63,9 +63,9 @@ Cc:     mingo@redhat.com, tglx@linutronix.de,
         gregkh@linuxfoundation.org, hpa@zytor.com,
         mathieu.poirier@linaro.org, linux-s390@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/6] perf tools: Make perf_evsel accessible to PMU driver configuration code
-Date:   Mon,  2 Jul 2018 16:33:26 -0600
-Message-Id: <1530570810-28929-3-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 4/6] perf/aux: Make perf_event accessible to setup_aux()
+Date:   Mon,  2 Jul 2018 16:33:28 -0600
+Message-Id: <1530570810-28929-5-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
@@ -74,132 +74,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make structure perf_evsel available to the PMU driver configuration code.
-That way function perf_evsel__apply_drv_config() can be used from within
-that code and information pertaining to the 'perf_evsel_config_term' is
-still available.
+It can be advantagous to have access to all the information conveyed by
+a perf_event when setting up the AUX buffer, as it is the case when
+dealing with PMU specific driver configuration communicated to the kernel
+using an ioctl() call.
+
+As such simply replace the cpu information by the complete perf_event
+structure and change all affected customers.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- tools/perf/arch/arm/util/cs-etm.c | 22 +++++++++++++++++++++-
- tools/perf/arch/arm/util/cs-etm.h |  3 ++-
- tools/perf/util/drv_configs.c     | 30 +++++++-----------------------
- tools/perf/util/pmu.h             |  3 ++-
- 4 files changed, 32 insertions(+), 26 deletions(-)
+ arch/s390/kernel/perf_cpum_sf.c                  | 4 ++--
+ arch/x86/events/intel/bts.c                      | 4 +++-
+ arch/x86/events/intel/pt.c                       | 5 +++--
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 6 +++---
+ drivers/perf/arm_spe_pmu.c                       | 6 +++---
+ include/linux/perf_event.h                       | 2 +-
+ kernel/events/ring_buffer.c                      | 2 +-
+ 7 files changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 2f595cd73da6..d8081c2e6d44 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -635,7 +635,7 @@ static int __printf(2, 3) cs_device__print_file(const char *name, const char *fm
- 	return ret;
- }
- 
--int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
-+static int cs_etm_set_drv_config_term(struct perf_evsel_config_term *term)
+diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+index 0292d68e7dde..e06daaa08894 100644
+--- a/arch/s390/kernel/perf_cpum_sf.c
++++ b/arch/s390/kernel/perf_cpum_sf.c
+@@ -1601,8 +1601,8 @@ static void aux_buffer_free(void *data)
+  *
+  * Return the private AUX buffer structure if success or NULL if fails.
+  */
+-static void *aux_buffer_setup(int cpu, void **pages, int nr_pages,
+-			      bool snapshot)
++static void *aux_buffer_setup(struct perf_event *event, void **pages,
++			      int nr_pages, bool snapshot);
  {
- 	int ret;
- 	char enable_sink[ENABLE_SINK_MAX];
-@@ -649,3 +649,23 @@ int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
- 
- 	return 0;
+ 	struct sf_buffer *sfb;
+ 	struct aux_buffer *aux;
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 24ffa1e88cf9..7139f6bf27ad 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -77,10 +77,12 @@ static size_t buf_size(struct page *page)
  }
-+
-+int cs_etm_set_drv_config(struct perf_evsel *evsel,
-+			  struct perf_evsel_config_term **err_term)
-+{
-+	int err = 0;
-+	struct perf_evsel_config_term *term;
-+
-+	list_for_each_entry(term, &evsel->config_terms, list) {
-+		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
-+			continue;
-+
-+		err = cs_etm_set_drv_config_term(term);
-+		if (err) {
-+			*err_term = term;
-+			break;
-+		}
-+	}
-+
-+	return err;
-+}
-diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
-index 1a12e64f5127..a3f8dde6ccef 100644
---- a/tools/perf/arch/arm/util/cs-etm.h
-+++ b/tools/perf/arch/arm/util/cs-etm.h
-@@ -10,6 +10,7 @@
- #include "../../util/evsel.h"
  
- struct auxtrace_record *cs_etm_record_init(int *err);
--int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
-+int cs_etm_set_drv_config(struct perf_evsel *evsel,
-+			  struct perf_evsel_config_term **err_term);
- 
- #endif
-diff --git a/tools/perf/util/drv_configs.c b/tools/perf/util/drv_configs.c
-index eec754243f4d..f7c1bcf08549 100644
---- a/tools/perf/util/drv_configs.c
-+++ b/tools/perf/util/drv_configs.c
-@@ -25,7 +25,6 @@ perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
+ static void *
+-bts_buffer_setup_aux(int cpu, void **pages, int nr_pages, bool overwrite)
++bts_buffer_setup_aux(struct perf_event *event, void **pages,
++		     int nr_pages, bool overwrite)
  {
- 	bool found = false;
- 	int err = 0;
--	struct perf_evsel_config_term *term;
- 	struct perf_pmu *pmu = NULL;
+ 	struct bts_buffer *buf;
+ 	struct page *page;
++	int cpu = event->cpu;
+ 	int node = (cpu == -1) ? cpu : cpu_to_node(cpu);
+ 	unsigned long offset;
+ 	size_t size = nr_pages << PAGE_SHIFT;
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 8d016ce5b80d..8f4c98fdd03c 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -1104,10 +1104,11 @@ static int pt_buffer_init_topa(struct pt_buffer *buf, unsigned long nr_pages,
+  * Return:	Our private PT buffer structure.
+  */
+ static void *
+-pt_buffer_setup_aux(int cpu, void **pages, int nr_pages, bool snapshot)
++pt_buffer_setup_aux(struct perf_event *event, void **pages,
++		    int nr_pages, bool snapshot)
+ {
+ 	struct pt_buffer *buf;
+-	int node, ret;
++	int node, ret, cpu = event->cpu;
  
- 	while ((pmu = perf_pmu__scan(pmu)) != NULL)
-@@ -34,29 +33,14 @@ perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
- 			break;
- 		}
- 
--	list_for_each_entry(term, &evsel->config_terms, list) {
--		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
--			continue;
-+	/*
-+	 * No need to continue if we didn't get a match or if there is no
-+	 * driver configuration function for this PMU.
-+	 */
-+	if (!found || !pmu->set_drv_config)
-+		return err;
- 
--		/*
--		 * We have a configuration term, report an error if we
--		 * can't find the PMU or if the PMU driver doesn't support
--		 * cmd line driver configuration.
--		 */
--		if (!found || !pmu->set_drv_config) {
--			err = -EINVAL;
--			*err_term = term;
--			break;
--		}
--
--		err = pmu->set_drv_config(term);
--		if (err) {
--			*err_term = term;
--			break;
--		}
--	}
--
--	return err;
-+	return pmu->set_drv_config(evsel, err_term);
+ 	if (!nr_pages)
+ 		return NULL;
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 677695635211..0f5e03e4df22 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -181,15 +181,15 @@ static void etm_free_aux(void *data)
+ 	schedule_work(&event_data->work);
  }
  
- int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 76fecec7b3f9..47f44394042b 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -29,7 +29,8 @@ struct perf_pmu {
- 	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
- 	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
- 	struct list_head list;    /* ELEM */
--	int (*set_drv_config)	(struct perf_evsel_config_term *term);
-+	int (*set_drv_config)	(struct perf_evsel *evsel,
-+				 struct perf_evsel_config_term **err_term);
- };
+-static void *etm_setup_aux(int event_cpu, void **pages,
++static void *etm_setup_aux(struct perf_event *event, void **pages,
+ 			   int nr_pages, bool overwrite)
+ {
+-	int cpu;
++	int cpu = event->cpu;
+ 	cpumask_t *mask;
+ 	struct coresight_device *sink;
+ 	struct etm_event_data *event_data = NULL;
  
- struct perf_pmu_info {
+-	event_data = alloc_event_data(event_cpu);
++	event_data = alloc_event_data(cpu);
+ 	if (!event_data)
+ 		return NULL;
+ 	INIT_WORK(&event_data->work, free_event_data);
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 54ec278d2fc4..4dcd7bf14dcc 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -824,10 +824,10 @@ static void arm_spe_pmu_read(struct perf_event *event)
+ {
+ }
+ 
+-static void *arm_spe_pmu_setup_aux(int cpu, void **pages, int nr_pages,
+-				   bool snapshot)
++static void *arm_spe_pmu_setup_aux(struct perf_event *event, void **pages,
++				   int nr_pages, bool snapshot)
+ {
+-	int i;
++	int i, cpu = event->cpu;
+ 	struct page **pglist;
+ 	struct arm_spe_pmu_buf *buf;
+ 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1fa12887ec02..4d9c8f30ca6c 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -409,7 +409,7 @@ struct pmu {
+ 	/*
+ 	 * Set up pmu-private data structures for an AUX area
+ 	 */
+-	void *(*setup_aux)		(int cpu, void **pages,
++	void *(*setup_aux)		(struct perf_event *event, void **pages,
+ 					 int nr_pages, bool overwrite);
+ 					/* optional */
+ 
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 5d3cf407e374..4c96c7575224 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -648,7 +648,7 @@ int rb_alloc_aux(struct ring_buffer *rb, struct perf_event *event,
+ 			goto out;
+ 	}
+ 
+-	rb->aux_priv = event->pmu->setup_aux(event->cpu, rb->aux_pages, nr_pages,
++	rb->aux_priv = event->pmu->setup_aux(event, rb->aux_pages, nr_pages,
+ 					     overwrite);
+ 	if (!rb->aux_priv)
+ 		goto out;
 -- 
 2.7.4
 
