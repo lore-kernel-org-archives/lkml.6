@@ -2,76 +2,62 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF3BC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C80C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020F625D9D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020F625D9D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4CEEB25DA6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CEEB25DA6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752645AbeGBNmb (ORCPT
+        id S1752656AbeGBNmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:42:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46422 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751878AbeGBNm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:42:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4405AAD26;
-        Mon,  2 Jul 2018 13:42:28 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 15:42:26 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
+        Mon, 2 Jul 2018 09:42:50 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50692 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeGBNmt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:42:49 -0400
+Received: from localhost (unknown [59.29.86.96])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 45F3A13F15D3F;
+        Mon,  2 Jul 2018 06:42:48 -0700 (PDT)
+Date:   Mon, 02 Jul 2018 22:42:47 +0900 (KST)
+Message-Id: <20180702.224247.143793494675352608.davem@davemloft.net>
+To:     laoar.shao@gmail.com
+Cc:     satoru.moriya@hds.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 3/5] mm: refactor do_munmap() to extract the
- common part
-Message-ID: <20180702134226.GX19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-4-git-send-email-yang.shi@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530311985-31251-4-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Subject: Re: [PATCH] net: expose sk wmem in sock_exceed_buf_limit tracepoint
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1530459090-11037-1-git-send-email-laoar.shao@gmail.com>
+References: <1530459090-11037-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 02 Jul 2018 06:42:49 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 30-06-18 06:39:43, Yang Shi wrote:
-> Introduces two new helper functions:
->   * munmap_addr_sanity()
->   * munmap_lookup_vma()
-> 
-> They will be used by do_munmap() and the new do_munmap with zapping
-> large mapping early in the later patch.
-> 
-> There is no functional change, just code refactor.
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Sun,  1 Jul 2018 23:31:30 +0800
 
-There are whitespace changes which make the code much harder to review
-than necessary.
-> +static inline bool munmap_addr_sanity(unsigned long start, size_t len)
->  {
-> -	unsigned long end;
-> -	struct vm_area_struct *vma, *prev, *last;
-> +	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE - start)
-> +		return false;
->  
-> -	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
-> -		return -EINVAL;
+> Currently trace_sock_exceed_buf_limit() only show rmem info,
+> but wmem limit may also be hit.
+> So expose wmem info in this tracepoint as well.
+> 
+> Regarding memcg, I think it is better to introduce a new tracepoint(if
+> that is needed), i.e. trace_memcg_limit_hit other than show memcg info in
+> trace_sock_exceed_buf_limit.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-e.g. here.
--- 
-Michal Hocko
-SUSE Labs
+Applied to net-next.
