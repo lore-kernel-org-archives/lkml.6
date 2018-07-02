@@ -2,149 +2,215 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710C6C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28447C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DDE824ECE
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:34:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="OwYDNWe2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDE824ECE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id CA22125228
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:37:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA22125228
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeGBPd6 (ORCPT
+        id S1752309AbeGBPhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:33:58 -0400
-Received: from vern.gendns.com ([206.190.152.46]:37800 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752184AbeGBPd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:33:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=c7WgQN8f4KVdAgRpxJwouAFaex9x5PPeIrwDe8OSjo4=; b=OwYDNWe2VlSiZj2YKUhSH+rC1I
-        9C5GNB5zh9e6panR2dYT3EhM9FsLhVcs/BG7aMjUbAmhWgaeTOMAAFQ/JeCXzpdscSUf6OcUHh+oX
-        6OPJwoLDD4HDooERG+Pq0/w7k+MWqWMePfNARgvCBuaZo0+tjZTvTjZryFfb4J9dUPvwK2FHc2UZm
-        RV4nUiUINjSBN4sUO1QDfEiKU7Eb/b4JByNV4funvgEzssK4V8/pDBZRXoRf6Ta+DYuS8Lzt3k13w
-        mY5s8bLy5+1LSlbZHBO07YSly4c2D1LHzPRb0zsUM4alllNd3tXavFcnC8anee5D9CpQaVXkZnrgW
-        E9HwrgeA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59394 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fa0pu-00DEL1-8u; Mon, 02 Jul 2018 11:33:54 -0400
-Subject: Re: [PATCH] iio: add channel type for frequency
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-References: <20180701025953.3561-1-david@lechnology.com>
- <308015e8-d203-c4d1-ba80-3c2adf4b377a@metafoo.de>
- <74c98fdc-b498-c593-e0b1-6aeb7057398a@lechnology.com>
- <20180702140352.00002c6c@huawei.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <51fa1708-a19e-aa05-6145-b2479a89805b@lechnology.com>
-Date:   Mon, 2 Jul 2018 10:33:52 -0500
+        Mon, 2 Jul 2018 11:37:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752185AbeGBPhT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:37:19 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FYmSs026653
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:37:18 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyp95hkbw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:37:18 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 2 Jul 2018 11:37:17 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 11:37:14 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62FbCnh7078606
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 15:37:12 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50A69AE05C;
+        Mon,  2 Jul 2018 11:36:56 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3CF0AE05F;
+        Mon,  2 Jul 2018 11:36:55 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 11:36:55 -0400 (EDT)
+Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
+ virtualization
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 2 Jul 2018 11:37:11 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180702140352.00002c6c@huawei.com>
+In-Reply-To: <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070215-0060-0000-0000-00000285AA98
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055518; UDB=6.00541378; IPR=6.00833440;
+ MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:37:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070215-0061-0000-0000-000045A6A6AC
+Message-Id: <276b5ae7-7f27-faae-1e5a-0d4c084139e9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 08:03 AM, Jonathan Cameron wrote:
-> On Sun, 1 Jul 2018 17:24:34 -0500
-> David Lechner <david@lechnology.com> wrote:
-> 
->> On 07/01/2018 02:18 AM, Lars-Peter Clausen wrote:
->>> On 07/01/2018 04:59 AM, David Lechner wrote:
->>>> This adds a new type for frequency to the IIO channel type enumeration.
->>>>
->>>> Units are in Hz.
->>>>   
->>>
->>> Documentation?
+On 07/02/2018 10:38 AM, Christian Borntraeger wrote:
+>
+> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
+>> Introduces a new CPU model feature and two CPU model
+>> facilities to support AP virtualization for KVM guests.
 >>
->> I take it that you mean Documentation/ABI/testing/sysfs-bus-iio? Or
->> somewhere else too?
-> 
-> Yes.
-> 
+>> CPU model feature:
 >>
->>>
->>> We already have the altvoltage channel type with the frequency attribute.
->>> Difficult to say if there are any overlaps without documentation on how this
->>> new attribute is supposed to be used.
+>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>> AP instructions are available on the guest. This
+>> feature will be enabled by the kernel only if the AP
+>> instructions are installed on the linux host. This feature
+>> must be specifically turned on for the KVM guest from
+>> userspace to use the VFIO AP device driver for guest
+>> access to AP devices.
 >>
->> I'm basically trying to implement a quadrature encoder in iio. I want to be
->> able to use it in-kernel to get a rotational speed value for a motor.
-> 
-> Have you seen the counters subsystem work that is pretty much ready to merge?
+>> CPU model facilities:
+>>
+>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>
+>>     This is indicated by setting facilities bit 12 for
+>>     the guest. The kernel will not enable this facility
+>>     for the guest if it is not set on the host. This facility
+>>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>     feature is not installed.
+>>
+>>     If this facility is not set for the KVM guest, then only
+>>     APQNs with an APQI less than 16 will be available to the
+>>     guest regardless of the guest's matrix configuration. This
+>>     is a limitation of the AP bus running on the guest.
+>>
+>> 2. AP Facilities Test facility (APFT) is installed.
+>>
+>>     This is indicated by setting facilities bit 15 for
+>>     the guest. The kernel will not enable this facility for
+>>     the guest if it is not set on the host. This facility
+>>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>>     feature is not installed.
+>>
+>>     If this facility is not set for the KVM guest, then no
+>>     AP devices will be available to the guest regardless of
+>>     the guest's matrix configuration. This is a limitation
+>>     of the AP bus running under the guest.
+>>
+>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> I think it probably should be at the end of the series, other than that its good.
 
-I hadn't seen that. Thanks. It sounds like the way to go since I am dealing with
-a quadrature encoder.
+If I move this to the end of the series, the very next patch checks the
 
-> 
-> https://lkml.org/lkml/2018/6/21/659
-> 
->>
->> The motors (and encoder wheels) are hot-swapable, so we don't know how many
->> counts from the quadrature encoder equals one rotation because it depends on
->> which motor is being used. So using IIO_ANGL_VEL doesn't work for this case.
-> 
-> Hmm. This always ugly when we have hotswappable external devices.  Ideal is
-> to describe them with device tree or similar none the less as this stuff isn't
-> really something userspace should have to figure out.
-> 
->>
->> It seems to me that the proper generic unit for "speed" from the quadrature
->> encoder would be counts per second, hence the suggestion of a frequency unit.
-> 
-> It is probably not that clear cut, as what is it frequency of?  All depends on
-> what mode the quadrature counter is working in x4 or x1 for simplest options.
-> 
-> 
->> I'm not sure if voltage frequency works here since a "count" on a quadrature
->> encoder is derived from two different voltage signals (and may vary depending
->> on how the encoder determines what one count it).
->>
->> Also, unrelated to my quadrature encoder project, I was thinking that
->> frequency counters would use this unit as well (although the voltage alt
->> makes more sense for this case).
->>
->> There are also sound sensors that measure frequency that could use this unit.
-> 
-> I have not fundamental issue with having a frequency channel, but only
-> if we have a clear cut use case.  I suspect the right option here is to
-> look at what extensions are needed to William's counter subsystem instead
-> of in IIO (which frankly failed to stretch far enough to support counters
-> well).
-> 
+KVM_S390_VM_CPU_FEAT_AP feature?
 
-Agreed. Let's drop this patch.
+
+
+>   
+>
+>
+>> ---
+>>   arch/s390/include/uapi/asm/kvm.h |    1 +
+>>   arch/s390/kvm/kvm-s390.c         |    8 ++++++++
+>>   arch/s390/tools/gen_facilities.c |    3 +++
+>>   3 files changed, 12 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
+>> index 4cdaa55..a580dec 100644
+>> --- a/arch/s390/include/uapi/asm/kvm.h
+>> +++ b/arch/s390/include/uapi/asm/kvm.h
+>> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
+>>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
+>>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
+>>   #define KVM_S390_VM_CPU_FEAT_KSS	13
+>> +#define KVM_S390_VM_CPU_FEAT_AP		14
+>>   struct kvm_s390_vm_cpu_feat {
+>>   	__u64 feat[16];
+>>   };
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 3b7a515..d2208d4 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -40,6 +40,7 @@
+>>   #include <asm/sclp.h>
+>>   #include <asm/cpacf.h>
+>>   #include <asm/timex.h>
+>> +#include <asm/ap.h>
+>>   #include "kvm-s390.h"
+>>   #include "gaccess.h"
+>>   
+>> @@ -366,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
+>>   
+>>   	if (MACHINE_HAS_ESOP)
+>>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>> +
+>> +	/*
+>> +	 * Check if AP instructions installed on host
+>> +	 */
+>> +	if (ap_instructions_available() == 0)
+>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>> +
+>>   	/*
+>>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>> index 90a8c9e..e0e2c19 100644
+>> --- a/arch/s390/tools/gen_facilities.c
+>> +++ b/arch/s390/tools/gen_facilities.c
+>> @@ -106,6 +106,9 @@ struct facility_def {
+>>   
+>>   		.name = "FACILITIES_KVM_CPUMODEL",
+>>   		.bits = (int[]){
+>> +			12, /* AP Query Configuration Information */
+>> +			15, /* AP Facilities Test */
+>>   			-1  /* END */
+>>   		}
+>>   	},
+
+
