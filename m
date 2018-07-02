@@ -2,249 +2,91 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D396DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDA8C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8490225C5B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:32:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8490225C5B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 11FC425C87
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:32:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11FC425C87
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965566AbeGBKcB convert rfc822-to-8bit (ORCPT
+        id S1030228AbeGBKcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:32:01 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:54444 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965174AbeGBKb6 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:8:1>);
-        Mon, 2 Jul 2018 06:31:58 -0400
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Mon, 02 Jul 2018 04:31:58 -0600
-Message-Id: <5B39FF1A02000078001CFB54@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date:   Mon, 02 Jul 2018 04:31:54 -0600
-From:   "Jan Beulich" <JBeulich@suse.com>
-To:     <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
-Cc:     <davem@davemloft.net>, <herbert@gondor.apana.org.au>,
-        <rjw@rjwysocki.net>, "Juergen Gross" <jgross@suse.com>,
-        <pavel@ucw.cz>, <linux-kernel@vger.kernel.org>,
-        "Alok Kataria" <akataria@vmware.com>
-Subject: [PATCH v2] x86-64: use 32-bit XOR to zero registers
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        Mon, 2 Jul 2018 06:32:45 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:36356 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965174AbeGBKcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:32:43 -0400
+X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 06:32:42 EDT
+Received: from wd0142.dip.tu-dresden.de ([141.76.108.142] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1fZw8O-0004Go-0d; Mon, 02 Jul 2018 12:32:40 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     thierry.reding@gmail.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, seanpaul@chromium.org,
+        briannorris@chromium.org, hl@rock-chips.com,
+        nickey.yang@rock-chips.com, Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2 2/3] dt-bindings: Add KINGDISPLAY KD097D04 panel bindings
+Date:   Mon,  2 Jul 2018 12:32:28 +0200
+Message-Id: <20180702103229.3952-3-heiko@sntech.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180702103229.3952-1-heiko@sntech.de>
+References: <20180702103229.3952-1-heiko@sntech.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Intel CPUs don't recognize 64-bit XORs as zeroing idioms. Zeroing
-idioms don't require execution bandwidth, as they're being taken care
-of in the frontend (through register renaming). Use 32-bit XORs instead.
+From: Nickey Yang <nickey.yang@rock-chips.com>
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
+The KINGDISPLAY KD097D04 is a 9.7" panel with a 1536x2048
+resolution and connected to DSI using 8 lanes.
+
+Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
-v2: Explain what zeroing idioms are/do in the description.
----
- arch/x86/crypto/aegis128-aesni-asm.S     |    2 +-
- arch/x86/crypto/aegis128l-aesni-asm.S    |    2 +-
- arch/x86/crypto/aegis256-aesni-asm.S     |    2 +-
- arch/x86/crypto/aesni-intel_asm.S        |    8 ++++----
- arch/x86/crypto/aesni-intel_avx-x86_64.S |    4 ++--
- arch/x86/crypto/morus1280-avx2-asm.S     |    2 +-
- arch/x86/crypto/morus1280-sse2-asm.S     |    2 +-
- arch/x86/crypto/morus640-sse2-asm.S      |    2 +-
- arch/x86/crypto/sha1_ssse3_asm.S         |    2 +-
- arch/x86/kernel/head_64.S                |    2 +-
- arch/x86/kernel/paravirt_patch_64.c      |    2 +-
- arch/x86/lib/memcpy_64.S                 |    2 +-
- arch/x86/power/hibernate_asm_64.S        |    2 +-
- 13 files changed, 17 insertions(+), 17 deletions(-)
+ .../display/panel/kingdisplay,kd097d04.txt    | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/kingdisplay,kd097d04.txt
 
---- 4.18-rc3/arch/x86/crypto/aegis128-aesni-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/aegis128-aesni-asm.S
-@@ -75,7 +75,7 @@
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	pxor MSG, MSG
- 
- 	mov LEN, %r8
---- 4.18-rc3/arch/x86/crypto/aegis128l-aesni-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/aegis128l-aesni-asm.S
-@@ -66,7 +66,7 @@
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	pxor MSG0, MSG0
- 	pxor MSG1, MSG1
- 
---- 4.18-rc3/arch/x86/crypto/aegis256-aesni-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/aegis256-aesni-asm.S
-@@ -59,7 +59,7 @@
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	pxor MSG, MSG
- 
- 	mov LEN, %r8
---- 4.18-rc3/arch/x86/crypto/aesni-intel_asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/aesni-intel_asm.S
-@@ -258,7 +258,7 @@ ALL_F:      .octa 0xffffffffffffffffffff
- .macro GCM_INIT Iv SUBKEY AAD AADLEN
- 	mov \AADLEN, %r11
- 	mov %r11, AadLen(%arg2) # ctx_data.aad_length = aad_length
--	xor %r11, %r11
-+	xor %r11d, %r11d
- 	mov %r11, InLen(%arg2) # ctx_data.in_length = 0
- 	mov %r11, PBlockLen(%arg2) # ctx_data.partial_block_length = 0
- 	mov %r11, PBlockEncKey(%arg2) # ctx_data.partial_block_enc_key = 0
-@@ -286,7 +286,7 @@ ALL_F:      .octa 0xffffffffffffffffffff
- 	movdqu HashKey(%arg2), %xmm13
- 	add %arg5, InLen(%arg2)
- 
--	xor %r11, %r11 # initialise the data pointer offset as zero
-+	xor %r11d, %r11d # initialise the data pointer offset as zero
- 	PARTIAL_BLOCK %arg3 %arg4 %arg5 %r11 %xmm8 \operation
- 
- 	sub %r11, %arg5		# sub partial block data used
-@@ -702,7 +702,7 @@ _no_extra_mask_1_\@:
- 
- 	# GHASH computation for the last <16 Byte block
- 	GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
--	xor	%rax,%rax
-+	xor	%eax, %eax
- 
- 	mov	%rax, PBlockLen(%arg2)
- 	jmp	_dec_done_\@
-@@ -737,7 +737,7 @@ _no_extra_mask_2_\@:
- 
- 	# GHASH computation for the last <16 Byte block
- 	GHASH_MUL \AAD_HASH, %xmm13, %xmm0, %xmm10, %xmm11, %xmm5, %xmm6
--	xor	%rax,%rax
-+	xor	%eax, %eax
- 
- 	mov	%rax, PBlockLen(%arg2)
- 	jmp	_encode_done_\@
---- 4.18-rc3/arch/x86/crypto/aesni-intel_avx-x86_64.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/aesni-intel_avx-x86_64.S
-@@ -463,7 +463,7 @@ _get_AAD_rest_final\@:
- 
- _get_AAD_done\@:
- 	# initialize the data pointer offset as zero
--	xor     %r11, %r11
-+	xor     %r11d, %r11d
- 
- 	# start AES for num_initial_blocks blocks
- 	mov     arg5, %rax                     # rax = *Y0
-@@ -1770,7 +1770,7 @@ _get_AAD_rest_final\@:
- 
- _get_AAD_done\@:
- 	# initialize the data pointer offset as zero
--	xor     %r11, %r11
-+	xor     %r11d, %r11d
- 
- 	# start AES for num_initial_blocks blocks
- 	mov     arg5, %rax                     # rax = *Y0
---- 4.18-rc3/arch/x86/crypto/morus1280-avx2-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/morus1280-avx2-asm.S
-@@ -113,7 +113,7 @@ ENDPROC(__morus1280_update_zero)
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	vpxor MSG, MSG, MSG
- 
- 	mov %rcx, %r8
---- 4.18-rc3/arch/x86/crypto/morus1280-sse2-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/morus1280-sse2-asm.S
-@@ -235,7 +235,7 @@ ENDPROC(__morus1280_update_zero)
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	pxor MSG_LO, MSG_LO
- 	pxor MSG_HI, MSG_HI
- 
---- 4.18-rc3/arch/x86/crypto/morus640-sse2-asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/morus640-sse2-asm.S
-@@ -113,7 +113,7 @@ ENDPROC(__morus640_update_zero)
-  *   %r9
-  */
- __load_partial:
--	xor %r9, %r9
-+	xor %r9d, %r9d
- 	pxor MSG, MSG
- 
- 	mov %rcx, %r8
---- 4.18-rc3/arch/x86/crypto/sha1_ssse3_asm.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/crypto/sha1_ssse3_asm.S
-@@ -96,7 +96,7 @@
- 	# cleanup workspace
- 	mov	$8, %ecx
- 	mov	%rsp, %rdi
--	xor	%rax, %rax
-+	xor	%eax, %eax
- 	rep stosq
- 
- 	mov	%rbp, %rsp		# deallocate workspace
---- 4.18-rc3/arch/x86/kernel/head_64.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/kernel/head_64.S
-@@ -235,7 +235,7 @@ ENTRY(secondary_startup_64)
- 	 *		address given in m16:64.
- 	 */
- 	pushq	$.Lafter_lret	# put return address on stack for unwinder
--	xorq	%rbp, %rbp	# clear frame pointer
-+	xorl	%ebp, %ebp	# clear frame pointer
- 	movq	initial_code(%rip), %rax
- 	pushq	$__KERNEL_CS	# set correct cs
- 	pushq	%rax		# target address in negative space
---- 4.18-rc3/arch/x86/kernel/paravirt_patch_64.c
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/kernel/paravirt_patch_64.c
-@@ -20,7 +20,7 @@ DEF_NATIVE(, mov64, "mov %rdi, %rax");
- 
- #if defined(CONFIG_PARAVIRT_SPINLOCKS)
- DEF_NATIVE(pv_lock_ops, queued_spin_unlock, "movb $0, (%rdi)");
--DEF_NATIVE(pv_lock_ops, vcpu_is_preempted, "xor %rax, %rax");
-+DEF_NATIVE(pv_lock_ops, vcpu_is_preempted, "xor %eax, %eax");
- #endif
- 
- unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
---- 4.18-rc3/arch/x86/lib/memcpy_64.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/lib/memcpy_64.S
-@@ -256,7 +256,7 @@ ENTRY(__memcpy_mcsafe)
- 
- 	/* Copy successful. Return zero */
- .L_done_memcpy_trap:
--	xorq %rax, %rax
-+	xorl %eax, %eax
- 	ret
- ENDPROC(__memcpy_mcsafe)
- EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
---- 4.18-rc3/arch/x86/power/hibernate_asm_64.S
-+++ 4.18-rc3-x86_64-32bit-XOR/arch/x86/power/hibernate_asm_64.S
-@@ -137,7 +137,7 @@ ENTRY(restore_registers)
- 	/* Saved in save_processor_state. */
- 	lgdt	saved_context_gdt_desc(%rax)
- 
--	xorq	%rax, %rax
-+	xorl	%eax, %eax
- 
- 	/* tell the hibernation core that we've just restored the memory */
- 	movq	%rax, in_suspend(%rip)
-
+diff --git a/Documentation/devicetree/bindings/display/panel/kingdisplay,kd097d04.txt b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd097d04.txt
+new file mode 100644
+index 000000000000..164a5fa236da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd097d04.txt
+@@ -0,0 +1,22 @@
++Kingdisplay KD097D04 9.7" 1536x2048 TFT LCD panel
++
++Required properties:
++- compatible: should be "kingdisplay,kd097d04"
++- reg: DSI virtual channel of the peripheral
++- power-supply: phandle of the regulator that provides the supply voltage
++- enable-gpios: panel enable gpio
++
++Optional properties:
++- backlight: phandle of the backlight device attached to the panel
++
++Example:
++
++	&mipi_dsi {
++		panel {
++			compatible = "kingdisplay,kd097d04";
++			reg = <0>;
++			power-supply = <...>;
++			backlight = <&backlight>;
++			enable-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
++		};
++	};
+-- 
+2.17.0
 
