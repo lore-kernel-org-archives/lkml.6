@@ -2,121 +2,104 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851D6C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 207DFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384B320C48
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GUyODOid"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384B320C48
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D92C620C48
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92C620C48
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeGBPZP (ORCPT
+        id S1752767AbeGBPZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:25:15 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42080 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752326AbeGBPZM (ORCPT
+        Mon, 2 Jul 2018 11:25:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752575AbeGBPZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:25:12 -0400
-Received: by mail-wr0-f194.google.com with SMTP id p1-v6so15976331wrs.9
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 08:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yjztGT3g5D1e7/ZMryypwbd9V/47rJLyb2HVKolYaw8=;
-        b=GUyODOidgQDxjYfDYV6MWYb4jqqPmW+r+iuJoSZU8vwwLI+b4Fd462FJH1iONuxjvE
-         rTVGkOM+xfjOX0xFUWSLftn5rupnQhOwzHH0w0/2FzeiUH4LNdD+W0wcuT9c7FLYdqW0
-         2GQPKTU3cyHw6nqcjJUtpUky6lRUJitw9bU0M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yjztGT3g5D1e7/ZMryypwbd9V/47rJLyb2HVKolYaw8=;
-        b=AdyMsvcpcwgORl/9yw3pjkIO/u1bgGPH1VHXgdaXfjAsGIUwARtYUGdn1919nTKm71
-         KVSkaAzySFlhGWdTAXW5tXIQ47dCL882Nb3pUNcc84jwU6DkF4udZ8Ro795U+dDspIvi
-         x7+VWwCWTKQGOYdV4+va2A3IvUjN0SvIzRuQoVb7RGeKrsjeHLPIHKheN8AmQqP6Y2yY
-         XHZ79k3TlM/C1UU+mM9SXZhPt6GNVy4wRV/EbkJa5tVSdC0CjsQ9e+yrvLFiz2fywTmS
-         Fv7Qx2fXo+EVMqB0GzUWEE+DykkjrH8C0KtWAnmgdMsfv2aGFUcL3lUc6zhF2dfJK6zM
-         VrXA==
-X-Gm-Message-State: APt69E2s+hNPQM34+V0n5rnNrqEkVTL1OUKUPkioc5FEuxeybX0tyIa3
-        0yL5Erty2UaJ5jFcCJ2G3cMJZw==
-X-Google-Smtp-Source: AAOMgpcoQ3U7cTZPDBclFj6R70ScERifeZps4jyjz10U1foNlB+Z3+Q5A/0r6Q77tFlj7IFfA86B4A==
-X-Received: by 2002:adf:b964:: with SMTP id b33-v6mr21054659wrg.265.1530545111063;
-        Mon, 02 Jul 2018 08:25:11 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id g15-v6sm15364135wrs.13.2018.07.02.08.25.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 08:25:10 -0700 (PDT)
-Subject: Re: [PATCH v4 00/27] Venus updates
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org,
-        Tomasz Figa <tfiga@chromium.org>
-References: <20180627152725.9783-1-stanimir.varbanov@linaro.org>
- <CAPBb6MXH7BpOXW++TxgsdRBr5C7PsHLO8jZtysGiNwUbkNW+BQ@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <6172d0e7-5557-7e2d-6ee7-e3d84050279b@linaro.org>
-Date:   Mon, 2 Jul 2018 18:25:09 +0300
+        Mon, 2 Jul 2018 11:25:25 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FOS5K123418
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:25:25 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jymvtw04n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:25:24 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 11:25:23 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 11:25:21 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62FPKXe65077252
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 15:25:20 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D392128058;
+        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C40DC2805C;
+        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 11:24:54 -0400 (EDT)
+Subject: Re: [PATCH v7 5/5] ima: Get rid of ima_used_chip and use ima_tpm_chip
+ != NULL instead
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     linux-kernel@vger.kernel.org
+References: <20180626190933.2508821-1-stefanb@linux.vnet.ibm.com>
+ <20180626190933.2508821-6-stefanb@linux.vnet.ibm.com>
+ <1530544304.3709.40.camel@linux.vnet.ibm.com>
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date:   Mon, 2 Jul 2018 11:25:20 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MXH7BpOXW++TxgsdRBr5C7PsHLO8jZtysGiNwUbkNW+BQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1530544304.3709.40.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18070215-0052-0000-0000-000003074F1F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055514; UDB=6.00541376; IPR=6.00833436;
+ MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:25:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070215-0053-0000-0000-00005D373FB3
+Message-Id: <b5fe7a69-ae53-70de-b8eb-bd7cb81fb15c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On 07/02/2018 11:11 AM, Mimi Zohar wrote:
+> Hi Stefan,
+>
+> On Tue, 2018-06-26 at 15:09 -0400, Stefan Berger wrote:
+>> Get rid of ima_used_chip and use ima_tpm_chip variable instead for
+>> determining whether to use the TPM chip.
+> I don't see a need for separating this change from the previous patch.
+> Could you squash this patch with the previous one?
+>
+> As Jarkko has already queued the TPM patches, there's no need for
+> posting them.  Posting just this one IMA patch is fine.
+>
+> thanks!
+Posted
 
-Thanks for review comments!
-
-On 07/02/2018 11:45 AM, Alexandre Courbot wrote:
-> Hi Stanimir,
-> 
-> Thanks for this very well organized series and sorry for not giving
-> feedback earlier.
-> 
-> I have tested this version against the 4.14 Chrome OS kernel tree (+ a
-> few extra changes to comply with the codec API) and it was working
-> flawlessly.
-> 
-> Therefore,
-> 
-> Tested-by: Alexandre Courbot <acourbot@chromium.org>
-
-Thanks for testing!
-
-> 
-> For the whole series.
-> 
-> I have a few comments/questions on some patches, would be great if you
-> could take a look. Also wondering what is your plan regarding codec
-> API compliance? Do you plan to integrate it into the current series,
-> or work on it after merging this initial work? Both ways would be ok
-> as far as I am concerned.
-
-Unfortunately I'm not ready with codec API compliance (at least for
-Venus v1 & v3). I'm working on that intensively these days and I'd say
-with a good progress but I still have few issues/details which needs
-more attention and time.
-
-So I guess the plan minimum is to merge this series first.
-
--- 
-regards,
-Stan
