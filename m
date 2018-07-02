@@ -2,124 +2,195 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4C7C6778D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B2DC6778C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 285B6255F8
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9F4255F8
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 00:57:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xuf4gwW4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285B6255F8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWfbcYK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9F4255F8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932318AbeGBA5o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 20:57:44 -0400
-Received: from mail-eopbgr20082.outbound.protection.outlook.com ([40.107.2.82]:36452
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752739AbeGBA5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 20:57:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VfXwJpTdSr/JoiFPE7i//1dFpUgva4VaXinON0Ho9QA=;
- b=Xuf4gwW4XJ221Pz6ugndVTyysuBs5FUYicJVveIMVbVtjza/5hsMhBxGFaC8p2vvJQjZRqLxmC6esuCCcezR+EUaVy8HijUdWRP82r+7eztW7xXols3CYVNNy38XBb5eclkcRAHyyNWHAuMQavMRTDQ/MDS+qHYVKvFJ2I0qZ88=
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com (10.163.7.13) by
- AM3PR04MB1395.eurprd04.prod.outlook.com (10.163.185.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.20; Mon, 2 Jul 2018 00:57:33 +0000
-Received: from AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7]) by AM3PR04MB1315.eurprd04.prod.outlook.com
- ([fe80::a024:25ab:f457:64c7%7]) with mapi id 15.20.0906.026; Mon, 2 Jul 2018
- 00:57:33 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>, Robin Gong <yibin.gong@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-Thread-Topic: [PATCH v1] ARM: dts: imx6sl-evk: keep sw4 always on
-Thread-Index: AQHUDD3lRelNZaT6s0KCSbdeyjhmZKR6JNEAgADqWICAABYs4IAAAL2AgAAAQsA=
-Date:   Mon, 2 Jul 2018 00:57:32 +0000
-Message-ID: <AM3PR04MB1315E7AED2BCE2265E6C443DF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1529930051-14122-1-git-send-email-yibin.gong@nxp.com>
- <20180701093402.GN4348@dragon>
- <CAOMZO5BjOEGWv2dC-bp0BYHq+PhLssEKic+o7ock8_1Dobd=sQ@mail.gmail.com>
- <AM3PR04MB131507901BFEE1A5E426EECBF5430@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5D8tjnjbwMdLGd7KF7_4PwqRWX8XH8kdcF3-5e-r2YQEA@mail.gmail.com>
-In-Reply-To: <CAOMZO5D8tjnjbwMdLGd7KF7_4PwqRWX8XH8kdcF3-5e-r2YQEA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1395;7:oD9pSxOMopEDPEilaE3gPfiuyfMF4I+fiedCLhcrRAR1oW4cFhfdU3LGmBjocCOXiHqVROcfbjfIJF7TEooPdhBBw2Ue7pOVkJCv/X+XASgJqZ5gOyZ+Y3c8S8B2Dj+E0ntNWjsVCyJ+K8QWLqDgGFHUshx9IHBIcvwCxzfBBEqXDXhnoyIy2q01RqsQlCURoI6SjmHPgMt5Qtnjr/lzKqxNYFiYw2gIC7fwiexqL/ermdhhmv+b7Y3YwOoCXH6+
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4604febd-158a-4be2-c9e2-08d5dfb6cb56
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1395;
-x-ms-traffictypediagnostic: AM3PR04MB1395:
-x-microsoft-antispam-prvs: <AM3PR04MB1395BD21FB2CBA541B948B4BF5430@AM3PR04MB1395.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1395;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1395;
-x-forefront-prvs: 07215D0470
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(346002)(376002)(366004)(199004)(189003)(13464003)(2900100001)(44832011)(4326008)(39060400002)(14444005)(486006)(6436002)(476003)(53546011)(6246003)(7696005)(97736004)(55016002)(9686003)(446003)(76176011)(6506007)(11346002)(229853002)(256004)(1411001)(2906002)(14454004)(25786009)(6116002)(33656002)(305945005)(53936002)(54906003)(105586002)(8676002)(316002)(8936002)(74316002)(3846002)(7736002)(106356001)(68736007)(66066001)(26005)(86362001)(478600001)(5250100002)(81166006)(99286004)(186003)(102836004)(5660300001)(6916009)(81156014)(93886005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1395;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pxl3Bkca4+zxUWCGKb5CZwGiT9eDd5Qii18Ig37F/h5X7CluqcUxG9UyFuSWCCTHpkef30OJ9HINsugeqFegwktYShfCqUlhAB5gd33gMOaCgeqPFi8TwydCggvmpCPtgWRZVNxlZNM9OktpJGKUHvkEerjq9lY6xk/R4RBaNpgOjX+eo0dwxqsbP0wRY/XkaxihsC12FJbjoE2I4ucwhWF7ukCfkk/brFGqWvo4XzpDS1wIqTS/9h/6UFiHCt0L9ympBQPpgiTEjwXOA0KSKoczxNbFV4ImG+Z3EXFps6OLS+Xsapj1fKp6RB+QwSkqpkAhm0AcbqDzMsh6A/cO7tRY8AU5l9iYimBbfWYtaZU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4604febd-158a-4be2-c9e2-08d5dfb6cb56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2018 00:57:33.0076
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1395
+        id S932363AbeGBA5r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 20:57:47 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45681 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752858AbeGBA5h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 20:57:37 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m2-v6so5393795oim.12;
+        Sun, 01 Jul 2018 17:57:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=QznxYmIJyvjPvcW2d5RmodQzyafpankCZbir/u4uwqA=;
+        b=hWfbcYK90ZFSVF7CPhjJqkZJkFXYwIcrJsA8qSWx2d9D2WE42OFwjIogQ+dK61wWbz
+         xi/AtqTf8nmYTn8f4pqy1+JBT30ww2wcnqYTu7eoVodIDpP+TZWHMDT/FXyzAdefpARV
+         5wQ1/0qZSWRw1YXfRjuAYtPIP8mBPfCYXh9NniKCeKHWyoogjOa2DT1w3EGp+AmrXlIE
+         tFdlxKXMGne9l3mStfbdMZcPA83e1TKDEI6I2zpnkP4B7lNJWDAafslxzJ2yQAlAJicU
+         uHj4bIKxemEsq6ZHHBFYSOJGobVExjGEmoZwNYQjTYvhWRKx/E4U+Fr7z2FOvKzaxXmq
+         9mjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QznxYmIJyvjPvcW2d5RmodQzyafpankCZbir/u4uwqA=;
+        b=a86EzIIiD0X+HDbXApdoepXF1RgsSWxEqH/dnoULQx8QsI5wXzEe6wafTvFWHn1Rgm
+         LQRYsSy+PoIfdXQ/Xov18rCdse8v1p/BUIMp2Btw9qqajSPwaA/xOZ7pUpgwFQfqXjD1
+         jnvS8/EUt7qviiSUBF5lSUE284WOl4/sADrVIXCI7S5Q+muxYreIrB2n5sDn25GS8Qtc
+         NPhwxKaJuc4sW8bsMvbeXQYUFy9omvi5ZNAFviZf5gsx9LdLWZ6uAo1IltfYuHzvt50F
+         dyoZrEBegLf8CtqJch9yLvr4UbPg78mnegJC+6DlVn454NGIBeAlVTl7g+ZLUCILgMpW
+         dokQ==
+X-Gm-Message-State: APt69E1pTHeBKpAPo9KOmCYSpm+hOskxeuGM7CueGMN8zSXzk2nzLk/U
+        UrN7XakYr79gM/HMq5cnIV7IIg==
+X-Google-Smtp-Source: AAOMgpcQ8Y1bpOxRFXxcg5s3ok3Rqo7VC9R76sdBKKGJFLAcKfEcH4yxfhnFde/pthu9PzWlDeYRew==
+X-Received: by 2002:aca:7517:: with SMTP id q23-v6mr12490591oic.352.1530493056827;
+        Sun, 01 Jul 2018 17:57:36 -0700 (PDT)
+Received: from sandstorm.nvidia.com ([2600:1700:43b0:3120:feaa:14ff:fe9e:34cb])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm4111672oix.30.2018.07.01.17.57.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Jul 2018 17:57:35 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v2 1/6] mm: get_user_pages: consolidate error handling
+Date:   Sun,  1 Jul 2018 17:56:49 -0700
+Message-Id: <20180702005654.20369-2-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180702005654.20369-1-jhubbard@nvidia.com>
+References: <20180702005654.20369-1-jhubbard@nvidia.com>
+X-NVConfidentiality: public
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBNb25kYXksIEp1bHkgMiwgMjAxOCA4OjU1IEFNDQo+IFRvOiBB
-bnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IFNoYXduIEd1byA8c2hhd25n
-dW9Aa2VybmVsLm9yZz47IFJvYmluIEdvbmcgPHlpYmluLmdvbmdAbnhwLmNvbT47DQo+IE1hcmsg
-UnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+OyBvcGVuIGxpc3Q6T1BFTiBGSVJNV0FSRSBB
-TkQNCj4gRkxBVFRFTkVEIERFVklDRSBUUkVFIEJJTkRJTkdTIDxkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZz47DQo+IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47
-IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBkbC1saW51eC1pbXggPGxpbnV4
-LWlteEBueHAuY29tPjsgU2FzY2hhIEhhdWVyDQo+IDxrZXJuZWxAcGVuZ3V0cm9uaXguZGU+OyBG
-YWJpbyBFc3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+Ow0KPiBtb2RlcmF0ZWQgbGlzdDpB
-Uk0vRlJFRVNDQUxFIElNWCAvIE1YQyBBUk0gQVJDSElURUNUVVJFDQo+IDxsaW51eC1hcm0ta2Vy
-bmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjFdIEFSTTog
-ZHRzOiBpbXg2c2wtZXZrOiBrZWVwIHN3NCBhbHdheXMgb24NCj4gDQo+IEhpIEFuc29uLA0KPiAN
-Cj4gT24gU3VuLCBKdWwgMSwgMjAxOCBhdCA5OjUzIFBNLCBBbnNvbiBIdWFuZyA8YW5zb24uaHVh
-bmdAbnhwLmNvbT4gd3JvdGU6DQo+IA0KPiA+IFllcywgSSB0aGluayB3ZSBjYW4gcmV2ZXJ0IGl0
-IHRvIGF2b2lkIGJyZWFrYWdlLiBEaWRuJ3Qgbm90aWNlIHRoYXQNCj4gPiBzb21lIGkuTVggcGxh
-dGZvcm0gZG8gTk9UIGhhdmUgdGhvc2UgY3JpdGljYWwgc3dpdGNoZXMgYWx3YXlzLW9uLg0KPiAN
-Cj4gT2ssIHRoYW5rcyBmb3IgY29uZmlybWluZy4NCj4gDQo+IEkgd2lsbCBzZW5kIGEgcmV2ZXJ0
-IHBhdGNoIHRoZW4uDQo+IA0KPiBUaGFua3MNCiANCkp1c3Qgd2FudCB0byBrbm93IGhvdyB0byBo
-YW5kbGUgc3VjaCBjYXNlPyBUaGUga2VybmVsIHBhdGNoIHdpbGwgbmV2ZXINCmJlIGFwcGxpZWQg
-b3IgaXMgdGhlcmUgYW55IHdheSB0byBtYWtlIGtlcm5lbCBwYXRjaCBhbmQgZHRiIHBhdGNoIGFw
-cGxpZWQNCnRvZ2V0aGVyIHRvIGF2b2lkIGFueSBicmVha2FnZT8NCg0KQW5zb24uDQoNCg==
+From: John Hubbard <jhubbard@nvidia.com>
+
+An upcoming patch requires a way to operate on each page that
+any of the get_user_pages_*() variants returns.
+
+In preparation for that, consolidate the error handling for
+__get_user_pages(). This provides a single location (the "out:" label)
+for operating on the collected set of pages that are about to be returned.
+
+As long every use of the "ret" variable is being edited, rename
+"ret" --> "err", so that its name matches its true role.
+This also gets rid of two shadowed variable declarations, as a
+tiny beneficial a side effect.
+
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ mm/gup.c | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
+
+diff --git a/mm/gup.c b/mm/gup.c
+index b70d7ba7cc13..73f0b3316fa7 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -660,6 +660,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		struct vm_area_struct **vmas, int *nonblocking)
+ {
+ 	long i = 0;
++	int err = 0;
+ 	unsigned int page_mask;
+ 	struct vm_area_struct *vma = NULL;
+ 
+@@ -685,18 +686,19 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		if (!vma || start >= vma->vm_end) {
+ 			vma = find_extend_vma(mm, start);
+ 			if (!vma && in_gate_area(mm, start)) {
+-				int ret;
+-				ret = get_gate_page(mm, start & PAGE_MASK,
++				err = get_gate_page(mm, start & PAGE_MASK,
+ 						gup_flags, &vma,
+ 						pages ? &pages[i] : NULL);
+-				if (ret)
+-					return i ? : ret;
++				if (err)
++					goto out;
+ 				page_mask = 0;
+ 				goto next_page;
+ 			}
+ 
+-			if (!vma || check_vma_flags(vma, gup_flags))
+-				return i ? : -EFAULT;
++			if (!vma || check_vma_flags(vma, gup_flags)) {
++				err = -EFAULT;
++				goto out;
++			}
+ 			if (is_vm_hugetlb_page(vma)) {
+ 				i = follow_hugetlb_page(mm, vma, pages, vmas,
+ 						&start, &nr_pages, i,
+@@ -709,23 +711,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		 * If we have a pending SIGKILL, don't keep faulting pages and
+ 		 * potentially allocating memory.
+ 		 */
+-		if (unlikely(fatal_signal_pending(current)))
+-			return i ? i : -ERESTARTSYS;
++		if (unlikely(fatal_signal_pending(current))) {
++			err = -ERESTARTSYS;
++			goto out;
++		}
+ 		cond_resched();
+ 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
+ 		if (!page) {
+-			int ret;
+-			ret = faultin_page(tsk, vma, start, &foll_flags,
++			err = faultin_page(tsk, vma, start, &foll_flags,
+ 					nonblocking);
+-			switch (ret) {
++			switch (err) {
+ 			case 0:
+ 				goto retry;
+ 			case -EFAULT:
+ 			case -ENOMEM:
+ 			case -EHWPOISON:
+-				return i ? i : ret;
++				goto out;
+ 			case -EBUSY:
+-				return i;
++				err = 0;
++				goto out;
+ 			case -ENOENT:
+ 				goto next_page;
+ 			}
+@@ -737,7 +741,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			 */
+ 			goto next_page;
+ 		} else if (IS_ERR(page)) {
+-			return i ? i : PTR_ERR(page);
++			err = PTR_ERR(page);
++			goto out;
+ 		}
+ 		if (pages) {
+ 			pages[i] = page;
+@@ -757,7 +762,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		start += page_increm * PAGE_SIZE;
+ 		nr_pages -= page_increm;
+ 	} while (nr_pages);
+-	return i;
++
++out:
++	return i ? i : err;
+ }
+ 
+ static bool vma_permits_fault(struct vm_area_struct *vma,
+-- 
+2.18.0
+
