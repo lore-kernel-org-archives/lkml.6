@@ -2,109 +2,109 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACBBC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 887E7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C3123DE6
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B27F21456
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lA0FbKLH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C3123DE6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b1JnZ6B+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B27F21456
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeGBOsm (ORCPT
+        id S1752197AbeGBOwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:48:42 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43961 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752185AbeGBOsj (ORCPT
+        Mon, 2 Jul 2018 10:52:20 -0400
+Received: from mail-qk0-f202.google.com ([209.85.220.202]:34909 "EHLO
+        mail-qk0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeGBOwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:48:39 -0400
-Received: by mail-lf0-f68.google.com with SMTP id m12-v6so11689324lfc.10;
-        Mon, 02 Jul 2018 07:48:38 -0700 (PDT)
+        Mon, 2 Jul 2018 10:52:19 -0400
+Received: by mail-qk0-f202.google.com with SMTP id c3-v6so19414833qkb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 07:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WTHQDLVi6dKQz3GlkDB1pFF37+DXeW7OEAhd9Iap5ak=;
-        b=lA0FbKLHM94Plq182uzrWn+uhmulSi7HAGOA6yLUSXMmRJDJyWSLFSXL8khuqgAJvr
-         RyMlNwzlfWKBfdokFxRDPKDMKGxAXWAGfFcDOGD/47vAMg11IsQYkB2WCYpc7uYS4fkB
-         Q/6p8Gw5kJO+OvVSDGoNMG9fYqQShJ2etJvnGhRvtfX1x+NP9ioQVJP04KkqJ7eZsbgk
-         wLNs/0xwP/3jgzN+/H9XTfTFKzEQjoZ8Vb/F5Ikc9o6w3ySOGQN+I2KyNwLQHxS4iap+
-         qrjMlU38ct8W/ATgbKJUW2Ye2eGeBlIgsZil9S4Ui97TQ5ok6scdrChQ1jhMaOeAtn2/
-         ptcw==
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=xWiNCxLjc5o9MHlPm5wYvJq0DglGGclMpeHn1C9nuas=;
+        b=b1JnZ6B+Pciud2vVvlyROa/SaZUrqA1rTGEgqktZAOBAkf96Ety6QUTeT0KWrAzyaE
+         8ZFb1gkGavCp0Lh/5dzHoNsG0i8yt7TwkOdEg1oKbTzrZl7jihtpGLw8GFGU9I8pD0fx
+         wCR/GVSkArI9Hl1rT25PSN8AZdyBKq9VOsSJMngxKbI9dub7mKJmwldd8s2uevDB1jqF
+         ZOKg+7TljnLMHNz6BxpDMOeq2qfygfPPi5TCAGPNo1uppoWDjJj52IvsDQiLVhswfZHw
+         qy9pIn+kjKQzB5Q82WPB0TsJ5/jCeXGl4BUph4c0u7+22Cjaszvz6ShFGxjcAvbJkNbv
+         P4gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WTHQDLVi6dKQz3GlkDB1pFF37+DXeW7OEAhd9Iap5ak=;
-        b=KjtZgPZ7Vksll3VLjGslh0k9DljCWsOccixS6ueBTWsshIG7yvF/O9xl0emu/rgUfU
-         A7SqvUuH6Kewq3zSG3MqMHv8m+5YDITWsONb5Lfy3JlsIyh9vjbmTEEFqvxBLKoQ08KZ
-         aN3uX4AFqn8SP68HRAx40FbqUnKVk3cqtuo1vyiaxsZGER7oHpCF1K6PUb7SuSza1Xq+
-         /ovH7ZxnoOj6BtfZAZ2CRAaycm1ZK+H6ObyoWA1PJiQAEr9Iate12A0H/bygZLEfrYjo
-         9m1ztTiDK64nsyE7148k210/Ru4CH5x02hhjG4i3Yb2xjeP52BI8E4A898Wrt4+YmoqV
-         LmcQ==
-X-Gm-Message-State: APt69E3KvvQqAQ5XJqDVqG/+0WXh69niLAZlJCI0k75W9rKXO2ZQ1z8Y
-        5KWAt7lin+nn27dp0WaJ1iY=
-X-Google-Smtp-Source: AAOMgpf3IBVQxwrukcl1aPLTlrAT+TQgjwtQgMG5YRY+7+4qXititxPB+d9B5veW95cXDyzmnUlLeA==
-X-Received: by 2002:a19:dedb:: with SMTP id i88-v6mr17821901lfl.26.1530542917687;
-        Mon, 02 Jul 2018 07:48:37 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.91.84])
-        by smtp.gmail.com with ESMTPSA id d75-v6sm3221072lfg.76.2018.07.02.07.48.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 07:48:37 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
-Date:   Mon, 02 Jul 2018 17:48:36 +0300
-Message-ID: <11534185.70fb5jbPr6@dimapc>
-In-Reply-To: <d99935be-797d-4676-c186-a045a590f01b@gmail.com>
-References: <20180619110027.16935-1-digetx@gmail.com> <d99935be-797d-4676-c186-a045a590f01b@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=xWiNCxLjc5o9MHlPm5wYvJq0DglGGclMpeHn1C9nuas=;
+        b=InAUzRQRhrIB0TXdPaTAKp5Ukbsx1YnyvFfPFzInCrwfqXjpV/JbJMwOXeBr/cdc0s
+         69SjaOeZiEdFfDSA1U3PYXRYqvp/k8yBxaYwGffCfJGIa59IRU9BFRP+/KieviOeHfm6
+         9dVk7fW8rzc0H22F9zcCwvrr5AjdrbY/QkRnz7nd/KZxMZYFvuH1YfNLdM/aA7MVtsYI
+         ZBVSWc9khwVsxaS3bLI++6Xdh+3NDRuRFgQ69UIx6DCShit1PAziP0eksB18hK5EHNZ1
+         /oe7JHNYorZk0AqCPqy7NIRAB6rjWgczUiRjt/a6FLfTCP5rbxZvTwtaWOjgo06qRIBc
+         ggrw==
+X-Gm-Message-State: APt69E183Bbqy0qoOl39H7L+eUd6YIVMfEOMJ6ctSXmfL5wi86ZTWqMF
+        Y1pfy5nEyzxKAvxtDmZNkYeljrcAdg==
+X-Google-Smtp-Source: AAOMgpc1Pv2crRfmBnKMXmvMbx26vPfxOKUOShAK9JOw6VfTrqJe/WigwhR+sHn3JTzGo83WxqMptFF82Q==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:ac8:6655:: with SMTP id j21-v6mr6185258qtp.11.1530543138134;
+ Mon, 02 Jul 2018 07:52:18 -0700 (PDT)
+Date:   Mon,  2 Jul 2018 16:51:08 +0200
+Message-Id: <20180702145108.73189-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
+Subject: [PATCH] fork: don't copy inconsistent signal handler state to child
+From:   Jann Horn <jannh@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, jannh@google.com
+Cc:     Rik van Riel <riel@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
-> Good Afternoon,
-> 
-> I have tested these patches on the Ouya T3 device.
-> They work great to enable the L2 cache controller, however they do not
-> respect explicitly disabling the L2 cache controller via the kernel
-> config nor device tree.
-> 
-> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
-> the L2 cache controller is silently enabled and allows all four cores to
-> boot.
-> 
+Before this change, if a multithreaded process forks while one of its
+threads is changing a signal handler using sigaction(), the memcpy() in
+copy_sighand() can race with the struct assignment in do_sigaction().
+It isn't clear whether this can cause corruption of the userspace signal
+handler pointer, but it definitely can cause inconsistency between
+different fields of struct sigaction.
 
-I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled, there 
-is no code to do that. Could you elaborate please?
+Take the appropriate spinlock to avoid this.
 
-Secondary cores do not depend on the cache state, disabled cache shouldn't 
-prevent them to boot.
+I have tested that this patch prevents inconsistency between sa_sigaction
+and sa_flags, which is possible before this patch.
 
-> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
-> controller from spinning up.
-> 
-> Tested-by: Peter Geis <pgwipeout@gmail.com>
-> 
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+I haven't added a CC stable line to this patch because I feel that it
+doesn't quite meet the bar; if anyone disagrees, please say so.
 
 
+ kernel/fork.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 9440d61b925c..4c86e8daae53 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1394,7 +1394,9 @@ static int copy_sighand(unsigned long clone_flags, struct task_struct *tsk)
+ 		return -ENOMEM;
+ 
+ 	atomic_set(&sig->count, 1);
++	spin_lock_irq(&current->sighand->siglock);
+ 	memcpy(sig->action, current->sighand->action, sizeof(sig->action));
++	spin_unlock_irq(&current->sighand->siglock);
+ 	return 0;
+ }
+ 
+-- 
+2.18.0.399.gad0ab374a1-goog
 
