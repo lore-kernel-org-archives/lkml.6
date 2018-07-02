@@ -2,153 +2,139 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F56C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB64C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6C47223E1
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:59:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C47223E1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6784724176
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:00:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6784724176
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeGBO7t (ORCPT
+        id S1752702AbeGBPAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:59:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56202 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752075AbeGBO7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:59:48 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 880EA401EF06;
-        Mon,  2 Jul 2018 14:59:47 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-57.ams2.redhat.com [10.36.116.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54BDD2166B5D;
-        Mon,  2 Jul 2018 14:59:45 +0000 (UTC)
-Subject: Re: [PATCH v3 11/20] kvm: arm64: Helper for computing VTCR_EL2.SL0
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-12-git-send-email-suzuki.poulose@arm.com>
-Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
-        Christoffer Dall <cdall@arm.com>, kvmarm@lists.cs.columbia.edu
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <8faab60c-3025-d37f-6dd2-4f26bc32447c@redhat.com>
-Date:   Mon, 2 Jul 2018 16:59:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Mon, 2 Jul 2018 11:00:46 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:30175 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeGBPAp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:00:45 -0400
+X-IronPort-AV: E=Sophos;i="5.51,299,1526342400"; 
+   d="scan'208";a="59246822"
+From:   Anoob Soman <anoob.soman@citrix.com>
+To:     <lduncan@suse.com>, <cleech@redhat.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <open-iscsi@googlegroups.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Anoob Soman <anoob.soman@citrix.com>
+Subject: [RFC 1/1] libiscsi: Fix race between iscsi_xmit_task and iscsi_complete_task
+Date:   Mon, 2 Jul 2018 16:00:24 +0100
+Message-ID: <1530543624-130587-1-git-send-email-anoob.soman@citrix.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <1530270944-11351-12-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 14:59:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 02 Jul 2018 14:59:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+When a target sends Check Condition, whilst initiator is busy xmiting
+re-queued data, could lead to race between iscsi_complete_task() and
+iscsi_xmit_task() and eventually crashing with the following kernel
+backtrace.
 
-On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
-> VTCR_EL2 holds the following key stage2 translation table
-> parameters:
->   SL0  - Entry level in the page table lookup.
->   T0SZ - Denotes the size of the memory addressed by the table.
-> 
-> We have been using fixed values for the SL0 depending on the
-> page size as we have a fixed IPA size. But since we are about
-> to make it dynamic, we need to calculate the SL0 at runtime
-> per VM. This patch adds a helper to comput the value of SL0 for
-compute
-> a given IPA.
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v2:
->  - Part 2 of split from VTCR & VTTBR dynamic configuration
-> ---
->  arch/arm64/include/asm/kvm_arm.h | 35 ++++++++++++++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index c557f45..11a7db0 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -153,7 +153,8 @@
->   * 2 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		38
-> +#define VTCR_EL2_TGRAN_SL0_BASE		3UL
-> +
->  #elif defined(CONFIG_ARM64_16K_PAGES)
->  /*
->   * Stage2 translation configuration:
-> @@ -161,7 +162,7 @@
->   * 2 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		42
-> +#define VTCR_EL2_TGRAN_SL0_BASE		3UL
->  #else	/* 4K */
->  /*
->   * Stage2 translation configuration:
-> @@ -169,11 +170,39 @@
->   * 3 level page tables (SL = 1)
->   */
->  #define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
-> -#define VTTBR_X_TGRAN_MAGIC		37
-> +#define VTCR_EL2_TGRAN_SL0_BASE		2UL
->  #endif
->  
->  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
->  /*
-> + * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
-> + * Interestingly, it depends on the page size.
-> + * See D.10.2.110, VTCR_EL2, in ARM DDI 0487B.b
-update ref to the last one?
-> + *
-> + *	-----------------------------------------
-> + *	| Entry level		|  4K  | 16K/64K |
-> + *	------------------------------------------
-> + *	| Level: 0		|  2   |   -     |
-> + *	------------------------------------------
-> + *	| Level: 1		|  1   |   2     |
-> + *	------------------------------------------
-> + *	| Level: 2		|  0   |   1     |
-> + *	------------------------------------------
-> + *	| Level: 3		|  -   |   0     |
-> + *	------------------------------------------
-> + *
-> + * That table roughly translates to :
-> + *
-> + *	SL0(PAGE_SIZE, Entry_level) = SL0_BASE(PAGE_SIZE) - Entry_Level
-> + *
-> + * Where SL0_BASE(4K) = 2 and SL0_BASE(16K) = 3, SL0_BASE(64K) = 3, provided
-> + * we take care of ruling out the unsupported cases and
-> + * Entry_Level = 4 - Number_of_levels.
-> + *
-> + */
-> +#define VTCR_EL2_SL0(levels) \
-> +	((VTCR_EL2_TGRAN_SL0_BASE - (4 - (levels))) << VTCR_EL2_SL0_SHIFT)
-> +/*
->   * ARM VMSAv8-64 defines an algorithm for finding the translation table
->   * descriptors in section D4.2.8 in ARM DDI 0487B.b.
->   *
-> 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+[3326150.987523] ALERT: BUG: unable to handle kernel NULL pointer dereference at 0000000000000078
+[3326150.987549] ALERT: IP: [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
+[3326150.987571] WARN: PGD 569c8067 PUD 569c9067 PMD 0
+[3326150.987582] WARN: Oops: 0002 [#1] SMP
+[3326150.987593] WARN: Modules linked in: tun nfsv3 nfs fscache dm_round_robin
+[3326150.987762] WARN: CPU: 2 PID: 8399 Comm: kworker/u32:1 Tainted: G O 4.4.0+2 #1
+[3326150.987774] WARN: Hardware name: Dell Inc. PowerEdge R720/0W7JN5, BIOS 2.5.4 01/22/2016
+[3326150.987790] WARN: Workqueue: iscsi_q_13 iscsi_xmitworker [libiscsi]
+[3326150.987799] WARN: task: ffff8801d50f3800 ti: ffff8801f5458000 task.ti: ffff8801f5458000
+[3326150.987810] WARN: RIP: e030:[<ffffffffa05ce70d>] [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
+[3326150.987825] WARN: RSP: e02b:ffff8801f545bdb0 EFLAGS: 00010246
+[3326150.987831] WARN: RAX: 00000000ffffffc3 RBX: ffff880282d2ab20 RCX: ffff88026b6ac480
+[3326150.987842] WARN: RDX: 0000000000000000 RSI: 00000000fffffe01 RDI: ffff880282d2ab20
+[3326150.987852] WARN: RBP: ffff8801f545bdc8 R08: 0000000000000000 R09: 0000000000000008
+[3326150.987862] WARN: R10: 0000000000000000 R11: 000000000000fe88 R12: 0000000000000000
+[3326150.987872] WARN: R13: ffff880282d2abe8 R14: ffff880282d2abd8 R15: ffff880282d2ac08
+[3326150.987890] WARN: FS: 00007f5a866b4840(0000) GS:ffff88028a640000(0000) knlGS:0000000000000000
+[3326150.987900] WARN: CS: e033 DS: 0000 ES: 0000 CR0: 0000000080050033
+[3326150.987907] WARN: CR2: 0000000000000078 CR3: 0000000070244000 CR4: 0000000000042660
+[3326150.987918] WARN: Stack:
+[3326150.987924] WARN: ffff880282d2ad58 ffff880282d2ab20 ffff880282d2abe8 ffff8801f545be18
+[3326150.987938] WARN: ffffffffa05cea90 ffff880282d2abf8 ffff88026b59cc80 ffff88026b59cc00
+[3326150.987951] WARN: ffff88022acf32c0 ffff880289491800 ffff880255a80800 0000000000000400
+[3326150.987964] WARN: Call Trace:
+[3326150.987975] WARN: [<ffffffffa05cea90>] iscsi_xmitworker+0x2f0/0x360 [libiscsi]
+[3326150.987988] WARN: [<ffffffff8108862c>] process_one_work+0x1fc/0x3b0
+[3326150.987997] WARN: [<ffffffff81088f95>] worker_thread+0x2a5/0x470
+[3326150.988006] WARN: [<ffffffff8159cad8>] ? __schedule+0x648/0x870
+[3326150.988015] WARN: [<ffffffff81088cf0>] ? rescuer_thread+0x300/0x300
+[3326150.988023] WARN: [<ffffffff8108ddf5>] kthread+0xd5/0xe0
+[3326150.988031] WARN: [<ffffffff8108dd20>] ? kthread_stop+0x110/0x110
+[3326150.988040] WARN: [<ffffffff815a0bcf>] ret_from_fork+0x3f/0x70
+[3326150.988048] WARN: [<ffffffff8108dd20>] ? kthread_stop+0x110/0x110
+[3326150.988127] ALERT: RIP [<ffffffffa05ce70d>] iscsi_xmit_task+0x2d/0xc0 [libiscsi]
+[3326150.988138] WARN: RSP <ffff8801f545bdb0>
+[3326150.988144] WARN: CR2: 0000000000000078
+[3326151.020366] WARN: ---[ end trace 1c60974d4678d81b ]---
 
-Thanks
+Commit 6f8830f5bbab (scsi: libiscsi: add lock around task lists to fix list
+corruption regression) introduced "taskqueuelock" to fix list corruption during
+the race, but this wasn't enough.
 
-Eric
+Re-setting of conn->task to NULL, could race with iscsi_xmit_task().
+iscsi_complete_task()
+{
+    ....
+    if (conn->task == task)
+        conn->task = NULL;
+}
+
+conn->task in iscsi_xmit_task() could be NULL and so will be task.
+__iscsi_get_task(task) will crash (NullPtr de-ref), trying to access refcount.
+
+iscsi_xmit_task()
+{
+    struct iscsi_task *task = conn->task;
+
+    __iscsi_get_task(task);
+}
+
+This commit will take extra conn->session->back_lock in iscsi_xmit_task()
+to ensure iscsi_xmit_task() waits for iscsi_complete_task(), if
+iscsi_complete_task() wins the race.
+If iscsi_xmit_task() wins the race, iscsi_xmit_task() increments task->refcount
+(__iscsi_get_task) ensuring iscsi_complete_task() will not iscsi_free_task().
+
+Signed-off-by: Anoob Soman <anoob.soman@citrix.com>
+---
+ drivers/scsi/libiscsi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index d609383..aa3be6f 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1449,7 +1449,13 @@ static int iscsi_xmit_task(struct iscsi_conn *conn)
+ 	if (test_bit(ISCSI_SUSPEND_BIT, &conn->suspend_tx))
+ 		return -ENODATA;
+ 
++	spin_lock_bh(&conn->session->back_lock);
++	if (conn->task == NULL) {
++		spin_unlock_bh(&conn->session->back_lock);
++		return -ENODATA;
++	}
+ 	__iscsi_get_task(task);
++	spin_unlock_bh(&conn->session->back_lock);
+ 	spin_unlock_bh(&conn->session->frwd_lock);
+ 	rc = conn->session->tt->xmit_task(task);
+ 	spin_lock_bh(&conn->session->frwd_lock);
+-- 
+1.8.3.1
+
