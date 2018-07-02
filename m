@@ -3,144 +3,188 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64343C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11505C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D7323F3F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:24:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D7323F3F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BADC2259E3
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADC2259E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeGBNY4 (ORCPT
+        id S1752282AbeGBNZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:24:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:60364 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751415AbeGBNYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:24:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7CE718A;
-        Mon,  2 Jul 2018 06:24:51 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8FAA53F5AD;
-        Mon,  2 Jul 2018 06:24:49 -0700 (PDT)
-Subject: Re: [PATCH v3 09/20] kvm: arm64: Make stage2 page table layout
- dynamic
-To:     Auger Eric <eric.auger@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
-        marc.zyngier@arm.com, cdall@kernel.org, julien.grall@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, qemu-devel@nongnu.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-10-git-send-email-suzuki.poulose@arm.com>
- <65475ac0-d156-c16e-bd91-438377326143@redhat.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <22c070c4-aede-d699-774f-6212d05f7a59@arm.com>
-Date:   Mon, 2 Jul 2018 14:24:47 +0100
+        Mon, 2 Jul 2018 09:25:49 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.100]:40922 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751922AbeGBNZr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:25:47 -0400
+X-Greylist: delayed 1467 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 09:25:47 EDT
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 2346216322
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 08:01:20 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZyRmfqb3LbXuJZyS3f1Cm4; Mon, 02 Jul 2018 08:01:19 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=35476 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fZyRm-003baJ-0B; Mon, 02 Jul 2018 08:00:50 -0500
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180628184030.GA23656@embeddedor.com>
+ <20180702085100.GF9802@localhost>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] USB: serial: io_edgeport: mark expected switch
+ fall-throughs
+Message-ID: <3a1b5c84-091d-7f7d-2fcf-206ccd4f91af@embeddedor.com>
+Date:   Mon, 2 Jul 2018 08:00:43 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <65475ac0-d156-c16e-bd91-438377326143@redhat.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <20180702085100.GF9802@localhost>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fZyRm-003baJ-0B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:35476
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Johan,
 
-
-On 02/07/18 13:14, Auger Eric wrote:
-> Hi Suzuki,
-> 
-> On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
->> So far we had a static stage2 page table handling code, based on a
->> fixed IPA of 40bits. As we prepare for a configurable IPA size per
->> VM, make our stage2 page table code dynamic, to do the right thing
->> for a given VM. We ensure the existing condition is always true even
->> when we lift the limit on the IPA. i.e,
+On 07/02/2018 03:51 AM, Johan Hovold wrote:
+> On Thu, Jun 28, 2018 at 01:40:30PM -0500, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
 >>
->> 	page table levels in stage1 >= page table levels in stage2
->>
->> Support for the IPA size configuration needs other changes in the way
->> we configure the EL2 registers (VTTBR and VTCR). So, the IPA is still
->> fixed to 40bits. The patch also moves the kvm_page_empty() in asm/kvm_mmu.h
->> to the top, before including the asm/stage2_pgtable.h to avoid a forward
->> declaration.
->>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 >> ---
->> Changes since V2
->>   - Restrict the stage2 page table to allow reusing the host page table
->>     helpers for now, until we get stage1 independent page table helpers.
-> I would move this up in the commit msg to motivate the fact we enforce
-> the able condition.
-
-This is mentioned in the commit message for the patch which lifts the limitation
-on the IPA. This patch only deals with the dynamic page table level handling,
-with the restriction on the levels. Nevertheless, I could add it to the
-description.
-
->> ---
->>   arch/arm64/include/asm/kvm_mmu.h              |  14 +-
->>   arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ------
->>   arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 -----
->>   arch/arm64/include/asm/stage2_pgtable.h       | 207 +++++++++++++++++++-------
->>   4 files changed, 159 insertions(+), 143 deletions(-)
->>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
->>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
-> 
-> with my very limited knowledge of S2 page table walkers I fail to
-> understand why we now can get rid of stage2_pgtable-nopmd.h and
-> stage2_pgtable-nopud.h and associated FOLDED config. Please could you
-> explain it in the commit message?
-
-As mentioned above, we have static page table helpers, which are decided
-at compile time (just like the stage1). So these files hold the definitions
-for the cases where PUD/PMD is folded and included for a given stage1 VA.
-But since we are now doing this check per VM, we make the decision
-by checking the kvm_stage2_levels(), instead of hard coding it.
-
-Does that help ? A short version of that is already there. May be I could
-elaborate that a bit.
-
->> -
->> -#define stage2_pgd_index(kvm, addr) \
->> -	(((addr) >> S2_PGDIR_SHIFT) & (PTRS_PER_S2_PGD - 1))
->> +static inline unsigned long stage2_pgd_index(struct kvm *kvm, phys_addr_t addr)
->> +{
->> +	return (addr >> stage2_pgdir_shift(kvm)) & (stage2_pgd_ptrs(kvm) - 1);
->> +}
->>   
->>   static inline phys_addr_t
->>   stage2_pgd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t end)
->>   {
->> -	phys_addr_t boundary = (addr + S2_PGDIR_SIZE) & S2_PGDIR_MASK;
->> +	phys_addr_t boundary;
->>   
->> +	boundary = (addr + stage2_pgdir_size(kvm)) & stage2_pgdir_mask(kvm);
->>   	return (boundary - 1 < end - 1) ? boundary : end;
->>   }
->>   
+>>  drivers/usb/serial/io_edgeport.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
+>> diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+>> index 97c69d3..441dab6 100644
+>> --- a/drivers/usb/serial/io_edgeport.c
+>> +++ b/drivers/usb/serial/io_edgeport.c
+>> @@ -1760,7 +1760,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
+>>  				edge_serial->rxState = EXPECT_HDR2;
+>>  				break;
+>>  			}
+>> -			/* otherwise, drop on through */
+>> +			/* else: fall through */
 > 
-> Globally this patch is pretty hard to review. I don't know if it is
-> possible to split into 2. 1) Addition of some helper macros. 2) removal
-> of nopud and nopmd and implementation of the corresponding macros?
+> This doesn't silence the compiler warning with gcc 7.2.0 as the "else: "
+> pattern isn't recognised.
+> 
 
-I acknowledge that. The patch redefines the "existing" macros to make the
-decision at runtime based on the VM's setting. I will see if there is a
-better way to do it.
+I'm using level 2:
 
-Cheers
-Suzuki
+-Wimplicit-fallthrough=2
+
+The thing here is that some people have pointed out that it can be misleading to
+place a plain fall-through comment after an if-else code block containing a "break".
+So, the solution above has proved to be a good one.
+
+>>  		case EXPECT_HDR2:
+>>  			edge_serial->rxHeader2 = *buffer;
+>>  			++buffer;
+>> @@ -1820,7 +1820,7 @@ static void process_rcvd_data(struct edgeport_serial *edge_serial,
+>>  					edge_serial->rxState = EXPECT_DATA;
+>>  					break;
+>>  				}
+>> -				/* Else, drop through */
+>> +				/* else: fall through */
+>>  			}
+> 
+> And this doesn't work either due to the "else: " as well as the fact
+> that the compiler expects the fallthrough comment to precede the case
+> statement directly (e.g. it would need to be moved out of the else
+> block, but that isn't necessarily desirable as we discussed last year: 
+> 
+> 	lkml.kernel.org/r/20171027203906.GA7054@embeddedor.com
+> 
+
+Yes. I'm aware of that. This certainly is still triggering a warning, so I just consider this
+as a temporal approach. I still need to define how are we going to manage cases like this.
+
+> )
+> 
+>>  		case EXPECT_DATA: /* Expect data */
+>>  			if (bufferLength < edge_serial->rxBytesRemaining) {
+> 
+> How do you compile test these these patches?
+>
+
+I already explained this above.
+
+Thanks for your comments.
+--
+Gustavo
