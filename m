@@ -2,152 +2,145 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98831C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660DCC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5962F2548E
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:02:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5962F2548E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 24245254D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24245254D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeGBQCO (ORCPT
+        id S1752292AbeGBQDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:02:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752282AbeGBQCM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:02:12 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62G0do5043421
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 12:02:11 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyksb16v2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:02:11 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 17:02:09 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 17:02:03 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62G22TZ27394104
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 16:02:02 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BF61A4065;
-        Mon,  2 Jul 2018 17:01:45 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 268A3A404D;
-        Mon,  2 Jul 2018 17:01:42 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Mon,  2 Jul 2018 17:01:41 +0100 (BST)
-Date:   Mon, 2 Jul 2018 09:01:58 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+        Mon, 2 Jul 2018 12:03:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34768 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752150AbeGBQC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 12:02:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0604E80D;
+        Mon,  2 Jul 2018 09:02:59 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBAAC3F2EA;
+        Mon,  2 Jul 2018 09:02:57 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 17:02:49 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jin Yao <yao.jin@linux.intel.com>, boris.ostrovsky@oracle.com
+Subject: Re: [RFC PATCH] perf/core: don't sample kernel regs upon skid
+Message-ID: <20180702160249.qck45h76galxrckn@lakrids.cambridge.arm.com>
+References: <20180702151250.14536-1-mark.rutland@arm.com>
+ <20180702154655.GR2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18070216-4275-0000-0000-000002945260
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070216-4276-0000-0000-0000379BCCE4
-Message-Id: <20180702160158.GD65296@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=974 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020182
+In-Reply-To: <20180702154655.GR2494@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Implement the reference counter logic in core uprobe. User will be
-> able to use it from trace_uprobe as well as from kernel module. New
-> trace_uprobe definition with reference counter will now be:
+On Mon, Jul 02, 2018 at 05:46:55PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 02, 2018 at 04:12:50PM +0100, Mark Rutland wrote:
+> > Users can request that general purpose registers, instruction pointer,
+> > etc, are sampled when a perf event counter overflows. To try to avoid
+> > this resulting in kernel state being leaked, unprivileged users are
+> > usually forbidden from opening events which count while the kernel is
+> > running.
+> > 
+> > Unfortunately, this is not sufficient to avoid leading kernel state.
 > 
->     <path>:<offset>[(ref_ctr_offset)]
+> 'leaking' surely.
 > 
-> where ref_ctr_offset is an optional field. For kernel module, new
-> variant of uprobe_register() has been introduced:
+> > 
+> > For various reasons, there can be a delay between the overflow occurring
+> > and the resulting overflow exception (e.g. an NMI) being taken. During
+> > this window, other instructions may be executed, resulting in skid.
+> > 
+> > This skid means that a userspace-only event overflowing may result in an
+> > exception being taken *after* entry to the kernel, allowing kernel
+> > registers to be sampled. Depending on the amount of skid, this may only
+> > leak the PC (breaking KASLR), or it may leak secrets which are currently
+> > live in GPRs.
+> > 
+> > Let's avoid this by only sampling from the user registers when an event
+> > is supposed to exclude the kernel, providing the illusion that the
+> > overflow exception is taken from userspace.
+> > 
+> > We also have similar cases when sampling a guest, where we get the host
+> > regs in some cases. It's not entirely clear to me how we should handle
+> > these.
 > 
->     uprobe_register_refctr(inode, offset, ref_ctr_offset, consumer)
+> Would not a similar:
 > 
+> 	if ((event->attr.exclude_hv || event->attr.exclude_host) /* WTF both !? */ &&
+> 	    perf_guest_cbs && !perf_guest_cbs->is_in_guest())
+> 		return perf_guest_cbs->guest_pt_regs();
+>
+> work there? 
 
-Sorry for bringing this again, but I would actually think the ref_ctr is
-a consumer property. i.e the ref_ctr_offset should be part of
-uprobe_consumer.
+Mostly. It's fun if the user also passed exclude_guest -- I have no idea
+what should be sampled there, if anything.
 
-The advantages of doing that would be
-1. Dont need to expose uprobe structure and just update our
-uprobe_consumer which is already an exported structure.
-- Exporting uprobe structure would expose some of our internal
-  implementation details, basically reduce the freedom of changing stuff
-  internally.
-- we came up with uprobe_arch for the parts that we wanted to expose
-  to archs. exposing uprobe and uprobe_arch looks weird.
+It's easy to get stuck in a rabbit hole looking at this.
 
-2. ref_ctr_offset is necessarily a consumer property, its not a uprobe
-property at all.
+> Of course, perf_guest_info_callbacks is currently lacking that
+> guest_pt_regs() thingy..
 
-3. We dont need to change/add new uprobe_register functions.
+Yeah; I started looking at implementing it, but ran away since it wasn't
+clear to me how to build that on most architectures.
 
-The way I look at it is.
-
-Based on the ref_ctr_offset field in consumer, we update_ref_ctr()
-around install_breakpoint/remove_breakpoint.
-
-> +static int delayed_uprobe_add(struct uprobe *uprobe, struct mm_struct *mm)
-> +{
-> +	struct delayed_uprobe *du;
-> +
-> +	if (delayed_uprobe_check(uprobe, mm))
-> +		return 0;
-> +
-> +	du  = kzalloc(sizeof(*du), GFP_KERNEL);
-> +	if (!du)
-> +		return -ENOMEM;
-> +
-> +	du->uprobe = uprobe;
-> +	du->mm = mm;
-> +	list_add(&du->list, &delayed_uprobe_list);
-> +	return 0;
-> +}
-> +
-
-If I understood the delayed_uprobe stuff, its when we could insert a
-breakpoint but the vma that has the ref_ctr_offset is not loaded. Is
-that correct?
-
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Jin Yao <yao.jin@linux.intel.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > ---
+> >  kernel/events/core.c | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 8f0434a9951a..2ab2548b2e66 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -6361,6 +6361,32 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+> >  	return callchain ?: &__empty_callchain;
+> >  }
+> >  
+> > +static struct pt_regs *perf_get_sample_regs(struct perf_event *event,
+> > +					    struct pt_regs *regs)
+> > +{
+> > +	/*
+> > +	 * Due to interrupt latency (AKA "skid"), we may enter the kernel
+> > +	 * before taking an overflow, even if the PMU is only counting user
+> > +	 * events.
+> > +	 *
+> > +	 * If we're not counting kernel events, always use the user regs when
+> > +	 * sampling.
+> > +	 *
+> > +	 * TODO: what do we do about sampling a guest's registers? The IP is
+> > +	 * special-cased, but for the rest of the regs they'll get the
+> > +	 * user/kernel regs depending on whether exclude_kernel is set, which
+> > +	 * is nonsensical.
+> > +	 *
+> > +	 * We can't get at the full set of regs in all cases (e.g. Xen's PV PMU
+> > +	 * can't provide the GPRs), so should we just zero the GPRs when in a
+> > +	 * guest? Or skip outputting the regs in perf_output_sample?
 > 
-> -- 
-> 2.14.4
-> 
+> Seems daft Xen cannot provide registers; why is that? Boris?
 
+The xen_pmu_regs structure simply doesn't have them, so I assume there's
+no API to get them.
+
+Given we don't currently sample the guest regs, I'd be tempted to just
+zero them for now, or skip the sample at output time (if that doesn't
+break some other case).
+
+Thanks,
+Mark.
