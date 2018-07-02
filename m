@@ -2,173 +2,145 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5D4C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD90C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA034256B3
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB145256D1
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARB7IGr7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA034256B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLqNCWwG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB145256D1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeGBSxC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:53:02 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38526 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753263AbeGBSxA (ORCPT
+        id S1753489AbeGBSxO (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 14:53:14 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:45669 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753263AbeGBSxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:53:00 -0400
-Received: by mail-pf0-f195.google.com with SMTP id j17-v6so7915215pfn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:53:00 -0700 (PDT)
+        Mon, 2 Jul 2018 14:53:12 -0400
+Received: by mail-qt0-f194.google.com with SMTP id y5-v6so4930475qti.12;
+        Mon, 02 Jul 2018 11:53:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DH9CSSbaxrEliXGeQErQjhAut0xk0sXB4F34YqfKmIM=;
-        b=ARB7IGr78x/vqUO4x8Ba0DmeaFcygc5XbisBv3to32ivxhXogUgrfXaHmo/AMMNjNj
-         XkzjJKJZQXVVG6qsSKNf8aKcfZEFHH4tVA5XL6baldsTM4q/mj/LV905McA84d1D1mnM
-         Xj+cdMnlLzcsZRACYCnmg5wjNwP0O9mUbt34g=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3/isBrlL86YnFTHHKRy7etWt5GUXy9hxpfht62BgfOA=;
+        b=bLqNCWwGzno1Y1yck1WpXoos++oT/EPe5kypMthucY4p+GPba1V6lSiba7oAtUnPHO
+         9sRaP4rXIZkgGlWjBWNUGx3LvMHexGAD7xCS0acfBPx5OrmP7k8NommVdMUPnoITobp7
+         xpnrkuzQj+0d/eidy2zFil/pbkVwnkJLoMHopjK9o4C97LB2fO1f2gHfnWfB7//1tbXk
+         iQ4a8f4pkTXBpqp+ggGAg2gB3H3KNqgtdjDYdJbH/Uu2uUXXV7XdBoQnMvTFUHRhjtVi
+         LdOkRFKAhVnGKGVa/HtgFqxZFZ66gfX8m9NXgK3la4w3xpfmHwd6amPkR5cEgtsIvpjr
+         46cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DH9CSSbaxrEliXGeQErQjhAut0xk0sXB4F34YqfKmIM=;
-        b=EgfSRTQVoZjTf9wY7R31bFu9hYUzm2NH84uB+tweHiVXjzSmg5fOnuA5IasJnYHQDj
-         QjII5JXyg4HdvRyCXcdrh/fqOg+Hs/cxtW341VVMlGpodCcD2pZEDBh382XPLDpxhfw1
-         Gv9iRZuwY3NGMWsZJqph2eo4i+G1IELmqv5HIFJcXa6K2KfJ2xUtyePb87xjWLW2ksBS
-         wY2gHBBAk5aXwEzLtkvnW09xSFQe3RxXfN2mqGQCDGZt4zGiWnUP15AJwF0w+2/LsqPy
-         spmsyWifSW35I0lsGx+JJuVXNSh1tosKtC3KKcBFBSpBQzA761eVDwnWG+Xia71OguHI
-         eSbA==
-X-Gm-Message-State: APt69E25f/nz1PbY6K6UKIWRrm2BFb8jfsSSoqm+rt3NpGok2VLSeKKu
-        YDyD8HKbQWH5J6qLevJiMMz5zA==
-X-Google-Smtp-Source: ADUXVKKMTFhsjp4st8ofSeYPXjJ/G+6myXvS9Zyeeuatjn7nXgMIgLY2Foqh2mXwz9AA4X/Ie4a/Og==
-X-Received: by 2002:a63:7b1b:: with SMTP id w27-v6mr21968037pgc.199.1530557579845;
-        Mon, 02 Jul 2018 11:52:59 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g10-v6sm25093453pfi.148.2018.07.02.11.52.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 11:52:59 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 11:55:30 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, Zhang Rui <rui.zhang@intel.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] thermal: tsens: Rename tsens-8996 to tsens-v2 for
- reuse
-Message-ID: <20180702185530.GD2050@tuxbook-pro>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <7e9beaa3218b1c46ea6a7399c5978c1538fce261.1530533998.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3/isBrlL86YnFTHHKRy7etWt5GUXy9hxpfht62BgfOA=;
+        b=SEHzhFspUHr/JXLDN55Y3x1YgPxpKm9lTRQXGhjkfaY3djrQIQ/7J+d9IwWynHs3oV
+         mL6zciBMNJMfN3mGoRM4HfeHS8nx51gEStsLbk7mcQLDGKaQIb8wr1F2HJIXFi134dmw
+         1vAE1COaTQR8zgX+rv9tQDI6+OXA/qmR/roZ8ayYAP+AX5t9T6sNaZ7WILoFBbYr74IA
+         KqCb3kvubIr4jB039P6m9iorFnAJelSlOmQAYQZNR4BHkUGq8CcDVQW71Ljlv2O+dVu+
+         e8xsjZo2IS6L8XEvqgz0CsU6Wunvq7yjkakLyayN06Owre3LKxF6zf28r3Nrmv6tkKJS
+         lY8g==
+X-Gm-Message-State: APt69E2vAC/A7sPlnBpa9D5AIvidUw8EXABKVkXD28qvXah5zz5R15lB
+        ngTSSz+E/1YGCKasAGyFW6B5sqzNhvw=
+X-Google-Smtp-Source: AAOMgpeESRaXyBKAc94rAvx9HwXui2KQgGRD1Db/rOk/MOww4UjfmyHxy8e0K80hBlGhcxxBF+j3vA==
+X-Received: by 2002:aed:3c42:: with SMTP id u2-v6mr24688100qte.198.1530557591347;
+        Mon, 02 Jul 2018 11:53:11 -0700 (PDT)
+Received: from [192.168.44.96] (203.sub-174-226-3.myvzw.com. [174.226.3.203])
+        by smtp.gmail.com with ESMTPSA id y49-v6sm13443786qty.91.2018.07.02.11.53.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 11:53:10 -0700 (PDT)
+Subject: Re: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20180619110027.16935-1-digetx@gmail.com>
+ <d99935be-797d-4676-c186-a045a590f01b@gmail.com> <11534185.70fb5jbPr6@dimapc>
+From:   Peter Geis <pgwipeout@gmail.com>
+Message-ID: <5c47ef70-b90e-6e81-39dd-fbcfad2b93e5@gmail.com>
+Date:   Mon, 2 Jul 2018 14:53:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e9beaa3218b1c46ea6a7399c5978c1538fce261.1530533998.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <11534185.70fb5jbPr6@dimapc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Jul 05:44 PDT 2018, Amit Kucheria wrote:
 
-> The TSENS block inside the 8996 is internally classified as version 2 of
-> the IP. Several other SoC families use this block and can share this code.
+
+On 07/02/2018 10:48 AM, Dmitry Osipenko wrote:
+> On Friday, 29 June 2018 22:37:02 MSK Peter Geis wrote:
+>> Good Afternoon,
+>>
+>> I have tested these patches on the Ouya T3 device.
+>> They work great to enable the L2 cache controller, however they do not
+>> respect explicitly disabling the L2 cache controller via the kernel
+>> config nor device tree.
+>>
+>> With CONFIG_CACHE_L2X0 disabled, but CONFIG_TRUSTED_FOUNDATIONS enabled,
+>> the L2 cache controller is silently enabled and allows all four cores to
+>> boot.
+>>
 > 
-> We rename get_temp() to reflect that it can be used across the v2 family.
+> I don't see how cache could be enabled with CONFIG_CACHE_L2X0 disabled, there
+> is no code to do that. Could you elaborate please?
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/thermal/qcom/Makefile                     |  2 +-
->  drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} | 26 ++++++++---------------
->  2 files changed, 10 insertions(+), 18 deletions(-)
->  rename drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} (66%)
+> Secondary cores do not depend on the cache state, disabled cache shouldn't
+> prevent them to boot.
+
+On the untouched mainline kernel running on a Trusted Foundations T3 
+device, I observed the following indications:
+With the L2 cache controller enabled, all four processor cores were 
+enabled, but it would immediately panic for writing to a secure register 
+from insecure mode.
+With the L2 cache controller disabled, only the boot core is detected, 
+but it successfully boots.
+This is the issue that I inquired originally to you about.
+
+With your patch running on the same device, the following is observed:
+With the L2 controller enabled, all four cores are active, and the cache 
+controller appears to function.
+With the L2 controller disabled, but trusted foundations enabled, the L2 
+controller enabled kernel message is missing, however all four cores 
+still enable.
+
+After looking through the code a little more deeply, I see you modified 
+the reset handler for handling offline cores.
+I am wondering if you fixed an additional issue inadvertently.
+
+The reason I discovered this is I am working with kexec as a bootloader.
+On a device without trusted foundations, kexec works without issue.
+On a device with trusted foundations and your patch, I found that 
+disabling the l2 cache controller and trusted foundations allow kexec to 
+occur.
+I haven't tried an either/or scenario, though now you have me thinking I 
+should.
 > 
-> diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
-> index 2cc2193..a821929 100644
-> --- a/drivers/thermal/qcom/Makefile
-> +++ b/drivers/thermal/qcom/Makefile
-> @@ -1,2 +1,2 @@
->  obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
-> -qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-8996.o
-> +qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
-> diff --git a/drivers/thermal/qcom/tsens-8996.c b/drivers/thermal/qcom/tsens-v2.c
-> similarity index 66%
-> rename from drivers/thermal/qcom/tsens-8996.c
-> rename to drivers/thermal/qcom/tsens-v2.c
-> index e1f7781..2eca7ff 100644
-> --- a/drivers/thermal/qcom/tsens-8996.c
-> +++ b/drivers/thermal/qcom/tsens-v2.c
-> @@ -1,27 +1,18 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (c) 2015, The Linux Foundation. All rights reserved.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 and
-> - * only version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> + * Copyright (c) 2018, Linaro Limited
->   */
->  
-> -#include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include "tsens.h"
->  
-> -#define STATUS_OFFSET	0x10a0
-> -#define LAST_TEMP_MASK	0xfff
-> +#define STATUS_OFFSET		0xa0
-
-This is not backwards compatible with present day dts files, you need to
-keep this effectively 0x10a0 when the memory region isn't split in two.
-
-Perhaps you can just offset the ioremap by 4k when there's only one
-region?
-
-
-Apart from this I like the change!
-
-Regards,
-Bjorn
-
-> +#define LAST_TEMP_MASK		0xfff
->  #define STATUS_VALID_BIT	BIT(21)
->  #define CODE_SIGN_BIT		BIT(11)
->  
-> -static int get_temp_8996(struct tsens_device *tmdev, int id, int *temp)
-> +static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
->  {
->  	struct tsens_sensor *s = &tmdev->sensor[id];
->  	u32 code;
-> @@ -73,12 +64,13 @@ static int get_temp_8996(struct tsens_device *tmdev, int id, int *temp)
->  	return 0;
->  }
->  
-> -static const struct tsens_ops ops_8996 = {
-> +static const struct tsens_ops ops_generic_v2 = {
->  	.init		= init_common,
-> -	.get_temp	= get_temp_8996,
-> +	.get_temp	= get_temp_tsens_v2,
->  };
->  
->  const struct tsens_data data_8996 = {
->  	.num_sensors	= 13,
-> -	.ops		= &ops_8996,
-> +	.ops		= &ops_generic_v2,
->  };
-> +
-> -- 
-> 2.7.4
+>> One must also disable CONFIG_TRUSTED_FOUNDATIONS to stop the L2 cache
+>> controller from spinning up.
+>>
+>> Tested-by: Peter Geis <pgwipeout@gmail.com>
+>>
+> 
+> 
+> 
 > 
