@@ -2,94 +2,118 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6C2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED35C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981312525F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981312525F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E7D902525F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D902525F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeGBNks (ORCPT
+        id S1752639AbeGBNkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:40:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46108 "EHLO mx1.suse.de"
+        Mon, 2 Jul 2018 09:40:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9152 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752401AbeGBNkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:40:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E6E1CAD12;
-        Mon,  2 Jul 2018 13:40:43 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 15:40:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 2/5] mm: introduce VM_DEAD flag
-Message-ID: <20180702134043.GW19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-3-git-send-email-yang.shi@linux.alibaba.com>
+        id S1752567AbeGBNku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:40:50 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 10816715F93C8;
+        Mon,  2 Jul 2018 21:40:30 +0800 (CST)
+Received: from localhost.localdomain (10.143.28.91) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 2 Jul 2018 21:40:23 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
+        <marc.zyngier@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <kvm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>
+CC:     <gengdongjiu@huawei.com>, <linuxarm@huawei.com>
+Subject: [PATCH v6 2/2] arm64: KVM: export the capability to set guest SError syndrome
+Date:   Mon, 2 Jul 2018 21:40:15 +0800
+Message-ID: <1530538815-3847-3-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1530538815-3847-1-git-send-email-gengdongjiu@huawei.com>
+References: <1530538815-3847-1-git-send-email-gengdongjiu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530311985-31251-3-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.91]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 30-06-18 06:39:42, Yang Shi wrote:
-> VM_DEAD flag is used to mark a vma is being unmapped, access to this
-> area will trigger SIGSEGV.
-> 
-> This flag will be used by the optimization for unmapping large address
-> space (>= 1GB) in the later patch. It is 64 bit only at the moment,
-> since:
->   * we used up vm_flags bit for 32 bit
->   * 32 bit machine typically will not have such large mapping
-> 
-> All architectures, which support 64 bit, need check this flag in their
-> page fault handler. This is implemented in later patches.
+For the arm64 RAS Extension, user space can inject a virtual-SError
+with specified ESR. So user space needs to know whether KVM support
+to inject such SError, this interface adds this query for this capability.
 
-Please add a new flag with its users. There is simply no way to tell the
-semantic from the above description and the patch as well.
+KVM will check whether system support RAS Extension, if supported, KVM
+returns true to user space, otherwise returns false.
+
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Reviewed-by: James Morse <james.morse@arm.com>
+---
+change since v5:
+1. Rebase this patch to v4.18-rc3
+---
+ Documentation/virtual/kvm/api.txt | 11 +++++++++++
+ arch/arm64/kvm/reset.c            |  3 +++
+ include/uapi/linux/kvm.h          |  1 +
+ 3 files changed, 15 insertions(+)
+
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index e3940f8..480fa64 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -4643,3 +4643,14 @@ This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
+ hypercalls:
+ HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
+ HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
++
++8.19 KVM_CAP_ARM_SET_SERROR_ESR
++
++Architectures: arm, arm64
++
++This capability indicates that userspace can specify the syndrome value reported
++to the guest OS when guest takes a virtual SError interrupt exception.
++If KVM has this capability, userspace can only specify the ISS field for the ESR
++syndrome, it can not specify the EC field which is not under control by KVM.
++If this virtual SError is taken to EL1 using AArch64, this value will be reported
++in ISS filed of ESR_EL1.
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index a3db01a..067c6ba 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_ARM_PMU_V3:
+ 		r = kvm_arm_support_pmu_v3();
+ 		break;
++	case KVM_CAP_ARM_INJECT_SERROR_ESR:
++		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
++		break;
+ 	case KVM_CAP_SET_GUEST_DEBUG:
+ 	case KVM_CAP_VCPU_ATTRIBUTES:
+ 	case KVM_CAP_VCPU_EVENTS:
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index b6270a3..a7d9bc4 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -949,6 +949,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_GET_MSR_FEATURES 153
+ #define KVM_CAP_HYPERV_EVENTFD 154
+ #define KVM_CAP_HYPERV_TLBFLUSH 155
++#define KVM_CAP_ARM_INJECT_SERROR_ESR 156
  
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
->  include/linux/mm.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index a0fbb9f..28a3906 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -242,6 +242,12 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
->  #endif
->  #endif /* CONFIG_ARCH_HAS_PKEYS */
->  
-> +#ifdef CONFIG_64BIT
-> +#define VM_DEAD			BIT(37)	/* bit only usable on 64 bit kernel */
-> +#else
-> +#define VM_DEAD			0
-> +#endif
-> +
->  #if defined(CONFIG_X86)
->  # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
->  #elif defined(CONFIG_PPC)
-> -- 
-> 1.8.3.1
-
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
