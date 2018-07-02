@@ -2,146 +2,67 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8A2C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D240C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13DC123C68
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC9CE25447
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:21:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vKPUZSM0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13DC123C68
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ihtr+l1h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9CE25447
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752298AbeGBNUr (ORCPT
+        id S1752389AbeGBNU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:20:47 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42836 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeGBNUp (ORCPT
+        Mon, 2 Jul 2018 09:20:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53258 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752003AbeGBNU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:20:45 -0400
-Received: by mail-pl0-f65.google.com with SMTP id y15-v6so6087177pll.9;
-        Mon, 02 Jul 2018 06:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ir3ChEr0HqTxoel/nevm50n8yWXff+Sn6IeCX3ujf1I=;
-        b=vKPUZSM0lahoTUWYepkJZxlGyKNBtPLnYW3r5z/0keQv5U4ADzj7Cl/ZI5mDdxO/oa
-         AZYYvFNHPhIvbuDITVR1q6klp5dH2Y/bPushK4lKnNOPkIWY9HEu3nYeVl7wrwZeKhCi
-         5css5MHYf25Npj0s8qxuTfFV+n/GtViWphk1deEvPUTBbTNBE70PkbynoOIIzuQ5YoZ4
-         POO8aPZ9oHbK3RTI+ajx/GyuGZ95KhLrlcDufw/tximqRgfZUEFYW2tQyTXVXO2b+2Zt
-         +/spbPy9AcL3sIIsglhAmXbtZ6M7F++BPQNslZL3lZtSs7R4dF11wOguQAn+Lg4B4q97
-         QpDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ir3ChEr0HqTxoel/nevm50n8yWXff+Sn6IeCX3ujf1I=;
-        b=UzeuVaO2Op0o4SBDcCjGc9lIydKKDUKGb+/BXvTqe2blI5AfJHqhw5w//ikXcxFi9l
-         gC884Uf7I9W55btDvQFD+W1Dx5Lnt5xUwK4smwMVQrBYLayDML1lZqRFyRgL5RCjFjbA
-         E6kD6eQmC2pVDvwJ+FfXzZkTsxrDtRbK3opgygXLV5pi7ef42Mc/iZIEQvH0w+wAtm67
-         IvQ9KYCR7M/bQk7WeMPnAUhxregkSS5zTkMqDhmQxDkaGmas1N8YjOV4TPuj/8A6SWdC
-         q/UzyquPEq4b5kXH9vU8npWYoQWR3GSgbAd6Pw2A6szuDpoxOvcpxaGBGlT737Q8il9Z
-         VorA==
-X-Gm-Message-State: APt69E15/lGQBWOLVoHrDGPrUIIZiO8GHPr5bgjSVsKLpzGxTD7BH9YW
-        fSyO/Ld8TOCSgcD4m66q8OaQGA==
-X-Google-Smtp-Source: ADUXVKIiOxo+/DwXHlAGBs2GGSw2naRJ5jixQiwU0fgI4pVqfox4SDBO3+l5sdzOF0he8puEuZrZAQ==
-X-Received: by 2002:a17:902:780e:: with SMTP id p14-v6mr25677239pll.239.1530537644992;
-        Mon, 02 Jul 2018 06:20:44 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id j133-v6sm32946655pgc.75.2018.07.02.06.20.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 06:20:44 -0700 (PDT)
-Subject: Re: [PATCH] watchdog: add module parameter "force_no_reboot" for iTCO
-To:     "Tian, Baofeng" <baofeng.tian@intel.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <0038B620BAC72941BCBF48AEB892976C02CADE1E@shsmsx102.ccr.corp.intel.com>
- <EEBA739CCF11FE49B73E1FB4690F5EE649E1BFEB@shsmsx102.ccr.corp.intel.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <140371d6-4bbb-6377-a570-5253c5f98e0e@roeck-us.net>
-Date:   Mon, 2 Jul 2018 06:20:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 2 Jul 2018 09:20:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KW2xw3jWDDgPcYimdcvFdC7/gvYFAqLn+depIs2hxTw=; b=Ihtr+l1hily/ldgK10lecD2xP
+        X+x1YZBRiht4XI3k4lxDXjbOXQZm7xgXivGExvgAQGsbwwA7tTxyivR4Iu183iAkehPmyXr61gw7Y
+        edEO12ViAbolMQVeiMvzgoX0/cSNVFzoCnsHexPzCME8ftZwKvrwIzPCjr5o5g11H38/RtfFPDdZ/
+        Eu1uDECXV9rK6KQAN7qYtN9/skzqyNYzxT7PSd5GNKU+nF3SaBzbSDKA0uuWVq1SbJ8V25FGp/LGQ
+        vtvH9UnDrHhp36yIVTL8UIYa0MzM1aSXRqrO3UkOaUO4ecQre1rqVjTACnZflgPrT1p6wogx9nOJW
+        73cI15XWQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fZylE-0000wJ-Sh; Mon, 02 Jul 2018 13:20:56 +0000
+Date:   Mon, 2 Jul 2018 06:20:56 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
+ configuration"
+Message-ID: <20180702132056.GA30627@infradead.org>
+References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <EEBA739CCF11FE49B73E1FB4690F5EE649E1BFEB@shsmsx102.ccr.corp.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 12:30 AM, Tian, Baofeng wrote:
-> From: "Tian, Baofeng" <baofeng.tian@intel.com <mailto:baofeng.tian@intel.com>>
-> Subject: [PATCH] watchdog: add module parameter "force_no_reboot" for iTCO
+On Fri, Jun 29, 2018 at 04:42:27PM +0300, Mike Rapoport wrote:
+> Otherwise mm configuration options show up in the top level menu.
 > 
-> Setting "force_no_reboot" parameter to true (y/Y/1) will have
-> the effect to prevent to reset the NO_REBOOT flag thus
-> preventing the iTCO to reboot the platform, if not set
-> or set to false, then system will reboot after about 30s.
-> 
-> Signed-off-by: Tian, Baofeng <baofeng.tian@intel.com <mailto:baofeng.tian@intel.com>>
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Your e-mail address is messed up.
-
-> ---
->   drivers/watchdog/iTCO_wdt.c | 11 ++++++++++-
->   1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-> index 347f038..255318b 100644
-> --- a/drivers/watchdog/iTCO_wdt.c
-> +++ b/drivers/watchdog/iTCO_wdt.c
-> @@ -131,6 +131,11 @@ module_param(turn_SMI_watchdog_clear_off, int, 0);
->   MODULE_PARM_DESC(turn_SMI_watchdog_clear_off,
->        "Turn off SMI clearing watchdog (depends on TCO-version)(default=1)");
-> 
-> +static bool force_no_reboot;
-> +module_param(force_no_reboot, bool, 0);
-> +MODULE_PARM_DESC(force_no_reboot,
-> +           "Prevents the watchdog rebooting the platform (default=0)");
-> +
->   /*
->    * Some TCO specific functions
->    */
-> @@ -243,6 +248,10 @@ static int iTCO_wdt_start(struct watchdog_device *wd_dev)
->        struct iTCO_wdt_private *p = watchdog_get_drvdata(wd_dev);
->        unsigned int val;
-> 
-> +     /* force_no_reboot will prevent to unset NO_REBOOT bit */
-> +     if (force_no_reboot)
-> +           return -EIO;
-> +
-It seems to me that this flag prevents the watchdog from being started,
-and on top it would return an unreasonable error (-EIO).
-
-I don't see the point of this patch, sorry.
-
-Guenter
-
->        spin_lock(&p->io_lock);
-> 
->        iTCO_vendor_pre_start(p->smi_res, wd_dev->timeout);
-> @@ -250,7 +259,7 @@ static int iTCO_wdt_start(struct watchdog_device *wd_dev)
->        /* disable chipset's NO_REBOOT bit */
->        if (p->update_no_reboot_bit(p->no_reboot_priv, false)) {
->              spin_unlock(&p->io_lock);
-> -           pr_err("failed to reset NO_REBOOT flag, reboot disabled by hardware/BIOS\n");
-> +           pr_err("failed to reset NO_REBOOT flag, reboot disabled by hardware/BIOS/rc_cmd\n");
->              return -EIO;
->        }
-> 
-> -- 
-> 2.7.4
-> 
-
+Is this urgent?  If not I'm about to post a series that moves the
+includes of all common kernel Kconfigs into the top-level Kconfig..
