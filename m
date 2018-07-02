@@ -3,80 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD8C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A930C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DDA925E25
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:52:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DDA925E25
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id C0B6425E30
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B6425E30
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeGBNwC (ORCPT
+        id S1752258AbeGBNxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:52:02 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:39304 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752213AbeGBNwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:52:01 -0400
-Received: by mail-vk0-f68.google.com with SMTP id v16-v6so6106259vkd.6
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 06:52:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SogqjdrYun7rmcasFCmUgPnBYnjHp1SewUmjyWkTqSs=;
-        b=AaR7IJUxs0Wg2NNL3d+Je+6h6/7g2ZnyGnA17veinPbe5wRrJ13FO9L0PLj+FrvKgc
-         bdU0WAi7yL8kz2yhoKjzLUNlv6QTAf0NSXTNgxNXuRqqAztWLzsmcYH9jvMoiOMuTue2
-         U9jMgub2/M7N0JY/7kYIkE2apmsgDzJGnCogbKFWulsLeeA7iaz4Kko2f7k1ZNZohTnG
-         u3aq0uTJQL/CBh3BGunwk4y6C9TyYWEKmBfFEfpIFmV6KN6Uu2MJpcgjaRfxW5QfH5IW
-         n6ctZ0xCy8h+hNSQVRtckwZs7x7FkPlBltaLB3M2Jc30JcdC4U3T5LTYfdDF2tBbGuK7
-         nA5w==
-X-Gm-Message-State: APt69E3Cc0UiavtNRpgrOnv0vy4Oy8ZS48t8bXMRSLi0LIrNt6zxCrmh
-        Phtxa8ibtXz4E0mTd8bcVG9bWDmbPYcGH5oMeYWqog==
-X-Google-Smtp-Source: AAOMgpdn1/QkOUYq73wfj8/T3FS7xEibOFKlprLFSbE8SrZRDGHZzj4VLv1uTmny7llH9z8jWifXR6x21hHqmYh/jZM=
-X-Received: by 2002:a1f:f44f:: with SMTP id s76-v6mr523212vkh.125.1530539520346;
- Mon, 02 Jul 2018 06:52:00 -0700 (PDT)
+        Mon, 2 Jul 2018 09:53:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:32848 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751931AbeGBNxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:53:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6299880D;
+        Mon,  2 Jul 2018 06:53:10 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F4E73F2EA;
+        Mon,  2 Jul 2018 06:53:08 -0700 (PDT)
+Subject: Re: [PATCH v3 16/20] kvm: arm64: Switch to per VM IPA limit
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-17-git-send-email-suzuki.poulose@arm.com>
+ <98b1fa06-d026-52b2-09de-87ec1dfdbfb2@arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <bab97403-bc60-d71a-72d6-3ca5c3fe6fd1@arm.com>
+Date:   Mon, 2 Jul 2018 14:53:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <142066981b41910f4e645590a8b1734a1ea72fb8.1529926655.git.fthain@telegraphics.com.au>
-In-Reply-To: <142066981b41910f4e645590a8b1734a1ea72fb8.1529926655.git.fthain@telegraphics.com.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Jul 2018 15:51:49 +0200
-Message-ID: <CAMuHMdVjjonPUj=L1xQx9B55M05EW+Oe8ffguLZEiiU-5zXyBA@mail.gmail.com>
-Subject: Re: [PATCH] nubus: Set default dma mask for nubus_board devices
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <98b1fa06-d026-52b2-09de-87ec1dfdbfb2@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 25, 2018 at 1:45 PM Finn Thain <fthain@telegraphics.com.au> wrote:
-> A 32-bit mask is used by default because a NuBus slot has 32
-> address/data lines and a NuBus board is free to use all of them.
->
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-Thanks, applied with Christoph's Rb, and queued for v4.19.
+Hi Marc,
 
-Gr{oetje,eeting}s,
+On 02/07/18 14:32, Marc Zyngier wrote:
+> On 29/06/18 12:15, Suzuki K Poulose wrote:
+>> Now that we can manage the stage2 page table per VM, switch the
+>> configuration details to per VM instance. We keep track of the
+>> IPA bits, number of page table levels and the VTCR bits (which
+>> depends on the IPA and the number of levels). While at it, remove
+>> unused pgd_lock field from kvm_arch for arm64.
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>> index 328f472..9a15860 100644
+>> --- a/arch/arm64/include/asm/kvm_host.h
+>> +++ b/arch/arm64/include/asm/kvm_host.h
+>> @@ -61,13 +61,23 @@ struct kvm_arch {
+>>   	u64    vmid_gen;
+>>   	u32    vmid;
+>>   
+>> -	/* 1-level 2nd stage table and lock */
+>> -	spinlock_t pgd_lock;
+>> +	/* stage-2 page table */
+>>   	pgd_t *pgd;
+>>   
+>>   	/* VTTBR value associated with above pgd and vmid */
+>>   	u64    vttbr;
+>>   
+>> +	/* Private bits of VTCR_EL2 for this VM */
+>> +	u64    vtcr_private;
+> 
+> As I said in another email, this should become a full VTCR_EL2 copy.
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+OK
+
+>> +	/* Size of the PA size for this guest */
+>> +	u8     phys_shift;
+>> +	/*
+>> +	 * Number of levels in page table. We could always calculate
+>> +	 * it from phys_shift above. We cache it for faster switches
+>> +	 * in stage2 page table helpers.
+>> +	 */
+>> +	u8     s2_levels;
+> 
+> And these two fields feel like they should be derived from the VTCR
+> itself, instead of being there on their own. Any chance you could look
+> into this?
+
+Yes, the VTCR is computed from the above two values and we could compute
+them back from the VTCR. I will give it a try.
+
+>> diff --git a/arch/arm64/include/asm/stage2_pgtable.h b/arch/arm64/include/asm/stage2_pgtable.h
+>> index ffc37cc..91d7936 100644
+>> --- a/arch/arm64/include/asm/stage2_pgtable.h
+>> +++ b/arch/arm64/include/asm/stage2_pgtable.h
+>> @@ -65,7 +65,6 @@
+>>   #define __s2_pgd_ptrs(pa, lvls)	(1 << ((pa) - pt_levels_pgdir_shift((lvls))))
+>>   #define __s2_pgd_size(pa, lvls)	(__s2_pgd_ptrs((pa), (lvls)) * sizeof(pgd_t))
+>>   
+>> -#define kvm_stage2_levels(kvm)		stage2_pt_levels(kvm_phys_shift(kvm))
+>>   #define stage2_pgdir_shift(kvm)	\
+>>   		pt_levels_pgdir_shift(kvm_stage2_levels(kvm))
+>>   #define stage2_pgdir_size(kvm)		(_AC(1, UL) << stage2_pgdir_shift((kvm)))
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index a339e00..d7822e1 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+>> @@ -867,6 +867,10 @@ int kvm_alloc_stage2_pgd(struct kvm *kvm)
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> +	/* Make sure we have the stage2 configured for this VM */
+>> +	if (WARN_ON(!kvm_phys_shift(kvm)))
+> 
+> Can this be triggered from userspace?
+
+No. As we initialise the phys shift before we get here. If type is left
+blank (i.e, 0), we default to 40bits. So there should be something there.
+The check is to make sure we have indeed past the configuration step.
+
+>> +		return -EINVAL;
+>> +
+>>   	/* Allocate the HW PGD, making sure that each page gets its own refcount */
+>>   	pgd = stage2_alloc_pgd(kvm);
+>>   	if (!pgd)
+>>
+> 
+
+Cheers
+Suzuki
