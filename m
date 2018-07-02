@@ -2,119 +2,165 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E980C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6D1C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0074522439
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0074522439
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 32D2D247D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:46:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D2D247D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752184AbeGBOpr (ORCPT
+        id S1752282AbeGBOq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:45:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33268 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751544AbeGBOpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:45:46 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62EjCfb040023
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 10:45:45 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jykxbdwe0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:45:45 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 15:45:43 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 15:45:38 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62EjbXE38928636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 14:45:37 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E1E8642049;
-        Mon,  2 Jul 2018 15:45:20 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE20742054;
-        Mon,  2 Jul 2018 15:45:17 +0100 (BST)
-Received: from linux.vnet.ibm.com (unknown [9.40.192.68])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Mon,  2 Jul 2018 15:45:17 +0100 (BST)
-Date:   Mon, 2 Jul 2018 07:45:33 -0700
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v5 10/10] perf probe: Support SDT markers having
- reference counter (semaphore)
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-11-ravi.bangoria@linux.ibm.com>
+        Mon, 2 Jul 2018 10:46:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56378 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751930AbeGBOqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 10:46:25 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B221440214E2;
+        Mon,  2 Jul 2018 14:46:24 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-116-57.ams2.redhat.com [10.36.116.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96AD310FD2A8;
+        Mon,  2 Jul 2018 14:46:22 +0000 (UTC)
+Subject: Re: [Qemu-devel] [PATCH v3 09/20] kvm: arm64: Make stage2 page table
+ layout dynamic
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-10-git-send-email-suzuki.poulose@arm.com>
+ <65475ac0-d156-c16e-bd91-438377326143@redhat.com>
+ <22c070c4-aede-d699-774f-6212d05f7a59@arm.com>
+Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
+        kvmarm@lists.cs.columbia.edu
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <f39d12b9-c715-3980-acfd-108255ff97c5@redhat.com>
+Date:   Mon, 2 Jul 2018 16:46:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20180628052209.13056-11-ravi.bangoria@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18070214-0008-0000-0000-0000024ECE6F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070214-0009-0000-0000-000021B4D87A
-Message-Id: <20180702144533.GA65296@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020170
+In-Reply-To: <22c070c4-aede-d699-774f-6212d05f7a59@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 14:46:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 02 Jul 2018 14:46:24 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Ravi Bangoria <ravi.bangoria@linux.ibm.com> [2018-06-28 10:52:09]:
+Hi Suzuki,
 
-> With this, perf buildid-cache will save SDT markers with reference
-> counter in probe cache. Perf probe will be able to probe markers
-> having reference counter. Ex,
+On 07/02/2018 03:24 PM, Suzuki K Poulose wrote:
+> Hi Eric,
 > 
->   # readelf -n /tmp/tick | grep -A1 loop2
->     Name: loop2
->     ... Semaphore: 0x0000000010020036
 > 
->   # ./perf buildid-cache --add /tmp/tick
->   # ./perf probe sdt_tick:loop2
->   # ./perf stat -e sdt_tick:loop2 /tmp/tick
->     hi: 0
->     hi: 1
->     hi: 2
->     ^C
->      Performance counter stats for '/tmp/tick':
->                  3      sdt_tick:loop2
->        2.561851452 seconds time elapsed
+> On 02/07/18 13:14, Auger Eric wrote:
+>> Hi Suzuki,
+>>
+>> On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+>>> So far we had a static stage2 page table handling code, based on a
+>>> fixed IPA of 40bits. As we prepare for a configurable IPA size per
+>>> VM, make our stage2 page table code dynamic, to do the right thing
+>>> for a given VM. We ensure the existing condition is always true even
+>>> when we lift the limit on the IPA. i.e,
+>>>
+>>>     page table levels in stage1 >= page table levels in stage2
+>>>
+>>> Support for the IPA size configuration needs other changes in the way
+>>> we configure the EL2 registers (VTTBR and VTCR). So, the IPA is still
+>>> fixed to 40bits. The patch also moves the kvm_page_empty() in
+>>> asm/kvm_mmu.h
+>>> to the top, before including the asm/stage2_pgtable.h to avoid a forward
+>>> declaration.
+>>>
+>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>> Cc: Christoffer Dall <cdall@kernel.org>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> ---
+>>> Changes since V2
+>>>   - Restrict the stage2 page table to allow reusing the host page table
+>>>     helpers for now, until we get stage1 independent page table helpers.
+>> I would move this up in the commit msg to motivate the fact we enforce
+>> the able condition.
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> This is mentioned in the commit message for the patch which lifts the
+> limitation
+> on the IPA. This patch only deals with the dynamic page table level
+> handling,
+> with the restriction on the levels. Nevertheless, I could add it to the
+> description.
 > 
+>>> ---
+>>>   arch/arm64/include/asm/kvm_mmu.h              |  14 +-
+>>>   arch/arm64/include/asm/stage2_pgtable-nopmd.h |  42 ------
+>>>   arch/arm64/include/asm/stage2_pgtable-nopud.h |  39 -----
+>>>   arch/arm64/include/asm/stage2_pgtable.h       | 207
+>>> +++++++++++++++++++-------
+>>>   4 files changed, 159 insertions(+), 143 deletions(-)
+>>>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopmd.h
+>>>   delete mode 100644 arch/arm64/include/asm/stage2_pgtable-nopud.h
+>>
+>> with my very limited knowledge of S2 page table walkers I fail to
+>> understand why we now can get rid of stage2_pgtable-nopmd.h and
+>> stage2_pgtable-nopud.h and associated FOLDED config. Please could you
+>> explain it in the commit message?
+> 
+> As mentioned above, we have static page table helpers, which are decided
+> at compile time (just like the stage1). So these files hold the definitions
+> for the cases where PUD/PMD is folded and included for a given stage1 VA.
+> But since we are now doing this check per VM, we make the decision
+> by checking the kvm_stage2_levels(), instead of hard coding it.
+> 
+> Does that help ? A short version of that is already there. May be I could
+> elaborate that a bit.
 
-Looks good to me.
+not totally to be honest. But that's not your fault. I need to spend
+more time studying the code to get what the FOLDED case does ;-)
 
-Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Thanks
 
+Eric
+> 
+>>> -
+>>> -#define stage2_pgd_index(kvm, addr) \
+>>> -    (((addr) >> S2_PGDIR_SHIFT) & (PTRS_PER_S2_PGD - 1))
+>>> +static inline unsigned long stage2_pgd_index(struct kvm *kvm,
+>>> phys_addr_t addr)
+>>> +{
+>>> +    return (addr >> stage2_pgdir_shift(kvm)) & (stage2_pgd_ptrs(kvm)
+>>> - 1);
+>>> +}
+>>>     static inline phys_addr_t
+>>>   stage2_pgd_addr_end(struct kvm *kvm, phys_addr_t addr, phys_addr_t
+>>> end)
+>>>   {
+>>> -    phys_addr_t boundary = (addr + S2_PGDIR_SIZE) & S2_PGDIR_MASK;
+>>> +    phys_addr_t boundary;
+>>>   +    boundary = (addr + stage2_pgdir_size(kvm)) &
+>>> stage2_pgdir_mask(kvm);
+>>>       return (boundary - 1 < end - 1) ? boundary : end;
+>>>   }
+>>>  
+>>
+>> Globally this patch is pretty hard to review. I don't know if it is
+>> possible to split into 2. 1) Addition of some helper macros. 2) removal
+>> of nopud and nopmd and implementation of the corresponding macros?
+> 
+> I acknowledge that. The patch redefines the "existing" macros to make the
+> decision at runtime based on the VM's setting. I will see if there is a
+> better way to do it.
+> 
+> Cheers
+> Suzuki
+> 
