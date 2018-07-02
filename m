@@ -2,129 +2,118 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D6CC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAFCC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A54A2538F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:08:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrfZe9SS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A54A2538F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C3E312538F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E312538F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754661AbeGBMIw (ORCPT
+        id S1754677AbeGBMJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:08:52 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43275 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753212AbeGBMIu (ORCPT
+        Mon, 2 Jul 2018 08:09:37 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.218]:39436 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752042AbeGBMJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:08:50 -0400
-Received: by mail-oi0-f68.google.com with SMTP id b15-v6so1710730oib.10;
-        Mon, 02 Jul 2018 05:08:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t7GGwVQu73IvJg3JvDEzagTHBWvRnCgzrqAshi/n6wg=;
-        b=JrfZe9SSnF+RA5V+/w5M34NSUyJqOiokZkDcowNBejwNowFnfksxt1XjFh1rx8f4ee
-         RbT4QHL/2d/brjE7I0EtS77nA2kYU7aJeOWuCmIr30n+8oyQCvnIlGAQmeCqzZti/6UV
-         zZGvy4KYEqgLI5R2Aftl9X3P/1ObTG2XYIukWQbNow84ukPZlqIgJ3N9RJk+2iaRAYwq
-         dbiqpo2PFA8fKxfv5C52xPlfV7mKgigzjxjO/hQu1iaCy2MB3anmPIjNsb0jOg6PZ8B1
-         9NCTBTEGvXRPt4KoRPE40UHYnSN20cbEKms/8jPWZz7ylL49UzhWif4MMhc/Pj25G+tM
-         4mDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t7GGwVQu73IvJg3JvDEzagTHBWvRnCgzrqAshi/n6wg=;
-        b=kbjARKy3q9kcYc4jTPnFm5bnyrUe4qdHcCYsMwHNOV2sFPCcHkzdxGOa+RYiOUxS0i
-         OPhiyevhJHXrHcKjQFMktzNUSumcFxdat8+d7MUwRpPLcY9Q2ASItg17oGBH3E94q8I+
-         aCA3gCSvHiHlrvUcngMp29o9fy+SY6uHXSp0mWImdmoxH5/RH4n2WsEOuLWMLDquFq4E
-         pl0nP4+L2BkZLb+rYUJYpFS7AghxBR9bo6Lkl20MjAd08ziDR8QLxsQR4xWaxD9dwEgU
-         oYUYtKWbNQ1m1jdAZpADn4N3qmGNY9PJYpHl7IhkwdFS6Ls3sgbfiaHbrTImWMnUk/MZ
-         i6yg==
-X-Gm-Message-State: APt69E0gX/Sjqli7heYsxkFvn6kWTmDs8pz9aDiZcstTHXOjcKW/Oa0Y
-        TZ4Gmqtwgz3d0ZoekQNAqJ3LO/lZUh4Sr6zQ7dg=
-X-Google-Smtp-Source: AAOMgpctYB0UTo0dSGGJ63mCmlEadOGP7CxZ6BoXiqluQuQWPMkBwM3x6Gz3CO4Csk1yaxlj5XanE1jkusSkhD0ol3E=
-X-Received: by 2002:aca:68a2:: with SMTP id o34-v6mr14560863oik.267.1530533330360;
- Mon, 02 Jul 2018 05:08:50 -0700 (PDT)
+        Mon, 2 Jul 2018 08:09:35 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id F2FFBD8FE
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 07:09:34 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZxeAfwrPiPvAdZxeAf50VQ; Mon, 02 Jul 2018 07:09:34 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=58866 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fZxeA-002zfa-BT; Mon, 02 Jul 2018 07:09:34 -0500
+Date:   Mon, 2 Jul 2018 07:09:32 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] net: stmmac_tc: use 64-bit arithmetic instead of 32-bit
+Message-ID: <20180702120932.GA13079@embeddedor.com>
 MIME-Version: 1.0
-References: <1530526462-920-1-git-send-email-wanpengli@tencent.com>
- <1530526462-920-2-git-send-email-wanpengli@tencent.com> <9e886415-2b68-ac1d-aadb-b44695ab0b21@redhat.com>
-In-Reply-To: <9e886415-2b68-ac1d-aadb-b44695ab0b21@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Mon, 2 Jul 2018 20:08:40 +0800
-Message-ID: <CANRm+Cx1pAg_L7gPvdqoM7Aw7JYFhN7h9z7xXPHKnkq4JXxHdw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] KVM: X86: Implement PV IPI in linux guest
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fZxeA-002zfa-BT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:58866
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 at 19:32, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 02/07/2018 12:14, Wanpeng Li wrote:
-> > +     unsigned long flags, ipi_bitmap_low = 0, ipi_bitmap_high = 0, icr = 0;
-> > +     int cpu, apic_id, ret = 1;
-> > +
-> > +     if (cpumask_empty(mask))
-> > +             return true;
-> > +
-> > +     local_irq_save(flags);
-> > +
-> > +     for_each_cpu(cpu, mask) {
-> > +             apic_id = per_cpu(x86_cpu_to_apicid, cpu);
-> > +             if (apic_id < BITS_PER_LONG)
-> > +                     __set_bit(apic_id, &ipi_bitmap_low);
-> > +             else if (apic_id < 2 * BITS_PER_LONG)
-> > +                     __set_bit(apic_id - BITS_PER_LONG, &ipi_bitmap_high);
-> > +             else
-> > +                     goto ipi_mask_done;
-> > +     }
->
-> CPU masks are themselves bitmaps made of longs, so you should be able to
-> avoid the loop here.
+Add suffix UL to constant 1024 in order to give the compiler complete
+information about the proper arithmetic to use. Notice that this
+constant is used in a context that expects an expression of type
+u64 (64 bits, unsigned) and  following expressions are currently
+being evaluated using 32-bit arithmetic:
 
-As we discuss offline, loop is needed since I need to convert
-processor id which is allocated by OS to apic id.
+qopt->idleslope * 1024 * ptr
+qopt->hicredit * 1024 * 8
+qopt->locredit * 1024 * 8
 
->
-> > +static void kvm_send_ipi_mask(const struct cpumask *mask, int vector)
-> > +{
-> > +     if (!__send_ipi_mask(mask, vector))
-> > +             orig_apic.send_IPI_mask(mask, vector);
-> > +}
-> > +
-> > +static void kvm_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
-> > +{
-> > +     unsigned int this_cpu = smp_processor_id();
-> > +     struct cpumask new_mask;
-> > +     const struct cpumask *local_mask;
-> > +
-> > +     cpumask_copy(&new_mask, mask);
-> > +     cpumask_clear_cpu(this_cpu, &new_mask);
-> > +     local_mask = &new_mask;
-> > +     if (!__send_ipi_mask(local_mask, vector))
-> > +             orig_apic.send_IPI_mask_allbutself(mask, vector);
-> > +}
->
-> Likewise, here it should be possible to check the highest bit in the
-> mask before copying it.
+Addresses-Coverity-ID: 1470246 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1470248 ("Unintentional integer overflow")
+Addresses-Coverity-ID: 1470249 ("Unintentional integer overflow")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-__send_ipi_mask() has already handled sparse APIC ID and > 128 APID ID
-scenarios.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 0b0fca0..8fedc28 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -321,7 +321,7 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+ 	speed_div = (priv->speed == SPEED_100) ? 100000 : 1000000;
+ 
+ 	/* Final adjustments for HW */
+-	value = qopt->idleslope * 1024 * ptr;
++	value = qopt->idleslope * 1024UL * ptr;
+ 	do_div(value, speed_div);
+ 	priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
+ 
+@@ -329,10 +329,10 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+ 	do_div(value, speed_div);
+ 	priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
+ 
+-	value = qopt->hicredit * 1024 * 8;
++	value = qopt->hicredit * 1024UL * 8;
+ 	priv->plat->tx_queues_cfg[queue].high_credit = value & GENMASK(31, 0);
+ 
+-	value = qopt->locredit * 1024 * 8;
++	value = qopt->locredit * 1024UL * 8;
+ 	priv->plat->tx_queues_cfg[queue].low_credit = value & GENMASK(31, 0);
+ 
+ 	ret = stmmac_config_cbs(priv, priv->hw,
+-- 
+2.7.4
 
-Regards,
-Wanpeng Li
