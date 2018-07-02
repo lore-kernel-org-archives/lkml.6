@@ -2,79 +2,89 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF07C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482C2C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842DD2528F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:27:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842DD2528F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id F3A3D25316
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:28:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="c7FbQ3en"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A3D25316
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752964AbeGBR1a (ORCPT
+        id S1753120AbeGBR20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:27:30 -0400
-Received: from ms.lwn.net ([45.79.88.28]:47888 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752554AbeGBR10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:27:26 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 937E59B6;
-        Mon,  2 Jul 2018 17:27:24 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 11:27:23 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        devicetree@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@zh-kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-leds@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        James Morris <james.morris@microsoft.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, netdev@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-input@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-scsi@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 0/9] Fix references for some missing documentation files
-Message-ID: <20180702112723.654d348c@lwn.net>
-In-Reply-To: <cover.1530005114.git.mchehab+samsung@kernel.org>
-References: <cover.1530005114.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
+        Mon, 2 Jul 2018 13:28:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43701 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752254AbeGBR2Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 13:28:24 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so3649695oib.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bd9PTMEk7HpAhoZLpt3NVQDwe2cIxj/FHiufqLrCzhg=;
+        b=c7FbQ3enkuf3E607Ujv88xfxlczqCbo7fWKWh6x162WXz/b+AmY7s9QldNBLIi9gqh
+         hRvBOj3TyDFFmOkCkyBL7k1pXqHYeaTg38uTxf0U2h1AQiD4TZZ9OZwB5GyqaOrcu98E
+         ydEVSGs+c8xNNZ6ArvZsYmnVdp0NY9l4UwXJdMJ3nE0eUEEMXuwWPZKQ39V+MJnj8dBp
+         7vqnaYCZFAVq5RSJo0uOY3kuBIiCfk1nHUWxe5W+BcH/rXfxfV6qp5pP5OF3we4+Tv0/
+         5tVOGOF/E4bXsYlfpi0jZxfAKOAwKUygLXXs767usTBuAMskbHuTh+/lZ/zqaXTCS5ay
+         2ssA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bd9PTMEk7HpAhoZLpt3NVQDwe2cIxj/FHiufqLrCzhg=;
+        b=cWtdvSqvgpzyj2LLJujiPjYOuxhGPA6FMhndliLa6b9nbsITVtT6IPWIK4APiNeeiW
+         EVnaVDZpEBd7TJUkViMHa7e+6xzKDjOrfCRl7ioSWhev4nhGAAqfZVE6zOfnyWs30YP/
+         53VGCALn5IDrALBke6t4SPDjFAthFlRpY0GG0cKqnJhNevLDcLyaMmVBryg7Zmj2EQpj
+         nuDj6uwbj+k1oIP7EbOjtGBLLexG63EX7nDduEcV2NEEe48lcfTsFayc+VEiz52Zyxuc
+         MlA90P/SX/0olp2dM+21D0pJyo5F0rhnVSSJkJ/HfOiFBOsjdmn5SkWdBxIU2qgh8xh/
+         c1lA==
+X-Gm-Message-State: APt69E2ZUfq/Mw5Hey6USkQIL9D+bGJmW+mgkipiQQOOt6ICppe4x2hx
+        81K6n4zpLpa/gnb1AyWv7vUxAXzXJu3ViPpZx3OemA==
+X-Google-Smtp-Source: AAOMgpek0LeH/coUSjiTNbrMYyjqDHR0PsHpxQfqLz6fisPME9J5V726BU1Qly42GH2iW5IwyJvDTMnpf2u3Neq+iAw=
+X-Received: by 2002:aca:5155:: with SMTP id f82-v6mr10561272oib.272.1530552504159;
+ Mon, 02 Jul 2018 10:28:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:3495:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 10:28:23 -0700 (PDT)
+In-Reply-To: <788aa605-94c7-f730-6ec6-0eac53cb10cf@virtuozzo.com>
+References: <20180625170259.30393-1-aryabinin@virtuozzo.com>
+ <20180629164932.740-1-aryabinin@virtuozzo.com> <20180629193300.0ae0f25880a800bd27952b15@linux-foundation.org>
+ <788aa605-94c7-f730-6ec6-0eac53cb10cf@virtuozzo.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 2 Jul 2018 10:28:23 -0700
+Message-ID: <CAPcyv4gN_f0q2a+e2-cXZoDGwKe2DfcMcHMZnf3UmyWp+dekSA@mail.gmail.com>
+Subject: Re: [PATCH v2] kernel/memremap, kasan: Make ZONE_DEVICE with work
+ with KASAN
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        david <david@fromorbit.com>, kasan-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 26 Jun 2018 06:49:02 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+On Mon, Jul 2, 2018 at 10:22 AM, Andrey Ryabinin
+<aryabinin@virtuozzo.com> wrote:
+[..]
+> It could be possible to not unmap kasan_zero_page, just leave it there after devm_memremap_pages_release().
+> But we must have some guarantee that after devm_memremap_pages()/devm_memremap_pages_release() the same
+> addresses can't be reused for ordinary hotpluggable memory.
 
-> Having nothing to do while waiting for my plane to arrive while
-> returning back from Japan, I ended by writing a small series of 
-> patches meant to reduce the number of bad Documentation/* 
-> links that are detected by:
-> 	./scripts/documentation-file-ref-check
-
-I've applied everything except the two networking patches, since I expect
-those to go through Dave's tree.
-
-Thanks,
-
-jon
+While this does not happen today we are looking to support it the
+future. I.e. have userspace policy pick whether to access an address
+range through a device-file mmap, or treat it as typical memory.
