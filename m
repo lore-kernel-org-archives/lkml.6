@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE6DC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C446DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A317C243C6
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A317C243C6
+	by mail.kernel.org (Postfix) with ESMTP id 7D33024345
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D33024345
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964784AbeGBH6T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:58:19 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43457 "EHLO
+        id S964828AbeGBH6s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:58:48 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:52394 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932988AbeGBH6Q (ORCPT
+        with ESMTP id S964774AbeGBH6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:58:16 -0400
-X-UUID: 29dae81092f941608214d6e525b22cfc-20180702
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Mon, 2 Jul 2018 03:58:19 -0400
+X-UUID: 17c6d3b2a99d45a3b1cc006f0bd8dfc8-20180702
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <honghui.zhang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1830051628; Mon, 02 Jul 2018 15:58:14 +0800
+        with ESMTP id 1281435733; Mon, 02 Jul 2018 15:58:15 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 2 Jul 2018 15:58:12 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 2 Jul 2018 15:58:13 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 2 Jul 2018 15:58:10 +0800
+ Transport; Mon, 2 Jul 2018 15:58:12 +0800
 From:   <honghui.zhang@mediatek.com>
 To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
         <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
@@ -44,9 +44,9 @@ To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
 CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
         <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
         <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
-Subject: [PATCH v3 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
-Date:   Mon, 2 Jul 2018 15:57:41 +0800
-Message-ID: <1530518264-6125-2-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v3 2/4] PCI: mediatek: enable msi after clock enabled
+Date:   Mon, 2 Jul 2018 15:57:42 +0800
+Message-ID: <1530518264-6125-3-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
 In-Reply-To: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
 References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
@@ -60,73 +60,187 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-The Mediatek's host controller has two slots, each with it's own control
-registers. The host driver need to identify which slot was connected
-in order to access the device's configuration space. There's problem
-for current host driver to find out which slot was connected to for
-a given EP device.
+The clocks was not enabled when enable MSI. This patch fix this
+issue by calling mtk_pcie_enable_msi in mtk_pcie_startup_port_v2
+since the clock was all enabled at that time.
 
-Assuming each slot have connect with one EP device as below:
-
-                host bridge
-  bus 0 --> __________|_______
-           |                  |
-           |                  |
-         slot 0             slot 1
-  bus 1 -->|        bus 2 --> |
-           |                  |
-         EP 0               EP 1
-
-During PCI enumeration, system software will scan all the PCI device
-starting from devfn 0. So it will get the proper port for slot0 and
-slot1 device when using PCI_SLOT(devfn) for match. But it will get
-the wrong slot for EP1: The devfn will be start from 0 when scanning
-EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
-for port0's slot value. So the host driver should not using EP's devfn
-but the slot's devfn(the slot which EP was connected to) for match.
-
-This patch fix the mtk_pcie_find_port's logical by using the slot's
-devfn for match.
+The function of mtk_pcie_startup_port_v2's define location is
+re-arranged to avoid mtk_pcie_enable_msi's forward declaration.
 
 Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/pci/controller/pcie-mediatek.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c | 143 +++++++++++++++++----------------
+ 1 file changed, 72 insertions(+), 71 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 0baabe3..b43f41d 100644
+index b43f41d..86918d4 100644
 --- a/drivers/pci/controller/pcie-mediatek.c
 +++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -337,11 +337,26 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+@@ -398,75 +398,6 @@ static struct pci_ops mtk_pcie_ops_v2 = {
+ 	.write = mtk_pcie_config_write,
+ };
+ 
+-static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+-{
+-	struct mtk_pcie *pcie = port->pcie;
+-	struct resource *mem = &pcie->mem;
+-	const struct mtk_pcie_soc *soc = port->pcie->soc;
+-	u32 val;
+-	size_t size;
+-	int err;
+-
+-	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+-	if (pcie->base) {
+-		val = readl(pcie->base + PCIE_SYS_CFG_V2);
+-		val |= PCIE_CSR_LTSSM_EN(port->slot) |
+-		       PCIE_CSR_ASPM_L1_EN(port->slot);
+-		writel(val, pcie->base + PCIE_SYS_CFG_V2);
+-	}
+-
+-	/* Assert all reset signals */
+-	writel(0, port->base + PCIE_RST_CTRL);
+-
+-	/*
+-	 * Enable PCIe link down reset, if link status changed from link up to
+-	 * link down, this will reset MAC control registers and configuration
+-	 * space.
+-	 */
+-	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
+-
+-	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
+-	val = readl(port->base + PCIE_RST_CTRL);
+-	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
+-	       PCIE_MAC_SRSTB | PCIE_CRSTB;
+-	writel(val, port->base + PCIE_RST_CTRL);
+-
+-	/* Set up vendor ID and class code */
+-	if (soc->need_fix_class_id) {
+-		val = PCI_VENDOR_ID_MEDIATEK;
+-		writew(val, port->base + PCIE_CONF_VEND_ID);
+-
+-		val = PCI_CLASS_BRIDGE_HOST;
+-		writew(val, port->base + PCIE_CONF_CLASS_ID);
+-	}
+-
+-	/* 100ms timeout value should be enough for Gen1/2 training */
+-	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
+-				 !!(val & PCIE_PORT_LINKUP_V2), 20,
+-				 100 * USEC_PER_MSEC);
+-	if (err)
+-		return -ETIMEDOUT;
+-
+-	/* Set INTx mask */
+-	val = readl(port->base + PCIE_INT_MASK);
+-	val &= ~INTX_MASK;
+-	writel(val, port->base + PCIE_INT_MASK);
+-
+-	/* Set AHB to PCIe translation windows */
+-	size = mem->end - mem->start;
+-	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+-	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+-
+-	val = upper_32_bits(mem->start);
+-	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
+-
+-	/* Set PCIe to AXI translation memory space.*/
+-	val = fls(0xffffffff) | WIN_ENABLE;
+-	writel(val, port->base + PCIE_AXI_WINDOW0);
+-
+-	return 0;
+-}
+-
+ static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
  {
- 	struct mtk_pcie *pcie = bus->sysdata;
- 	struct mtk_pcie_port *port;
-+	struct pci_dev *dev;
-+	struct pci_bus *pbus;
+ 	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
+@@ -643,8 +574,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+ 		ret = mtk_pcie_allocate_msi_domains(port);
+ 		if (ret)
+ 			return ret;
+-
+-		mtk_pcie_enable_msi(port);
+ 	}
  
--	list_for_each_entry(port, &pcie->ports, list)
--		if (port->slot == PCI_SLOT(devfn))
-+	list_for_each_entry(port, &pcie->ports, list) {
-+		if (!bus->number && port->slot == PCI_SLOT(devfn))
- 			return port;
- 
-+		if (bus->number) {
-+			pbus = bus;
-+
-+			while (pbus->number) {
-+				dev = pbus->self;
-+				pbus = dev->bus;
-+			}
-+
-+			if (port->slot == PCI_SLOT(dev->devfn))
-+				return port;
-+		}
-+	}
-+
- 	return NULL;
+ 	return 0;
+@@ -711,6 +640,78 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+ 	return 0;
  }
  
++static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
++{
++	struct mtk_pcie *pcie = port->pcie;
++	struct resource *mem = &pcie->mem;
++	const struct mtk_pcie_soc *soc = port->pcie->soc;
++	u32 val;
++	size_t size;
++	int err;
++
++	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
++	if (pcie->base) {
++		val = readl(pcie->base + PCIE_SYS_CFG_V2);
++		val |= PCIE_CSR_LTSSM_EN(port->slot) |
++		       PCIE_CSR_ASPM_L1_EN(port->slot);
++		writel(val, pcie->base + PCIE_SYS_CFG_V2);
++	}
++
++	/* Assert all reset signals */
++	writel(0, port->base + PCIE_RST_CTRL);
++
++	/*
++	 * Enable PCIe link down reset, if link status changed from link up to
++	 * link down, this will reset MAC control registers and configuration
++	 * space.
++	 */
++	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
++
++	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
++	val = readl(port->base + PCIE_RST_CTRL);
++	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
++	       PCIE_MAC_SRSTB | PCIE_CRSTB;
++	writel(val, port->base + PCIE_RST_CTRL);
++
++	/* Set up vendor ID and class code */
++	if (soc->need_fix_class_id) {
++		val = PCI_VENDOR_ID_MEDIATEK;
++		writew(val, port->base + PCIE_CONF_VEND_ID);
++
++		val = PCI_CLASS_BRIDGE_HOST;
++		writew(val, port->base + PCIE_CONF_CLASS_ID);
++	}
++
++	/* 100ms timeout value should be enough for Gen1/2 training */
++	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
++				 !!(val & PCIE_PORT_LINKUP_V2), 20,
++				 100 * USEC_PER_MSEC);
++	if (err)
++		return -ETIMEDOUT;
++
++	/* Set INTx mask */
++	val = readl(port->base + PCIE_INT_MASK);
++	val &= ~INTX_MASK;
++	writel(val, port->base + PCIE_INT_MASK);
++
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		mtk_pcie_enable_msi(port);
++
++	/* Set AHB to PCIe translation windows */
++	size = mem->end - mem->start;
++	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
++	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
++
++	val = upper_32_bits(mem->start);
++	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
++
++	/* Set PCIe to AXI translation memory space.*/
++	val = fls(0xffffffff) | WIN_ENABLE;
++	writel(val, port->base + PCIE_AXI_WINDOW0);
++
++	return 0;
++}
++
+ static void __iomem *mtk_pcie_map_bus(struct pci_bus *bus,
+ 				      unsigned int devfn, int where)
+ {
 -- 
 2.6.4
 
