@@ -2,163 +2,112 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F465C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 568EFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B62248D2
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC1323EF2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AP/6D88E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B62248D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iMAf4CMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DC1323EF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeGBMo7 (ORCPT
+        id S1753146AbeGBMpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:44:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41864 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753063AbeGBMov (ORCPT
+        Mon, 2 Jul 2018 08:45:07 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37293 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752146AbeGBMpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:44:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pRBylj61MqFIBWuF6o1MohAYKIQXpkjLfSsCLlShiZc=; b=AP/6D88EzEtqYGNUPojUlMZu7
-        2Fd9YkQmkgo8B7Ud7WaBZ6LJ70wlHRIzVSueGVkyudWr8yJddtQfkzm/lnvY+UbzDqOd3cblQ+SoC
-        fgptXeGQsgSzxPownqy8wUTVFfll8jCe0JyhO6rKdVcpYtkurcY1YZl2gld4HOFuQxnwDs1vDq+nW
-        Ls+gdtlFmg95+IBm1c8NjLl/JZJZZ+cvKysAstXNRbmdNK1mjDbv4qPSxH9czdQea2OOvf9AwK81i
-        RjTGtaYgMaZTJSCKD1NT6vRlug18B35Yhgc5QrDheB1zFh4cErihMrcYZPnVYPq3kAlwfCuQMtv47
-        5VFfjGySg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fZyCD-0006I2-87; Mon, 02 Jul 2018 12:44:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DD56F2029F1DB; Mon,  2 Jul 2018 14:44:43 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 14:44:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Jacek Tomaka <jacekt@dug.com>
-Subject: Re: [PATCH] sched/nohz: Skip remote tick on idle task entirely
-Message-ID: <20180702124443.GN2494@hirez.programming.kicks-ass.net>
-References: <1530203381-31234-1-git-send-email-frederic@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530203381-31234-1-git-send-email-frederic@kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 2 Jul 2018 08:45:03 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 31-v6so7915247plc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 05:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=p3koVhtRRzyhzphTmu+qmrI0x4JDa4s0PSex5KgY8no=;
+        b=iMAf4CMkixc+6N4DEsUC+7GixyaVLiWNzVPXziMW0IhO6mxTMVfxYpSwvwENQdlKZc
+         5JUI+HpGPrnWnItKuszB2UUA/cjwQ2fr5EZcolwVdu39ea5JlbdXgShEZ2aSeMffdvS4
+         dBGoSokGFrgdG2+wu4oiD+ywb1VAhVpMmpGQY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=p3koVhtRRzyhzphTmu+qmrI0x4JDa4s0PSex5KgY8no=;
+        b=Vlx+zrpjMW5gxJs1y8/gehOOpsoaauLXTliUXOHokdpyzNH+li0Y0/RAaKMIxoxJVt
+         fnfzosDGakKLpzju0wq4ojhYuHra/VdJAEI6uRLyX3ReyvXDTXT7gQLX/etJETbUxTcM
+         EQuH52UCwYQFeNiVR5l4pV484eQ5Xl9qBgi7Ng+gxib9OQIC4e1bOe6zWgcEt+osRDk4
+         peXovAgC8SkdRjMrDzuHbnwEg7hQEZaSFi7TwOxDUpl/8bbjdxjujO1aJP+g5MLYXdfl
+         rdd+HsZtMFR8Isay0LBufGU2wuz+1jtKDsTUbza9o/wUZwoI8bt0qB+Z1B/kSxcONlrj
+         tgPg==
+X-Gm-Message-State: APt69E2lrO0RhwEgbjk6d5GqR5AwDvtIZ/DiLJKVOhBgfg3BhHKfKooB
+        GKs4OM9HvTM4W+aeEZAixlf7PaMPRMw=
+X-Google-Smtp-Source: ADUXVKK9QoQU7rnov/BsGPI2GaldJtcMBooU26t3+eEE6pogEeqfXgBplYi66Z0rhmuotDmSuHhmIA==
+X-Received: by 2002:a17:902:7202:: with SMTP id ba2-v6mr25198257plb.119.1530535501540;
+        Mon, 02 Jul 2018 05:45:01 -0700 (PDT)
+Received: from localhost ([49.248.63.129])
+        by smtp.gmail.com with ESMTPSA id c85-v6sm8483724pfd.110.2018.07.02.05.45.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 05:45:01 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
+        andy.gross@linaro.org, Zhang Rui <rui.zhang@intel.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 5/6] thermal: tsens: Check if we have valid data before reading
+Date:   Mon,  2 Jul 2018 18:14:08 +0530
+Message-Id: <e2fd1933390c2c1c0fedc6e2c4f2093470c4242a.1530533998.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1530533998.git.amit.kucheria@linaro.org>
+References: <cover.1530533998.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1530533998.git.amit.kucheria@linaro.org>
+References: <cover.1530533998.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 06:29:41PM +0200, Frederic Weisbecker wrote:
-> ---
->  kernel/sched/core.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 78d8fac..da8f121 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3127,16 +3127,18 @@ static void sched_tick_remote(struct work_struct *work)
->  		u64 delta;
->  
->  		rq_lock_irq(rq, &rf);
-> -		update_rq_clock(rq);
->  		curr = rq->curr;
-> -		delta = rq_clock_task(rq) - curr->se.exec_start;
-> +		if (!is_idle_task(curr)) {
-> +			update_rq_clock(rq);
-> +			delta = rq_clock_task(rq) - curr->se.exec_start;
->  
-> -		/*
-> -		 * Make sure the next tick runs within a reasonable
-> -		 * amount of time.
-> -		 */
-> -		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-> -		curr->sched_class->task_tick(rq, curr, 0);
-> +			/*
-> +			 * Make sure the next tick runs within a reasonable
-> +			 * amount of time.
-> +			 */
-> +			WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-> +			curr->sched_class->task_tick(rq, curr, 0);
-> +		}
->  		rq_unlock_irq(rq, &rf);
->  	}
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/thermal/qcom/tsens-v2.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Instead of deep indent, how about we write it like so: ?
+diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
+index 1871945..0473f33 100644
+--- a/drivers/thermal/qcom/tsens-v2.c
++++ b/drivers/thermal/qcom/tsens-v2.c
+@@ -7,6 +7,9 @@
+ #include <linux/regmap.h>
+ #include "tsens.h"
+ 
++#define TRDY_OFFSET            0xe4
++#define TRDY_READY_BIT         BIT(0)
++
+ #define STATUS_OFFSET		0xa0
+ #define LAST_TEMP_MASK		0xfff
+ #define STATUS_VALID_BIT	BIT(21)
+@@ -19,6 +22,12 @@ static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+ 	unsigned int sensor_addr;
+ 	int last_temp = 0, last_temp2 = 0, last_temp3 = 0, ret;
+ 
++	ret = regmap_read(tmdev->map, TRDY_OFFSET, &code);
++	if (ret)
++		return ret;
++	if (code & TRDY_READY_BIT)
++		return -ENODATA;
++
+ 	sensor_addr = STATUS_OFFSET + s->hw_id * 4;
+ 	ret = regmap_read(tmdev->map, sensor_addr, &code);
+ 	if (ret)
+-- 
+2.7.4
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3113,7 +3113,9 @@ static void sched_tick_remote(struct wor
- 	struct tick_work *twork = container_of(dwork, struct tick_work, work);
- 	int cpu = twork->cpu;
- 	struct rq *rq = cpu_rq(cpu);
-+	struct task_struct *curr;
- 	struct rq_flags rf;
-+	u64 delta;
- 
- 	/*
- 	 * Handle the tick only if it appears the remote CPU is running in full
-@@ -3122,26 +3124,28 @@ static void sched_tick_remote(struct wor
- 	 * statistics and checks timeslices in a time-independent way, regardless
- 	 * of when exactly it is running.
- 	 */
--	if (!idle_cpu(cpu) && tick_nohz_tick_stopped_cpu(cpu)) {
--		struct task_struct *curr;
--		u64 delta;
--
--		rq_lock_irq(rq, &rf);
--		curr = rq->curr;
--		if (!is_idle_task(curr)) {
--			update_rq_clock(rq);
--			delta = rq_clock_task(rq) - curr->se.exec_start;
--
--			/*
--			 * Make sure the next tick runs within a reasonable
--			 * amount of time.
--			 */
--			WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
--			curr->sched_class->task_tick(rq, curr, 0);
--		}
--		rq_unlock_irq(rq, &rf);
--	}
-+	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
-+		goto out_requeue;
- 
-+	rq_lock_irq(rq, &rf);
-+	curr = rq->curr;
-+	if (is_idle_task(curr))
-+		goto out_unlock;
-+
-+	update_rq_clock(rq);
-+	delta = rq_clock_task(rq) - curr->se.exec_start;
-+
-+	/*
-+	 * Make sure the next tick runs within a reasonable
-+	 * amount of time.
-+	 */
-+	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-+	curr->sched_class->task_tick(rq, curr, 0);
-+
-+out_unlock:
-+	rq_unlock_irq(rq, &rf);
-+
-+out_requeue:
- 	/*
- 	 * Run the remote tick once per second (1Hz). This arbitrary
- 	 * frequency is large enough to avoid overload but short enough
