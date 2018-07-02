@@ -3,118 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A609C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 710C6C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3104208FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DDE824ECE
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:34:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="egoYuZ6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3104208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="OwYDNWe2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDE824ECE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeGBPdM (ORCPT
+        id S1752629AbeGBPd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:33:12 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47932 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751956AbeGBPdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:33:10 -0400
+        Mon, 2 Jul 2018 11:33:58 -0400
+Received: from vern.gendns.com ([206.190.152.46]:37800 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752184AbeGBPd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 11:33:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FRG7krd4aYZ0RMZq8C2uv5/w/L0YN0OUPGmrDEs5Wt4=; b=egoYuZ6fM4kyvJFYcj9i01mC8b
-        OGPRUFDcNW8TKsckTGQx/0jGBmkZdyd5gbBqeV00Oc1ZPSSVolp1DvfuxwMPaEuL/QsnUATwQ4woz
-        tPiEl23lP9nWlHVRFTmLx9ALERv7sPFigwjm4SCKSLba6KVVpXJ7Rmw65fKhP47kpo44XyFM9MvSE
-        TXYjJky9QwGKAedAXkspzaWfc94G/BdU7KNdxt5mRqT136JOTt5+vLktbXSxLDxlFKbdNChvp/Qko
-        zYjLtT5rgidYifF6h2CNMZVRQaNeaY2yQFEp5GZpvmRxo1gnOh3ST4bvMh36+TjtT76Lkel5x72a9
-        J+lv6LZQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fa0p2-0000fU-PW; Mon, 02 Jul 2018 15:33:00 +0000
-Subject: Re: [PATCH] Input: elantech - Fix V4 report decoding for module with
- middle key
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, kt.liao@emc.com.tw,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        ulrik.debie-os@e2big.org, phoenix@emc.com.tw,
-        aaron.ma@canonical.com, josh.chen@emc.com.tw
-References: <1527507182-3858-1-git-send-email-kt.liao@emc.com.tw>
- <20180529180506.GB167092@dtor-ws>
- <000301d3f7e4$5c9e51c0$15daf540$@emc.com.tw> <20180622001632.GI79890@dtor-ws>
- <CA+55aFzLMkyAGdfaeDLUXeRE0MJUckRDsrbVy2yonT6R=wf-Og@mail.gmail.com>
- <20180701234419.GA250349@dtor-ws>
- <CA+55aFwCdAuw+GuKTCzACWpQBDFAx_DsMM0uTCx2fZKBBU7X0w@mail.gmail.com>
- <A5DA555C-6131-4F7B-82F2-A06C12E23CAF@gmail.com>
- <87sh5196pk.fsf@purkki.adurom.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <57436c8d-c188-500d-5764-5df4208d53b0@infradead.org>
-Date:   Mon, 2 Jul 2018 08:32:56 -0700
+        bh=c7WgQN8f4KVdAgRpxJwouAFaex9x5PPeIrwDe8OSjo4=; b=OwYDNWe2VlSiZj2YKUhSH+rC1I
+        9C5GNB5zh9e6panR2dYT3EhM9FsLhVcs/BG7aMjUbAmhWgaeTOMAAFQ/JeCXzpdscSUf6OcUHh+oX
+        6OPJwoLDD4HDooERG+Pq0/w7k+MWqWMePfNARgvCBuaZo0+tjZTvTjZryFfb4J9dUPvwK2FHc2UZm
+        RV4nUiUINjSBN4sUO1QDfEiKU7Eb/b4JByNV4funvgEzssK4V8/pDBZRXoRf6Ta+DYuS8Lzt3k13w
+        mY5s8bLy5+1LSlbZHBO07YSly4c2D1LHzPRb0zsUM4alllNd3tXavFcnC8anee5D9CpQaVXkZnrgW
+        E9HwrgeA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59394 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1fa0pu-00DEL1-8u; Mon, 02 Jul 2018 11:33:54 -0400
+Subject: Re: [PATCH] iio: add channel type for frequency
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+References: <20180701025953.3561-1-david@lechnology.com>
+ <308015e8-d203-c4d1-ba80-3c2adf4b377a@metafoo.de>
+ <74c98fdc-b498-c593-e0b1-6aeb7057398a@lechnology.com>
+ <20180702140352.00002c6c@huawei.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <51fa1708-a19e-aa05-6145-b2479a89805b@lechnology.com>
+Date:   Mon, 2 Jul 2018 10:33:52 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <87sh5196pk.fsf@purkki.adurom.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180702140352.00002c6c@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 05:12 AM, Kalle Valo wrote:
-> Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
+On 07/02/2018 08:03 AM, Jonathan Cameron wrote:
+> On Sun, 1 Jul 2018 17:24:34 -0500
+> David Lechner <david@lechnology.com> wrote:
 > 
->> On July 1, 2018 5:00:03 PM PDT, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->>> On Sun, Jul 1, 2018 at 4:44 PM Dmitry Torokhov
->>> <dmitry.torokhov@gmail.com> wrote:
+>> On 07/01/2018 02:18 AM, Lars-Peter Clausen wrote:
+>>> On 07/01/2018 04:59 AM, David Lechner wrote:
+>>>> This adds a new type for frequency to the IIO channel type enumeration.
 >>>>
->>>> The reason it got messed up is I switched to pulling patches from
->>>> patchwork.kernel.org as it collects Acked-by and Reviewed-by tags so
->>> I
->>>> do not have to add them manually, but unfortunately it does not do
->>>> proper UTF-8:
+>>>> Units are in Hz.
+>>>>   
 >>>
->>> Ugh.
->>>
->>> I made an 'issue' of it for patchwork:
->>>
->>>  https://github.com/getpatchwork/patchwork/issues/194
->>>
->>> and hopefully that can be fixed. It's sad when we corrupt names like
->>> this.
+>>> Documentation?
 >>
->> Might not even be an issue with recent patchwork, but unfortunately
->> the version that is running on kernel.org is ancient as far as I know.
+>> I take it that you mean Documentation/ABI/testing/sysfs-bus-iio? Or
+>> somewhere else too?
 > 
-> FWIW I use patchwork.kernel.org and I don't have any issues with UTF-8
-> characters in the From header. For example, here's one patch which I
-> recently applied:
+> Yes.
 > 
-> https://git.kernel.org/linus/88001968245c
+>>
+>>>
+>>> We already have the altvoltage channel type with the frequency attribute.
+>>> Difficult to say if there are any overlaps without documentation on how this
+>>> new attribute is supposed to be used.
+>>
+>> I'm basically trying to implement a quadrature encoder in iio. I want to be
+>> able to use it in-kernel to get a rotational speed value for a motor.
 > 
-> But of course it depends on what tools you use (I have my own patchwork
-> script which downloads and applies the patch) or what characters there
-> were etc. 
+> Have you seen the counters subsystem work that is pretty much ready to merge?
+
+I hadn't seen that. Thanks. It sounds like the way to go since I am dealing with
+a quadrature encoder.
+
 > 
-> Also I heard that we should get an upgrade to patchwork.kernel.org in
-> the near future, which is great. The current version has some quirks
-> which are quite annoying.
+> https://lkml.org/lkml/2018/6/21/659
+> 
+>>
+>> The motors (and encoder wheels) are hot-swapable, so we don't know how many
+>> counts from the quadrature encoder equals one rotation because it depends on
+>> which motor is being used. So using IIO_ANGL_VEL doesn't work for this case.
+> 
+> Hmm. This always ugly when we have hotswappable external devices.  Ideal is
+> to describe them with device tree or similar none the less as this stuff isn't
+> really something userspace should have to figure out.
+> 
+>>
+>> It seems to me that the proper generic unit for "speed" from the quadrature
+>> encoder would be counts per second, hence the suggestion of a frequency unit.
+> 
+> It is probably not that clear cut, as what is it frequency of?  All depends on
+> what mode the quadrature counter is working in x4 or x1 for simplest options.
+> 
+> 
+>> I'm not sure if voltage frequency works here since a "count" on a quadrature
+>> encoder is derived from two different voltage signals (and may vary depending
+>> on how the encoder determines what one count it).
+>>
+>> Also, unrelated to my quadrature encoder project, I was thinking that
+>> frequency counters would use this unit as well (although the voltage alt
+>> makes more sense for this case).
+>>
+>> There are also sound sensors that measure frequency that could use this unit.
+> 
+> I have not fundamental issue with having a frequency channel, but only
+> if we have a clear cut use case.  I suspect the right option here is to
+> look at what extensions are needed to William's counter subsystem instead
+> of in IIO (which frankly failed to stretch far enough to support counters
+> well).
 > 
 
-I don't know if it's better or different, but there is also
-https://lore.kernel.org/patchwork/
-
-
--- 
-~Randy
+Agreed. Let's drop this patch.
