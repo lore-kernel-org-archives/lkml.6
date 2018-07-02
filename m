@@ -2,110 +2,80 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A89BCC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F29C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE1225C2F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:17:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE1225C2F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E4DEB24A35
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DEB24A35
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965416AbeGBKRi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:17:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37376 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965036AbeGBKRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 06:17:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF873ADA4;
-        Mon,  2 Jul 2018 10:17:34 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 12:17:32 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ufo19890607@gmail.com
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com
-Subject: Re: [PATCH v11 1/2] Refactor part of the oom report in dump_header
-Message-ID: <20180702101732.GD19043@dhcp22.suse.cz>
-References: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530376739-20459-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S965297AbeGBKSu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 06:18:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:52421 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753807AbeGBKSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:18:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 03:18:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,298,1526367600"; 
+   d="scan'208";a="242298111"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Jul 2018 03:18:43 -0700
+Message-ID: <fef0bf484ead5e0998666168ced86438bf935ce5.camel@linux.intel.com>
+Subject: Re: [PATCH 0/2] serial: 8250_dw: add fractional divisor support
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 02 Jul 2018 13:18:42 +0300
+In-Reply-To: <20180702180428.331b36c5@xhacker.debian>
+References: <20180702180428.331b36c5@xhacker.debian>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 01-07-18 00:38:58, ufo19890607@gmail.com wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
+On Mon, 2018-07-02 at 18:04 +0800, Jisheng Zhang wrote:
+> For Synopsys DesignWare 8250 uart which version >= 4.00a, there's a
+> valid divisor latch fraction register. The fractional divisor width is
+> 4bits ~ 6bits.
 > 
-> The current system wide oom report prints information about the victim
-> and the allocation context and restrictions. It, however, doesn't
-> provide any information about memory cgroup the victim belongs to. This
-> information can be interesting for container users because they can find
-> the victim's container much more easily.
+
+There are several serial IPs that have fractional divider built-in. None
+is using any specific hooks. Why do you need in your case, esp. taking
+into consideration that we have a custom ->set_termios() callback?
+
+> patch1 introduces necessary hooks to 8250 core.
+> patch2 implement the fractional divisor support for Synopsys DW 8250.
 > 
-> I follow the advices of David Rientjes and Michal Hocko, and refactor
-> part of the oom report. After this patch, users can get the memcg's
-> path from the oom report and check the certain container more quickly.
+> Jisheng Zhang (2):
+>   serial: 8250: introduce get_divisor() and set_divisor() hook
+>   serial: 8250_dw: add fractional divisor support
 > 
-> The oom print info after this patch:
-> oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
+>  drivers/tty/serial/8250/8250_core.c |  4 +++
+>  drivers/tty/serial/8250/8250_dw.c   | 54
+> +++++++++++++++++++++++++++++
+>  drivers/tty/serial/8250/8250_port.c |  8 +++++
+>  include/linux/serial_8250.h         |  7 ++++
+>  4 files changed, 73 insertions(+)
+> 
 
-This changelog doesn't correspond to the patch. Also while we were
-discussing this off-list, I have suggested to pull the cpuset info into
-the single line output.
-
-What about the following?
-"
-OOM report contains several sections. The first one is the allocation
-context that has triggered the OOM. Then we have cpuset context
-followed by the stack trace of the OOM path. Followed by the oom
-eligible tasks and the information about the chosen oom victim.
-
-One thing that makes parsing more awkward than necessary is that we do
-not have a single and easily parsable line about the oom context. This
-patch is reorganizing the oom report to
-1) who invoked oom and what was the allocation request
-	[  126.168182] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
-
-2) OOM stack trace
-	[  126.169806] CPU: 23 PID: 8668 Comm: panic Not tainted 4.18.0-rc2+ #36
-	[  126.170494] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-	[  126.171197] Call Trace:
-	[  126.171901]  dump_stack+0x5a/0x73
-	[  126.172593]  dump_header+0x58/0x2dc
-	[  126.173294]  oom_kill_process+0x228/0x420
-	[  126.173999]  ? oom_badness+0x2a/0x130
-	[  126.174705]  out_of_memory+0x11a/0x4a0
-	[  126.175415]  __alloc_pages_slowpath+0x7cc/0xa1e
-	[  126.176128]  ? __alloc_pages_slowpath+0x194/0xa1e
-	[  126.176853]  ? page_counter_try_charge+0x54/0xc0
-	[  126.177580]  __alloc_pages_nodemask+0x277/0x290
-	[  126.178319]  alloc_pages_vma+0x73/0x180
-	[  126.179058]  do_anonymous_page+0xed/0x5a0
-	[  126.179825]  __handle_mm_fault+0xbb3/0xe70
-	[  126.180566]  handle_mm_fault+0xfa/0x210
-	[  126.181313]  __do_page_fault+0x233/0x4c0
-	[  126.182063]  do_page_fault+0x32/0x140
-	[  126.182812]  ? page_fault+0x8/0x30
-	[  126.183560]  page_fault+0x1e/0x30
-
-3) oom context (contrains and the chosen victim)
-	[  126.190619] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid= 8673,uid=    0
-
-An admin can easily get the full oom context at a single line which
-makes parsing much easier.
-"
 -- 
-Michal Hocko
-SUSE Labs
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
