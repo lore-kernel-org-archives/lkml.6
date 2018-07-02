@@ -2,215 +2,169 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28447C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E558BC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA22125228
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:37:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA22125228
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F6112543C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:38:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ku5dO+RD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6112543C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeGBPhV (ORCPT
+        id S1752550AbeGBPiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:37:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53256 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752185AbeGBPhT (ORCPT
+        Mon, 2 Jul 2018 11:38:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeGBPiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:37:19 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FYmSs026653
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:37:18 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyp95hkbw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:37:18 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 2 Jul 2018 11:37:17 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 11:37:14 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62FbCnh7078606
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 15:37:12 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50A69AE05C;
-        Mon,  2 Jul 2018 11:36:56 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C3CF0AE05F;
-        Mon,  2 Jul 2018 11:36:55 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 11:36:55 -0400 (EDT)
-Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
- virtualization
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 2 Jul 2018 11:37:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 2 Jul 2018 11:38:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WgdSB/pzlU7x3tjbiX8BR3Lqs/IbJ3UHK8OR38voySM=; b=ku5dO+RDE198G5UiU/aBahier
+        6rBeIrsUbBaDLG64NcgTNa3Fm8xpoWOeZDgk+qwdpbKMgTlS1j7XaA5jEheEdD2qzkoS8ZRfMm7m2
+        5gPejhBrMESRKrCQXaIiEGJNCxMjxWtZX1reZgUSugTPJGzAioZblDe5vtEwdAlExy9OpKVkpGaNU
+        ApvwekS2gjzETO3OgBRlYbHquxvIq/Zg29IHGqsmOYnsdkdfGbGyNgb5K+0l68Ltl/6zu9jEkJsvh
+        QlNt/2gDI75QXTV+YBjYp5igC1kdnP6nzOpVTYTEJbmtn6Srqg+GEO31hTlXTSdIkFJFKEeUCNxLb
+        kOkzHCyJA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fa0tV-0000i9-Jo; Mon, 02 Jul 2018 15:37:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A4B452029F1DB; Mon,  2 Jul 2018 17:37:35 +0200 (CEST)
+Date:   Mon, 2 Jul 2018 17:37:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 2/3] locking: Clarify requirements for
+ smp_mb__after_spinlock()
+Message-ID: <20180702153735.GQ2494@hirez.programming.kicks-ass.net>
+References: <1530182480-13205-3-git-send-email-andrea.parri@amarulasolutions.com>
+ <1530544315-14614-1-git-send-email-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <ceb1d797-9bb3-cb6e-c510-657fc61a7f82@de.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18070215-0060-0000-0000-00000285AA98
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055518; UDB=6.00541378; IPR=6.00833440;
- MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:37:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070215-0061-0000-0000-000045A6A6AC
-Message-Id: <276b5ae7-7f27-faae-1e5a-0d4c084139e9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020178
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530544315-14614-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2018 10:38 AM, Christian Borntraeger wrote:
->
-> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
->> Introduces a new CPU model feature and two CPU model
->> facilities to support AP virtualization for KVM guests.
->>
->> CPU model feature:
->>
->> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->> AP instructions are available on the guest. This
->> feature will be enabled by the kernel only if the AP
->> instructions are installed on the linux host. This feature
->> must be specifically turned on for the KVM guest from
->> userspace to use the VFIO AP device driver for guest
->> access to AP devices.
->>
->> CPU model facilities:
->>
->> 1. AP Query Configuration Information (QCI) facility is installed.
->>
->>     This is indicated by setting facilities bit 12 for
->>     the guest. The kernel will not enable this facility
->>     for the guest if it is not set on the host. This facility
->>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->>     feature is not installed.
->>
->>     If this facility is not set for the KVM guest, then only
->>     APQNs with an APQI less than 16 will be available to the
->>     guest regardless of the guest's matrix configuration. This
->>     is a limitation of the AP bus running on the guest.
->>
->> 2. AP Facilities Test facility (APFT) is installed.
->>
->>     This is indicated by setting facilities bit 15 for
->>     the guest. The kernel will not enable this facility for
->>     the guest if it is not set on the host. This facility
->>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
->>     feature is not installed.
->>
->>     If this facility is not set for the KVM guest, then no
->>     AP devices will be available to the guest regardless of
->>     the guest's matrix configuration. This is a limitation
->>     of the AP bus running under the guest.
->>
->> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> I think it probably should be at the end of the series, other than that its good.
+On Mon, Jul 02, 2018 at 05:11:55PM +0200, Andrea Parri wrote:
+>  /*
+> + * smp_mb__after_spinlock() provides the equivalent of a full memory barrier
+> + * between program-order earlier lock acquisitions and program-order later
+> + * memory accesses.
+>   *
+> + * This guarantees that the following two properties hold:
+>   *
+> + *   1) Given the snippet:
+>   *
+> + *	  { X = 0;  Y = 0; }
+>   *
+> + *	  CPU0				CPU1
+>   *
+> + *	  WRITE_ONCE(X, 1);		WRITE_ONCE(Y, 1);
+> + *	  spin_lock(S);			smp_mb();
+> + *	  smp_mb__after_spinlock();	r1 = READ_ONCE(X);
+> + *	  r0 = READ_ONCE(Y);
+> + *	  spin_unlock(S);
+>   *
+> + *      it is forbidden that CPU0 does not observe CPU1's store to Y (r0 = 0)
+> + *      and CPU1 does not observe CPU0's store to X (r1 = 0); see the comments
+> + *      preceding the call to smp_mb__after_spinlock() in __schedule() and in
+> + *      try_to_wake_up().
+> + *
+> + *   2) Given the snippet:
+> + *
+> + *  { X = 0;  Y = 0; }
+> + *
+> + *  CPU0		CPU1				CPU2
+> + *
+> + *  spin_lock(S);	spin_lock(S);			r1 = READ_ONCE(Y);
+> + *  WRITE_ONCE(X, 1);	smp_mb__after_spinlock();	smp_rmb();
+> + *  spin_unlock(S);	r0 = READ_ONCE(X);		r2 = READ_ONCE(X);
+> + *			WRITE_ONCE(Y, 1);
+> + *			spin_unlock(S);
+> + *
+> + *      it is forbidden that CPU0's critical section executes before CPU1's
+> + *      critical section (r0 = 1), CPU2 observes CPU1's store to Y (r1 = 1)
+> + *      and CPU2 does not observe CPU0's store to X (r2 = 0); see the comments
+> + *      preceding the calls to smp_rmb() in try_to_wake_up() for similar
+> + *      snippets but "projected" onto two CPUs.
 
-If I move this to the end of the series, the very next patch checks the
-
-KVM_S390_VM_CPU_FEAT_AP feature?
+Maybe explicitly note that 2) is the RCsc lock upgrade.
 
 
+>   * Since most load-store architectures implement ACQUIRE with an smp_mb() after
+>   * the LL/SC loop, they need no further barriers. Similarly all our TSO
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index da8f12119a127..ec9ef0aec71ac 100644
+> +++ b/kernel/sched/core.c
+> @@ -1999,21 +1999,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  	 * be possible to, falsely, observe p->on_rq == 0 and get stuck
+>  	 * in smp_cond_load_acquire() below.
+>  	 *
+> +	 * sched_ttwu_pending()			try_to_wake_up()
+> +	 *   STORE p->on_rq = 1			  LOAD p->state
+> +	 *   UNLOCK rq->lock
+> +	 *
+> +	 * __schedule() (switch to task 'p')
+> +	 *   LOCK rq->lock			  smp_rmb();
+> +	 *   smp_mb__after_spinlock();
+> +	 *   UNLOCK rq->lock
+>  	 *
+>  	 * [task p]
+> +	 *   STORE p->state = UNINTERRUPTIBLE	  LOAD p->on_rq
+>  	 *
+> +	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
+> +	 * __schedule().  See the comment for smp_mb__after_spinlock().
+>  	 */
+>  	smp_rmb();
+>  	if (p->on_rq && ttwu_remote(p, wake_flags))
+> @@ -2027,15 +2026,17 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  	 * One must be running (->on_cpu == 1) in order to remove oneself
+>  	 * from the runqueue.
+>  	 *
+> +	 * __schedule() (switch to task 'p')	try_to_wake_up()
+> +	 *   STORE p->on_cpu = 1		  LOAD p->on_rq
+> +	 *   UNLOCK rq->lock
+> +	 *
+> +	 * __schedule() (put 'p' to sleep)
+> +	 *   LOCK rq->lock			  smp_rmb();
+> +	 *   smp_mb__after_spinlock();
+> +	 *   STORE p->on_rq = 0			  LOAD p->on_cpu
+>  	 *
+> +	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
+> +	 * __schedule().  See the comment for smp_mb__after_spinlock().
+>  	 */
+>  	smp_rmb();
 
->   
->
->
->> ---
->>   arch/s390/include/uapi/asm/kvm.h |    1 +
->>   arch/s390/kvm/kvm-s390.c         |    8 ++++++++
->>   arch/s390/tools/gen_facilities.c |    3 +++
->>   3 files changed, 12 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
->> index 4cdaa55..a580dec 100644
->> --- a/arch/s390/include/uapi/asm/kvm.h
->> +++ b/arch/s390/include/uapi/asm/kvm.h
->> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->>   #define KVM_S390_VM_CPU_FEAT_KSS	13
->> +#define KVM_S390_VM_CPU_FEAT_AP		14
->>   struct kvm_s390_vm_cpu_feat {
->>   	__u64 feat[16];
->>   };
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 3b7a515..d2208d4 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -40,6 +40,7 @@
->>   #include <asm/sclp.h>
->>   #include <asm/cpacf.h>
->>   #include <asm/timex.h>
->> +#include <asm/ap.h>
->>   #include "kvm-s390.h"
->>   #include "gaccess.h"
->>   
->> @@ -366,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
->>   
->>   	if (MACHINE_HAS_ESOP)
->>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->> +
->> +	/*
->> +	 * Check if AP instructions installed on host
->> +	 */
->> +	if (ap_instructions_available() == 0)
->> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->> +
->>   	/*
->>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->> index 90a8c9e..e0e2c19 100644
->> --- a/arch/s390/tools/gen_facilities.c
->> +++ b/arch/s390/tools/gen_facilities.c
->> @@ -106,6 +106,9 @@ struct facility_def {
->>   
->>   		.name = "FACILITIES_KVM_CPUMODEL",
->>   		.bits = (int[]){
->> +			12, /* AP Query Configuration Information */
->> +			15, /* AP Facilities Test */
->>   			-1  /* END */
->>   		}
->>   	},
+Ah yes, good.
 
-
+Ack!
