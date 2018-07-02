@@ -2,125 +2,200 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C832C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531CFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10278248AE
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:00:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LnMvJUpc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d9uO6dAA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10278248AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 190D924FBF
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 190D924FBF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753134AbeGBRAg (ORCPT
+        id S1752326AbeGBRAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:00:36 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33697 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752813AbeGBRAX (ORCPT
+        Mon, 2 Jul 2018 13:00:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753135AbeGBRAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:00:23 -0400
-Received: by mail-ua0-f193.google.com with SMTP id g18-v6so7752205uak.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=I+u58XWIlYuHmYzWNPSgoCLOzMQzWwK/OkSVwvLQASM=;
-        b=LnMvJUpchRyHT64/O5UcQc3J1gMplNKrYp3UXThfLYg5RJW+3i7X9JncJalWrdwTQW
-         yRzg6L7/SiE1LrOUfV9+airYx8BqScK0zuBOl/fE14OvynaylN8H+zz2426sinU6ocCD
-         EBqtJRSHgJWVe9cGDMp0Xz6S7mnFTBEr0t8Tk0deL+LU5XRG96oV54dCfoTDWCI+r9Uc
-         GNKnAhN++ok5EclNOKdJ+ie/ZfBUriMfCfrRk/s4GsW2fGmJVKRuHRO/DviPgQxlEoT8
-         mSTniuZbihvsxFsM44ircVrbYbG73se6O4ogJJrG9Nv3ttMeU7U4iuA0OOMT8pa7wmHJ
-         +RZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=I+u58XWIlYuHmYzWNPSgoCLOzMQzWwK/OkSVwvLQASM=;
-        b=d9uO6dAAGER/ap/II3WK2YAVpJdqg2kuCzWuK3mYhuS7jbeDG2e2gcFgWOLiPBN9oz
-         AOMikudObGxjDdIZtYV35V4gIyDUoQ6c1UBbPM3bwD7DgNxL1dIt8msFvseiKM03aYAL
-         P0ee7Pm5MyQcfU3SvQf6+i+zQihYfEUkA0kO0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=I+u58XWIlYuHmYzWNPSgoCLOzMQzWwK/OkSVwvLQASM=;
-        b=ERmLPriJI0IGSgb2GRRXDHGqU+fyDmwvmUfPuzcdRnsJ9eKYlOC72PJTZFDq+KSMl3
-         heYAvPgnnsQaF1g/ihdVAJwayN9ZM6zwyWDw1ywPsjIV1scz0BXdKe/jC2j5L+DpVbTb
-         AES1Yo3SFuWV44RnWsRfthnlRohD06HeO+C3GMrc0le+ec9/dftykgxciipKVkhela4U
-         q6nyQdmN0D00UU6X8sIEhI8qW4CWxAxk24q2VjqP0C1oRPCdNxMzr9c46BYl271r81qY
-         4yQ1lzirnhYAgZxwvGmUmepdkdjcgUDilKsq/WLQIxpzFP98Z+sT+uY6RD2P6ONjw/P8
-         tVEA==
-X-Gm-Message-State: APt69E3TyRrKAm8pIKkLJY0NNAG69qHU3wLpchwDAqFhqsXyqNyCXKj8
-        gkNh6GssmS+Bey3OTjb/zKJlNZL0DmKFpcCkR6LXXA==
-X-Google-Smtp-Source: AAOMgpf5GM+3w36knXYvnWsXFMFvfqYHHalQPvyWbcfQ/Tj0kDwC+430wkQWGTAd4/PdC/ZjH3M9HoY1Jux+IIRIZn8=
-X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr16192664uac.191.1530550821566;
- Mon, 02 Jul 2018 10:00:21 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 10:00:20 -0700 (PDT)
-In-Reply-To: <08a08d60-8176-df54-ff0e-ffc195f40d6c@rock-chips.com>
-References: <1527590335-171787-1-git-send-email-xiaqing17@hisilicon.com>
- <CAPDyKFo7FP5bL8doK3P749Rcyzh_H-3SzG+GZVJb2pp9j_ZH_A@mail.gmail.com> <08a08d60-8176-df54-ff0e-ffc195f40d6c@rock-chips.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 2 Jul 2018 10:00:20 -0700
-X-Google-Sender-Auth: _ZeiE68PeqsdKB3v-j0fVaBXe9E
-Message-ID: <CAD=FV=VBQOeaFGnJBBmVtYZjoJo1WdkwkPFaVJ=zr+C=N9iqQw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: fix card threshold control configuration
-To:     Shawn Lin <shawn.lin@rock-chips.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Qing Xia <xiaqing17@hisilicon.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Mon, 2 Jul 2018 13:00:47 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62GwoMG146861
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 13:00:47 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyqv70j8w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:00:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 18:00:43 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 18:00:41 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62H0eQA38338738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 17:00:40 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D9B5A405D;
+        Mon,  2 Jul 2018 18:00:23 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 746D0A405F;
+        Mon,  2 Jul 2018 18:00:22 +0100 (BST)
+Received: from dhcp-9-31-103-18.watson.ibm.com (unknown [9.31.103.18])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 18:00:22 +0100 (BST)
+Subject: Re: [PATCH] ima: Use tpm_default_chip() and call TPM functions with
+ a tpm_chip
+From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Mon, 02 Jul 2018 13:00:39 -0400
+In-Reply-To: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
+References: <20180702152449.3219288-1-stefanb@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070217-4275-0000-0000-000002945630
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070217-4276-0000-0000-0000379BD0E7
+Message-Id: <1530550839.3709.46.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 2018-07-02 at 11:24 -0400, Stefan Berger wrote:
+> Rather than accessing the TPM functions by passing a NULL pointer for
+> the tpm_chip, which causes a lookup for a suitable chip every time, get a
+> hold of a tpm_chip and access the TPM functions using it. Also get rid of
+> the ima_used_chip variable and use the new ima_tpm_chip variable instead
+> for determining whether to call TPM functions.
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-On Mon, Jun 11, 2018 at 7:17 AM, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> On 2018/6/11 20:20, Ulf Hansson wrote:
->>
->> + Shawn Lin, Evgeniy Didin, Doug Andersson
->>
->> On 29 May 2018 at 12:38, Qing Xia <xiaqing17@hisilicon.com> wrote:
->>>
->>> From: x00270170 <xiaqing17@hisilicon.com>
->>>
->>> Card write threshold control is supposed to be set since controller
->>> version 2.80a for data write in HS400 mode and data read in
->>> HS200/HS400/SDR104 mode. However the current code returns without
->>> configuring it in the case of data writing in HS400 mode.
->>> Meanwhile the patch fixes that the current code goes to
->>> 'disable' when doing data reading in HS400 mode.
->>>
->
-> I'm more or less unable to review this, as I don't have 2.80a databook,
-> nor a such platform to verify it. :(
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-Sorry for not responding earlier.  I didn't have a lot of context here
-so reviewing it never made it to the top of my queue.  ...but quickly
-checking what I can...
+Jarkko, would you mind staging this patch with the rest of the patch
+set?
 
-I'm in almost the same boat as Shawn.  I don't have any HS400 hardware
-using dw_mmc available to me, but I do seem to have the 2.80a databook
-hanging around and it agrees that we need to enable the card write
-threshold for HS400 writes.  That also matches the comments, so the
-patch seems right to me.  Probably Jaehoon would make a better
-reviewer since he submitted the original code and also has more
-familiarity with HS400 on dw_mmc.
+Mimi
 
-I don't think I have enough context to give a full Reviewed-by, but in
-the very least I can confirm that the patch seems sane.
 
--Doug
+> ---
+>  security/integrity/ima/ima.h        |  2 +-
+>  security/integrity/ima/ima_crypto.c |  4 ++--
+>  security/integrity/ima/ima_init.c   | 16 +++++-----------
+>  security/integrity/ima/ima_queue.c  |  4 ++--
+>  4 files changed, 10 insertions(+), 16 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 354bb5716ce3..2ab1affffa36 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -53,9 +53,9 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+>  extern int ima_policy_flag;
+> 
+>  /* set during initialization */
+> -extern int ima_used_chip;
+>  extern int ima_hash_algo;
+>  extern int ima_appraise;
+> +extern struct tpm_chip *ima_tpm_chip;
+> 
+>  /* IMA event related data */
+>  struct ima_event_data {
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 4e085a17124f..7e7e7e7c250a 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -631,10 +631,10 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+> 
+>  static void __init ima_pcrread(int idx, u8 *pcr)
+>  {
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return;
+> 
+> -	if (tpm_pcr_read(NULL, idx, pcr) != 0)
+> +	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
+>  		pr_err("Error Communicating to TPM chip\n");
+>  }
+> 
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 29b72cd2502e..faac9ecaa0ae 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -26,7 +26,7 @@
+> 
+>  /* name for boot aggregate entry */
+>  static const char *boot_aggregate_name = "boot_aggregate";
+> -int ima_used_chip;
+> +struct tpm_chip *ima_tpm_chip;
+> 
+>  /* Add the boot aggregate to the IMA measurement list and extend
+>   * the PCR register.
+> @@ -64,7 +64,7 @@ static int __init ima_add_boot_aggregate(void)
+>  	iint->ima_hash->algo = HASH_ALGO_SHA1;
+>  	iint->ima_hash->length = SHA1_DIGEST_SIZE;
+> 
+> -	if (ima_used_chip) {
+> +	if (ima_tpm_chip) {
+>  		result = ima_calc_boot_aggregate(&hash.hdr);
+>  		if (result < 0) {
+>  			audit_cause = "hashing_error";
+> @@ -106,17 +106,11 @@ void __init ima_load_x509(void)
+> 
+>  int __init ima_init(void)
+>  {
+> -	u8 pcr_i[TPM_DIGEST_SIZE];
+>  	int rc;
+> 
+> -	ima_used_chip = 0;
+> -	rc = tpm_pcr_read(NULL, 0, pcr_i);
+> -	if (rc == 0)
+> -		ima_used_chip = 1;
+> -
+> -	if (!ima_used_chip)
+> -		pr_info("No TPM chip found, activating TPM-bypass! (rc=%d)\n",
+> -			rc);
+> +	ima_tpm_chip = tpm_default_chip();
+> +	if (!ima_tpm_chip)
+> +		pr_info("No TPM chip found, activating TPM-bypass!\n");
+> 
+>  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+>  	if (rc)
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+> index 418f35e38015..b186819bd5aa 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -142,10 +142,10 @@ static int ima_pcr_extend(const u8 *hash, int pcr)
+>  {
+>  	int result = 0;
+> 
+> -	if (!ima_used_chip)
+> +	if (!ima_tpm_chip)
+>  		return result;
+> 
+> -	result = tpm_pcr_extend(NULL, pcr, hash);
+> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+>  	if (result != 0)
+>  		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+>  	return result;
+
