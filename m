@@ -1,129 +1,141 @@
 Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12425C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2A1C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B192124192
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:34:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B192124192
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0167F246D2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0167F246D2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754527AbeGBJeo (ORCPT
+        id S934095AbeGBJfA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:34:44 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5567 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753343AbeGBJem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:34:42 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 02A95A00D3B41;
-        Mon,  2 Jul 2018 17:34:36 +0800 (CST)
-Received: from DGGEMM421-HUB.china.huawei.com (10.1.198.38) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.382.0; Mon, 2 Jul 2018 17:34:36 +0800
-Received: from DGGEMM511-MBX.china.huawei.com ([169.254.1.80]) by
- dggemm421-hub.china.huawei.com ([10.1.198.38]) with mapi id 14.03.0382.000;
- Mon, 2 Jul 2018 17:34:29 +0800
-From:   "Gaoming (ming, consumer BG)" <gaoming20@huawei.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-CC:     "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Liqingchao (sorp)" <sorp.liqingchao@huawei.com>,
-        "Shenchen (harry)" <harry.shen@huawei.com>,
-        "miaoxie (A)" <miaoxie@huawei.com>,
-        "yangfei (D)" <yangfei39@huawei.com>,
-        "Renlipeng (OS driver)" <renlipeng@huawei.com>
-Subject: =?gb2312?B?tPC4tDogtPC4tDogtPC4tDogtPC4tDogtPC4tDogW1BBVENIXSBleHQ0OiBl?=
- =?gb2312?B?MmZzcHJvZ3M6IGZpeCBpbm9kZSBiaXRtYXAgbnVtIG5vdCBpbnRlZ2VyLGlu?=
- =?gb2312?Q?compatible_for_ancient_android_devices?=
-Thread-Topic: =?gb2312?B?tPC4tDogtPC4tDogtPC4tDogtPC4tDogW1BBVENIXSBleHQ0OiBlMmZzcHJv?=
- =?gb2312?B?Z3M6IGZpeCBpbm9kZSBiaXRtYXAgbnVtIG5vdCBpbnRlZ2VyLGluY29tcGF0?=
- =?gb2312?Q?ible_for_ancient_android_devices?=
-Thread-Index: AQHUDiB7bBM9P+9CgUmyd+rfiNQEzqR03/Qw//+NOgCAANrbsP///3QAgAE0cUCAAEv3AIABNeRAgABFnICAA2DhYA==
-Date:   Mon, 2 Jul 2018 09:34:28 +0000
-Message-ID: <FDC91B229D965C458E3615E98C48ADDD0EC41D5F@dggemm511-mbx.china.huawei.com>
-References: <1530014046-62466-1-git-send-email-gaoming20@huawei.com>
- <20180627140937.GA3348@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41667@dggemm511-mbx.china.huawei.com>
- <20180628022900.GA663@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC416E8@dggemm511-mbx.china.huawei.com>
- <20180628153022.GA8521@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC4179B@dggemm511-mbx.china.huawei.com>
- <20180629142612.GE1231@thunk.org>
- <FDC91B229D965C458E3615E98C48ADDD0EC41869@dggemm511-mbx.china.huawei.com>
- <20180630130429.GA26529@thunk.org>
-In-Reply-To: <20180630130429.GA26529@thunk.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.189.158.207]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Mon, 2 Jul 2018 05:35:00 -0400
+Received: from mga03.intel.com ([134.134.136.65]:50869 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933423AbeGBJey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 05:34:54 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 02:34:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,298,1526367600"; 
+   d="scan'208";a="242289978"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 02 Jul 2018 02:34:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 1E62AF7; Mon,  2 Jul 2018 12:34:51 +0300 (EEST)
+Date:   Mon, 2 Jul 2018 12:34:50 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Benjamin Gilbert <bgilbert@redhat.com>
+Cc:     linux-x86_64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+Message-ID: <20180702093450.h5tfjeynpi3nwjbo@black.fi.intel.com>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
+ <20180701213243.GA20180@trogon.sfo.coreos.systems>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180701213243.GA20180@trogon.sfo.coreos.systems>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SSBnb3QgaXQuIFlvdSBoYXRlIG1ha2VfZXh0NGZzLCBhbmQgbWUgdG9vLg0KWW91IGRvbid0IGxp
-a2UgdG8gbWVyZ2UgdGhpcyBwYXRjaCBpbiB1cHN0cmVhbSBlMmZzcHJvZ3MgdG8gcmVzb2x2ZSB0
-aGUgYnVnIG9mIG1ha2VfZXh0NGZzLg0KDQpPZiBjb3Vyc2Ugd2Ugd2lsbCBmaXggdGhlIGJ1ZyBv
-biBvdXIgYW5jaWVudCBkZXZpY2VzLCB3ZSBoYXZlIHRvIC4NCklmIHRoaXMgcHJvYmxlbSBmaXhl
-ZCBvciB0aGlzIHBhdGNoIG1lcmdlcyBpbiBsYXRlc3QgZTJmc3Byb2dzLCB3ZSB3aWxsIGJhY2tw
-b3J0IHRoZSBsYXRlc3QgZTJmc3Byb2dzLg0KSWYgbm90LCB3ZSBoYXZlIG5vIG1vdGl2YXRpb24g
-dG8gYmFja3BvcnQgaXQuDQoNCkkgZG9uJ3Qga25vdyB3aGV0aGVyIG90aGVyIGFuZHJvaWQgZGV2
-aWNlcyBzdWZmZXIgdGhpcyBwcm9ibGVtLg0KDQpJZiBzb21lb25lIGVsc2UgY29tZSB0byBjb21w
-bGFpbiB0aGlzIHByb2JsZW0sIHlvdSBzaG91bGQgY29uc2lkZXIgdG8gZml4IGl0Lg0KDQpCZXN0
-IHdpc2hlcy4NCg0KTWluZw0KDQoNCi0tLS0t08q8/tStvP4tLS0tLQ0Kt6K8/sjLOiBUaGVvZG9y
-ZSBZLiBUcydvIFttYWlsdG86dHl0c29AbWl0LmVkdV0gDQq3osvNyrG85DogMjAxOMTqNtTCMzDI
-1SAyMTowNA0KytW8/sjLOiBHYW9taW5nIChtaW5nLCBjb25zdW1lciBCRykNCrOty806IGxpbnV4
-LWV4dDRAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBMaXFp
-bmdjaGFvIChzb3JwKTsgU2hlbmNoZW4gKGhhcnJ5KTsgbWlhb3hpZSAoQSk7IHlhbmdmZWkgKEQp
-OyBSZW5saXBlbmcgKE9TIGRyaXZlcikNCtb3zOI6IFJlOiC08Li0OiC08Li0OiC08Li0OiC08Li0
-OiBbUEFUQ0hdIGV4dDQ6IGUyZnNwcm9nczogZml4IGlub2RlIGJpdG1hcCBudW0gbm90IGludGVn
-ZXIsaW5jb21wYXRpYmxlIGZvciBhbmNpZW50IGFuZHJvaWQgZGV2aWNlcw0KDQpPbiBTYXQsIEp1
-biAzMCwgMjAxOCBhdCAwMToyNjo0M0FNICswMDAwLCBHYW9taW5nIChtaW5nLCBjb25zdW1lciBC
-Rykgd3JvdGU6DQo+IFllcywgaXQgaXMgY2F1c2VkIGJ5IHVzaW5nIDEwMjQgYmxvY2tzaXplLg0K
-PiBJdCBpcyBoaXN0b3JpY2FsIHByb2JsZW0sIGFuZCBJIGhhdmUgdG8gYWRtaXQgdGhhdCdzIG5v
-dCBnb29kIGlkZWEuICBJIGRvbid0IGtub3cgd2h5IHNvbWVib2R5IGNob29zZSBpdCBzb21lIHll
-YXJzIGJlZm9yZS4gDQo+IEl0IGhhcyBiZWVuIGNvcnJlY3RlZCB0d28geWVhcnMgYmVmb3JlIG9y
-IG1vcmUgZWFybHkuIEJ1dCBzb21lIGFuY2llbnQgZGV2aWNlcyBleGlzdC4gDQo+IEl0IGlzIG5v
-dCB1c2VyIGRhdGEsIG5vIG5lZWQgdG8gZG8gZmlsZS1iYXNlZCBlbmNyeXB0aW9uLiBJdCBpcyBh
-IHNtYWxsIHBhcnRpdGlvbiBmb3Igc29tZSB1c2UuDQo+IA0KPiBIb3dldmVyLCAxMDI0IGlzIGxl
-Z2FsIHRob3VnaCBub3QgZ29vZCwgc29tZWJvZHkgbWF5IHVzZSBpdC4gDQo+IEFuZCB3ZSBzaG91
-bGQgZml4IGl0Lg0KDQpTbyB5b3UgdW5kZXJzdGFuZCBteSBwb3NpdGlvbiAtLS0gdGhlIHJlYXNv
-biB3aHkgSSd2ZSBiZWVuIHB1c2hpbmcgc28NCmhhcmQgaXMgSSdtIHRyeWluZyB0byBmaWd1cmUg
-b3V0IGhvdyBiaWcgb2YgYSBwcm9ibGVtIHRoaXMgaXMuDQpTcGVjaWZpY2FsbHkgc3BlYWtpbmcs
-IGlzIHRoaXMgYSBIdWF3ZWktc3BlY2lmaWMgcHJvYmxlbSwgb3Igc29tZXRoaW5nDQphY3Jvc3Mg
-dGhlIGVudGlyZSBBbmRyb2lkIGVjb3N5c3RlbS4gIEkgKnRob3VnaHQqIEkgaGFkIGZpeGVkIG1v
-c3Qgb2YNCnRoZSBkaXNhc3RlciBiYWNrIGluIDIwMTEuICBUaGVyZSBoYXZlIHBlcmlvZGljIGhl
-YWRhY2hlcyB3aGVyZQ0KdGVzdGVycyB3b3VsZCBkaXNjb3ZlciBwcm9ibGVtcyB3aGVyZSBhbmRy
-b2lkIGhhbmRzZXRzIGdldCBicmlja2VkDQphZnRlciBkb2luZyBhIGZhY3RvcnkgcmVzZXQgdGhh
-dCBJIGhhZCB0cmFja2VkIGRvd24gdG8gbWFrZV9leHQ0ZnMsDQphbmQgdGhlIGV4aXN0ZW5jZSBv
-ZiBtYWtlX2V4dDRmcyBpcyBub3Qgc29tZXRoaW5nIEkgYWdyZWVkIHRvLCBhbmQNCmhhdmUgYmVl
-biBmaWdodGluZyBmb3IgeWVhcnMuICBTbyBJJ3ZlIGJlZW4gY2xlYW5pbmcgdXAgYWZ0ZXINCm1h
-a2VfZXh0NGZzIGZvciBhIHdoaWxlLCBldmVuIHRob3VnaCBpdCdzIG5vdCBteSByZXNwb25zaWJs
-aXR5LiAgKEZvcg0Kb25lIHRoaW5nIG15IHdvcmsgcmVzcG9uc2liaWxpdGllcyBhcmUgZm9yIGRh
-dGEgY2VudGVyIHNlcnZlcnMgYXQNCkdvb2dsZSwgKm5vdCogQW5kcm9pZDsgZm9yIGFub3RoZXIs
-IG5vIG9uZSBhc2tlZCAqbWUqIGJlZm9yZSB0aGV5IGNhbWUNCnVwIHdpdGggdGhlIGFib21pbmF0
-aW9uIHdoaWNoIGlzIG1ha2VfZXh0NGZzLikNCg0KU28gSSBkb24ndCBmZWVsIHBhcnRpY3VsYXJs
-eSwgb3IgcGVyc29uYWxseSwgcmVzcG9uc2libGUgZm9yIGJ1Z3MNCmNhdXNlZCBieSBtYWtlX2V4
-dDRmcywgYmVjYXVzZSBpZiBpdCBoYWQgYmVlbiB1cCB0byBtZSwgaXQgd291bGQgaGF2ZQ0KbmV2
-ZXIgZXhpc3RlZCBpbiB0aGUgZmlyc3QgcGxhY2UuDQoNCklmIGl0J3Mgb25seSBpbiBhbmNpZW50
-IEh1YXdlaSBkZXZpY2VzLCBJIGRvbid0IHNlZSBhIHN0cm9uZyByZWFzb24gdG8NCnN1cHBvcnQg
-aGlzIGluIHVwc3RyZWFtIGUyZnNwcm9ncy4gIEFyZSB5b3UgcmVhbGx5IGdvaW5nIHRvIGJlDQpi
-YWNrcG9ydGluZyB0aGUgbGF0ZXN0IGUyZnNwcm9ncyBpbnRvIHRoZXNlIGFuY2llbnQgSHVhd2Vp
-IGRldmljZXM/DQpJbiBteSBleHBlcmllbmNlLCB0aGUgQW5kcm9pZCB0ZWFtIGhhcyBhIGhhcmQg
-ZW5vdWdoIHRpbWUgZ2V0dGluZw0KdGhlaXIgQW5kcm9pZCBwYXJ0bmVycyB0byBiYWNrcG9ydCBr
-ZXJuZWwgZml4ZXMgZm9yIHNldmVyZSBzZWN1cml0eQ0KYnVncyBpbnRvIG9sZCBBbmRyb2lkIGRl
-dmljZXMgLS0tIG5ldmVyIG1pbmQgdmVyc2lvbnMgb2YgZTJmc3Byb2dzLg0KDQpJZiBub3QsIHdo
-YXQncyB0aGUgcG9pbnQ/DQoNClJlZ2FyZHMsDQoNCgkJCQkJCS0gVGVkDQo=
+On Sun, Jul 01, 2018 at 09:32:43PM +0000, Benjamin Gilbert wrote:
+> On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
+> > 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig, 
+> > up to and including 4.17.3, fail to boot on AMD64 running in (at least) 
+> > QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.  
+> > Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level 
+> > paging boot if kernel is above 4G") fixes it.  I've attached our kernel 
+> > config for reference, and am happy to test patches, provide sample QCOW 
+> > images, etc.
+> 
+> Adding linux-x86_64, LKML.
+
+Thank you for the report.
+
+I'm not able to trigger it in my environment. Tried v4.17.3 and current
+Linus' tree.
+
+I had to change config slightly to get kernel build in my setup. Diff is
+below.
+
+I run KVM this way:
+
+qemu-system-x86_64 -kernel ./arch/x86/boot/bzImage -nographic -append "console=ttyS0"
+
+Could you check if you can trigger the issue with my changes to config and
+the way I run KVM?
+
+If not, what the key difference in our setups that make the issue visible?
+
+How do you run KVM? Do you have EFI enable? Config difference?
+Running kernel directly, without GRUB makes a difference?
+
+--- config	2018-07-02 11:59:23.662685761 +0300
++++ .config	2018-07-02 12:09:51.822677398 +0300
+@@ -1,6 +1,6 @@
+ #
+ # Automatically generated file; DO NOT EDIT.
+-# Linux/x86 4.17.3-coreos Kernel Configuration
++# Linux/x86 4.17.3 Kernel Configuration
+ #
+ CONFIG_64BIT=y
+ CONFIG_X86_64=y
+@@ -187,16 +187,13 @@
+ # CONFIG_SYSFS_DEPRECATED is not set
+ CONFIG_RELAY=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_INITRAMFS_SOURCE="bootengine.cpio"
+-CONFIG_INITRAMFS_ROOT_UID=0
+-CONFIG_INITRAMFS_ROOT_GID=0
++CONFIG_INITRAMFS_SOURCE=""
+ CONFIG_RD_GZIP=y
+ CONFIG_RD_BZIP2=y
+ CONFIG_RD_LZMA=y
+ CONFIG_RD_XZ=y
+ CONFIG_RD_LZO=y
+ CONFIG_RD_LZ4=y
+-CONFIG_INITRAMFS_COMPRESSION=".gz"
+ CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
+ # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+ CONFIG_SYSCTL=y
+@@ -1564,8 +1561,7 @@
+ CONFIG_STANDALONE=y
+ CONFIG_PREVENT_FIRMWARE_BUILD=y
+ CONFIG_FW_LOADER=y
+-CONFIG_EXTRA_FIRMWARE="intel-ucode/0f-04-04 intel-ucode/06-55-03 intel-ucode/06-1d-01 intel-ucode/06-9e-09 intel-ucode/06-05-03 intel-ucode/0f-02-09 intel-ucode/06-56-02 intel-ucode/0f-04-01 intel-ucode/06-03-02 intel-ucode/06-3e-06 intel-ucode/06-0e-0c intel-ucode/0f-04-0a intel-ucode/06-25-05 intel-ucode/06-56-03 intel-ucode/06-0f-0a intel-ucode/06-0f-0d intel-ucode/0f-03-04 intel-ucode/06-2d-07 intel-ucode/06-3d-04 intel-ucode/06-0f-02 intel-ucode/06-05-00 intel-ucode/0f-04-03 intel-ucode/06-47-01 intel-ucode/.keep_sys-firmware_intel-microcode-0 intel-ucode/06-07-02 intel-ucode/06-0a-00 intel-ucode/06-9e-0a intel-ucode/06-56-05 intel-ucode/06-1c-0a intel-ucode/06-05-02 intel-ucode/06-2d-06 intel-ucode/06-08-01 intel-ucode/06-06-0d intel-ucode/06-46-01 intel-ucode/06-0f-06 intel-ucode/06-0b-01 intel-ucode/06-45-01 intel-ucode/0f-04-09 intel-ucode/0f-06-02 intel-ucode/0f-04-07 intel-ucode/06-16-01 intel-ucode/06-5e-03 intel-ucode/06-06-05 intel-ucode/06-08-06 intel-ucode/0f-00-07 i
+ ntel-ucode/06-07-01 intel-ucode/06-3e-07 intel-ucode/06-1c-02 intel-ucode/06-08-0a intel-ucode/0f-03-02 intel-ucode/06-07-03 intel-ucode/0f-02-07 intel-ucode/06-56-04 intel-ucode/06-2a-07 intel-ucode/06-17-06 intel-ucode/06-3e-04 intel-ucode/0f-02-05 intel-ucode/06-06-0a intel-ucode/06-3f-04 intel-ucode/06-25-02 intel-ucode/0f-01-02 intel-ucode/06-0b-04 intel-ucode/0f-04-08 intel-ucode/06-09-05 intel-ucode/06-2f-02 intel-ucode/06-4f-01 intel-ucode/06-3f-02 intel-ucode/06-3c-03 intel-ucode/06-7a-01 intel-ucode/0f-02-06 intel-ucode/06-1a-05 intel-ucode/06-26-01 intel-ucode/06-0f-07 intel-ucode/06-0d-06 intel-ucode/0f-03-03 intel-ucode/06-9e-0b intel-ucode/06-05-01 intel-ucode/06-0a-01 intel-ucode/06-4e-03 intel-ucode/06-8e-09 intel-ucode/06-1a-04 intel-ucode/06-5c-09 intel-ucode/0f-00-0a intel-ucode/0f-06-05 intel-ucode/0f-06-08 intel-ucode/06-08-03 intel-ucode/06-55-04 intel-ucode/06-0f-0b intel-ucode/06-1e-05 intel-ucode/06-0e-08 intel-ucode/06-3a-09 intel-ucode/06-17-07 intel-ucode
+ /06-06-00 intel-ucode/06-8e-0a intel-ucode/0f-02-04 intel-ucode/06-17-0a intel-ucode/0f-06-04 amd-ucode/microcode_amd.bin amd-ucode/microcode_amd_fam17h.bin amd-ucode/microcode_amd_fam16h.bin amd-ucode/microcode_amd_fam15h.bin "
+-CONFIG_EXTRA_FIRMWARE_DIR="/build/amd64-usr/lib/firmware"
++CONFIG_EXTRA_FIRMWARE=""
+ CONFIG_FW_LOADER_USER_HELPER=y
+ # CONFIG_FW_LOADER_USER_HELPER_FALLBACK is not set
+ CONFIG_ALLOW_DEV_COREDUMP=y
+@@ -4742,7 +4738,7 @@
+ #
+ # Certificates for signature checking
+ #
+-CONFIG_MODULE_SIG_KEY="certs/modules.pem"
++CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+ CONFIG_SYSTEM_TRUSTED_KEYRING=y
+ CONFIG_SYSTEM_TRUSTED_KEYS=""
+ # CONFIG_SYSTEM_EXTRA_CERTIFICATE is not set
+-- 
+ Kirill A. Shutemov
