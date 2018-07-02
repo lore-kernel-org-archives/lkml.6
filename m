@@ -2,139 +2,114 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A2DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3695C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2FC324F78
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB2B924FEE
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:17:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkun1gkt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2FC324F78
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="u4bwMQ4C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2B924FEE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeGBTQt (ORCPT
+        id S1753067AbeGBTRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:16:49 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:36986 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753357AbeGBTQp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:16:45 -0400
-Received: by mail-ua0-f196.google.com with SMTP id u8-v6so5417460uao.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zM8QdUYcU79fmKmDab6fB3QO6ufAC+g62NgcxdseyEE=;
-        b=hkun1gktPhl05hCgoKO9IHYr2GlqavZXde45ML0ZGNGf+MSUtAmd/O1bJp/e49UdW3
-         uK6elNgGXRJ7Y7TEqXapmnMJawKGKoS/WS3jTVVdi6Gy2oc87msugrkKdUwqkbfIx+v2
-         ghEiTylkhhL2XIdHIj2T6dVsQ+ULY/X4AnmyxQZrODy6Hz1tNcMKoM9fufgSx/dYnHJ8
-         tgr8nrTkgFd1w2yHCAV44n5lFJRxxuayg4bhEyWY25mV3TZoKqXofAOnX3YmpZ7et2Dm
-         pdKQ8BdP+DiDaV6PmgXDB+0UmY5hUIt1kYX5hoGkPljjfImmVGHCiy9SkCavNZVrCIZt
-         0jSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zM8QdUYcU79fmKmDab6fB3QO6ufAC+g62NgcxdseyEE=;
-        b=FI/r8iVJsE6/GTOIfiOzmnzFpEUG43GcFV9tATfOe6rSUZqk3cTN65f+Ihp6rM4CQs
-         ZhFV0OCs7YI7Xgv4wAjSgPhxuPrTddJc0A+IXri4YtbH3eCIGfK7WTGlN8+rTYi4LFzd
-         b9ITeAr4I9ScZ8dSRCtbI38c0eWF4JaFy1OvXYMAsd65yLQjoNXb28JYeSzG7lSHmf7T
-         X23vpMnIBMIY59f++zgDTIXkzV4BUAX2NDVSvgy9s6CczRctMsoz3QJKmKlRNiiEUNF7
-         A4yEKSAL7gzoRP22s/ij0CjT0Us3bY05ya6UMLc0EcWdcT22mYb/EcBX35Xxzgtq1MVW
-         F/Dg==
-X-Gm-Message-State: APt69E0b+92WCd3pfvrKqPSpDdm1Tv9x/2PZkpJfzAXc7AzOtlBk5JGv
-        gf4sVW0pXqo7Bt0L1bScXbKsDD+twPbxXJA5PelqiQ==
-X-Google-Smtp-Source: AAOMgpemPtYrmgCK0Q5ateivPvC0Req6qaZzLHXDJH1esP4jmEjDxbCLYUkb6FbOxJxJzudffyuQCciGqORSzzSDYOU=
-X-Received: by 2002:a9f:2523:: with SMTP id 32-v6mr8853089uaz.101.1530559003965;
- Mon, 02 Jul 2018 12:16:43 -0700 (PDT)
+        Mon, 2 Jul 2018 15:17:44 -0400
+Received: from erza.pados.hu ([176.9.136.194]:58260 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752167AbeGBTRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 15:17:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
+        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UVmIzZbXPBu1E6PpF6AIA5E5I7wVKIYnf+y0IsNNrdo=; b=u4bwMQ4C0UEiZODdGRjon0kQnW
+        NXgM1nvIjEhAssSoW6ZODWe58l8k6M75X/bjhTfoJ7V++PdZiOiXpCiEMFd0vfkRwAIma7xJ8TYDm
+        DGzw/jDvnYsE+DERUSWDQT2nkQbLhuWvu3Srj9/8tl2NbP6xvYBxkJewu+OpTTrKymErOjAkABgFy
+        TR8SIBWlpqGhDzMRnGspzcjIP46b07deo5gH3XjJ633AyfA4IQGrt75Nk40BQE7qdbBFFu1pMHc8l
+        +BHq2ynPhQAWvSwBWNqHtFcFgmao7BIWI7L+oVn5CMHQqeXodOJ7zIQOvoGT1Fo2rNfLigQkdx1DV
+        RsTBqqLw==;
+Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1fa4KN-0004eO-VO; Mon, 02 Jul 2018 21:17:36 +0200
 MIME-Version: 1.0
-Received: by 2002:a1f:9d83:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 12:16:42 -0700 (PDT)
-In-Reply-To: <20180629194117.01b2d31e805808eee5c97b4d@linux-foundation.org>
-References: <cover.1530018818.git.andreyknvl@google.com> <20180627160800.3dc7f9ee41c0badbf7342520@linux-foundation.org>
- <CAAeHK+xz552VNpZxgWwU-hbTqF5_F6YVDw3fSv=4OT8mNrqPzg@mail.gmail.com>
- <20180628124039.8a42ab5e2994fb2876ff4f75@linux-foundation.org>
- <CAAeHK+xsBOKghUp9XhpfXGqU=gjSYuy3G2GH14zWNEmaLPy8_w@mail.gmail.com> <20180629194117.01b2d31e805808eee5c97b4d@linux-foundation.org>
-From:   Evgenii Stepanov <eugenis@google.com>
-Date:   Mon, 2 Jul 2018 12:16:42 -0700
-Message-ID: <CAFKCwrjxGEa6CLJnjmNy+92d2GSUkoymQ6Sm91CDpMZcJCcWCA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/17] khwasan: kernel hardware assisted address sanitizer
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Mon, 02 Jul 2018 19:17:33 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: RainLoop/1.12.0
+From:   "Karoly Pados" <pados@pados.hu>
+Message-ID: <f16a7de43b151c6f98ff5ff379427f16@pados.hu>
+Subject: Re: [PATCH] USB: serial: cp210x: Implement GPIO support for
+ CP2102N
+To:     "=?utf-8?B?QmrDuHJuIE1vcms=?=" <bjorn@mork.no>,
+        "Johan Hovold" <johan@kernel.org>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Martyn Welch" <martyn.welch@collabora.co.uk>
+In-Reply-To: <87d0w5wm33.fsf@miraculix.mork.no>
+References: <87d0w5wm33.fsf@miraculix.mork.no>
+ <20180620082507.GO32411@localhost> <20180617182503.23080-1-pados@pados.hu>
+ <b2526c441d5d99b5f491b78cf9e84475@pados.hu>
+ <20180620105231.GQ32411@localhost>
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  >> First of all I can't seem to find that code snippet on
+   the wiki page it >> does refer to, so I'm still not convinced. > > It was
+   there in older versions of the article. See for example: > https://en.wikipedia.org/w/index.php?title=Fletcher's_checksum&oldid=730327006
+    > >> Second, this should have been high-lighted in your submission somehow.
+    > > Definitely. All code has an original author who deserves credit. And
+   if > you cannot find the original author, then there is always a risk than
+    > someone along the line stole the code... Maybe long before it ended up
+   > in Wikipedia. But that doesn't matter. > > Doesn't seem worth the risk for
+    a simple checksum algorithm which > probably has lots of GPL implementations.
+    > [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: wikipedia.org]
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looking at a live Android device under load, slab (according to
-/proc/meminfo) + kernel stack take 8-10% available RAM (~350MB).
-Kasan's overhead of 2x - 3x on top of it is not insignificant.
-
-On Fri, Jun 29, 2018 at 7:41 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Fri, 29 Jun 2018 14:45:08 +0200 Andrey Konovalov <andreyknvl@google.com> wrote:
->
->> >> What kind of memory consumption testing would you like to see?
->> >
->> > Well, 100kb or so is a teeny amount on virtually any machine.  I'm
->> > assuming the savings are (much) more significant once the machine gets
->> > loaded up and doing work?
->>
->> So with clean kernel after boot we get 40 kb memory usage. With KASAN
->> it is ~120 kb, which is 200% overhead. With KHWASAN it's 50 kb, which
->> is 25% overhead. This should approximately scale to any amounts of
->> used slab memory. For example with 100 mb memory usage we would get
->> +200 mb for KASAN and +25 mb with KHWASAN. (And KASAN also requires
->> quarantine for better use-after-free detection). I can explicitly
->> mention the overhead in %s in the changelog.
->>
->> If you think it makes sense, I can also make separate measurements
->> with some workload. What kind of workload should I use?
->
-> Whatever workload people were running when they encountered problems
-> with KASAN memory consumption ;)
->
-> I dunno, something simple.  `find / > /dev/null'?
->
+>> First of all I can't seem to find that code snippet on the wiki page i=
+t=0A>> does refer to, so I'm still not convinced.=0A> =0A> It was there i=
+n older versions of the article. See for example:=0A> https://en.wikipedi=
+a.org/w/index.php?title=3DFletcher's_checksum&oldid=3D730327006=0A> =0A>>=
+ Second, this should have been high-lighted in your submission somehow.=
+=0A> =0A> Definitely. All code has an original author who deserves credit=
+. And if=0A> you cannot find the original author, then there is always a =
+risk than=0A> someone along the line stole the code... Maybe long before =
+it ended up=0A> in Wikipedia. But that doesn't matter.=0A> =0A> Doesn't s=
+eem worth the risk for a simple checksum algorithm which=0A> probably has=
+ lots of GPL implementations.=0A> =0A=0ASorry about not explicitly mentio=
+ning the source, I only cared about making=0Asure that there is no violat=
+ion and I thought that'd be enough.=0ANext time something like this happe=
+ns, I'll explicitly name the sources=0Aeven if the license does not requi=
+re it.=0A=0AAnd just to clear things up further, rest assured that fletch=
+er function was =0Athe only one copied from the Cypress knowledge base or=
+ from anywhere else.=0ARest is by me, so there should be no other unclear=
+ origins.=0A=0AOn a different note, v2 patches are coming soon with the f=
+eedback from Johan=0Aincorporated. Did not forget and I still intend to p=
+olish everything up=0Aas requested to get these features into mainline.=
+=0A=0AKaroly
