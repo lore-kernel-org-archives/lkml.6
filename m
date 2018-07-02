@@ -2,106 +2,130 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E93C6778C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F3DC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7151C254C2
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7151C254C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8665525588
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 03:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8665525588
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932778AbeGBDmh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 23:42:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60780 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753057AbeGBDmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 23:42:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78D6F8315E;
-        Mon,  2 Jul 2018 03:42:34 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 50A82111DCEE;
-        Mon,  2 Jul 2018 03:42:29 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 11:42:21 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
-Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
-Message-ID: <20180702034221.GR3223@MiWiFi-R3L-srv>
-References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
- <20180702020417.21281-2-pasha.tatashin@oracle.com>
- <20180702021121.GL3223@MiWiFi-R3L-srv>
- <CAGM2rebY1_-3hvp_+kqF==nLawC0FN6Q1J5X5pm5qxHdDJzjiQ@mail.gmail.com>
- <20180702023130.GM3223@MiWiFi-R3L-srv>
- <CAGM2rebUsJ2r-2F38Vv13zbaEPPgTn0w6H3j6fpg0WVa9wB6Uw@mail.gmail.com>
- <20180702025343.GN3223@MiWiFi-R3L-srv>
- <CAGM2reatQzroymAb8kaPKgd8sEehtScH9DAELeWpYCaNNnAU6w@mail.gmail.com>
- <20180702031417.GP3223@MiWiFi-R3L-srv>
- <CAGM2reYBO11oaetHr0C4KgGegh9yUNZD0x4vzDW6bz8URUowcw@mail.gmail.com>
+        id S933498AbeGBDuG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 23:50:06 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:52735 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932819AbeGBDt4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Jul 2018 23:49:56 -0400
+X-UUID: d1f87d98044e4d6ba01b07a532f75891-20180702
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1539029916; Mon, 02 Jul 2018 11:49:53 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 2 Jul 2018 11:49:51 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 2 Jul 2018 11:49:50 +0800
+From:   <honghui.zhang@mediatek.com>
+To:     <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
+        <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>
+CC:     <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>
+Subject: [PATCH v2 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+Date:   Mon, 2 Jul 2018 11:49:41 +0800
+Message-ID: <1530503384-1218-2-git-send-email-honghui.zhang@mediatek.com>
+X-Mailer: git-send-email 2.6.4
+In-Reply-To: <1530503384-1218-1-git-send-email-honghui.zhang@mediatek.com>
+References: <1530503384-1218-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reYBO11oaetHr0C4KgGegh9yUNZD0x4vzDW6bz8URUowcw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 03:42:34 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 02 Jul 2018 03:42:34 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/01/18 at 11:28pm, Pavel Tatashin wrote:
-> > > So, on the first failure, we even stop trying to populate other
-> > > sections. No more memory to do so.
-> >
-> > This is the thing I worry about. In old sparse_mem_maps_populate_node()
-> > you can see, when not present or failed to populate, just continue. This
-> > is the main difference between yours and the old code. The key logic is
-> > changed here.
-> >
-> 
-> I do not see how  we can succeed after the first failure. We still
-> allocate from the same node:
-> 
-> sparse_mem_map_populate() may fail only if we could not allocate large
-> enough buffer vmemmap_buf_start earlier.
-> 
-> This means that in:
-> sparse_mem_map_populate()
->   vmemmap_populate()
->     vmemmap_populate_hugepages()
->       vmemmap_alloc_block_buf() (no buffer, so call allocator)
->         vmemmap_alloc_block(size, node);
->             __earlyonly_bootmem_alloc(node, size, size, __pa(MAX_DMA_ADDRESS));
->               memblock_virt_alloc_try_nid_raw() -> Nothing changes for
-> this call to succeed. So, all consequent calls to
-> sparse_mem_map_populate() in this node will fail as well.
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-Yes, you are right, it's improvement. Thanks.
+The Mediatek's host controller has two slots, each with it's own control
+registers. The host driver need to identify which slot was connected
+in order to access the device's configuration space. There's problem
+for current host driver to find out which slot was connected to for
+a given EP device.
 
-> 
-> > >
-> > Forgot mentioning it's the vervion in mm/sparse-vmemmap.c
-> 
-> Sorry, I do not understand what is vervion.
+Assuming each slot have connect with one EP device as below:
 
-Typo, 'version', should be. Sorry for that.
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+During PCI enumeration, system software will scan all the PCI device
+starting from devfn 0. So it will get the proper port for slot0 and
+slot1 device when using PCI_SLOT(devfn) for match. But it will get
+the wrong slot for EP1: The devfn will be start from 0 when scanning
+EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+for port0's slot value. So the host driver should not using EP's devfn
+but the slot's devfn(the slot which EP was connected to) for match.
+
+This patch fix the mtk_pcie_find_port's logical by using the slot's
+devfn for match.
+
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+---
+ drivers/pci/controller/pcie-mediatek.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+index 0baabe3..b43f41d 100644
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -337,11 +337,26 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+ {
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev;
++	struct pci_bus *pbus;
+ 
+-	list_for_each_entry(port, &pcie->ports, list)
+-		if (port->slot == PCI_SLOT(devfn))
++	list_for_each_entry(port, &pcie->ports, list) {
++		if (!bus->number && port->slot == PCI_SLOT(devfn))
+ 			return port;
+ 
++		if (bus->number) {
++			pbus = bus;
++
++			while (pbus->number) {
++				dev = pbus->self;
++				pbus = dev->bus;
++			}
++
++			if (port->slot == PCI_SLOT(dev->devfn))
++				return port;
++		}
++	}
++
+ 	return NULL;
+ }
+ 
+-- 
+2.6.4
 
