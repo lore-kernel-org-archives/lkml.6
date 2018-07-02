@@ -2,127 +2,154 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BABC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64223C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A9325E25
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A9325E25
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2ACA8240EB
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:53:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACA8240EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeGBNxR (ORCPT
+        id S1752635AbeGBNxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:53:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48392 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752303AbeGBNxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:53:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E76FAAE07;
-        Mon,  2 Jul 2018 13:53:12 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 15:53:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
- large mapping
-Message-ID: <20180702135311.GY19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+        Mon, 2 Jul 2018 09:53:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37224 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752445AbeGBNxj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:53:39 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62DnmGC004815
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 09:53:39 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jyjaxya43-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 09:53:38 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 2 Jul 2018 14:53:36 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 14:53:33 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62DrWuD45154532
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 13:53:32 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F1EA11C054;
+        Mon,  2 Jul 2018 14:53:15 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55C9E11C05C;
+        Mon,  2 Jul 2018 14:53:14 +0100 (BST)
+Received: from oc3836556865.ibm.com (unknown [9.152.224.39])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 14:53:14 +0100 (BST)
+Subject: Re: [PATCH v6 07/21] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Mon, 2 Jul 2018 15:53:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1530306683-7270-8-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070213-4275-0000-0000-0000029445CD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070213-4276-0000-0000-0000379BC008
+Message-Id: <f4fdea7d-1c4d-bb6e-1dd2-27e441dc9837@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=831 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 30-06-18 06:39:44, Yang Shi wrote:
-> When running some mmap/munmap scalability tests with large memory (i.e.
-> > 300GB), the below hung task issue may happen occasionally.
+
+
+On 06/29/2018 11:11 PM, Tony Krowiak wrote:
+> Introduces a new AP device driver. This device driver
+> is built on the VFIO mediated device framework. The framework
+> provides sysfs interfaces that facilitate passthrough
+> access by guests to devices installed on the linux host.
 > 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> The VFIO AP device driver will serve two purposes:
 > 
-> It is because munmap holds mmap_sem from very beginning to all the way
-> down to the end, and doesn't release it in the middle. When unmapping
-> large mapping, it may take long time (take ~18 seconds to unmap 320GB
-> mapping with every single page mapped on an idle machine).
+> 1. Provide the interfaces to reserve AP devices for exclusive
+>     use by KVM guests. This is accomplished by unbinding the
+>     devices to be reserved for guest usage from the default AP
+>     device driver and binding them to the VFIO AP device driver.
 > 
-> It is because munmap holds mmap_sem from very beginning to all the way
-> down to the end, and doesn't release it in the middle. When unmapping
-> large mapping, it may take long time (take ~18 seconds to unmap 320GB
-> mapping with every single page mapped on an idle machine).
+> 2. Implements the functions, callbacks and sysfs attribute
+>     interfaces required to create one or more VFIO mediated
+>     devices each of which will be used to configure the AP
+>     matrix for a guest and serve as a file descriptor
+>     for facilitating communication between QEMU and the
+>     VFIO AP device driver.
 > 
-> Zapping pages is the most time consuming part, according to the
-> suggestion from Michal Hock [1], zapping pages can be done with holding
-
-s@Hock@Hocko@
-
-> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
-> mmap_sem to cleanup vmas. All zapped vmas will have VM_DEAD flag set,
-> the page fault to VM_DEAD vma will trigger SIGSEGV.
-
-This really deserves an explanation why the all dance is really needed.
-
-It would be also good to mention how do you achieve the overal
-consistency. E.g. you are dropping mmap_sem and then re-taking it for
-write. What if any pending write lock succeeds and modify the address
-space? Does it matter, why if not? 
-
-> Define large mapping size thresh as PUD size or 1GB, just zap pages with
-> read mmap_sem for mappings which are >= thresh value.
+> When the VFIO AP device driver is initialized:
 > 
-> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, then just
-> fallback to regular path since unmapping those mappings need acquire
-> write mmap_sem.
+> * It registers with the AP bus for control of type 10 (CEX4
+>    and newer) AP queue devices. This limitation was imposed
+>    due to:
 > 
-> For the time being, just do this in munmap syscall path. Other
-> vm_munmap() or do_munmap() call sites remain intact for stability
-> reason.
-
-What are those stability reasons?
-
-> The below is some regression and performance data collected on a machine
-> with 32 cores of E5-2680 @ 2.70GHz and 384GB memory.
+>    1. A lack of access to older systems needed to test the
+>       older AP device models;
 > 
-> With the patched kernel, write mmap_sem hold time is dropped to us level
-> from second.
+>    2. A desire to keep the code as simple as possible;
+> 
+>    3. Some older models are no longer supported by the kernel
+>       and others are getting close to end of service.
+> 
+>    The probe and remove callbacks will be provided to support
+>    the binding/unbinding of AP queue devices to/from the VFIO
+>    AP device driver.
+> 
+> * Creates a /sys/devices/vfio-ap/matrix device to hold
+>    the APQNs of the AP devices bound to the VFIO
+>    AP device driver and serves as the parent of the
+>    mediated devices created for each guest.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>   MAINTAINERS                           |   10 +++
+>   arch/s390/Kconfig                     |   11 +++
+>   drivers/s390/crypto/Makefile          |    4 +
+>   drivers/s390/crypto/vfio_ap_drv.c     |  140 +++++++++++++++++++++++++++++++++
+>   drivers/s390/crypto/vfio_ap_private.h |   29 +++++++
+>   include/uapi/linux/vfio.h             |    2 +
+>   samples/bpf/bpf_load.c                |   62 +++++++++++++++
 
-I haven't read through the implemenation carefuly TBH but the changelog
-needs quite some work to explain the solution and resulting semantic of
-munmap after the change.
--- 
-Michal Hocko
-SUSE Labs
+You have probably touched the last one by accident.
+
+Regards,
+Halil
+
