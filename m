@@ -2,140 +2,78 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E29FC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC4C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514D624805
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:53:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514D624805
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 96C2424E48
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:54:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iD5y1Dss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C2424E48
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753498AbeGBSxV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:53:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753263AbeGBSxR (ORCPT
+        id S932313AbeGBSyW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 14:54:22 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:53772 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753428AbeGBSxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:53:17 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62IiJQq145951
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 14:53:16 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyqp8nq0u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:53:16 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 14:53:16 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 2 Jul 2018 14:53:13 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62IrDEi8913366
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 18:53:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5905B2066;
-        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7491B2065;
-        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Jul 2018 14:52:57 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2510D16CA366; Mon,  2 Jul 2018 11:55:26 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 11:55:26 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: atomic_ops: atomic_set is a write (not read)
- operation
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180605194326.23596-1-j.neuschaefer@gmx.net>
- <20180606080756.GU3593@linux.vnet.ibm.com>
- <20180629134345.GA10981@andrea>
+Received: by mail-it0-f44.google.com with SMTP id a195-v6so13537725itd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QmoIMGmSpwQjwTXba6zzjqD82456Rmf9sXklUYhjASQ=;
+        b=iD5y1DssTnj1WxJ03vGjJnYgiOvmz/VEEN2Ff4EE9of+au3x8SOE8AXPN5grmquPDo
+         FmkwZOZUiNnkh526ePusPEnFyGgFuDAqUtrozn2VTgWCqbuiNpcNgTrfbFgMtXOTTi9c
+         0FY6RfWSZ3XArTmoeNvsQ3qkWJXwo9rqSOlAk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QmoIMGmSpwQjwTXba6zzjqD82456Rmf9sXklUYhjASQ=;
+        b=J1ryhholD3QuCWhp2CXJT6uewFwztnPj2Zb9TMiMJl2QFLqrUFGRFp1OGD8I53NWG7
+         YEIV7tBRB+DdK8OSU1OFz6MUhl6Vo3hfT29wO6uk6mgacn0aiQvx+mpUJtITZ06aEcyb
+         +IN6SQWo7YoNmu0JRGgsoo+zbh0sm/z5NQmps5eVLrSaYW4j7N9jLTv8307a7Yr0QeFP
+         lS8QH6Or92qqSiZ6vY2cq4xkrSoCQLXKW99wBIb7EiUHBXSCmq1YoZn4+QPrft2Tzu8v
+         1TrHv7KybZC4uvUdD83IfA3CH6NhKw7qN7lW7U7xMCTiHyelOk/tbt5OEFy9XvP9IUDu
+         jJaQ==
+X-Gm-Message-State: APt69E1HZIdxdIlAj1ysD0iC81xiZ6oUHrLgnLockhxPqOmEJy+M5Ia+
+        59Jd8YgQlQynXXPELvqK8dSf+Oi/StgymTDkPJURPA==
+X-Google-Smtp-Source: AAOMgpcYbx4yDZaWp6q3aegbMjU9c1OIi5/TO7WgjP3t4MAtFMeKIChcqzrPzD39AmjjzPePl59N6HhoTj1X671spyE=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr6757426itd.16.1530557592120;
+ Mon, 02 Jul 2018 11:53:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180629134345.GA10981@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070218-0060-0000-0000-00000285BD72
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009296; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055583; UDB=6.00541417; IPR=6.00833506;
- MB=3.00021965; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 18:53:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070218-0061-0000-0000-000045A71A92
-Message-Id: <20180702185526.GS3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020210
+References: <20180630084933.GA15210@gmail.com> <CA+55aFz4BiRVKKwdF+y8K4O1jZnig8mmuQZ7prGp6o+DiH_TeQ@mail.gmail.com>
+ <CALCETrWiTEscV8E--v6=+kkvfWKf_OXzVceMjX7GA51uJo-+DQ@mail.gmail.com>
+In-Reply-To: <CALCETrWiTEscV8E--v6=+kkvfWKf_OXzVceMjX7GA51uJo-+DQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 11:53:01 -0700
+Message-ID: <CA+55aFzakezPMP+=9KAaM+fJtR4BeKWj5MjEuPFwiH6K1wBqbg@mail.gmail.com>
+Subject: Re: [GIT PULL] x86 fixes
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 03:43:45PM +0200, Andrea Parri wrote:
-> On Wed, Jun 06, 2018 at 01:07:56AM -0700, Paul E. McKenney wrote:
-> > On Tue, Jun 05, 2018 at 09:43:23PM +0200, Jonathan Neuschäfer wrote:
-> > > Describe it as such.
-> > > 
-> > > Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> > 
-> > I have queued this, but if someone else would prefer to take it:
-> > 
-> > Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> 
-> In the commit message of bb7d47b697116c ("docs: atomic_ops: Describe
-> atomic_set as a write operation") from your dev branch,
-> 
-> from "reads" to "writes"
+On Mon, Jul 2, 2018 at 11:48 AM Andy Lutomirski <luto@amacapital.net> wrote:
+>
+> BTR is way more leet than AND!
 
-Good catch, fixed, thank you!
+I stand corrected.
 
-							Thanx, Paul
-
->   Andrea
-> 
-> 
-> > 
-> > > ---
-> > >  Documentation/core-api/atomic_ops.rst | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/Documentation/core-api/atomic_ops.rst b/Documentation/core-api/atomic_ops.rst
-> > > index 2e7165f86f55..724583453e1f 100644
-> > > --- a/Documentation/core-api/atomic_ops.rst
-> > > +++ b/Documentation/core-api/atomic_ops.rst
-> > > @@ -29,7 +29,7 @@ updated by one CPU, local_t is probably more appropriate. Please see
-> > >  local_t.
-> > > 
-> > >  The first operations to implement for atomic_t's are the initializers and
-> > > -plain reads. ::
-> > > +plain writes. ::
-> > > 
-> > >  	#define ATOMIC_INIT(i)		{ (i) }
-> > >  	#define atomic_set(v, i)	((v)->counter = (i))
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> 
-
+              Linus
