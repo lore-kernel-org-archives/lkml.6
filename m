@@ -2,105 +2,207 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BF3C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5315AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DFE2517D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:55:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFbJ+2gE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DFE2517D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0874E2517D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0874E2517D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752646AbeGBPze (ORCPT
+        id S1752712AbeGBP4M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:55:34 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:44187 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752341AbeGBPzd (ORCPT
+        Mon, 2 Jul 2018 11:56:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54868 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752415AbeGBP4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:55:33 -0400
-Received: by mail-pg0-f68.google.com with SMTP id r1-v6so1632475pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 08:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=oP7Blqg5YFV958P+hSooTbrCKgN30DN99I+YXoTjruw=;
-        b=lFbJ+2gEV9p4bx6UYGF379wwDQgOM3+smOxwJnwqlW689pt7XWieiAXLNZG13cgF47
-         +yu5VciI613rhblDxbms5/Vrrid7DYOQpWL29DFuiTcCSvssV8dp2wYiq3fVsaJ6UpOk
-         yy9/fupwWhQtY/RMNTyj8U2lG9C0/h8fO2ko4+ZXkpwLLU/tOSIttLj+Tr5SNsXiHGlR
-         BgwHVMMHGpJfUit3kS6IwaF9OK6mYx0XLJ0ZBiF77e0ru3txwqzJ0N2AEq73T+4weGSS
-         rSJioBZZuCw3W547HZmrbVPTv2yE8z9UWIdCdOXNBlyU9seJgvTEZD/XyUagazFDGNea
-         4RPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=oP7Blqg5YFV958P+hSooTbrCKgN30DN99I+YXoTjruw=;
-        b=Z3KqEdgxt6iIIwB4k3CNXseaPpGl9gCpwPi0mcb4b5MC1CgkHIg4y0r+0Qn1Oppam9
-         pATiDZBKShSwkV4ER/09pMAUjlTlTqM2OQjSA6LJHv6ggUPKC3gM632awFVDf7hz4Ruj
-         dPq72Ro3k2qmO5qnViFoSmTTug2YmJmfrE9/19Wya771HFULi/kZHNASYYVdp0fyzRne
-         XdFSUiLqsNEJsZl+3AhcW1oq11sgVgfemvQs5Dyqhe3NshsuObI8kaM+lrkdtJl4aW2p
-         0zxRGC3i2TP7fXxHGxBiU1NhfPXaFZ44JZYL0qkcuLeHkBFtFvqL1/T924O/0K81DKj6
-         +AjQ==
-X-Gm-Message-State: APt69E0nb6EkZtglyWRbIR0g64Ue4vO16xHowdDrjQ6gKhNICpZba11v
-        IpV8iFlYqtGhFl1HCw0lPnBaMw==
-X-Google-Smtp-Source: AAOMgpf4TAIDBFg+2azWrkdDTW8VgJSe9azRLv3CVkeLAu2mnxrMjF4cKpdPuwJzq9d2L43aId5zbg==
-X-Received: by 2002:a63:4a07:: with SMTP id x7-v6mr3245093pga.34.1530546932295;
-        Mon, 02 Jul 2018 08:55:32 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([49.205.216.114])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm29542502pgn.92.2018.07.02.08.55.30
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Jul 2018 08:55:30 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 21:28:01 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     alexander.shishkin@linux.intel.com, willy@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] hwtracing: intel_th: Change return type to vm_fault_t
-Message-ID: <20180702155801.GA4010@jordon-HP-15-Notebook-PC>
+        Mon, 2 Jul 2018 11:56:11 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62FrmJL115605
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 11:56:10 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jykxbghnn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:56:10 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 2 Jul 2018 11:56:08 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 11:56:06 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62Fu4O92294038
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 15:56:04 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 417D3AE05F;
+        Mon,  2 Jul 2018 11:55:48 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A4954AE062;
+        Mon,  2 Jul 2018 11:55:47 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 11:55:47 -0400 (EDT)
+Subject: Re: [PATCH v6 05/21] KVM: s390: CPU model support for AP
+ virtualization
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 2 Jul 2018 11:56:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1530306683-7270-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070215-0040-0000-0000-0000044854E0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009295; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055524; UDB=6.00541382; IPR=6.00833446;
+ MB=3.00021964; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-02 15:56:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070215-0041-0000-0000-0000084E70BA
+Message-Id: <e83a1433-649f-5540-016b-aa2c96f66d02@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On 06/29/2018 05:11 PM, Tony Krowiak wrote:
+> Introduces a new CPU model feature and two CPU model
+> facilities to support AP virtualization for KVM guests.
+>
+> CPU model feature:
+>
+> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+> AP instructions are available on the guest. This
+> feature will be enabled by the kernel only if the AP
+> instructions are installed on the linux host. This feature
+> must be specifically turned on for the KVM guest from
+> userspace to use the VFIO AP device driver for guest
+> access to AP devices.
+>
+> CPU model facilities:
+>
+> 1. AP Query Configuration Information (QCI) facility is installed.
+>
+>     This is indicated by setting facilities bit 12 for
+>     the guest. The kernel will not enable this facility
+>     for the guest if it is not set on the host. This facility
+>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>     feature is not installed.
+>
+>     If this facility is not set for the KVM guest, then only
+>     APQNs with an APQI less than 16 will be available to the
+>     guest regardless of the guest's matrix configuration. This
+>     is a limitation of the AP bus running on the guest.
+>
+> 2. AP Facilities Test facility (APFT) is installed.
+>
+>     This is indicated by setting facilities bit 15 for
+>     the guest. The kernel will not enable this facility for
+>     the guest if it is not set on the host. This facility
+>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+>     feature is not installed.
+>
+>     If this facility is not set for the KVM guest, then no
+>     AP devices will be available to the guest regardless of
+>     the guest's matrix configuration. This is a limitation
+>     of the AP bus running under the guest.
+>
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>   arch/s390/include/uapi/asm/kvm.h |    1 +
+>   arch/s390/kvm/kvm-s390.c         |    8 ++++++++
+>   arch/s390/tools/gen_facilities.c |    3 +++
+>   3 files changed, 12 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
+> index 4cdaa55..a580dec 100644
+> --- a/arch/s390/include/uapi/asm/kvm.h
+> +++ b/arch/s390/include/uapi/asm/kvm.h
+> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
+>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
+>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
+>   #define KVM_S390_VM_CPU_FEAT_KSS	13
+> +#define KVM_S390_VM_CPU_FEAT_AP		14
+>   struct kvm_s390_vm_cpu_feat {
+>   	__u64 feat[16];
+>   };
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 3b7a515..d2208d4 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -40,6 +40,7 @@
+>   #include <asm/sclp.h>
+>   #include <asm/cpacf.h>
+>   #include <asm/timex.h>
+> +#include <asm/ap.h>
+>   #include "kvm-s390.h"
+>   #include "gaccess.h"
+>   
+> @@ -366,6 +367,13 @@ static void kvm_s390_cpu_feat_init(void)
+>   
+>   	if (MACHINE_HAS_ESOP)
+>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+> +
+> +	/*
+> +	 * Check if AP instructions installed on host
+> +	 */
+> +	if (ap_instructions_available() == 0)
+> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+> +
+>   	/*
+>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+> index 90a8c9e..e0e2c19 100644
+> --- a/arch/s390/tools/gen_facilities.c
+> +++ b/arch/s390/tools/gen_facilities.c
+> @@ -106,6 +106,9 @@ struct facility_def {
+>   
+>   		.name = "FACILITIES_KVM_CPUMODEL",
+>   		.bits = (int[]){
+> +			12, /* AP Query Configuration Information */
+> +			15, /* AP Facilities Test */
+> +			156, /* Execution Token facility */
 
-see commit 1c8f422059ae ("mm: change return type to
-vm_fault_t") for reference.
+Oops. This last one is an error, the result of a faulty merge with the 
+latest
+code base.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/hwtracing/intel_th/msu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>   			-1  /* END */
+>   		}
+>   	},
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index dfb57ea..0ac84eb 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1190,7 +1190,7 @@ static void msc_mmap_close(struct vm_area_struct *vma)
- 	mutex_unlock(&msc->buf_mutex);
- }
-
--static int msc_mmap_fault(struct vm_fault *vmf)
-+static vm_fault_t msc_mmap_fault(struct vm_fault *vmf)
- {
- 	struct msc_iter *iter = vmf->vma->vm_file->private_data;
- 	struct msc *msc = iter->msc;
---
-1.9.1
 
