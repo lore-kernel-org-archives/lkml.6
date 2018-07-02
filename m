@@ -2,127 +2,125 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8080EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404A1C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 380E525C01
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEAE125BEA
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:54:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RV2Ki7kE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 380E525C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="MrRXngiY";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YQPKMQNY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEAE125BEA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeGBUwv (ORCPT
+        id S1752969AbeGBUyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:52:51 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:45730 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752636AbeGBUws (ORCPT
+        Mon, 2 Jul 2018 16:54:39 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:45959 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752391AbeGBUyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:52:48 -0400
-Received: by mail-io0-f196.google.com with SMTP id l25-v6so15861896ioh.12;
-        Mon, 02 Jul 2018 13:52:48 -0700 (PDT)
+        Mon, 2 Jul 2018 16:54:37 -0400
+Received: by mail-yw0-f196.google.com with SMTP id 139-v6so1806821ywg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NGrd6unPpJVY1IWOm7oS5EFzFdLQA69N/5PjRQVodAg=;
-        b=RV2Ki7kEuiqhJDD9JVDjxLKVGdrzSVUWI7iT8mapkrMQBqGLu9PRy9tHQ7MCm4If++
-         nulTvZkbgFLEYfEpN0uNLgp8wEvoxzCCZW03SnGMKO2uoFagE+APtdqDwMvclzyY/3BU
-         bCCP5X8zYAbbz2TGdI2NqewtvhynYfxb/xsX4=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ZX0kxtKXqxWLYEoVFOKpwuR0lKdAjWDtszc83xa48Ao=;
+        b=MrRXngiYOfw//SXySzh6dMsahHbJ1oh/0Ap8mOU0naARtPNhXv5ugkp10i3mHh8Jap
+         htqgELVnn0HDhsxwiQjwAGcvHJBkelhY1tlsknS76MWRmoa/NckSpcPWbcKBOwsO5s0+
+         rYBCFuFpga1kGu00y1UzGdgQbR7DMXei5XXGTqg7TscoLGsKEdi7KRDCvJC9YxBF3APO
+         JOabR4/NiCFhmhdJnSwdIUJbnR1O6Q7zbGL/A+S9lCASyrrwCtEEF62XEJWPPn7lppQB
+         cFQftGIfIcq8E0+IvlrvGrFN8K7N6ML1jWwvsc45JnEyo1POiZRVlv27UvOT7A5cyi8N
+         XZ/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ZX0kxtKXqxWLYEoVFOKpwuR0lKdAjWDtszc83xa48Ao=;
+        b=YQPKMQNYK0U+8ZwZLP/yQ2BHnwY1nvElvNpSt4FuWKz7w+UyZLUIahAl9DF7E+Y+Po
+         D3zlfLWvx/epajvds3YzLhB4zpHbOnmR/ZPZewrIosOMn0iI5ASMSUzza9IOIhin8KMf
+         du//qTFp3fpdEjMvpCIyLb8MlyHY8fvgzuYds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NGrd6unPpJVY1IWOm7oS5EFzFdLQA69N/5PjRQVodAg=;
-        b=F6V5attyN110Zfs9dQsv+zTiI1gRziky02FuwlKXt/L2JKYVqabvB959zmWji2Go44
-         Kab3kC8evBHmI8lV4T3Npc6Om2Hai56ugSwkEP/Xk0aqPwR3pbC8Sa+sOuo178oOBDUY
-         iTuJtO0Fww+tgJjuRQb9raW+QQUMFgpxOU97L1dUORziKsRcnEM6LjLfudRXSTa4BIVN
-         PD45uoBP/X+kygNQSMBgugRPX+2POCroOKUcijvyohe8vXjEiXMPifjBJn0BSeGhSE1a
-         ijnLFZOYxppUYuraLnMcYqLiGld0xBvyuB1RVLjvG03CCFlbLU7QnGR3qNMZrILOxj+b
-         VWSw==
-X-Gm-Message-State: APt69E0ysTqgAGT3B3POIQr/fbrki4K9OcU+TqR0oTWr6f1VEuoG/KPx
-        WR8jLNZlZejUia05wqgG/E495uzAzxMiSFR6kV0=
-X-Google-Smtp-Source: AAOMgpf+QgTQWG5VGxupDFVgkIwmqo27K1Rrn4JExIp0+jvb/2TnScBtpJoWBesB6ffPpOoiqTbm9nxW5QlENpupzoE=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr23296102ion.259.1530564767841;
- Mon, 02 Jul 2018 13:52:47 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ZX0kxtKXqxWLYEoVFOKpwuR0lKdAjWDtszc83xa48Ao=;
+        b=eDSATUamgrCpaXwHgP9P05GSr7ncyUQ7C5Zi+W9r/3712GK+nkAZJG7oeOuGZm+NDN
+         FbaRFnCjPp4EkaUPojcojnOnoAIS/eeFNo8v5Nsf4E5fMDKxm08i9wD89qCY4btpAY26
+         jrnzdFx+Wdg2MxzPE/RVjuIvuC5Y0pCVEFq5PW+fr3rxVBYG81LF98Krcy0ya7u8eCgo
+         ViiB5Nt7q+0Wh1uvC8+3eIefwjiyaHNfg5hH6Brq2I0ulCuOk3AX6KCTadPtF/la5JQI
+         2QV9JDK5ipxRpMxRg/W5Wzq3fF2+bbXv69RRt2OSttbzWdaHLtkmgUDOCCpfg7kjInhz
+         8uRA==
+X-Gm-Message-State: APt69E1EO1ju3A2JwHSzTmSRqIngx1U1S2YusDaeJu4BiG7C5O0IWPM2
+        dKV061gu/vviwL7FkZ1/CVMzB31X0t6/sJIzfVrYWw==
+X-Google-Smtp-Source: AAOMgpf6XzrFeb87O+WkmdwVQ4Iycha6LiqThxPPpfm/VtlXDctfPFsFuj489s3QDE1qSCM3ybnGV0NuiFX8Z65kCbE=
+X-Received: by 2002:a81:39d7:: with SMTP id g206-v6mr6774791ywa.416.1530564876953;
+ Mon, 02 Jul 2018 13:54:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180702204058.819-1-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20180702204058.819-1-mathieu.desnoyers@efficios.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 2 Jul 2018 13:52:36 -0700
-Message-ID: <CA+55aFzH+4=Aeh_P1ptFn5nVm7yFuEGpxUJ0kNB-sUHVOv8rcw@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: use __u64 for rseq_cs fields,
- validate abort_ip < TASK_SIZE
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 13:54:36 -0700 (PDT)
+In-Reply-To: <0076b929-4785-0665-0e08-789c504f6b78@redhat.com>
+References: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
+ <CAGXu5jLDULvf-VBhUfBXtSNaSWpq8irgg56LT3nHDft5gZg5Lw@mail.gmail.com>
+ <5506a72f-99ac-b47c-4ace-86c43b17b5c5@redhat.com> <CAGXu5jL8XDYE+B=a_TBM2K8F-c3f4Jz6zcm3ggacbPNN2wCtpg@mail.gmail.com>
+ <0076b929-4785-0665-0e08-789c504f6b78@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 2 Jul 2018 13:54:36 -0700
+X-Google-Sender-Auth: ms4Ng3WgA0XXjN0pDtEiHxJLYJo
+Message-ID: <CAGXu5jLXG6YKruuNc3Bnx3tuKZjNfavRwKxk-e4_-Q5mEzy5rw@mail.gmail.com>
+Subject: Re: [PATCH v3] add param that allows bootline control of hardened usercopy
+To:     Chris von Recklinghausen <crecklin@redhat.com>
+Cc:     Laura Abbott <labbott@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 1:41 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> -       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
-> +       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)) ||
-> +           rseq_cs->abort_ip >= TASK_SIZE)
->                 return -EFAULT;
+On Mon, Jul 2, 2018 at 11:55 AM, Christoph von Recklinghausen
+<crecklin@redhat.com> wrote:
+> On 07/02/2018 02:43 PM, Kees Cook wrote:
+>> On Sat, Jun 30, 2018 at 1:43 PM, Christoph von Recklinghausen
+>> <crecklin@redhat.com> wrote:
+>>> The last issue I'm chasing is build failures on ARCH=m68k. The error is
+>>> atomic_read and friends needed by the jump label code not being found.
+>>> The config has CONFIG_BROKEN_ON_SMP=y, so the jump label calls I added
+>>> will only be made #ifndef CONFIG_BROKEN_ON_SMP. Do you think that's
+>>> worth a mention in the blurb that's added to
+>>> Documentation/admin-guide/kernel-parameters.txt?
+>> Uhm, that's weird -- I think the configs on m68k need fixing then? I
+>> don't want to have to sprinkle that ifdef in generic code.
+>>
+>> How are other users of static keys and jump labels dealing with m68k weirdness?
+>>
+> There's also CONFIG_JUMP_LABEL which is defined in x86_64 but not
+> defined in the m68k configs. I'll use that instead. In hindsight I
+> should have spotted that but didn't.
 
-I think the abort_ip check should have the same error value as the
-other sanity checks, ie just be of this format:
+I think what I mean is that jump labels should always work. There
+shouldn't be a need to #ifdef the common usercopy code. i.e.
+include/linux/jump_label.h should work on all architectures already. I
+see HAVE_JUMP_LABEL tests there, for example:
 
->         if (rseq_cs->version > 0)
->                 return -EINVAL;
+#if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_JUMP_LABEL)
+# define HAVE_JUMP_LABEL
+#endif
 
-also, I think you should check start_ip to be consistent. You kind of
-accidentally do it with the check for
+Other core code uses static keys without this; what is the failing combination?
 
-        if (rseq_cs->abort_ip - rseq_cs->start_ip - rseq_cs->post_commit_offset)
+-Kees
 
-but honestly, that has underflow issues already, so I think you want
-to basically make the check be
-
-        if (rseq_cs->abort_ip >= TASK_SIZE)
-                return -EINVAL;
-
-        if (rseq_cs->start_ip >= rseq_cs->abort_ip)
-                return -EINVAL;
-
-which takes care of checkint  start_ip, and also the underflow for the
-post_commit_offset check.
-
-If somebody is depending on negative offsets, then that
-post_commit_offset logic is already wrong.
-
-> +       usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
->         ret = get_user(sig, usig);
-
-That can underflow too, but I guess we can just rely on get_user()
-getting it right.
-
-               Linus
+-- 
+Kees Cook
+Pixel Security
