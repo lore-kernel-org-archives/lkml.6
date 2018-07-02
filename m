@@ -2,98 +2,197 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14CEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C45C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60FBD208B9
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:29:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60FBD208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A11725E33
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:32:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="YRW/BCSe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A11725E33
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752205AbeGBO3z (ORCPT
+        id S1752147AbeGBOcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:29:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56368 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751878AbeGBO3y (ORCPT
+        Mon, 2 Jul 2018 10:32:50 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45288 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeGBOcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:29:54 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62ETdhp079887
-        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 10:29:54 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jyk6eq8r2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:29:53 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 2 Jul 2018 15:29:51 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Jul 2018 15:29:50 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62ETnTA10813664
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 2 Jul 2018 14:29:49 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CF34AE04D;
-        Mon,  2 Jul 2018 15:29:37 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABA9FAE057;
-        Mon,  2 Jul 2018 15:29:36 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.245])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon,  2 Jul 2018 15:29:36 +0100 (BST)
-Date:   Mon, 2 Jul 2018 17:29:47 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arc/Kconfig: include mm/Kconfig inside "ARC system
- configuration"
-References: <1530279747-25320-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180702132056.GA30627@infradead.org>
+        Mon, 2 Jul 2018 10:32:48 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2CE1222E1B8;
+        Mon,  2 Jul 2018 10:32:47 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id wxv3nHNLgg2m; Mon,  2 Jul 2018 10:32:46 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 8CB3522E1AA;
+        Mon,  2 Jul 2018 10:32:46 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8CB3522E1AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530541966;
+        bh=5IPuu3BGwgE15PQNbTIeXfIUS3378KS18eqdKiTQyvE=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=YRW/BCSeJ9NWPaj/R7WD0zK/qhI45W41uq/xEKiiJKh323ZXtPzok3mkQGibwuGNe
+         ZzwUuTjpUs58UdAwuJZhb/xck1xW46qQ/GSsVB4CizH/klnFit750MabcYG4/799Bm
+         sY4PtgpQ1BjdBdvhVHUZ8DmQEUwLDBkn3VJlcZlihP9m2Y4cXnHGE73MeywEFxloWS
+         w4g2mfWu47O1iv3DvuQnPm7IlZoDq2udG/rSrS1vuDMklV+YSRWaezS2709JMtVThy
+         fa8J1rOG0qwYFOipjqN6ZLO1p2KQecX95a6U/4G8nJ5bOFO6Mmkogaq/RV0C0GFkLG
+         I+47xfAlHuuNA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id Aw-hCGYbBPgo; Mon,  2 Jul 2018 10:32:46 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 632B722E191;
+        Mon,  2 Jul 2018 10:32:46 -0400 (EDT)
+Date:   Mon, 2 Jul 2018 10:32:46 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <1527399163.10673.1530541966296.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com>
+References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com> <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com> <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com> <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com> <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com> <CA+55aFz8KyVqFsVnp-6g+thz7vmm5nK_FSdRTPSks7gsNVNRdQ@mail.gmail.com> <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com> <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are <
+ TASK_SIZE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702132056.GA30627@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18070214-0008-0000-0000-0000024ECD43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070214-0009-0000-0000-000021B4D747
-Message-Id: <20180702142946.GA14305@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=644 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807020166
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: validate rseq_cs fields are < TASK_SIZE
+Thread-Index: EfNoEXYdmNtWTN5CDgNZeik/VS9bfA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 06:20:56AM -0700, Christoph Hellwig wrote:
-> On Fri, Jun 29, 2018 at 04:42:27PM +0300, Mike Rapoport wrote:
-> > Otherwise mm configuration options show up in the top level menu.
-> > 
-> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> 
-> Is this urgent?  If not I'm about to post a series that moves the
-> includes of all common kernel Kconfigs into the top-level Kconfig..
+----- On Jun 29, 2018, at 4:39 PM, Andy Lutomirski luto@amacapital.net wrote:
 
-I believe it's not. The arch/arc/Kconfig had it for couple of years :) 
+> On Fri, Jun 29, 2018 at 12:48 PM, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>> There are two aspects I'm concerned about here:
+>>
+>> 1) security: we don't want 32-bit user-space to feed a 64-bit value over 4GB
+>>    as abort_ip that may end up causing OOPSes on architectures that would
+>>    lack proper validation of those values on return to userspace.
+> 
+> I'm not too worried about this.  As long as you're doing it from
+> signal-delivery context (which you are AFAICT) you're fine.
+
+No, it's not just signal-delivery context. It's _also_ called from
+return to usermode loop, which can by called on return from
+interrupt/trap/syscall.
+
+> 
+> But I re-read the code and I think I have a really straightforward
+> solution.  Two choices:
+> 
+> (1) Change instruction_pointer_set() to return an error code if the
+> address passed in is garbage in a way that could cause unexpected
+> behavior (like >=2^32 on x86_64 if regs->cs is 32-bit).  It has very
+> very few callers.
+
+This would take care of my security concern wrt abort_ip, but would not
+provide consistent behavior for the other fields. Also, perhaps this
+kind of change should aim the next merge window ?
+
+> 
+> (2) Add instruction_pointer_validate() to go along with
+> instruction_pointer_set().
+>
+> That should be enough to solve the problem, right?
+
+This would only handle the "security" part of the matter, which
+is specifically related to rseq->rseq_cs->abort_ip.
+
+What is left is ensuring that we have consistent behavior for
+other fields:
+
+[ Note: we have introduced this helper macro: LINUX_FIELD_u32_u64
+which defines a field which is 64-bit for 64-bit processes, and 32-bit
+with 32-bit of padding for 32-bit processes. ]
+
+* rseq->rseq_cs: (userspace pointer to user-space, updated by user-space
+  with single-copy atomicity): current type: LINUX_FIELD_u32_u64,
+  cannot be changed to __u64 due to single-copy atomicity requirement,
+
+* rseq->rseq_cs->start_ip: currently a LINUX_FIELD_u32_u64,
+  could become a __u64,
+
+* rseq->rseq_cs->post_commit_ip: currently a LINUX_FIELD_u32_u64,
+  could become a __u64,
+
+* rseq->rseq_cs->abort_ip: currently a LINUX_FIELD_u32_u64,
+  could become a __u64,
+
+For abort_ip, changing the type to __u64 and using the
+instruction_pointer_validate() approach you propose would work.
+
+For start_ip and post_commit_ip, we need to decide whether we
+want to kill a 32-bit process setting the high bits or if we just
+accept and use the full __u64 content on both 32-bit and 64-bit
+kernels. Those two fields are only used for arithmetic comparison.
+Using the full __u64 content means using 64-bit arithmetic on
+32-bit native kernels though.
+
+If we decide to kill the offending process (whether the field type is
+__u64 or LINUX_FIELD_u32_u64), we need to be able to figure out if
+the process is a compat task when called from signal delivery and from
+return to usermode loop (return from irq/trap/syscall).
+
+Comparison with TASK_SIZE solves the issue for abort_ip, post_commit_ip
+and start_ip, although nobody seems to like that approach very much.
+
+For rseq->rseq_cs, we cannot use __u64 due to single-copy atomicity
+update requirement for 32-bit processes. However, we are using this
+field in a copy_from_user(), so it will EFAULT if the high-bits are
+set by a compat 32-bit task on a 64-bit kernel. We can therefore check
+that the padding is zeroed explicitly on a native 32-bit kernel to
+provide a consistent behavior. Specifically because rseq->rseq_cs is
+checked with access_ok(), it is therefore enough to check the padding
+when __LP64__ is not defined by the preprocessor.
+
+But rather than trying to play games with input validation, I would
+favor an approach that would allow rseq to validate all its inputs
+straightforwardly. Introducing user_64bit_mode(struct pt_regs *)
+across all architectures would allow doing just that. rseq signal
+delivery and return to usermode code could then ensure that high bits are
+cleared by 32-bit tasks for all fields and thus provide a consistent
+behavior for 32-bit tasks running on 32-bit and 64-bit kernels.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
 
 -- 
-Sincerely yours,
-Mike.
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
