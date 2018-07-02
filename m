@@ -7,115 +7,137 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85793C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17E2C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3C224BAA
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B8D25460
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 12:24:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2LnDtCB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3C224BAA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO+I/h5J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B8D25460
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752318AbeGBMW4 (ORCPT
+        id S1752404AbeGBMYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 08:22:56 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:42624 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeGBMWw (ORCPT
+        Mon, 2 Jul 2018 08:24:23 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37999 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751890AbeGBMYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 08:22:52 -0400
-Received: by mail-ua0-f195.google.com with SMTP id x18-v6so9915498uaj.9;
-        Mon, 02 Jul 2018 05:22:51 -0700 (PDT)
+        Mon, 2 Jul 2018 08:24:21 -0400
+Received: by mail-vk0-f65.google.com with SMTP id b77-v6so9037250vkb.5;
+        Mon, 02 Jul 2018 05:24:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=cyjukQZGlbnwD2WVyHDycm8IBYoHNvuMNEx7II6lnKc=;
-        b=H2LnDtCBEudoJdqGnO7Gw57iyvHr49y0WMuSZvIJlLdOywoGzPWEE8Yol+PRmdOphw
-         2ykH/1usahtmwpl9k7OkWufFTj9LVK5MDG7La3ClVXTkrOUyPMTyvLY0lj4ubskgwTh+
-         rieTRL5gcuxa79Dl1DmXZAyY05Gp71/RFeIYfdDaO+epzl/MrHs4o6Uyo75wVrLg20E5
-         lVbAtZhLMCYAUV5KCX0nX3EfeWma5A1PMoi+iJSxDrl/ntRald6tQ3nYY8PDh+GCSrlx
-         MIhfN1x7vJpY5lCHLEmANXCIVeGLtqqD1jq22PP1jRHK5nJy19VKO+CsnNn3ab5L3Cd2
-         5sZw==
+        bh=PdJCjz9zUVuHa5ACpKV59OlYM/hEZuTBb5WJPb0L82E=;
+        b=MO+I/h5JHECleSNxXYpbdbumQg08+zvPhtW9RZ+PAF2qS/DeK9iRWFKwkQ8sYchLSq
+         56ZmZC/9b/z22G+AuvuvtJdhwcQPMCHUR8m4QlfsYIDKjy5tTcY67zZgxssnEY1JVrQH
+         AqTidMMMQtdGqAimBCZdEU8zFA0NrybPfuMEYEU4fd7Du2NGy/DoMYI0aQoFDJh3BOtr
+         5hnbu/AJMMXU7DJhsJ9/1yYoyT/pCgGcE1YP2FKY96e/1DKlv4xKH63KM/uJkwxg/8gU
+         y1MzE40/HkYjD3g35tmENBIeCurHdwNuXKSafvlLbP0yR9mRyXgD/ti7k9LmuadUyI8H
+         pkhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=cyjukQZGlbnwD2WVyHDycm8IBYoHNvuMNEx7II6lnKc=;
-        b=V49+Jt6308D3XT1aFq8bxijBq5M72C6Yh4oXV87+ms62uWsYRXAfA9dYjHzWFlmX0Y
-         YfAXqI6s8nMqVC/5w0Xv8bDfsetHIGPfvtRVAMUswh/CyWSDvXc74Mk9Ih2Iz0Zw83ma
-         hoo3RtO5drXnBKgcn3Tdzc6pHBvEEtjKXyFRJWU76ut0ry2zfgIPRRG56y6GBr11VRSi
-         xcHLYU1Jm+FjLAyDFvsUFoJlCL3R1BWqUPPPe2c6Tg1l0XXlLzmP0nk/38aD2j3iNeB5
-         g1WUSwgZc7HlEkdwQpWJCooEblLAKEa1pvX1a119GWGz5SwP182Sbb31QhObuphG1kfr
-         kPGg==
-X-Gm-Message-State: APt69E3U49ERzP/ICa7yKI63VjfXeccX2J8U1Qxq2volAgFp4kfDotEC
-        6NRsd04CW+M4kg1AWqftboFuBIqHdwr+mgZ1deI=
-X-Google-Smtp-Source: AAOMgpfR5nQtqqAX3gIa3gUmTim62tM8lWsTg3YsDXOZ+TYMN5gA8HWy3/fJSR3kr+eESRICNHGubu8U/Unwan62XiM=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr15695550uae.12.1530534170893;
- Mon, 02 Jul 2018 05:22:50 -0700 (PDT)
+        bh=PdJCjz9zUVuHa5ACpKV59OlYM/hEZuTBb5WJPb0L82E=;
+        b=nt0vXcPWROCBTHhbTOyBynpDF614LHohHjKiSgMSNVG1L3wlTep7rG/pCfhJedmSPl
+         6T3VQbgglR37uzWaacLyBCxB3UlRJi8VwvoEai+p8+iN0t5v5cNYngHYsbsaqU9DH3Aw
+         kYEtvdmylwuIrffbGk/KK8w1aWMl2CubSoqCxW7I6Wqn/+L+7/9kIw+zI1da/LAvfzrC
+         iZG2Q8Fz7KBRf8dKq7UKyz/8ahHO9Dhu7mqiwylLWfcfriwGWtCwLoEP0nx1WbCJrZoW
+         96/4y3d2LP9puE40YwLbv9YRm3IqTMs30mtDm8rvrJP6OZggUxpIlPDk4f6VizlcuGo/
+         dJKw==
+X-Gm-Message-State: APt69E3q/rWu6nYC3Mt/Fy5XZVVuYMc+m2I3h93CqZKhtCuwHeMqTzmV
+        4mR//7ipeKDLVLk1AED2t5Ug+Aa4W65ZTp8fpsI=
+X-Google-Smtp-Source: AAOMgpdtQPtyl6jo2ywtxVUyc25chCpDbZDEPXx3iecTx4ghckKLg1uyIbc9sbYwd8mGPQ7xwxnHV2rEEIGfMr7bj4M=
+X-Received: by 2002:a1f:6742:: with SMTP id m2-v6mr318274vki.129.1530534260475;
+ Mon, 02 Jul 2018 05:24:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 05:22:50 -0700 (PDT)
-In-Reply-To: <20180619080522.40a20951@canb.auug.org.au>
-References: <20180617235812.18596-1-youling257@gmail.com> <342c314e-6e9f-aefc-3ec0-300b53071089@redhat.com>
- <32076294-07ac-7801-2220-7468e71c275e@redhat.com> <CAHp75VfPPnqgsHFwfLaUZSYa3i2tUmvWpwgxEAz45q61aU9OGA@mail.gmail.com>
- <20180619080522.40a20951@canb.auug.org.au>
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 05:24:19 -0700 (PDT)
+In-Reply-To: <20180701093256.7043-2-hdegoede@redhat.com>
+References: <20180701093256.7043-1-hdegoede@redhat.com> <20180701093256.7043-2-hdegoede@redhat.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 2 Jul 2018 15:22:50 +0300
-Message-ID: <CAHp75VeO-3AAvYXP3=bShpec4YzDRXwEKCAP_HwfQpzoLCcZ1A@mail.gmail.com>
-Subject: Re: [PATCH v4] platform/x86: touchscreen_dmi: Add info for the ONDA
- V891W Dual OS tablet
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        youling257 <youling257@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>,
+Date:   Mon, 2 Jul 2018 15:24:19 +0300
+Message-ID: <CAHp75VeTumJKZA5P6U9pU8m11WSUc5PMxDzmntxuzyRapc6zTQ@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Add info for the "Connect
+ Tablet 9" tablet
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 1:05 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Mon, 18 Jun 2018 16:59:30 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
->> > youling has indicated to me (off-list) that he does not
->> > want to use his real name.
->> >
->> > He has already provided me with the touchscreen details
->> > and dmi strings for this tablet a while ago and I had
->> > writing the exact same quirk on my TODO list already.
->> >
->> > As such I've no doubt that he created this patch and
->> > has the rights to Submit it under the GPL license.
->> >
->> > So I'm going to resubmit this with his S-o-b removed
->> > and replaced with mine. Where the intent of my
->> > S-o-b is to certify point c. of the certificate
->> > of origin, quoting from:
->> >
->> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
->> >
->> > "c. The contribution was provided directly to me by some other person who
->> > certified (a), (b) or (c) and I have not modified it."
->> >
->> > This seems better then me re-creating the exact
->> > same patch from scratch.
->>
->> I guess this will not pass checks Stephen has.
->> So, Stephen, how should we proceed?
+On Sun, Jul 1, 2018 at 12:32 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> Add touchscreen info for the "Connect Tablet 9" tablet. This appears to be
+> a variant of the same hardware as the ITworks TW891 tablet, but it needs
+> different firmware for the touchscreen to fonction properly.
 >
-> That's fine.  I amy report it (If I forget this email), but you can
-> just ignore the report.  My scripted checks obviously can't take this
-> case into account.
 
-Thanks!
+Pushed to my review and testing queue, thanks!
 
-I have pushed to my review and testing queue as is.
+P.S. Renaming now in our for-next branch.
+
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/platform/x86/touchscreen_dmi.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>
+> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+> index 8578f9e28ee0..8086e01e069e 100644
+> --- a/drivers/platform/x86/touchscreen_dmi.c
+> +++ b/drivers/platform/x86/touchscreen_dmi.c
+> @@ -119,6 +119,23 @@ static const struct ts_dmi_data chuwi_vi10_data = {
+>         .properties     = chuwi_vi10_props,
+>  };
+>
+> +static const struct property_entry connect_tablet9_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 9),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 878),
+> +       PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+> +       PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+> +       PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-connect-tablet9.fw"),
+> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+> +       { }
+> +};
+> +
+> +static const struct ts_dmi_data connect_tablet9_data = {
+> +       .acpi_name      = "MSSL1680:00",
+> +       .properties     = connect_tablet9_props,
+> +};
+> +
+>  static const struct property_entry cube_iwork8_air_props[] = {
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
+>         PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
+> @@ -470,6 +487,14 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
+>                         DMI_MATCH(DMI_PRODUCT_NAME, "S165"),
+>                 },
+>         },
+> +       {
+> +               /* Connect Tablet 9 */
+> +               .driver_data = (void *)&connect_tablet9_data,
+> +               .matches = {
+> +                       DMI_MATCH(DMI_SYS_VENDOR, "Connect"),
+> +                       DMI_MATCH(DMI_PRODUCT_NAME, "Tablet 9"),
+> +               },
+> +       },
+>         {
+>                 /* CUBE iwork8 Air */
+>                 .driver_data = (void *)&cube_iwork8_air_data,
+> --
+> 2.17.1
+>
+
+
 
 -- 
 With Best Regards,
