@@ -2,263 +2,191 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35371C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D34C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE4D251B4
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78169244EE
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:15:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="0Ag2z94O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE4D251B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="uBFkDPjV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V/M2sDkD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78169244EE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeGBRL3 (ORCPT
+        id S1752612AbeGBRPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:11:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40692 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752137AbeGBRL1 (ORCPT
+        Mon, 2 Jul 2018 13:15:30 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:43652 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752215AbeGBRP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:11:27 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z13-v6so9475499wma.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:11:26 -0700 (PDT)
+        Mon, 2 Jul 2018 13:15:29 -0400
+Received: by mail-yb0-f196.google.com with SMTP id x10-v6so3287739ybl.10
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:15:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4Y1cveiJhaXMM6jgnLyJ2woebnzzxIJZl+exoPSarUE=;
-        b=0Ag2z94OJiQwzFARuZz7ggPdAPfpJJEwSX4Vp+JmBlen/Eku82FQUOqNvrmDYbriMP
-         Q35JDfMTF1WfW6YtAZCNLnmwfeuVBF9egW+s9T8jOHdyNEKP5Ebv466F7us2+zn2jSrs
-         T6fnjtagfMFWXtnZ2iUbnjjb93WbxRLi7bDDF2PeVX2uYJ4L1EL6BHP8CGW5oaNDzEWY
-         +oCLZgZhlRVpSa8HipOyfXcZlwmyEEc45msKCcKFFPsYWY6yLIJ1VfcrUIQX54QxabnL
-         JRMFjhNET0zOG6tTGGl7Y7bdI0WpX+OXTg7VmKSQ5/QYYtJ49QRjlNIynXl3xXUfCAhs
-         WGZg==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=JT+4eEFjHKsup6CLOIhUaLPIoNOiN8TeXvldauzIotQ=;
+        b=uBFkDPjVe2LP7JVO52cDwkftLTg2vku68WdbidsxypcuEXDZ1UG4NsPjPUs+Br+CTt
+         0Py1plpYgQSZXplCjHbxASyKdBEose+nw6lYTaB86EggjW8tp275gK9vBDCdZlk4xTyu
+         2z0oVKRmLPQbrh7AtIZk2rGuok5/BfUykP+IRv3dg65j1a5slvRkJEqnBM3BMUE2mkdJ
+         jYEMR4+f7pyCw/hTzY7Vy6mwuLsx98OVzkQevVk5lD8U1UVqv6e9uOKAETKq6/K52Jsg
+         LmJwwcOhZZtY0lF7CNdJ0/osuxwS99W6eqjZKzq3YQmvIgQ6W/xgN826Z1ZgkXQHVCtV
+         p9JA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=JT+4eEFjHKsup6CLOIhUaLPIoNOiN8TeXvldauzIotQ=;
+        b=V/M2sDkDArjeh29GhYV0bGVcYmkb1LNHqy7S+MKC4/kOkwEAMAqosIKQlOK7+aE/1H
+         t2VITP/YC0tCOgcBQLDqnCixnfPI6uGWt16W/BhxeQAFOPWrgU5v3pj2o0Uy8P3gkXdP
+         tncLzQzfYp92gllmwDhKKY3U0cC6Jm0Uq8bSc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4Y1cveiJhaXMM6jgnLyJ2woebnzzxIJZl+exoPSarUE=;
-        b=DkndB+o5yWn7rmB/RldvPrfvoQ3VqnuGPqPvjQ/P7nA8M7fREHCUNbXtby2zXtn+nu
-         3KjwNYyTE2BFo13r3jfObMbB+avEAgDpjBASuu04UBbKK0zPEe8hxkEpvuFhNenL2GsT
-         N0JB/pQDf59ogyA+5pngU6BgECKDWWqj3PfhnFAhxaBtv6FY76nlIz81v3m1X4g080vc
-         B7sSTJq+VpHxee9hxF7yZIPynNAEsqtMVkTLVGcNxcB90AYehtOrBSEk7YFPrrsXEhEG
-         EH5UKkNvMkJsbiZOUKt2+DEEC+oYAM0e69SWTBcml7P5rjuf4VdgxCty20ngwcy7nVJc
-         noDQ==
-X-Gm-Message-State: APt69E2xILVMDYXou2MSzVaOqAXDnN9YPXiYgylHPF5Jlok6JbfWXHDE
-        q0UxLdOk6GTgSfXgzzTUO+KMUZjZUdzHD63hvwtW3g==
-X-Google-Smtp-Source: AAOMgpfAkulxVVDUpsSbMPVusanrjg/rDXZwInxQ7ZN5iJ9jPQuU5FKuJ5Y1mNj6Lmyvs1f3eaiUT6r0gqbHOBsPuJo=
-X-Received: by 2002:a1c:f20d:: with SMTP id s13-v6mr8446986wmc.36.1530551486082;
- Mon, 02 Jul 2018 10:11:26 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=JT+4eEFjHKsup6CLOIhUaLPIoNOiN8TeXvldauzIotQ=;
+        b=I24jrOHpylyDEyeMswjmbRb7VvtaCYcGzlC5tSa0DbNvnWz8RnUC2iONUqWxh/fjSA
+         cs89R0FBx3R0mEHeEnHDTCaXRrBC3JSTt5JGY9Rf0aKjdiwQZ0VvPTbFY3GpM9JGzCyU
+         ihu1/w7IOwWABKi4AGfU8c3Dh+nBw4DTSI6OXKr0ubE2Pnk1oCtARInryxTTOhVlQXCH
+         n8z7n/L0q4U+yKoSZr5Xfzo/fvUIA8EQpI7QNtrA0+kOlt3iPiLm+HLFWlJ9LJebDsFf
+         o/yOlgufCwkTSIbyRyVKQCQ3PI/kPzTcKIObu+VMtCz9XBEetyIVpvTq4m93CXGqNSn1
+         E2xQ==
+X-Gm-Message-State: APt69E0sMTTUXbId0STn71WxFOWGXATDV4tCA/PIOOhHSRDz4prRPBI5
+        jrP0JkwwHO8gQ+4Pof+tIjfF9Nmz213IkCH/GESqsQ==
+X-Google-Smtp-Source: AAOMgpcbwxD+tEaTrlMVDQhBeLFrWxQDNKctPpFxPCzTjCuG9mvY5TsFbnqihVtcVlWzI9Lm87ofToWodKO4bjn9r4s=
+X-Received: by 2002:a25:a483:: with SMTP id g3-v6mr2670241ybi.309.1530551728193;
+ Mon, 02 Jul 2018 10:15:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180628162359.9054-1-mathieu.desnoyers@efficios.com>
- <729451355.9702.1530284622326.JavaMail.zimbra@efficios.com>
- <CA+55aFw==YnFJn7iGnKMW=RbPT74YHNa0QDF96mEdMPA2oX9SA@mail.gmail.com>
- <CA+55aFwJWxsE_LL=-8WgB7uH_mYeMSu=boWF4N5KdOW673g4hA@mail.gmail.com>
- <247789350.9741.1530288432573.JavaMail.zimbra@efficios.com>
- <CA+55aFz8KyVqFsVnp-6g+thz7vmm5nK_FSdRTPSks7gsNVNRdQ@mail.gmail.com>
- <184287091.10022.1530301738384.JavaMail.zimbra@efficios.com>
- <CALCETrXqjrCoHX1KyL0iKGBaAZSGJb1cVdNN1gNigJ8DW9LF8w@mail.gmail.com> <1527399163.10673.1530541966296.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1527399163.10673.1530541966296.JavaMail.zimbra@efficios.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 2 Jul 2018 10:11:13 -0700
-Message-ID: <CALCETrVeu_V-3K8OfKv9QixrWBJs+q866yb=e96sC76SS4hxYg@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 1/2] rseq: validate rseq_cs fields are < TASK_SIZE
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 10:15:27 -0700 (PDT)
+In-Reply-To: <19f9ddb1-6009-850c-1949-3a8cdacdd2fc@redhat.com>
+References: <20180629184618.GA37364@beast> <19f9ddb1-6009-850c-1949-3a8cdacdd2fc@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 2 Jul 2018 10:15:27 -0700
+X-Google-Sender-Auth: NYW0mXHHzYm7mYLod6GrRQlqp-g
+Message-ID: <CAGXu5jJcqMX7HjvgqcR37jnuN48PtyHd+VVmfcQH6YfXXSpO_g@mail.gmail.com>
+Subject: Re: [PATCH] KVM: arm64: vgic-its: Remove VLA usage
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
+        kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:32 AM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Mon, Jul 2, 2018 at 12:36 AM, Auger Eric <eric.auger@redhat.com> wrote:
+> Hi Kees,
 >
-> ----- On Jun 29, 2018, at 4:39 PM, Andy Lutomirski luto@amacapital.net wrote:
->
-> > On Fri, Jun 29, 2018 at 12:48 PM, Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >> There are two aspects I'm concerned about here:
-> >>
-> >> 1) security: we don't want 32-bit user-space to feed a 64-bit value over 4GB
-> >>    as abort_ip that may end up causing OOPSes on architectures that would
-> >>    lack proper validation of those values on return to userspace.
-> >
-> > I'm not too worried about this.  As long as you're doing it from
-> > signal-delivery context (which you are AFAICT) you're fine.
->
-> No, it's not just signal-delivery context. It's _also_ called from
-> return to usermode loop, which can by called on return from
-> interrupt/trap/syscall.
->
+> On 06/29/2018 08:46 PM, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> switches to using a maximum size and adds sanity checks. Additionally
+>> cleans up some of the int-vs-u32 usage and adds additional bounds checking.
+>> As it currently stands, this will always be 8 bytes until the ABI changes.
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Eric Auger <eric.auger@redhat.com>
+>> Cc: Andre Przywara <andre.przywara@arm.com>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: kvmarm@lists.cs.columbia.edu
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  virt/kvm/arm/vgic/vgic-its.c | 19 +++++++++++++++----
+>>  1 file changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+>> index 4ed79c939fb4..3143fc047fcf 100644
+>> --- a/virt/kvm/arm/vgic/vgic-its.c
+>> +++ b/virt/kvm/arm/vgic/vgic-its.c
+>> @@ -168,8 +168,14 @@ struct vgic_its_abi {
+>>       int (*commit)(struct vgic_its *its);
+>>  };
+>>
+>> +#define ABI_0_ESZ    8
+>> +#define ESZ_MAX              ABI_0_ESZ
+>> +
+>>  static const struct vgic_its_abi its_table_abi_versions[] = {
+>> -     [0] = {.cte_esz = 8, .dte_esz = 8, .ite_esz = 8,
+>> +     [0] = {
+>> +      .cte_esz = ABI_0_ESZ,
+>> +      .dte_esz = ABI_0_ESZ,
+>> +      .ite_esz = ABI_0_ESZ,
+>>        .save_tables = vgic_its_save_tables_v0,
+>>        .restore_tables = vgic_its_restore_tables_v0,
+>>        .commit = vgic_its_commit_v0,
+>> @@ -180,10 +186,12 @@ static const struct vgic_its_abi its_table_abi_versions[] = {
+>>
+>>  inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
+>>  {
+>> +     if (WARN_ON(its->abi_rev >= NR_ITS_ABIS))
+>> +             return NULL;
+>>       return &its_table_abi_versions[its->abi_rev];
+>>  }
+>>
+>> -int vgic_its_set_abi(struct vgic_its *its, int rev)
+>> +static int vgic_its_set_abi(struct vgic_its *its, u32 rev)
+>>  {
+> if vgic_its_get_abi is likely to return NULL, don't we need to check abi
+> != NULL in all call sites.
 
-TIF_NOTIFY_RESUME context in the exit slowpath is fine, too.
+My thinking was that since it should never happen, a WARN_ON would be
+sufficient. But I can drop all these changes if you want. I just
+wanted to see the VLA removed. :)
 
-> >
-> > But I re-read the code and I think I have a really straightforward
-> > solution.  Two choices:
-> >
-> > (1) Change instruction_pointer_set() to return an error code if the
-> > address passed in is garbage in a way that could cause unexpected
-> > behavior (like >=2^32 on x86_64 if regs->cs is 32-bit).  It has very
-> > very few callers.
->
-> This would take care of my security concern wrt abort_ip, but would not
-> provide consistent behavior for the other fields. Also, perhaps this
-> kind of change should aim the next merge window ?
-
-It's not about security.  The idea is that instruction_pointer_set()
-should return some indication of whether it actually set the
-instruction pointer to the requested value.  On x86, if you have
-!user_64bit_mode(regs) and you call instruction_pointer_set() to set
-ip to 0xbaadc0de12345678, then you end up with a state where we will
-probably execute user code at the address 0x12345678.  Conversely, if
-you have user_64bit_mode(regs) == true and you set ip to
-0xbaadc0de12345678, then you will end up sending a signal to the task
-because 0xbaadc0de12345678 is not executable (and, in fact, is highly
-likely to be noncanonical).
-
-So I would argue that the semantics *should* be:
-
-/*
- * Attempts to modify @regs such that the next user instruction to be
-executed is
- * the instruction at @addr.  instruction_pointer_set() may return
-false to indicate
- * that addr was invalid in the sense that the next user instruction executed
- * might be some other address instead.  The most likely cause is that
- * regs refers to a 32-bit compat context, addr != (u32)addr, and the
-architecture
- * might silently truncate the address on the next return to user code.
- *
- * instruction_pointer_set() must only be called from a context in
-which the architecture
- * allows arbitrary modifications of @regs.
- *
- * Architecture implementations promise that calling
-instruction_pointer_set() will not
- * crash or otherwise corrupt the kernel when called from a valid
-context, regardless
- * of what value is passed in @addr.
- */
-bool instruction_pointer_set(struct pt_regs *regs, unsigned long addr);
+-Kees
 
 >
-> >
-> > (2) Add instruction_pointer_validate() to go along with
-> > instruction_pointer_set().
-> >
-> > That should be enough to solve the problem, right?
+> abi_rev is actually set by vgic_its_set_abi() which is actually called
+> by vgic_mmio_uaccess_write_its_iidr() and vgic_its_create().
 >
-> This would only handle the "security" part of the matter, which
-> is specifically related to rseq->rseq_cs->abort_ip.
+> Only vgic_mmio_uaccess_write_its_iidr allows the userspace to overwrite
+> the default abi_rev. At this point a check against NR_ITS_ABIS is
+> already done. So to me the check is done at the source?
 >
-> What is left is ensuring that we have consistent behavior for
-> other fields:
+> Thanks
 >
-> [ Note: we have introduced this helper macro: LINUX_FIELD_u32_u64
-> which defines a field which is 64-bit for 64-bit processes, and 32-bit
-> with 32-bit of padding for 32-bit processes. ]
->
-> * rseq->rseq_cs: (userspace pointer to user-space, updated by user-space
->   with single-copy atomicity): current type: LINUX_FIELD_u32_u64,
->   cannot be changed to __u64 due to single-copy atomicity requirement,
->
-> * rseq->rseq_cs->start_ip: currently a LINUX_FIELD_u32_u64,
->   could become a __u64,
->
-> * rseq->rseq_cs->post_commit_ip: currently a LINUX_FIELD_u32_u64,
->   could become a __u64,
->
-> * rseq->rseq_cs->abort_ip: currently a LINUX_FIELD_u32_u64,
->   could become a __u64,
->
-> For abort_ip, changing the type to __u64 and using the
-> instruction_pointer_validate() approach you propose would work.
->
-> For start_ip and post_commit_ip, we need to decide whether we
-> want to kill a 32-bit process setting the high bits or if we just
-> accept and use the full __u64 content on both 32-bit and 64-bit
-> kernels. Those two fields are only used for arithmetic comparison.
-> Using the full __u64 content means using 64-bit arithmetic on
-> 32-bit native kernels though.
-
-Just use the 64-bit values, I think.  I see no point in killing the task.
+> Eric
+>>       const struct vgic_its_abi *abi;
+>>
+>> @@ -1881,16 +1889,19 @@ typedef int (*entry_fn_t)(struct vgic_its *its, u32 id, void *entry,
+>>   * Return: < 0 on error, 0 if last element was identified, 1 otherwise
+>>   * (the last element may not be found on second level tables)
+>>   */
+>> -static int scan_its_table(struct vgic_its *its, gpa_t base, int size, int esz,
+>> +static int scan_its_table(struct vgic_its *its, gpa_t base, int size, u32 esz,
+>>                         int start_id, entry_fn_t fn, void *opaque)
+>>  {
+>>       struct kvm *kvm = its->dev->kvm;
+>>       unsigned long len = size;
+>>       int id = start_id;
+>>       gpa_t gpa = base;
+>> -     char entry[esz];
+>> +     char entry[ESZ_MAX];
+>>       int ret;
+>>
+>> +     if (WARN_ON(esz > ESZ_MAX))
+>> +             return -EINVAL;
+>> +
+>>       memset(entry, 0, esz);
+>>
+>>       while (len > 0) {
+>>
 
 
->
-> For rseq->rseq_cs, we cannot use __u64 due to single-copy atomicity
-> update requirement for 32-bit processes. However, we are using this
-> field in a copy_from_user(), so it will EFAULT if the high-bits are
-> set by a compat 32-bit task on a 64-bit kernel. We can therefore check
-> that the padding is zeroed explicitly on a native 32-bit kernel to
-> provide a consistent behavior. Specifically because rseq->rseq_cs is
-> checked with access_ok(), it is therefore enough to check the padding
-> when __LP64__ is not defined by the preprocessor.
 
-Agreed.
-
->
-> But rather than trying to play games with input validation, I would
-> favor an approach that would allow rseq to validate all its inputs
-> straightforwardly. Introducing user_64bit_mode(struct pt_regs *)
-> across all architectures would allow doing just that.
-
-I would be okay with that, too, but I think it would have to be
-user_64bit_mode(task, regs), since
-sane architectures would have the task bitness somewhere other than in
-regs.  x86 is IMO rather
-weird in this regard.  When I added user_64bit_mode(), I didn't
-envision its use outside x86 arch code.
-
-> AFAIU this could be achieved by re-introducing is_compat_task() on x86 as:
->
-> #ifdef CONFIG_COMPAT
-> static bool is_compat_task(void)
-> {
->         return user_64bit_mode(current_pt_regs()));
-> }
-> #else
-> static bool is_compat_task(void) { return false; };
-> #endif
->
-> Or am I missing something ?
-
-is_compat_task() historically literally meant "am I in a compat system
-call".  It never worked consistently on x86 outside of syscall
-context.  While I do have fundamental objections to having a generic
-concept of "is this a compat task?" on Linux, that's not why I removed
-is_compat_task().  I removed it because it didn't do what the name
-suggested.
-
-Unfortunately, while it's gone from generic code, it's still there on
-non-x86 arches, and it probably still has inconsistent semantics.  So
-I don't want to re-add it.
-
-But I think that the limited solution of changing
-instruction_pointer_set() really is a sufficient
-architecture-dependent change to fully solve your problem.
+-- 
+Kees Cook
+Pixel Security
