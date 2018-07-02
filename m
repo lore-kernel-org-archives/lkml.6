@@ -2,115 +2,155 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F98C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81520C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B37824617
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A5B824748
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="heB/eDuj";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pw12lfeB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B37824617
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+57sY+J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5B824748
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753274AbeGBVFl (ORCPT
+        id S1753436AbeGBVFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:05:41 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:35855 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752686AbeGBVFk (ORCPT
+        Mon, 2 Jul 2018 17:05:48 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:35859 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753384AbeGBVFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:05:40 -0400
-Received: by mail-yw0-f194.google.com with SMTP id t198-v6so7155898ywc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:05:39 -0700 (PDT)
+        Mon, 2 Jul 2018 17:05:44 -0400
+Received: by mail-yw0-f196.google.com with SMTP id t198-v6so7155974ywc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
-        b=heB/eDuj6A4XVaCgVK1aRorFr7PFPsPI8yaNJl0m467I+TsKAwqQHBt4Ab1Ou8wV52
-         Nkt50fr//twXHFrKKBzABTfsWyuV7hbcZFo/rkTe+XaeHKC+Z/BId7/yr5/hY2c05ANr
-         FYMDni5NSHBGZJG3c9h4kM/NKLx8+VvUoPH9iHwNDh5yc5NYvB8fzRKNZeHaqRw8o1JR
-         iBV9ZF5JRIuHLs9p1loW5ONdUQI/6QPKV4ZsGyrKIWE4W1tM3hriSRVCyYb9x6IRiWPY
-         7vV1OVdH/Il819Tn8nyQa/MnuavLuF5yLGTObKJ+XbKmVwjhmB6aYvpuTFuWhhpnoPmR
-         2PUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
-        b=Pw12lfeBdwLEfyyMKjI6JMNfqZcv/98mCTGeJn+xOdZVaEjXHlo/tfj8ozQA7iEvWW
-         74ja1pLd3HDrYpjgz8YySv0hmrGi1tAbIWV0wP+0HJDfywRubbO7mjEhdOWBsZUclG0w
-         5m8ou0QK+5N5k6ElQdGBDM1hqymUrUHX9FTaI=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TgR1wPJpNuxWalOIbefskoEqMomVcfO6gB6fuvGW/cA=;
+        b=U+57sY+JAmX5j8AAre72JC7IwPZ88loqowsdMRsMztnI0Zn4LkRXCMQxa37kao6mmi
+         hDn4OX0mq7yUHNaLnNWd8lQUN5lE/239kZIdpqbey8USI+vO/NkGp9EuOLwWvjkXf4Ib
+         E/HzPWV9iav+jWnp2Qb3Zw0C3qHKEYI6XjyWqPtHRyNG6PdDknbCtjTqjYo51vvi9TYq
+         DllASpExIbTAz1eJhwPIhxA9xgLlhU1ZdmLz02//ByXpzUQo1IEWh/Yl5Q9fgixFN4sp
+         1b9FC62HBVkG/xfOgUX3RN0gRGaOYE8daWIWCMKTbgI6TmobcYln696Tpcv+YFiIGvev
+         I85Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
-        b=pYGGcvp1SkZfuYnbimkFTdFWOu1zirB6KbJOg5KSkKQpIY5bVZsKUmVVQGEfbBcP39
-         gvsE/wksVzdcrwhLf6rogB0Cug+ihSDlUXzuN1P27Km75TnI/SSYjkgd0Dd6C/R8C0XH
-         unI/3UcI91iz4+8Me3uosdg9IEmfzeE3G92xBd/6EMF88YSvoKkSDnW3Rd3QtiYe/duP
-         DkCQeCpOURqY5jjT5kkRAn7gW+aQPF/RmEMWNJZRDydRgnmU9OrTSAg5UZJNtNQBdAOD
-         hkwOn3ptA7NSUADMtyTe4wI0wVAg7sLFvkIDylEKJcy8zPzJBulSz0FNP1iQtuTKAQ/j
-         rj8Q==
-X-Gm-Message-State: APt69E3Dgx/NlKQwQr0pAATxJK7IrlGXANza2hJab1RmX+iUxNVdvRCG
-        BxY1Rx3fpuGkwGLtAn9WqDtqf/rXhR/Xv0LNNDMB5A==
-X-Google-Smtp-Source: AAOMgpeLh5YzRM7zbY+q+jmAPpS5jDY7L5qqTFCruI1H9w+IwwsQSiUEGgJBLA2mLQ212EGbYdzR4vN0PbkIlouULoQ=
-X-Received: by 2002:a81:4a05:: with SMTP id x5-v6mr13890620ywa.116.1530565539133;
- Mon, 02 Jul 2018 14:05:39 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TgR1wPJpNuxWalOIbefskoEqMomVcfO6gB6fuvGW/cA=;
+        b=tM+w05kdelcyEZ8YNNhG/RecuIaI+ryByHWQQ3DBzXhwpX7UeqJ1bNCkms9+maWmrt
+         ryXZg/Cm7NAmp1wnc+V2MlywnmiKd05okSWgLTnd+OGCrQujGUHOcLOr4Lmh3yGQ5BOJ
+         GmNm4dp+MRjPLFMfF8+VNIoKQJR35boqJrIvT+Zuv4xIgibi/XgcFrNAY1VOWcIE+e8y
+         NXiCUc9uYZvVagj3HUlMCxRPH8tP3uuJZV7Ji9C4BXyJL5lqLgo7NuN8nmE3f9oKLMrZ
+         DQwpDqZGcdazFe+lXddaMtybqr4g+bZ43aojPx/kb+tDWjOXH2Bx1vBJLoHqRKUEQByz
+         dvwQ==
+X-Gm-Message-State: APt69E0+9WGlNcoWsQBMHiyxqpFvso/Efg1390ALI22OzXGICzSeNRvN
+        pb8dnmHD+P9zG0dmpKyBvF0=
+X-Google-Smtp-Source: AAOMgpcaDWqDR4gLmxEyH07tSlB8kfgg0djLuIgaXnSy9Zg5ysOGjDlfpedOFiB1bGhrznfqM8Ri8Q==
+X-Received: by 2002:a81:ae66:: with SMTP id g38-v6mr215211ywk.74.1530565542534;
+        Mon, 02 Jul 2018 14:05:42 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2b6f])
+        by smtp.gmail.com with ESMTPSA id k6-v6sm7774514ywl.42.2018.07.02.14.05.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 14:05:41 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 14:05:40 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     jiangshanlai@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: WARN_ON_ONCE() in process_one_work()?
+Message-ID: <20180702210540.GL533219@devbig577.frc2.facebook.com>
+References: <20180620192901.GA9956@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 14:05:38 -0700 (PDT)
-In-Reply-To: <20180702194505.28355-1-eric@anholt.net>
-References: <20180629184449.GA37304@beast> <20180702194505.28355-1-eric@anholt.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 2 Jul 2018 14:05:38 -0700
-X-Google-Sender-Auth: XeubM4mVAeIikiijOwxCr3OKBBA
-Message-ID: <CAGXu5jLqkdSYd4MWPm9v49U+6FvgfMLtG1Vz3SUBR999vHshHQ@mail.gmail.com>
-Subject: Re: [PATCH] fixup! firmware: raspberrypi: Remove VLA usage
-To:     Eric Anholt <eric@anholt.net>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620192901.GA9956@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 12:45 PM, Eric Anholt <eric@anholt.net> wrote:
-> Kees - with this fix to your patch, the kernel boots again (otherwise,
-> the FW would try to parse the uninitialized bits of stack and throw
-> errors).  If you're good with me squashing this in, I'll do so and
-> send it to -next.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
->  drivers/firmware/raspberrypi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
-> index b80f15214b73..a200a2174611 100644
-> --- a/drivers/firmware/raspberrypi.c
-> +++ b/drivers/firmware/raspberrypi.c
-> @@ -162,7 +162,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
->         memcpy(data + sizeof(struct rpi_firmware_property_tag_header),
->                tag_data, buf_size);
->
-> -       ret = rpi_firmware_property_list(fw, &data, sizeof(data));
-> +       ret = rpi_firmware_property_list(fw, &data, buf_size + sizeof(*header));
->         memcpy(tag_data,
->                data + sizeof(struct rpi_firmware_property_tag_header),
->                buf_size);
+Hello, Paul.
 
-Eek! Yes, thank you. Yeah, please feel free to squash. Thanks for testing!
+Sorry about the late reply.
 
--Kees
+On Wed, Jun 20, 2018 at 12:29:01PM -0700, Paul E. McKenney wrote:
+> I have hit this WARN_ON_ONCE() in process_one_work:
+> 
+> 	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
+> 		     raw_smp_processor_id() != pool->cpu);
+> 
+> This looks like it is my rcu_gp workqueue (see splat below), and it
+> appears to be intermittent.  This happens on rcutorture scenario SRCU-N,
+> which does random CPU-hotplug operations (in case that helps).
+> 
+> Is this related to the recent addition of WQ_MEM_RECLAIM?  Either way,
+> what should I do to further debug this?
 
--- 
-Kees Cook
-Pixel Security
+Hmm... I checked the code paths but couldn't spot anything suspicious.
+Can you please apply the following patch and see whether it triggers
+before hitting the warn and if so report what it says?
+
+Thanks.
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 0db8938fbb23..81caab9643b2 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -79,6 +79,15 @@ static struct lockdep_map cpuhp_state_up_map =
+ static struct lockdep_map cpuhp_state_down_map =
+ 	STATIC_LOCKDEP_MAP_INIT("cpuhp_state-down", &cpuhp_state_down_map);
+ 
++int cpuhp_current_state(int cpu)
++{
++	return per_cpu_ptr(&cpuhp_state, cpu)->state;
++}
++
++int cpuhp_target_state(int cpu)
++{
++	return per_cpu_ptr(&cpuhp_state, cpu)->target;
++}
+ 
+ static inline void cpuhp_lock_acquire(bool bringup)
+ {
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 78b192071ef7..365cf6342808 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1712,6 +1712,9 @@ static struct worker *alloc_worker(int node)
+ 	return worker;
+ }
+ 
++int cpuhp_current_state(int cpu);
++int cpuhp_target_state(int cpu);
++
+ /**
+  * worker_attach_to_pool() - attach a worker to a pool
+  * @worker: worker to be attached
+@@ -1724,13 +1727,20 @@ static struct worker *alloc_worker(int node)
+ static void worker_attach_to_pool(struct worker *worker,
+ 				   struct worker_pool *pool)
+ {
++	int ret;
++
+ 	mutex_lock(&wq_pool_attach_mutex);
+ 
+ 	/*
+ 	 * set_cpus_allowed_ptr() will fail if the cpumask doesn't have any
+ 	 * online CPUs.  It'll be re-applied when any of the CPUs come up.
+ 	 */
+-	set_cpus_allowed_ptr(worker->task, pool->attrs->cpumask);
++	ret = set_cpus_allowed_ptr(worker->task, pool->attrs->cpumask);
++	if (ret && pool->cpu >= 0 && worker->rescue_wq)
++		printk("XXX rescuer failed to attach: ret=%d pool=%d this_cpu=%d target_cpu=%d cpuhp_state=%d chuhp_target=%d\n",
++		       ret, pool->id, raw_smp_processor_id(), pool->cpu,
++		       cpuhp_current_state(pool->cpu),
++		       cpuhp_target_state(pool->cpu));
+ 
+ 	/*
+ 	 * The wq_pool_attach_mutex ensures %POOL_DISASSOCIATED remains
