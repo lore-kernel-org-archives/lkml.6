@@ -2,144 +2,93 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66C0C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D014C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D66C2502D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:05:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MZ59kktU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D66C2502D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CD7B02502D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:06:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7B02502D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeGBSFz (ORCPT
+        id S1753151AbeGBSGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:05:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44038 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbeGBSFy (ORCPT
+        Mon, 2 Jul 2018 14:06:34 -0400
+Received: from gateway36.websitewelcome.com ([192.185.196.23]:46293 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752466AbeGBSGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:05:54 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w62I47gt179602;
-        Mon, 2 Jul 2018 18:05:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id; s=corp-2017-10-26;
- bh=C6zE+J8vXI4FLk3e+K2be6GDmydsnKSY9uTRPUSkTVg=;
- b=MZ59kktUtxQ5g94Ni3iRD/YsyfOQBLIV3nA5v9BWR66AOt42Lx2n/Hdbt638CtTVjSs1
- YWV5dNTN8OmkEUOxXpnsqsJtY9AmvGvSksdcHMl7m8Esimpz0DFPZiu91fjXWvIsrblv
- mAXsf6/Q4c7Cpwkg5QEHOdmAkj1VR74CkErLVgek5AGe4LYR0SH8RVidDNiLT8JUBN6C
- tPzhaaH7o4V5TFyWjTVZVkGI9NDLoBzhSGSOwjmM5NOLjVBNTS39ofG1azlS+qnaadLS
- NWvDEKrw9h976po3/UxQeqw8ThEvpScLiWqtGdbKGQBTkEwi9BvaBFMK9DYgauoplTle Mw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jx2gpwga6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 02 Jul 2018 18:05:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w62I5fFl029014
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Jul 2018 18:05:41 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w62I5edp003462;
-        Mon, 2 Jul 2018 18:05:40 GMT
-Received: from localhost.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 02 Jul 2018 11:05:40 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, mgorman@techsingularity.net,
-        gregkh@linuxfoundation.org, pasha.tatashin@oracle.com
-Subject: [PATCH v2] mm: teach dump_page() to correctly output poisoned struct pages
-Date:   Mon,  2 Jul 2018 14:05:36 -0400
-Message-Id: <20180702180536.2552-1-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.18.0
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807020202
+        Mon, 2 Jul 2018 14:06:32 -0400
+X-Greylist: delayed 844 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Jul 2018 14:06:32 EDT
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id F078F400C5B4B
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Jul 2018 12:07:12 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id a3DFfDcTf79N3a3DTfctc5; Mon, 02 Jul 2018 13:06:31 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=36432 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fa3DE-002QqT-Lk; Mon, 02 Jul 2018 13:06:09 -0500
+Date:   Mon, 2 Jul 2018 13:06:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dmaengine: nbpfaxi: Mark expected switch fall-through
+Message-ID: <20180702180605.GA8523@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fa3DE-002QqT-Lk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:36432
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If struct page is poisoned, and uninitialized access is detected via
-PF_POISONED_CHECK(page) dump_page() is called to output the page. But,
-the dump_page() itself accesses struct page to determine how to print
-it, and therefore gets into a recursive loop.
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-For example:
-dump_page()
- __dump_page()
-  PageSlab(page)
-   PF_POISONED_CHECK(page)
-    VM_BUG_ON_PGFLAGS(PagePoisoned(page), page)
-     dump_page() recursion loop.
-
-Fixes: f165b378bbdf ("mm: uninitialized struct page poisoning sanity checking")
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- mm/debug.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/dma/nbpfaxi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/debug.c b/mm/debug.c
-index 56e2d9125ea5..38c926520c97 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -43,12 +43,25 @@ const struct trace_print_flags vmaflag_names[] = {
+diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
+index 2f9974d..8c7b2e8 100644
+--- a/drivers/dma/nbpfaxi.c
++++ b/drivers/dma/nbpfaxi.c
+@@ -479,6 +479,7 @@ static size_t nbpf_xfer_size(struct nbpf_device *nbpf,
  
- void __dump_page(struct page *page, const char *reason)
- {
-+	bool page_poisoned = PagePoisoned(page);
-+	int mapcount;
-+
-+	/*
-+	 * If struct page is poisoned don't access Page*() functions as that
-+	 * leads to recursive loop. Page*() check for poisoned pages, and calls
-+	 * dump_page() when detected.
-+	 */
-+	if (page_poisoned) {
-+		pr_emerg("page:%px is uninitialized and poisoned", page);
-+		goto hex_only;
-+	}
-+
- 	/*
- 	 * Avoid VM_BUG_ON() in page_mapcount().
- 	 * page->_mapcount space in struct page is used by sl[aou]b pages to
- 	 * encode own info.
- 	 */
--	int mapcount = PageSlab(page) ? 0 : page_mapcount(page);
-+	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
- 
- 	pr_emerg("page:%px count:%d mapcount:%d mapping:%px index:%#lx",
- 		  page, page_ref_count(page), mapcount,
-@@ -60,6 +73,7 @@ void __dump_page(struct page *page, const char *reason)
- 
- 	pr_emerg("flags: %#lx(%pGp)\n", page->flags, &page->flags);
- 
-+hex_only:
- 	print_hex_dump(KERN_ALERT, "raw: ", DUMP_PREFIX_NONE, 32,
- 			sizeof(unsigned long), page,
- 			sizeof(struct page), false);
-@@ -68,7 +82,7 @@ void __dump_page(struct page *page, const char *reason)
- 		pr_alert("page dumped because: %s\n", reason);
- 
- #ifdef CONFIG_MEMCG
--	if (page->mem_cgroup)
-+	if (!page_poisoned && page->mem_cgroup)
- 		pr_alert("page->mem_cgroup:%px\n", page->mem_cgroup);
- #endif
- }
+ 	default:
+ 		pr_warn("%s(): invalid bus width %u\n", __func__, width);
++		/* fall through */
+ 	case DMA_SLAVE_BUSWIDTH_1_BYTE:
+ 		size = burst;
+ 	}
 -- 
-2.18.0
+2.7.4
 
