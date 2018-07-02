@@ -2,79 +2,101 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4790C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DB7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786FF24DDD
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786FF24DDD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8125A252B6
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 10:50:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8125A252B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754621AbeGBKsC convert rfc822-to-8bit (ORCPT
+        id S1754659AbeGBKun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 06:48:02 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:39712 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752954AbeGBKsB (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:3:1>);
-        Mon, 2 Jul 2018 06:48:01 -0400
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Mon, 02 Jul 2018 04:48:00 -0600
-Message-Id: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date:   Mon, 02 Jul 2018 04:47:57 -0600
-From:   "Jan Beulich" <JBeulich@suse.com>
-To:     <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
-Cc:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86/entry/64: add two more instruction suffixes
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        Mon, 2 Jul 2018 06:50:43 -0400
+Received: from muru.com ([72.249.23.125]:49492 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753124AbeGBKul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 06:50:41 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 15A388047;
+        Mon,  2 Jul 2018 10:53:35 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 03:50:38 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Robert Nelson <robertcnelson@gmail.com>
+Cc:     Faiz Abbas <faiz_abbas@ti.com>,
+        linux kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: Re: [PATCH] ARM: dts: am33xx: Add pinmux data for mmc1 in
+ am335x-evm, evmsk and beaglebone
+Message-ID: <20180702105037.GQ112168@atomide.com>
+References: <1523447304-21037-1-git-send-email-faiz_abbas@ti.com>
+ <CAOCHtYjrgRTAz4ZfkQVWL0YzC8SGbC9p1b8VYJ1TWLy5JXs3mQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAOCHtYjrgRTAz4ZfkQVWL0YzC8SGbC9p1b8VYJ1TWLy5JXs3mQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sadly, other than claimed in a368d7fd2a ("x86/entry/64: Add instruction
-suffix"), there are two more instances which want to be adjusted. As
-said there, omitting suffixes from instructions in AT&T mode is bad
-practice when operand size cannot be determined by the assembler from
-register operands, and is likely going to be warned about by upstream
-gas in the future (mine does already). Add the other missing suffixes
-here as well.
+* Robert Nelson <robertcnelson@gmail.com> [180618 14:00]:
+> On Wed, Apr 11, 2018 at 6:48 AM, Faiz Abbas <faiz_abbas@ti.com> wrote:
+> > am335x-evm, am335x-evmsk and am335x-beaglebone are currently relying on
+> > pinmux set by the bootloader to set the correct value for mmc1. Fix
+> > this by adding pinmux data for the same in kernel.
+> >
+> > Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> > ---
+> >  arch/arm/boot/dts/am335x-bone-common.dtsi | 9 ++++++++-
+> >  arch/arm/boot/dts/am335x-evm.dts          | 9 ++++++++-
+> >  arch/arm/boot/dts/am335x-evmsk.dts        | 9 ++++++++-
+> >  3 files changed, 24 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm/boot/dts/am335x-bone-common.dtsi b/arch/arm/boot/dts/am335x-bone-common.dtsi
+> > index e67b4d6..f9e8667 100644
+> > --- a/arch/arm/boot/dts/am335x-bone-common.dtsi
+> > +++ b/arch/arm/boot/dts/am335x-bone-common.dtsi
+> > @@ -161,7 +161,14 @@
+> >
+> >         mmc1_pins: pinmux_mmc1_pins {
+> >                 pinctrl-single,pins = <
+> > -                       AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7) /* GPIO0_6 */
+> > +                       AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)              /* spio0_cs1.gpio0_6 */
+> > +                       AM33XX_IOPAD(0x8fc, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat0.mmc0_dat0 */
+> > +                       AM33XX_IOPAD(0x8f8, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat1.mmc0_dat1 */
+> > +                       AM33XX_IOPAD(0x8f4, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat2.mmc0_dat2 */
+> > +                       AM33XX_IOPAD(0x8f0, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat3.mmc0_dat3 */
+> > +                       AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_cmd.mmc0_cmd */
+> > +                       AM33XX_IOPAD(0x900, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_clk.mmc0_clk */
+> > +                       AM33XX_IOPAD(0x9a0, PIN_INPUT | MUX_MODE4)              /* mcasp0_aclkr.mmc0_sdwp */
+> 
+> We went one pin too far on the Beagle's here:
+> 
+> 0x9a0 ( mcasp0_aclkr.mmc0_sdwp ) = Routed to P9_42, (muxed with C18,
+> to a shared pin on the header), so not connected to the microSD
+> socket...
+> 
+> https://github.com/beagleboard/beaglebone-black/blob/master/BBB_SCH.pdf
+> 
+> Looking at this evm schematic, it looks like 0x9a0 should be removed
+> too, but I'm not sure on all revisions:
+> 
+> http://processors.wiki.ti.com/images/a/a2/TMDSSK3358_3H0009_REV1_2B_SCH.pdf
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
----
- arch/x86/entry/entry_64.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hmm care to post a fix for this?
 
---- 4.18-rc3/arch/x86/entry/entry_64.S
-+++ 4.18-rc3-x86_64-entry-insn-suffix/arch/x86/entry/entry_64.S
-@@ -92,7 +92,7 @@ END(native_usergs_sysret64)
- .endm
- 
- .macro TRACE_IRQS_IRETQ_DEBUG
--	bt	$9, EFLAGS(%rsp)		/* interrupts off? */
-+	btl	$9, EFLAGS(%rsp)		/* interrupts off? */
- 	jnc	1f
- 	TRACE_IRQS_ON_DEBUG
- 1:
-@@ -701,7 +701,7 @@ retint_kernel:
- #ifdef CONFIG_PREEMPT
- 	/* Interrupts are off */
- 	/* Check if we need preemption */
--	bt	$9, EFLAGS(%rsp)		/* were interrupts off? */
-+	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
- 	jnc	1f
- 0:	cmpl	$0, PER_CPU_VAR(__preempt_count)
- 	jnz	1f
+Regards,
 
-
-
-
+Tony
