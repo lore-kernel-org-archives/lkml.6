@@ -2,138 +2,155 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366E1C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB86FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE4621EB5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:54:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE4621EB5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 5D60D2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 06:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D60D2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932646AbeGBGyU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 02:54:20 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:42214 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932453AbeGBGyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 02:54:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 91E80608D739;
-        Mon,  2 Jul 2018 08:54:17 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id jdzw5xRWxUgb; Mon,  2 Jul 2018 08:54:17 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 3C82A60A359C;
-        Mon,  2 Jul 2018 08:54:17 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SZV_Ke_lHsWt; Mon,  2 Jul 2018 08:54:17 +0200 (CEST)
-Received: from blindfold.localnet (089144195003.atnat0004.highway.a1.net [89.144.195.3])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 15A0560A3593;
-        Mon,  2 Jul 2018 08:54:17 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, dedekind1@gmail.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v3 2/2] ubi: expose the volume CRC check skip flag
-Date:   Mon, 02 Jul 2018 08:54:09 +0200
-Message-ID: <2109705.Xvz1DYdJuj@blindfold>
-In-Reply-To: <20180702085227.2b418264@bbrezillon>
-References: <cover.6d66955e7c1848c8255870deb42eddb69bd276f3.1530169759.git-series.quentin.schulz@bootlin.com> <20180702064433.kvxcacdhuenzk5j3@qschulz> <20180702085227.2b418264@bbrezillon>
+        id S1753605AbeGBG6O (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 02:58:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59432 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751420AbeGBG6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 02:58:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 78745AD36;
+        Mon,  2 Jul 2018 06:58:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C2E2F1E3C25; Mon,  2 Jul 2018 08:58:07 +0200 (CEST)
+Date:   Mon, 2 Jul 2018 08:58:07 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180702065807.zwnsdwww442gqcf6@quack2.suse.cz>
+References: <20180626164825.fz4m2lv6hydbdrds@quack2.suse.cz>
+ <20180627113221.GO32348@dhcp22.suse.cz>
+ <20180627115349.cu2k3ainqqdrrepz@quack2.suse.cz>
+ <20180627115927.GQ32348@dhcp22.suse.cz>
+ <20180627124255.np2a6rxy6rb6v7mm@quack2.suse.cz>
+ <20180627145718.GB20171@ziepe.ca>
+ <20180627170246.qfvucs72seqabaef@quack2.suse.cz>
+ <1f6e79c5-5801-16d2-18a6-66bd0712b5b8@nvidia.com>
+ <20180628091743.khhta7nafuwstd3m@quack2.suse.cz>
+ <20180702055251.GV3014@mtr-leonro.mtl.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702055251.GV3014@mtr-leonro.mtl.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 2. Juli 2018, 08:52:27 CEST schrieb Boris Brezillon:
-> On Mon, 2 Jul 2018 08:44:33 +0200
-> Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+On Mon 02-07-18 08:52:51, Leon Romanovsky wrote:
+> On Thu, Jun 28, 2018 at 11:17:43AM +0200, Jan Kara wrote:
+> > On Wed 27-06-18 19:42:01, John Hubbard wrote:
+> > > On 06/27/2018 10:02 AM, Jan Kara wrote:
+> > > > On Wed 27-06-18 08:57:18, Jason Gunthorpe wrote:
+> > > >> On Wed, Jun 27, 2018 at 02:42:55PM +0200, Jan Kara wrote:
+> > > >>> On Wed 27-06-18 13:59:27, Michal Hocko wrote:
+> > > >>>> On Wed 27-06-18 13:53:49, Jan Kara wrote:
+> > > >>>>> On Wed 27-06-18 13:32:21, Michal Hocko wrote:
+> > > >>>> [...]
+> > > >>>>>> Appart from that, do we really care about 32b here? Big DIO, IB users
+> > > >>>>>> seem to be 64b only AFAIU.
+> > > >>>>>
+> > > >>>>> IMO it is a bad habit to leave unpriviledged-user-triggerable oops in the
+> > > >>>>> kernel even for uncommon platforms...
+> > > >>>>
+> > > >>>> Absolutely agreed! I didn't mean to keep the blow up for 32b. I just
+> > > >>>> wanted to say that we can stay with a simple solution for 32b. I thought
+> > > >>>> the g-u-p-longterm has plugged the most obvious breakage already. But
+> > > >>>> maybe I just misunderstood.
+> > > >>>
+> > > >>> Most yes, but if you try hard enough, you can still trigger the oops e.g.
+> > > >>> with appropriately set up direct IO when racing with writeback / reclaim.
+> > > >>
+> > > >> gup longterm is only different from normal gup if you have DAX and few
+> > > >> people do, which really means it doesn't help at all.. AFAIK??
+> > > >
+> > > > Right, what I wrote works only for DAX. For non-DAX situation g-u-p
+> > > > longterm does not currently help at all. Sorry for confusion.
+> > > >
+> > >
+> > > OK, I've got an early version of this up and running, reusing the page->lru
+> > > fields. I'll clean it up and do some heavier testing, and post as a PATCH v2.
+> >
+> > Cool.
+> >
+> > > One question though: I'm still vague on the best actions to take in the
+> > > following functions:
+> > >
+> > >     page_mkclean_one
+> > >     try_to_unmap_one
+> > >
+> > > At the moment, they are both just doing an evil little early-out:
+> > >
+> > > 	if (PageDmaPinned(page))
+> > > 		return false;
+> > >
+> > > ...but we talked about maybe waiting for the condition to clear, instead?
+> > > Thoughts?
+> >
+> > What needs to happen in page_mkclean() depends on the caller. Most of the
+> > callers really need to be sure the page is write-protected once
+> > page_mkclean() returns. Those are:
+> >
+> >   pagecache_isize_extended()
+> >   fb_deferred_io_work()
+> >   clear_page_dirty_for_io() if called for data-integrity writeback - which
+> >     is currently known only in its caller (e.g. write_cache_pages()) where
+> >     it can be determined as wbc->sync_mode == WB_SYNC_ALL. Getting this
+> >     information into page_mkclean() will require some plumbing and
+> >     clear_page_dirty_for_io() has some 50 callers but it's doable.
+> >
+> > clear_page_dirty_for_io() for cleaning writeback (wbc->sync_mode !=
+> > WB_SYNC_ALL) can just skip pinned pages and we probably need to do that as
+> > otherwise memory cleaning would get stuck on pinned pages until RDMA
+> > drivers release its pins.
 > 
-> > Hi Richard, Boris,
-> > 
-> > On Sun, Jul 01, 2018 at 10:50:41PM +0200, Richard Weinberger wrote:
-> > > Am Sonntag, 1. Juli 2018, 22:33:47 CEST schrieb Boris Brezillon:  
-> > > > On Sun, 01 Jul 2018 21:35:57 +0200
-> > > > Richard Weinberger <richard@nod.at> wrote:
-> > > >   
-> > > > > Quentin,
-> > > > > 
-> > > > > Am Donnerstag, 28. Juni 2018, 09:40:53 CEST schrieb Quentin Schulz:  
-> > > > > > Now that we have the logic for skipping CRC check for static UBI volumes
-> > > > > > in the core, let's expose it to users.
-> > > > > > 
-> > > > > > This makes use of a padding byte in the volume description data
-> > > > > > structure as a flag. This flag only tell for now whether we should skip
-> > > > > > the CRC check of a volume.
-> > > > > > 
-> > > > > > This checks the UBI volume for which we are trying to skip the CRC check
-> > > > > > is static.
-> > > > > > 
-> > > > > > Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > > > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > > > > > Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > > > > ---
-> > > > > >  drivers/mtd/ubi/cdev.c      |  4 ++++
-> > > > > >  drivers/mtd/ubi/vmt.c       |  3 +++
-> > > > > >  include/uapi/mtd/ubi-user.h | 16 ++++++++++++++--
-> > > > > >  3 files changed, 21 insertions(+), 2 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
-> > > > > > index 45c3296..3eea1df 100644
-> > > > > > --- a/drivers/mtd/ubi/cdev.c
-> > > > > > +++ b/drivers/mtd/ubi/cdev.c
-> > > > > > @@ -622,6 +622,10 @@ static int verify_mkvol_req(const struct ubi_device *ubi,
-> > > > > >  	    req->vol_type != UBI_STATIC_VOLUME)
-> > > > > >  		goto bad;
-> > > > > >  
-> > > > > > +	if (req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG &&  
-> > > > 
-> > > > Oops, missed that req->flags & UBI_VOL_SKIP_CRC_CHECK_FLG check was
-> > > > missing parens (checkpatch --strict should complain about that).  
-> > > 
-> > > Latest when building my local branch or in linux-next we had noticed.
-> > > No need to worry.
-> > >    
-> > > > > > +	    req->vol_type != UBI_STATIC_VOLUME)
-> > > > > > +		goto bad;    
-> > > > > 
-> > > > > We should also reject unknown flags here.  
-> > > > 
-> > > > I agree.  
-> > 
-> > Should I send another version of my patches for it?
+> Sorry for naive question, but won't it create too much dirty pages
+> so writeback will be called "non-stop" to rebalance watermarks without
+> ability to progress?
 
-Yes. Please.
+If the amount of pinned pages is more than allowed dirty limit then yes.
+However dirty limit is there exactly to prevent too many
+difficult-to-get-rid-of pages in page cache. So if your amount of pinned
+pages crosses the dirty limit you have just violated this mm constraint and
+you either need to modify your workload not to pin so many pages or you
+need to verify so many dirty pages are indeed safe and increase the dirty
+limit.
 
-> Yes please, respin your series with this additional check. Just define
-> 
-> #define UBI_VOL_VALID_FLGS	(UBI_VOL_SKIP_CRC_CHECK_FLG)
-> 
-> and then, in verify_mkvol_req() add
-> 
-> 	if (req->flags & ~UBI_VOL_VALID_FLGS)
-> 		goto bad;
+Realistically, I think we need to come up with a hard limit (similar to
+mlock or account them as mlock) on these pinned pages because they are even
+worse than plain dirty pages. However I'd strongly prefer to keep that
+discussion separate to this discussion about method how to avoid memory
+corruption / oopses because that is another can of worms with a big
+bikeshedding potential.
 
-Yep.
- 
-> > Same for
-> > parenthesis around the flags masking above?
-> 
-> No need to fix that one (unless Richard cares), as it seems I had it
-> wrong.
-
-Nah. If both gcc and checkpatch don't complain, let's keep it as-is.
-
-Thanks,
-//richard
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
