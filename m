@@ -2,145 +2,113 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF18DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35698C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 857442506C
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:16:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 857442506C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id E10422550D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:17:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnIKokjx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10422550D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753529AbeGBLQN (ORCPT
+        id S1753770AbeGBLRW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:16:13 -0400
-Received: from muru.com ([72.249.23.125]:49520 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753155AbeGBLQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:16:10 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 92F408047;
-        Mon,  2 Jul 2018 11:19:03 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 04:16:05 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc:     nsekhar@ti.com, khilman@kernel.org, linux@armlinux.org.uk,
-        kaloz@openwrt.org, khalasa@piap.pl, aaro.koskinen@iki.fi,
-        jason@lakedaemon.net, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com,
-        gregory.clement@free-electrons.com, daniel@zonque.org,
-        haojian.zhuang@gmail.com, marek.vasut@gmail.com,
-        slapin@ossfans.org, jic23@cam.ac.uk, kgene@kernel.org,
-        krzk@kernel.org, ralf@linux-mips.org, ysato@users.sourceforge.jp,
-        dalias@libc.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 08/11 v2] ARM: OMAP1: constify gpio_led
-Message-ID: <20180702111605.GS112168@atomide.com>
-References: <de0879ef47b96776e3f18a1889c41d976a677b21.1514267721.git.arvind.yadav.cs@gmail.com>
- <c00efa8371f63d6b888590ea66767c832088cd1a.1514267721.git.arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c00efa8371f63d6b888590ea66767c832088cd1a.1514267721.git.arvind.yadav.cs@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 2 Jul 2018 07:17:22 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45512 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753155AbeGBLRU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:17:20 -0400
+Received: by mail-pl0-f68.google.com with SMTP id bi1-v6so7801837plb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 04:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5PpOo5CURtD1XpIQGYYJWhuyFZ9iY+u7nTdh2Dnh+u4=;
+        b=TnIKokjxTkfOteatzA0qHiXIvsvfvH3CUgha+dY5mKFBtkE66/X5EdFNZtvBXvVbXg
+         FrT9yCRJylXUfal71VfYsTRxNQySBCl0wZwG7menNQa7jS944oqbgD6iMemLrNh9XexI
+         0pNOAM6T93RFeKQCb23HUxzrokD9tO3x8BcqIG9e9ehhmRp9FaUf24MosrIWJw240v78
+         kIseFdCgoeF1fiwTT6iuveClLeXQgG+fR5bAyqXgL7ryAny5gSWwGnvpOkK64YVyEhf2
+         TakJLkzYD98qKuKeIPBoQfKF4UPceRxWBOzCC5HaSmFYya90QSQQ5TR+7+pDyds1f/nn
+         zmJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5PpOo5CURtD1XpIQGYYJWhuyFZ9iY+u7nTdh2Dnh+u4=;
+        b=LYABGvsE+fRBXvCVt3wl6ergIAN2L9W5kAP75zL0rSypjwPJVNlmJkTH9U8sqrTG+e
+         8oN1F36pwASQY7a0hutXI7BumWGbXXL94b6noPB0F7a8WI17TWhQI/tO1drF/x08Zg0N
+         VtI3OSKyCu+Sk4SK7NNEamFHOs0iTY1THmG2ZHGG2qD8bqJ3vJZH2ZGmWbQ5IxTFhO5L
+         JmSs3SsvhnCQxX7TxVV5XjAFp9MIb+5j3tBWHZdpi/BeoS3plYYgATBTfpWkTBpcOLA1
+         vUPV5H0+1KnU75F7rL+9pHIjksOCR8+SpKyr8PN0Y5+gzKeOasCIIYV3jr6MtXdtkA8r
+         yfZQ==
+X-Gm-Message-State: APt69E0guOKEntoCL67AWjScQH3gSrJz7Q+jsjYEzFfHQIkVKkv/RKN2
+        SF26JLOMbFV/v7rok0RKAGM=
+X-Google-Smtp-Source: ADUXVKKWusifURQMZTwGwtMG88PvX/Ce7oNRuz4Ee484FNBY8iS8EKluTReElHpSKK+A75yhu41RFA==
+X-Received: by 2002:a17:902:2884:: with SMTP id f4-v6mr25467381plb.204.1530530240427;
+        Mon, 02 Jul 2018 04:17:20 -0700 (PDT)
+Received: from toy.corp.qihoo.net ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm11262150pfh.186.2018.07.02.04.17.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 04:17:19 -0700 (PDT)
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        suzuki.poulose@arm.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] Move {idmap_pg_dir,swapper_pg_dir} to .rodata
+Date:   Mon,  2 Jul 2018 19:16:54 +0800
+Message-Id: <20180702111659.25570-1-yaojun8558363@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Arvind Yadav <arvind.yadav.cs@gmail.com> [171225 22:40]:
-> gpio_led are not supposed to change at runtime.
-> struct gpio_led_platform_data working with const gpio_led
-> provided by <linux/leds.h>. So mark the non-const structs
-> as const.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
-> changes in v2:
->               The GPIO LED driver can be built as a module, it can
->               be loaded after the init sections have gone away.
->               So removed '__initconst'.
+Version 3 changes:
+	As James Morse suggested[1], we split the old patch into 5
+	patches:
 
-Sorry just noticed I still have this one tagged and it's still
-pending.. Applying into omap-for-v4.19/omap1.
+	1. Introduce init_pg_dir.
+	2. Make __enable_mmu() take the ttbr1 page as an argument.
+	3. Create initial page tables in init_pg_dir and then create final
+	   page tables in swapper_pg_dir directly.
+	4. Make swapper_pg_dir smaller.
+	5. Move {idmap_pg_dir, swapper_pg_dir} to .rodata section.
 
-Regards,
+	At the same time, fix bugs mentioned in [1] and [2].
 
-Tony
+Special thanks to James Morse and Suzuki K Poulose. Without their help, I
+couldn't write these patches.
 
+v2: https://patchwork.kernel.org/patch/10485641/
+v1: https://patchwork.kernel.org/patch/10476595/
 
->  arch/arm/mach-omap1/board-h2.c        | 2 +-
->  arch/arm/mach-omap1/board-h3.c        | 2 +-
->  arch/arm/mach-omap1/board-htcherald.c | 2 +-
->  arch/arm/mach-omap1/board-osk.c       | 4 ++--
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mach-omap1/board-h2.c b/arch/arm/mach-omap1/board-h2.c
-> index ab51f85..9aeb8ad 100644
-> --- a/arch/arm/mach-omap1/board-h2.c
-> +++ b/arch/arm/mach-omap1/board-h2.c
-> @@ -274,7 +274,7 @@ static struct platform_device h2_kp_device = {
->  	.resource	= h2_kp_resources,
->  };
->  
-> -static struct gpio_led h2_gpio_led_pins[] = {
-> +static const struct gpio_led h2_gpio_led_pins[] = {
->  	{
->  		.name		= "h2:red",
->  		.default_trigger = "heartbeat",
-> diff --git a/arch/arm/mach-omap1/board-h3.c b/arch/arm/mach-omap1/board-h3.c
-> index ad339f5..2edcd63 100644
-> --- a/arch/arm/mach-omap1/board-h3.c
-> +++ b/arch/arm/mach-omap1/board-h3.c
-> @@ -326,7 +326,7 @@ static struct spi_board_info h3_spi_board_info[] __initdata = {
->  	},
->  };
->  
-> -static struct gpio_led h3_gpio_led_pins[] = {
-> +static const struct gpio_led h3_gpio_led_pins[] = {
->  	{
->  		.name		= "h3:red",
->  		.default_trigger = "heartbeat",
-> diff --git a/arch/arm/mach-omap1/board-htcherald.c b/arch/arm/mach-omap1/board-htcherald.c
-> index 67d4669..e6a79fd 100644
-> --- a/arch/arm/mach-omap1/board-htcherald.c
-> +++ b/arch/arm/mach-omap1/board-htcherald.c
-> @@ -292,7 +292,7 @@ static struct platform_device herald_gpiokeys_device = {
->  };
->  
->  /* LEDs for the Herald.  These connect to the HTCPLD GPIO device. */
-> -static struct gpio_led gpio_leds[] = {
-> +static const struct gpio_led gpio_leds[] = {
->  	{"dpad",        NULL, HTCPLD_GPIO_LED_DPAD,        0, 0, LEDS_GPIO_DEFSTATE_OFF},
->  	{"kbd",         NULL, HTCPLD_GPIO_LED_KBD,         0, 0, LEDS_GPIO_DEFSTATE_OFF},
->  	{"vibrate",     NULL, HTCPLD_GPIO_LED_VIBRATE,     0, 0, LEDS_GPIO_DEFSTATE_OFF},
-> diff --git a/arch/arm/mach-omap1/board-osk.c b/arch/arm/mach-omap1/board-osk.c
-> index c66372e..e2277b5 100644
-> --- a/arch/arm/mach-omap1/board-osk.c
-> +++ b/arch/arm/mach-omap1/board-osk.c
-> @@ -167,7 +167,7 @@ static struct platform_device *osk5912_devices[] __initdata = {
->  	&osk5912_cf_device,
->  };
->  
-> -static struct gpio_led tps_leds[] = {
-> +static const struct gpio_led tps_leds[] = {
->  	/* NOTE:  D9 and D2 have hardware blink support.
->  	 * Also, D9 requires non-battery power.
->  	 */
-> @@ -385,7 +385,7 @@ static struct platform_device osk5912_lcd_device = {
->  	.id		= -1,
->  };
->  
-> -static struct gpio_led mistral_gpio_led_pins[] = {
-> +static const struct gpio_led mistral_gpio_led_pins[] = {
->  	{
->  		.name		= "mistral:red",
->  		.default_trigger = "heartbeat",
-> -- 
-> 2.7.4
-> 
+[1] https://patchwork.kernel.org/patch/10485641/
+[2] https://patchwork.kernel.org/patch/10485643/
+
+Jun Yao (5):
+  arm64/mm: Introduce init_pg_dir
+  arm64/mm: Make __enable_mmu() take the ttbr1 page as an argument
+  arm64/mm: Create initial page tables in init_pg_dir
+  arm64/mm: Make swapper_pg_dir smaller
+  arm64/mm: Move {idmap_pg_dir, swapper_pg_dir} to .rodata section
+
+ arch/arm64/include/asm/assembler.h | 23 ++++++++++++++
+ arch/arm64/include/asm/pgalloc.h   | 48 ++++++++++++++++++++++++++++++
+ arch/arm64/include/asm/pgtable.h   | 17 ++++++-----
+ arch/arm64/kernel/head.S           | 31 ++++++++++++++-----
+ arch/arm64/kernel/setup.c          |  1 +
+ arch/arm64/kernel/sleep.S          |  1 +
+ arch/arm64/kernel/vmlinux.lds.S    | 29 ++++++++++++------
+ arch/arm64/mm/mmu.c                | 32 +++-----------------
+ 8 files changed, 129 insertions(+), 53 deletions(-)
+
+-- 
+2.17.1
+
