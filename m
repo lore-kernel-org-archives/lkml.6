@@ -2,96 +2,100 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FF9C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EDEC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2B224E14
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3A520C03
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 15:21:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="StAISmw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E2B224E14
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCDPHOTY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3A520C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeGBPTb (ORCPT
+        id S1752274AbeGBPVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 11:19:31 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:36568 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbeGBPT3 (ORCPT
+        Mon, 2 Jul 2018 11:21:10 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:40887 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeGBPVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 11:19:29 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4376424E0448;
-        Mon,  2 Jul 2018 08:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530544769; bh=LXO4zPhQ899l1W9jNxs+V/ZW/l1nLEpIs/vcIFd4OM8=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
-        b=StAISmw5Dt1I/bl/a3/H0BMoTwjH+N93f5Xy1qbJGZ0sridMHEqMr2GkMZZrMkLG+
-         HQroIOb4htl067QZta2r0CUEP+BmFPau6oTDDj15H2o4u6EX+0ttEfl6BMqECouQi3
-         T71EYheZaxUAnKXvYee3BZ7Ck9j244dr+3dofLh+6maWzPL8RE2WXfTz8CXq7Cmaen
-         OsDhaZvG+Hcwug09WN/SK58GV7oSzwqVxX/ICVKvfi0jRJr5cqlgCZzwzrDg8FHr4P
-         u5E6HU9p0rlvqOtLK+KRB9TWmpCHfRirUXhcJST3ItV8sHqAJUZT9hEwbcLcQfw4jC
-         lTVT8HQtYi9ug==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C3E533C8F;
-        Mon,  2 Jul 2018 08:19:28 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 2 Jul 2018 08:19:28 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 2 Jul 2018 17:19:26 +0200
-Received: from [10.0.2.15] (10.107.19.20) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 2 Jul
- 2018 17:19:25 +0200
-Subject: Re: [PATCH] net: stmmac_tc: use 64-bit arithmetic instead of 32-bit
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Jose Abreu" <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20180702120932.GA13079@embeddedor.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-Message-ID: <32c70751-9083-5c59-1e0e-c4ba69c18d80@synopsys.com>
-Date:   Mon, 2 Jul 2018 16:19:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Mon, 2 Jul 2018 11:21:09 -0400
+Received: by mail-yb0-f193.google.com with SMTP id y11-v6so1725172ybm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 08:21:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KjAU1n16nNiLQs4iuK4WOdn03VIJLmVf1f4XWDGd9ZU=;
+        b=aCDPHOTYjHannO9MWJUDQl4I/43Og1SlrgDWncSxA0wrHrRg6PkPnXpldkSLS9No9h
+         eoJoDNWOnnB9DeR6pRtp7IowFaewGtkTn2CTswb+RNHayOBePd8z30EmQ+MsoXHfO/Qo
+         R26prDQGB+xYgBuaoaFeroXwF9KPMv/w93N2hh8X+HsWDB17sxy31QwV0J2pnGa/CA1q
+         1FhSMalg8vLMXthpLTv51APnbOLEfm0ljH+MeSLwUiwG0H10ZCe/wPVIANLrsq4LSGpr
+         GNS7kfC+KsP6jlpy1qLbynUbJHReWQDUoZN1ZhnC/xPKAKclyJaIE5ty7+0/eEzbuvdE
+         8eGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KjAU1n16nNiLQs4iuK4WOdn03VIJLmVf1f4XWDGd9ZU=;
+        b=JFG7xFrh5wlrHDNH7dDVyijcbTdGBHh+BlqT2r+kr2YBNCOf+MhVelbmftejIwKsH6
+         2sasms1Oz/beDUXYMl479bhf60iXtYb/74plIXFd1MaMXuMum/SS4PYz4k+AaNcyERPw
+         bOJDJfZooMnFY8/ErBtBS0Sw0Jdu02BsOP0JHYvzMCeBEND7pY3bfFo1q36zIP63HqRS
+         FjnME4FOs7oNzClb+aN2NfhoTHkfZkZvh/Ks607NbRqDcne/GYOdXQUGGXYDjOXC4Kc7
+         is6CkbqkgFu/CAZbG86VHER/c5ERY32Ufgn2GSqjp6SOGVbxU9i5O9ahyPup2+oar6+/
+         5ttA==
+X-Gm-Message-State: APt69E0/ssNqM+QjB6WnJdY3lJYfbIoj0N25/gYFqPnn9V/KHQPxbrfE
+        gqkUVYQzRz2O619xJSurXJE=
+X-Google-Smtp-Source: AAOMgpeZWxaCkSPTvM/JLIj+ZMp16EVHAKq+MqnesUIdYWvc3z7IiwjeLLue8fRjoGxxy7A5Q9omng==
+X-Received: by 2002:a5b:841:: with SMTP id v1-v6mr11286591ybq.250.1530544868388;
+        Mon, 02 Jul 2018 08:21:08 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2b6f])
+        by smtp.gmail.com with ESMTPSA id l14-v6sm6114604ywi.35.2018.07.02.08.21.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 08:21:07 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 08:21:06 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Xunlei Pang <xlpang@linux.alibaba.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
+Message-ID: <20180702152106.GD533219@devbig577.frc2.facebook.com>
+References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
+ <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
+ <20180626154908.GE2458@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180702120932.GA13079@embeddedor.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.20]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-07-2018 13:09, Gustavo A. R. Silva wrote:
-> Add suffix UL to constant 1024 in order to give the compiler complete
-> information about the proper arithmetic to use. Notice that this
-> constant is used in a context that expects an expression of type
-> u64 (64 bits, unsigned) and  following expressions are currently
-> being evaluated using 32-bit arithmetic:
->
-> qopt->idleslope * 1024 * ptr
-> qopt->hicredit * 1024 * 8
-> qopt->locredit * 1024 * 8
->
-> Addresses-Coverity-ID: 1470246 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1470248 ("Unintentional integer overflow")
-> Addresses-Coverity-ID: 1470249 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->
+Hello, Peter.
 
-Acked-by: Jose Abreu <joabreu@synopsys.com>
+On Tue, Jun 26, 2018 at 05:49:08PM +0200, Peter Zijlstra wrote:
+> Well, no, because the Changelog is incomprehensible and the patch
+> doesn't really have useful comments, so I'll have to reverse engineer
+> the entire thing, and I've just not had time for that.
 
-Thanks!
+Just as an additional data point, we also sometimes see artifacts from
+cpu_adjust_time() in the form of per-task user or sys time getting
+stuck for some period (in extreme cases for over a minute) while the
+application isn't doing anything differently.  We're telling the users
+that it's an inherent sampling artifact but it'd be nice to improve it
+if possible without adding noticeable overhead.  No idea whether this
+patch's approach is a good one tho.
 
-Best Regards,
-Jose Miguel Abreu
+Thanks.
+
+-- 
+tejun
