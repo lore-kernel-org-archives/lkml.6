@@ -2,142 +2,116 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1EAC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C54C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A5124E33
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F6FC259D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:48:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="udldNnGQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A5124E33
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O59xRPRe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6FC259D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeGBQsC (ORCPT
+        id S1752942AbeGBQsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:48:02 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:56753 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752550AbeGBQsA (ORCPT
+        Mon, 2 Jul 2018 12:48:13 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:39698 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752554AbeGBQsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:48:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NJBi5rh18Gn/XUYA/IYESQZZ6Uzy/r8sIMEMhSF6z2E=; b=udldNnGQPsbcjwcizW697J/SEU
-        QYCyx94qaHboow4YcSjrnlG4tXjxeR1eFtyO8Cm06MWpbwj4UPd14Do9RuCalRbDmCohhQipmEgkq
-        3CMzgqPlOAwiaTeUH6IqaheprPDzSJUPqqxEaWKHGTqZjwJkF/A2R5uNgJmIZ9qjxxunbz1hlyfyJ
-        CD6uQu+s3MYZy9I80eLlEihkAsIEKja8sReXEfqshrlpPgp+6jXeMwPETUvdGzUGa6L6Slf7Xw80Q
-        J+YCqwwg8Pf63tRPgwkFE5snKZdGVGCfgtArTXfyfKQUXmrup8e9TJYuITPWtH7Gh4CYQnsmUGRgl
-        I7Rsuoxg==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:57370 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fa1zb-00A0A9-MV; Mon, 02 Jul 2018 16:48:00 +0000
-Date:   Mon, 2 Jul 2018 09:47:58 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>
-Subject: v4.18-rc3: Build and qemu test results
-Message-ID: <20180702164758.GA9835@roeck-us.net>
-References: <20180702164605.GF9114@roeck-us.net>
+        Mon, 2 Jul 2018 12:48:11 -0400
+Received: by mail-it0-f67.google.com with SMTP id p185-v6so12825029itp.4;
+        Mon, 02 Jul 2018 09:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=atKdLrITNE12YTlBdgYTs04GPS3Q4TWQSdXTcUAQMUM=;
+        b=O59xRPRePMTCdIlDbiRw3dXdXEi6R5fTQbYp4Kj9CqA4Ha+zgiV0ZI1B/F0AP/+U6L
+         FDcSdAXZLHPaDeel+CSE6ooxn5/jBuJRidnNgwyxZc0YhGDbo55mJ4XKjWHG/Ej/6DMj
+         83Tn4Zptf/0ZAfYnpaAO7CexaghlaIcOZ7v4A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=atKdLrITNE12YTlBdgYTs04GPS3Q4TWQSdXTcUAQMUM=;
+        b=B1udHCxBzOC++IT1GiGtPuzxoiJz3XXFygBN6yDD/N0nTEoXM/9/AfpmUPuyWBgzO0
+         ZGaWXfAwjkLo7e6j6UA03LSVk+unLqXOzK7EKXtyKRpG+zldpewEaD6WkQQ6fGtXglhd
+         FY7ay/rqh6hUH4yzkB07vsEqowiIxLv74BnTyadaYPT/wRT1iJ3i23iAvAMOM0Pb7bW3
+         nPA9OazzX1WNrsFrOqJxhdx03BJ9PiWrJmGYREfO6lXkp5qdKX/LJYN4aBP6N+Fhz56f
+         1n4FUcmou4Bgx6jfEMg1MaJxXV5v06LIQ2bqgJnP4yBWTJMVy458yxhZEi5L1Acr521P
+         o5og==
+X-Gm-Message-State: APt69E3HQtWyi7MLEcgZ2vp2XC9BXWFO00Xiual6pSJ+r4DRciy1GtRJ
+        WK2Tc/xGCxEkdZXUL6cYj+P3o5dXCyj3sN7mI4w=
+X-Google-Smtp-Source: AAOMgpcBGMUzqE3hV7RH0zjvcsIONX9zzEZXIrfaS6AMtPzHvVsc0w5v1O1ZbHkgq6vPNTWsQ5FYcGvPAkZfmVIcWvU=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr6413761itd.16.1530550090106;
+ Mon, 02 Jul 2018 09:48:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702164605.GF9114@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20180701160757.138608453@linuxfoundation.org> <CAMuHMdVcSkXAmuD2qsc0mk9pDx_Fd0Q_peBmZY6Mpfkq6gMQZg@mail.gmail.com>
+ <20180702102413.GB16825@kroah.com>
+In-Reply-To: <20180702102413.GB16825@kroah.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 09:47:59 -0700
+Message-ID: <CA+55aFzwn3M0q8Ps6VTKK98693P7verOAEggJ7AsR6CEgk6VGA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 000/101] 4.9.111-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[trying again, this time to a valid address]
+On Mon, Jul 2, 2018 at 3:24 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jul 02, 2018 at 11:57:36AM +0200, Geert Uytterhoeven wrote:
+> >
+> > > Pseudo-Shortlog of commits:
+> >
+> > Given you do publish a git tree with these changes, is there any specific reason
+> > you're not using a real shortlog? Sorting and grouping would make it
+> > easier to see
+> > which patches of mine you have backported.
+>
+> Many years ago Linus wanted it in this type of format as it was easier
+> to see what was being applied to the trees.
 
-Build and qemu test results for v4.18-rc3:
+I think you refer to an old email of mine where I said:
 
-Build results:
-	total: 134 pass: 128 fail: 6
-Failed builds: 
-	arm:allmodconfig 
-	i386:allyesconfig 
-	i386:allmodconfig 
-	nds32:defconfig 
-	nds32:allnoconfig 
-	sparc32:allmodconfig
-Qemu test results:
-	total: 158 pass: 158 fail: 0
+ "I think Greg has a script he uses, so I'm cc'ing him here too. i'm not
+  sure I really like his one-liner format, but I'm not sure what the
+  right format would be. I *think* the format I'd prefer would be a
+  two-liner one (with a newline in between), something like
 
----
-arm:allmodconfig:
+     git log --abbrev=12 --format="%h %aN <%aE>%n    %s%n"
 
-/tmp/ccXj8hfB.s: Assembler messages:
-/tmp/ccXj8hfB.s:35: Error: .err encountered
-/tmp/ccXj8hfB.s:36: Error: .err encountered
-/tmp/ccXj8hfB.s:37: Error: .err encountered
-make[2]: *** [arch/arm/firmware/trusted_foundations.o] Error 1
+  but that's more of a "maybe something along those lines.." than anything else"
 
-Fix at:
-	https://patchwork.kernel.org/patch/10434909/
-	[not queued in -next]
+Note that "maybe something along those lines", and in fact the format
+Greg uses doesn't have the commit ID in it, so it's more like
 
----
-i386:allyesconfig, i386:allmodconfig:
+    git log --format="%aN <%aE>%n    %s%n"
 
-x86_64-linux-ld: i386:x86-64 architecture of input file
-`net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+I forget what the original format Greg used was, but I don't think it
+was "shortlog".  This is from almost a decade ago, and I couldn't
+actually find any of Greg's emails with the original format that I
+found to be inconvenient. I think it was something really dense and
+incomprehensible based on my " i'm not sure I really like his
+one-liner format", but..
 
-next-20180702 builds fine, so presumably the fix is queued there.
+Maybe just "shortlog" would be better. I agree that it's likely easier
+for authors to see what commits got done from them, thanks to the
+author grouping.
 
----
-nds32:defconfig, nds32:allnoconfig:
-
-nds32le-linux-ld: kernel/time/timekeeping.o: in function `timekeeping_init':
-timekeeping.c:(.init.text+0x1a8): undefined reference to `__ashldi3'
-nds32le-linux-ld: timekeeping.c:(.init.text+0x1ac):
-	undefined reference to `__ashldi3'
-nds32le-linux-ld: timekeeping.c:(.init.text+0x1ec):
-	undefined reference to `__lshrdi3'
-nds32le-linux-ld: timekeeping.c:(.init.text+0x1f0):
-	undefined reference to `__lshrdi3'
-nds32le-linux-ld: fs/direct-io.o: in function `do_direct_IO':
-direct-io.c:(.text+0x16a0): undefined reference to `__ashldi3'
-
-Fix is queued in -next.
-
----
-sparc32:allmodconfig:
-
-...
-drivers/staging/media/omap4iss/iss_video.c:15:
-build/include/linux/highmem.h: In function 'clear_user_highpage':
-include/linux/highmem.h:137:31: error:
-	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible pointer type 
-
-This is only seen with gcc 5 and later; gcc 4 produces warnings.
-
-Building drivers/staging/media/omap4iss/iss_video.c for sparc32 was only
-recently enabled with COMPILE_TEST. A possible fix for the problem is
-available at https://patchwork.kernel.org/patch/10497941/.
-
-Further details are available at http://kerneltests.org/builders.
-
-Guenter
+            Linus
