@@ -2,121 +2,109 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9435FC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC3FC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5D922407
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:39:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5D922407
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C7E725C62
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7E725C62
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030599AbeGBLjI (ORCPT
+        id S1754445AbeGBLkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:39:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59428 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030567AbeGBLjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:39:04 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA76A308402F;
-        Mon,  2 Jul 2018 11:39:03 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA9DB6016F;
-        Mon,  2 Jul 2018 11:39:03 +0000 (UTC)
-Received: from zmail19.collab.prod.int.phx2.redhat.com (zmail19.collab.prod.int.phx2.redhat.com [10.5.83.22])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 9AB6C1800B68;
-        Mon,  2 Jul 2018 11:39:03 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 07:39:03 -0400 (EDT)
-From:   Rodrigo Freire <rfreire@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Message-ID: <1583797106.15227304.1530531543526.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180702112906.GH19043@dhcp22.suse.cz>
-References: <7de14c6cac4a486c04149f37948e3a76028f3fa5.1530461087.git.rfreire@redhat.com> <20180702093043.GB19043@dhcp22.suse.cz> <1113748807.15224076.1530530533122.JavaMail.zimbra@redhat.com> <20180702112906.GH19043@dhcp22.suse.cz>
-Subject: Re: [PATCH] mm: be more informative in OOM task list
+        Mon, 2 Jul 2018 07:40:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50920 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753397AbeGBLkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:40:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1DC02AF46;
+        Mon,  2 Jul 2018 11:40:39 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 13:40:37 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jia He <hejianet@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, James Morse <james.morse@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steve Capper <steve.capper@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com
+Subject: Re: [PATCH v9 0/6] optimize memblock_next_valid_pfn and
+ early_pfn_valid on arm and arm64
+Message-ID: <20180702114037.GJ19043@dhcp22.suse.cz>
+References: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.97.116.8, 10.4.195.4]
-Thread-Topic: be more informative in OOM task list
-Thread-Index: kWhy4UPh4UlUgHWt0Cdtg9onaXIWpg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 02 Jul 2018 11:39:03 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michal!
+On Fri 29-06-18 10:29:17, Jia He wrote:
+> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> where possible") tried to optimize the loop in memmap_init_zone(). But
+> there is still some room for improvement.
 
------ Original Message ----- 
-> From: "Michal Hocko" <mhocko@kernel.org>
-> To: "Rodrigo Freire" <rfreire@redhat.com>
-> Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-> Sent: Monday, July 2, 2018 8:29:06 AM
-> Subject: Re: [PATCH] mm: be more informative in OOM task list
->
-> On Mon 02-07-18 07:22:13, Rodrigo Freire wrote:
-> > Hello Michal,
-> >
-> > ----- Original Message -----
-> > > From: "Michal Hocko" <mhocko@kernel.org>
-> > > To: "Rodrigo Freire" <rfreire@redhat.com>
-> > > Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-> > > Sent: Monday, July 2, 2018 6:30:43 AM
-> > > Subject: Re: [PATCH] mm: be more informative in OOM task list
-> > >
-> > > On Sun 01-07-18 13:09:40, Rodrigo Freire wrote:
-> > > > The default page memory unit of OOM task dump events might not be
-> > > > intuitive for the non-initiated when debugging OOM events. Add
-> > > > a small printk prior to the task dump informing that the memory
-> > > > units are actually memory _pages_.
-> > >
-> > > Does this really help? I understand the the oom report might be not the
-> > > easiest thing to grasp but wouldn't it be much better to actually add
-> > > documentation with clarification of each part of it?
-> >
-> > That would be great: After a quick grep -ri for oom in Documentation,
-> > I found several other files containing its own OOM behaviour modifier
-> > configurations. But it indeed lacks a central and canonical Doc file
-> > which documents the OOM Killer behavior and workflows.
-> >
-> > However, I still stand by my proposed patch: It is unobtrusive, infers
-> > no performance issue and clarifying: I recently worked in a case (for
-> > full disclosure: I am a far cry from a MM expert) where the sum of the
-> > RSS pages made sense when interpreted as real kB pages. Reason: There
-> > were processes sharing (a good amount of) memory regions, misleading
-> > the interpretation and that misled not only me, but some other
-> > colleagues a well: The pages was only sorted out after actually
-> > inspecting the source code.
-> >
-> > This patch is user-friendly and can be a great time saver to others in
-> > the community.
->
-> Well, all other counters we print are in page units unless explicitly
-> kB. 
+It would be great to shortly describe those optimization from high level
+POV.
 
-Your statement is correct. And I thought about that too. And then the doubt:
-* Maybe someone forgot to state that these values are in kB?
+> 
+> Patch 1 introduce new config to make codes more generic
+> Patch 2 remain the memblock_next_valid_pfn on arm and arm64
+> Patch 3 optimizes the memblock_next_valid_pfn()
+> Patch 4~6 optimizes the early_pfn_valid()
+> 
+> As for the performance improvement, after this set, I can see the time
+> overhead of memmap_init() is reduced from 27956us to 13537us in my
+> armv8a server(QDF2400 with 96G memory, pagesize 64k).
 
-> So I am not sure we really need to do anything but document the
-> output better. Maybe others will find it more important though.
+So this is 13ms saving when booting 96G machine. Is this really worth
+the additional code? Are there any other benefits?
+[...]
+>  arch/arm/Kconfig          |  4 +++
+>  arch/arm/mm/init.c        |  1 +
+>  arch/arm64/Kconfig        |  4 +++
+>  arch/arm64/mm/init.c      |  1 +
+>  include/linux/early_pfn.h | 79 +++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/memblock.h  |  2 ++
+>  include/linux/mmzone.h    | 18 ++++++++++-
+>  mm/Kconfig                |  3 ++
+>  mm/memblock.c             |  9 ++++++
+>  mm/page_alloc.c           |  5 ++-
+>  10 files changed, 124 insertions(+), 2 deletions(-)
+>  create mode 100644 include/linux/early_pfn.h
 
-The thing is, it also led some other colleagues (a few!) to think the
-very same as me: That raised the flag and made me write the patch:
-That was indeed misleading.
-And you may not have a MM and OOM-versed specialist available all the 
-time! ;-)
-
-Still ask you to reconsider.
-
-My best regards,
-
-- RF.
+-- 
+Michal Hocko
+SUSE Labs
