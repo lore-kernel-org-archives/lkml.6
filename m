@@ -2,95 +2,138 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1D8C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C76AC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858C821A56
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:57:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858C821A56
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AF6DF21A56
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 17:58:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6DF21A56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753262AbeGBR5x (ORCPT
+        id S1753290AbeGBR6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 13:57:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49276 "EHLO mx1.suse.de"
+        Mon, 2 Jul 2018 13:58:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49350 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752606AbeGBR5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 13:57:52 -0400
+        id S1753129AbeGBR6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 13:58:00 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B68FBADB8;
-        Mon,  2 Jul 2018 17:57:50 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 19:57:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     Laurent Dufour <ldufour@linux.vnet.ibm.com>, willy@infradead.org,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 5/5] x86: check VM_DEAD flag in page fault
-Message-ID: <20180702175749.GG19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-6-git-send-email-yang.shi@linux.alibaba.com>
- <84eba553-2e0b-1a90-d543-6b22c1b3c5f8@linux.vnet.ibm.com>
- <20180702121528.GM19043@dhcp22.suse.cz>
- <80406cbd-67f4-ca4c-cd54-aeb305579a72@linux.vnet.ibm.com>
- <20180702124558.GP19043@dhcp22.suse.cz>
- <e6f8d0e2-48c1-f610-c00b-d05d4bd0d9eb@linux.vnet.ibm.com>
- <20180702133733.GU19043@dhcp22.suse.cz>
- <6fd4eb3d-ef66-7a37-4adb-05c22ac51d95@linux.alibaba.com>
+        by mx1.suse.de (Postfix) with ESMTP id 5B9ECAF43;
+        Mon,  2 Jul 2018 17:57:58 +0000 (UTC)
+Subject: Re: [RFC net-next 08/15] net: lora: sx1276: Add debugfs
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>
+References: <20180701110804.32415-1-afaerber@suse.de>
+ <20180701110804.32415-9-afaerber@suse.de>
+ <20180702162649.GC2737@nanopsycho.orion>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ xsFNBE6W6ZQBEAC/BIukDnkVenIkK9O14UucicBIVvRB5WSMHC23msS+R2h915mW7/vXfn+V
+ 0nrr5ECmEg/5OjujKf0x/uhJYrsxcp45nDyYCk+RYoOJmGzzUFya1GvT/c04coZ8VmgFUWGE
+ vCfhHJro85dZUL99IoLP21VXEVlCPyIngSstikeuf14SY17LPTN1aIpGQDI2Qt8HHY1zOVWv
+ iz53aiFLFeIVhQlBmOABH2Ifr2M9loRC9yOyGcE2GhlzgyHGlQxEVGFn/QptX6iYbtaTBTU0
+ c72rpmbe1Nec6hWuzSwu2uE8lF+HYcYi+22ml1XBHNMBeAdSEbSfDbwc///8QKtckUzbDvME
+ S8j4KuqQhwvYkSg7dV9rs53WmjO2Wd4eygkC3tBhPM5s38/6CVGl3ABiWJs3kB08asUNy8Wk
+ juusU/nRJbXDzxu1d+hv0d+s5NOBy/5+7Pa6HeyBnh1tUmCs5/f1D/cJnuzzYwAmZTHFUsfQ
+ ygGBRRKpAVu0VxCFNPSYKW0ULi5eZV6bcj+NAhtafGsWcv8WPFXgVE8s2YU38D1VtlBvCo5/
+ 0MPtQORqAQ/Itag1EHHtnfuK3MBtA0fNxQbb2jha+/oMAi5hKpmB/zAlFoRtYHwjFPFldHfv
+ Iljpe1S0rDASaF9NsQPfUBEm7dA5UUkyvvi00HZ3e7/uyBGb0QARAQABzSJBbmRyZWFzIEbD
+ pHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgID
+ AQIeAQIXgAUCTqGJnQIZAQAKCRD6LtEtPn4BPzetD/4rF6k/HF+9U9KqykfJaWdUHJvXpI85
+ Roab12rQbiIrL4hVEYKrYwPEKpCf+FthXpgOq+JdTGJ831DMlTx7Ed5/QJ9KAAQuhZlSNjSc
+ +FNobJm7EbFv9jWFjQC0JcOl17Ji1ikgRcIRDCul1nQh9jCdfh1b848GerZmzteNdT9afRJm
+ 7rrvMqXs1Y52/dTlfIW0ygMA2n5Vv3EwykXJOPF6fRimkErKO84sFMNg0eJV9mXs+Zyionfi
+ g2sZJfVeKjkDqjxy7sDDBZZR68I9HWq5VJQrXqQkCZUvtr6TBLI+uiDLbGRUDNxA3wgjVdS2
+ v9bhjYceSOHpKU+h3H2S8ju9rjhOADT2F5lUQMTSpjlzglh8IatV5rXLGkXEyum4MzMo2sCE
+ Cr+GD6i2M3pHCtaIVV3xV0nRGALa6DdF7jBWqM54KHaKsE883kFH2+6ARcPCPrnPm7LX98h2
+ 4VpG984ysoq6fpzHHG/KCaYCEOe1bpr3Plmmp3sqj0utA6lwzJy0hj5dqug+lqmg7QKAnxl+
+ porgluoY56U0X0PIVBc0yO0dWqRxtylJa9kDX/TKwFYNVddMn2NQNjOJXzx2H9hf0We7rG7+
+ F/vgwALVVYbiTzvp2L0XATTv/oX4BHagAa/Qc3dIsBYJH+KVhBp+ZX4uguxk4xlc2hm75b1s
+ cqeAD87BTQROlumUARAAzd7eu+tw/52FB7xQZWDv5aF+6CAkoz7AuY4s1fo0AQQDqjLOdpQF
+ bifdH7B8SnsA4eo0syfs+1tZW6nn9hdy1GHEMbeuvdhNwkhEfYGDYpSue7oVxB4jajKvRHAP
+ VcewKZIxvIiZ5aSp5n1Bd7B0c0C443DHiWE/0XWSpvbU7fTzTNvdz+2OZmGtqCn610gBqScv
+ 1BOiP3OfLly8ghxcJsos23c0mkB/1iWlzh3UMFIGrzsK3sZJ/3uRaLYFimmqqPlSwFqx3b0M
+ 1gFdHWKfOpvQ4wwP5P10xwvqNXLWC30wB1QmJGD/X8aAoVNnGsmEL7GcWF4cLoOSRidSoccz
+ znShE+Ap+FVDD6MRyesNT4D67l792//B38CGJRdELtNacdwazaFgxH9O85Vnd70ZC7fIcwzG
+ yg/4ZEf96DlAvrSOnu/kgklofEYdzpZmW+Fqas6cnk6ZaHa35uHuBPesdE13MVz5TeiHGQTW
+ xP1jbgWQJGPvJZ+htERT8SZGBQRb1paoRd1KWQ1mlr3CQvXtfA/daq8p/wL48sXrKNwedrLV
+ iZOeJOFwfpJgsFU4xLoO/8N0RNFsnelBgWgZE3ZEctEd4BsWFUw+czYCPYfqOcJ556QUGA9y
+ DeDcxSitpYrNIvpk4C5CHbvskVLKPIUVXxTNl8hAGo1Ahm1VbNkYlocAEQEAAcLBXwQYAQIA
+ CQUCTpbplAIbDAAKCRD6LtEtPn4BPzA6D/9TbSBOPM99SHPX9JiEQAw4ITCBF2oTWeZQ6RJg
+ RKpB15lzyPfyFbNSceJp9dCiwDWe+pzKaX6KYOFZ5+YTS0Ph2eCR+uT2l6Mt6esAun8dvER/
+ xlPDW7p88dwGUcV8mHEukWdurSEDTj8V3K29vpgvIgRq2lHCn2wqRQBGpiJAt72Vg0HxUlwN
+ GAJNvhpeW8Yb43Ek7lWExkUgOfNsDCTvDInF8JTFtEXMnUcPxC0d/GdAuvBilL9SlmzvoDIZ
+ 5k2k456bkY3+3/ydDvKU5WIgThydyCEQUHlmE6RdA3C1ccIrIvKjVEwSH27Pzy5jKQ78qnhv
+ dtLLAavOXyBJnOGlNDOpOyBXfv02x91RoRiyrSIM7dKmMEINKQlAMgB/UU/6B+mvzosbs5d3
+ 4FPzBLuuRz9WYzXmnC460m2gaEVk1GjpidBWw0yY6kgnAM3KhwCFSecqUQCvwKFDGSXDDbCr
+ w08b3GDk40UoCoUq9xrGfhlf05TUSFTg2NlSrK7+wAEsTUgs2ZYLpHyEeftoDDnKpM4ghs/O
+ ceCeyZUP1zSgRSjgITQp691Uli5Nd1mIzaaM8RjOE/Rw67FwgblKR6HAhSy/LYw1HVOu+Ees
+ RAEdbtRt37A8brlb/ENxbLd9SGC8/j20FQjit7oPNMkTJDs7Uo2eb7WxOt5pSTVVqZkv7Q==
+Organization: SUSE Linux GmbH
+Message-ID: <d6aa15a0-9660-0687-9da0-53749c1235f8@suse.de>
+Date:   Mon, 2 Jul 2018 19:57:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fd4eb3d-ef66-7a37-4adb-05c22ac51d95@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180702162649.GC2737@nanopsycho.orion>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02-07-18 10:24:27, Yang Shi wrote:
+Am 02.07.2018 um 18:26 schrieb Jiri Pirko:
+> Sun, Jul 01, 2018 at 01:07:57PM CEST, afaerber@suse.de wrote:
+>> Allow some interactive inspection at runtime via debugfs.
+>>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+[...]
+>> @@ -566,6 +691,10 @@ static int sx1276_probe(struct spi_device *spi)
+>> 		return ret;
+>> 	}
+>>
+>> +	priv->debugfs = debugfs_create_dir(dev_name(&spi->dev), NULL);
+>> +	debugfs_create_file("state", S_IRUGO, priv->debugfs, netdev, &sx1276_state_fops);
+>> +	debugfs_create_file("frequency", S_IRUGO, priv->debugfs, netdev, &sx1276_freq_fops);
 > 
-> 
-> On 7/2/18 6:37 AM, Michal Hocko wrote:
-> > On Mon 02-07-18 15:33:11, Laurent Dufour wrote:
-> > > 
-> > > On 02/07/2018 14:45, Michal Hocko wrote:
-> > > > On Mon 02-07-18 14:26:09, Laurent Dufour wrote:
-> > > > > On 02/07/2018 14:15, Michal Hocko wrote:
-> > [...]
-> > > > > > We already do have a model for that. Have a look at MMF_UNSTABLE.
-> > > > > MMF_UNSTABLE is a mm's flag, here this is a VMA's flag which is checked.
-> > > > Yeah, and we have the VMA ready for all places where we do check the
-> > > > flag. check_stable_address_space can be made to get vma rather than mm.
-> > > Yeah, this would have been more efficient to check that flag at the beginning
-> > > of the page fault handler rather than the end, but this way it will be easier
-> > > to handle the speculative page fault too ;)
-> > The thing is that it doesn't really need to be called earlier. You are
-> > not risking data corruption on file backed mappings.
-> 
-> OK, I just think it could save a few cycles to check the flag earlier.
+> Hmm. These look like useful information not only for debugging. I think
+> it would be worth to expose these via some standard uapi. Like generic
+> netlink, similar to nl80211
 
-This should be an extremely rare case. Just think about it. It should
-only ever happen when an access races with munmap which itself is
-questionable if not an outright bug.
+Which API to use for reading/writing such config data was question 4) in
+my cover letter. :)
 
-> If nobody think it is necessary, we definitely could re-use
-> check_stable_address_space(),
+"frequency" was added first and helped me debug a calculation overflow.
+Netlink might indeed be an option here, haven't worked on it before,
+I'll look into nl80211. Thanks.
 
-If we really need this whole VM_DEAD thing then it should be better
-handled at the same place rather than some ad-hoc places.
+"state" was just a partial dump of SPI registers, to monitor status
+changes after the initial probe or other callbacks with printks, while
+debugging GPIO interrupts iirc. So I'd think merging that to mainline
+would be unnecessary, but it could remain useful during development.
 
-> just return VM_FAULT_SIGSEGV for VM_DEAD vma,
-> and check for both shared and non-shared.
+Cheers,
+Andreas
 
-Why would you even care about shared mappings?
 -- 
-Michal Hocko
-SUSE Labs
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
