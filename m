@@ -2,296 +2,88 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF189C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4340DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6570D25663
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6570D25663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id F21252150F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 07:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21252150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932254AbeGBHSA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 03:18:00 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:53080 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753088AbeGBHR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 03:17:59 -0400
-Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 2 Jul 2018
- 15:18:09 +0800
-Subject: Re: [PATCH 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20180613161314.14894-1-yixun.lan@amlogic.com>
- <20180613161314.14894-3-yixun.lan@amlogic.com>
- <20180624213844.2207ca6f@bbrezillon> <7ha7rfiz3c.fsf@baylibre.com>
- <20180628090034.0637a062@xps13> <7hr2kqfpam.fsf@baylibre.com>
-CC:     <yixun.lan@amlogic.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        <linux-mtd@lists.infradead.org>,
-        Liang Yang <liang.yang@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <3afe2a61-d15d-63e8-ef59-b36d891dbfb7@amlogic.com>
-Date:   Mon, 2 Jul 2018 15:17:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S932767AbeGBHTU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 03:19:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9146 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752862AbeGBHTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 03:19:11 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 682564D852CA;
+        Mon,  2 Jul 2018 15:18:57 +0800 (CST)
+Received: from linux-ioko.site (10.71.200.31) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 2 Jul 2018 15:18:49 +0800
+From:   Peng Li <lipeng321@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
+        <salil.mehta@huawei.com>, <lipeng321@huawei.com>
+Subject: [PATCH V2 net-next 0/9] net: hns3: a few code improvements
+Date:   Mon, 2 Jul 2018 15:50:17 +0800
+Message-ID: <1530517826-69226-1-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <7hr2kqfpam.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Kevin
+This patchset removes some redundant code and fixes a few code
+stylistic issues from internal concentrated review,
+no functional changes introduced.
 
-On 06/29/18 07:45, Kevin Hilman wrote:
-> Hi Miquel,
-> 
-> Miquel Raynal <miquel.raynal@bootlin.com> writes:
-> 
->> On Wed, 27 Jun 2018 16:33:43 -0700, Kevin Hilman <khilman@baylibre.com>
->> wrote:
->>
->>> Hi Boris,
->>>
->>> Boris Brezillon <boris.brezillon@bootlin.com> writes:
->>>
->>>> Hi Yixun,
->>>>
->>>> On Wed, 13 Jun 2018 16:13:14 +0000
->>>> Yixun Lan <yixun.lan@amlogic.com> wrote:
->>>>  
->>>>> From: Liang Yang <liang.yang@amlogic.com>
->>>>>
->>>>> Add initial support for the Amlogic NAND flash controller which found
->>>>> in the Meson-GXBB/GXL/AXG SoCs.
->>>>>
->>>>> Singed-off-by: Liang Yang <liang.yang@amlogic.com>
->>>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>>>> ---
->>>>>  drivers/mtd/nand/raw/Kconfig      |    8 +
->>>>>  drivers/mtd/nand/raw/Makefile     |    3 +
->>>>>  drivers/mtd/nand/raw/meson_nand.c | 1422 +++++++++++++++++++++++++++++
->>>>>  3 files changed, 1433 insertions(+)
->>>>>  create mode 100644 drivers/mtd/nand/raw/meson_nand.c  
->>>>
->>>> Can you run checkpatch.pl --strict and fix the coding style issues?
->>>>  
->>>>>
->>>>> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
->>>>> index 19a2b283fbbe..b3c17a3ca8f4 100644
->>>>> --- a/drivers/mtd/nand/raw/Kconfig
->>>>> +++ b/drivers/mtd/nand/raw/Kconfig
->>>>> @@ -534,4 +534,12 @@ config MTD_NAND_MTK
->>>>>  	  Enables support for NAND controller on MTK SoCs.
->>>>>  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
->>>>>  
->>>>> +config MTD_NAND_MESON
->>>>> +	tristate "Support for NAND flash controller on Amlogic's Meson SoCs"
->>>>> +	depends on ARCH_MESON || COMPILE_TEST
->>>>> +	select COMMON_CLK_REGMAP_MESON
->>>>> +	select MFD_SYSCON
->>>>> +	help
->>>>> +	  Enables support for NAND controller on Amlogic's Meson SoCs.
->>>>> +
->>>>>  endif # MTD_NAND
->>>>> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
->>>>> index 165b7ef9e9a1..cdf6162f38c3 100644
->>>>> --- a/drivers/mtd/nand/raw/Makefile
->>>>> +++ b/drivers/mtd/nand/raw/Makefile
->>>>> @@ -1,5 +1,7 @@
->>>>>  # SPDX-License-Identifier: GPL-2.0
->>>>>  
->>>>> +ccflags-$(CONFIG_MTD_NAND_MESON) += -I$(srctree)/drivers/clk/meson  
->>>>
->>>> Please don't do that. If you need to expose common regs, put them
->>>> in include/linux/soc/meson/. I'm also not sure why you need to access
->>>> the clk regs directly. Why can't you expose the MMC/NAND clk as a clk
->>>> provider whose driver would be placed in drivers/clk and which would use
->>>> the mmc syscon. This way the same clk driver could be used for both
->>>> MMC and NAND clk indifferently, and the NAND driver would be much
->>>> simpler.  
->>>
->>> [...]
->>>
->>>>> +
->>>>> +	return 0;
->>>>> +}
->>>>> +
->>>>> +static const char * sd_emmc_ext_clk0_parent_names[MUX_CLK_NUM_PARENTS];
->>>>> +
->>>>> +static struct clk_regmap sd_emmc_c_ext_clk0_sel = {
->>>>> +	.data = &(struct clk_regmap_mux_data){
->>>>> +		.offset = SD_EMMC_CLOCK,
->>>>> +		.mask = 0x3,
->>>>> +		.shift = 6,
->>>>> +	},
->>>>> +	.hw.init = &(struct clk_init_data) {
->>>>> +		.name = "sd_emmc_c_nand_clk_mux",
->>>>> +		.ops = &clk_regmap_mux_ops,
->>>>> +		.parent_names = sd_emmc_ext_clk0_parent_names,
->>>>> +		.num_parents = ARRAY_SIZE(sd_emmc_ext_clk0_parent_names),
->>>>> +		.flags = CLK_SET_RATE_PARENT,
->>>>> +	},
->>>>> +};
->>>>> +
->>>>> +static struct clk_regmap sd_emmc_c_ext_clk0_div = {
->>>>> +	.data = &(struct clk_regmap_div_data){
->>>>> +		.offset = SD_EMMC_CLOCK,
->>>>> +		.shift = 0,
->>>>> +		.width = 6,
->>>>> +		.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
->>>>> +	},
->>>>> +	.hw.init = &(struct clk_init_data) {
->>>>> +		.name = "sd_emmc_c_nand_clk_div",
->>>>> +		.ops = &clk_regmap_divider_ops,
->>>>> +		.parent_names = (const char *[]){ "sd_emmc_c_nand_clk_mux" },
->>>>> +		.num_parents = 1,
->>>>> +		.flags = CLK_SET_RATE_PARENT,
->>>>> +	},
->>>>> +};
->>>>> +
->>>>> +static int meson_nfc_clk_init(struct meson_nfc *nfc)
->>>>> +{
->>>>> +	struct clk_regmap *mux = &sd_emmc_c_ext_clk0_sel;
->>>>> +	struct clk_regmap *div = &sd_emmc_c_ext_clk0_div;
->>>>> +	struct clk *clk;
->>>>> +	int i, ret;
->>>>> +
->>>>> +	/* request core clock */
->>>>> +	nfc->core_clk = devm_clk_get(nfc->dev, "core");
->>>>> +	if (IS_ERR(nfc->core_clk)) {
->>>>> +		dev_err(nfc->dev, "failed to get core clk\n");
->>>>> +		return PTR_ERR(nfc->core_clk);
->>>>> +	}
->>>>> +
->>>>> +	/* init SD_EMMC_CLOCK to sane defaults w/min clock rate */
->>>>> +	regmap_update_bits(nfc->reg_clk, 0,
->>>>> +			CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK,
->>>>> +			CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK);
->>>>> +
->>>>> +	/* get the mux parents */
->>>>> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
->>>>> +		char name[16];
->>>>> +
->>>>> +		snprintf(name, sizeof(name), "clkin%d", i);
->>>>> +		clk = devm_clk_get(nfc->dev, name);
->>>>> +		if (IS_ERR(clk)) {
->>>>> +			if (clk != ERR_PTR(-EPROBE_DEFER))
->>>>> +				dev_err(nfc->dev, "Missing clock %s\n", name);
->>>>> +			return PTR_ERR(clk);
->>>>> +		}
->>>>> +
->>>>> +		sd_emmc_ext_clk0_parent_names[i] = __clk_get_name(clk);
->>>>> +	}
->>>>> +
->>>>> +	mux->map = nfc->reg_clk;
->>>>> +	clk = devm_clk_register(nfc->dev, &mux->hw);
->>>>> +	if (WARN_ON(IS_ERR(clk)))
->>>>> +		return PTR_ERR(clk);
->>>>> +
->>>>> +	div->map = nfc->reg_clk;
->>>>> +	nfc->device_clk = devm_clk_register(nfc->dev, &div->hw);
->>>>> +	if (WARN_ON(IS_ERR(nfc->device_clk)))
->>>>> +		return PTR_ERR(nfc->device_clk);
->>>>> +
->>>>> +	ret = clk_prepare_enable(nfc->core_clk);
->>>>> +	if (ret) {
->>>>> +		dev_err(nfc->dev, "failed to enable core clk\n");
->>>>> +		return ret;
->>>>> +	}
->>>>> +
->>>>> +	ret = clk_prepare_enable(nfc->device_clk);
->>>>> +	if (ret) {
->>>>> +		dev_err(nfc->dev, "failed to enable device clk\n");
->>>>> +		clk_disable_unprepare(nfc->core_clk);
->>>>> +		return ret;
->>>>> +	}
->>>>> +
->>>>> +	return 0;
->>>>> +}  
->>>>
->>>>
->>>> As said above, I don't like having a clk driver here, especially since
->>>> the registers you're accessing are not part of the NAND controller
->>>> registers. Please try to create a driver in drivers/clk/ for that.  
->>>
->>> We went back and forth on this one on some off-list reviews.
->>>
->>> Had we known that the NAND controller was (re)using the clock registers
->>> internal to the MMC IP block from the beginning, we would have written a
->>> clock provider in drivers/clk for this, and shared it.
->>>
->>> However, when I wrote the MMC driver[1] (already upstream) along with
->>> the bindings[2], we did not fathom that the internal mux and divider
->>> would be "borrowed" by another device. :(
->>>
->>> We only recently found out that the NAND controller "borrows" one of the
->>> MMC clocks, whose registers are inside the MMC range.  Taking the clock
->>> out of the MMC driver and into its own clock-provider implies redoing
->>> the MMC driver, as well as its bindings, which we wanted to avoid
->>> (especially the binding changes.)
->>>
->>> We (I can take the blame) decided that since the MMC and NAND are
->>> mutually exclusive (they also share pins), that allowing NAND to reuse
->>> the MMC range would be a good compromise.  The DT still accurately
->>> describes the hardware, but we don't have to throw a large wrench into
->>> the DT bindings just for a newly discovered shared clock.
->>>
->>> I agree, it's not the prettiest thing, but when we cannot know the full
->>> details of the hardware when we start, sometimes we end up in a bit of a
->>> mess that requires some compromise.
->>
->> I totally understand your situation but as MMC and NAND are mutually
->> exclusive, how is this a problem to have a dedicated clock driver used
->> only by the NAND controller (as maybe a first step)? I mean, if you
->> don't change the MMC bindings, then the MMC driver will still use its
->> own 'local' clock driver, right?
-> 
-> Yeah, I think you're right.  That would work too.
-> 
->> I don't know if you can have two nodes reserving the same address
->> range though.
-> 
-> You can, but it's a race who gets to claim the region.
-> 
-> You'd have to have the new clock-controler disabled by default, and have
-> any boards that use the NAND disable the MMC and enable the clock
-> controller node.
-> 
-> But I think that should work.
-> 
-> Yixun, can you give this approach a try?
-Yes, It actually works here, I'll send out the clock patches later for
-review.
+---
+Change log:
+V1 -> V2:
+1, remove a patch according to the comment reported by David Miller.
+---
 
-Thanks everyone for the suggestion
-> 
-> Kevin
-> 
-> .
-> 
+Huazhong Tan (8):
+  net: hns3: remove unused hclge_ring_to_dma_dir
+  net: hns3: remove useless code in hclge_cmd_send
+  net: hns3: remove some redundant assignments
+  net: hns3: simplify hclge_cmd_csq_clean
+  net: hns3: remove a redundant hclge_cmd_csq_done
+  net: hns3: remove some unused members of some structures
+  net: hns3: give default option while dependency HNS3 set
+  net: hns3: use dma_zalloc_coherent instead of kzalloc/dma_map_single
+
+Peng Li (1):
+  net: hns3: modify hnae_ to hnae3_
+
+ drivers/net/ethernet/hisilicon/Kconfig             |  15 +-
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c        |  28 +-
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  18 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 244 ++++++++--------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   9 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |  69 ++---
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 317 ++++++++++-----------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |  24 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c    |  38 +--
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |   8 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |   7 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |  26 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  25 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   |   2 +-
+ 14 files changed, 395 insertions(+), 435 deletions(-)
+
+-- 
+1.9.1
 
