@@ -2,153 +2,142 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765AAC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C95C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7D2253CA
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26CBE21A57
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 02:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WlZMrY8/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7D2253CA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FfXGFrpv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CBE21A57
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932879AbeGBCf6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 1 Jul 2018 22:35:58 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39267 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753042AbeGBCfx (ORCPT
+        id S933028AbeGBCnw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 1 Jul 2018 22:43:52 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39182 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753057AbeGBCnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Jul 2018 22:35:53 -0400
-Received: by mail-pg0-f67.google.com with SMTP id n2-v6so6419811pgq.6
-        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 19:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=b8PPriMWRG9naR04wUtYox1sKTGzCo4cFOu8fGakX0E=;
-        b=WlZMrY8/U1kzvGkhmEgBSY0t9+3SbD9OAVASlP7j8EMlmzeZVce/4CUigTiCtFGdY2
-         sdRWyiMNLaAaq1wt1uN5CaRdRYRDr1Dt3sbPFbheagOD9FmrQFsKJ3meBkgWw7XLdzmb
-         i4j3Yb9bi9NEhhIf/+XiXcMoXyq8A1/MlFy84=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b8PPriMWRG9naR04wUtYox1sKTGzCo4cFOu8fGakX0E=;
-        b=ckt6/YReN+veIsUZzm9VVAUtBShJvxFl3abLhOMFTZTv0we5YeIA6uEmPbH3X4NiIh
-         zjEerRaEoaWICBbff4i2So0h9yc3QSyB1LQfz4gIkyybzq9IDKr15NQ6eLdFd0PxmLmP
-         kR+WNZ2jUONxExpDOvmrc1+Du+rYQIQw29vrXQzIieKCUU1Xv/7m+AwbD10OV5mecA8o
-         r3nf3iNyMrM7NPx5ixZ+xyG4rtT0LsSVpU9kAU4vGdEnBeymwIyo9Tg5Pzzj1Thr3t8U
-         jKXvfqFSkSOL+r/6HohTWAY73u8u3fgcWXby8wGSZTysdySoo1BGScRv+2E61wXW68IN
-         r8zg==
-X-Gm-Message-State: APt69E0qpgUTr0KuuqW5Fs3BkWm7C2fReKx0uxfy2yef+MMCQpe4uHbN
-        tCPEJPTb1ZZpQYFrTotOjeUBlg==
-X-Google-Smtp-Source: AAOMgped45kDQ8oRhux7Cv386oW1Hq/Ims1CJc2Alzg2vHfzSlLrl32T43jyv4hxY1pAeVyaKs0wCw==
-X-Received: by 2002:a63:6383:: with SMTP id x125-v6mr3313148pgb.127.1530498953113;
-        Sun, 01 Jul 2018 19:35:53 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1192-169.members.linode.com. [45.79.93.169])
-        by smtp.gmail.com with ESMTPSA id v1-v6sm9338538pfg.101.2018.07.01.19.35.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Jul 2018 19:35:52 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 10:35:45 +0800
-From:   leo.yan@linaro.org
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Kim Phillips <kim.phillips@arm.com>
-Subject: Re: [PATCH v1 0/6] perf cs-etm: Fix tracing packet handling and
- minor refactoring
-Message-ID: <20180702023545.GA13629@leoy-ThinkPad-X240s>
-References: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
- <CANLsYkyxuz+tPrC7wb1omsw+qj=7ZB5t6FRbqZz54994g62q6g@mail.gmail.com>
- <20180619181943.GL20477@kernel.org>
+        Sun, 1 Jul 2018 22:43:49 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w622dkEq130820
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 02:43:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=xdjdWALLK0oyxEtJ/Nllig3o2f/wSY9YycgKHE+uFh4=;
+ b=FfXGFrpvrwEo6BI+Zlsf4D5elRDrIBC22Qn2PRhCpwnx8SCPEC5sBcwYvT1l8d+XXkwR
+ zh5h9SevBKGTvHJNLspSDlMeFpiC6OuOW6tiBDrQqHJLyTai1Ra5e8Tj4JIMGqKYzGyH
+ HErJmnG+ADBnSP8HnHxY4ubcbGzaMo+vHXoWpp5/QkQgC+9P9JD3MGwFygbhUtv9gLd9
+ HAj0R4SvtxxtCxs+J0QlVk5DvObhAjIUVN5IEGStJywoS6F6Eg8faoUnaZKpQQSv2ItB
+ rD8qKXz5vNMQld8hr0+eK2gRx/I0uHnnib8YAW0hz5zzW2avI99jOrXQJ4sfbqMvR10J wQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2jx1tntkua-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:43:48 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w622hkDf015342
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 02:43:46 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w622hkGO021913
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 02:43:46 GMT
+Received: from mail-oi0-f51.google.com (/209.85.218.51)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 01 Jul 2018 19:43:46 -0700
+Received: by mail-oi0-f51.google.com with SMTP id r16-v6so13121190oie.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Jul 2018 19:43:45 -0700 (PDT)
+X-Gm-Message-State: APt69E0R8STD1gSyHLrmeKlmCIvTWPfoY530TxpfgtErIZWNcqdzBAmq
+        bYe6nCywOnI5fW2IOQ/tgMVtZHBpG9zCEsbrHzU=
+X-Google-Smtp-Source: AAOMgpcrnSoQeAX7w4SAytAxbWugMh3KA3aGfcO564PQEff+IRtbMwegwWp8AVNuNpElkfsGLAy+8ueVxXgaGTA85YI=
+X-Received: by 2002:aca:e5d2:: with SMTP id c201-v6mr14549642oih.191.1530499425739;
+ Sun, 01 Jul 2018 19:43:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619181943.GL20477@kernel.org>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
+ <20180702020417.21281-2-pasha.tatashin@oracle.com> <20180702021121.GL3223@MiWiFi-R3L-srv>
+ <CAGM2rebY1_-3hvp_+kqF==nLawC0FN6Q1J5X5pm5qxHdDJzjiQ@mail.gmail.com> <20180702023130.GM3223@MiWiFi-R3L-srv>
+In-Reply-To: <20180702023130.GM3223@MiWiFi-R3L-srv>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Sun, 1 Jul 2018 22:43:09 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebUsJ2r-2F38Vv13zbaEPPgTn0w6H3j6fpg0WVa9wB6Uw@mail.gmail.com>
+Message-ID: <CAGM2rebUsJ2r-2F38Vv13zbaEPPgTn0w6H3j6fpg0WVa9wB6Uw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
+To:     bhe@redhat.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, osalvador@techadventures.net
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8941 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=869
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807020030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+On Sun, Jul 1, 2018 at 10:31 PM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 07/01/18 at 10:18pm, Pavel Tatashin wrote:
+> > > Here, I think it might be not right to jump to 'failed' directly if one
+> > > section of the node failed to populate memmap. I think the original code
+> > > is only skipping the section which memmap failed to populate by marking
+> > > it as not present with "ms->section_mem_map = 0".
+> > >
+> >
+> > Hi Baoquan,
+> >
+> > Thank you for a careful review. This is an intended change compared to
+> > the original code. Because we operate per-node now, if we fail to
+> > allocate a single section, in this node, it means we also will fail to
+> > allocate all the consequent sections in the same node and no need to
+> > check them anymore. In the original code we could not simply bailout,
+> > because we still might have valid entries in the following nodes.
+> > Similarly, sparse_init() will call sparse_init_nid() for the next node
+> > even if previous node failed to setup all the memory.
+>
+> Hmm, say the node we are handling is node5, and there are 100 sections.
+> If you allocate memmap for section at one time, you have succeeded to
+> handle for the first 99 sections, now the 100th failed, so you will mark
+> all sections on node5 as not present. And the allocation failure is only
+> for single section memmap allocation case.
 
-On Tue, Jun 19, 2018 at 03:19:43PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Jun 19, 2018 at 11:46:02AM -0600, Mathieu Poirier escreveu:
-> > On Sun, 17 Jun 2018 at 23:10, Leo Yan <leo.yan@linaro.org> wrote:
-> > >
-> > > Due the current code is missing to handle cs-etm start tracing packet
-> > > and CS_ETM_TRACE_ON packet, we fail to generate branch sample for them.
-> > >
-> > > This patch series is to fix cs-etm tracing packet handling:
-> > >
-> > > Patch 0001 is to add invalid address macro for readable coding;
-> > >
-> > > Patch 0002 is one minor fixing to return error code for instruction
-> > > sample failure;
-> > >
-> > > Patches 0003~0006 are fixing patches for start tracing packet
-> > > and CS_ETM_TRACE_ON packet.
-> > >
-> > > This patch series is applied on acme tree [1] on branch perf/core with
-> > > latest commit: e238cf2e3d2e ("perf intel-pt: Fix packet decoding of CYC
-> > > packets").  Also applied successfully this patch series on Linus tree
-> > > on 4.18-rc1.
-> > >
-> > > This patch series has been verified on Hikey620 platform with below two
-> > > commands:
-> > > perf script --itrace=i10000il128 -F cpu,event,ip,addr,sym -k ./vmlinux
-> > > perf script -F cpu,event,ip,addr,sym -k ./vmlinux
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-> > >
-> > >
-> > > Leo Yan (6):
-> > >   perf cs-etm: Introduce invalid address macro
-> > >   perf cs-etm: Bail out immediately for instruction sample failure
-> > >   perf cs-etm: Fix start tracing packet handling
-> > >   perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
-> > >   perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON
-> > >     packet
-> > >   perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
-> > >
-> > >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++--
-> > >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
-> > >  tools/perf/util/cs-etm.c                        | 71 +++++++++++++++++++++----
-> > >  3 files changed, 68 insertions(+), 14 deletions(-)
-> > 
-> > Good day Arnaldo,
-> > 
-> > I am good with this set:
-> > 
-> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > 
-> > Please consider for inclusion in your tree if you are satisfied with the work.
-> 
-> I'll take a look and get it into perf/core, now I'm concentrating on
-> perf/urgent work.
+No, unless I am missing something, that's not how code works:
 
-Gentle ping for this patch series.
+463                 if (!map) {
+464                         pr_err("%s: memory map backing failed.
+Some memory will not be available.",
+465                                __func__);
+466                         pnum_begin = pnum;
+467                         goto failed;
+468                 }
 
-I tested this patch series on perf/core branch with latest commit
-87b40003b17a ("perf tests: Check that complex event name is parsed
-correctly"), this patch series is still valid and can pass testing.
+476 failed:
+477         /* We failed to allocate, mark all the following pnums as
+not present */
+478         for_each_present_section_nr(pnum_begin, pnum) {
 
-Could you pick up them?  If you want me to resend this patch series,
-please let me know.
+We continue from the pnum that failed as we set pnum_begin to pnum,
+and mark all the consequent sections as not-present.
 
-Thanks,
-Leo Yan
+The only change compared to the original code is that once we found an
+empty pnum we stop checking the consequent pnums in this node, as we
+know they are empty as well, because there is no more memory in this
+node to allocate from.
+
+Pavel
