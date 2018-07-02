@@ -2,105 +2,92 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BE0C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BABC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A0925DA6
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A0925DA6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 116B125DAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116B125DAD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752387AbeGBNcu (ORCPT
+        id S1752431AbeGBNcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 09:32:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44648 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752381AbeGBNcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Jul 2018 09:32:50 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:40591 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752073AbeGBNcq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:32:46 -0400
-Received: by mail-ua0-f195.google.com with SMTP id j17-v6so10055008uap.7;
-        Mon, 02 Jul 2018 06:32:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LStrlzSrZhqKOAoi+lTr24WW4llQJPqpKFqLdezPjMg=;
-        b=OtT8i3inDuxcmh1aDLGiSw8UP8cmSo3dodky+Xy45cOAiA9UGgz+NMVfap3fPh6WwH
-         gkiCCgyS+r1ijJP1hoKqVaamh/bJPU2M9PNfhZ1eJrg74sNMe6gka4ti7+D9qVRZBbuv
-         tZ0PImiJXf5qaZymtSU2Q/isErP5eg0h5OpbaXxhHwpM9Npg2VOmpb/4UNGHfCrPJ/jp
-         u5YGsw/6yJtG2XCftqRtX7sGimIhOWfD0gwemokryGUxcRK0jYECNhndtm1Dix9I4YjO
-         lh7qZw3CBfPzi8lPk0EcyHT64052HW27ge46014LHeOdDBAy9OQk2j/kmKHtj8VtJVlC
-         qEdg==
-X-Gm-Message-State: APt69E06KUsDvZit2gWI6jaxPrM8tFxTsEaWJSMeYeC36wotunxOMkch
-        +flxesLjvah5+DxVcg+oA8j+MsDBdm44n2+jiS8=
-X-Google-Smtp-Source: AAOMgpfflNqlTgpkZ/oY/F8s4QNv+4v09N47+MiH8GVmtP0LW2lT3k8PdvUwaGB4JAcJES7Fy7O14I1Cnbm47wHMEiM=
-X-Received: by 2002:ab0:25d6:: with SMTP id y22-v6mr16901330uan.33.1530538365479;
- Mon, 02 Jul 2018 06:32:45 -0700 (PDT)
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ADEC1AE07;
+        Mon,  2 Jul 2018 13:32:49 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 15:32:47 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm: cma: honor __GFP_ZERO flag in cma_alloc()
+Message-ID: <20180702133247.GT19043@dhcp22.suse.cz>
+References: <CGME20180613085851eucas1p20337d050face8ff8ea87674e16a9ccd2@eucas1p2.samsung.com>
+ <20180613085851eucas1p20337d050face8ff8ea87674e16a9ccd2~3rI_9nj8b0455904559eucas1p2C@eucas1p2.samsung.com>
+ <20180613122359.GA8695@bombadil.infradead.org>
+ <20180613124001eucas1p2422f7916367ce19fecd40d6131990383~3uKFrT3ML1977219772eucas1p2G@eucas1p2.samsung.com>
+ <20180613125546.GB32016@infradead.org>
+ <20180613133913.GD20315@dhcp22.suse.cz>
+ <20180702132335eucas1p1323fbf51cd5e82a59939d72097acee04~9kAizDyji0466904669eucas1p1w@eucas1p1.samsung.com>
 MIME-Version: 1.0
-References: <1528310612-10158-1-git-send-email-clabbe@baylibre.com> <CAPDyKFoRUhwHk6=j0-scQa4W+nbnS_qXZbPUn0eTFm_3kqdwPQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFoRUhwHk6=j0-scQa4W+nbnS_qXZbPUn0eTFm_3kqdwPQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Jul 2018 15:32:34 +0200
-Message-ID: <CAMuHMdU709R3woOAvw7EH4=zGiBtezg0YeEer-4wG7pqo2SZBg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc should depend on COMMON_CLK
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Corentin Labbe <clabbe@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702132335eucas1p1323fbf51cd5e82a59939d72097acee04~9kAizDyji0466904669eucas1p1w@eucas1p1.samsung.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+On Mon 02-07-18 15:23:34, Marek Szyprowski wrote:
+> Hi Michal,
+> 
+> On 2018-06-13 15:39, Michal Hocko wrote:
+> > On Wed 13-06-18 05:55:46, Christoph Hellwig wrote:
+> >> On Wed, Jun 13, 2018 at 02:40:00PM +0200, Marek Szyprowski wrote:
+> >>> It is not only the matter of the spinlocks. GFP_ATOMIC is not supported
+> >>> by the
+> >>> memory compaction code, which is used in alloc_contig_range(). Right, this
+> >>> should be also noted in the documentation.
+> >> Documentation is good, asserts are better.  The code should reject any
+> >> flag not explicitly supported, or even better have its own flags type
+> >> with the few actually supported flags.
+> > Agreed. Is the cma allocator used for anything other than GFP_KERNEL
+> > btw.? If not then, shouldn't we simply drop the gfp argument altogether
+> > rather than give users a false hope for differen gfp modes that are not
+> > really supported and grow broken code?
+> 
+> Nope, all cma_alloc() callers are expected to use it with GFP_KERNEL gfp 
+> mask.
+> The only flag which is now checked is __GFP_NOWARN. I can change the 
+> function
+> signature of cma_alloc to:
+> struct page *cma_alloc(struct cma *cma, size_t count, unsigned int 
+> align, bool no_warn);
 
-On Mon, Jul 2, 2018 at 3:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 6 June 2018 at 20:43, Corentin Labbe <clabbe@baylibre.com> wrote:
-> > This patch fix the following build failure on m68k:
-> > ERROR: "clk_set_rate" [drivers/mmc/host/dw_mmc.ko] undefined!
-> >
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
->
-> Thanks, applied for next!
+Are there any __GFP_NOWARN users? I have quickly hit the indirection
+trap and searching for alloc callback didn't tell me really much.
 
-Please drop this patch, I posted proper fixes for this general issue in series
-"[PATCH 0/3] Legacy clock drivers: Normalize clk API"
-(https://lkml.org/lkml/2018/6/11/122).
+> What about clearing the allocated buffer? Should it be another bool
+> parameter, done unconditionally or moved to the callers?
 
-All fixes above are already in next-20180702.
-Thanks!
-
-> > ---
-> >  drivers/mmc/host/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> > index 0581c199c996..77d6ba090436 100644
-> > --- a/drivers/mmc/host/Kconfig
-> > +++ b/drivers/mmc/host/Kconfig
-> > @@ -666,7 +666,7 @@ config MMC_CAVIUM_THUNDERX
-> >
-> >  config MMC_DW
-> >         tristate "Synopsys DesignWare Memory Card Interface"
-> > -       depends on ARC || ARM || ARM64 || MIPS || COMPILE_TEST
-> > +       depends on COMMON_CLK && (ARC || ARM || ARM64 || MIPS || COMPILE_TEST)
-> >         help
-> >           This selects support for the Synopsys DesignWare Mobile Storage IP
-> >           block, this provides host support for SD and MMC interfaces, in both
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+That really depends on callers. I have no idea what they actually ask
+for.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Michal Hocko
+SUSE Labs
