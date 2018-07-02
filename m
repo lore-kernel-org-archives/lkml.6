@@ -2,130 +2,243 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E87C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39121C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1245F22B1E
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDFE8243FC
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 18:45:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVM6Ydo0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1245F22B1E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFzf3pGY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFE8243FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeGBSpk (ORCPT
+        id S1753367AbeGBSpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 14:45:40 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45500 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753099AbeGBSpi (ORCPT
+        Mon, 2 Jul 2018 14:45:50 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41552 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeGBSpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 14:45:38 -0400
-Received: by mail-pl0-f66.google.com with SMTP id bi1-v6so8341791plb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 11:45:37 -0700 (PDT)
+        Mon, 2 Jul 2018 14:45:47 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w8-v6so8358474ply.8;
+        Mon, 02 Jul 2018 11:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UWRQROmrjIciYLD3khEzuILTKLGlhBhHL79m00fYyg8=;
-        b=TVM6Ydo0GRGS/D/pwaKwpYJmgaUzU0u8I2LxXpvVv6lwiPb4/Yw5GB2jD6gQQP8QfT
-         4ZdINTnrV79FDs3GfqoFR2iR3pzhk2PdLP8EFNF/EGqxLEq2K1U/4yRbLO0IUY7swYzB
-         rvv7ipDlYxjdSYNA8Q3NSmq1+TechBnx9BWQM=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=R5gITDyKjHIcVf9ODycq5GIar2+xX43sCJn6NRzBzuo=;
+        b=dFzf3pGYv00NPCSKZpk/T2ReruSrNQq4EH16t1RUgn/KY224Na4JCUUGsmqTGiRvNT
+         A7rhvgTfEzNjDr9an44UXZM6HQsG9J3gpTn1kN+WNNIIolp5/6KIr5K7aMb8UbQhLlBO
+         tAk8bj1wQzuQcO0mHubMOs0dyHX6f+Eq5twdnWmMwHt7QfmcHVZsoiEVClxzkWPkml42
+         X9Hnx5gJC1gWiegMg9V+9PbsmYjDoT/UUtAZXlXvnmRlI1tYmgUVUEwpi9694pr7dN5i
+         JCWq1GN4fTDMASL97CGm4JMAJH/3mVDEzQJTN3NRcZppm30mDWATka000bLlZrkHkAXR
+         FOXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UWRQROmrjIciYLD3khEzuILTKLGlhBhHL79m00fYyg8=;
-        b=OqXdNVFsWlkviMvByXwQvxoiSkq3AP8MihUGBsuFG+/3gQZbtBBfvlBnXbAQwqCGWp
-         xOKkpYb3EQsKqir+AZjL4b5sVWrrD7TD4Xz5Z1kSXpIO8Vn4jdFmfPv8FYxyhuvB6EuB
-         GrAndZy8G6bnEzW3+0BerflRnbweE8eUqoYoNxgRcL/Y3aORZ1J51HJ8JRx6grmCMQp4
-         yMJEqf1gdtSxhAx2vZ5PX40JvxmouhdpmLNxqwxMheaIhQBTqvmRhLTlE9yzTuJ1UJZI
-         AqdqGWkqgvJRq3WYwDEl/FBVOvcIX+Yty2xSXxg4LDt0Xjv386UZCiLKkZUemvbY+4sl
-         uGwg==
-X-Gm-Message-State: APt69E1uU5B2exYN4wyvEo6aLLbrJUIq2Pb7tL1Sfq1k/Ohl/SolO3x3
-        6epKvETQi++is8qcdP/WxbgBOA==
-X-Google-Smtp-Source: ADUXVKLyENXgIyPIRDpivj/l5sXT0Okcu/UxAAXbLOXvXy8CJEms6sjuPlg35YTLlQOH+uDm5dd++w==
-X-Received: by 2002:a17:902:a508:: with SMTP id s8-v6mr27346221plq.223.1530557137431;
-        Mon, 02 Jul 2018 11:45:37 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z66-v6sm5242275pfi.150.2018.07.02.11.45.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 11:45:36 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 11:48:06 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/6] dt: qcom: 8996: thermal: Move to DT initialisation
-Message-ID: <20180702184806.GA2050@tuxbook-pro>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <80e54ddfa672ae05db24a90c5f5463fc7fcbec46.1530533998.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=R5gITDyKjHIcVf9ODycq5GIar2+xX43sCJn6NRzBzuo=;
+        b=RxgbYiUWwE4MJzjDjwID1+UiVWN3l3dl/BTfJMa3kYMU9w38+x8uyH+CCnPjUF2lCX
+         q4pRzz0BPv/fFzOG28hhyZD4t/wGT8D0Xu5t0Or7PNC06/t9dXF2Fy6e1I/OOZ9wXs2W
+         uOHLsVsOMN7RAddelD0Q67/IhKRl56Tjg4O0gnjB0z2Qa1aRLUX1H/+Fu0kNZNfyzNjf
+         v1PEq/rCLWJ80u96UxjPG5S0nor4BaMzv6Bg9pMhF9P4agM/LXd5U1LueZwnI89ShB4i
+         lnKTIJf/zq67xR4n7OyFJkvZotGDxZy2zmiP82irkjAV/qIoaen1zG+nuVKj9D1cYzR6
+         U8FQ==
+X-Gm-Message-State: APt69E00Oul7AoET0GrBnPXkZ9e5mq1qQmWM2+HnrLWoUzRSbQjivdb0
+        UC5BnwwjhQnt4SBzkvnc5bM=
+X-Google-Smtp-Source: ADUXVKJtrIhsfgjS9wdOAsIzIE0QJsODbDppOWuoW2FCOzO0r6eRWSUQOvlFvWQThFKHIfxsNb56dg==
+X-Received: by 2002:a17:902:b40f:: with SMTP id x15-v6mr27220990plr.270.1530557147365;
+        Mon, 02 Jul 2018 11:45:47 -0700 (PDT)
+Received: from JF-EN-C02V905BHTDF.tld ([216.23.175.59])
+        by smtp.gmail.com with ESMTPSA id f10-v6sm21961197pgr.30.2018.07.02.11.45.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 11:45:46 -0700 (PDT)
+Subject: Re: [PATCH v5 1/8] security: define new LSM hook named
+ security_kernel_load_data
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <64f467a5-e907-ee3e-495b-b2c731715037@gmail.com>
+Date:   Mon, 2 Jul 2018 11:45:44 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80e54ddfa672ae05db24a90c5f5463fc7fcbec46.1530533998.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1530542283-26145-2-git-send-email-zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02 Jul 05:44 PDT 2018, Amit Kucheria wrote:
 
-> We also split up the regmap address space into two, one for the TM
-> registers, the other for the SROT registers. This was required to deal with
-> different address offsets for the TM and SROT registers across different
-> SoC families.
-> 
-> Since tsens-common.c/init_common() currently only registers one address
-> space, the order is important (TM before SROT). This is OK since the code
-> doesn't really use the SROT functionality yet.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On 7/2/18 7:37 AM, Mimi Zohar wrote:
+> Differentiate between the kernel reading a file from the kernel loading
+> data provided by userspace.  This patch defines a new LSM hook named
+> security_kernel_load_data.
 
-Regards,
-Bjorn
+If this patch series is re-done, can we tweak the description here 
+please?  From what I understood of the code in this patch, I'd tweak it as:
 
+"Differentiate between the kernel reading a file specified by userspace 
+and the kernel loading a block of data provided by userspace.  This 
+patch defines a new LSM hook named security_kernel_load_data()."
+
+ From the description, I got a tad confused if the the kernel reading a file was also provided by userspace (I know it may be 2nd-nature to people on this list, I'm still learning this kernel module).
+
+Thanks,
+Jay
+
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+>
 > ---
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 8c7f9ca..6c8a857 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -461,7 +461,17 @@
->  
->  		tsens0: thermal-sensor@4a8000 {
->  			compatible = "qcom,msm8996-tsens";
-> -			reg = <0x4a8000 0x2000>;
-> +			reg = <0x4a9000 0x1000>, /* TM */
-> +			      <0x4a8000 0x1000>; /* SROT */
-> +			#qcom,sensors = <13>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
+> Changelog v5:
+> - Share the kernel_load_data_id and kernel_read_file_id values,
+> simplifying Loadpin's and other LSMs calling one LSM hook from the
+> other.
+>
+> Changelog v4:
+> - Define new LSM hook named security_kernel_load_data.
+>
+> Changelog v3:
+> - Rename security_kernel_read_file to security_kernel_read_data().
+>
+> Changelog v2:
+> - Define a generic wrapper named security_kernel_read_blob() for
+> security_kernel_read_file().
+>
+> Changelog v1:
+> - Define and call security_kexec_load(), a wrapper for
+> security_kernel_read_file().
+>
+>   include/linux/lsm_hooks.h |  6 ++++++
+>   include/linux/security.h  | 27 +++++++++++++++++++++++++++
+>   security/security.c       |  5 +++++
+>   3 files changed, 38 insertions(+)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 8f1131c8dd54..a08bc2587b96 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -576,6 +576,10 @@
+>    *	userspace to load a kernel module with the given name.
+>    *	@kmod_name name of the module requested by the kernel
+>    *	Return 0 if successful.
+> + * @kernel_load_data:
+> + *	Load data provided by userspace.
+> + *	@id kernel load data identifier
+> + *	Return 0 if permission is granted.
+>    * @kernel_read_file:
+>    *	Read a file specified by userspace.
+>    *	@file contains the file structure pointing to the file being read
+> @@ -1582,6 +1586,7 @@ union security_list_options {
+>   	int (*kernel_act_as)(struct cred *new, u32 secid);
+>   	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+>   	int (*kernel_module_request)(char *kmod_name);
+> +	int (*kernel_load_data)(enum kernel_load_data_id id);
+>   	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
+>   	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
+>   				     enum kernel_read_file_id id);
+> @@ -1872,6 +1877,7 @@ struct security_hook_heads {
+>   	struct hlist_head cred_getsecid;
+>   	struct hlist_head kernel_act_as;
+>   	struct hlist_head kernel_create_files_as;
+> +	struct hlist_head kernel_load_data;
+>   	struct hlist_head kernel_read_file;
+>   	struct hlist_head kernel_post_read_file;
+>   	struct hlist_head kernel_module_request;
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..3410acfe139c 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
+>   typedef int (*initxattrs) (struct inode *inode,
+>   			   const struct xattr *xattr_array, void *fs_data);
+>   
 > +
-> +		tsens1: thermal-sensor@4ac000 {
-> +			compatible = "qcom,msm8996-tsens";
-> +			reg = <0x4ad000 0x1000>, /* TM */
-> +			      <0x4ac000 0x1000>; /* SROT */
-> +			#qcom,sensors = <8>;
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> -- 
-> 2.7.4
-> 
+> +/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
+> +#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
+> +#define __data_id_stringify(dummy, str) #str,
+> +
+> +enum kernel_load_data_id {
+> +	__kernel_read_file_id(__data_id_enumify)
+> +};
+> +
+> +static const char * const kernel_load_data_str[] = {
+> +	__kernel_read_file_id(__data_id_stringify)
+> +};
+> +
+> +static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+> +{
+> +	if ((unsigned)id >= LOADING_MAX_ID)
+> +		return kernel_load_data_str[LOADING_UNKNOWN];
+> +
+> +	return kernel_load_data_str[id];
+> +}
+> +
+>   #ifdef CONFIG_SECURITY
+>   
+>   struct security_mnt_opts {
+> @@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
+>   int security_kernel_act_as(struct cred *new, u32 secid);
+>   int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+>   int security_kernel_module_request(char *kmod_name);
+> +int security_kernel_load_data(enum kernel_load_data_id id);
+>   int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
+>   int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>   				   enum kernel_read_file_id id);
+> @@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+>   	return 0;
+>   }
+>   
+> +static inline int security_kernel_load_data(enum kernel_load_data_id id)
+> +{
+> +	return 0;
+> +}
+> +
+>   static inline int security_kernel_read_file(struct file *file,
+>   					    enum kernel_read_file_id id)
+>   {
+> diff --git a/security/security.c b/security/security.c
+> index e7d76a8000a5..05fe5b1932d7 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+>   }
+>   EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+>   
+> +int security_kernel_load_data(enum kernel_load_data_id id)
+> +{
+> +	return call_int_hook(kernel_load_data, 0, id);
+> +}
+> +
+>   int security_task_fix_setuid(struct cred *new, const struct cred *old,
+>   			     int flags)
+>   {
+
