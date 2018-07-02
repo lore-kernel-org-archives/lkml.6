@@ -2,128 +2,127 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAF8C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8080EC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9F525116
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 380E525C01
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SnPzNyH8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9F525116
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RV2Ki7kE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 380E525C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeGBUvv (ORCPT
+        id S1753397AbeGBUwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 16:51:51 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34987 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753312AbeGBUvs (ORCPT
+        Mon, 2 Jul 2018 16:52:51 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45730 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752636AbeGBUws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 16:51:48 -0400
-Received: by mail-pg0-f67.google.com with SMTP id i7-v6so7647519pgp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 13:51:48 -0700 (PDT)
+        Mon, 2 Jul 2018 16:52:48 -0400
+Received: by mail-io0-f196.google.com with SMTP id l25-v6so15861896ioh.12;
+        Mon, 02 Jul 2018 13:52:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nc3ThZ/dLdj8M/tNkrs/elT1kRl3be9boQ6OKmSY3pg=;
-        b=SnPzNyH8J7DGZXUFiFRDhXRI+sVpTePWu58vZyt2itChfPfjCeAAxJzoYH15r/KZ9Q
-         Ad8Euda5vP+Dfok4ZPUVGC17lakTVADZUV+Cx/LSjuhour5S9WiSi4IPRCHQXsId/vxD
-         qyPAzWQdx9N6hHYVjUe3TrTyoJvIFCMx1ry1w=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NGrd6unPpJVY1IWOm7oS5EFzFdLQA69N/5PjRQVodAg=;
+        b=RV2Ki7kEuiqhJDD9JVDjxLKVGdrzSVUWI7iT8mapkrMQBqGLu9PRy9tHQ7MCm4If++
+         nulTvZkbgFLEYfEpN0uNLgp8wEvoxzCCZW03SnGMKO2uoFagE+APtdqDwMvclzyY/3BU
+         bCCP5X8zYAbbz2TGdI2NqewtvhynYfxb/xsX4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nc3ThZ/dLdj8M/tNkrs/elT1kRl3be9boQ6OKmSY3pg=;
-        b=jHfMI3ZfNGibF9I9Ol0i6vHZB7uqakEMg1cswk/j5Cb4wefNj73ypoR01vWXrA4MjW
-         F3slF/JA0iabj8Gti2y/kUK7ph8GQcy1tkKc1lTVCfDpFmXkiBbF16o7mE+LiiNgigKy
-         YbL67PP3bJibNM2NKTotM7UmnqWiHlnGzCKvka9qLgsao5buZ8hI3Fiy5tlTwM4h5Y34
-         Z2yOqmxy8YzNEeIq9/nXEKy+MIJ8cnuNis2rPnk0mmZhHZzGZNQHBGzu2kFKM8O1acNX
-         Ekg8OLdgxlumSpkbYVD4O5v+gIdWszjjc6nGQBuVjri7WsGsBdS3uh+S/DaOB1QeySzA
-         Sc5g==
-X-Gm-Message-State: APt69E36tltxw00z6h7dEjYBxjW8iFFdfiqwAhR0gydkHR1DLmbO4Ez6
-        O15Zyf+DLzxpPBApfd8JjFxDsg==
-X-Google-Smtp-Source: ADUXVKJuYyPo1XBWAiSBqOFxSfOZUCac2vCw5Pkh4enPpBrVQL8uQ2CCiblW2oULTp7hDh+W6amDkA==
-X-Received: by 2002:a63:980a:: with SMTP id q10-v6mr22653365pgd.50.1530564707903;
-        Mon, 02 Jul 2018 13:51:47 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm22140112pgr.30.2018.07.02.13.51.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 13:51:47 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 13:51:46 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NGrd6unPpJVY1IWOm7oS5EFzFdLQA69N/5PjRQVodAg=;
+        b=F6V5attyN110Zfs9dQsv+zTiI1gRziky02FuwlKXt/L2JKYVqabvB959zmWji2Go44
+         Kab3kC8evBHmI8lV4T3Npc6Om2Hai56ugSwkEP/Xk0aqPwR3pbC8Sa+sOuo178oOBDUY
+         iTuJtO0Fww+tgJjuRQb9raW+QQUMFgpxOU97L1dUORziKsRcnEM6LjLfudRXSTa4BIVN
+         PD45uoBP/X+kygNQSMBgugRPX+2POCroOKUcijvyohe8vXjEiXMPifjBJn0BSeGhSE1a
+         ijnLFZOYxppUYuraLnMcYqLiGld0xBvyuB1RVLjvG03CCFlbLU7QnGR3qNMZrILOxj+b
+         VWSw==
+X-Gm-Message-State: APt69E0ysTqgAGT3B3POIQr/fbrki4K9OcU+TqR0oTWr6f1VEuoG/KPx
+        WR8jLNZlZejUia05wqgG/E495uzAzxMiSFR6kV0=
+X-Google-Smtp-Source: AAOMgpf+QgTQWG5VGxupDFVgkIwmqo27K1Rrn4JExIp0+jvb/2TnScBtpJoWBesB6ffPpOoiqTbm9nxW5QlENpupzoE=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr23296102ion.259.1530564767841;
+ Mon, 02 Jul 2018 13:52:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180702204058.819-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20180702204058.819-1-mathieu.desnoyers@efficios.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Jul 2018 13:52:36 -0700
+Message-ID: <CA+55aFzH+4=Aeh_P1ptFn5nVm7yFuEGpxUJ0kNB-sUHVOv8rcw@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 1/2] rseq: use __u64 for rseq_cs fields,
+ validate abort_ip < TASK_SIZE
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King - ARM Linux <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: pm8998: Add spmi-temp-alarm node
-Message-ID: <20180702205146.GA129942@google.com>
-References: <20180702181005.18247-1-mka@chromium.org>
- <CAD=FV=VSnKWqeRj-Kr9tkzeuqxm86Ex6E0uT6Qka=EqjurizNg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=VSnKWqeRj-Kr9tkzeuqxm86Ex6E0uT6Qka=EqjurizNg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 01:12:01PM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Jul 2, 2018 at 11:10 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> > This adds the spmi-temp-alarm node to pm8998 based on the examples in the
-> > bindings.
-> >
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > Changes in v2:
-> > - none
-> >
-> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > index 92bed1e7d4bb..2f4989e7ef68 100644
-> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > @@ -11,6 +11,13 @@
-> >                 #address-cells = <1>;
-> >                 #size-cells = <0>;
-> >
-> > +               pm8998_temp: qcom,temp-alarm@2400 {
-> 
-> Remove "qcom," from the node name (AKA please change to
-> "temp-alarm@2400").  Someone internal in Qualcomm seems to have
-> started this trend so you see it on all downstream kernels, but
-> upstream device tree isn't supposed to have it.
+On Mon, Jul 2, 2018 at 1:41 PM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> -       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
+> +       if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)) ||
+> +           rseq_cs->abort_ip >= TASK_SIZE)
+>                 return -EFAULT;
 
-Ok, thanks
+I think the abort_ip check should have the same error value as the
+other sanity checks, ie just be of this format:
 
-> > +                       compatible = "qcom,spmi-temp-alarm";
-> > +                       reg = <0x2400 0x100>;
-> 
-> Why are there two numbers for the "reg"?  Should just be 0x2400.
+>         if (rseq_cs->version > 0)
+>                 return -EINVAL;
 
-From /Documentation/devicetree/bindings/thermal/qcom-spmi-temp-alarm.txt:
+also, I think you should check start_ip to be consistent. You kind of
+accidentally do it with the check for
 
-Required properties:
-...
-- reg:             Specifies the SPMI address and length of the controller's
-                   registers.
+        if (rseq_cs->abort_ip - rseq_cs->start_ip - rseq_cs->post_commit_offset)
+
+but honestly, that has underflow issues already, so I think you want
+to basically make the check be
+
+        if (rseq_cs->abort_ip >= TASK_SIZE)
+                return -EINVAL;
+
+        if (rseq_cs->start_ip >= rseq_cs->abort_ip)
+                return -EINVAL;
+
+which takes care of checkint  start_ip, and also the underflow for the
+post_commit_offset check.
+
+If somebody is depending on negative offsets, then that
+post_commit_offset logic is already wrong.
+
+> +       usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
+>         ret = get_user(sig, usig);
+
+That can underflow too, but I guess we can just rely on get_user()
+getting it right.
+
+               Linus
