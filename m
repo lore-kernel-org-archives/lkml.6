@@ -2,160 +2,123 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB75EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4648CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 772EC20849
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772EC20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id F35DB24A5D
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 09:23:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ULoY+Qaj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35DB24A5D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933907AbeGBJXi convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 05:23:38 -0400
-Received: from smtp-out6.electric.net ([192.162.217.185]:63645 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933829AbeGBJXe (ORCPT
+        id S933952AbeGBJXt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 05:23:49 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35860 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933829AbeGBJXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 05:23:34 -0400
-Received: from 1fZv3T-0000gQ-Uu by out6a.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fZv3U-0000my-VJ; Mon, 02 Jul 2018 02:23:32 -0700
-Received: by emcmailer; Mon, 02 Jul 2018 02:23:32 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6a.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fZv3T-0000gQ-Uu; Mon, 02 Jul 2018 02:23:31 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 2 Jul 2018 10:25:11 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 2 Jul 2018 10:25:11 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Taeung Song' <treeze.taeung@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-CC:     Teng Qin <qinteng@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/4] samples/bpf: Check the error of write() and read()
-Thread-Topic: [PATCH 3/4] samples/bpf: Check the error of write() and read()
-Thread-Index: AQHUEeXT5Bh7AKk1jEeTWRWtKGH1caR7qFeA
-Date:   Mon, 2 Jul 2018 09:25:11 +0000
-Message-ID: <c8fd15978e6642158c7e64190e4dee13@AcuMS.aculab.com>
-References: <1530522893-8961-1-git-send-email-treeze.taeung@gmail.com>
- <1530522893-8961-4-git-send-email-treeze.taeung@gmail.com>
-In-Reply-To: <1530522893-8961-4-git-send-email-treeze.taeung@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 2 Jul 2018 05:23:42 -0400
+Received: by mail-yb0-f195.google.com with SMTP id s1-v6so4854629ybk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2/EaDmROs0e3m2MKWJzIWMnwLyCQ7ElXJjfcbhG3Dko=;
+        b=ULoY+QajKjjZYYNEOg/eWQxzpRs8ZT3JTtjjFHC6zvuhfGSifFN9i51qvC2q0/+Rnp
+         QVBNGDUeNck3NoHhdVz8fGzlQXGEJvN8UihpuBjBiXmKUxxAPJKdvIED3LMhx6emO5K1
+         aJjmG7u005TzSY+qywZPP1u15+4oJXPzOM1F0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2/EaDmROs0e3m2MKWJzIWMnwLyCQ7ElXJjfcbhG3Dko=;
+        b=jONOtzGAxCwquT2Ta2Ucml++Ane+RW3Zx7myS3i2S0ykfrE1MXsYNy3Z2eI9QniJex
+         mOfWhYKOkw0RWb+TVuEQU3y2VzqmTECWxWXYC1OdUo/YF9dldj0OoNxDEBm/HOQ6FAkX
+         CstSUo2KsZW/v3M2+TqKnYCVbiCflIsUMCahFRWQZ15UC1VCEEGfmtdnexeP+KeZhLvd
+         p8bfiuxg1W48SkTmoGN6HxqGc6DFt2ZW2heN3IAOV3SaqLGDTm9L6j89Pfb1KfnaqhzH
+         zlp80kf7dsXaUUxVJncPDm9btuzcnuYBAp5j9LLeBsX6QFyuNPWxRPxa4rTVfg08yYLN
+         NlSA==
+X-Gm-Message-State: APt69E1lGXaO4+Lu8Fu94ecLjOVpdZ8LAZfBa7maTbowugXh9LtzML6a
+        GsDTT3JB5Gr7kSdsleGCwK86SIk//3c=
+X-Google-Smtp-Source: AAOMgpeld1cRh+auKIm5EcXnuSXqqrTUlzIqCx1Ze4tEZnIbSpD/c82Zr1diCbyitYQLa/HsM5+TmA==
+X-Received: by 2002:a25:84d0:: with SMTP id x16-v6mr10786193ybm.307.1530523421568;
+        Mon, 02 Jul 2018 02:23:41 -0700 (PDT)
+Received: from mail-yb0-f175.google.com (mail-yb0-f175.google.com. [209.85.213.175])
+        by smtp.gmail.com with ESMTPSA id p124-v6sm4521058ywf.85.2018.07.02.02.23.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 02:23:40 -0700 (PDT)
+Received: by mail-yb0-f175.google.com with SMTP id e9-v6so4850737ybq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 02:23:40 -0700 (PDT)
+X-Received: by 2002:a25:207:: with SMTP id 7-v6mr2365584ybc.7.1530523419960;
+ Mon, 02 Jul 2018 02:23:39 -0700 (PDT)
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+References: <20180515075859.17217-1-stanimir.varbanov@linaro.org>
+ <20180515075859.17217-13-stanimir.varbanov@linaro.org> <CAAFQd5Bj73zyi0vsaSJ2sam2TGm7agshXg+n+sa2c7HoqLRGUw@mail.gmail.com>
+ <13c7aec1-2bb9-f449-6b7d-7ec93be4ec71@linaro.org> <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
+In-Reply-To: <CAAFQd5B8UVk3n7m+MV3t68vrDhtd9Hi_CnuYS-4QFaVdByOTyA@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 2 Jul 2018 18:23:28 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
+Message-ID: <CAAFQd5CddQBo2JRaab0uWdtkmetd=zDzVt=rM+vJZQ7DM-kLGA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/29] venus: add common capability parser
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taeung Song
-> Sent: 02 July 2018 10:15
-> test_task_rename() and test_urandom_read()
-> can be failed during write() and read(),
-> So check the result of them.
-> 
-> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-> ---
->  samples/bpf/test_overhead_user.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/samples/bpf/test_overhead_user.c b/samples/bpf/test_overhead_user.c
-> index 6caf47a..8a88d9c 100644
-> --- a/samples/bpf/test_overhead_user.c
-> +++ b/samples/bpf/test_overhead_user.c
-> @@ -6,6 +6,7 @@
->   */
->  #define _GNU_SOURCE
->  #include <sched.h>
-> +#include <errno.h>
->  #include <stdio.h>
->  #include <sys/types.h>
->  #include <asm/unistd.h>
-> @@ -44,8 +45,12 @@ static void test_task_rename(int cpu)
->  		exit(1);
->  	}
->  	start_time = time_get_ns();
-> -	for (i = 0; i < MAX_CNT; i++)
-> -		write(fd, buf, sizeof(buf));
-> +	for (i = 0; i < MAX_CNT; i++) {
-> +		if (write(fd, buf, sizeof(buf)) < 0) {
-> +			printf("task rename failed: %s\n", strerror(errno));
-> +			break;
+On Thu, May 31, 2018 at 4:06 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> On Thu, May 31, 2018 at 1:21 AM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
+> >
+> > Hi Tomasz,
+> >
+> > On 05/24/2018 05:16 PM, Tomasz Figa wrote:
+> > > Hi Stanimir,
+> > >
+> > > On Tue, May 15, 2018 at 5:08 PM Stanimir Varbanov <
+[snip]
+> > >
+> > >> +                       break;
+> > >> +               }
+> > >> +
+> > >> +               word++;
+> > >> +               words_count--;
+> > >
+> > > If data is at |word + 1|, shouldn=E2=80=99t we increment |word| by |1=
+ + |data
+> > > size||?
+> >
+> > yes, that could be possible but the firmware packets are with variable
+> > data length and don't want to make the code so complex.
+> >
+> > The idea is to search for HFI_PROPERTY_PARAM* key numbers. Yes it is no=
+t
+> > optimal but this enumeration is happen only once during driver probe.
+> >
+>
+> Hmm, do we have a guarantee that we will never find a value that
+> matches HFI_PROPERTY_PARAM*, but would be actually just some data
+> inside the payload?
 
-I'm not sure 'break' generates sensible output.
+Ping?
 
-> +		}
-> +	}
-
-What about partial writes??
-
->  	printf("task_rename:%d: %lld events per sec\n",
->  	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
->  	close(fd);
-> @@ -55,7 +60,7 @@ static void test_urandom_read(int cpu)
->  {
->  	__u64 start_time;
->  	char buf[4];
-> -	int i, fd;
-> +	int i, fd, err = 0;
-> 
->  	fd = open("/dev/urandom", O_RDONLY);
->  	if (fd < 0) {
-> @@ -63,8 +68,13 @@ static void test_urandom_read(int cpu)
->  		exit(1);
->  	}
->  	start_time = time_get_ns();
-> -	for (i = 0; i < MAX_CNT; i++)
-> -		read(fd, buf, sizeof(buf));
-> +	for (i = 0; i < MAX_CNT; i++) {
-> +		err = read(fd, buf, sizeof(buf));
-> +		if (err < 0 || err >= sizeof(buf)) {
-
-Overlong reads indicate that something is seriously awry.
-Short reads are valid - but maybe not expected.
-> +			printf("failed to read from /dev/urandom: %s\n", strerror(errno));
-
-
-strerror() won't give anything sensible unless err == -1;
-You probably want to include the loop count.
-
-> +			break;
-
-The summary print will be gibberish after break.
-
-> +		}
-> +	}
->  	printf("urandom_read:%d: %lld events per sec\n",
->  	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
->  	close(fd);
-> --
-> 2.7.4
-
+Best regards,
+Tomasz
