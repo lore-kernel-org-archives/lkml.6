@@ -2,95 +2,115 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A36DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F98C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C052722ACD
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C052722ACD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B37824617
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 21:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="heB/eDuj";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pw12lfeB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B37824617
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753076AbeGBVFO (ORCPT
+        id S1753274AbeGBVFl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 17:05:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752391AbeGBVFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 17:05:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DFEA281A4EB9;
-        Mon,  2 Jul 2018 21:05:12 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 567C12026D5B;
-        Mon,  2 Jul 2018 21:05:11 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Kees Cook <keescook@chromium.org>,
-        =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jschoenh@amazon.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] video/console/vgacon: Print big fat warning with nomodeset
-Date:   Mon,  2 Jul 2018 17:04:40 -0400
-Message-Id: <20180702210442.18648-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 21:05:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 02 Jul 2018 21:05:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Mon, 2 Jul 2018 17:05:41 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:35855 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbeGBVFk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 17:05:40 -0400
+Received: by mail-yw0-f194.google.com with SMTP id t198-v6so7155898ywc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 14:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
+        b=heB/eDuj6A4XVaCgVK1aRorFr7PFPsPI8yaNJl0m467I+TsKAwqQHBt4Ab1Ou8wV52
+         Nkt50fr//twXHFrKKBzABTfsWyuV7hbcZFo/rkTe+XaeHKC+Z/BId7/yr5/hY2c05ANr
+         FYMDni5NSHBGZJG3c9h4kM/NKLx8+VvUoPH9iHwNDh5yc5NYvB8fzRKNZeHaqRw8o1JR
+         iBV9ZF5JRIuHLs9p1loW5ONdUQI/6QPKV4ZsGyrKIWE4W1tM3hriSRVCyYb9x6IRiWPY
+         7vV1OVdH/Il819Tn8nyQa/MnuavLuF5yLGTObKJ+XbKmVwjhmB6aYvpuTFuWhhpnoPmR
+         2PUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
+        b=Pw12lfeBdwLEfyyMKjI6JMNfqZcv/98mCTGeJn+xOdZVaEjXHlo/tfj8ozQA7iEvWW
+         74ja1pLd3HDrYpjgz8YySv0hmrGi1tAbIWV0wP+0HJDfywRubbO7mjEhdOWBsZUclG0w
+         5m8ou0QK+5N5k6ElQdGBDM1hqymUrUHX9FTaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=NTHeU/zpbRRMcJeZOFAppkjexaXF5KDm1Xpl4agsF9I=;
+        b=pYGGcvp1SkZfuYnbimkFTdFWOu1zirB6KbJOg5KSkKQpIY5bVZsKUmVVQGEfbBcP39
+         gvsE/wksVzdcrwhLf6rogB0Cug+ihSDlUXzuN1P27Km75TnI/SSYjkgd0Dd6C/R8C0XH
+         unI/3UcI91iz4+8Me3uosdg9IEmfzeE3G92xBd/6EMF88YSvoKkSDnW3Rd3QtiYe/duP
+         DkCQeCpOURqY5jjT5kkRAn7gW+aQPF/RmEMWNJZRDydRgnmU9OrTSAg5UZJNtNQBdAOD
+         hkwOn3ptA7NSUADMtyTe4wI0wVAg7sLFvkIDylEKJcy8zPzJBulSz0FNP1iQtuTKAQ/j
+         rj8Q==
+X-Gm-Message-State: APt69E3Dgx/NlKQwQr0pAATxJK7IrlGXANza2hJab1RmX+iUxNVdvRCG
+        BxY1Rx3fpuGkwGLtAn9WqDtqf/rXhR/Xv0LNNDMB5A==
+X-Google-Smtp-Source: AAOMgpeLh5YzRM7zbY+q+jmAPpS5jDY7L5qqTFCruI1H9w+IwwsQSiUEGgJBLA2mLQ212EGbYdzR4vN0PbkIlouULoQ=
+X-Received: by 2002:a81:4a05:: with SMTP id x5-v6mr13890620ywa.116.1530565539133;
+ Mon, 02 Jul 2018 14:05:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 14:05:38 -0700 (PDT)
+In-Reply-To: <20180702194505.28355-1-eric@anholt.net>
+References: <20180629184449.GA37304@beast> <20180702194505.28355-1-eric@anholt.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 2 Jul 2018 14:05:38 -0700
+X-Google-Sender-Auth: XeubM4mVAeIikiijOwxCr3OKBBA
+Message-ID: <CAGXu5jLqkdSYd4MWPm9v49U+6FvgfMLtG1Vz3SUBR999vHshHQ@mail.gmail.com>
+Subject: Re: [PATCH] fixup! firmware: raspberrypi: Remove VLA usage
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's been a pretty good while since kernel modesetting was introduced.
-It has almost entirely replaced previous solutions which required
-userspace modesetting, and I can't even recall any drivers off the top
-of my head for modern day hardware that don't only support one or the
-other. Even nvidia's ugly blob does not require the use of nomodeset,
-and only requires that nouveau be blacklisted.
+On Mon, Jul 2, 2018 at 12:45 PM, Eric Anholt <eric@anholt.net> wrote:
+> Kees - with this fix to your patch, the kernel boots again (otherwise,
+> the FW would try to parse the uninitialized bits of stack and throw
+> errors).  If you're good with me squashing this in, I'll do so and
+> send it to -next.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  drivers/firmware/raspberrypi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/raspberrypi.c b/drivers/firmware/raspberrypi.c
+> index b80f15214b73..a200a2174611 100644
+> --- a/drivers/firmware/raspberrypi.c
+> +++ b/drivers/firmware/raspberrypi.c
+> @@ -162,7 +162,7 @@ int rpi_firmware_property(struct rpi_firmware *fw,
+>         memcpy(data + sizeof(struct rpi_firmware_property_tag_header),
+>                tag_data, buf_size);
+>
+> -       ret = rpi_firmware_property_list(fw, &data, sizeof(data));
+> +       ret = rpi_firmware_property_list(fw, &data, buf_size + sizeof(*header));
+>         memcpy(tag_data,
+>                data + sizeof(struct rpi_firmware_property_tag_header),
+>                buf_size);
 
-Effectively, the only thing nomodeset does in the year 2018 is disable
-your graphics drivers. Since VESA is a thing, this will give many users
-the false impression that they've actually fixed an issue they were
-having with their machine simply because the laptop will boot up to a
-degraded GUI. This of course, is never actually the case.
+Eek! Yes, thank you. Yeah, please feel free to squash. Thanks for testing!
 
-Things get even worse when you consider that there's still an enormous
-amount of tutorials users find on the internet that still suggest adding
-nomodeset, along with various users who have been around long enough to
-still suggest it.
+-Kees
 
-There really isn't any legitimate reason I can see for this to be an
-option that's used by anyone else other then developers, or properly
-informed users. So, let's end the confusion and start printing warnings
-whenever it's enabled.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/video/console/vgacon.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgacon.c
-index f09e17b60e45..09731b2f6815 100644
---- a/drivers/video/console/vgacon.c
-+++ b/drivers/video/console/vgacon.c
-@@ -112,6 +112,11 @@ EXPORT_SYMBOL(vgacon_text_force);
- static int __init text_mode(char *str)
- {
- 	vgacon_text_mode_force = true;
-+
-+	pr_warning("You have booted with nomodeset. This means your GPU drivers are DISABLED\n");
-+	pr_warning("Any video related functionality will be severely degraded, and you may not even be able to suspend the system properly\n");
-+	pr_warning("Unless you actually understand what nomodeset does, you should reboot without enabling it\n");
-+
- 	return 1;
- }
- 
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
