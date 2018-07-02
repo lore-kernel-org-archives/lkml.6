@@ -2,108 +2,77 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD28C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44781C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DDF2476F
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:01:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DDF2476F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 06DBF2476F
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06DBF2476F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753462AbeGBTB2 (ORCPT
+        id S1753496AbeGBTBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:01:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60249 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753312AbeGBTB1 (ORCPT
+        Mon, 2 Jul 2018 15:01:36 -0400
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:35584 "EHLO
+        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753312AbeGBTBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:01:27 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 597C68051E; Mon,  2 Jul 2018 21:01:24 +0200 (CEST)
-Date:   Mon, 2 Jul 2018 21:01:23 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        alan@linux.intel.com, Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
-Message-ID: <20180702190123.GA30798@amd>
-References: <20180601082259.17563-1-johan@kernel.org>
- <20180628120103.GA28131@kroah.com>
- <20180629094607.GC31718@amd>
- <20180629182600.GA17562@kroah.com>
+        Mon, 2 Jul 2018 15:01:34 -0400
+Received: by mail-pf0-f173.google.com with SMTP id a24-v6so4271413pfo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 12:01:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fMZiRr31kIxQgnBfAWaWt6gqSFblcyyvArJVX4D+c6U=;
+        b=YIopOhs+FmuO1TH/e0TuR7taqwSI60O+dtvImiK7M3Z0GZp6vEGEW5l7s2Y2Dca4x3
+         xsdD7WiJyRFWcG3islQsrKXI75jAtAEzOd9+FTzjudSzs3rmD6fC2wMPOp6EDOtflmri
+         uBAHaNU/TpyHAWTxh2DiQtm4NOjQ+bInP6nTz1HxlJpUxzyN9AcAoBhZUrmbDMkqpN+4
+         XC9PGcGN4R8rh0xVxqMzJgu4+tmTu1eYmWN1lq+wZHAl3z8aytCdw2kwKVsjs3oHhFfM
+         5/bbl4+GQi+WR+CCogWHD9ZEXjKpDwvvvVdgbqGcQi4ahP5g6KWr+MhDzocOv7yATOxL
+         bf2Q==
+X-Gm-Message-State: APt69E2ulJH7w3HSG0KO23T4mcoyWTFCVdHqEDo/sJnJERHBQLsWI/y+
+        mqMmPk5jQ62ignr2s8zdONZFbw==
+X-Google-Smtp-Source: ADUXVKIEmHZPQLLmFvEIMWeO5tkNguH1q3rXhK6kw8oo9CV1E9tqdoU6+zLKB/Bhnevjc7iHinBhPw==
+X-Received: by 2002:a65:6147:: with SMTP id o7-v6mr22846106pgv.163.1530558094118;
+        Mon, 02 Jul 2018 12:01:34 -0700 (PDT)
+Received: from trogon.sfo.coreos.systems ([2604:2000:80c5:4400:140c:73de:b623:c90])
+        by smtp.gmail.com with ESMTPSA id n72-v6sm34057276pfj.68.2018.07.02.12.01.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 12:01:33 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 15:01:28 -0400
+From:   Benjamin Gilbert <bgilbert@redhat.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     linux-x86_64@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+Message-ID: <20180702190128.GA455@trogon.sfo.coreos.systems>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
+ <20180701213243.GA20180@trogon.sfo.coreos.systems>
+ <20180702093450.h5tfjeynpi3nwjbo@black.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180629182600.GA17562@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180702093450.h5tfjeynpi3nwjbo@black.fi.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 02, 2018 at 12:34:50PM +0300, Kirill A. Shutemov wrote:
+> Could you check if you can trigger the issue with my changes to config and
+> the way I run KVM?
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, the issue still triggers in that case.  I've also verified that the
+kernel boots normally with your qemu command if the commit is reverted.
 
-On Fri 2018-06-29 14:26:00, Greg Kroah-Hartman wrote:
-> On Fri, Jun 29, 2018 at 11:46:07AM +0200, Pavel Machek wrote:
-> >=20
-> > > > Finally, note that documentation (including kerneldoc) remains to be
-> > > > written, but hopefully this will not hinder review given that the
-> > > > current interfaces are fairly self-describing.
-> > >=20
-> > > This all looks great.  Thanks for doing this work and adding a new
-> > > subsystem for something that has been asked for for many years.
-> > >=20
-> > > All now merged in my tree, nice job!
-> >=20
-> > I don't think discussion was finished on this one.
->=20
-> It looked done to me as there was only a single set of patches, with no
-> other working patches submitted from anyone else.
-
-Is "noone submitted patches on top" sufficient reason to apply the patch?
-
-> If this turns out to be a "bad" api, then we can deal with it then, but
-> for now let's try this out.
-
-Series uses /dev/gnss0 , without providing hardware abstraction,
-blocking place for proper gnss layer. Suggested fix is to to make it
-"/dev/gnssraw0". How do you propose to fix this after it is merged?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAls6doMACgkQMOfwapXb+vJwaACeI+rqau9/0yFxcUNAqyXyIDPw
-ZI8AoLvECl1hLw7rSIT2LPKjY3kT8o0s
-=qXOS
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+--Benjamin Gilbert
