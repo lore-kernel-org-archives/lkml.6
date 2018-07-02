@@ -2,98 +2,170 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E3DC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2975C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35E2025469
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yr21O3IE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35E2025469
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A6CA12543E
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 14:38:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CA12543E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752528AbeGBOiB (ORCPT
+        id S1752573AbeGBOi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 10:38:01 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53996 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752466AbeGBOh7 (ORCPT
+        Mon, 2 Jul 2018 10:38:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41834 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751878AbeGBOiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 10:37:59 -0400
-Received: by mail-it0-f66.google.com with SMTP id a195-v6so12439911itd.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 07:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oWrrzbnulZgcXiAbWCM/JReVABwn/1QfjidFuSOBh7A=;
-        b=Yr21O3IEeBk7kPF4aw7OV2eWwPkiHQVvKjTOpRkepp6FWhWIecjk+qcFVvBOA2uarr
-         +Kax9HItU22dkTSJBN6aOKEJ00vbasDVjUpZRUnM8HH/9r77tBJWETp1YbezYSJqCW7j
-         wOteTdw9jagD2nrrtJn6iGZpO4A+2LT/h59RM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oWrrzbnulZgcXiAbWCM/JReVABwn/1QfjidFuSOBh7A=;
-        b=FHFQN/2pHRwhbph6qCcJgRFSFF7NnuUC54LtLFkswCWjEsKwC9YL8f/MsHpFJST0y6
-         xM2pT1wjrEGLcyuV+6hTVsRgbcqIwyLGyN57cYawOiZ4XOpGL+hnGXohRLneiQdaGZJt
-         /3OvrLdoQBGPU/LAgf9ePtycKDxpmx8nR5+7hkbdAwQRQ+B5F1QiHeJnSZ+68TFsI+6N
-         CMMoFqbmOzSKbaTTXw5FIuBMpxmA4TbSvbK5giRrvG/T1CfB0iw21Ha1WnDsRkh8R1UE
-         7iT/alT0hS1GHNk5g69otxs9Ol+JGuc84Uy+7QG+EysrrniP/4xyfUi5B85TrVNFYlGF
-         2LQw==
-X-Gm-Message-State: APt69E2bVZe2ylWNVriM1zszRD7gBy0K9X1dwKHWoHF1r/y9PUeAipH2
-        0GiJP5DjYp7YOmb0YPPx0nRU5QqkMc+U55UvRwrJDQ==
-X-Google-Smtp-Source: AAOMgpdrdFHG84louxCs0Eah+/SINuESX/AAUlFvEKdhhHkDinQox4/MWA54J4ZtNjneZXjQdxnuYKKuh4gD6lAHfZM=
-X-Received: by 2002:a24:69cb:: with SMTP id e194-v6mr10861617itc.102.1530542279283;
- Mon, 02 Jul 2018 07:37:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 07:37:58 -0700 (PDT)
-In-Reply-To: <CAMuHMdU709R3woOAvw7EH4=zGiBtezg0YeEer-4wG7pqo2SZBg@mail.gmail.com>
-References: <1528310612-10158-1-git-send-email-clabbe@baylibre.com>
- <CAPDyKFoRUhwHk6=j0-scQa4W+nbnS_qXZbPUn0eTFm_3kqdwPQ@mail.gmail.com> <CAMuHMdU709R3woOAvw7EH4=zGiBtezg0YeEer-4wG7pqo2SZBg@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 2 Jul 2018 16:37:58 +0200
-Message-ID: <CAPDyKFrZYixkv7Exjt-L18sNX5sVcOLq_uFVxJmUwdU4Q6kavg@mail.gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc should depend on COMMON_CLK
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Corentin Labbe <clabbe@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 2 Jul 2018 10:38:51 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w62Ecktu142341
+        for <linux-kernel@vger.kernel.org>; Mon, 2 Jul 2018 10:38:50 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jykvgdt3d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 10:38:50 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Mon, 2 Jul 2018 15:38:48 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 2 Jul 2018 15:38:44 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w62EchUO43516140
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 2 Jul 2018 14:38:43 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B44BE11C054;
+        Mon,  2 Jul 2018 15:38:26 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5389B11C05E;
+        Mon,  2 Jul 2018 15:38:25 +0100 (BST)
+Received: from localhost.ibm.com (unknown [9.80.97.108])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Jul 2018 15:38:25 +0100 (BST)
+From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v5 0/8] kexec/firmware: support system wide policy requiring signatures
+Date:   Mon,  2 Jul 2018 10:37:55 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 18070214-0020-0000-0000-000002A2393C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070214-0021-0000-0000-000020EE4B05
+Message-Id: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-02_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807020168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 July 2018 at 15:32, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> On Mon, Jul 2, 2018 at 3:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 6 June 2018 at 20:43, Corentin Labbe <clabbe@baylibre.com> wrote:
->> > This patch fix the following build failure on m68k:
->> > ERROR: "clk_set_rate" [drivers/mmc/host/dw_mmc.ko] undefined!
->> >
->> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
->>
->> Thanks, applied for next!
->
-> Please drop this patch, I posted proper fixes for this general issue in series
-> "[PATCH 0/3] Legacy clock drivers: Normalize clk API"
-> (https://lkml.org/lkml/2018/6/11/122).
->
-> All fixes above are already in next-20180702.
-> Thanks!
+IMA-appraisal is mostly being used in the embedded or single purpose
+closed system environments.  In these environments, both the Kconfig
+options and the userspace tools can be modified appropriately to limit
+syscalls.  For stock kernels, userspace applications need to continue to
+work with older kernels as well as with newer kernels.
 
-Thanks for letting me know, patch dropped!
+In this environment, the customer needs the ability to define a system
+wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
+modules to be signed, without being dependent on either the Kconfig
+options or the userspace tools.[1]
 
-I had the feeling there was a better way. :-)
+This patch set allows the customer to define a policy which requires
+the kexec'ed kernel images, firmware, and/or kernel modules to be
+signed.
 
-[...]
+In addition, this patch set includes the ability to configure a build
+time IMA policy, which is automatically loaded at run time without
+needing to specify it on the boot command line and persists after
+loading a custom kernel policy.
 
-Kind regards
-Uffe
+[1] kexec-tools suupports the new syscall based on a flag (-s).
+
+Changelog v5:
+- Shared kernel_load_data_id and kernel_read_file_id enumerations.
+
+The previous version of this patch set defined a new LSM hook named
+security_kernel_load_data and an associated enumeration named
+kernel_load_data_id, independent of kernel_read_file_id.  In this
+version, the kernel_load_data_id and kernel_read_file_id values are
+shared, simplifying Loadpin's and other LSMs calling one LSM hook from
+the other.
+
+- Warn about loading firmware from pre-shared memory.
+
+Previous versions of this patch set prevented loading firmware, based on
+policy, from pre-allocated (DMA) memory, introduced in commit
+a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer").
+Based on discussions, calling dma_alloc_coherent() is unnecessary and
+confusing.  This version of the patch set allows loading the firmware,
+but emits a warning.
+
+Changelog v4:
+- Define a new LSM hook named security_kernel_load_data().
+- Define kernel_load_data_id enumeration.
+- Replace the existing LSM hook in init_module syscall.
+
+Changelog v3:
+Based on James' feedback:
+- Renamed security_kernel_read_file() to security_kernel_read_data().
+- Defined new kernel_load_data_id enumeration.
+- Cleaned up ima_read_data(), replacing if's with switch.
+
+Changelog v2:
+- combined "kexec: limit kexec_load syscall" and "firmware: kernel
+signature verification" patch sets.
+- add support for build time policy.
+- defined generic security_kernel_read_blob() wrapper for
+  security_kernel_read_file(). Suggested by Luis
+
+Mimi Zohar (8):
+  security: define new LSM hook named security_kernel_load_data
+  kexec: add call to LSM hook in original kexec_load syscall
+  ima: based on policy require signed kexec kernel images
+  firmware: add call to LSM hook before firmware sysfs fallback
+  ima: based on policy require signed firmware (sysfs fallback)
+  ima: add build time policy
+  ima: based on policy warn about loading firmware (pre-allocated
+    buffer)
+  module: replace the existing LSM hook in init_module
+
+ drivers/base/firmware_loader/fallback.c |  7 +++
+ include/linux/ima.h                     |  7 +++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 27 ++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 78 ++++++++++++++++++++++++---------
+ security/integrity/ima/ima_policy.c     | 48 ++++++++++++++++++--
+ security/loadpin/loadpin.c              |  6 +++
+ security/security.c                     | 10 +++++
+ security/selinux/hooks.c                | 15 +++++++
+ 13 files changed, 249 insertions(+), 24 deletions(-)
+
+-- 
+2.7.5
+
