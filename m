@@ -2,77 +2,78 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 559C5C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7765AC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F10C2524D
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:39:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F10C2524D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0ACA525231
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACA525231
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752228AbeGBNj4 (ORCPT
+        id S1752355AbeGBNkb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:39:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45966 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751912AbeGBNjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:39:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 031C1AD12;
-        Mon,  2 Jul 2018 13:39:54 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 15:39:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 0/5] mm: zap pages with read mmap_sem in munmap
- for large mapping
-Message-ID: <20180702133953.GV19043@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+        Mon, 2 Jul 2018 09:40:31 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57338 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751922AbeGBNk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 09:40:29 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8AC2889C52AEB;
+        Mon,  2 Jul 2018 21:40:25 +0800 (CST)
+Received: from localhost.localdomain (10.143.28.91) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 2 Jul 2018 21:40:18 +0800
+From:   Dongjiu Geng <gengdongjiu@huawei.com>
+To:     <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
+        <marc.zyngier@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <kvm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>
+CC:     <gengdongjiu@huawei.com>, <linuxarm@huawei.com>
+Subject: [PATCH v6 0/2] support exception state migration and set VSESR_EL2 by user space
+Date:   Mon, 2 Jul 2018 21:40:13 +0800
+Message-ID: <1530538815-3847-1-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.91]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 30-06-18 06:39:40, Yang Shi wrote:
-> 
-> Background:
-> Recently, when we ran some vm scalability tests on machines with large memory,
-> we ran into a couple of mmap_sem scalability issues when unmapping large memory
-> space, please refer to https://lkml.org/lkml/2017/12/14/733 and
-> https://lkml.org/lkml/2018/2/20/576.
-> 
-> 
-> History:
-> Then akpm suggested to unmap large mapping section by section and drop mmap_sem
-> at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
-> 
-> V1 patch series was submitted to the mailing list per Andrew’s suggestion
-> (see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
-> and suggestions.
-> 
-> Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hock
-> suggested (also in the v1 patches review) to try "two phases" approach. Zapping
-> pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
-> discussion detail, see https://lwn.net/Articles/753269/)
+This series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
 
-The cover letter should really describe your approach to the problem.
-But there is none here.
+1. Detect whether KVM can set set guest SError syndrome
+2. Support to Set VSESR_EL2 and inject SError by user space.
+3. Support live migration to keep SError pending state and VSESR_EL2 value
+
+The user space patch is here: https://www.mail-archive.com/qemu-devel@nongnu.org/msg539534.html
+BTW: The user space patch is needed to rebase
+
+
+Dongjiu Geng (2):
+  arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+  arm64: KVM: export the capability to set guest SError syndrome
+
+ Documentation/virtual/kvm/api.txt    | 44 ++++++++++++++++++++++++++++++----
+ arch/arm64/include/asm/kvm_emulate.h |  5 ++++
+ arch/arm64/include/asm/kvm_host.h    |  7 ++++++
+ arch/arm64/include/uapi/asm/kvm.h    | 13 ++++++++++
+ arch/arm64/kvm/guest.c               | 46 ++++++++++++++++++++++++++++++++++++
+ arch/arm64/kvm/inject_fault.c        |  6 ++---
+ arch/arm64/kvm/reset.c               |  4 ++++
+ include/uapi/linux/kvm.h             |  1 +
+ virt/kvm/arm/arm.c                   | 21 ++++++++++++++++
+ 9 files changed, 140 insertions(+), 7 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
