@@ -2,88 +2,189 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A43C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B6CC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FDCD25B4B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDCD25B4B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id B474225CC2
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 11:32:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EgbddhDR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B474225CC2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030533AbeGBLaO (ORCPT
+        id S1754259AbeGBLck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 07:30:14 -0400
-Received: from muru.com ([72.249.23.125]:49584 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965174AbeGBLaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 07:30:11 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 8919C8047;
-        Mon,  2 Jul 2018 11:33:06 +0000 (UTC)
-Date:   Mon, 2 Jul 2018 04:30:08 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wlcore: Fix memory leak in
- wlcore_cmd_wait_for_event_or_timeout
-Message-ID: <20180702113008.GV112168@atomide.com>
-References: <20180628130809.GA8147@embeddedor.com>
+        Mon, 2 Jul 2018 07:32:40 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46146 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbeGBLcf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 07:32:35 -0400
+Received: by mail-oi0-f67.google.com with SMTP id y207-v6so15684084oie.13;
+        Mon, 02 Jul 2018 04:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kTjXJNqwV0L6AVwZRH8K5/XvD+1aLLT1+rxicjytnlI=;
+        b=EgbddhDRDC34AMmfs22YbRemxEfPjYQlOCmU5Rc1Mwf/+eeN2ohrVnf2ioD520BQBg
+         SVXBQFjxazg514C0BAR5I6XysG28xfHCv1NM9SS/DKztnjopnBQYExh03jGUaRtbg3Wp
+         x9rC7L17qkWXJzt49aTjeAF5Y3wEst4r9ceGF1YOdUITR2Zn3jkpSxSyYSCgnR7vO2t1
+         zr9KdAwYCrRvv7UFmBC2niirw9e6F9LINRFCtKnEZ2QuB2bU28ftAUImRYZGdOcgLjZE
+         77ZyK3OteAtEvGuWs0Sx86EMnQr+Sa2mExnAmdeGQfxA7TlnfwdHHu1e+D4lrx/TRG2t
+         VwXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kTjXJNqwV0L6AVwZRH8K5/XvD+1aLLT1+rxicjytnlI=;
+        b=LwjcK8LR0U2+ZjWsaYvevhu3WVk8idtErYcB1/LdOZEcZRHJbmCIV2gdRc8wPwzFxG
+         LRs44mfGkiirJJ1GZCOmEA2/+RFugPFv2rWwNJEEWHJC0SdOogjZv+6gm+eS8DxFvdCP
+         uxVaeK6MUjGhe+GNiedPn+WTCRrYdzCgTSo0ktMYv1c41WQwqg0juGa1+j7Yo4JUCK1h
+         hHGhhyBo81S2BWR2feYtgZ7MeVfVIcu6xiJz3/fMsLQvINZH2doZ1Agf7leIzY28PImE
+         Y5PBcqJBNtis5nSuieQ532NJ1ipq3+Oy9WBYy14buTF5IKHv+t8KcgXqpTNZpZBlYWUU
+         MpHw==
+X-Gm-Message-State: APt69E1stOWMZxb9AdFGZ6aN5PmQS6IYMt51hKOwTxO6Ss7LyTQFsFDa
+        tpHkoDWkG+6hM+3PNuYNwlYy1bsfE9WS8955Etg=
+X-Google-Smtp-Source: AAOMgpevJn+kRuNONH55oSxGjSoRRUnug4WD0T7xJAHzpRvo/qDrkORR7+u7/+EB6EgID8/9baqoB4ds5wVp/4oNtcc=
+X-Received: by 2002:aca:b782:: with SMTP id h124-v6mr16110671oif.7.1530531155293;
+ Mon, 02 Jul 2018 04:32:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628130809.GA8147@embeddedor.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1530526462-920-1-git-send-email-wanpengli@tencent.com>
+ <1530526462-920-2-git-send-email-wanpengli@tencent.com> <87sh52aq7g.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87sh52aq7g.fsf@vitty.brq.redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Mon, 2 Jul 2018 19:32:25 +0800
+Message-ID: <CANRm+CyNVatPLZm3i1_xumma5jMj-PSEbASZ6ovWfv2U0zspuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] KVM: X86: Implement PV IPI in linux guest
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Gustavo A. R. Silva <gustavo@embeddedor.com> [180628 13:11]:
-> In case memory resources for *events_vector* were allocated, release
-> them before return.
-> 
-> Addresses-Coverity-ID: 1470194 ("Resource leak")
-> Fixes: 4ec7cece87b3 ("wlcore: Add missing PM call for wlcore_cmd_wait_for_event_or_timeout()")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Mon, 2 Jul 2018 at 18:26, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+> Wanpeng Li <kernellwp@gmail.com> writes:
+>
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > Implement PV IPIs in guest kernel.
+> >
+> > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> >  arch/x86/kernel/kvm.c         | 99 +++++++++++++++++++++++++++++++++++=
+++++++++
+> >  include/uapi/linux/kvm_para.h |  1 +
+> >  2 files changed, 100 insertions(+)
+> >
+> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> > index 5b2300b..7e3ee25 100644
+> > --- a/arch/x86/kernel/kvm.c
+> > +++ b/arch/x86/kernel/kvm.c
+> > @@ -47,6 +47,7 @@
+> >  #include <asm/hypervisor.h>
+> >  #include <asm/kvm_guest.h>
+> >
+> > +static struct apic orig_apic;
+> >  static int kvmapf =3D 1;
+> >
+> >  static int __init parse_no_kvmapf(char *arg)
+> > @@ -454,6 +455,89 @@ static void __init sev_map_percpu_data(void)
+> >  }
+> >
+> >  #ifdef CONFIG_SMP
+> > +
+> > +#ifdef CONFIG_X86_64
+> > +static bool __send_ipi_mask(const struct cpumask *mask, int vector)
+> > +{
+> > +     unsigned long flags, ipi_bitmap_low =3D 0, ipi_bitmap_high =3D 0,=
+ icr =3D 0;
+> > +     int cpu, apic_id, ret =3D 1;
+> > +
+> > +     if (cpumask_empty(mask))
+> > +             return true;
+> > +
+> > +     local_irq_save(flags);
+> > +
+> > +     for_each_cpu(cpu, mask) {
+> > +             apic_id =3D per_cpu(x86_cpu_to_apicid, cpu);
+> > +             if (apic_id < BITS_PER_LONG)
+> > +                     __set_bit(apic_id, &ipi_bitmap_low);
+> > +             else if (apic_id < 2 * BITS_PER_LONG)
+> > +                     __set_bit(apic_id - BITS_PER_LONG, &ipi_bitmap_hi=
+gh);
+> > +             else
+> > +                     goto ipi_mask_done;
+>
+> Nit:
+>
+> Both the fact that we don't set 'ret' here and the fact that the label
+> is named 'ipi_mask_done' -- which sounds like 'all OK' at least to me --
+> contribute to the feeling that we just skip sending IPIs in some cases.
+>
+> I would prefer to see something like
+>
+> else {
+>    ret =3D -EFAULT;
+>    goto irq_restore_exit;
+> }
+>
+> > +     }
+> > +
+> > +     switch (vector) {
+> > +     default:
+> > +             icr =3D APIC_DM_FIXED | vector;
+> > +             break;
+> > +     case NMI_VECTOR:
+> > +             icr =3D APIC_DM_NMI;
+> > +             break;
+> > +     }
+> > +
+> > +     ret =3D kvm_hypercall3(KVM_HC_SEND_IPI, ipi_bitmap_low, ipi_bitma=
+p_high, icr);
+> > +
+> > +ipi_mask_done:
+> > +     local_irq_restore(flags);
+> > +     return ((ret =3D=3D 0) ? true : false);
+>
+> ... and why in the first place do we need to make this function return
+> 'bool' then? Let's just make it return 'int'.
 
-Thanks for catching this one:
+Thanks for the comments, will do in v3. Btw, on my haswell desktop(i7
+8 HT), there is a 2.5 times performance boot for the IPI
+microbenchmark(https://lkml.org/lkml/2017/12/19/141). (8 vCPUs guest,
+x2apic physical mode, I will retest on Skylake server w/ 64 vCPUs
+x2apic cluster mode guest tomorrow):
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Before:
+ Dry-run:                         0,            1885493 ns
+ Self-IPI:                  7071403,           14711151 ns
+ Normal IPI:              204453899,          219896346 ns
+ Broadcast IPI:                   0,         2213679722 ns
+ Broadcast lock:                  0,         2241226307 ns
 
-> ---
->  drivers/net/wireless/ti/wlcore/cmd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
-> index 836c616..9039687 100644
-> --- a/drivers/net/wireless/ti/wlcore/cmd.c
-> +++ b/drivers/net/wireless/ti/wlcore/cmd.c
-> @@ -195,8 +195,7 @@ int wlcore_cmd_wait_for_event_or_timeout(struct wl1271 *wl,
->  	ret = pm_runtime_get_sync(wl->dev);
->  	if (ret < 0) {
->  		pm_runtime_put_noidle(wl->dev);
-> -
-> -		return ret;
-> +		goto free_vector;
->  	}
->  
->  	do {
-> @@ -232,6 +231,7 @@ int wlcore_cmd_wait_for_event_or_timeout(struct wl1271 *wl,
->  out:
->  	pm_runtime_mark_last_busy(wl->dev);
->  	pm_runtime_put_autosuspend(wl->dev);
-> +free_vector:
->  	kfree(events_vector);
->  	return ret;
->  }
-> -- 
-> 2.7.4
-> 
+After:
+ Dry-run:                         0,            1752903 ns
+ Self-IPI:                  4944737,           10434149 ns
+ Normal IPI:              202351280,          220807969 ns
+ Broadcast IPI:                   0,          872991742 ns
+=3D> 2.5 times boost
+ Broadcast lock:                  0,          879995113 ns
+
+Regards,
+Wanpeng Li
