@@ -2,154 +2,110 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48303C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C784DC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D852548E
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 813722146E
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 16:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="hmFVbvWX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D852548E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXIXqccm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813722146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752772AbeGBQNd (ORCPT
+        id S1752797AbeGBQOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 12:13:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58582 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752208AbeGBQNb (ORCPT
+        Mon, 2 Jul 2018 12:14:04 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:45732 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752228AbeGBQOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 12:13:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AUX0mMzck7DD8EWxUZJU7Ccgy2J0C4DmKWDcL4F2xDE=; b=hmFVbvWXuyMIOLtZBJPBbLAMW
-        Gpsr9wxLGNNBMwCLfXvi0AulMb+lDbfFsa8LurTHQCNkV6OSa3qp5FKU/JRPYLypgZ1ZUhIDIGtZI
-        7AP2UbHIYwM88byqSyNTMaOl1jAysZwUq7uA+t+iT8Zwl9TcfDfw4WmotkOUxpa6lQcOE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fa1Rj-0004gY-KL; Mon, 02 Jul 2018 16:12:59 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id D1013440073; Mon,  2 Jul 2018 17:12:58 +0100 (BST)
-Date:   Mon, 2 Jul 2018 17:12:58 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Janus Piwek <jpiwek@arroweurope.com>,
-        Michael =?iso-8859-1?Q?R=F6der?= <michael.roeder@avnet.eu>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        Ben Whitten <ben.whitten@lairdtech.com>,
-        Steve deRosier <derosier@gmail.com>, linux-spi@vger.kernel.org
-Subject: Re: [RFC net-next 15/15] net: lora: Add Semtech SX1301
-Message-ID: <20180702161258.GA18744@sirena.org.uk>
-References: <20180701110804.32415-1-afaerber@suse.de>
- <20180701110804.32415-16-afaerber@suse.de>
+        Mon, 2 Jul 2018 12:14:02 -0400
+Received: by mail-ua0-f195.google.com with SMTP id z4-v6so9562214uao.12;
+        Mon, 02 Jul 2018 09:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=znl0p4wiU8mYIqcHEL+H0pntEVA5MFSEniaA0RPaFWY=;
+        b=TXIXqccmkYqFS/rPjT+dxlA4MVMoSQzOYCvjQLlQemVDmX6WCZUtYzIUfImqSnSgkx
+         iZPB5bTbgs+03sM6qXrr5x7BNTAXFOyqV/W1ku4TMy8E4UtAM7MqURbxv+n7hX2FmAf3
+         CP/Q4El76APadkS+cp+/kPHp0O8e7s7W2yuR3NsIMTpt9U5H9PzhjH6OEJyi1ZK3acJP
+         pCaXmh3MJn2DxYeSNRDIVRQpCvwJFSeBY8gVxzTGhfoWUofiqZI4y2XIGbqd7rjYI4oA
+         L65RQBZu8ANGLkUk6gTZWrksClaPVNJdQeurh6CMLKSK03UrT1yWG8P7+rCHGoZqj+G4
+         Pv7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=znl0p4wiU8mYIqcHEL+H0pntEVA5MFSEniaA0RPaFWY=;
+        b=bhnNGW6iZzxT1tWD9C6jLqDYrFTz1BoUKIB2PsFLOxoSMBmr3E5agp7MPNtb+y4MRV
+         DWnAS9YZSlTZG1mW7zSq98sMKuJKoMB8caNN/dpAzqLk49c+OgMEbPi9G+8zYsA4Q+yY
+         SA65rvvNSJmnLSTu5C/kFEdLWQ+QV5CVbon83X9XDorAwF8s85iEiLfrPs080pULVWn6
+         LC1C+VLc3CjURWEy+IuGKiLh5m8vWfRolZDWCZL4RFzxrDkg4VQ1eeHP+YpixmWEgpiD
+         rp4boqeAXQDQcKCYlfN0c1WjiJ6t3i7KMprkH0l3xRxPCTfhBmdyJBk/SeCU+SDMYjgz
+         AGrw==
+X-Gm-Message-State: APt69E1G3z05tLIKbCpMENhxLWRSpLsFviwaZuJ3ar3lp1bWMO06tHtP
+        I3UvLimsRFTCUnxM2Baw/VD5zTBrJY6hECfKPwQ=
+X-Google-Smtp-Source: AAOMgpdIhS21DrojgwkGoENPXiX+UI6hAvd+zoRXuhO6tbQEXEAAiA6+fuf9BQovFPmxEPFIfixJr809LTVEsAr+08Y=
+X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr3586816uaf.199.1530548041751;
+ Mon, 02 Jul 2018 09:14:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-In-Reply-To: <20180701110804.32415-16-afaerber@suse.de>
-X-Cookie: Eloquence is logic on fire.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 09:14:01 -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.20.1807020810580.31530@fox.voss.local>
+References: <cover.1530268235.git.nikolaus.voss@loewensteinmedical.de>
+ <CAHp75VfR8JZaDbvzudW5mc4=nOoYM2EeXPMhUHCw1ovnPmGV5A@mail.gmail.com> <alpine.DEB.2.20.1807020810580.31530@fox.voss.local>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 2 Jul 2018 19:14:01 +0300
+Message-ID: <CAHp75Vdr=e-8g2bF0oF+xSY_UL8wD8k2Azkhvg2_a7-bpOFn-A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] IIO: st_sensors_i2c: improve device enumeration
+To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiongfeng Wang <xiongfeng.wang@linaro.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 2, 2018 at 9:41 AM, Nikolaus Voss
+<nikolaus.voss@loewensteinmedical.de> wrote:
+> On Fri, 29 Jun 2018, Andy Shevchenko wrote:
+>
+>> I'm not sure I understand how ->probe_new() is supposed to work
+>> against i2c_id_table, but I don't care for legacy platform data
+>> anyway.
+>>
+>> What I would like to point to is device_get_match_data() API which
+>> should simplify / unify the case how you get driver data.
+>
+>
+> This driver doesn't need any driver data/ platform_data beyond the
+> i2c_id_table name (which has already been matched when probe()/ probe_new()
+> is called), so strictly neither of_match_table nor apci_match_table would be
+> necessary, because i2c DT/ ACPI enumeration also matches against i2c_table
+> names.
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looking at the code I see still calls to acpi_match_data() and of_match_data().
+Instead nowadays better to use device_get_match_data().
 
-On Sun, Jul 01, 2018 at 01:08:04PM +0200, Andreas F=E4rber wrote:
+i2c_id_table should be removed from the module device table at least
+(though you may continue to use it internally in the driver).
 
-> +static void sx1301_radio_spi_set_cs(struct spi_device *spi, bool enable)
-> +{
-> +	int ret;
-> +
-> +	dev_dbg(&spi->dev, "setting SPI CS to %s\n", enable ? "1" : "0");
-> +
-> +	if (enable)
-> +		return;
-> +
-> +	ret =3D sx1301_radio_set_cs(spi->controller, enable);
-> +	if (ret)
-> +		dev_warn(&spi->dev, "failed to write CS (%d)\n", ret);
-> +}
+That's my understanding how it should be done.
 
-So we never disable chip select?
-
-> +	if (tx_buf) {
-> +		ret =3D sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_ADDR, tx_buf=
- ? tx_buf[0] : 0);
-
-This looks confused.  We're in an if (tx_buf) block but there's a use of
-the ternery operator that appears to be checking if we have a tx_buf?
-
-> +		if (ret) {
-> +			dev_err(&spi->dev, "SPI radio address write failed\n");
-> +			return ret;
-> +		}
-> +
-> +		ret =3D sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_DATA, (tx_bu=
-f && xfr->len >=3D 2) ? tx_buf[1] : 0);
-> +		if (ret) {
-> +			dev_err(&spi->dev, "SPI radio data write failed\n");
-> +			return ret;
-> +		}
-
-This looks awfully like you're coming in at the wrong abstraction layer
-and the hardware actually implements a register abstraction rather than
-a SPI one so you should be using regmap as the abstraction.
-
-> +	if (rx_buf) {
-> +		ret =3D sx1301_read(ssx->parent, ssx->regs + REG_RADIO_X_DATA_READBACK=
-, &rx_buf[xfr->len - 1]);
-> +		if (ret) {
-> +			dev_err(&spi->dev, "SPI radio data read failed\n");
-> +			return ret;
-> +		}
-> +	}
-
-For a read we never set an address?
-
-> +static void sx1301_radio_setup(struct spi_controller *ctrl)
-> +{
-> +	ctrl->mode_bits =3D SPI_CS_HIGH | SPI_NO_CS;
-
-This controller has no chip select but we provided a set_cs operation?
-
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAls6TwcACgkQJNaLcl1U
-h9CtNQf/ZkgI4m6ipAehhMLl5FnfWF06bpi2CDPHl+6Cz0LgN9Qnfs0oqOGo4Zb/
-Y6/6bRwMLButsPy07H9JjgbDdDbqGvXamBcDEr2QUpituYS2FBgGCJKxS09beCw0
-sYsYVbTKu92JQbymL8/Ps8vU2l8GsUTvg1gZfLwiJq7Crs9x18j0HQSW6QOuPVLI
-eFhv2kXtoi30yP+HUc2eRYtQEf0eoY/V46h57YqdqeJQDbHILKDLq1Fstfd/8gLR
-BQLiCdKDRKPuc4qCMC7lrSQFmTTMFdoF9HxC9R+afZCrT/TUWLkAhDCz+b8OwMlD
-GrQ/DQFX0ki2DD7Eb/HMqIk4+gmYWg==
-=dmQR
------END PGP SIGNATURE-----
-
---azLHFNyN32YCQGCU--
+-- 
+With Best Regards,
+Andy Shevchenko
