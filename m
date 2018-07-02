@@ -2,162 +2,161 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C56C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E435C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41C8425D9A
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2D825DAD
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 13:22:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iob3wAOK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41C8425D9A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jrXXGEWL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2D825DAD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeGBNVI (ORCPT
+        id S1752186AbeGBNW3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 09:21:08 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41096 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752399AbeGBNVC (ORCPT
+        Mon, 2 Jul 2018 09:22:29 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37871 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeGBNW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 09:21:02 -0400
-Received: by mail-wr0-f194.google.com with SMTP id h10-v6so15528394wrq.8;
-        Mon, 02 Jul 2018 06:21:01 -0700 (PDT)
+        Mon, 2 Jul 2018 09:22:28 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j8-v6so2421588lfb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 06:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0diT0olf1JszXilW7085EJtFA3VQVQMcMhBK0cKmzWg=;
-        b=iob3wAOKV4hWRXo7F8SaaiFQ26a2QSz2AvqRm3AsxhAeivh8LrpAU9TxMKeHFXR1tS
-         iPKHTMg7ABuxSQUelzvJg4f2HpJ+XkNSXCYJ0QwxceSVjUl7Qvc5XIGRMYFteh4l23r/
-         2GRBRiu+B9dOLF7c5ykTDO1BuZ9Q+SY9s3Aj/vBy2vuCDGOvFaYn7HB4IL4bKhmAuW8t
-         M6B28QRYtl0tiNJ7HM4X+M9rkCVaE9Mw3oxCRvkv1iz7UcsUuxfsX4XunF7rw6/CfWeB
-         At+S9c01875DwmZsgaBOZ1Fw3zI+RokNTHdTzOvOEy3+zRXvM0/qu/VSFRnSSxxbEGTK
-         CkXg==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TMH3ufA4J/4rwdjeXn3iSCiebTDA2+5OEd6SH3pt+VE=;
+        b=jrXXGEWLW4Q66ualGwSz63dQdpq4xcigC4Zq7vc0Kg56mYH9+zmLgZo1EwPtJg6qn5
+         5iVRCRRjAU3psYpkUCpsflWKhblcq7hCRaW0fLGU/epIlimroVwY3mjW0tSeqT9Glcsz
+         VWMcUHlvACUnStVrfU+3fPs3yiALXZzrhB8r0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=0diT0olf1JszXilW7085EJtFA3VQVQMcMhBK0cKmzWg=;
-        b=pfPFoRY+o/5x3zMm4woxlXo7c2NMiP+0ulS0jETgH1/0rlRETLle0yQfrndCwxv8RY
-         DWSARoCRcHZs2N1kWfK3WqQ2324TQnwxQuu3zXiTyUSn2S70Bmwj/VL/rBmrVuyMheum
-         gAZr/JFjgYj+tCUncjikdabrcAP7dI7jevVcuB17kxnVbHthI7AgS30unz+N3OW9O0tz
-         0cpzifcS5iM/2WQH25xvSvfYOMZqbXZY4bQrPbks/BB6y3pbg69qaA0Z+9/CPyiKFse7
-         hLDkQaucIsXwSlTr+27g5vuE4wWuwdvQobAm6VaE0ahz2VMYdmMF0Uv3oCrz3TLzTBlc
-         WwmA==
-X-Gm-Message-State: APt69E3zId9UTGGVjZpdaBdYfkslRKv013H99a2lxEQab5+5zG7+uOdv
-        wnPr7gW/Q62BzIDnhuBydcMUDOim
-X-Google-Smtp-Source: AAOMgpcvsyKrxRlaKjH2w9HpprUR01tpjNTmsJiO4YCPoR2cfC1Z+NaiH8dbjJqWZDA8q5Fl3ggB+Q==
-X-Received: by 2002:adf:d142:: with SMTP id b2-v6mr14220783wri.17.1530537660824;
-        Mon, 02 Jul 2018 06:21:00 -0700 (PDT)
-Received: from ?IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740? ([2a02:908:1257:4460:1ab8:55c1:a639:6740])
-        by smtp.gmail.com with ESMTPSA id f2-v6sm18247574wre.16.2018.07.02.06.20.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 06:21:00 -0700 (PDT)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 1/2] PCI: fix restoring resized BAR state on resume
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180614122146.62118-1-christian.koenig@amd.com>
- <20180630005718.GJ40928@bhelgaas-glaptop.roam.corp.google.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <064ebaf7-8953-fd29-a688-26a5646111a0@gmail.com>
-Date:   Mon, 2 Jul 2018 15:20:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TMH3ufA4J/4rwdjeXn3iSCiebTDA2+5OEd6SH3pt+VE=;
+        b=LSNQZw4smMKNSVH/f6k6olH7nH60HIkNR/IYJ79zO7MjGI6fTT2x61k1eQc8Gg/ugy
+         EmqSGNsOjGYV84gQvVf4wWSQEh5chi2ojYVez9NvlaRNPKSSp3Q6WB+BHFPmPpsKRjtb
+         ZW0gYT6ppFlWlJy4jnceFgEOUBjxt5lHtw1LEvmrg69nrQOobT9dJAKWOFmDELD/Fg9g
+         5flY1gt8p1WpSoQnsuWf7vQuZ4gwL2ohMB85VgCjkoTQLX/rOCPMtbfXM6tQ6O7fybr9
+         TRVq1tvgu1+wRpY/hUFx2ikX78GbMAQ+zh7f92MpoOSxFOYlpaldXtRDUDjdTnCyhvgw
+         aRrQ==
+X-Gm-Message-State: APt69E2GJuytbYIs0CJ4Bxhyvtg6UfUbA6ILVRU6J+W7J0PYGjeMWiyT
+        naumvYKYelKinsYfq5u+fo2BH1gAK54F29tHurvpiw==
+X-Google-Smtp-Source: AAOMgpcELQWoG0mI2gtaskCu/iz6+KIpohGpmYLYDzKiujcgCcW6bsPodhUQCuljdEu7di3c9Sr8r4OinvKjIJKOfIA=
+X-Received: by 2002:a19:e955:: with SMTP id g82-v6mr16037768lfh.44.1530537746624;
+ Mon, 02 Jul 2018 06:22:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180630005718.GJ40928@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 06:22:25 -0700 (PDT)
+In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
+References: <20180701160908.272447118@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 2 Jul 2018 18:52:25 +0530
+Message-ID: <CA+G9fYsxP+-2R7M2LRffmwmucWNXPnC4J75C3v3CV6n+2iDOkA@mail.gmail.com>
+Subject: Re: [PATCH 4.17 000/220] 4.17.4-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 30.06.2018 um 02:57 schrieb Bjorn Helgaas:
-> On Thu, Jun 14, 2018 at 02:21:45PM +0200, Christian König wrote:
->> Resize BARs after resume to the expected size again.
->>
->> Signed-off-by: Christian König <christian.koenig@amd.com>
->> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199959
->> CC: stable@vger.kernel.org      # v4.15+
-> I applied both of these to pci/resource for v4.19, thanks!  It'd be nice to
-> have them in v4.18, but since it's not a regression and the problem has
-> been there since v4.15, I'm not sure I could justify it.
-
-Well it is a regression. The change to enable this in the upstream 
-driver was added in 4.16, but a good bunch of people also compile our 
-backported DKMS module.
-
-And now those people are complaining that the driver stopped working 
-after resume in 4.15 with the DKMS module and with 4.16 with the 
-upstream module.
-
-Alternatively I can disable resizing from the driver from kernels older 
-than v4.19.
-
-Christian.
-
+On 1 July 2018 at 21:50, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
+ote:
+> This is the start of the stable review cycle for the 4.17.4 release.
+> There are 220 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->> ---
->>   drivers/pci/pci.c | 28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index bd6f156dc3cf..d4685090378b 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -1159,6 +1159,33 @@ static void pci_restore_config_space(struct pci_dev *pdev)
->>   	}
->>   }
->>   
->> +static void pci_restore_rebar_state(struct pci_dev *pdev)
->> +{
->> +	unsigned int pos, nbars, i;
->> +	u32 ctrl;
->> +
->> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_REBAR);
->> +	if (!pos)
->> +		return;
->> +
->> +	pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
->> +	nbars = (ctrl & PCI_REBAR_CTRL_NBAR_MASK) >>
->> +		    PCI_REBAR_CTRL_NBAR_SHIFT;
->> +
->> +	for (i = 0; i < nbars; i++, pos += 8) {
->> +		struct resource *res;
->> +		int bar_idx, size;
->> +
->> +		pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
->> +		bar_idx = ctrl & PCI_REBAR_CTRL_BAR_IDX;
->> +		res = pdev->resource + bar_idx;
->> +		size = order_base_2((resource_size(res) >> 20) | 1) - 1;
->> +		ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
->> +		ctrl |= size << 8;
->> +		pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
->> +	}
->> +}
->> +
->>   /**
->>    * pci_restore_state - Restore the saved state of a PCI device
->>    * @dev: - PCI device that we're dealing with
->> @@ -1174,6 +1201,7 @@ void pci_restore_state(struct pci_dev *dev)
->>   	pci_restore_pri_state(dev);
->>   	pci_restore_ats_state(dev);
->>   	pci_restore_vc_state(dev);
->> +	pci_restore_rebar_state(dev);
->>   
->>   	pci_cleanup_aer_error_status_regs(dev);
->>   
->> -- 
->> 2.14.1
->>
+> Responses should be made by Tue Jul  3 16:08:27 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.17.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.17.4-rc1
+git repo:
+ https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.17.y
+git commit: 7cde32fbe2ccb991623eb74b50c45abf51eec58f
+git describe: v4.17.3-221-g7cde32fbe2cc
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe\
+/build/v4.17.3-221-g7cde32fbe2cc
+^please join url
+
+
+No regressions (compared to build v4.17.3-222-g5cff622a798f)
+
+
+Ran 11389 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
