@@ -2,159 +2,258 @@ Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A54C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71F4C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C17EB245A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 19:56:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="YdrauYee"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17EB245A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 824F622497
+	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 20:00:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824F622497
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753440AbeGBT4c (ORCPT
+        id S1753399AbeGBUAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 15:56:32 -0400
-Received: from vern.gendns.com ([206.190.152.46]:47767 "EHLO vern.gendns.com"
+        Mon, 2 Jul 2018 16:00:08 -0400
+Received: from mga12.intel.com ([192.55.52.136]:56008 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752930AbeGBT4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 15:56:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UxFD5uDBUO+RLSJc4ZYxXVFdNqbDgN51gjP304mQLcw=; b=YdrauYeeQq4vzQMTCAw3+MOWYR
-        cFl5vlhQKkJNePXjB7sG94Vjiq67LNNGfmS21g0jRC4N5jExSVLSIBI4UZkBYE7nPTpc1Wjmkgos2
-        bv9IZ3hzVhvy//qKbhqyv0JPCrkyzOaRVEmIahQfiSlklEHhTNjd/s5L3Rr/jUtYpndT7xcrQoS2t
-        KfMjzZvdXCh0Cch67vrM4BNia/RPM5QHrjZ8O2srTQ5/iEkmB4xOVzV7cYNye+PGpAyttwTMPOfcM
-        QAm6jaaq/bztW1Woj0dmMXCcMB6OWAWCzhfWmk8AIT5SvrmVjNN5gfYA5erV/475v5dps4t6lGYfT
-        y5eYETlw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:36786 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1fa4w0-00DxWx-3w; Mon, 02 Jul 2018 15:56:28 -0400
-Subject: Re: [v7,07/10] dt-bindings: counter: Document stm32 quadrature
- encoder
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
-        benjamin.gaignard@st.com, robh+dt@kernel.org, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mark.rutland@arm.com
-References: <c1cc3d567d0a5799c3afe6e24ca9ec3b1547224e.1529607879.git.vilhelm.gray@gmail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <cf8231e3-0255-a4da-145c-69ccfe7288b2@lechnology.com>
-Date:   Mon, 2 Jul 2018 14:56:26 -0500
+        id S1752839AbeGBUAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 16:00:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 13:00:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,300,1526367600"; 
+   d="scan'208";a="212889506"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2018 12:59:42 -0700
+Subject: Re: [PATCH v3 1/2] mm/sparse: add sparse_init_nid()
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, rientjes@google.com, mingo@kernel.org,
+        osalvador@techadventures.net
+References: <20180702020417.21281-1-pasha.tatashin@oracle.com>
+ <20180702020417.21281-2-pasha.tatashin@oracle.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ba037a25-eef0-c2b1-91f2-5db5588b2881@intel.com>
+Date:   Mon, 2 Jul 2018 12:59:41 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <c1cc3d567d0a5799c3afe6e24ca9ec3b1547224e.1529607879.git.vilhelm.gray@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180702020417.21281-2-pasha.tatashin@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/2018 04:08 PM, William Breathitt Gray wrote:
-> From: Benjamin Gaignard <benjamin.gaignard@st.com>
-> 
-> Add bindings for STM32 Timer quadrature encoder.
-> It is a sub-node of STM32 Timer which implement the
-> quadratic encoder part of the hardware.
+> @@ -2651,6 +2651,14 @@ void sparse_mem_maps_populate_node(struct page **map_map,
+>  				   unsigned long pnum_end,
+>  				   unsigned long map_count,
+>  				   int nodeid);
+> +struct page * sparse_populate_node(unsigned long pnum_begin,
 
-quadradic? or quadrature?
+CodingStyle: put the "*" next to the function name, no space, please.
 
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
->   .../bindings/counter/stm32-timer-cnt.txt      | 31 +++++++++++++++++++
->   .../devicetree/bindings/mfd/stm32-timers.txt  |  7 +++++
->   2 files changed, 38 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-> new file mode 100644
-> index 000000000000..c52fcdd4bf6c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-> @@ -0,0 +1,31 @@
-> +STMicroelectronics STM32 Timer quadrature encoder
-> +
-> +STM32 Timer provides quadrature encoder to detect
-> +angular position and direction of rotary elements,
-> +from IN1 and IN2 input signals.
-> +
-> +Must be a sub-node of an STM32 Timer device tree node.
-> +See ../mfd/stm32-timers.txt for details about the parent node.
-> +
-> +Required properties:
-> +- compatible:		Must be "st,stm32-timer-counter".
-> +- pinctrl-names: 	Set to "default".
-> +- pinctrl-0: 		List of phandles pointing to pin configuration nodes,
-> +			to set CH1/CH2 pins in mode of operation for STM32
-> +			Timer input on external pin.
-> +
-> +Example:
-> +	timers@40010000 {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		compatible = "st,stm32-timers";
-> +		reg = <0x40010000 0x400>;
-> +		clocks = <&rcc 0 160>;
-> +		clock-names = "int";
-> +
-> +		counter {
-> +			compatible = "st,stm32-timer-counter";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&tim1_in_pins>;
-> +		};
-> +	};
-> diff --git a/Documentation/devicetree/bindings/mfd/stm32-timers.txt b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-> index 1db6e0057a63..ff9c14ada30b 100644
-> --- a/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-> +++ b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-> @@ -23,6 +23,7 @@ Optional parameters:
->   Optional subnodes:
->   - pwm:			See ../pwm/pwm-stm32.txt
->   - timer:		See ../iio/timer/stm32-timer-trigger.txt
-> +- counter:		See ../counter/stm32-timer-cnt.txt
->   
->   Example:
->   	timers@40010000 {
-> @@ -43,4 +44,10 @@ Example:
->   			compatible = "st,stm32-timer-trigger";
->   			reg = <0>;
->   		};
-> +
-> +		counter {
-> +			compatible = "st,stm32-timer-counter";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&tim1_in_pins>;
-> +		};
->   	};
-> 
+> +				   unsigned long pnum_end,
+> +				   unsigned long map_count,
+> +				   int nid);
+> +struct page * sparse_populate_node_section(struct page *map_base,
+> +				   unsigned long map_index,
+> +				   unsigned long pnum,
+> +				   int nid);
 
+These two functions are named in very similar ways.  Do they do similar
+things?
+
+>  struct page *sparse_mem_map_populate(unsigned long pnum, int nid,
+>  		struct vmem_altmap *altmap);
+> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> index e1a54ba411ec..b3e325962306 100644
+> --- a/mm/sparse-vmemmap.c
+> +++ b/mm/sparse-vmemmap.c
+> @@ -311,3 +311,52 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  		vmemmap_buf_end = NULL;
+>  	}
+>  }
+> +
+> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
+> +					  unsigned long pnum_end,
+> +					  unsigned long map_count,
+> +					  int nid)
+> +{
+
+Could you comment what the function is doing, please?
+
+> +	unsigned long size = sizeof(struct page) * PAGES_PER_SECTION;
+> +	unsigned long pnum, map_index = 0;
+> +	void *vmemmap_buf_start;
+> +
+> +	size = ALIGN(size, PMD_SIZE) * map_count;
+> +	vmemmap_buf_start = __earlyonly_bootmem_alloc(nid, size,
+> +						      PMD_SIZE,
+> +						      __pa(MAX_DMA_ADDRESS));
+
+Let's not repeat the mistakes of the previous version of the code.
+Please explain why we are aligning this.  Also,
+__earlyonly_bootmem_alloc()->memblock_virt_alloc_try_nid_raw() claims to
+be aligning the size.  Do we also need to do it here?
+
+Yes, I know the old code did this, but this is the cost of doing a
+rewrite. :)
+
+> +	if (vmemmap_buf_start) {
+> +		vmemmap_buf = vmemmap_buf_start;
+> +		vmemmap_buf_end = vmemmap_buf_start + size;
+> +	}
+
+It would be nice to call out that these are globals that other code
+picks up.
+
+> +	for (pnum = pnum_begin; map_index < map_count; pnum++) {
+> +		if (!present_section_nr(pnum))
+> +			continue;
+> +		if (!sparse_mem_map_populate(pnum, nid, NULL))
+> +			break;
+
+^ This consumes "vmemmap_buf", right?  That seems like a really nice
+thing to point out here if so.
+
+> +		map_index++;
+> +		BUG_ON(pnum >= pnum_end);
+> +	}
+> +
+> +	if (vmemmap_buf_start) {
+> +		/* need to free left buf */
+> +		memblock_free_early(__pa(vmemmap_buf),
+> +				    vmemmap_buf_end - vmemmap_buf);
+> +		vmemmap_buf = NULL;
+> +		vmemmap_buf_end = NULL;
+> +	}
+> +	return pfn_to_page(section_nr_to_pfn(pnum_begin));
+> +}
+> +
+> +/*
+> + * Return map for pnum section. sparse_populate_node() has populated memory map
+> + * in this node, we simply do pnum to struct page conversion.
+> + */
+> +struct page * __init sparse_populate_node_section(struct page *map_base,
+> +						  unsigned long map_index,
+> +						  unsigned long pnum,
+> +						  int nid)
+> +{
+> +	return pfn_to_page(section_nr_to_pfn(pnum));
+> +}
+
+What is up with all of the unused arguments to this function?
+
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index d18e2697a781..c18d92b8ab9b 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -456,6 +456,43 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  		       __func__);
+>  	}
+>  }
+> +
+> +static unsigned long section_map_size(void)
+> +{
+> +	return PAGE_ALIGN(sizeof(struct page) * PAGES_PER_SECTION);
+> +}
+
+Seems like if we have this, we should use it wherever possible, like
+sparse_populate_node().
+
+
+> +/*
+> + * Try to allocate all struct pages for this node, if this fails, we will
+> + * be allocating one section at a time in sparse_populate_node_section().
+> + */
+> +struct page * __init sparse_populate_node(unsigned long pnum_begin,
+> +					  unsigned long pnum_end,
+> +					  unsigned long map_count,
+> +					  int nid)
+> +{
+> +	return memblock_virt_alloc_try_nid_raw(section_map_size() * map_count,
+> +					       PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
+> +					       BOOTMEM_ALLOC_ACCESSIBLE, nid);
+> +}
+> +
+> +/*
+> + * Return map for pnum section. map_base is not NULL if we could allocate map
+> + * for this node together. Otherwise we allocate one section at a time.
+> + * map_index is the index of pnum in this node counting only present sections.
+> + */
+> +struct page * __init sparse_populate_node_section(struct page *map_base,
+> +						  unsigned long map_index,
+> +						  unsigned long pnum,
+> +						  int nid)
+> +{
+> +	if (map_base) {
+> +		unsigned long offset = section_map_size() * map_index;
+> +
+> +		return (struct page *)((char *)map_base + offset);
+> +	}
+> +	return sparse_mem_map_populate(pnum, nid, NULL);
+
+Oh, you have a vmemmap and non-vmemmap version.
+
+BTW, can't the whole map base calculation just be replaced with:
+
+	return &map_base[PAGES_PER_SECTION * map_index];
+
+?
