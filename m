@@ -2,111 +2,141 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEABC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A412C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F90B23CCD
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C8024F17
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:48:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="boO3KxJJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F90B23CCD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZaz/dn0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C8024F17
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932535AbeGCCog (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:44:36 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53638 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbeGCCoe (ORCPT
+        id S1752243AbeGCCst (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 22:48:49 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:41073 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932120AbeGCCsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:44:34 -0400
-Received: by mail-it0-f65.google.com with SMTP id a195-v6so1060139itd.3;
-        Mon, 02 Jul 2018 19:44:34 -0700 (PDT)
+        Mon, 2 Jul 2018 22:48:47 -0400
+Received: by mail-yb0-f193.google.com with SMTP id s8-v6so162405ybe.8;
+        Mon, 02 Jul 2018 19:48:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tWufW4CXMCA2e8nqe8Z2uXnWilwGXlAVpEl0VpSkwDQ=;
-        b=boO3KxJJbXLNpbCKoC4t7w3BKzrOMP2AJQbspmQ5u85ziLUIXe1RzeTcnXXdhF8kuO
-         J8SiexzQWPxHpBPIR+w5WpGEzx+sn6fZriD1KAuJg7dxU3+79NGk+/j9rowGhupHqECU
-         perJ2rzyBU1eUBLSvhWWwIoIWWzm5Jry30bDc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jzOgsFx75bprPfF/GiE/pCF372lX9XtG0R81km2L3zM=;
+        b=EZaz/dn0qZsg2vf54pqKdB0hFbzDbrk29x/QkRqQbZWlBa0e7BHXbIBroPuOHiANBI
+         AQWQIsWUQnmc7C6ChPXWyO0ErThCl49g2WEqVnUKPnvKO2I1+HTva9b+Xfxi4KR9O44V
+         J4iEk6rR7vBYZQQAIt0iXGVTrHNnjlvO9Qo1LQygjEkgkqNJUl6aXoC/ibx/Pvs8mB51
+         QE+ocsU3uv1Z7KHYPh4FPzDG+TI1GMmtXThYCJWkoJ/kRX3A2y8uMY77+M7rjPRMmcKz
+         t+217hyZc8HLQiOqamy4cCwLQSLibk0WDuLPA0sANLScBzCSZcpWRh6WUH1t9/rCnvQq
+         lkEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tWufW4CXMCA2e8nqe8Z2uXnWilwGXlAVpEl0VpSkwDQ=;
-        b=h7NqNZMeZ5A2P+d8iFs/f1Kgb2PDwGGgQow1ih1RMBhkAmMrHnAh1cOtbyNIy9DTef
-         dLOGsGsKH0EoY3IQrARKNcgJm6o4lhqPIAgKriu9oL8ZRL82+H+w/2Cf2xPmq8c0iCWs
-         e35tp5DddK/PHxXYiTJnVHeS73BTfkKPQkOu0miBjGLCuo2QkpGLV8OE/JUSw+FGPr2e
-         lUjk2TNe9yxk8Vs1D7E5u1+h9AkwajNIe5csscWLYf4bJZHAtNxkKpa1+GD7325WnXg/
-         9AkFihL1K16n5HwuFeUSLYGqWmhvjNyxbWuWHckMg1q+TUh42oRDZXvupQsJva7uq1YD
-         KhlQ==
-X-Gm-Message-State: APt69E3VmOh0CBsBK1v8IzLDtXENly91ANv1HvlAlbpcnjNT5ZPw/KMk
-        OBaK9CGfiEPx/nkp0T+IHvqpVU1fVx4tyonDgwWWsA==
-X-Google-Smtp-Source: AAOMgpeujTOrDCAtbChlZ/KozdFbufDoHgnh2IemmNLmUjcwcFYf94qcQfgD4c1sOuRJPdHCq9wPcRGCZQpeZ0BNeD4=
-X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr7703018itd.16.1530585874095;
- Mon, 02 Jul 2018 19:44:34 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jzOgsFx75bprPfF/GiE/pCF372lX9XtG0R81km2L3zM=;
+        b=TzAYlJLpQQTkMYFvaTHsBwAe1zzdG/mSUEQznuvfXKR3i53WhXjqttfCON45VpFUc8
+         imic7vei0xTaWoJRW+qNPgBNQpGgDSVGBweGTgwT2hazuRuNr4z9GF26SCdBv+33vnSG
+         Aaq+he6f+8bAt7mlSySf7DQp9zLV5hxjfwzvlUK8yQzc+MmRfaIz8AKYdEm6KtQgbeFn
+         AwOvq1Qmlxq2zw79sOxis+F4sOpPlFBzVLHo0b+5J6O8g5+eIZnwZtkLxqm9GjOBfpcX
+         O4u8DuFBhO2+b4CJYAJCbMeurmtal7sWRyaXj/Krjn72uZnA1Wt32R5ZIBLMeOPTgoNl
+         916w==
+X-Gm-Message-State: APt69E1nOqUuFO6nH1X5F8uueGqHBehVO2E2T+ERLWPvpbnhs52zTqQ2
+        B3kpF3Jb3aGfBBrQWbHekGQ=
+X-Google-Smtp-Source: ADUXVKLZeMBdz34ro24RPJmv1SFxCjEgEqU9573IcevyoQCPtO5E89fVHGLMVEmgtERcX5Std1PYqw==
+X-Received: by 2002:a25:bf90:: with SMTP id l16-v6mr15074076ybk.390.1530586126397;
+        Mon, 02 Jul 2018 19:48:46 -0700 (PDT)
+Received: from sophia ([72.188.97.40])
+        by smtp.gmail.com with ESMTPSA id b68-v6sm24480ywh.68.2018.07.02.19.48.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Jul 2018 19:48:45 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 22:48:35 -0400
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     David Lechner <david@lechnology.com>
+Cc:     gregkh@linuxfoundation.org, jic23@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        fabrice.gasnier@st.com, benjamin.gaignard@st.com,
+        robh+dt@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, mark.rutland@arm.com
+Subject: Re: [PATCH v7 00/10] Introduce the Counter subsystem
+Message-ID: <20180703024835.GA9493@sophia>
+References: <cover.1529607879.git.vilhelm.gray@gmail.com>
+ <603b0373-f1e1-5938-fa53-8328c9a5964f@lechnology.com>
 MIME-Version: 1.0
-References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
- <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
- <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
- <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
- <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com> <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 2 Jul 2018 19:44:23 -0700
-Message-ID: <CA+55aFytFfjRSdWapQ0F6RjuFgy9oSHjMtFpDPwAh4G9QRfUNw@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
- user inputs
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <603b0373-f1e1-5938-fa53-8328c9a5964f@lechnology.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:30 PM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Mon, Jul 02, 2018 at 01:13:40PM -0500, David Lechner wrote:
+>On 06/21/2018 04:06 PM, William Breathitt Gray wrote:
+>> I decided to strip down these devices to arrive at the core essence of
+>> what constitutes a "counter device" and therefore design a "generic
+>> counter" abstraction to better represent these devices and prevent the
+>> ambiguity we discovered with the existing IIO Counter interface. This
+>> abstraction became the Generic Counter paradigm, which is explained in
+>> detail within the Documentation/driver-api/generic-counter.rst file
+>> introduced by this patchset.
 >
+>I'm curious if you have given any thought to the time aspect of counters.
+>I am interested in the rate at which the counters are counting (e.g. how
+>many counts per second). I realize that you can calculate this in
+>userspace or in the kernel using the system timer, but it is not very
+>accurate since Linux is not a realtime OS. So, I would like to get the
+>rate directly from the hardware. For example, the TI eQEP[1], like the
+>one found in BeagleBones, has a couple ways of measuring time (see link
+>for details).
 >
-> Is it really ? Last time we had this discussion, not all architectures
-> guaranteed that reading a 64-bit integer would happen in two atomic
-> 32-bit sub-parts.
+>[1]: http://www.ti.com/lit/ug/sprug05a/sprug05a.pdf
 
-All architectures that matter do.
+Ah yes, I see you initially attempted adding a frequency channel type to
+the IIO code. I agree with you that this calculation is best kept away
+from the operating system, not just because of the realtime requirement
+considerations, but also because the hardware likely knows best its own
+data, so let's expose it!
 
-Please don't overdesign this, or try to make a problem out of
-something that isn't a problem.
+Regarding the Generic Counter interface, a frequency attribute can be
+added quite easily in a technical sense, so this discussion should be
+focused more on the warrant for exposing this data. I understand from
+the discussion thread on your initial patch submission that you're
+working with hot-swappable encoder wheels and would like to expose a
+counting rate since you have trouble otherwise knowing the number of
+counts equal to one revolution due to the various possible encoder
+wheels that could be installed -- do I understand this correctly?
 
-Sure, maybe some toy architecture does a 8-byte "get_user()" as a
-"copy_from_user()" one byte at a time, because that's the best way to
-do unaligned accesses.
+Luckily the Generic Counter interface is a more abstract paradigm, so
+the hot-swappable encoder wheels should not be a problem for us as long
+as we nail down a consistent and thorough definition for this attribute.
+To that end, since the Generic Counter paradigm is designed to abstract
+away specifics of counter devices in order to present the final data of
+interest to users (e.g. the count value, the mode of operation, etc.),
+let's make sure frequency is actually what we want to expose and not
+just a middle-step datum on the path to the final result.
 
-But nobody will ever care about rseq on such a thing anyway. Let it go.
+What is the real life use-case for this information (are you tracking
+position)? Does the relevant hardware report the number of counts equal
+to one revolution, or are you calculating this from frequency? Are you
+using this frequency to simply track the number of revolutions? Should
+revolution count also be exposed? Is frequency useful for other
+applications on its own (perhaps velocity of an automobile device
+equipped with an encoder wheel for some reason or other)?
 
-               Linus
+Once we figure out how this data is used, we can determine the best
+design and place to introduce it into the Generic Counter interface,
+then move on to integration from there.
+
+William Breathitt Gray
