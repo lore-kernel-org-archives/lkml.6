@@ -2,108 +2,162 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCAEC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAB1C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7DD24D25
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:43:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ska-ac-za.20150623.gappssmtp.com header.i=@ska-ac-za.20150623.gappssmtp.com header.b="UmN3pxy+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA7DD24D25
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ska.ac.za
+	by mail.kernel.org (Postfix) with ESMTP id 4E0A6204EC
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0A6204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753735AbeGCGn0 (ORCPT
+        id S1753823AbeGCGnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:43:26 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:38291 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752636AbeGCGnZ (ORCPT
+        Tue, 3 Jul 2018 02:43:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33249 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753557AbeGCGnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:43:25 -0400
-Received: by mail-ua0-f195.google.com with SMTP id 59-v6so534706uas.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 23:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ska-ac-za.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=g5nAIXTMO/Jd0ITM222qzzXwkBOtP+U4Jtn6YoMu5ew=;
-        b=UmN3pxy++N/Guu4hyCGPRoxBsd9puxVtaDteW0Axvf0+OjHtqzOKThEnhVJ3MRWO9T
-         2b5NqWVi3qLPvygKE73o8Y0kHnFKuHDRW7RwNOkeCtJLcmmqWGnTxcb+MIE7Zf5Homn3
-         HHierxD+vmHwY5oz0L3g3pzuVqlHhhmMnPhMJG+qzmUX9GIXAersH99fROQwqdorxG8M
-         oXAG66mVn76wCBDbi1iK14+HeUgSIaMQgU/5FAo9QI40qH7t8FCfRXSQH+VmrK845L8f
-         fN8SwigjUo4ve7o0+Pufo/icTk4ESyNvFI/mujqM61WhOvr0HDp3iOudtiINiLSGTBNn
-         8EJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=g5nAIXTMO/Jd0ITM222qzzXwkBOtP+U4Jtn6YoMu5ew=;
-        b=ZvWTXPc61AT3yHKIetzuDPyGVyj2IM4/Eetb6PjihJiIRccL0VLkEFWKgM/5WdyAHO
-         bu46EWm9fnqyeLw7RRO9bncoEM/5ZkWe2tMgT3vTop87cybZ5CeoS4E8jQIY6P02tQ9x
-         v4rPYmCRytaY5PL1+ZfP6YslJNKoxHs8eIGlLXrVy2PfdS+IIWWVNTWtmX7zgbKesCYo
-         k4y6ujT6cKEZxTQNiS+RyquJN1iARFPwA/hhac/iIC5k6yWQdjhT7z+IzzMbMaIX/viq
-         35QxwjOQvCC/eZTfDnf4HvVcCr+A/qaBpim5INr3nPdPTzgmRURttDbkpQvf7ZOl9gtl
-         Dnhw==
-X-Gm-Message-State: APt69E3fYp6HVi/RdRSO9G8aX0wg77PUyCOVVLI9DvuNkUCvfz+CaNBF
-        HPGwQCedhZJNV9LLvRndpgNNLorHoWLJ9y9Q6PTB8/js
-X-Google-Smtp-Source: AAOMgpeJOc1wlPn3do8AZ0xesSlwTtXPV5H+IGtad84WtLa1ZcTR7JBupoLTU65KKHTQlnr9AUiL620yjQ+KcB13A0E=
-X-Received: by 2002:a9f:3861:: with SMTP id q30-v6mr17408037uad.170.1530600203854;
- Mon, 02 Jul 2018 23:43:23 -0700 (PDT)
+        Tue, 3 Jul 2018 02:43:32 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w636hQc8182654
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 2 Jul 2018 23:43:27 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w636hQF6182651;
+        Mon, 2 Jul 2018 23:43:26 -0700
+Date:   Mon, 2 Jul 2018 23:43:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-546d3c74277398a3d76d059bd2db47186bb47fc8@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, reinette.chatre@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, reinette.chatre@intel.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <49b4782f6d204d122cee3499e642b2772a98d2b4.1530421026.git.reinette.chatre@intel.com>
+References: <49b4782f6d204d122cee3499e642b2772a98d2b4.1530421026.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Fix cleanup of plr structure on
+ error
+Git-Commit-ID: 546d3c74277398a3d76d059bd2db47186bb47fc8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:ab0:d96:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 23:43:23 -0700 (PDT)
-From:   Bruce Merry <bmerry@ska.ac.za>
-Date:   Tue, 3 Jul 2018 08:43:23 +0200
-Message-ID: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
-Subject: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Commit-ID:  546d3c74277398a3d76d059bd2db47186bb47fc8
+Gitweb:     https://git.kernel.org/tip/546d3c74277398a3d76d059bd2db47186bb47fc8
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Sat, 30 Jun 2018 22:03:03 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 3 Jul 2018 08:38:39 +0200
 
-I've run into an odd performance issue in the kernel, and not being a
-kernel dev or knowing terribly much about cgroups, am looking for
-advice on diagnosing the problem further (I discovered this while
-trying to pin down high CPU load in cadvisor).
+x86/intel_rdt: Fix cleanup of plr structure on error
 
-On some machines in our production system, cat
-/sys/fs/cgroup/memory/memory.stat is extremely slow (500ms on one
-machine), while on other nominally identical machines it is fast
-(2ms).
+When a resource group enters pseudo-locksetup mode a pseudo_lock_region is
+associated with it. When the user writes to the resource group's schemata
+file the CBM of the requested pseudo-locked region is entered into the
+pseudo_lock_region struct. If any part of pseudo-lock region creation fails
+the resource group will remain in pseudo-locksetup mode with the
+pseudo_lock_region associated with it.
 
-One other thing I've noticed is that the affected machines generally
-have much larger values for SUnreclaim in /proc/memstat (up to several
-GB), and slabtop reports >1GB of dentry.
+In case of failure during pseudo-lock region creation care needs to be
+taken to ensure that the pseudo_lock_region struct associated with the
+resource group is cleared from any pseudo-locking data - especially the
+CBM. This is because the existence of a pseudo_lock_region struct with a
+CBM is significant in other areas of the code, for example, the display of
+bit_usage and initialization of a new resource group.
 
-Before I tracked the original problem (high CPU usage in cadvisor)
-down to this, I rebooted one of the machines and the original problem
-went away, so it seems to be cleared by a reboot; I'm reluctant to
-reboot more machines to confirm since I don't have a sure-fire way to
-reproduce the problem again to debug it.
+Fix the error path of pseudo-lock region creation to ensure that the
+pseudo_lock_region struct is cleared at each error exit.
 
-The machines are running Ubuntu 16.04 with kernel 4.13.0-41-generic.
-They're running Docker, which creates a bunch of cgroups, but not an
-excessive number: there are 106 memory.stat files in
-/sys/fs/cgroup/memory.
+Fixes: 018961ae5579 ("x86/intel_rdt: Pseudo-lock region creation/removal core")
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/49b4782f6d204d122cee3499e642b2772a98d2b4.1530421026.git.reinette.chatre@intel.com
 
-Digging a bit further, cat
-/sys/fs/cgroup/memory/system.slice/memory.stat also takes ~500ms, but
-"find /sys/fs/cgroup/memory/system.slice -mindepth 2 -name memory.stat
-| xargs cat" takes only 8ms.
+---
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-Any thoughts, particularly on what I should compare between the good
-and bad machines to narrow down the cause, or even better, how to
-prevent it happening?
-
-Thanks
-Bruce
--- 
-Bruce Merry
-Senior Science Processing Developer
-SKA South Africa
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 1860ec10302d..8fd79c281ee6 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -290,6 +290,7 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ {
+ 	struct cpu_cacheinfo *ci;
++	int ret;
+ 	int i;
+ 
+ 	/* Pick the first cpu we find that is associated with the cache. */
+@@ -298,7 +299,8 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 	if (!cpu_online(plr->cpu)) {
+ 		rdt_last_cmd_printf("cpu %u associated with cache not online\n",
+ 				    plr->cpu);
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto out_region;
+ 	}
+ 
+ 	ci = get_cpu_cacheinfo(plr->cpu);
+@@ -312,8 +314,11 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 		}
+ 	}
+ 
++	ret = -1;
+ 	rdt_last_cmd_puts("unable to determine cache line size\n");
+-	return -1;
++out_region:
++	pseudo_lock_region_clear(plr);
++	return ret;
+ }
+ 
+ /**
+@@ -365,16 +370,23 @@ static int pseudo_lock_region_alloc(struct pseudo_lock_region *plr)
+ 	 */
+ 	if (plr->size > KMALLOC_MAX_SIZE) {
+ 		rdt_last_cmd_puts("requested region exceeds maximum size\n");
+-		return -E2BIG;
++		ret = -E2BIG;
++		goto out_region;
+ 	}
+ 
+ 	plr->kmem = kzalloc(plr->size, GFP_KERNEL);
+ 	if (!plr->kmem) {
+ 		rdt_last_cmd_puts("unable to allocate memory\n");
+-		return -ENOMEM;
++		ret = -ENOMEM;
++		goto out_region;
+ 	}
+ 
+-	return 0;
++	ret = 0;
++	goto out;
++out_region:
++	pseudo_lock_region_clear(plr);
++out:
++	return ret;
+ }
+ 
+ /**
