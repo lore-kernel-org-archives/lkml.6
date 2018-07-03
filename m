@@ -2,241 +2,179 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434B7C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8B3C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9F421A6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:20:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="EuZwR2aT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9F421A6A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	by mail.kernel.org (Postfix) with ESMTP id B936F21A6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B936F21A6A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934141AbeGCPUF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:20:05 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:36304 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933919AbeGCPPI (ORCPT
+        id S933746AbeGCPVD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:21:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932818AbeGCPVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:15:08 -0400
-Received: by mail-qt0-f194.google.com with SMTP id f1-v6so1869790qti.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oYH2jmVnDlfMeDLkq07E406Du8rKVpE53UeePKSxXhs=;
-        b=EuZwR2aTF/jfdhgZHZjDmkV+hheOoQJxTl/9xfWqd7qXBHH7Uci8bF8C2cGVfVuMxt
-         dxFtXLnvS8Z6K8xA5RosbrS1/A9yhdZPzyMALm9gsrUid+7j8wxMxgSFDdk5d42Uxm2X
-         x0nyaszUb8tYi7NBErrKLgSZu84fS4MSAgwcSwLY4eiqNrXPaG9/21iZeandmHajy4p/
-         WuzHcwZwD/PLoGf714wxaLuTNhZarGBQI4RytmJQ8/IulZGAy32/PLHobw9s3ktyKP4c
-         M7Kn+wYJlqsoHNlKBYntJMzc+JpP8cx+IRHbrb94unBLud74T3d9C7BAgPbrNh4ZXgrE
-         HRFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oYH2jmVnDlfMeDLkq07E406Du8rKVpE53UeePKSxXhs=;
-        b=uYHUfsQJV1lCmgbnPows0PS4jBcaRvI2U23zvCgbMfw4alURqgSZrd8Lpxx7z01Biz
-         1NM7GfCWeoTFhESsNU5xVX7F+zAi70MNyphQ2/vPkhJN/WwQomtMw5QMM7wvYGpkR/M4
-         Y6Py7+9beLZC99RGDlwvE3uwLczYiXK3t5ttz5kh6P/Nc6FjRWWHJD9Q6D/FLpDSyBpD
-         0V3JrB9k/Ep0RNZDTGzC7HGtOwo4WM1MCkP65ySYdgMZUp0IJL2bZtgVfybe/e04FqXd
-         I/e+Y1kGOvRUxJDEyaLz9BqwKR4EgQNF7IwmT29Ho4G942rvccMqqr0CuMWozHUNKhqC
-         zeYw==
-X-Gm-Message-State: APt69E1PiDNjLudMHM07IUvn8Rs/0Aju8c1lv5dY0x+3AWEy5ItBwAAV
-        So39Ei1qcaqXsj8TYqx+aUp6Yg==
-X-Google-Smtp-Source: AAOMgpcgBZNDYmm0vsLBMNGbx6BmhTEyrBORbBz4bg0kSCHHCfGl3w1n03a5T64PzwSA+Fko9KOCqw==
-X-Received: by 2002:a0c:adf8:: with SMTP id x53-v6mr22818609qvc.19.1530630907795;
-        Tue, 03 Jul 2018 08:15:07 -0700 (PDT)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm901861qtt.81.2018.07.03.08.15.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 08:15:07 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Cc:     Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 01/14] block: add bi_blkg to the bio for cgroups
-Date:   Tue,  3 Jul 2018 11:14:50 -0400
-Message-Id: <20180703151503.2549-2-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180703151503.2549-1-josef@toxicpanda.com>
-References: <20180703151503.2549-1-josef@toxicpanda.com>
+        Tue, 3 Jul 2018 11:21:01 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FJXkY066472
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:21:00 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0a3hn5bs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:21:00 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Tue, 3 Jul 2018 11:20:59 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 11:20:57 -0400
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FKtv210879486
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 15:20:55 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D97942805C;
+        Tue,  3 Jul 2018 11:20:27 -0400 (EDT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3690D28058;
+        Tue,  3 Jul 2018 11:20:27 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.218])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 11:20:27 -0400 (EDT)
+Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
+ virtualization
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <49b11ac2-2230-ad74-1583-c6a57f8b31e3@linux.ibm.com>
+ <6a330cae-2fe2-54df-edce-c3360117cf3c@linux.ibm.com>
+ <13998e79-9bae-5c55-b83d-85e6db8d3b99@linux.ibm.com>
+ <20180703135205.2ebb107f.cohuck@redhat.com>
+ <18532145-abeb-1251-926e-edbc6fa0bcb0@linux.ibm.com>
+ <20180703152557.08d10223.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Tue, 3 Jul 2018 11:20:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180703152557.08d10223.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070315-0064-0000-0000-000003247AE1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055992; UDB=6.00541663; IPR=6.00833915;
+ MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 15:20:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070315-0065-0000-0000-000039CE7348
+Message-Id: <c5e553b1-34cb-c8f9-1183-7675f826d49e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+On 07/03/2018 09:25 AM, Cornelia Huck wrote:
+> On Tue, 3 Jul 2018 14:20:11 +0200
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+>
+>> On 07/03/2018 01:52 PM, Cornelia Huck wrote:
+>>> On Tue, 3 Jul 2018 11:22:10 +0200
+>>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>>    
+>> [..]
+>>>> Let me try to invoke the DASD analogy. If one for some reason wants to detach
+>>>> a DASD the procedure to follow seems to be (see
+>>>> https://www.ibm.com/support/knowledgecenter/en/linuxonibm/com.ibm.linux.z.lgdd/lgdd_t_dasd_online.html)
+>>>> the following:
+>>>> 1) Unmount.
+>>>> 2) Offline possibly using safe_offline.
+>>>> 3) Detach.
+>>>>
+>>>> Detaching a disk that is currently doing I/O asks for trouble, so the admin is encouraged
+>>>> to make sure there is no pending I/O.
+>>> I don't think we can use dasd (block devices) as a good analogy for
+>>> every kind of device (for starters, consider network devices).
+>>>    
+>> I did not use it for every kind of device. I used it for AP. I'm
+>> under the impression you find the analogy inappropriate. If, could
+>> you please explain why?
+> I don't think block devices (which are designed to be more or less
+> permanently accessed, e.g. by mounting a file system) have the same
+> semantics as ap devices (which exist as a backend for crypto requests).
+> Not everything that makes sense for a block device makes sense for
+> other devices as well, and I don't think it makes sense here.
+>
+>>>> In case of AP you can interpret my 'in use' as the queue is not empty. In my understanding
+>>>> unbind is supposed to be hard (I used the word radical). That's why I compared it to pulling
+>>>> a cable. So that's why I ask is there stuff the admin is supposed to do before doing the
+>>>> unbind.
+>>> Are you asking for a kind of 'quiescing' operation? I would hope that
+>>> the crypto drivers already can deal with that via flushing the queue,
+>>> not allowing new requests, or whatever. This is not the block device
+>>> case.
+>>>    
+>> The current implementation of vfio-ap which is a crypto driver too certainly
+>> can not deal 'with that'. Whether the rest of the drivers can, I don't
+>> know. Maybe Tony can tell.
+> If the current implementation of vfio-ap cannot deal with it (by
+> cleaning up, blocking, etc.), it needs at the very least be documented
+> so that it can be implemented later. I do not know what the SIE will or
+> won't do to assist here (e.g., if you're removing it from some masks,
+> the device will already be inaccessible to the guest). But the part you
+> were referring to was talking about the existing host driver anyway,
+> wasn't it?
 
-Currently io.low uses a bi_cg_private to stash its private data for the
-blkg, however other blkcg policies may want to use this as well.  Since
-we can get the private data out of the blkg, move this to bi_blkg in the
-bio and make it generic, then we can use bio_associate_blkg() to attach
-the blkg to the bio.
+I addressed this in the cover letter and included a comment in the remove
+callback for the vfio_ap driver. The goal is to provide this in the next
+patch series.
 
-Theoretically we could simply replace the bi_css with this since we can
-get to all the same information from the blkg, however you have to
-lookup the blkg, so for example wbc_init_bio() would have to lookup and
-possibly allocate the blkg for the css it was trying to attach to the
-bio.  This could be problematic and result in us either not attaching
-the css at all to the bio, or falling back to the root blkcg if we are
-unable to allocate the corresponding blkg.
-
-So for now do this, and in the future if possible we could just replace
-the bi_css with bi_blkg and update the helpers to do the correct
-translation.
-
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- block/bio.c               | 23 +++++++++++++++++++++++
- block/blk-throttle.c      | 21 +++++++--------------
- include/linux/bio.h       |  1 +
- include/linux/blk_types.h |  2 +-
- 4 files changed, 32 insertions(+), 15 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index f7e3d88bd0b6..c9072a54395e 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -28,6 +28,7 @@
- #include <linux/mempool.h>
- #include <linux/workqueue.h>
- #include <linux/cgroup.h>
-+#include <linux/blk-cgroup.h>
- 
- #include <trace/events/block.h>
- #include "blk.h"
-@@ -2036,6 +2037,24 @@ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css)
- }
- EXPORT_SYMBOL_GPL(bio_associate_blkcg);
- 
-+/**
-+ * bio_associate_blkg - associate a bio with the specified blkg
-+ * @bio: target bio
-+ * @blkg: the blkg to associate
-+ *
-+ * Associate @bio with the blkg specified by @blkg.  This is the queue specific
-+ * blkcg information associated with the @bio, a reference will be taken on the
-+ * @blkg and will be freed when the bio is freed.
-+ */
-+int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg)
-+{
-+	if (unlikely(bio->bi_blkg))
-+		return -EBUSY;
-+	blkg_get(blkg);
-+	bio->bi_blkg = blkg;
-+	return 0;
-+}
-+
- /**
-  * bio_disassociate_task - undo bio_associate_current()
-  * @bio: target bio
-@@ -2050,6 +2069,10 @@ void bio_disassociate_task(struct bio *bio)
- 		css_put(bio->bi_css);
- 		bio->bi_css = NULL;
- 	}
-+	if (bio->bi_blkg) {
-+		blkg_put(bio->bi_blkg);
-+		bio->bi_blkg = NULL;
-+	}
- }
- 
- /**
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 82282e6fdcf8..06f42b92fe10 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -2132,12 +2132,8 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
- static void blk_throtl_assoc_bio(struct throtl_grp *tg, struct bio *bio)
- {
- #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
--	if (bio->bi_css) {
--		if (bio->bi_cg_private)
--			blkg_put(tg_to_blkg(bio->bi_cg_private));
--		bio->bi_cg_private = tg;
--		blkg_get(tg_to_blkg(tg));
--	}
-+	if (bio->bi_css)
-+		bio_associate_blkg(bio, tg_to_blkg(tg));
- 	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
- #endif
- }
-@@ -2285,6 +2281,7 @@ void blk_throtl_stat_add(struct request *rq, u64 time_ns)
- 
- void blk_throtl_bio_endio(struct bio *bio)
- {
-+	struct blkcg_gq *blkg;
- 	struct throtl_grp *tg;
- 	u64 finish_time_ns;
- 	unsigned long finish_time;
-@@ -2292,20 +2289,18 @@ void blk_throtl_bio_endio(struct bio *bio)
- 	unsigned long lat;
- 	int rw = bio_data_dir(bio);
- 
--	tg = bio->bi_cg_private;
--	if (!tg)
-+	blkg = bio->bi_blkg;
-+	if (!blkg)
- 		return;
--	bio->bi_cg_private = NULL;
-+	tg = blkg_to_tg(blkg);
- 
- 	finish_time_ns = ktime_get_ns();
- 	tg->last_finish_time = finish_time_ns >> 10;
- 
- 	start_time = bio_issue_time(&bio->bi_issue) >> 10;
- 	finish_time = __bio_issue_time(finish_time_ns) >> 10;
--	if (!start_time || finish_time <= start_time) {
--		blkg_put(tg_to_blkg(tg));
-+	if (!start_time || finish_time <= start_time)
- 		return;
--	}
- 
- 	lat = finish_time - start_time;
- 	/* this is only for bio based driver */
-@@ -2334,8 +2329,6 @@ void blk_throtl_bio_endio(struct bio *bio)
- 		tg->bio_cnt /= 2;
- 		tg->bad_bio_cnt /= 2;
- 	}
--
--	blkg_put(tg_to_blkg(tg));
- }
- #endif
- 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f08f5fe7bd08..a279ba384da9 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -555,6 +555,7 @@ do {						\
- 
- #ifdef CONFIG_BLK_CGROUP
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
-+int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
- void bio_disassociate_task(struct bio *bio);
- void bio_clone_blkcg_association(struct bio *dst, struct bio *src);
- #else	/* CONFIG_BLK_CGROUP */
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 3c4f390aea4b..3364d42ebe08 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -179,8 +179,8 @@ struct bio {
- 	 */
- 	struct io_context	*bi_ioc;
- 	struct cgroup_subsys_state *bi_css;
-+	struct blkcg_gq		*bi_blkg;
- #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
--	void			*bi_cg_private;
- 	struct bio_issue	bi_issue;
- #endif
- #endif
--- 
-2.14.3
+>
+>> I'm aware of the fact that AP adapters are not block devices. But
+>> as stated above I don't understand what is the big difference regarding
+>> the unbind operation.
+>>
+>>> Anyway, this is an administrative issue. If you don't have a clear
+>>> concept which devices are for host usage and which for guest usage, you
+>>> already have problems.
+>> I'm trying to understand the whole solution. I agree, this is an administrative
+>> issue. But the document is trying to address such administrative issues.
+> I'd assume "know which devices are for the host and which devices are
+> for the guests" to be a given, no?
+>
+>>> Speaking of administrative issues, is there libvirt support for vfio-ap
+>>> under development? It would be helpful to validate the approach.
+>> I full-heartedly agree. I guess Tony will have to answer this one too.
+>>
+>> Regards,
+>> Halil
+>>
 
