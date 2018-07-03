@@ -2,354 +2,176 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2F9C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8774AC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4481123ECE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22E2723ECE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:21:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYJU76VG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4481123ECE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="t6bb7BW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E2723ECE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933878AbeGCQU3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:20:29 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35826 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933569AbeGCQUZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:20:25 -0400
-Received: by mail-oi0-f65.google.com with SMTP id i12-v6so4972174oik.2;
-        Tue, 03 Jul 2018 09:20:25 -0700 (PDT)
+        id S933732AbeGCQVr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:21:47 -0400
+Received: from mail-eopbgr710071.outbound.protection.outlook.com ([40.107.71.71]:47760
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932392AbeGCQVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:21:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zsgypG04OW6kcYuDEeplrtJIK66q56vyi8ZE06TomNM=;
-        b=oYJU76VGOUofJ9/KvNrZeU9A8xHAwAkjneQ1rGDCRTfIIeKGZEnVkzkAGHDW89717O
-         YsM/BJGXeTJ7dpOFPZpZCap2Gt2vYx5nhIrZqmG1ZRN3BMZJmqrdfg51W3XZxal3cLkQ
-         Swn2EM5lhB/fQd/HIi0cYXtD9A2FHbMqJL4R3MDudublaZoXh3z45PGFcc1lL4aGlAWH
-         CQbwJY539INz45DDJdrwiGRErJla1MYl/1IQa89OOxXZ+uBuC9M9MIbkcQeS6Eh3lgdD
-         XFOeCVTTbZ7IJGNVueVXVjrtnO3T3QMWpwVOqH8qGoXSP5tUXOWwQoisDNORi003WxIO
-         KgiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zsgypG04OW6kcYuDEeplrtJIK66q56vyi8ZE06TomNM=;
-        b=ghjPQEzwx02KOqhRyUGr1jD1POPySjQxb8e2EAhZRYYPl67SYu1MCFdR2GVvP20azS
-         ZkLJdwqn1C+dW4KIaS9Nvat6GdUhQ+bwZjJ6ftDpf9CGz+D5PcS5BjZUQyUNna6uqyIV
-         i414hQHpdI66HkSL2U1DU4cdsNCFFYmEVEA7kOiWrcnx+8rvJdpJhGNP9n8lCsdviMOC
-         r/bJ+vL0iNLQmSV75zRWMwrcAXW/kfkGvzr8pH1cbxoYV9yraaaSmxcv7RRviURuNReg
-         bbFo5wNCW9bCxQkhyUrEG8EfN46PCIKC9SKy650uTDdX2GF5ebwwytHkmLxLf7QWAcjH
-         xzWg==
-X-Gm-Message-State: APt69E3hFXQDWtIldwwstaZsMARSdU5ijlHmpILVhWszScXElRTJtCcv
-        IsGm/GyNo/5xzQ+KruijcpFAubtH
-X-Google-Smtp-Source: AAOMgpetCILNp77lzoFBTkRsPf04Okd0i1DaNKiDJTJm9xIB4xk/HC7q9ZKvV2iH0By5AmpZzSZwug==
-X-Received: by 2002:aca:3507:: with SMTP id c7-v6mr5996959oia.46.1530634824813;
-        Tue, 03 Jul 2018 09:20:24 -0700 (PDT)
-Received: from [192.168.0.2] (cpe-70-124-142-160.austin.res.rr.com. [70.124.142.160])
-        by smtp.gmail.com with ESMTPSA id w62-v6sm641936otb.0.2018.07.03.09.20.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 09:20:23 -0700 (PDT)
-Subject: [PATCH v5] dcdbas: Add support for WSMT ACPI table
-To:     Mario.Limonciello@dell.com, andy.shevchenko@gmail.com
-Cc:     dvhart@infradead.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
- <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com>
- <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
- <20180609010420.GA112645@localhost.localdomain>
- <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
- <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com>
- <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
- <8307f1e0-c480-3f78-9327-e248208e5349@gmail.com>
- <CAHp75VdTGXqE__VHjRphEmpMVfxaVVik=u-_0NRhQAKeq=+ZKA@mail.gmail.com>
- <b5652ed8-5fff-4f8b-ec0f-467bce853bf8@gmail.com>
- <CAHp75VfL3v8U6o36-e3+XPL53sb9wMUOXsL6gn3XE4=-kJjuKQ@mail.gmail.com>
- <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com>
- <CAHp75VdSVLzNHnrOzzrBMf4X2Cg4QACRrnxKNkQzcYJ0h5W+tw@mail.gmail.com>
- <e17fbb51b98d45318001adb7eb6a51b2@ausx13mpc120.AMER.DELL.COM>
- <CAHp75VfNo9NVfgGn4Fqa5fA9zp47TkqHwn1MJ044qMQoMNMB-Q@mail.gmail.com>
- <73c53c23c0824e4595292bfafc6054ee@ausx13mpc120.AMER.DELL.COM>
-From:   Stuart Hayes <stuart.w.hayes@gmail.com>
-Message-ID: <4e26f407-58c0-09b6-6735-f004d5e86969@gmail.com>
-Date:   Tue, 3 Jul 2018 11:20:21 -0500
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D/9+ykSIHdEM4BWkTn8M9LquO1CjFYgixih0NfSKROQ=;
+ b=t6bb7BW95b3m+tXkVx6j0sVs5FAerqD2z9zMha0YRVrW8EG/wGOep4N6qiG7E+tacKOExuZ/mkhmUPd35gOEPNzxN2OEu4W5KWptPYvdcnm36JeTJIDlsXQmBP1psAKCJePJtClp28siEWDxAj39swIWsboJjTuXUy8uxfZfZMY=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+Received: from [10.236.70.155] (165.204.78.1) by
+ DM5PR12MB1449.namprd12.prod.outlook.com (2603:10b6:4:d::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.906.24; Tue, 3 Jul 2018 16:21:42 +0000
+Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
+To:     Joe Perches <joe@perches.com>,
+        Colin King <colin.king@canonical.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180703064005.18908-1-colin.king@canonical.com>
+ <6763ec382f8d629f5f356f4cc023f20c2f76b26a.camel@perches.com>
+ <d27fe634-89cf-7d9a-3e3d-a2baafabf0be@amd.com>
+ <d93bfa0f52d8907019b16336645986cd339ebf75.camel@perches.com>
+From:   "Hook, Gary" <ghook@amd.com>
+Message-ID: <f3e15437-68c1-58eb-bc34-93fa70e50dc9@amd.com>
+Date:   Tue, 3 Jul 2018 11:21:24 -0500
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <73c53c23c0824e4595292bfafc6054ee@ausx13mpc120.AMER.DELL.COM>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d93bfa0f52d8907019b16336645986cd339ebf75.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 180703-2, 07/03/2018), Outbound message
-X-Antivirus-Status: Clean
+X-Originating-IP: [165.204.78.1]
+X-ClientProxiedBy: CY4PR0601CA0091.namprd06.prod.outlook.com
+ (2603:10b6:910:88::32) To DM5PR12MB1449.namprd12.prod.outlook.com
+ (2603:10b6:4:d::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a68d1fde-bef4-4c94-65b9-08d5e1011044
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1449;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;3:yIAYiOVQhMp6APp6mQMG7Rvv5HYofo6Zc6DsIN4YF5t/so7JwkaBzJ9Pa1Tqugr04Ww+Yc8iFwMVOhKlXlq1RvHfDszPm7rQCkPPsUNOqAzYnjgAv0XqTmMWinVnZLyhdjrr59dNjGTEnPyjOyvES0DqrxB1ApOyIHTS2a78DgHHMtCYHbZxMneAnFgs1XYH+RuwulVPUv+ffLLLgMie624NyMq/e1FApauhxL+rMAw0X+OhGBUIbsvIpgCZMKdG;25:kMjdTp03wBtKwhEFB0qvf3xanEX9rfmi3bkxipqj8GKT91R92jyOoJUhvkaiP27Yc4D/XgrCMpb2NVTSTr+Fu+EhJgHxMPBCKzmWBBEo3AjayfQchx4/aJ+oqh1mHXYIc/BWu4lDHBM+A8aMnbugvf8mv4fcGm61s5jKUgao3pHSkMaSuhOmMqEW23CKUd5AnEODq8vGQ09bCBTTOYHFpE9carBaD0ZLKCEAm65ECzNlDX6EvjaIpZUaYS/tl5/uDIavsh+6PcgnwIZ2d+Ub8QVJDD3YmGHRsjj+3J+MgBiDYgLctiLwdNK8T87ZNLi1UjC4tOQqDJhoR9vfGXUtLg==;31:cLp4525fEManjUjbBuw+aL9qnlrRvSSE012AX6iuhXkzYK5o8zaNLUyGlljJY95vHmJ/svOWNSzaA+ss2jLII5DJC8i4oO2acT1eTIdX1Hb73U5J20VuK2eq8ZnjLZBd3QRao8HFIoAu+zIgw42VDfeeHDI0tvaNVYqfEFgbfZGg+lldKM1WxDSwxJ+SwNBwV1P94NMzrcHF4IYHbYhfCWkpxVioK1BnNAnv8jZYf7U=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1449:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;20:wMVar3sfGpqeu00Fy4l+iZjPbUhvqFGrGQ6qy7gK+5Yyo1gVJ53dcaZXD3n9NvxZvLp7TX1f6/wN6BDfzG/QPAmvwP1yZ1vmMQWcTbXWIsoY00nzbJCUx5ZWKG1wQLSj2uRcSRrFQRZ2YwhtPqCFJukWAbx8nW4JZakPeMua5gUjwai7/y0smtSAgZmvJ+IP8RmUfbSgU9dZjOq/w9M7e1CUqi6LwUthzCkQSS1WXG+AnD71DcIAHtwChEImNFT4unO1Kr0MwpB+yhGmvMrs7Hx5KTUVB9oJCA+xEY46E5laIqPg+ut1TT6Y9fuwMvhvTE9T+MpnxSlxAZbETld5EzZEzaX06lusLgCPzYO8z0hd5gnF1kEmtG9+T4qBy4Li0L72AwlinS1IgxdCj7aE9sekkqKKXoxXJr6kVycnIAGRcHInn+aXiVy3yWXqzOamxGxT3VduZKP7E3e1ibmxeTmC5pqQgBxe0o+XhmZqtuungOQEQrwuZZvJ3R1q/NA8;4:hGAFanYHvzDlw7/2udWKBMNDDX9+4ErMRoXv6jkfHWwE6CSq2rYPj1sCVA4sKVqxeqrfQcKtdE043rnTMtsIYkvBxZbKyuwdx43lQFtK9uBRS3tQr1J+eQcwGeKNcOSefxZRcR17HUW9VhZHTRYLZac3RSiHSKzhTMewCVdA+xSVCyb3AH862/4/VmcYNM1N0CW9C83QTCLZ5psk/N9JkIyLK9AzA3U31c4ssSMtJMqfxjLNyv5PFSLaLkjyjv18RwU2zrpxJUARfVfJJoi3MA==
+X-Microsoft-Antispam-PRVS: <DM5PR12MB14498A08BEA1F71087E06893FD420@DM5PR12MB1449.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DM5PR12MB1449;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1449;
+X-Forefront-PRVS: 0722981D2A
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39860400002)(346002)(396003)(376002)(136003)(366004)(199004)(189003)(11346002)(106356001)(8936002)(72206003)(446003)(186003)(25786009)(53936002)(4326008)(3260700006)(6246003)(31686004)(956004)(2616005)(5660300001)(476003)(105586002)(486006)(68736007)(97736004)(15650500001)(2906002)(6486002)(6666003)(305945005)(65826007)(316002)(14444005)(230700001)(229853002)(16576012)(36756003)(93886005)(3846002)(58126008)(67846002)(47776003)(6116002)(386003)(53546011)(65956001)(52116002)(31696002)(7736002)(8676002)(66066001)(81166006)(16526019)(81156014)(26005)(77096007)(76176011)(50466002)(2486003)(478600001)(110136005)(52146003)(23676004)(65806001)(64126003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1449;H:[10.236.70.155];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxNDQ5OzIzOkhIeEdrNnMyaFVYdmNVQnlEdDRsSURHQklQ?=
+ =?utf-8?B?Q1hrSWZIMDc3dDQ2Z284WDM1TFVGU0ZuMWVDRnBqMElsZElkOXlNVXZNeTkw?=
+ =?utf-8?B?SmZtaEN0cEcvWCtBMndzV09rNERnaEp2VS92WXJnbmthbkswTEY0QVZGY1lz?=
+ =?utf-8?B?MlRuK1llVTRNM2txazRPRytzVVphMTdRT2lTZ2lCUGd6TFlWSE4wdmV2T1lS?=
+ =?utf-8?B?Q3JlUzR3bzVRc0tWN0hjM0JHbXZsQWc0UTlZM25VTGFnWVh3eDRsVElITkIw?=
+ =?utf-8?B?Y050QUpkeGMraTlHN09oYUNRUTdxc3laNXZVdk9haG44SEU3N1lrc3FHYjM1?=
+ =?utf-8?B?bTdwNy9rNzdNd0MrRmVzSTlQL0F6OHY3OWVSdmg2cDF6ZU81R3dvODVqb2NC?=
+ =?utf-8?B?Y0pEV1g3NERKeVgwVEhUL0doRVJGL0N6c2ZVN2czQllLeHQ1TUZPYVhLSG1F?=
+ =?utf-8?B?ZmdsR2xYSWoyR3kwdE5DaDhpbnc4cGZnYzdmSzgybE5QSWhPd2UrMHkwVmtq?=
+ =?utf-8?B?RXp5ekJHMVd1aFFsOS81elVTVkoxbFFBNjg3aTl6MW5wUmdWSUZtMWVNTWpE?=
+ =?utf-8?B?SytteFludHpSQ01HdWF4aHBYN3FJODUvY2ZQc295T1ExSUJKTklJNUpZcitJ?=
+ =?utf-8?B?WHpKakkvV2Q5dDg4M3JUbE9tMHRKVEFGK0ZtdGJ3Zkl6eWRiR2hZTEdlL3FO?=
+ =?utf-8?B?NzBuZnlobXZaUXFSZTVLVFVZMlVMMUJoRUljdmhXbE55OFFzVDF2SVEzTThT?=
+ =?utf-8?B?by9EOWx3b3NMeHJML1FNQ2FvQzkxQVl5eERYKzZkdGQxSU1RMVlVN3ZDK0Ry?=
+ =?utf-8?B?WnVQNWowM1l3UXg3L0NOUTBLdzE0VFVRWVVxc3d4RiswVlRPZ0diTWlyNmVi?=
+ =?utf-8?B?dVhGNjNDaVZETFdla1Q0ZWQ4c016T20rcFhLZDUzSDVDai8yTDBMMklnQWxV?=
+ =?utf-8?B?VmIzWnpOSjBPUFNuQXRWUnl3RUlSbEZrelZDbFVaTzUwMXl1ZmNOQm9Wa24y?=
+ =?utf-8?B?bzlMeC82aENmU3RpdU16aGtzL1lkSS96aGIrcU15ekJncDFqZmJheXpqQ3ZT?=
+ =?utf-8?B?dTVUdEZpNkZzWGxISWNDS29VdUtQRUREcWp4TGtBSXV4ODBKbGsybVc4bFRW?=
+ =?utf-8?B?R1dKK2g4V1dBOWk3SEI1YkpzcnFZU3JnNzM0YlBQRyt4UkdhTkEvRnVTajRh?=
+ =?utf-8?B?RklZSUlpZjQzaU9STm1RUjl6d0JjUkljdmQ4YjZnRSthK2U1eUdwcFhyZmRr?=
+ =?utf-8?B?dXk3a3BlZ1hwTVJjalprcW83NE9LaFJxQTBZckV1dXgxTHZwT0gyaFdWNGQr?=
+ =?utf-8?B?dk1Pb080dDJoaytGa1c4d2tIbnIzUEdBeHJmQk9YN0lDa0ZzN3dyN2hYNXpV?=
+ =?utf-8?B?TTdGSFVVNG5NZTNUUFFiTWNmVWtJUjlPZWl3a3l1MlFKdVI0OTI2TkhQNjdF?=
+ =?utf-8?B?SHVKZlJOdVEvcjhJZUZlTDdrYjhrM2ZFTXh4ejN5WnNjSWt4Q1FVTDJJajBQ?=
+ =?utf-8?B?aDB6QkxwWGVMS2pKZDJxSUdsbTJBc2NJcWpaUXZuUjFRZVR0cmgrRUErTTJP?=
+ =?utf-8?B?NktDUXFJZis4TkJYWldDeGthNGRXbUZneUZ1NFdjOEYraC92cXQ5LysrREJy?=
+ =?utf-8?B?MDhoSDVqMWRSSmJrbkhGMk1FS0JEZnNnZytQZHJnTjFqSjRQUlkzNW9UeHZC?=
+ =?utf-8?B?R2I2YnZlS1FRMERDM0VyL1VibVg4R2NCV3lLeDVZRnAyTGM0YkZsSGE3UTQ5?=
+ =?utf-8?B?RGVUSG9xUGJ2TnJTM2pzTzdjVmM0VzdUWExYVTdUL0liR0FnY0tURWVFSmpk?=
+ =?utf-8?B?RzE0cXRvRWJlT3JvdzJEZnA4d0hRTWV5bzdCbHExaTBVaUw5ellZTmZkWHB0?=
+ =?utf-8?B?Q2JMbGNyWXlRbDR2ZCtBeTByZ3F6R0lqUUZrZTJ1Yk5JWG94Q1pWUGdhck9o?=
+ =?utf-8?B?MTJWR3JTT3JCTFRYZGFQeVdhM0tMNzVWMGlpWDNLZkxpZlpJeTdFSnZwbm5i?=
+ =?utf-8?B?RTZjaVpVU2d3dmpFMmJBbjJsZFFjLzJOVjZQT2QrVUovZ2xPTGVQY1BwbDlx?=
+ =?utf-8?Q?Y2mc=3D?=
+X-Microsoft-Antispam-Message-Info: MDiTjzjgU0liTnZz8V7y9szBBmEdcnFUPSHecpxEAzNAClY6UDpOsOuQs0/7hDRj+fx+OJkuxje04iNkqjBkug6ZdfAMw6SFFgsZ/Wnssxha6JcOK16naeWS+xMChKrrGzPNzJt43v7pIPcrhtbsm6HSvkWWGUHKYjkw6uSJsCvHbC+Vd0TaTL9fRc9znuRwzq8I27Dn5DHgR6R9R8dd/2PTy64akveKTY/eMgPJoZjIjsxtkX2ETsrRRBHwjNxJzGbIUYswUchw4spM8ZTKCIWq9TP0JWB8qjpsCWR18Atx/6RpYhKIjoazs1/y3LHrQryhO79TRLWm/wwqEi35/R1YYGCsLwaezjej0IWB5X4=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;6:bjNyMUxP/ym/LMmKX/d3j8G5pPCvT4Pg5BtgWGk3V9s7cweFtx62MJB8r1n6clhn+G3Bw6iHske7ZvKCd+jvi7xSsLZcW6lxAOmYyVavONnMcwbqEAtwUzCZ1DlXYLnfiM3QEDcygTxfWTpCyvcLUQzyEM5mbs7dnBkvETjz+eqUqRd4rd+aAiRw+BqG1a0jCWpl6x86FhXEKOIH1sD3kss53rfx4IfHVCJ+Li95n1BZVH44AXCSuBJ1PLvIFd5dXRtc8P0KGLqNFVvqWz2jbBtzPNVRKpFD5WOVfvenlJWf+1lyVGhpDQUF5nrw4YDVtmVBlMViY10u/3BbqObKgb3ZUkrQ/yD0bgS64V55o8VWMNwss88bsBtj3dGjNL8PVHJmj2v8RxvP6QupU0vhMKar53oNnDYbqu6qAmzhyVUCcORENoEu80joqQUFGGXg9z4O+5bCiBPbB7dAtW+z6w==;5:hKjnHBvAtR9KG9owRfxm8QPqeD5tLRq/4d9oOa/CmAskwdtifM06VRG01dClnbsZUw6YXK4ugQ5V8gd8r0vAIndMzjSQPBPCOBVJo9Hv4M9oPAfm+RZRklb/ABib2KVkWJaMWW6gsW0vXuOWe4VBLY0aJoDD/4MyPH3c7nD35Nc=;24:jtwk9sGhkl8hIYCYwKrYhnFRv3LDn6Gi3EkYoEdNfShBrZul908L1lhRD77BWicmjmXSSPC/c3t8ZtvvbAPLNDd2+4SBX3iNxwojs9Q8vz0=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;7:8HncqzIgtaw6Rio6tcf7rkbsa4Ba6a6ZdhIxkGoTso3EJLYZMESBaNfKpe91vpu+bMcM6QXN85fk3mNNgbiIENBqupnYyG2IeuLLSBBvd3k4TB69uulARG9BM0MAAn0NcjzRGSyvP45IEpHYlguY+1xbtrKBdKKCplP9kh19pQBc03WvYfsZbW0VEqDc+Mqg7Q1kBPLqtTJVrU09EMgeaWHp3+9tj0SCWnSmFp/vJEusnovxxhrPUmLWMeWvrPnm;20:C3q4S8cEP4Dte6zUYw6JDV2wYkrJq2HAkyc9TEMo/NM18VMbH97KCRvPo4pnYABrwmMBMy1uA9SdKKhy1wUtQGG+TYfzBEY3Lf4wNbE3FVLLcIvzfajxo2uwCCOmdCwkChogquvPWDM/8FMGZVbl7Jadx9UIEKs+I/WpFFkjrRCJk/TTf7Z4Xz/oVguvxhoWe+CHSG9ndw/sZiit8ihX7zXphRWzbBs+lhYJ433kEJp/zPyMb3VscInfXh6o//MH
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 16:21:42.2064 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a68d1fde-bef4-4c94-65b9-08d5e1011044
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1449
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/3/2018 10:55 AM, Joe Perches wrote:
+> On Tue, 2018-07-03 at 07:56 -0500, Gary R Hook wrote:
+>> On 07/03/2018 05:07 AM, Joe Perches wrote:
+>>> On Tue, 2018-07-03 at 07:40 +0100, Colin King wrote:
+>>>> Currently tag is being assigned but not used, it is missing from
+>>>> the dev_err message, so add it in.
+>>>>
+>>>> Cleans up clang warning:
+>>>> warning: variable 'tag' set but not used [-Wunused-but-set-variable]
+>>>
+>>> []
+>>>> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+>>>
+>>> []
+>>>> @@ -616,9 +616,9 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+>>>>    		pasid = ((event[0] >> 16) & 0xFFFF)
+>>>>    			| ((event[1] << 6) & 0xF0000);
+>>>>    		tag = event[1] & 0x03FF;
+>>>> -		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+>>>> +		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%03x]\n",
+>>>>    			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>>>> -			pasid, address, flags);
+>>>> +			pasid, address, flags, tag);
+>>>
+>>> Seems to have a superfluous ] that should be removed.
+>>
+>> Yeah, I pretty much messed up all of the log messages in that function.
+>> My apologies. I'll create a patch for that problem; it shouldn't be
+>> fixed here.
 
-If the WSMT ACPI table is present and indicates that a fixed communication
-buffer should be used, use the firmware-specified buffer instead of
-allocating a buffer in memory for communications between the dcdbas driver
-and firmare.
-
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
----
-v2 Bumped driver version to 5.6.0-3.3
-v3 Removed dependency on ACPI in Kconfig
-   Moved the added #include to be in alphabetical order
-   Added comments in smi_request_store()
-   Simplified checksum code
-   Changed loop searching 0xf0000 to be more readable
-   Reworked calculation of remap_size & smi_data_buf_size
-v4 Fixed comment that starts with "Calling Interface SMI"
-   Fixed formatting of first "if" statement in dcdbas_check_wsmt()
-v5 Reworked comment that starts with "Calling Interface SMI"
-   Changed EPS scanning loop to check every 16 bytes
+Well, no, I misremembered. The extraneous square brace has been there 
+forever. Needs fixin', though.
 
 
- drivers/firmware/dcdbas.c | 123 +++++++++++++++++++++++++++++++++++++++++++---
- drivers/firmware/dcdbas.h |  10 ++++
- 2 files changed, 127 insertions(+), 6 deletions(-)
+> I also wonder why event is declared volatile and then
+> dereferenced with [<constant>] multiple times.
+> 
+> Maybe each array dereference should be stored as a
+> local variable instead.
 
-diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
-index 0bdea60c65dd..ae28e48ff7dc 100644
---- a/drivers/firmware/dcdbas.c
-+++ b/drivers/firmware/dcdbas.c
-@@ -21,6 +21,7 @@
-  */
- 
- #include <linux/platform_device.h>
-+#include <linux/acpi.h>
- #include <linux/dma-mapping.h>
- #include <linux/errno.h>
- #include <linux/cpu.h>
-@@ -41,7 +42,7 @@
- #include "dcdbas.h"
- 
- #define DRIVER_NAME		"dcdbas"
--#define DRIVER_VERSION		"5.6.0-3.2"
-+#define DRIVER_VERSION		"5.6.0-3.3"
- #define DRIVER_DESCRIPTION	"Dell Systems Management Base Driver"
- 
- static struct platform_device *dcdbas_pdev;
-@@ -49,19 +50,23 @@ static struct platform_device *dcdbas_pdev;
- static u8 *smi_data_buf;
- static dma_addr_t smi_data_buf_handle;
- static unsigned long smi_data_buf_size;
-+static unsigned long max_smi_data_buf_size = MAX_SMI_DATA_BUF_SIZE;
- static u32 smi_data_buf_phys_addr;
- static DEFINE_MUTEX(smi_data_lock);
-+static u8 *eps_buffer;
- 
- static unsigned int host_control_action;
- static unsigned int host_control_smi_type;
- static unsigned int host_control_on_shutdown;
- 
-+static bool wsmt_enabled;
-+
- /**
-  * smi_data_buf_free: free SMI data buffer
-  */
- static void smi_data_buf_free(void)
- {
--	if (!smi_data_buf)
-+	if (!smi_data_buf || wsmt_enabled)
- 		return;
- 
- 	dev_dbg(&dcdbas_pdev->dev, "%s: phys: %x size: %lu\n",
-@@ -86,7 +91,7 @@ static int smi_data_buf_realloc(unsigned long size)
- 	if (smi_data_buf_size >= size)
- 		return 0;
- 
--	if (size > MAX_SMI_DATA_BUF_SIZE)
-+	if (size > max_smi_data_buf_size)
- 		return -EINVAL;
- 
- 	/* new buffer is needed */
-@@ -169,7 +174,7 @@ static ssize_t smi_data_write(struct file *filp, struct kobject *kobj,
- {
- 	ssize_t ret;
- 
--	if ((pos + count) > MAX_SMI_DATA_BUF_SIZE)
-+	if ((pos + count) > max_smi_data_buf_size)
- 		return -EINVAL;
- 
- 	mutex_lock(&smi_data_lock);
-@@ -322,8 +327,20 @@ static ssize_t smi_request_store(struct device *dev,
- 			ret = count;
- 		break;
- 	case 1:
--		/* Calling Interface SMI */
--		smi_cmd->ebx = (u32) virt_to_phys(smi_cmd->command_buffer);
-+		/*
-+		 * Calling Interface SMI
-+		 *
-+		 * Provide physical address of command buffer field within
-+		 * the struct smi_cmd to BIOS.
-+		 *
-+		 * Because the address that smi_cmd (smi_data_buf) points to
-+		 * will be from memremap() of a non-memory address if WSMT
-+		 * is present, we can't use virt_to_phys() on smi_cmd, so
-+		 * we have to use the physical address that was saved when
-+		 * the virtual address for smi_cmd was received.
-+		 */
-+		smi_cmd->ebx = smi_data_buf_phys_addr +
-+				offsetof(struct smi_cmd, command_buffer);
- 		ret = dcdbas_smi_request(smi_cmd);
- 		if (!ret)
- 			ret = count;
-@@ -482,6 +499,93 @@ static void dcdbas_host_control(void)
- 	}
- }
- 
-+/* WSMT */
-+
-+static u8 checksum(u8 *buffer, u8 length)
-+{
-+	u8 sum = 0;
-+	u8 *end = buffer + length;
-+
-+	while (buffer < end)
-+		sum += *buffer++;
-+	return sum;
-+}
-+
-+static inline struct smm_eps_table *check_eps_table(u8 *addr)
-+{
-+	struct smm_eps_table *eps = (struct smm_eps_table *)addr;
-+
-+	if (strncmp(eps->smm_comm_buff_anchor, SMM_EPS_SIG, 4) != 0)
-+		return NULL;
-+
-+	if (checksum(addr, eps->length) != 0)
-+		return NULL;
-+
-+	return eps;
-+}
-+
-+static int dcdbas_check_wsmt(void)
-+{
-+	struct acpi_table_wsmt *wsmt = NULL;
-+	struct smm_eps_table *eps = NULL;
-+	u64 remap_size;
-+	u8 *addr;
-+
-+	acpi_get_table(ACPI_SIG_WSMT, 0, (struct acpi_table_header **)&wsmt);
-+	if (!wsmt)
-+		return 0;
-+
-+	/* Check if WSMT ACPI table shows that protection is enabled */
-+	if (!(wsmt->protection_flags & ACPI_WSMT_FIXED_COMM_BUFFERS) ||
-+	    !(wsmt->protection_flags & ACPI_WSMT_COMM_BUFFER_NESTED_PTR_PROTECTION))
-+		return 0;
-+
-+	/* Scan for EPS (entry point structure) */
-+	for (addr = (u8 *)__va(0xf0000);
-+	     addr < (u8 *)__va(0x100000 - sizeof(struct smm_eps_table));
-+	     addr += 16) {
-+		eps = check_eps_table(addr);
-+		if (eps)
-+			break;
-+	}
-+
-+	if (!eps) {
-+		dev_dbg(&dcdbas_pdev->dev, "found WSMT, but no EPS found\n");
-+		return -ENODEV;
-+	}
-+
-+	/*
-+	 * Get physical address of buffer and map to virtual address.
-+	 * Table gives size in 4K pages, regardless of actual system page size.
-+	 */
-+	if (upper_32_bits(eps->smm_comm_buff_addr + 8)) {
-+		dev_warn(&dcdbas_pdev->dev, "found WSMT, but EPS buffer address is above 4GB\n");
-+		return -EINVAL;
-+	}
-+	/*
-+	 * Limit remap size to MAX_SMI_DATA_BUF_SIZE + 8 (since the first 8
-+	 * bytes are used for a semaphore, not the data buffer itself).
-+	 */
-+	remap_size = eps->num_of_4k_pages * PAGE_SIZE;
-+	if (remap_size > MAX_SMI_DATA_BUF_SIZE + 8)
-+		remap_size = MAX_SMI_DATA_BUF_SIZE + 8;
-+	eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
-+	if (!eps_buffer) {
-+		dev_warn(&dcdbas_pdev->dev, "found WSMT, but failed to map EPS buffer\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* First 8 bytes is for a semaphore, not part of the smi_data_buf */
-+	smi_data_buf_phys_addr = eps->smm_comm_buff_addr + 8;
-+	smi_data_buf = eps_buffer + 8;
-+	smi_data_buf_size = remap_size - 8;
-+	max_smi_data_buf_size = smi_data_buf_size;
-+	wsmt_enabled = true;
-+	dev_info(&dcdbas_pdev->dev,
-+		 "WSMT found, using firmware-provided SMI buffer.\n");
-+	return 1;
-+}
-+
- /**
-  * dcdbas_reboot_notify: handle reboot notification for host control
-  */
-@@ -548,6 +652,11 @@ static int dcdbas_probe(struct platform_device *dev)
- 
- 	dcdbas_pdev = dev;
- 
-+	/* Check if ACPI WSMT table specifies protected SMI buffer address */
-+	error = dcdbas_check_wsmt();
-+	if (error < 0)
-+		return error;
-+
- 	/*
- 	 * BIOS SMI calls require buffer addresses be in 32-bit address space.
- 	 * This is done by setting the DMA mask below.
-@@ -635,6 +744,8 @@ static void __exit dcdbas_exit(void)
- 	 */
- 	if (dcdbas_pdev)
- 		smi_data_buf_free();
-+	if (eps_buffer)
-+		memunmap(eps_buffer);
- 	platform_device_unregister(dcdbas_pdev_reg);
- 	platform_driver_unregister(&dcdbas_driver);
- }
-diff --git a/drivers/firmware/dcdbas.h b/drivers/firmware/dcdbas.h
-index ca3cb0a54ab6..52729a494b00 100644
---- a/drivers/firmware/dcdbas.h
-+++ b/drivers/firmware/dcdbas.h
-@@ -53,6 +53,7 @@
- #define EXPIRED_TIMER				(0)
- 
- #define SMI_CMD_MAGIC				(0x534D4931)
-+#define SMM_EPS_SIG				"$SCB"
- 
- #define DCDBAS_DEV_ATTR_RW(_name) \
- 	DEVICE_ATTR(_name,0600,_name##_show,_name##_store);
-@@ -103,5 +104,14 @@ struct apm_cmd {
- 
- int dcdbas_smi_request(struct smi_cmd *smi_cmd);
- 
-+struct smm_eps_table {
-+	char smm_comm_buff_anchor[4];
-+	u8 length;
-+	u8 checksum;
-+	u8 version;
-+	u64 smm_comm_buff_addr;
-+	u64 num_of_4k_pages;
-+} __packed;
-+
- #endif /* _DCDBAS_H_ */
- 
--- 
-2.14.2
+(I know you know this, but as I understand it) Event is pointing into 
+the (hardware's) event buffer, and the data structure has the potential 
+of changing out from under us if the device does something without our 
+knowledge. Since volatile hints to the compiler of this possibility, I 
+believe the compiler should manage this situation. But I could be wrong.
 
+I don't know that we need to atomically copy all 16 bytes into a local 
+buffer, as I don't think it's possible for the device to step on itself. 
+It will just stop recording events if the buffer gets full. At this 
+moment I think volatile is overkill, at least for the EPYC/Ryzen IOMMU.
