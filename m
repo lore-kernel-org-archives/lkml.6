@@ -3,109 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46875C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25B2C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C2924C67
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:03:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C2924C67
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 952B023EDB
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:04:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952B023EDB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754630AbeGCIDr (ORCPT
+        id S1754650AbeGCIEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:03:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:44904 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754309AbeGCIDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:03:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7B8718A;
-        Tue,  3 Jul 2018 01:03:40 -0700 (PDT)
-Received: from [10.37.8.137] (unknown [10.37.8.137])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D05D13F5A0;
-        Tue,  3 Jul 2018 01:03:36 -0700 (PDT)
-Subject: Re: [PATCH v3 01/20] virtio: mmio-v1: Validate queue PFN
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        james.morse@arm.com, marc.zyngier@arm.com, cdall@kernel.org,
-        eric.auger@redhat.com, julien.grall@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com,
-        qemu-devel@nongnu.org, Jason Wang <jasowang@redhat.com>,
-        Peter Maydel <peter.maydell@linaro.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-2-git-send-email-suzuki.poulose@arm.com>
- <20180629200816-mutt-send-email-mst@kernel.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <5124334c-b3c8-4c59-b652-d26ea1101807@arm.com>
-Date:   Tue, 3 Jul 2018 09:04:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 3 Jul 2018 04:04:55 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41358 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754536AbeGCIEx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 04:04:53 -0400
+Received: by mail-vk0-f66.google.com with SMTP id j11-v6so568270vke.8
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:04:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JT1N4FVDy1rBx+B/8AVTUsgnx5b0GMIrxIVZc4SKPYk=;
+        b=CrVLpWTCiBeSdyo2wZ9Vn1pE2jBk2Na81SLbA9NC5tZKUYp8XUv7KFDe4N9zwQkvRU
+         FQxqA6iz1yF0MrDJJfPi5YBOct3fvsTW+bp/Z0iPuy8km60FBxX1EU4Bpvzv1XXaH0tR
+         o2ITmScHbD8NXgLhTV0hrsgGHQFC06AAbCSlCJXMnGQPwj9mWAn4IDP00qJJghucSWK2
+         yRF/ScJ2nQ2KOZwDLHJbEDaFlA8Xgkjcg+R4mDwEEXir7VriViazfDTONfaHOrgZti+T
+         JHyIfzotbx8sYCrnGYcWDsJrVKfYcsEnokgfD6iDRDvNCE4hR7b0Oj6F5K8cYODqbN1x
+         fuvw==
+X-Gm-Message-State: APt69E286tQJJjO+wdAio3ZHpRnSYswqvOkNXT+KXCUSJzlRCHt6nNtn
+        rGynKf6AFYS954YB9gEshFCGp++y5IqBcmvpwwU=
+X-Google-Smtp-Source: AAOMgpe3XZPSjRdbCxf9DRmkCD+MQ4pwYNpnWYWJEdLBVP9yHHUEF/QzvMhvzNSLNZIgVHY46fXvECZKqDeEEn1ey6E=
+X-Received: by 2002:a1f:3701:: with SMTP id e1-v6mr4239322vka.50.1530605092077;
+ Tue, 03 Jul 2018 01:04:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180629200816-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1530101255-13988-1-git-send-email-crecklin@redhat.com>
+ <CAGXu5jLDULvf-VBhUfBXtSNaSWpq8irgg56LT3nHDft5gZg5Lw@mail.gmail.com>
+ <5506a72f-99ac-b47c-4ace-86c43b17b5c5@redhat.com> <CAGXu5jL8XDYE+B=a_TBM2K8F-c3f4Jz6zcm3ggacbPNN2wCtpg@mail.gmail.com>
+In-Reply-To: <CAGXu5jL8XDYE+B=a_TBM2K8F-c3f4Jz6zcm3ggacbPNN2wCtpg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 3 Jul 2018 10:04:40 +0200
+Message-ID: <CAMuHMdU89jEp4Oi6RK887P-LxCFNVPMnOpvvC6BEDHWDjNATAw@mail.gmail.com>
+Subject: Re: [PATCH v3] add param that allows bootline control of hardened usercopy
+To:     Kees Cook <keescook@chromium.org>
+Cc:     crecklin@redhat.com, Laura Abbott <labbott@redhat.com>,
+        pabeni@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        kernel-hardening@lists.openwall.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+Hi Kees,
 
-On 06/29/2018 06:42 PM, Michael S. Tsirkin wrote:
-> On Fri, Jun 29, 2018 at 12:15:21PM +0100, Suzuki K Poulose wrote:
->> virtio-mmio with virtio-v1 uses a 32bit PFN for the queue.
->> If the queue pfn is too large to fit in 32bits, which
->> we could hit on arm64 systems with 52bit physical addresses
->> (even with 64K page size), we simply miss out a proper link
->> to the other side of the queue.
->>
->> Add a check to validate the PFN, rather than silently breaking
->> the devices.
->>
->> Cc: "Michael S. Tsirkin" <mst@redhat.com>
->> Cc: Jason Wang <jasowang@redhat.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Cc: Peter Maydel <peter.maydell@linaro.org>
->> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->> Changes since v2:
->>   - Change errno to -E2BIG
->> ---
->>   drivers/virtio/virtio_mmio.c | 18 ++++++++++++++++--
->>   1 file changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
->> index 67763d3..82cedc8 100644
->> --- a/drivers/virtio/virtio_mmio.c
->> +++ b/drivers/virtio/virtio_mmio.c
->> @@ -397,9 +397,21 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned index,
->>   	/* Activate the queue */
->>   	writel(virtqueue_get_vring_size(vq), vm_dev->base + VIRTIO_MMIO_QUEUE_NUM);
->>   	if (vm_dev->version == 1) {
->> +		u64 q_pfn = virtqueue_get_desc_addr(vq) >> PAGE_SHIFT;
->> +
->> +		/*
->> +		 * virtio-mmio v1 uses a 32bit QUEUE PFN. If we have something
->> +		 * that doesn't fit in 32bit, fail the setup rather than
->> +		 * pretending to be successful.
->> +		 */
->> +		if (q_pfn >> 32) {
->> +			dev_err(&vdev->dev, "virtio-mmio: queue address too large\n");
-> 
-> How about:
-> 	"hypervisor bug: legacy virtio-mmio must not be used with more than 0x%llx Gigabytes of memory",
-> 	0x1ULL << (32 - 30) << PAGE_SHIFT
+On Mon, Jul 2, 2018 at 8:44 PM Kees Cook <keescook@chromium.org> wrote:
+> On Sat, Jun 30, 2018 at 1:43 PM, Christoph von Recklinghausen
+> <crecklin@redhat.com> wrote:
+> > The last issue I'm chasing is build failures on ARCH=m68k. The error is
+> > atomic_read and friends needed by the jump label code not being found.
+> > The config has CONFIG_BROKEN_ON_SMP=y, so the jump label calls I added
+> > will only be made #ifndef CONFIG_BROKEN_ON_SMP. Do you think that's
+> > worth a mention in the blurb that's added to
+> > Documentation/admin-guide/kernel-parameters.txt?
+>
+> Uhm, that's weird -- I think the configs on m68k need fixing then? I
+> don't want to have to sprinkle that ifdef in generic code.
 
-nit : Do we need change "hypervisor" => "platform" ? Virtio is used by 
-other tools (e.g, emulators) and not just virtual machines.
+config BROKEN_ON_SMP
+        bool
+        depends on BROKEN || !SMP
+        default y
 
-Suzuki
+So BROKEN_ON_SMP=y if SMP=n, i.e. not an issue?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
