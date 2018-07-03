@@ -6,147 +6,226 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561EFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D32AC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBF223E65
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBF223E65
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id DDCAE23E65
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCAE23E65
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933512AbeGCKAV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:00:21 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:9199 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754469AbeGCKAS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:00:18 -0400
-Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 3 Jul 2018
- 17:59:29 +0800
-Subject: Re: [PATCH 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
- <20180703145716.31860-2-yixun.lan@amlogic.com>
- <1530605776.2900.163.camel@baylibre.com>
-CC:     <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <0e2d2c14-656a-b43f-7699-ca68644aee57@amlogic.com>
-Date:   Tue, 3 Jul 2018 17:59:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <1530605776.2900.163.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+        id S933702AbeGCKAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 06:00:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933536AbeGCKAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:00:40 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2FA087A7D;
+        Tue,  3 Jul 2018 10:00:39 +0000 (UTC)
+Received: from crecklin.bos.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31106111AF37;
+        Tue,  3 Jul 2018 10:00:39 +0000 (UTC)
+From:   Chris von Recklinghausen <crecklin@redhat.com>
+To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH v6] add param that allows bootline control of hardened usercopy
+Date:   Tue,  3 Jul 2018 06:00:37 -0400
+Message-Id: <1530612037-32512-1-git-send-email-crecklin@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 10:00:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 10:00:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi jerome
+Enabling HARDENED_USERCOPY causes measurable regressions in
+ networking performance, up to 8% under UDP flood.
 
-On 07/03/18 16:16, Jerome Brunet wrote:
-> On Tue, 2018-07-03 at 14:57 +0000, Yixun Lan wrote:
->> Document the EMMC sub clock controller driver, the potential consumer
->> of this driver is EMMC or NAND.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../bindings/clock/amlogic,emmc-clkc.txt      | 45 +++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->> new file mode 100644
->> index 000000000000..5534bd446363
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->> @@ -0,0 +1,45 @@
->> +* Amlogic EMMC Sub Clock Controller Driver
->> +
->> +The Amlogic EMMC clock controller generates and supplies clock to support
->> +EMMC and NAND controller
->> +
->> +Required Properties:
->> +
->> +- compatible: should be:
->> +		"amlogic,emmc-clkc"
-> 
-> missing clocks and clock-names here
-> 
-ok, will update
+I'm running an a small packet UDP flood using pktgen vs. a host b2b
+connected. On the receiver side the UDP packets are processed by a
+simple user space process that just reads and drops them:
 
->> +
->> +- #clock-cells: should be 1.
->> +
->> +Two clocks are provided as the parent of this EMMC clock controller driver from
->> +upper layer clock controller - eg "amlogic,axg-clkc" in AXG platfrom.
->> +The main consumer of this driver is EMMC or NAND, to specify which the clock
->> +they may consume, the preprocessor macros in the dt-bindings/clock/emmc-clkc.h
->> +header and can be used in device tree sources.
-> 
-> Not sure this explanation belongs in dt-binding documentation.
-> Maybe this should be in the driver itself.
-> 
-ok, I probably will waiting for more comments coming in ;-)
+https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
 
->> +
->> +Parent node should have the following properties :
->> +- compatible: "syscon", "simple-mfd, and "amlogic,emmc-clkc"
->> +- reg: base address and size of the EMMC control register space.
->> +
->> +Example: Clock controller node:
->> +
->> +sd_emmc_c_clkc: clock-controller@7000 {
->> +	compatible = "amlogic,emmc-clkc", "syscon", "simple-mfd";
->> +	reg = <0x0 0x7000 0x0 0x4>;
->> +	#clock-cells = <1>;
->> +
->> +	clock-names = "clkin0", "clkin1";
->> +	clocks = <&clkc CLKID_SD_EMMC_C_CLK0>,
->> +			<&clkc CLKID_FCLK_DIV2>;
->> +};
->> +
-> 
-> Not sure the following is necessary, you don't really to show how to use a clock
-> controller.
-> 
-ditto,
+Not very useful from a functional PoV, but it helps to pin-point
+bottlenecks in the networking stack.
 
-and I'm fine with either way, this was a copy & paste from gxbb-clkc.h
+When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
+regression in the receive tput, compared to the same kernel without
+this option enabled.
 
+With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
+cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
 
->> +Example: NAND controller node that consumes the clock generated by the clock
->> +  controller:
->> +
->> +	nand: nfc@7800 {
->> +		compatible = "amlogic,meson-axg-nfc";
->> +		reg = <0x0 0x7800 0x0 0x100>;
->> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
->> +		clocks = <&clkc CLKID_SD_EMMC_C>,
->> +				<&sd_emmc_c_clkc CLKID_EMMC_C_DIV>;
->> +		clock-names = "core", "device";
->> +	};
-> 
-> .
-> 
+The call-chain is:
+
+__GI___libc_recvfrom
+entry_SYSCALL_64_after_hwframe
+do_syscall_64
+__x64_sys_recvfrom
+__sys_recvfrom
+inet_recvmsg
+udp_recvmsg
+__check_object_size
+
+udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
+calls check_copy_size() (again, inlined).
+
+A generic distro may want to enable HARDENED_USERCOPY in their default
+kernel config, but at the same time, such distro may want to be able to
+avoid the performance penalties in with the default configuration and
+disable the stricter check on a per-boot basis.
+
+This change adds a boot parameter that conditionally disables
+HARDENED_USERCOPY at boot time.
+
+This feature is not available on platforms that don't have CONFIG_JUMP_LABEL
+set.
+
+v5->v6:
+	m68k build issue was when changes were in include/linux/thread_info.h.
+		mm/usercopy.c builds just fine without CONFIG_JUMP_LABEL or
+		CONFIG_SMP_BROKEN.
+v4->v5:
+	key off of CONFIG_JUMP_LABEL, not CONFIG_SMP_BROKEN.
+
+v3->v4:
+	fix a couple of nits in commit comments
+	declaration of bypass_usercopy_checks moved inside mm/usercopy.c and
+		made static
+	add blurb to commit comments about not enabling this functionality on
+		platforms with CONFIG_BROKEN_ON_SMP set.
+v2->v3:
+	add benchmark details to commit comments
+	Don't add new item to Documentation/admin-guide/kernel-parameters.rst
+	rename boot param to "hardened_usercopy="
+	update description in Documentation/admin-guide/kernel-parameters.txt
+	static_branch_likely -> static_branch_unlikely
+	add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
+		DEFINE_STATIC_KEY_TRUE
+	disable_huc_atboot -> enable_checks (strtobool "on" == true)
+
+v1->v2:
+	remove CONFIG_HUC_DEFAULT_OFF
+	default is now enabled, boot param disables
+	move check to __check_object_size so as to not break optimization of
+		__builtin_constant_p()
+	include linux/atomic.h before linux/jump_label.h
+
+Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 11 ++++++++++
+ include/linux/jump_label.h                      |  6 ++++++
+ mm/usercopy.c                                   | 27 +++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7..560d4dc 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -816,6 +816,17 @@
+ 	disable=	[IPV6]
+ 			See Documentation/networking/ipv6.txt.
+ 
++	hardened_usercopy=
++                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
++                        hardening is enabled for this boot. Hardened
++                        usercopy checking is used to protect the kernel
++                        from reading or writing beyond known memory
++                        allocation boundaries as a proactive defense
++                        against bounds-checking flaws in the kernel's
++                        copy_to_user()/copy_from_user() interface.
++                on      Perform hardened usercopy checks (default).
++                off     Disable hardened usercopy checks.
++
+ 	disable_radix	[PPC]
+ 			Disable RADIX MMU mode on POWER9
+ 
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index b46b541..1a0b6f1 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -299,12 +299,18 @@ struct static_key_false {
+ #define DEFINE_STATIC_KEY_TRUE(name)	\
+ 	struct static_key_true name = STATIC_KEY_TRUE_INIT
+ 
++#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
++	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
++
+ #define DECLARE_STATIC_KEY_TRUE(name)	\
+ 	extern struct static_key_true name
+ 
+ #define DEFINE_STATIC_KEY_FALSE(name)	\
+ 	struct static_key_false name = STATIC_KEY_FALSE_INIT
+ 
++#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
++	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
++
+ #define DECLARE_STATIC_KEY_FALSE(name)	\
+ 	extern struct static_key_false name
+ 
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index e9e9325..7c8a1e9 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -20,6 +20,8 @@
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/thread_info.h>
++#include <linux/atomic.h>
++#include <linux/jump_label.h>
+ #include <asm/sections.h>
+ 
+ /*
+@@ -240,6 +242,8 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+ 	}
+ }
+ 
++static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
++
+ /*
+  * Validates that the given object is:
+  * - not bogus address
+@@ -248,6 +252,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
+  */
+ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+ {
++	if (static_branch_unlikely(&bypass_usercopy_checks))
++		return;
++
+ 	/* Skip all tests if size is zero. */
+ 	if (!n)
+ 		return;
+@@ -279,3 +286,23 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+ 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
+ }
+ EXPORT_SYMBOL(__check_object_size);
++
++EXPORT_SYMBOL(bypass_usercopy_checks);
++
++static bool enable_checks __initdata = true;
++
++static int __init parse_hardened_usercopy(char *str)
++{
++	return strtobool(str, &enable_checks);
++}
++
++__setup("hardened_usercopy=", parse_hardened_usercopy);
++
++static int __init set_hardened_usercopy(void)
++{
++	if (enable_checks == false)
++		static_branch_enable(&bypass_usercopy_checks);
++	return 1;
++}
++
++late_initcall(set_hardened_usercopy);
+-- 
+1.8.3.1
 
