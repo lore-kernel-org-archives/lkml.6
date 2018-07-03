@@ -2,116 +2,146 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0628C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7DFC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B18F22565
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74B0D22565
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uwAMzak6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B18F22565
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Omo621aI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B0D22565
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934366AbeGCR0M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:26:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42194 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933637AbeGCR0K (ORCPT
+        id S934378AbeGCR0o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:26:44 -0400
+Received: from mail.efficios.com ([167.114.142.138]:56414 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934074AbeGCR0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:26:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 1-v6so2162079ljv.9;
-        Tue, 03 Jul 2018 10:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yRwPHqdzreWQR0K/JkpBGuCe/bdZMajH7m3tWS4hMiI=;
-        b=uwAMzak6xG4mya0n69ucDbjuYmKLCAOMd199scLj8Ul2AbLyilJb8TLNbZFTii1Xul
-         aaMVkMoIRVSwLS/bNb5sKqGlWRFWc/40td3I1msKaWi4b+H/ikOwuoQcoAzreOQnKloK
-         YttmY30xy7wZUj61ClmRs0gRoKzwpbkc0N0UE85bvs6tFw5zvvAHbJx6KmfuCI2v9g+p
-         fMnLwKRPU/kxOO/dzKgBlV8NwwDRvEHU0zD6XAf6Mq6+UkLKAACnrcFCkBPFylLvLRSC
-         KuA7etGryn9qDmvbFOthSXsu45YLqO5L6WumpGywo2D9nInzwZyEChbiNsB9luKEYp9/
-         I2vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yRwPHqdzreWQR0K/JkpBGuCe/bdZMajH7m3tWS4hMiI=;
-        b=DIr21zuuNoGMfXVpWFUKFD03/N3IebfzVl2blhfyPn6VbXZdNXMFk5G2Soia40RzPO
-         B02ZP64BHQ/z4gOvh3UtMR4FnflpLbpmpZTVwxRjQuBVeQzhfeiouaf9g5aWP3eRHrCv
-         pU+xp807rTXNd+4w63Cn2/MI8B0zfIyKt17M7mf9Al7VetSdL5GRz1vShIWcy2O7zvn3
-         Mu4UPxEBV14KrzbiMaUZHbS9gygMqeRd+kKHmdnKXPA3aovRS+LYwkvZ8RXSynXkrhgr
-         VTqvEvINZdd5lqDB5It0WjsP6RzxGNpLVd7hSJhAbKbPNHodA6fN8QHxacmEIYI/lmp2
-         PKCg==
-X-Gm-Message-State: APt69E34m8Uit+12TDrK8o2+fgznpqsSxdsJMemAp4uWhZ0fQyWE5VkU
-        4ROcAEl5TE6CnzroV7RQA/I=
-X-Google-Smtp-Source: AAOMgpc2CeIdNyBHBYF928FbqQ8Ozn3nrNE6H7+oifdOclSu7GerFeU0sR9zB4RPO0saEzrfAYZwdA==
-X-Received: by 2002:a2e:9941:: with SMTP id r1-v6mr2258374ljj.53.1530638768999;
-        Tue, 03 Jul 2018 10:26:08 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id c83-v6sm344930lfg.18.2018.07.03.10.26.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 10:26:08 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH] gpiolib: Defer on non-DT find_chip_by_name() failure
-Date:   Tue,  3 Jul 2018 19:26:35 +0200
-Message-Id: <20180703172635.32508-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        Tue, 3 Jul 2018 13:26:41 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 68007230195;
+        Tue,  3 Jul 2018 13:26:40 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id eSPUoTI7tUqO; Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id C1774230192;
+        Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C1774230192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530638799;
+        bh=zgZSJZBAZSDaPGbe9Vl06QB2i7y5d9PRZOyzqbTqMQQ=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=Omo621aIh+jWjrkRsdHweQXhQQC4gUpqadLICJqNok54yyVtzAEGmdUNTgYtfVZTh
+         mTwRkyX1+xJYtBOMUt2XCfpYZqZCLkaT6PTjlcInQ4x+KL0hamG0FwO+dw8LuJO+kP
+         Pv9tLyfhOgy/Gd+8vtJD/ihviQFnyPcIDnz7orLx6jWMZQvnh8kXc84rlXDNVu8HdT
+         1c0klrWCeDonp7sBIfv2KWnrBezU3onGqyM7w9LFGM5jDXX/vPS+dj3PSzLuvSMbfu
+         Bk6fwfhBD3nxg7oqcSwr+hSKAGU5/njUkFqyrBuUWh+rK9Y4r3/0URfVek2ZXGf/yw
+         FAVESUnXmBnXg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id eBh6q0wSKmR9; Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id A600023018B;
+        Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
+Date:   Tue, 3 Jul 2018 13:26:39 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andi Kleen <andi@firstfloor.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        heiko carstens <heiko.carstens@de.ibm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        schwidefsky <schwidefsky@de.ibm.com>, gor@linux.ibm.com
+Message-ID: <1047204530.11737.1530638799580.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
+References: <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <20180703081449.GT2494@hirez.programming.kicks-ass.net> <20180703082955.GH3704@osiris> <20180703084312.GU2494@hirez.programming.kicks-ass.net> <20180703085546.GJ3704@osiris> <20180703092113.GV2494@hirez.programming.kicks-ass.net> <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org> <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
+Thread-Index: j66OqF9zbUhN0xBsQ1otYplWTFq6fg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid replication of error code conversion in non-DT GPIO consumers'
-code by returning -EPROBE_DEFER from gpiod_find() in case a chip
-identified by its label in a registered lookup table is not ready.
+----- On Jul 3, 2018, at 1:10 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-See https://lkml.org/lkml/2018/5/30/176 for example case.
+> On Tue, Jul 3, 2018 at 9:40 AM Andi Kleen <andi@firstfloor.org> wrote:
+>>
+>> So it sounds like architectures that don't have an instruction atomic u64
+>> *_user need to disable interrupts during the access, and somehow handle that
+>> case when a page fault happens?
+> 
+> No. It's actually the store by *user* space that is the critical one.
+> Not the whole 64-bit value, just the low pointer part.
+> 
+> The kernel could do it as a byte-by-byte load, really. It's
+> per-thread, and once the kernel is running, it's not going to change.
+> The kernel never changes the value, it just loads it from user space.
+> 
+> So all the atomicity worries for the kernel are a red herring. They'd
+> arguably be nice to have - but only for an insane case that makes
+> absolutely no sense (a different thread trying to change the value).
+> 
+> Can we please stop the idiocy already? The kernel could read the rseq
+> pointer one bit at a time, and do a little dance with "yield()" in
+> between, and take interrupts and page faults, and it wouldn't matter
+> AT ALL.
+> 
+> It's not even that we read the value from an interrupt context, it's
+> that as we return to user space (which can be the result of an
+> interrupt) we can read the value.
+> 
+> This whole thread has been filled with crazy "what if" things that don't matter.
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-If accepted, please add
-	Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-if Boris doesn't mind.
+Sorry to come back in the thread late, looks like I've missed all the
+fun.
+
+I agree with Linus: we can simply document that updates to rseq->rseq_cs
+should be thread-local in the rseq uapi and be done with it. This would
+allow using get_user(u64) even on 32-bit architectures, because we cannot
+care less if an architecture chooses to read the u64 byte-wise while
+standing on its feet.
+
+With this added requirement, Andy's idea of using a union between __u64
+and upper/lower __u32 would fit very nicely.
+
+If everyone is OK with that approach, I can prepare an updated patch.
 
 Thanks,
-Janusz
 
- drivers/gpio/gpiolib.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Mathieu
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index e11a3bb03820..15dc77c80328 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -3639,9 +3639,16 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 		chip = find_chip_by_name(p->chip_label);
- 
- 		if (!chip) {
--			dev_err(dev, "cannot find GPIO chip %s\n",
--				p->chip_label);
--			return ERR_PTR(-ENODEV);
-+			/*
-+			 * As the lookup table indicates a chip with
-+			 * p->chip_label should exist, assume it may
-+			 * still appear latar and let the interested
-+			 * consumer be probed again or let the Deferred
-+			 * Probe infrastructure handle the error.
-+			 */
-+			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
-+				 p->chip_label);
-+			return ERR_PTR(-EPROBE_DEFER);
- 		}
- 
- 		if (chip->ngpio <= p->chip_hwnum) {
 -- 
-2.16.4
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
