@@ -2,125 +2,179 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC57CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31D5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67067223B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:49:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q+LIukTk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hys9Bi+6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67067223B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 74C16223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:51:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C16223B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933102AbeGCPtx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:49:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45478 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752905AbeGCPtu (ORCPT
+        id S933290AbeGCPu7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:50:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54356 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932261AbeGCPu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:49:50 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4D1AD601A8; Tue,  3 Jul 2018 15:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632990;
-        bh=5Zy6B5pUlaqsWFf8tqUNa8Z981ARt3SA3eKTk1RWR6Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Q+LIukTkMMAj8/Wb+WCqX/F82KDLzxxXUla6CWwfkG3QyjSPR9DAJnx1hMUWI7YUo
-         29mJ0Y4YFUeRQGNdYdtntDdBa+AXTBis2q7XbxmM7W5n9UIijl8ozI1K7udxTP0Dd0
-         TWPd0SScoH2MIbpX9kTgdRGfAGScFWbIUnbroURk=
-Received: from [192.168.0.117] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7C1EA601A8;
-        Tue,  3 Jul 2018 15:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530632989;
-        bh=5Zy6B5pUlaqsWFf8tqUNa8Z981ARt3SA3eKTk1RWR6Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hys9Bi+6rd9DiQoQHj2rLnrodeJdCvlsS0DIHaKIRd/Y93jArUWHgxVaofApkB8y3
-         Eo8htqP5WTEx0u6hHVZjYCm3fYYP9I5isBCPFBn52HwaZ7HptfjT/JM+iybkiWYwqg
-         dmVRwL7sBDROlINMSyy9ZbPmLQSwdQK2lfS6pLSU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C1EA601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-To:     poza@codeaurora.org, Lukas Wunner <lukas@wunner.de>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
- <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
- <20180703143434.GA4086@wunner.de>
- <fda77cee8e379f2e9b7ab55fefe17cad@codeaurora.org>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <867e1f69-8b77-ecb0-d4e3-ab0636a49a2e@codeaurora.org>
-Date:   Tue, 3 Jul 2018 11:49:47 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 11:50:57 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FmbO8110092
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:50:57 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0b52k43b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:50:56 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 11:50:56 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 11:50:51 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63Fooix10289472
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 15:50:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2131FB206A;
+        Tue,  3 Jul 2018 11:50:34 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E400FB205F;
+        Tue,  3 Jul 2018 11:50:33 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 11:50:33 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D64A416CA31C; Tue,  3 Jul 2018 08:53:03 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 08:53:03 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        akiyks@gmail.com, boqun.feng@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, npiggin@gmail.com,
+        peterz@infradead.org, stern@rowland.harvard.edu,
+        will.deacon@arm.com, davem@davemloft.net
+Subject: Re: [PATCH 0/2] tools/memory-model: remove ACCESS_ONCE()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180628123347.52963-1-mark.rutland@arm.com>
+ <20180628123845.GA14456@andrea>
+ <20180628152140.GK3593@linux.vnet.ibm.com>
+ <20180628165111.GA4013@andrea>
+ <20180702185415.GR3593@linux.vnet.ibm.com>
+ <20180703101241.GA29602@andrea>
 MIME-Version: 1.0
-In-Reply-To: <fda77cee8e379f2e9b7ab55fefe17cad@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703101241.GA29602@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070315-0068-0000-0000-000003128204
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009301; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01056002; UDB=6.00541669; IPR=6.00833925;
+ MB=3.00021977; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 15:50:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070315-0069-0000-0000-000044E664AD
+Message-Id: <20180703155303.GA3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/3/2018 11:12 AM, poza@codeaurora.org wrote:
-> if (!pci_probe_reset_slot(dev->slot))
-> {
->     pci_reset_slot(dev->slot)
->     result = reset_link(udev, service); >> in this case aer_root_reset must not call pci_reset_bridge_secondary_bus()
-> } else
->     result = reset_link(udev, service); >> in this case aer_root_reset must call pci_reset_bridge_secondary_bus() [since bridge is not hotplug capable)
+On Tue, Jul 03, 2018 at 12:12:41PM +0200, Andrea Parri wrote:
+> > >   1) Merge the file touched by that patch into (the recently created):
+> > >   
+> > >         Documentation/atomic_t.txt
+> > > 
+> > >      (FWIW, queued in my TODO list).
+> > 
+> > Some consolidation of documentation would be good.  ;-)
+> > 
+> > Thoughts from others?
+> > 
+> > >   2) Add the entry:
+> > > 
+> > > 	F: Documentation/atomic_t.txt
+> > > 
+> > >      to the "ATOMIC INFRASTRUCTURE" subsystem in the MAINTAINERS file so
+> > >      that developers can easily find (the intended?) reviewers for their
+> > >      patch. (Of course, this will need ACK from the ATOMIC people).
+> > 
+> > If the merging will take awhile, it might also be good to put
+> > Documentation/core-api/atomic_ops.rst somewhere as well.
+> 
+> Indeed.  And let's not forget the "orphaned":
+> 
+>   Documentation/atomic_bitops.txt
+>   Documentation/core-api/refcount-vs-atomic.rst
 
-Here are two different flow for two different FATAL error sources
+Lots of puppies to adopt, aren't there?  ;-)
 
-dpc_irq
-	link is down due to DPC
-	pcie_do_fatal_recovery()
-		pci_reset_slot()
-			mask hotplug IRQ
-			secondary bus reset
-			unmask hotplug IRQ
-			undefined behavior as link went down due to DPC
-		dpc_reset_link()
-			undefined behavior secondary bus reset happened
-					   while a DPC event is pending
-			link may or may not be up at this moment
-			recover the link via DPC way if HW can cope with this undefined behavior.
+I could make the argument that these files are part of the documentation
+for the Linux kernel's memory model, and that they should therefore be
+added to the LKMM MAINTAINERS entry.  Any objections?  (Adding David
+Miller in his capacity of author of atomic_ops.txt.)
 
+Separately, it might be good to make sure that the linux-arch folks are
+aware of proposed changes to the memory model.  To that end, would it
+make sense to add the linux-arch mailing list to that same entry?
 
-aer_irq
-	link is up
-	pcie_do_fatal_recovery()
-		pci_reset_slot()
-			mask hotplug IRQ
-			secondary bus reset
-			unmask hotplug IRQ
-			link goes up
-		aer_reset_link()
-			secondary bus reset
-			hotplug link down interrupt again
+							Thanx, Paul
 
-I tried to change pci_reset_slot() such that we do
+------------------------------------------------------------------------
 
-mask hotplug IRQ
-go to AER/DPC reset_link based on error source
-unmask hotplug IRQ
+commit 33a58ee5eadadfb1f4850eabd4fac332984881d5
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Tue Jul 3 08:48:09 2018 -0700
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+    tools/memory-model: Add informal LKMM documentation to MAINTAINERS
+    
+    The Linux-kernel memory model has been informal, with a number of
+    text files documenting it.  It would be good to make sure that these
+    informal descriptions are kept up to date and/or pruned appropriately.
+    This commit therefore brings more of those text files into the LKMM
+    MAINTAINERS file entry.
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+    Cc: Alan Stern <stern@rowland.harvard.edu>
+    Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
+    Cc: Will Deacon <will.deacon@arm.com>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Cc: Boqun Feng <boqun.feng@gmail.com>
+    Cc: Nicholas Piggin <npiggin@gmail.com>
+    Cc: David Howells <dhowells@redhat.com>
+    Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+    Cc: Luc Maranget <luc.maranget@inria.fr>
+    Cc: Akira Yokosawa <akiyks@gmail.com>
+    Cc: Daniel Lustig <dlustig@nvidia.com>
+    Cc: "David S. Miller" <davem@davemloft.net>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f2903b818671..2ba947fc9a2f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8321,6 +8321,10 @@ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+ F:	tools/memory-model/
++F:	Documentation/atomic_bitops.txt
++F:	Documentation/atomic_t.txt
++F:	Documentation/core-api/atomic_ops.rst
++F:	Documentation/core-api/refcount-vs-atomic.rst
+ F:	Documentation/memory-barriers.txt
+ 
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
+
