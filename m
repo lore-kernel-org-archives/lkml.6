@@ -3,56 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F71BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDF0C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2332075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB2332075E
+	by mail.kernel.org (Postfix) with ESMTP id 04B4B2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04B4B2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753114AbeGCLET (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:04:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57872 "EHLO
+        id S932133AbeGCLEb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 07:04:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37100 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752678AbeGCLER (ORCPT
+        by vger.kernel.org with ESMTP id S1752837AbeGCLEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:04:17 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63B4BtL086629
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 07:04:17 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k06t5jvd5-1
+        Tue, 3 Jul 2018 07:04:30 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63B4MkA058188
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 07:04:29 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0734a6wg-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 07:04:13 -0400
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 07:04:25 -0400
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 05:04:03 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Tue, 3 Jul 2018 07:04:02 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 05:03:59 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63B3x7T9437596
+        Tue, 3 Jul 2018 07:03:59 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63B3w4D56229944
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 04:03:59 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBB4BBE053;
-        Tue,  3 Jul 2018 05:03:58 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95386BE04F;
-        Tue,  3 Jul 2018 05:03:58 -0600 (MDT)
+        Tue, 3 Jul 2018 11:03:58 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EC1CAE062;
+        Tue,  3 Jul 2018 07:03:41 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EF84AE05F;
+        Tue,  3 Jul 2018 07:03:41 -0400 (EDT)
 Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 05:03:58 -0600 (MDT)
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 07:03:41 -0400 (EDT)
 Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 1D2952E2F43; Tue,  3 Jul 2018 16:33:57 +0530 (IST)
+        id 10CC62E2F42; Tue,  3 Jul 2018 16:33:57 +0530 (IST)
 From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 To:     Michael Ellerman <mpe@ellerman.id.au>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
@@ -64,22 +63,18 @@ To:     Michael Ellerman <mpe@ellerman.id.au>,
         Nicholas Piggin <npiggin@gmail.com>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [v2 PATCH 1/2] powerpc: Detect the presence of big-cores via "ibm,thread-groups"
-Date:   Tue,  3 Jul 2018 16:33:50 +0530
+Subject: [v2 PATCH 0/2] powerpc: Detection and scheduler optimization for POWER9 bigcore
+Date:   Tue,  3 Jul 2018 16:33:49 +0530
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <cover.1530609795.git.ego@linux.vnet.ibm.com>
-References: <cover.1530609795.git.ego@linux.vnet.ibm.com>
-In-Reply-To: <cover.1530609795.git.ego@linux.vnet.ibm.com>
-References: <cover.1530609795.git.ego@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18070311-8235-0000-0000-00000DCC73DA
+x-cbid: 18070311-0052-0000-0000-0000030813B0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009300; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055907; UDB=6.00541611; IPR=6.00833829;
- MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 11:04:02
+ PH=3.00000004; SC=3.00000266; SDB=6.01055907; UDB=6.00541612; IPR=6.00833829;
+ MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 11:04:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070311-8236-0000-0000-000041BF0983
-Message-Id: <b922aa0ea79a83ad733508c861900a08c4fee25a.1530609795.git.ego@linux.vnet.ibm.com>
+x-cbparentid: 18070311-0053-0000-0000-00005D3A486B
+Message-Id: <cover.1530609795.git.ego@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -94,302 +89,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-On IBM POWER9, the device tree exposes a property array identifed by
-"ibm,thread-groups" which will indicate which groups of threads share a
-particular set of resources.
+Hi,
 
-As of today we only have one form of grouping identifying the group of
-threads in the core that share the L1 cache, translation cache and
-instruction data flow.
+This is the second iteration of the patchset to add support for big-core on POWER9.
 
-This patch defines the helper function to parse the contents of
-"ibm,thread-groups" and a new structure to contain the parsed output.
+The earlier version can be found here: https://lkml.org/lkml/2018/5/11/245.
 
-The patch also creates the sysfs file named "small_core_siblings" that
-returns the physical ids of the threads in the core that share the L1
-cache, translation cache and instruction data flow.
+The changes from the previous version:
+    - Added comments explaining the "ibm,thread-groups" device tree property.
+    - Uses cleaner device-tree parsing functions to parse the u32 arrays.
+    - Adds a sysfs file listing the small-core siblings for every CPU.
+    - Enables the scheduler optimization by setting the CPU_FTR_ASYM_SMT bit
+      in the cur_cpu_spec->cpu_features on detecting the presence
+      of interleaved big-core.
+    - Handles the corner case where there is only a single thread-group
+      or when there is a single thread in a thread-group.
 
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- Documentation/ABI/testing/sysfs-devices-system-cpu |   8 ++
- arch/powerpc/include/asm/cputhreads.h              |  22 +++++
- arch/powerpc/kernel/setup-common.c                 | 110 +++++++++++++++++++++
- arch/powerpc/kernel/sysfs.c                        |  35 +++++++
- 4 files changed, 175 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 9c5e7732..53a823a 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -487,3 +487,11 @@ Description:	Information about CPU vulnerabilities
- 		"Not affected"	  CPU is not affected by the vulnerability
- 		"Vulnerable"	  CPU is affected and no mitigation in effect
- 		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
-+
-+What: 		/sys/devices/system/cpu/cpu[0-9]+/small_core_sibings
-+Date:		03-Jul-2018
-+KernelVersion:	v4.18.0
-+Contact:	Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-+Description:	List of Physical ids of CPUs which share the the L1 cache,
-+		translation cache and instruction data-flow with this CPU.
-+Values:		Comma separated list of decimal integers.
-diff --git a/arch/powerpc/include/asm/cputhreads.h b/arch/powerpc/include/asm/cputhreads.h
-index d71a909..33226d7 100644
---- a/arch/powerpc/include/asm/cputhreads.h
-+++ b/arch/powerpc/include/asm/cputhreads.h
-@@ -23,11 +23,13 @@
- extern int threads_per_core;
- extern int threads_per_subcore;
- extern int threads_shift;
-+extern bool has_big_cores;
- extern cpumask_t threads_core_mask;
- #else
- #define threads_per_core	1
- #define threads_per_subcore	1
- #define threads_shift		0
-+#define has_big_cores		0
- #define threads_core_mask	(*get_cpu_mask(0))
- #endif
- 
-@@ -69,12 +71,32 @@ static inline cpumask_t cpu_online_cores_map(void)
- 	return cpu_thread_mask_to_cores(cpu_online_mask);
- }
- 
-+#define MAX_THREAD_LIST_SIZE	8
-+struct thread_groups {
-+	unsigned int property;
-+	unsigned int nr_groups;
-+	unsigned int threads_per_group;
-+	unsigned int thread_list[MAX_THREAD_LIST_SIZE];
-+};
-+
- #ifdef CONFIG_SMP
- int cpu_core_index_of_thread(int cpu);
- int cpu_first_thread_of_core(int core);
-+int parse_thread_groups(struct device_node *dn, struct thread_groups *tg);
-+int get_cpu_thread_group_start(int cpu, struct thread_groups *tg);
- #else
- static inline int cpu_core_index_of_thread(int cpu) { return cpu; }
- static inline int cpu_first_thread_of_core(int core) { return core; }
-+static inline int parse_thread_groups(struct device_node *dn,
-+				      struct thread_groups *tg)
-+{
-+	return -ENODATA;
-+}
-+
-+static inline int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
-+{
-+	return -1;
-+}
- #endif
- 
- static inline int cpu_thread_in_core(int cpu)
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 40b44bb..a78ec66 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -402,10 +402,12 @@ void __init check_for_initrd(void)
- #ifdef CONFIG_SMP
- 
- int threads_per_core, threads_per_subcore, threads_shift;
-+bool has_big_cores = true;
- cpumask_t threads_core_mask;
- EXPORT_SYMBOL_GPL(threads_per_core);
- EXPORT_SYMBOL_GPL(threads_per_subcore);
- EXPORT_SYMBOL_GPL(threads_shift);
-+EXPORT_SYMBOL_GPL(has_big_cores);
- EXPORT_SYMBOL_GPL(threads_core_mask);
- 
- static void __init cpu_init_thread_core_maps(int tpc)
-@@ -433,6 +435,108 @@ static void __init cpu_init_thread_core_maps(int tpc)
- 
- u32 *cpu_to_phys_id = NULL;
- 
-+/*
-+ * parse_thread_groups: Parses the "ibm,thread-groups" device tree
-+ *                      property for the CPU device node dn and stores
-+ *                      the parsed output in the thread_groups
-+ *                      structure tg.
-+ *
-+ * ibm,thread-groups[0..N-1] array defines which group of threads in
-+ * the CPU-device node can be grouped together based on the property.
-+ *
-+ * ibm,thread-groups[0] tells us the property based on which the
-+ * threads are being grouped together. If this value is 1, it implies
-+ * that the threads in the same group share L1, translation cache.
-+ *
-+ * ibm,thread-groups[1] tells us how many such thread groups exist.
-+ *
-+ * ibm,thread-groups[2] tells us the number of threads in each such
-+ * group.
-+ *
-+ * ibm,thread-groups[3..N-1] is the list of threads identified by
-+ * "ibm,ppc-interrupt-server#s" arranged as per their membership in
-+ * the grouping.
-+ *
-+ * Example: If ibm,thread-groups = [1,2,4,5,6,7,8,9,10,11,12] it
-+ * implies that there are 2 groups of 4 threads each, where each group
-+ * of threads share L1, translation cache.
-+ *
-+ * The "ibm,ppc-interrupt-server#s" of the first group is {5,6,7,8}
-+ * and the "ibm,ppc-interrupt-server#s" of the second group is {9, 10,
-+ * 11, 12} structure
-+ *
-+ * Returns 0 on success, -EINVAL if the property does not exist,
-+ * -ENODATA if property does not have a value, and -EOVERFLOW if the
-+ * property data isn't large enough.
-+ */
-+int parse_thread_groups(struct device_node *dn,
-+			struct thread_groups *tg)
-+{
-+	unsigned int nr_groups, threads_per_group, property;
-+	int i;
-+	u32 thread_group_array[3 + MAX_THREAD_LIST_SIZE];
-+	u32 *thread_list;
-+	size_t total_threads;
-+	int ret;
-+
-+	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-+					 thread_group_array, 3);
-+
-+	if (ret)
-+		return ret;
-+
-+	property = thread_group_array[0];
-+	nr_groups = thread_group_array[1];
-+	threads_per_group = thread_group_array[2];
-+	total_threads = nr_groups * threads_per_group;
-+
-+	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
-+					 thread_group_array,
-+					 3 + total_threads);
-+	if (ret)
-+		return ret;
-+
-+	thread_list = &thread_group_array[3];
-+
-+	for (i = 0 ; i < total_threads; i++)
-+		tg->thread_list[i] = thread_list[i];
-+
-+	tg->property = property;
-+	tg->nr_groups = nr_groups;
-+	tg->threads_per_group = threads_per_group;
-+
-+	return 0;
-+}
-+
-+/*
-+ * get_cpu_thread_group_start : Searches the thread group in tg->thread_list
-+ *                              that @cpu belongs to.
-+ *
-+ * Returns the index to tg->thread_list that points to the the start
-+ * of the thread_group that @cpu belongs to.
-+ *
-+ * Returns -1 if cpu doesn't belong to any of the groups pointed
-+ * to by tg->thread_list.
-+ */
-+int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
-+{
-+	int hw_cpu_id = get_hard_smp_processor_id(cpu);
-+	int i, j;
-+
-+	for (i = 0; i < tg->nr_groups; i++) {
-+		int group_start = i * tg->threads_per_group;
-+
-+		for (j = 0; j < tg->threads_per_group; j++) {
-+			int idx = group_start + j;
-+
-+			if (tg->thread_list[idx] == hw_cpu_id)
-+				return group_start;
-+		}
-+	}
-+
-+	return -1;
-+}
-+
- /**
-  * setup_cpu_maps - initialize the following cpu maps:
-  *                  cpu_possible_mask
-@@ -467,6 +571,7 @@ void __init smp_setup_cpu_maps(void)
- 		const __be32 *intserv;
- 		__be32 cpu_be;
- 		int j, len;
-+		struct thread_groups tg = {.nr_groups = 0};
- 
- 		DBG("  * %pOF...\n", dn);
- 
-@@ -505,6 +610,11 @@ void __init smp_setup_cpu_maps(void)
- 			cpu++;
- 		}
- 
-+		if (parse_thread_groups(dn, &tg) ||
-+		    tg.nr_groups < 1 || tg.property != 1) {
-+			has_big_cores = false;
-+		}
-+
- 		if (cpu >= nr_cpu_ids) {
- 			of_node_put(dn);
- 			break;
-diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-index 755dc98..f5717de 100644
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@ -18,6 +18,7 @@
- #include <asm/smp.h>
- #include <asm/pmc.h>
- #include <asm/firmware.h>
-+#include <asm/cputhreads.h>
- 
- #include "cacheinfo.h"
- #include "setup.h"
-@@ -1025,6 +1026,33 @@ static ssize_t show_physical_id(struct device *dev,
- }
- static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
- 
-+static ssize_t show_small_core_siblings(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	struct device_node *dn = of_get_cpu_node(cpu->dev.id, NULL);
-+	struct thread_groups tg;
-+	int i, j;
-+	ssize_t ret = 0;
-+
-+	if (parse_thread_groups(dn, &tg))
-+		return -ENODATA;
-+
-+	i = get_cpu_thread_group_start(cpu->dev.id, &tg);
-+
-+	if (i == -1)
-+		return -ENODATA;
-+
-+	for (j = 0; j < tg.threads_per_group - 1; j++)
-+		ret += sprintf(buf + ret, "%d,", tg.thread_list[i + j]);
-+
-+	ret += sprintf(buf + ret, "%d\n", tg.thread_list[i + j]);
-+
-+	return ret;
-+}
-+static DEVICE_ATTR(small_core_siblings, 0444, show_small_core_siblings, NULL);
-+
- static int __init topology_init(void)
- {
- 	int cpu, r;
-@@ -1048,6 +1076,13 @@ static int __init topology_init(void)
- 			register_cpu(c, cpu);
- 
- 			device_create_file(&c->dev, &dev_attr_physical_id);
-+
-+			if (has_big_cores) {
-+				const struct device_attribute *attr =
-+				       &dev_attr_small_core_siblings;
-+
-+			       device_create_file(&c->dev, attr);
-+			}
- 		}
- 	}
- 	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "powerpc/topology:online",
+Description:
+~~~~~~~~~~~~~~~~~~~~
+A pair of IBM POWER9 SMT4 cores can be fused together to form a
+big-core with 8 SMT threads. This can be discovered via the
+"ibm,thread-groups" CPU property in the device tree which will
+indicate which group of threads that share the L1 cache, translation
+cache and instruction data flow.  If there are multiple such group of
+threads, then the core is a big-core. Furthermore, the thread-ids of
+such a big-core is obtained by interleaving the thread-ids of the
+component SMT4 cores.
+
+Eg: Threads in the pair of component SMT4 cores of an interleaved
+big-core are numbered {0,2,4,6} and {1,3,5,7} respectively.
+    
+On such a big-core, when multiple tasks are scheduled to run on the
+big-core, we get the best performance when the tasks are spread across
+the pair of SMT4 cores.
+
+The Linux scheduler supports a flag called "SD_ASYM_PACKING" which
+when set in the SMT sched-domain, biases the load-balancing of the
+tasks on the smaller numbered threads in the core. On an big-core
+whose threads are interleavings of the threads of the small cores,
+enabling SD_ASYM_PACKING in the SMT sched-domain automatically results
+in spreading the tasks uniformly across the associated pair of SMT4
+cores, thereby yielding better performance.
+
+This patchset contains two patches which on detecting the presence of
+interleaved big-cores will enable the the CPU_FTR_ASYM_SMT bit in the
+cur_cpu_spec->cpu_feature.
+
+Patch 1: adds support to detect the presence of
+big-cores and reports the small-core siblings of each CPU X
+via the sysfs file "/sys/devices/system/cpu/cpuX/big_core_siblings".
+
+Patch 2: checks if the thread-ids of the component small-cores are
+interleaved, in which case we enable the the CPU_FTR_ASYM_SMT bit in
+the cur_cpu_spec->cpu_features which results in the SD_ASYM_PACKING
+flag being set at the SMT level sched-domain.
+
+Results:
+~~~~~~~~~~~~~~~~~
+Experimental results for ebizzy with 2 threads, bound to a single big-core
+show a marked improvement with this patchset over the 4.18-rc3 vanilla
+kernel.
+
+The result of 100 such runs for 4.18-rc3 kernel and the 4.18-rc3 +
+big-core-patches are as follows
+
+4.18-rc3:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+[0 -       1000000]  :      0      : #
+[1000000 - 2000000]  :      3      : #
+[2000000 - 3000000]  :      16     : ####
+[3000000 - 4000000]  :      11     : ###
+[4000000 - 5000000]  :      0      : #
+[5000000 - 6000000]  :      70     : ###############
+
+4.18-rc3 + big-core-patches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+[0 -       1000000]  :      0      : #
+[1000000 - 2000000]  :      0      : #
+[2000000 - 3000000]  :      6      : ##
+[3000000 - 4000000]  :      0      : #
+[4000000 - 5000000]  :      2      : #
+[5000000 - 6000000]  :      92     : ###################
+
+
+
+Gautham R. Shenoy (2):
+  powerpc: Detect the presence of big-cores via "ibm,thread-groups"
+  powerpc: Enable CPU_FTR_ASYM_SMT for interleaved big-cores
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |   8 +
+ arch/powerpc/include/asm/cputhreads.h              |  22 +++
+ arch/powerpc/kernel/setup-common.c                 | 177 ++++++++++++++++++++-
+ arch/powerpc/kernel/sysfs.c                        |  35 ++++
+ 4 files changed, 241 insertions(+), 1 deletion(-)
+
 -- 
 1.9.4
 
