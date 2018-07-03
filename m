@@ -2,122 +2,653 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9D4C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF13C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 026D323EDB
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 026D323EDB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D20BF23EDB
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:38:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jMAwdvzb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20BF23EDB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933827AbeGCIgT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:36:19 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36763 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932169AbeGCIgR (ORCPT
+        id S1754665AbeGCIiH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:38:07 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43732 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754309AbeGCIiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:36:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w638ZfPT214163
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 3 Jul 2018 01:35:41 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w638ZfOo214160;
-        Tue, 3 Jul 2018 01:35:41 -0700
-Date:   Tue, 3 Jul 2018 01:35:41 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jan Beulich <tipbot@zytor.com>
-Message-ID: <tip-6709812f094d96543b443645c68daaa32d3d3e77@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, tglx@linutronix.de, dvlasenk@redhat.com,
-        jbeulich@suse.com, bp@alien8.de, brgerst@gmail.com,
-        peterz@infradead.org, hpa@zytor.com, JBeulich@suse.com,
-        mingo@kernel.org, luto@kernel.org
-Reply-To: jbeulich@suse.com, bp@alien8.de, brgerst@gmail.com,
-          peterz@infradead.org, hpa@zytor.com, luto@kernel.org,
-          JBeulich@suse.com, mingo@kernel.org,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          jpoimboe@redhat.com, tglx@linutronix.de, dvlasenk@redhat.com
-In-Reply-To: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
-References: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
-Git-Commit-ID: 6709812f094d96543b443645c68daaa32d3d3e77
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 3 Jul 2018 04:38:02 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u11-v6so997631eds.10
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J3xyWGG6ZXebSzSEbg3ED9ghEns3bxafjdwoLEd2TME=;
+        b=jMAwdvzbKZFOG8PxFV8Taw+tNqNPoSLw+MEWs82ST2/mRbSMNkLEPLcVeaYcvsenPw
+         Smj2ma0zqmRHxISjdd9jkJJrsuq8fPbQyTS7nCr68ZQlvRkSu1DE3W2nBWfvo7K8ocLq
+         mEd1D2ywapDOqGUXM9o2RSOEvDe+5GC7zSOiM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=J3xyWGG6ZXebSzSEbg3ED9ghEns3bxafjdwoLEd2TME=;
+        b=DsSXfMZE/vSUpWh5YJ8YoYQ+YDGfEHyRXLdnJJYQ6u70S0nrRJTDrdqjzaDuK8rlH6
+         8tdVHCw2jkEkWzmjJceUjmn9JNAUkLDsXOHxobVM7mTUWkTSUK6zIOD211h9JwW7nIDC
+         VgykTrDI65ra9rCalzcEayImGF+SwD93k54gR7Bup+v1yVZdJBUXLJJnc8TzHuBD97uY
+         GrERzeA8wK9DOJILmICb2eyjoVDcqdSKkPDj1aDUKnHD2/i4qXQ8etwHo8LjYYSHXxOd
+         1Vrwh9otbaEEVqSMW/9E8RfvSXqJSag02uzrcSCSkNA2bLLgSb+7Lr24TESuvzag1W35
+         QCzg==
+X-Gm-Message-State: APt69E2t9pKKSzZjOX3nxr/+ttq2B2Ti2VgoMTufjLhQggafdP4R3m1+
+        0qlsNZvCoWVrRS6gBeEPTtvDWQ==
+X-Google-Smtp-Source: AAOMgpc7vNMFt1OYV4WmPcGD8e4Ahoqth7co13KFUAVzqFSZUGwVAStH+NXtNjThGVogu3RD3fKseQ==
+X-Received: by 2002:a50:88c2:: with SMTP id d60-v6mr26718310edd.281.1530607080825;
+        Tue, 03 Jul 2018 01:38:00 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm391380edr.24.2018.07.03.01.37.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 01:37:59 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 10:37:57 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v6] Add udmabuf misc device
+Message-ID: <20180703083757.GG7880@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <20180703075359.30349-1-kraxel@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180703075359.30349-1-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.16.0-2-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6709812f094d96543b443645c68daaa32d3d3e77
-Gitweb:     https://git.kernel.org/tip/6709812f094d96543b443645c68daaa32d3d3e77
-Author:     Jan Beulich <JBeulich@suse.com>
-AuthorDate: Mon, 2 Jul 2018 04:47:57 -0600
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 3 Jul 2018 09:59:29 +0200
+On Tue, Jul 03, 2018 at 09:53:58AM +0200, Gerd Hoffmann wrote:
+> A driver to let userspace turn memfd regions into dma-bufs.
+> 
+> Use case:  Allows qemu create dmabufs for the vga framebuffer or
+> virtio-gpu ressources.  Then they can be passed around to display
+> those guest things on the host.  To spice client for classic full
+> framebuffer display, and hopefully some day to wayland server for
+> seamless guest window display.
+> 
+> qemu test branch:
+>   https://git.kraxel.org/cgit/qemu/log/?h=sirius/udmabuf
+> 
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-x86/entry/64: Add two more instruction suffixes
+I think some ack for a 2nd use-case, like virtio-wl or whatever would be
+really cool. To give us some assurance that this is generically useful.
+Plus an ack from dma-buf folks (nag them on irc, you don't have them on Cc
+here). Then this is imo good to go.
 
-Sadly, other than claimed in:
+I assume you'll push it to drm-misc, like all the other dma-buf stuff?
+-Daniel
 
-  a368d7fd2a ("x86/entry/64: Add instruction suffix")
+> ---
+>  Documentation/ioctl/ioctl-number.txt              |   1 +
+>  include/uapi/linux/udmabuf.h                      |  33 +++
+>  drivers/dma-buf/udmabuf.c                         | 287 ++++++++++++++++++++++
+>  tools/testing/selftests/drivers/dma-buf/udmabuf.c |  96 ++++++++
+>  MAINTAINERS                                       |   8 +
+>  drivers/dma-buf/Kconfig                           |   8 +
+>  drivers/dma-buf/Makefile                          |   1 +
+>  tools/testing/selftests/drivers/dma-buf/Makefile  |   5 +
+>  8 files changed, 439 insertions(+)
+>  create mode 100644 include/uapi/linux/udmabuf.h
+>  create mode 100644 drivers/dma-buf/udmabuf.c
+>  create mode 100644 tools/testing/selftests/drivers/dma-buf/udmabuf.c
+>  create mode 100644 tools/testing/selftests/drivers/dma-buf/Makefile
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+> index 480c8609dc..6636dea476 100644
+> --- a/Documentation/ioctl/ioctl-number.txt
+> +++ b/Documentation/ioctl/ioctl-number.txt
+> @@ -271,6 +271,7 @@ Code  Seq#(hex)	Include File		Comments
+>  't'	90-91	linux/toshiba.h		toshiba and toshiba_acpi SMM
+>  'u'	00-1F	linux/smb_fs.h		gone
+>  'u'	20-3F	linux/uvcvideo.h	USB video class host driver
+> +'u'	40-4f	linux/udmabuf.h		userspace dma-buf misc device
+>  'v'	00-1F	linux/ext2_fs.h		conflict!
+>  'v'	00-1F	linux/fs.h		conflict!
+>  'v'	00-0F	linux/sonypi.h		conflict!
+> diff --git a/include/uapi/linux/udmabuf.h b/include/uapi/linux/udmabuf.h
+> new file mode 100644
+> index 0000000000..46b6532ed8
+> --- /dev/null
+> +++ b/include/uapi/linux/udmabuf.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_LINUX_UDMABUF_H
+> +#define _UAPI_LINUX_UDMABUF_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/ioctl.h>
+> +
+> +#define UDMABUF_FLAGS_CLOEXEC	0x01
+> +
+> +struct udmabuf_create {
+> +	__u32 memfd;
+> +	__u32 flags;
+> +	__u64 offset;
+> +	__u64 size;
+> +};
+> +
+> +struct udmabuf_create_item {
+> +	__u32 memfd;
+> +	__u32 __pad;
+> +	__u64 offset;
+> +	__u64 size;
+> +};
+> +
+> +struct udmabuf_create_list {
+> +	__u32 flags;
+> +	__u32 count;
+> +	struct udmabuf_create_item list[];
+> +};
+> +
+> +#define UDMABUF_CREATE       _IOW('u', 0x42, struct udmabuf_create)
+> +#define UDMABUF_CREATE_LIST  _IOW('u', 0x43, struct udmabuf_create_list)
+> +
+> +#endif /* _UAPI_LINUX_UDMABUF_H */
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> new file mode 100644
+> index 0000000000..8e24204526
+> --- /dev/null
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -0,0 +1,287 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/dma-buf.h>
+> +#include <linux/highmem.h>
+> +#include <linux/cred.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/memfd.h>
+> +
+> +#include <uapi/linux/udmabuf.h>
+> +
+> +struct udmabuf {
+> +	u32 pagecount;
+> +	struct page **pages;
+> +};
+> +
+> +static int udmabuf_vm_fault(struct vm_fault *vmf)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	struct udmabuf *ubuf = vma->vm_private_data;
+> +
+> +	if (WARN_ON(vmf->pgoff >= ubuf->pagecount))
+> +		return VM_FAULT_SIGBUS;
+> +
+> +	vmf->page = ubuf->pages[vmf->pgoff];
+> +	get_page(vmf->page);
+> +	return 0;
+> +}
+> +
+> +static const struct vm_operations_struct udmabuf_vm_ops = {
+> +	.fault = udmabuf_vm_fault,
+> +};
+> +
+> +static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
+> +{
+> +	struct udmabuf *ubuf = buf->priv;
+> +
+> +	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+> +		return -EINVAL;
+> +
+> +	vma->vm_ops = &udmabuf_vm_ops;
+> +	vma->vm_private_data = ubuf;
+> +	return 0;
+> +}
+> +
+> +static struct sg_table *map_udmabuf(struct dma_buf_attachment *at,
+> +				    enum dma_data_direction direction)
+> +{
+> +	struct udmabuf *ubuf = at->dmabuf->priv;
+> +	struct sg_table *sg;
+> +
+> +	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
+> +	if (!sg)
+> +		goto err1;
+> +	if (sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->pagecount,
+> +				      0, ubuf->pagecount << PAGE_SHIFT,
+> +				      GFP_KERNEL) < 0)
+> +		goto err2;
+> +	if (!dma_map_sg(at->dev, sg->sgl, sg->nents, direction))
+> +		goto err3;
+> +
+> +	return sg;
+> +
+> +err3:
+> +	sg_free_table(sg);
+> +err2:
+> +	kfree(sg);
+> +err1:
+> +	return ERR_PTR(-ENOMEM);
+> +}
+> +
+> +static void unmap_udmabuf(struct dma_buf_attachment *at,
+> +			  struct sg_table *sg,
+> +			  enum dma_data_direction direction)
+> +{
+> +	sg_free_table(sg);
+> +	kfree(sg);
+> +}
+> +
+> +static void release_udmabuf(struct dma_buf *buf)
+> +{
+> +	struct udmabuf *ubuf = buf->priv;
+> +	pgoff_t pg;
+> +
+> +	for (pg = 0; pg < ubuf->pagecount; pg++)
+> +		put_page(ubuf->pages[pg]);
+> +	kfree(ubuf->pages);
+> +	kfree(ubuf);
+> +}
+> +
+> +static void *kmap_udmabuf(struct dma_buf *buf, unsigned long page_num)
+> +{
+> +	struct udmabuf *ubuf = buf->priv;
+> +	struct page *page = ubuf->pages[page_num];
+> +
+> +	return kmap(page);
+> +}
+> +
+> +static void kunmap_udmabuf(struct dma_buf *buf, unsigned long page_num,
+> +			   void *vaddr)
+> +{
+> +	kunmap(vaddr);
+> +}
+> +
+> +static struct dma_buf_ops udmabuf_ops = {
+> +	.map_dma_buf	  = map_udmabuf,
+> +	.unmap_dma_buf	  = unmap_udmabuf,
+> +	.release	  = release_udmabuf,
+> +	.map		  = kmap_udmabuf,
+> +	.unmap		  = kunmap_udmabuf,
+> +	.mmap		  = mmap_udmabuf,
+> +};
+> +
+> +#define SEALS_WANTED (F_SEAL_SHRINK)
+> +#define SEALS_DENIED (F_SEAL_WRITE)
+> +
+> +static long udmabuf_create(struct udmabuf_create_list *head,
+> +			   struct udmabuf_create_item *list)
+> +{
+> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+> +	struct file *memfd = NULL;
+> +	struct udmabuf *ubuf;
+> +	struct dma_buf *buf;
+> +	pgoff_t pgoff, pgcnt, pgidx, pgbuf;
+> +	struct page *page;
+> +	int seals, ret = -EINVAL;
+> +	u32 i, flags;
+> +
+> +	ubuf = kzalloc(sizeof(struct udmabuf), GFP_KERNEL);
+> +	if (!ubuf)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < head->count; i++) {
+> +		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
+> +			goto err_free_ubuf;
+> +		if (!IS_ALIGNED(list[i].size, PAGE_SIZE))
+> +			goto err_free_ubuf;
+> +		ubuf->pagecount += list[i].size >> PAGE_SHIFT;
+> +	}
+> +	ubuf->pages = kmalloc_array(ubuf->pagecount, sizeof(struct page *),
+> +				    GFP_KERNEL);
+> +	if (!ubuf->pages) {
+> +		ret = -ENOMEM;
+> +		goto err_free_ubuf;
+> +	}
+> +
+> +	pgbuf = 0;
+> +	for (i = 0; i < head->count; i++) {
+> +		memfd = fget(list[i].memfd);
+> +		if (!memfd)
+> +			goto err_put_pages;
+> +		if (!shmem_mapping(file_inode(memfd)->i_mapping))
+> +			goto err_put_pages;
+> +		seals = memfd_fcntl(memfd, F_GET_SEALS, 0);
+> +		if (seals == -EINVAL ||
+> +		    (seals & SEALS_WANTED) != SEALS_WANTED ||
+> +		    (seals & SEALS_DENIED) != 0)
+> +			goto err_put_pages;
+> +		pgoff = list[i].offset >> PAGE_SHIFT;
+> +		pgcnt = list[i].size   >> PAGE_SHIFT;
+> +		for (pgidx = 0; pgidx < pgcnt; pgidx++) {
+> +			page = shmem_read_mapping_page(
+> +				file_inode(memfd)->i_mapping, pgoff + pgidx);
+> +			if (IS_ERR(page)) {
+> +				ret = PTR_ERR(page);
+> +				goto err_put_pages;
+> +			}
+> +			ubuf->pages[pgbuf++] = page;
+> +		}
+> +		fput(memfd);
+> +	}
+> +	memfd = NULL;
+> +
+> +	exp_info.ops  = &udmabuf_ops;
+> +	exp_info.size = ubuf->pagecount << PAGE_SHIFT;
+> +	exp_info.priv = ubuf;
+> +
+> +	buf = dma_buf_export(&exp_info);
+> +	if (IS_ERR(buf)) {
+> +		ret = PTR_ERR(buf);
+> +		goto err_put_pages;
+> +	}
+> +
+> +	flags = 0;
+> +	if (head->flags & UDMABUF_FLAGS_CLOEXEC)
+> +		flags |= O_CLOEXEC;
+> +	return dma_buf_fd(buf, flags);
+> +
+> +err_put_pages:
+> +	while (pgbuf > 0)
+> +		put_page(ubuf->pages[--pgbuf]);
+> +err_free_ubuf:
+> +	fput(memfd);
+> +	kfree(ubuf->pages);
+> +	kfree(ubuf);
+> +	return ret;
+> +}
+> +
+> +static long udmabuf_ioctl_create(struct file *filp, unsigned long arg)
+> +{
+> +	struct udmabuf_create create;
+> +	struct udmabuf_create_list head;
+> +	struct udmabuf_create_item list;
+> +
+> +	if (copy_from_user(&create, (void __user *)arg,
+> +			   sizeof(struct udmabuf_create)))
+> +		return -EFAULT;
+> +
+> +	head.flags  = create.flags;
+> +	head.count  = 1;
+> +	list.memfd  = create.memfd;
+> +	list.offset = create.offset;
+> +	list.size   = create.size;
+> +
+> +	return udmabuf_create(&head, &list);
+> +}
+> +
+> +static long udmabuf_ioctl_create_list(struct file *filp, unsigned long arg)
+> +{
+> +	struct udmabuf_create_list head;
+> +	struct udmabuf_create_item *list;
+> +	int ret = -EINVAL;
+> +	u32 lsize;
+> +
+> +	if (copy_from_user(&head, (void __user *)arg, sizeof(head)))
+> +		return -EFAULT;
+> +	if (head.count > 1024)
+> +		return -EINVAL;
+> +	lsize = sizeof(struct udmabuf_create_item) * head.count;
+> +	list = memdup_user((void __user *)(arg + sizeof(head)), lsize);
+> +	if (IS_ERR(list))
+> +		return PTR_ERR(list);
+> +
+> +	ret = udmabuf_create(&head, list);
+> +	kfree(list);
+> +	return ret;
+> +}
+> +
+> +static long udmabuf_ioctl(struct file *filp, unsigned int ioctl,
+> +			  unsigned long arg)
+> +{
+> +	long ret;
+> +
+> +	switch (ioctl) {
+> +	case UDMABUF_CREATE:
+> +		ret = udmabuf_ioctl_create(filp, arg);
+> +		break;
+> +	case UDMABUF_CREATE_LIST:
+> +		ret = udmabuf_ioctl_create_list(filp, arg);
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
+> +	}
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations udmabuf_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.unlocked_ioctl = udmabuf_ioctl,
+> +};
+> +
+> +static struct miscdevice udmabuf_misc = {
+> +	.minor          = MISC_DYNAMIC_MINOR,
+> +	.name           = "udmabuf",
+> +	.fops           = &udmabuf_fops,
+> +};
+> +
+> +static int __init udmabuf_dev_init(void)
+> +{
+> +	return misc_register(&udmabuf_misc);
+> +}
+> +
+> +static void __exit udmabuf_dev_exit(void)
+> +{
+> +	misc_deregister(&udmabuf_misc);
+> +}
+> +
+> +module_init(udmabuf_dev_init)
+> +module_exit(udmabuf_dev_exit)
+> +
+> +MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/tools/testing/selftests/drivers/dma-buf/udmabuf.c b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+> new file mode 100644
+> index 0000000000..376b1d6730
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <string.h>
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <malloc.h>
+> +
+> +#include <sys/ioctl.h>
+> +#include <sys/syscall.h>
+> +#include <linux/memfd.h>
+> +#include <linux/udmabuf.h>
+> +
+> +#define TEST_PREFIX	"drivers/dma-buf/udmabuf"
+> +#define NUM_PAGES       4
+> +
+> +static int memfd_create(const char *name, unsigned int flags)
+> +{
+> +	return syscall(__NR_memfd_create, name, flags);
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	struct udmabuf_create create;
+> +	int devfd, memfd, buf, ret;
+> +	off_t size;
+> +	void *mem;
+> +
+> +	devfd = open("/dev/udmabuf", O_RDWR);
+> +	if (devfd < 0) {
+> +		printf("%s: [skip,no-udmabuf]\n", TEST_PREFIX);
+> +		exit(77);
+> +	}
+> +
+> +	memfd = memfd_create("udmabuf-test", MFD_CLOEXEC);
+> +	if (memfd < 0) {
+> +		printf("%s: [skip,no-memfd]\n", TEST_PREFIX);
+> +		exit(77);
+> +	}
+> +
+> +	size = getpagesize() * NUM_PAGES;
+> +	ret = ftruncate(memfd, size);
+> +	if (ret == -1) {
+> +		printf("%s: [FAIL,memfd-truncate]\n", TEST_PREFIX);
+> +		exit(1);
+> +	}
+> +
+> +	memset(&create, 0, sizeof(create));
+> +
+> +	/* should fail (offset not page aligned) */
+> +	create.memfd  = memfd;
+> +	create.offset = getpagesize()/2;
+> +	create.size   = getpagesize();
+> +	buf = ioctl(devfd, UDMABUF_CREATE, &create);
+> +	if (buf >= 0) {
+> +		printf("%s: [FAIL,test-1]\n", TEST_PREFIX);
+> +		exit(1);
+> +	}
+> +
+> +	/* should fail (size not multiple of page) */
+> +	create.memfd  = memfd;
+> +	create.offset = 0;
+> +	create.size   = getpagesize()/2;
+> +	buf = ioctl(devfd, UDMABUF_CREATE, &create);
+> +	if (buf >= 0) {
+> +		printf("%s: [FAIL,test-2]\n", TEST_PREFIX);
+> +		exit(1);
+> +	}
+> +
+> +	/* should fail (not memfd) */
+> +	create.memfd  = 0; /* stdin */
+> +	create.offset = 0;
+> +	create.size   = size;
+> +	buf = ioctl(devfd, UDMABUF_CREATE, &create);
+> +	if (buf >= 0) {
+> +		printf("%s: [FAIL,test-3]\n", TEST_PREFIX);
+> +		exit(1);
+> +	}
+> +
+> +	/* should work */
+> +	create.memfd  = memfd;
+> +	create.offset = 0;
+> +	create.size   = size;
+> +	buf = ioctl(devfd, UDMABUF_CREATE, &create);
+> +	if (buf < 0) {
+> +		printf("%s: [FAIL,test-4]\n", TEST_PREFIX);
+> +		exit(1);
+> +	}
+> +
+> +	fprintf(stderr, "%s: ok\n", TEST_PREFIX);
+> +	close(buf);
+> +	close(memfd);
+> +	close(devfd);
+> +	return 0;
+> +}
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 07d1576fc7..a8e1bb3bc3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14638,6 +14638,14 @@ S:	Maintained
+>  F:	Documentation/filesystems/udf.txt
+>  F:	fs/udf/
+>  
+> +UDMABUF DRIVER
+> +M:	Gerd Hoffmann <kraxel@redhat.com>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Maintained
+> +F:	drivers/dma-buf/udmabuf.c
+> +F:	include/uapi/linux/udmabuf.h
+> +F:	tools/testing/selftests/drivers/dma-buf/udmabuf.c
+> +
+>  UDRAW TABLET
+>  M:	Bastien Nocera <hadess@hadess.net>
+>  L:	linux-input@vger.kernel.org
+> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+> index ed3b785bae..338129eb12 100644
+> --- a/drivers/dma-buf/Kconfig
+> +++ b/drivers/dma-buf/Kconfig
+> @@ -30,4 +30,12 @@ config SW_SYNC
+>  	  WARNING: improper use of this can result in deadlocking kernel
+>  	  drivers from userspace. Intended for test and debug only.
+>  
+> +config UDMABUF
+> +	bool "userspace dmabuf misc driver"
+> +	default n
+> +	depends on DMA_SHARED_BUFFER
+> +	help
+> +	  A driver to let userspace turn memfd regions into dma-bufs.
+> +	  Qemu can use this to create host dmabufs for guest framebuffers.
+> +
+>  endmenu
+> diff --git a/drivers/dma-buf/Makefile b/drivers/dma-buf/Makefile
+> index c33bf88631..0913a6ccab 100644
+> --- a/drivers/dma-buf/Makefile
+> +++ b/drivers/dma-buf/Makefile
+> @@ -1,3 +1,4 @@
+>  obj-y := dma-buf.o dma-fence.o dma-fence-array.o reservation.o seqno-fence.o
+>  obj-$(CONFIG_SYNC_FILE)		+= sync_file.o
+>  obj-$(CONFIG_SW_SYNC)		+= sw_sync.o sync_debug.o
+> +obj-$(CONFIG_UDMABUF)		+= udmabuf.o
+> diff --git a/tools/testing/selftests/drivers/dma-buf/Makefile b/tools/testing/selftests/drivers/dma-buf/Makefile
+> new file mode 100644
+> index 0000000000..4154c3d7aa
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/dma-buf/Makefile
+> @@ -0,0 +1,5 @@
+> +CFLAGS += -I../../../../../usr/include/
+> +
+> +TEST_GEN_PROGS := udmabuf
+> +
+> +include ../../lib.mk
+> -- 
+> 2.9.3
+> 
 
-... there are two more instances which want to be adjusted.
-
-As said there, omitting suffixes from instructions in AT&T mode is bad
-practice when operand size cannot be determined by the assembler from
-register operands, and is likely going to be warned about by upstream
-gas in the future (mine does already).
-
-Add the other missing suffixes here as well.
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/entry/entry_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index c6f3677e6105..65aa16d845f6 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -92,7 +92,7 @@ END(native_usergs_sysret64)
- .endm
- 
- .macro TRACE_IRQS_IRETQ_DEBUG
--	bt	$9, EFLAGS(%rsp)		/* interrupts off? */
-+	btl	$9, EFLAGS(%rsp)		/* interrupts off? */
- 	jnc	1f
- 	TRACE_IRQS_ON_DEBUG
- 1:
-@@ -702,7 +702,7 @@ retint_kernel:
- #ifdef CONFIG_PREEMPT
- 	/* Interrupts are off */
- 	/* Check if we need preemption */
--	bt	$9, EFLAGS(%rsp)		/* were interrupts off? */
-+	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
- 	jnc	1f
- 0:	cmpl	$0, PER_CPU_VAR(__preempt_count)
- 	jnz	1f
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
