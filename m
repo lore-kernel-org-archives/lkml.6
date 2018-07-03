@@ -2,119 +2,98 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72547C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FC6C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 246C723DA8
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 908372429F
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="O4k2uG6e";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nvDFMg5j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246C723DA8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Anye8HJd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908372429F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753895AbeGCCZb (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:25:31 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34416 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753819AbeGCCZ2 (ORCPT
+        id S932328AbeGCCZp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 22:25:45 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42649 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753818AbeGCCZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:25:28 -0400
-Received: by mail-yb0-f196.google.com with SMTP id e9-v6so153228ybq.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 19:25:28 -0700 (PDT)
+        Mon, 2 Jul 2018 22:25:43 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n84-v6so759865oib.9;
+        Mon, 02 Jul 2018 19:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KovnlIiW70oLUaOBUZSpNenzcGtxJiE9BAafXTqhjB4=;
-        b=O4k2uG6eU7k9gFIeuUSm/FoGXzMopz9qnXlXqArVJItQ+SCqG3XQpDKEGJRTP8gulr
-         OA7f+hhMCWb5fuc6oJlGLo6MXDjHCwVdeI5n9N3hjqTCRKJAh7lFDkYDTS6nEHLBZ/Ji
-         xy2PP4VPpdiYrffIxkHDQ/B5iP4R2IIbFmyY8jKEngfOrgVenYiqlYVjIiZOfF9rgOWg
-         CgroUiB/hrhCvegNEl2FBOA95HowTyi9WGBTVfwlIRYXH+lUpgMKofO6ArCq7AFP+26+
-         SxPv3uAfWa1nwEok9jEbA4/iIWx34rMqr+jrCU3eCDM94B8MkanAvgHN0X51Llx5bS1k
-         7MDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KovnlIiW70oLUaOBUZSpNenzcGtxJiE9BAafXTqhjB4=;
-        b=nvDFMg5jw0SG5ro3qEGeIAtBrgQgDlVL6nuVKYbF/MJ2AcuTCSWQkqCtwqsficndSl
-         1VnF2nr7vAgKbLbRbSbvrF0OYuqDjBFcdjM4W6aZ37OrIBtdh3O++Akmzg0AwYRGKgLv
-         mWocwKgdj/tO8W1PxEeAZlOPcAtcsEdIwXFXI=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=77Oce+qhGCTYGLIaR/xRfUAPa3pBexP0ykriZSPiF6c=;
+        b=Anye8HJdoBV+jP8YqgIuK/Bx1M+cSnj+GYXfEj3pIohSVi2TjjdnviCSIDz6OX7FrR
+         7G9J6VwYt5eQpbMM9UNUMs7uf94clHPBnh86FRTgagEJWsuV9zg52ZBENVjyoqpeZ1hI
+         /P5F+OF7QHeInJGVfsubO7CX5z7zGpkim5q0zBMAaFDmz9d85np6qBuItAwCzI7K5lqK
+         CWxkRdcO+8HeOm3hnZpKy3/Q2YbQCLkJER/a6MUe3sEQUqAyZIfL31gCFuP7FZhYzD4r
+         TkpkWbFfzzFVfRQM32brHNUlRNfLcVjtH1KBv/yN6Ap8EFkdPR0csgLUMbuzI1Sqx2cE
+         IfsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=KovnlIiW70oLUaOBUZSpNenzcGtxJiE9BAafXTqhjB4=;
-        b=QKBE+52qLLr6qSzVTAXhQAjqctw1CyMYMTjwIZarTtgyrEH9hab4CUpt9ywMi1e35W
-         NvPWkkd1Apf9+4uCwcECcjftQMxFY9vXKWooC2cCVjPX/ZQXDauVecrEr3liAYBhUot4
-         a/3NnRQ0Zu2xT1KOzKiV7FQ9NkBoT3Q1M95x3UNkXXFYp15g3eiLYvDh9adIyAAr714G
-         12xNhgHVAg/2suEmcJIv/T2H9OtfYaAt/NVIOc57GxdB01vcFtYLkL2EEcptpwMpz8T6
-         yACPwojf8rt0BSf36trrjETyGGuRwOcNepwjwBqRegjHTh+d/9cwgo6fDflLh7ushBrk
-         ld7w==
-X-Gm-Message-State: APt69E1S8Q5aP9VUPLpvkEIiabyo5RxS9nCjXPU9KFq1DIJoW+93Ukqz
-        DrCv5CeXYeDuhvhwkSb/vFfGrX7fzCiCumU7no1/Qa+3
-X-Google-Smtp-Source: AAOMgpestSDm3CadzClHP/lh5MBmtQh5Bx15Eknt1F+t7WBy9mncu2/RSFDy78e+NRk8K61p63O+wsnuLst+pJn2cMc=
-X-Received: by 2002:a5b:b44:: with SMTP id b4-v6mr4028685ybr.463.1530584727463;
- Mon, 02 Jul 2018 19:25:27 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=77Oce+qhGCTYGLIaR/xRfUAPa3pBexP0ykriZSPiF6c=;
+        b=Tl8FWUiJkKIMAXMY5+dUcF3y57IMwGffM/gI6hFmNCIV+oDryl7kQ9+lpX4J8R3hjz
+         ieVW5htUY8TFX9fHG8yJGdobX5vtnFCbhpBuKs0fuPVriUR2n/Z/B7AB4OALtjcHAXuS
+         k89xgsK7oOcpzwdaC5E0TFtu5uSNsYMmhygenDIiu2CQzf2kkipe8BsbdiuFcQVYOT0p
+         wbm3KhowSPXN8wPhGhL8ptbQPCNUKEJKNC+M+B1hmYuhoS9VcAbQkSqvA8MngjsFrRZ+
+         1vfsBHeXWzfo8fte4sZNd4Gar0PTwnHO52CG4pc/1QXIuv1ZGtFTEjWVvmn1JeCZUyJD
+         Okhw==
+X-Gm-Message-State: APt69E34bvZVrGbLMNUnlW/wOzyHLuUPhKZIapXvRypJrl1KRdHOJaNY
+        6V7mVY1gkU2KPicOkt9u1Zm6x63rVxiYHlWIR8Y=
+X-Google-Smtp-Source: AAOMgpee6P2crT3Wm34rD4D3UEeOIlCGRyxEriiZQ3Q/GhOcml7cfmOACCByiPYn208tR5GnlfUMaaWsSb8mmU6oPdM=
+X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr19848868oia.44.1530584741942;
+ Mon, 02 Jul 2018 19:25:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 19:25:26 -0700 (PDT)
-In-Reply-To: <CAK7LNAT13TrEbq5YR74YA1Snimn53MLjZFbHhbS2jLuvXn9a=g@mail.gmail.com>
-References: <1530578352-18613-1-git-send-email-yamada.masahiro@socionext.com>
- <CAGXu5jKcWjm-56VRj=0kKU0Fb1ZrGgJ8WgesD0cN2x9WHTGwDw@mail.gmail.com> <CAK7LNAT13TrEbq5YR74YA1Snimn53MLjZFbHhbS2jLuvXn9a=g@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 2 Jul 2018 19:25:26 -0700
-X-Google-Sender-Auth: 9rWGZoamVWQnRoHxcng1_2YR2eY
-Message-ID: <CAGXu5j+sQ9Fz+zYW8AXyDjuKtOSh-e7b_02N5nkD_DV7Voj10g@mail.gmail.com>
-Subject: Re: [PATCH] gcc-plugins: remove unused GCC_PLUGIN_SUBDIR
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Emese Revfy <re.emese@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
+Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 19:25:41 -0700 (PDT)
+In-Reply-To: <AM3PR04MB1315FEF9C8833B30DA665E7DF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1530494867-15015-1-git-send-email-Anson.Huang@nxp.com>
+ <CACRpkdZOCJXHxcYv0CU76J0r2OpxdtDuOiJ9cenrvJCHVsBeAA@mail.gmail.com> <AM3PR04MB1315FEF9C8833B30DA665E7DF5420@AM3PR04MB1315.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 2 Jul 2018 23:25:41 -0300
+Message-ID: <CAOMZO5A7=ptbOiSUDywwQrFd+DAZ3vsE3dSPab7cwOF3_T3qeQ@mail.gmail.com>
+Subject: Re: [PATCH V2] mmc: core: cd_label must be last entry of mmc_gpio struct
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "evgreen@chromium.org" <evgreen@chromium.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:23 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Hi Kees,
->
-> 2018-07-03 11:18 GMT+09:00 Kees Cook <keescook@chromium.org>:
->> On Mon, Jul 2, 2018 at 5:39 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> GCC_PLUGIN_SUBDIR has never been used.  If you really need this in
->>> the future, please re-add it then.
->>>
->>> For now, the code is unused. Remove.
->>>
->>> 'export HOSTLIBS' is not necessary either.
->>>
->>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->>
->> Acked-by: Kees Cook <keescook@chromium.org>
->>
->> Is this going via your tree, or should I take it via the gcc-plugins tree?
->>
->> Thanks!
->>
->> -Kees
->
-> Could you pick it up to your tree?
+On Mon, Jul 2, 2018 at 11:13 PM, Anson Huang <anson.huang@nxp.com> wrote:
 
-Happily; thanks!
+> I think either way is OK, since flexible array is used in kernel code quite commonly,
+> so I prefer to make code change as small as possible, the original patch can also prevent
+> similar bug in future. And like below commit Fabio pointed out, it also has same kind
+> of fix: a158531f3c92 ("gpio: 74x164: Fix crash during .remove()"). Thanks.
 
--Kees
+I am also fine with this patch or the one from Linus.
 
--- 
-Kees Cook
-Pixel Security
+Maybe Anson's patch could be applied to 4.18-rc as a bug fix and
+Linus' patch could be applied to 4.19-rc1 as a cleanup/improvement?
+
+Ulf,
+
+What would you prefer?
+
+Thanks
