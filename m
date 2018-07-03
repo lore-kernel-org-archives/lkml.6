@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8D3C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5556BC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3842C2084D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D1462084D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:33:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="nyjY6e6E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3842C2084D
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="X5EPHHlD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1462084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932248AbeGCMcp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:32:45 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:49726 "EHLO
+        id S932516AbeGCMdd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 08:33:33 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:50094 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932181AbeGCMcn (ORCPT
+        with ESMTP id S932191AbeGCMco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:32:43 -0400
+        Tue, 3 Jul 2018 08:32:44 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -35,12 +35,12 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH 11/14] dmaengine: dma-jz4780: Further residue status fix
-Date:   Tue,  3 Jul 2018 14:32:11 +0200
-Message-Id: <20180703123214.23090-12-paul@crapouillou.net>
+Subject: [PATCH 12/14] dmaengine: dma-jz4780: Use dma_set_residue()
+Date:   Tue,  3 Jul 2018 14:32:12 +0200
+Message-Id: <20180703123214.23090-13-paul@crapouillou.net>
 In-Reply-To: <20180703123214.23090-1-paul@crapouillou.net>
 References: <20180703123214.23090-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530621161; bh=enkQAEhOU5uNiPVbgK7vMWl7oouDaqOl2/Xy8HlDqpM=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=nyjY6e6Ej1girbg211tllekja9eKNp2bLJzTNNLkvrVOE/JEpOn8A2OIfVYp15mrhDYYYCMdlf0ELUNe38Ez7c3bsIdO5Zr3BrrTcW+0wZNhzG7A+JVnIbYaEeqbYvsTaGywCQrXANQzBADE2aLEm0/AdHD3keFyQW3ycrGAqUM=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1530621162; bh=9/6JpqsNrbpcWfS0o27b2rGFCQEIjnQIZBWkgANlJ6A=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=X5EPHHlDS03UOL7PNQLZa/fzx+Lq5pFnjWdyT4rJHsiQRgKvjZTbZSsM3sJSpnySC0M5Fo2mPCZz9P+bv9zeQIrde7ODS48IJ9V/3f2n6woeGMLLOYW68v2XXvZoeLvYOR0JBsBqKa9AR1IiF+EmF5HN/xKK4twxFgT9rcyOSxg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,36 +48,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Silsby <dansilsby@gmail.com>
 
-Func jz4780_dma_desc_residue() expects the index to the next hw
-descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
-however, applied modulus before passing it. When the current hw
-descriptor was last in the list, the index passed became zero.
-
-The resulting excess of reported residue especially caused problems
-with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
-rely on this for determining current DMA location within buffer.
-
-Combined with the recent and related residue-reporting fixes, spurious
-ALSA audio underruns on jz4770 hardware are now fixed.
+This is the standard method provided by dmaengine header.
 
 Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
 ---
- drivers/dma/dma-jz4780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 64270d53ba57..690b853977b2 100644
+index 690b853977b2..084b7a46a68d 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -647,7 +647,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+@@ -633,6 +633,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+ 	struct virt_dma_desc *vdesc;
+ 	enum dma_status status;
+ 	unsigned long flags;
++	unsigned long residue = 0;
+ 
+ 	status = dma_cookie_status(chan, cookie, txstate);
+ 	if ((status == DMA_COMPLETE) || (txstate == NULL))
+@@ -643,13 +644,13 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
+ 	vdesc = vchan_find_desc(&jzchan->vchan, cookie);
+ 	if (vdesc) {
+ 		/* On the issued list, so hasn't been processed yet */
+-		txstate->residue = jz4780_dma_desc_residue(jzchan,
++		residue = jz4780_dma_desc_residue(jzchan,
  					to_jz4780_dma_desc(vdesc), 0);
  	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
- 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
--			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
-+					jzchan->curr_hwdesc + 1);
- 	} else
- 		txstate->residue = 0;
+-		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
++		residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
+ 					jzchan->curr_hwdesc + 1);
+-	} else
+-		txstate->residue = 0;
++	}
++	dma_set_residue(txstate, residue);
  
+ 	if (vdesc && jzchan->desc && vdesc == &jzchan->desc->vdesc
+ 	    && jzchan->desc->status & (JZ_DMA_DCS_AR | JZ_DMA_DCS_HLT))
 -- 
 2.18.0
 
