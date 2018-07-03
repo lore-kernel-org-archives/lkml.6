@@ -2,150 +2,70 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EC2C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D60AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 469B72443A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469B72443A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 490692443A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:18:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 490692443A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754709AbeGCJRc (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:17:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34892 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754606AbeGCJR3 (ORCPT
+        id S933358AbeGCJSA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:18:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50764 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932883AbeGCJR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:17:29 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w639EBgQ113897
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 05:17:29 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k02ec9mfe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:17:28 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Tue, 3 Jul 2018 10:17:26 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 10:17:21 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w639HKxB27852902
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 09:17:20 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A2321A404D;
-        Tue,  3 Jul 2018 12:17:45 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEA83A4040;
-        Tue,  3 Jul 2018 12:17:44 +0100 (BST)
-Received: from osiris (unknown [9.152.212.90])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  3 Jul 2018 12:17:44 +0100 (BST)
-Date:   Tue, 3 Jul 2018 11:17:17 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
-References: <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
- <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
- <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
- <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
- <20180703081449.GT2494@hirez.programming.kicks-ass.net>
- <20180703082955.GH3704@osiris>
- <20180703084312.GU2494@hirez.programming.kicks-ass.net>
- <20180703085546.GJ3704@osiris>
+        Tue, 3 Jul 2018 05:17:58 -0400
+Received: from localhost (unknown [37.171.46.72])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83969F22;
+        Tue,  3 Jul 2018 09:17:56 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 11:17:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Helge Deller <deller@gmx.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 3.18 35/85] parisc: Move setup_profiling_timer() out of
+ init section
+Message-ID: <20180703091750.GA4005@kroah.com>
+References: <20180701153122.365061142@linuxfoundation.org>
+ <20180701153123.756542422@linuxfoundation.org>
+ <18c43f1b-fb29-97a0-883a-d71fd2de80c5@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <20180703085546.GJ3704@osiris>
-X-TM-AS-GCONF: 00
-x-cbid: 18070309-0016-0000-0000-000001E2D1FA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070309-0017-0000-0000-000032372EB2
-Message-Id: <20180703091717.GK3704@osiris>
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=425 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030105
+In-Reply-To: <18c43f1b-fb29-97a0-883a-d71fd2de80c5@gmx.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 10:55:46AM +0200, Heiko Carstens wrote:
-> > > > We're piece-wise enabling rseq across architectures anyway, and when the
-> > > > relevant maintains do this, they can have a look at their
-> > > > {get,put}_user() implementations and fix them.
-> > > > 
-> > > > If you rely on get_user(u64) working, that means microblaze is already
-> > > > broken, but I suppose it already was, since their rseq enablement patch
-> > > > is extremely dodgy. Michal?
-> > > 
-> > > s390 uses the mvcos instruction to implement get_user(). That instruction
-> > > is not defined to be atomic, but may copy bytes piecemeal.. I had the
-> > > impression that the rseq fields are supposed to be updated within the
-> > > context of a single thread (user + kernel space).
-> > > 
-> > > However if another user space thread is allowed to do this as well, then
-> > > the get_user() approach won't fly on s390.
-> > > 
-> > > That leaves the question: does it even make sense for a thread to update
-> > > the rseq structure of a different thread?
-> > 
-> > The problem is interrupts; we need interrupts on the CPU doing the store
-> > to observe either the old or the new value, not a mix.
-> > 
-> > If mvcos does not guarantee that, we're having problems. Is there a
-> > reason get_user() cannot use a 'regular' load?
+On Sun, Jul 01, 2018 at 06:29:54PM +0200, Helge Deller wrote:
+> Hi Greg,
 > 
-> Well, that's single instruction semantics. This is something we actually
-> can guarantee, since the mvcos instruction itself won't be interrupted and
-> copies all 1/2/4/8 bytes in a row.
+> On 01.07.2018 18:01, Greg Kroah-Hartman wrote:
+> > 3.18-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Helge Deller <deller@gmx.de>
+> > 
+> > [ Upstream commit 01f56832cfb6fcc204e7203f46841b6185ebd574 ]
 > 
-> So we are talking about that single instructions are required and not
-> atomic accesses?
+> I wonder how this patch and patch #22 ([PATCH 3.18 22/85] parisc: drivers.c: Fix section mismatches)
+> reached the stable trees?
+> I haven't tagged upstream commit 01f56832cfb6fcc204e7203f46841b6185ebd574 or 
+> b819439fea305a0bfd6ca23a7994fd1a8847c0d8 for backport.
+> 
+> Anyway, I'd suggest not to apply both.
+> I haven't tested them in those old kernels....
 
-And to answer also your question: we don't use a regular load, since we
-would have to use 'sacf' construct surrounding the load instruction which
-would be much slower.
-We have something like that implemented for the futex atomic ops, and we
-could also implement something like that for this use case
-(e.g. get_user_atomic()), if really needed.
+Ok, both now dropped, thanks.
 
+greg k-h
