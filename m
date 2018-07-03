@@ -2,118 +2,118 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E576FC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9025AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C106245D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:08:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C106245D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 516B3214FB
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 13:08:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516B3214FB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753349AbeGCNIL (ORCPT
+        id S1753401AbeGCNIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 09:08:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60408 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753163AbeGCNIK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:08:10 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63D53H9023754
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 09:08:09 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k07bgxp9f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 09:08:05 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 14:07:57 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 14:07:52 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63D7pXe32178218
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 13:07:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45D3B11C04A;
-        Tue,  3 Jul 2018 16:08:17 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDA6211C054;
-        Tue,  3 Jul 2018 16:08:15 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.97.127])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 16:08:15 +0100 (BST)
-Subject: Re: [PATCH v5 3/8] ima: based on policy require signed kexec kernel
- images
-From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
-To:     J Freyensee <why2jjj.linux@gmail.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>
-Date:   Tue, 03 Jul 2018 09:07:39 -0400
-In-Reply-To: <840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
-References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1530542283-26145-4-git-send-email-zohar@linux.vnet.ibm.com>
-         <840dae63-5a90-1327-437e-1ed92e165754@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070313-0012-0000-0000-000002864C02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070313-0013-0000-0000-000020B7C868
-Message-Id: <1530623259.3452.28.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=876 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030150
+        Tue, 3 Jul 2018 09:08:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:48916 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752606AbeGCNIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 09:08:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEB3A80D;
+        Tue,  3 Jul 2018 06:08:35 -0700 (PDT)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.210.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8D4FE3F5BA;
+        Tue,  3 Jul 2018 06:08:34 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     hch@lst.de, m.szyprowski@samsung.com
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        noring@nocrew.org, JuergenUrban@gmx.de
+Subject: [PATCH] dma-mapping: Relax warnings for per-device areas
+Date:   Tue,  3 Jul 2018 14:08:30 +0100
+Message-Id: <1f8262d206c6886072d04cc93454f6e3f812bd20.1530623284.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.17.1.dirty
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-02 at 11:31 -0700, J Freyensee wrote:
-> 
-> On 7/2/18 7:37 AM, Mimi Zohar wrote:
-> > The original kexec_load syscall can not verify file signatures, nor can
-> > the kexec image be measured.  Based on policy, deny the kexec_load
-> > syscall.
-> 
-> 
-> Curiosity question: I thought kexec_load() syscall was used to load a 
-> crashdump?
+The reasons why dma_free_attrs() should not be called from IRQ context
+are not necessarily obvious and somewhat buried in the development
+history, so let's start by documenting the warning itself to help anyone
+who does happen to hit it and wonder what the deal is.
 
-kexec is used to collect the memory used to analyze the crash dump.
+However, this check turns out to be slightly over-restrictive for the
+way that per-device memory has been spliced into the general API, since
+for that case we know that dma_declare_coherent_memory() has created an
+appropriate CPU mapping for the entire area and nothing dynamic should
+be happening. Given that the usage model for per-device memory is often
+more akin to streaming DMA than 'real' coherent DMA (e.g. allocating and
+freeing space to copy short-lived packets in and out), it is also
+somewhat more reasonable for those operations to happen in IRQ handlers
+for such devices.
 
-> If this is true, how would this work if kexec_load() is 
-> being denied?  I don't think I'd want to be hindered in cases where I'm 
-> trying to diagnose a crash.
+A somewhat similar line of reasoning also applies at the other end for
+the mask check in dma_alloc_attrs() too - indeed, a device which cannot
+access anything other than its own local memory probably *shouldn't*
+have a valid mask for the general coherent DMA API.
 
-For trusted & secure boot, we need a full measurement list and
-signature chain of trust rooted in HW.  Permitting kexec_load would
-break these chains of trust.
+Therefore, let's move the per-device area hooks up ahead of the assorted
+checks, so that they get a chance to resolve the request before we get
+as far as definite "you're doing it wrong" territory.
 
-Permitting/denying kexec_load is based on a runtime IMA policy.  Patch
-6/8 "ima: add build time policy", in this patch set, introduces the
-concept of a build time policy.  With these patches, you could
-configure your kernel and/or load an IMA policy permitting kexec_load.
+Reported-by: Fredrik Noring <noring@nocrew.org>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+ include/linux/dma-mapping.h | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-Mimi
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index f9cc309507d9..ffeca3ab59c0 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -512,12 +512,12 @@ static inline void *dma_alloc_attrs(struct device *dev, size_t size,
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 	void *cpu_addr;
+ 
+-	BUG_ON(!ops);
+-	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
+-
+ 	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
+ 		return cpu_addr;
+ 
++	BUG_ON(!ops);
++	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
++
+ 	/* let the implementation decide on the zone to allocate from: */
+ 	flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM);
+ 
+@@ -537,12 +537,19 @@ static inline void dma_free_attrs(struct device *dev, size_t size,
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 
+-	BUG_ON(!ops);
+-	WARN_ON(irqs_disabled());
+-
+ 	if (dma_release_from_dev_coherent(dev, get_order(size), cpu_addr))
+ 		return;
+ 
++	BUG_ON(!ops);
++	/*
++	 * On non-coherent platforms which implement DMA-coherent buffers via
++	 * non-cacheable remaps, ops->free() may call vunmap(). Thus arriving
++	 * here in IRQ context is a) at risk of a BUG_ON() or trying to sleep
++	 * on some machines, and b) an indication that the driver is probably
++	 * misusing the coherent API anyway.
++	 */
++	WARN_ON(irqs_disabled());
++
+ 	if (!ops->free || !cpu_addr)
+ 		return;
+ 
+-- 
+2.17.1.dirty
 
