@@ -2,121 +2,108 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C032C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB47C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453C923C52
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:36:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htq8o7xI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453C923C52
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 523AE2495A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 523AE2495A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934408AbeGCRgp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:36:45 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:46496 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934141AbeGCRgm (ORCPT
+        id S934419AbeGCRhI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:37:08 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12016 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934141AbeGCRhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:36:42 -0400
-Received: by mail-ua0-f195.google.com with SMTP id r18-v6so1747154ual.13;
-        Tue, 03 Jul 2018 10:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8NY4DJoQ+auWNOnu/CCbxd7QbVY2b9rCae1kqPpSiLg=;
-        b=htq8o7xIhjI/eePTYQ9Hyso2m4ayosSp/4OIHDWsiIFvh639SAi4YcdOLlg6xWOBwq
-         Z4RUJzGowhZJe2xpxKf0yWrxHvmBZG4qRkUVfsRJWj6tQvVJrzXxn/D3rNvyvc83zqKk
-         /5Vnm8zAe+ZNpG0mFgDD2HB+H+bcsahwfOv2SpP63XOWN+lM4lxtJ4/120t7Zn9ZTAOM
-         zC1ZbK/o3du9DbBuuJsZKSF9Orwg6X1hkdc2IEuN1LjW87bCx9/e9hvjicqmS/BuG/vX
-         C1ylR/yZmED+J27ZLXNkE+0curWWIlf2mLgt/4iaxUOmr1FPg8nD50jtVutb7peeOtgU
-         kBZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8NY4DJoQ+auWNOnu/CCbxd7QbVY2b9rCae1kqPpSiLg=;
-        b=ebCDZFsndFWUPRpTLnexiOeCs+wlnnAlGMR8UA0JV6R3rB8EbEL+cnnc5KGGVZMd0C
-         0Hwv3Lz6ngRyLhZHjkIPCTyl1KtPtwLN0GaAiOjGX5xN0tFu80u0qRMez+5Fn/RCy85Q
-         JVj6fGKta2wSq74Q3T83bqYf0qQ9bPpbK5NpuT0+4nOIvgWepV0XFhsO018fhFIpeK0H
-         bONA1sMMTwGMpCGToxXVQixIHpKjIhH5P+nAYzKEqobRpMmP5GilG5kB0URCDiihT3ln
-         EAQRqVolYYsGzN4zz/AC1GN4gcBbCfS+tapau24XGpYmqDNyJvigljh3wEryll5Xrtwa
-         vjZQ==
-X-Gm-Message-State: APt69E15uXnsg+ymg32PaDpoIISpMenZ0a5XW785II7xO4cA8rk7Qb0L
-        VPf+nOBuiyDdQu7f6EUZtb9NEHn6EPGZXQTE5SNKWw==
-X-Google-Smtp-Source: AAOMgpcAmp0PnNC6qY05uQSyCYBAUYVL+LzDWZCpHutt0IPblMSbmbcvcsTlCsJsoD8mZmj3JWFYzz0iQ9cmKlPneoo=
-X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr10805390ual.141.1530639402011;
- Tue, 03 Jul 2018 10:36:42 -0700 (PDT)
+        Tue, 3 Jul 2018 13:37:07 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3bb41e0000>; Tue, 03 Jul 2018 10:36:30 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 03 Jul 2018 10:37:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 03 Jul 2018 10:37:05 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Jul
+ 2018 17:37:05 +0000
+Subject: Re: [PATCH v2 5/6] mm: track gup pages with page->dma_pinned_* fields
+To:     Christopher Lameter <cl@linux.com>
+CC:     Jan Kara <jack@suse.cz>, <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20180702005654.20369-1-jhubbard@nvidia.com>
+ <20180702005654.20369-6-jhubbard@nvidia.com>
+ <20180702095331.n5zfz35d3invl5al@quack2.suse.cz>
+ <bb798475-ebf3-7b02-409f-8c4347fa6674@nvidia.com>
+ <010001645d77ee2c-de7fedbd-f52d-4b74-9388-e6435973792b-000000@email.amazonses.com>
+ <f01666d5-8da1-7bea-adfb-c3571a54587a@nvidia.com>
+ <01000164611dacae-5ac25e48-b845-43ef-9992-fc1047d8e0a0-000000@email.amazonses.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <3c71556f-1d71-873a-6f74-121865568bf7@nvidia.com>
+Date:   Tue, 3 Jul 2018 10:36:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 10:36:40 -0700 (PDT)
-In-Reply-To: <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 3 Jul 2018 20:36:40 +0300
-Message-ID: <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-ntb@googlegroups.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <01000164611dacae-5ac25e48-b845-43ef-9992-fc1047d8e0a0-000000@email.amazonses.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 6:31 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Logan,
->
-> On Fri, Jun 22, 2018 at 4:47 PM, Logan Gunthorpe <logang@deltatee.com> wr=
-ote:
->> Clean up the extra ifdefs which defined the wr_reg64 and rd_reg64
->> functions in non-64bit cases in favour of the new common
->> io-64-nonatomic-lo-hi header.
+On 07/03/2018 10:08 AM, Christopher Lameter wrote:
+> On Mon, 2 Jul 2018, John Hubbard wrote:
+> 
+>>> If you establish a reference to a page then increase the page count. If
+>>> the reference is a dma pin action also then increase the pinned count.
+>>>
+>>> That way you know how many of the references to the page are dma
+>>> pins and you can correctly manage the state of the page if the dma pins go
+>>> away.
+>>>
 >>
->> To be consistent with CAAM engine HW spec: in case of 64-bit registers,
->> irrespective of device endianness, the lower address should be read from
->> / written to first, followed by the upper address. Indeed the I/O
->> accessors in CAAM driver currently don't follow the spec, however this
->> is a good opportunity to fix the code.
->>
->> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
->> Reviewed-by: Horia Geant=C4=83 <horia.geanta@nxp.com>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Cc: Dan Douglass <dan.douglass@nxp.com>
->> Cc: Herbert Xu <herbert@gondor.apana.org.au>
->> Cc: "David S. Miller" <davem@davemloft.net>
->
-> This is now in linux-next as commit 46e4bf08f6388 and it breaks
-> booting imx6 (32-bit ARM):
+>> I think this sounds like what this patch already does, right? See:
+>> __put_page_for_pinned_dma(), __get_page_for_pinned_dma(), and
+>> pin_page_for_dma(). The locking seems correct to me, but I suspect it's
+>> too heavyweight for such a hot path. But without adding a new put_user_page()
+>> call, that was the best I could come up with.
+> 
+> When I saw the patch it looked like you were avoiding to increment the
+> page->count field.
+
+Looking at it again, this patch is definitely susceptible to Jan's "page gets
+dma-unpinnned too soon" problem.  That leaves a window in which the original
+problem can occur.
+
+The page->_refcount field is used normally, in addition to the dma_pinned_count.
+But the problem is that, unless the caller knows what kind of page it is,
+the page->dma_pinned_count cannot be looked at, because it is unioned with
+page->lru.prev.  page->dma_pinned_flags, at least starting at bit 1, are 
+safe to look at due to pointer alignment, but now you cannot atomically 
+count...
+
+So this seems unsolvable without having the caller specify that it knows the
+page type, and that it is therefore safe to decrement page->dma_pinned_count.
+I was hoping I'd found a way, but clearly I haven't. :)
 
 
-> Any ideas on how to fix this issue?
-
-Oops, first of all the header should be hi-lo instead of lo-hi.
-Does it fix it?
-
-Otherwise I didn't (briefly) see what can be the issue.
-
---=20
-With Best Regards,
-Andy Shevchenko
+thanks,
+-- 
+John Hubbard
+NVIDIA
