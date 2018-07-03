@@ -2,72 +2,78 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82F4C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC5FC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6622251D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:07:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6622251D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2249F24997
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:08:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmUPIP3X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2249F24997
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933994AbeGCKHV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:07:21 -0400
-Received: from smtprelay0230.hostedemail.com ([216.40.44.230]:45244 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933536AbeGCKHT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:07:19 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 0198A180A8125;
-        Tue,  3 Jul 2018 10:07:18 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: blood93_3f92828e9bc2b
-X-Filterd-Recvd-Size: 1807
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Jul 2018 10:07:16 +0000 (UTC)
-Message-ID: <6763ec382f8d629f5f356f4cc023f20c2f76b26a.camel@perches.com>
-Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
-From:   Joe Perches <joe@perches.com>
-To:     Colin King <colin.king@canonical.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 03 Jul 2018 03:07:15 -0700
-In-Reply-To: <20180703064005.18908-1-colin.king@canonical.com>
-References: <20180703064005.18908-1-colin.king@canonical.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933863AbeGCKIq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 06:08:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933660AbeGCKIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:08:45 -0400
+Received: from dragon (unknown [104.237.91.44])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0B7921A0C;
+        Tue,  3 Jul 2018 10:08:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530612524;
+        bh=bmqch2fSogfXOTGO2W77/hBor23kKPfWEmxEVLcf6UI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QmUPIP3Xi7t52pYNJZy4teT1mHRhl3jBmiMBmWjK3VRZXWOkYafTeEz6uXe/7fn5N
+         Lx7I/OQmV9nkHarba8oHSB7tFUZr+L3Y87eCbXu2CWXmoj48CEgmlZeDuCFWl4dW2Y
+         54Ln1EzeDEwt7h4PkhnMTO3HrmnQQFuKH96zpXC4=
+Date:   Tue, 3 Jul 2018 18:08:28 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        chris.redpath@arm.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] arm64: dts: freescale: Add missing cooling device
+ properties for CPUs
+Message-ID: <20180703100827.GP4348@dragon>
+References: <cover.1527225682.git.viresh.kumar@linaro.org>
+ <e4504945d2b684fae2850bbcf03a6d02917a8c8a.1527225682.git.viresh.kumar@linaro.org>
+ <CAAQ0ZWRsroAAKRyxdd9ZCreriAjdBecmJy01sRy+6i_iQsMKgw@mail.gmail.com>
+ <20180703083431.l4rbnept2lwjocol@vireshk-i7>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703083431.l4rbnept2lwjocol@vireshk-i7>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 07:40 +0100, Colin King wrote:
-> Currently tag is being assigned but not used, it is missing from
-> the dev_err message, so add it in.
+On Tue, Jul 03, 2018 at 02:04:31PM +0530, Viresh Kumar wrote:
+> On 03-07-18, 15:34, Shawn Guo wrote:
+> > Please use my kernel.org email address for future patches.
 > 
-> Cleans up clang warning:
-> warning: variable 'tag' set but not used [-Wunused-but-set-variable]
-[]
-> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-[]
-> @@ -616,9 +616,9 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
->  		pasid = ((event[0] >> 16) & 0xFFFF)
->  			| ((event[1] << 6) & 0xF0000);
->  		tag = event[1] & 0x03FF;
-> -		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
-> +		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%03x]\n",
->  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
-> -			pasid, address, flags);
-> +			pasid, address, flags, tag);
+> As there were many patches I relied on get_maintainers to do that
+> stuff and it didn't pick you up by default. Maybe try fixing
+> MAINTAINERS to add an entry against your email id ?
 
-Seems to have a superfluous ] that should be removed.
+Good point.  Will patch MAINTAINERS for arm64 freescale DTS.
 
+Shawn
