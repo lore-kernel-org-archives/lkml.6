@@ -5,256 +5,696 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D30C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363DFC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB8823C60
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB8823C60
+	by mail.kernel.org (Postfix) with ESMTP id D08E223C60
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08E223C60
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754297AbeGCFi0 (ORCPT
+        id S1754342AbeGCFid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:38:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44646 "EHLO mx1.redhat.com"
+        Tue, 3 Jul 2018 01:38:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39342 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753935AbeGCFiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:38:23 -0400
+        id S1754304AbeGCFi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 01:38:28 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8B6438163C5F;
-        Tue,  3 Jul 2018 05:38:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 238EC40267CE;
+        Tue,  3 Jul 2018 05:38:28 +0000 (UTC)
 Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-60.pek2.redhat.com [10.72.12.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E8B0111AF02;
-        Tue,  3 Jul 2018 05:38:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A59D9111AF0C;
+        Tue,  3 Jul 2018 05:38:22 +0000 (UTC)
 From:   Jason Wang <jasowang@redhat.com>
 To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     wexu@redhat.com, tiwei.bie@intel.com, maxime.coquelin@redhat.com,
         jfreimann@redhat.com
-Subject: [PATCH net-next 1/8] vhost: move get_rx_bufs to vhost.c
-Date:   Tue,  3 Jul 2018 13:37:57 +0800
-Message-Id: <1530596284-4101-2-git-send-email-jasowang@redhat.com>
+Subject: [PATCH net-next 2/8] vhost: hide used ring layout from device
+Date:   Tue,  3 Jul 2018 13:37:58 +0800
+Message-Id: <1530596284-4101-3-git-send-email-jasowang@redhat.com>
 In-Reply-To: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
 References: <1530596284-4101-1-git-send-email-jasowang@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 05:38:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 05:38:22 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 05:38:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 05:38:28 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move get_rx_bufs() to vhost.c and rename it to
-vhost_get_bufs(). This helps to hide vring internal layout from
-specific device implementation. Packed ring implementation will
-benefit from this.
+We used to return descriptor head by vhost_get_vq_desc() to device and
+pass it back to vhost_add_used() and its friends. This exposes the
+internal used ring layout to device which makes it hard to be extended for
+e.g packed ring layout.
+
+So this patch tries to hide the used ring layout by
+
+- letting vhost_get_vq_desc() return pointer to struct vring_used_elem
+- accepting pointer to struct vring_used_elem in vhost_add_used() and
+  vhost_add_used_and_signal()
+
+This could help to hide used ring layout and make it easier to
+implement packed ring on top.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/vhost/net.c   | 77 --------------------------------------------------
- drivers/vhost/vhost.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/vhost/vhost.h |  7 +++++
- 3 files changed, 85 insertions(+), 77 deletions(-)
+ drivers/vhost/net.c   | 46 +++++++++++++++++++++-----------------
+ drivers/vhost/scsi.c  | 62 +++++++++++++++++++++++++++------------------------
+ drivers/vhost/vhost.c | 52 +++++++++++++++++++++---------------------
+ drivers/vhost/vhost.h |  9 +++++---
+ drivers/vhost/vsock.c | 42 +++++++++++++++++-----------------
+ 5 files changed, 112 insertions(+), 99 deletions(-)
 
 diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 29756d8..712b134 100644
+index 712b134..449f793 100644
 --- a/drivers/vhost/net.c
 +++ b/drivers/vhost/net.c
-@@ -685,83 +685,6 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
- 	return len;
- }
+@@ -433,22 +433,24 @@ static int vhost_net_enable_vq(struct vhost_net *n,
  
--/* This is a multi-buffer version of vhost_get_desc, that works if
-- *	vq has read descriptors only.
-- * @vq		- the relevant virtqueue
-- * @datalen	- data length we'll be reading
-- * @iovcount	- returned count of io vectors we fill
-- * @log		- vhost log
-- * @log_num	- log offset
-- * @quota       - headcount quota, 1 for big buffer
-- *	returns number of buffer heads allocated, negative on error
-- */
--static int get_rx_bufs(struct vhost_virtqueue *vq,
--		       struct vring_used_elem *heads,
--		       int datalen,
--		       unsigned *iovcount,
--		       struct vhost_log *log,
--		       unsigned *log_num,
--		       unsigned int quota)
--{
--	unsigned int out, in;
--	int seg = 0;
--	int headcount = 0;
+ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
+ 				    struct vhost_virtqueue *vq,
++				    struct vring_used_elem *used_elem,
+ 				    struct iovec iov[], unsigned int iov_size,
+ 				    unsigned int *out_num, unsigned int *in_num)
+ {
+ 	unsigned long uninitialized_var(endtime);
+-	int r = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
++	int r = vhost_get_vq_desc(vq, used_elem, vq->iov, ARRAY_SIZE(vq->iov),
+ 				  out_num, in_num, NULL, NULL);
+ 
+-	if (r == vq->num && vq->busyloop_timeout) {
++	if (r == -ENOSPC && vq->busyloop_timeout) {
+ 		preempt_disable();
+ 		endtime = busy_clock() + vq->busyloop_timeout;
+ 		while (vhost_can_busy_poll(vq->dev, endtime) &&
+ 		       vhost_vq_avail_empty(vq->dev, vq))
+ 			cpu_relax();
+ 		preempt_enable();
+-		r = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
+-				      out_num, in_num, NULL, NULL);
++		r = vhost_get_vq_desc(vq, used_elem, vq->iov,
++				      ARRAY_SIZE(vq->iov), out_num, in_num,
++				      NULL, NULL);
+ 	}
+ 
+ 	return r;
+@@ -470,7 +472,6 @@ static void handle_tx(struct vhost_net *net)
+ 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
+ 	struct vhost_virtqueue *vq = &nvq->vq;
+ 	unsigned out, in;
+-	int head;
+ 	struct msghdr msg = {
+ 		.msg_name = NULL,
+ 		.msg_namelen = 0,
+@@ -483,6 +484,7 @@ static void handle_tx(struct vhost_net *net)
+ 	size_t hdr_size;
+ 	struct socket *sock;
+ 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
++	struct vring_used_elem used;
+ 	bool zcopy, zcopy_used;
+ 	int sent_pkts = 0;
+ 
+@@ -506,20 +508,20 @@ static void handle_tx(struct vhost_net *net)
+ 			vhost_zerocopy_signal_used(net, vq);
+ 
+ 
+-		head = vhost_net_tx_get_vq_desc(net, vq, vq->iov,
+-						ARRAY_SIZE(vq->iov),
+-						&out, &in);
+-		/* On error, stop handling until the next kick. */
+-		if (unlikely(head < 0))
+-			break;
++		err = vhost_net_tx_get_vq_desc(net, vq, &used, vq->iov,
++					       ARRAY_SIZE(vq->iov),
++					       &out, &in);
+ 		/* Nothing new?  Wait for eventfd to tell us they refilled. */
+-		if (head == vq->num) {
++		if (err == -ENOSPC) {
+ 			if (unlikely(vhost_enable_notify(&net->dev, vq))) {
+ 				vhost_disable_notify(&net->dev, vq);
+ 				continue;
+ 			}
+ 			break;
+ 		}
++		/* On error, stop handling until the next kick. */
++		if (unlikely(err < 0))
++			break;
+ 		if (in) {
+ 			vq_err(vq, "Unexpected descriptor format for TX: "
+ 			       "out %d, int %d\n", out, in);
+@@ -547,7 +549,8 @@ static void handle_tx(struct vhost_net *net)
+ 			struct ubuf_info *ubuf;
+ 			ubuf = nvq->ubuf_info + nvq->upend_idx;
+ 
+-			vq->heads[nvq->upend_idx].id = cpu_to_vhost32(vq, head);
++			vq->heads[nvq->upend_idx].id =
++				cpu_to_vhost32(vq, used.id);
+ 			vq->heads[nvq->upend_idx].len = VHOST_DMA_IN_PROGRESS;
+ 			ubuf->callback = vhost_zerocopy_callback;
+ 			ubuf->ctx = nvq->ubufs;
+@@ -588,7 +591,7 @@ static void handle_tx(struct vhost_net *net)
+ 			pr_debug("Truncated TX packet: "
+ 				 " len %d != %zd\n", err, len);
+ 		if (!zcopy_used)
+-			vhost_add_used_and_signal(&net->dev, vq, head, 0);
++			vhost_add_used_and_signal(&net->dev, vq, &used, 0);
+ 		else
+ 			vhost_zerocopy_signal_used(net, vq);
+ 		vhost_net_tx_packet(net);
+@@ -735,14 +738,12 @@ static void handle_rx(struct vhost_net *net)
+ 	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
+ 		sock_len += sock_hlen;
+ 		vhost_len = sock_len + vhost_hlen;
+-		headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
+-					vhost_len, &in, vq_log, &log,
+-					likely(mergeable) ? UIO_MAXIOV : 1);
+-		/* On error, stop handling until the next kick. */
+-		if (unlikely(headcount < 0))
+-			goto out;
++		err = vhost_get_bufs(vq, vq->heads + nvq->done_idx,
++				     vhost_len, &in, vq_log, &log,
++				     likely(mergeable) ? UIO_MAXIOV : 1,
++				     &headcount);
+ 		/* OK, now we need to know about added descriptors. */
+-		if (!headcount) {
++		if (err == -ENOSPC) {
+ 			if (unlikely(vhost_enable_notify(&net->dev, vq))) {
+ 				/* They have slipped one in as we were
+ 				 * doing that: check again. */
+@@ -753,6 +754,9 @@ static void handle_rx(struct vhost_net *net)
+ 			 * they refilled. */
+ 			goto out;
+ 		}
++		/* On error, stop handling until the next kick. */
++		if (unlikely(err < 0))
++			goto out;
+ 		if (nvq->rx_ring)
+ 			msg.msg_control = vhost_net_buf_consume(&nvq->rxq);
+ 		/* On overrun, truncate and discard */
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 17fcd3b..013464c 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -67,7 +67,7 @@ struct vhost_scsi_inflight {
+ 
+ struct vhost_scsi_cmd {
+ 	/* Descriptor from vhost_get_vq_desc() for virt_queue segment */
+-	int tvc_vq_desc;
++	struct vring_used_elem tvc_vq_used;
+ 	/* virtio-scsi initiator task attribute */
+ 	int tvc_task_attr;
+ 	/* virtio-scsi response incoming iovecs */
+@@ -441,8 +441,9 @@ vhost_scsi_do_evt_work(struct vhost_scsi *vs, struct vhost_scsi_evt *evt)
+ 	struct vhost_virtqueue *vq = &vs->vqs[VHOST_SCSI_VQ_EVT].vq;
+ 	struct virtio_scsi_event *event = &evt->event;
+ 	struct virtio_scsi_event __user *eventp;
++	struct vring_used_elem used;
+ 	unsigned out, in;
+-	int head, ret;
++	int ret;
+ 
+ 	if (!vq->private_data) {
+ 		vs->vs_events_missed = true;
+@@ -451,16 +452,16 @@ vhost_scsi_do_evt_work(struct vhost_scsi *vs, struct vhost_scsi_evt *evt)
+ 
+ again:
+ 	vhost_disable_notify(&vs->dev, vq);
+-	head = vhost_get_vq_desc(vq, vq->iov,
++	ret = vhost_get_vq_desc(vq, &used, vq->iov,
+ 			ARRAY_SIZE(vq->iov), &out, &in,
+ 			NULL, NULL);
+-	if (head < 0) {
++	if (ret == -ENOSPC) {
++		if (vhost_enable_notify(&vs->dev, vq))
++			goto again;
+ 		vs->vs_events_missed = true;
+ 		return;
+ 	}
+-	if (head == vq->num) {
+-		if (vhost_enable_notify(&vs->dev, vq))
+-			goto again;
++	if (ret < 0) {
+ 		vs->vs_events_missed = true;
+ 		return;
+ 	}
+@@ -480,7 +481,7 @@ vhost_scsi_do_evt_work(struct vhost_scsi *vs, struct vhost_scsi_evt *evt)
+ 	eventp = vq->iov[out].iov_base;
+ 	ret = __copy_to_user(eventp, event, sizeof(*event));
+ 	if (!ret)
+-		vhost_add_used_and_signal(&vs->dev, vq, head, 0);
++		vhost_add_used_and_signal(&vs->dev, vq, &used, 0);
+ 	else
+ 		vq_err(vq, "Faulted on vhost_scsi_send_event\n");
+ }
+@@ -541,7 +542,7 @@ static void vhost_scsi_complete_cmd_work(struct vhost_work *work)
+ 		ret = copy_to_iter(&v_rsp, sizeof(v_rsp), &iov_iter);
+ 		if (likely(ret == sizeof(v_rsp))) {
+ 			struct vhost_scsi_virtqueue *q;
+-			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
++			vhost_add_used(cmd->tvc_vq, &cmd->tvc_vq_used, 0);
+ 			q = container_of(cmd->tvc_vq, struct vhost_scsi_virtqueue, vq);
+ 			vq = q - vs->vqs;
+ 			__set_bit(vq, signal);
+@@ -784,7 +785,7 @@ static void vhost_scsi_submission_work(struct work_struct *work)
+ static void
+ vhost_scsi_send_bad_target(struct vhost_scsi *vs,
+ 			   struct vhost_virtqueue *vq,
+-			   int head, unsigned out)
++			   struct vring_used_elem *used, unsigned out)
+ {
+ 	struct virtio_scsi_cmd_resp __user *resp;
+ 	struct virtio_scsi_cmd_resp rsp;
+@@ -795,7 +796,7 @@ vhost_scsi_send_bad_target(struct vhost_scsi *vs,
+ 	resp = vq->iov[out].iov_base;
+ 	ret = __copy_to_user(resp, &rsp, sizeof(rsp));
+ 	if (!ret)
+-		vhost_add_used_and_signal(&vs->dev, vq, head, 0);
++		vhost_add_used_and_signal(&vs->dev, vq, used, 0);
+ 	else
+ 		pr_err("Faulted on virtio_scsi_cmd_resp\n");
+ }
+@@ -807,11 +808,12 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 	struct virtio_scsi_cmd_req v_req;
+ 	struct virtio_scsi_cmd_req_pi v_req_pi;
+ 	struct vhost_scsi_cmd *cmd;
++	struct vring_used_elem used;
+ 	struct iov_iter out_iter, in_iter, prot_iter, data_iter;
+ 	u64 tag;
+ 	u32 exp_data_len, data_direction;
+ 	unsigned int out = 0, in = 0;
+-	int head, ret, prot_bytes;
++	int ret, prot_bytes;
+ 	size_t req_size, rsp_size = sizeof(struct virtio_scsi_cmd_resp);
+ 	size_t out_size, in_size;
+ 	u16 lun;
+@@ -831,22 +833,22 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 	vhost_disable_notify(&vs->dev, vq);
+ 
+ 	for (;;) {
+-		head = vhost_get_vq_desc(vq, vq->iov,
+-					 ARRAY_SIZE(vq->iov), &out, &in,
+-					 NULL, NULL);
++		ret = vhost_get_vq_desc(vq, &used, vq->iov,
++					ARRAY_SIZE(vq->iov), &out, &in,
++					NULL, NULL);
+ 		pr_debug("vhost_get_vq_desc: head: %d, out: %u in: %u\n",
+-			 head, out, in);
+-		/* On error, stop handling until the next kick. */
+-		if (unlikely(head < 0))
+-			break;
++			 used.id, out, in);
+ 		/* Nothing new?  Wait for eventfd to tell us they refilled. */
+-		if (head == vq->num) {
++		if (ret == -ENOSPC) {
+ 			if (unlikely(vhost_enable_notify(&vs->dev, vq))) {
+ 				vhost_disable_notify(&vs->dev, vq);
+ 				continue;
+ 			}
+ 			break;
+ 		}
++		/* On error, stop handling until the next kick. */
++		if (unlikely(ret < 0))
++			break;
+ 		/*
+ 		 * Check for a sane response buffer so we can report early
+ 		 * errors back to the guest.
+@@ -891,20 +893,20 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 
+ 		if (unlikely(!copy_from_iter_full(req, req_size, &out_iter))) {
+ 			vq_err(vq, "Faulted on copy_from_iter\n");
+-			vhost_scsi_send_bad_target(vs, vq, head, out);
++			vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 			continue;
+ 		}
+ 		/* virtio-scsi spec requires byte 0 of the lun to be 1 */
+ 		if (unlikely(*lunp != 1)) {
+ 			vq_err(vq, "Illegal virtio-scsi lun: %u\n", *lunp);
+-			vhost_scsi_send_bad_target(vs, vq, head, out);
++			vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 			continue;
+ 		}
+ 
+ 		tpg = READ_ONCE(vs_tpg[*target]);
+ 		if (unlikely(!tpg)) {
+ 			/* Target does not exist, fail the request */
+-			vhost_scsi_send_bad_target(vs, vq, head, out);
++			vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 			continue;
+ 		}
+ 		/*
+@@ -950,7 +952,8 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 				if (data_direction != DMA_TO_DEVICE) {
+ 					vq_err(vq, "Received non zero pi_bytesout,"
+ 						" but wrong data_direction\n");
+-					vhost_scsi_send_bad_target(vs, vq, head, out);
++					vhost_scsi_send_bad_target(vs, vq,
++								   &used, out);
+ 					continue;
+ 				}
+ 				prot_bytes = vhost32_to_cpu(vq, v_req_pi.pi_bytesout);
+@@ -958,7 +961,8 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 				if (data_direction != DMA_FROM_DEVICE) {
+ 					vq_err(vq, "Received non zero pi_bytesin,"
+ 						" but wrong data_direction\n");
+-					vhost_scsi_send_bad_target(vs, vq, head, out);
++					vhost_scsi_send_bad_target(vs, vq,
++								   &used, out);
+ 					continue;
+ 				}
+ 				prot_bytes = vhost32_to_cpu(vq, v_req_pi.pi_bytesin);
+@@ -996,7 +1000,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 			vq_err(vq, "Received SCSI CDB with command_size: %d that"
+ 				" exceeds SCSI_MAX_VARLEN_CDB_SIZE: %d\n",
+ 				scsi_command_size(cdb), VHOST_SCSI_MAX_CDB_SIZE);
+-			vhost_scsi_send_bad_target(vs, vq, head, out);
++			vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 			continue;
+ 		}
+ 		cmd = vhost_scsi_get_tag(vq, tpg, cdb, tag, lun, task_attr,
+@@ -1005,7 +1009,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 		if (IS_ERR(cmd)) {
+ 			vq_err(vq, "vhost_scsi_get_tag failed %ld\n",
+ 			       PTR_ERR(cmd));
+-			vhost_scsi_send_bad_target(vs, vq, head, out);
++			vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 			continue;
+ 		}
+ 		cmd->tvc_vhost = vs;
+@@ -1025,7 +1029,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 			if (unlikely(ret)) {
+ 				vq_err(vq, "Failed to map iov to sgl\n");
+ 				vhost_scsi_release_cmd(&cmd->tvc_se_cmd);
+-				vhost_scsi_send_bad_target(vs, vq, head, out);
++				vhost_scsi_send_bad_target(vs, vq, &used, out);
+ 				continue;
+ 			}
+ 		}
+@@ -1034,7 +1038,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *vs, struct vhost_virtqueue *vq)
+ 		 * complete the virtio-scsi request in TCM callback context via
+ 		 * vhost_scsi_queue_data_in() and vhost_scsi_queue_status()
+ 		 */
+-		cmd->tvc_vq_desc = head;
++		cmd->tvc_vq_used = used;
+ 		/*
+ 		 * Dispatch cmd descriptor for cmwq execution in process
+ 		 * context provided by vhost_scsi_workqueue.  This also ensures
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 8814e5b..9572c4f 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1962,6 +1962,7 @@ static int get_indirect(struct vhost_virtqueue *vq,
+  * never a valid descriptor number) if none was found.  A negative code is
+  * returned on error. */
+ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
++		      struct vring_used_elem *used,
+ 		      struct iovec iov[], unsigned int iov_size,
+ 		      unsigned int *out_num, unsigned int *in_num,
+ 		      struct vhost_log *log, unsigned int *log_num)
+@@ -1994,7 +1995,7 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 		 * invalid.
+ 		 */
+ 		if (vq->avail_idx == last_avail_idx)
+-			return vq->num;
++			return -ENOSPC;
+ 
+ 		/* Only get avail ring entries after they have been
+ 		 * exposed by guest.
+@@ -2012,6 +2013,7 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 		return -EFAULT;
+ 	}
+ 
++	used->id = ring_head;
+ 	head = vhost16_to_cpu(vq, ring_head);
+ 
+ 	/* If their number is silly, that's an error. */
+@@ -2100,10 +2102,16 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+ 	/* Assume notifications from guest are disabled at this point,
+ 	 * if they aren't we would need to update avail_event index. */
+ 	BUG_ON(!(vq->used_flags & VRING_USED_F_NO_NOTIFY));
+-	return head;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
+ 
++static void vhost_set_used_len(struct vhost_virtqueue *vq,
++			       struct vring_used_elem *used, int len)
++{
++	used->len = cpu_to_vhost32(vq, len);
++}
++
+ /* This is a multi-buffer version of vhost_get_desc, that works if
+  *	vq has read descriptors only.
+  * @vq		- the relevant virtqueue
+@@ -2120,13 +2128,13 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 		   unsigned *iovcount,
+ 		   struct vhost_log *log,
+ 		   unsigned *log_num,
+-		   unsigned int quota)
++		   unsigned int quota,
++		   s16 *count)
+ {
+ 	unsigned int out, in;
+ 	int seg = 0;
+ 	int headcount = 0;
 -	unsigned d;
 -	int r, nlogs = 0;
--	/* len is always initialized before use since we are always called with
--	 * datalen > 0.
--	 */
--	u32 uninitialized_var(len);
--
--	while (datalen > 0 && headcount < quota) {
--		if (unlikely(seg >= UIO_MAXIOV)) {
--			r = -ENOBUFS;
--			goto err;
--		}
++	int r = 0, nlogs = 0;
+ 	/* len is always initialized before use since we are always called with
+ 	 * datalen > 0.
+ 	 */
+@@ -2137,17 +2145,12 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 			r = -ENOBUFS;
+ 			goto err;
+ 		}
 -		r = vhost_get_vq_desc(vq, vq->iov + seg,
--				      ARRAY_SIZE(vq->iov) - seg, &out,
--				      &in, log, log_num);
--		if (unlikely(r < 0))
--			goto err;
--
++		r = vhost_get_vq_desc(vq, &heads[headcount], vq->iov + seg,
+ 				      ARRAY_SIZE(vq->iov) - seg, &out,
+ 				      &in, log, log_num);
+ 		if (unlikely(r < 0))
+ 			goto err;
+ 
 -		d = r;
 -		if (d == vq->num) {
 -			r = 0;
 -			goto err;
 -		}
--		if (unlikely(out || in <= 0)) {
--			vq_err(vq, "unexpected descriptor format for RX: "
--				"out %d, in %d\n", out, in);
--			r = -EINVAL;
--			goto err;
--		}
--		if (unlikely(log)) {
--			nlogs += *log_num;
--			log += *log_num;
--		}
+ 		if (unlikely(out || in <= 0)) {
+ 			vq_err(vq, "unexpected descriptor format for RX: "
+ 				"out %d, in %d\n", out, in);
+@@ -2158,24 +2161,26 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 			nlogs += *log_num;
+ 			log += *log_num;
+ 		}
 -		heads[headcount].id = cpu_to_vhost32(vq, d);
--		len = iov_length(vq->iov + seg, in);
++
+ 		len = iov_length(vq->iov + seg, in);
 -		heads[headcount].len = cpu_to_vhost32(vq, len);
--		datalen -= len;
--		++headcount;
--		seg += in;
--	}
++		vhost_set_used_len(vq, &heads[headcount], len);
+ 		datalen -= len;
+ 		++headcount;
+ 		seg += in;
+ 	}
 -	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
--	*iovcount = seg;
--	if (unlikely(log))
--		*log_num = nlogs;
--
--	/* Detect overrun */
--	if (unlikely(datalen > 0)) {
--		r = UIO_MAXIOV + 1;
--		goto err;
--	}
--	return headcount;
--err:
--	vhost_discard_vq_desc(vq, headcount);
--	return r;
--}
--
- /* Expects to be always run from workqueue - which acts as
-  * read-size critical section for our kind of RCU. */
- static void handle_rx(struct vhost_net *net)
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index a502f1a..8814e5b 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2104,6 +2104,84 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
- }
- EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
++	vhost_set_used_len(vq, &heads[headcount - 1], len + datalen);
+ 	*iovcount = seg;
+ 	if (unlikely(log))
+ 		*log_num = nlogs;
  
-+/* This is a multi-buffer version of vhost_get_desc, that works if
-+ *	vq has read descriptors only.
-+ * @vq		- the relevant virtqueue
-+ * @datalen	- data length we'll be reading
-+ * @iovcount	- returned count of io vectors we fill
-+ * @log		- vhost log
-+ * @log_num	- log offset
-+ * @quota       - headcount quota, 1 for big buffer
-+ *	returns number of buffer heads allocated, negative on error
-+ */
-+int vhost_get_bufs(struct vhost_virtqueue *vq,
-+		   struct vring_used_elem *heads,
-+		   int datalen,
-+		   unsigned *iovcount,
-+		   struct vhost_log *log,
-+		   unsigned *log_num,
-+		   unsigned int quota)
-+{
-+	unsigned int out, in;
-+	int seg = 0;
-+	int headcount = 0;
-+	unsigned d;
-+	int r, nlogs = 0;
-+	/* len is always initialized before use since we are always called with
-+	 * datalen > 0.
-+	 */
-+	u32 uninitialized_var(len);
+ 	/* Detect overrun */
+ 	if (unlikely(datalen > 0)) {
+-		r = UIO_MAXIOV + 1;
++		headcount = UIO_MAXIOV + 1;
+ 		goto err;
+ 	}
+-	return headcount;
 +
-+	while (datalen > 0 && headcount < quota) {
-+		if (unlikely(seg >= UIO_MAXIOV)) {
-+			r = -ENOBUFS;
-+			goto err;
-+		}
-+		r = vhost_get_vq_desc(vq, vq->iov + seg,
-+				      ARRAY_SIZE(vq->iov) - seg, &out,
-+				      &in, log, log_num);
-+		if (unlikely(r < 0))
-+			goto err;
-+
-+		d = r;
-+		if (d == vq->num) {
-+			r = 0;
-+			goto err;
-+		}
-+		if (unlikely(out || in <= 0)) {
-+			vq_err(vq, "unexpected descriptor format for RX: "
-+				"out %d, in %d\n", out, in);
-+			r = -EINVAL;
-+			goto err;
-+		}
-+		if (unlikely(log)) {
-+			nlogs += *log_num;
-+			log += *log_num;
-+		}
-+		heads[headcount].id = cpu_to_vhost32(vq, d);
-+		len = iov_length(vq->iov + seg, in);
-+		heads[headcount].len = cpu_to_vhost32(vq, len);
-+		datalen -= len;
-+		++headcount;
-+		seg += in;
-+	}
-+	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
-+	*iovcount = seg;
-+	if (unlikely(log))
-+		*log_num = nlogs;
-+
-+	/* Detect overrun */
-+	if (unlikely(datalen > 0)) {
-+		r = UIO_MAXIOV + 1;
-+		goto err;
-+	}
-+	return headcount;
-+err:
-+	vhost_discard_vq_desc(vq, headcount);
-+	return r;
-+}
-+EXPORT_SYMBOL_GPL(vhost_get_bufs);
-+
- /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. */
- void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
++	*count = headcount;
++	return 0;
+ err:
+ 	vhost_discard_vq_desc(vq, headcount);
+ 	return r;
+@@ -2191,14 +2196,11 @@ EXPORT_SYMBOL_GPL(vhost_discard_vq_desc);
+ 
+ /* After we've used one of their buffers, we tell them about it.  We'll then
+  * want to notify the guest, using eventfd. */
+-int vhost_add_used(struct vhost_virtqueue *vq, unsigned int head, int len)
++int vhost_add_used(struct vhost_virtqueue *vq, struct vring_used_elem *used,
++		   int len)
  {
+-	struct vring_used_elem heads = {
+-		cpu_to_vhost32(vq, head),
+-		cpu_to_vhost32(vq, len)
+-	};
+-
+-	return vhost_add_used_n(vq, &heads, 1);
++	vhost_set_used_len(vq, used, len);
++	return vhost_add_used_n(vq, used, 1);
+ }
+ EXPORT_SYMBOL_GPL(vhost_add_used);
+ 
+@@ -2331,9 +2333,9 @@ EXPORT_SYMBOL_GPL(vhost_signal);
+ /* And here's the combo meal deal.  Supersize me! */
+ void vhost_add_used_and_signal(struct vhost_dev *dev,
+ 			       struct vhost_virtqueue *vq,
+-			       unsigned int head, int len)
++			       struct vring_used_elem *used, int len)
+ {
+-	vhost_add_used(vq, head, len);
++	vhost_add_used(vq, used, len);
+ 	vhost_signal(dev, vq);
+ }
+ EXPORT_SYMBOL_GPL(vhost_add_used_and_signal);
 diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 6c844b9..52edd242 100644
+index 52edd242..a7cc7e7 100644
 --- a/drivers/vhost/vhost.h
 +++ b/drivers/vhost/vhost.h
-@@ -185,6 +185,13 @@ int vhost_get_vq_desc(struct vhost_virtqueue *,
+@@ -182,6 +182,7 @@ bool vhost_vq_access_ok(struct vhost_virtqueue *vq);
+ bool vhost_log_access_ok(struct vhost_dev *);
+ 
+ int vhost_get_vq_desc(struct vhost_virtqueue *,
++		      struct vring_used_elem *used_elem,
  		      struct iovec iov[], unsigned int iov_count,
  		      unsigned int *out_num, unsigned int *in_num,
  		      struct vhost_log *log, unsigned int *log_num);
-+int vhost_get_bufs(struct vhost_virtqueue *vq,
-+		   struct vring_used_elem *heads,
-+		   int datalen,
-+		   unsigned *iovcount,
-+		   struct vhost_log *log,
-+		   unsigned *log_num,
-+		   unsigned int quota);
+@@ -191,15 +192,17 @@ int vhost_get_bufs(struct vhost_virtqueue *vq,
+ 		   unsigned *iovcount,
+ 		   struct vhost_log *log,
+ 		   unsigned *log_num,
+-		   unsigned int quota);
++		   unsigned int quota,
++		   s16 *count);
  void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
  
  int vhost_vq_init_access(struct vhost_virtqueue *);
+-int vhost_add_used(struct vhost_virtqueue *, unsigned int head, int len);
++int vhost_add_used(struct vhost_virtqueue *vq,
++		   struct vring_used_elem *elem, int len);
+ int vhost_add_used_n(struct vhost_virtqueue *, struct vring_used_elem *heads,
+ 		     unsigned count);
+ void vhost_add_used_and_signal(struct vhost_dev *, struct vhost_virtqueue *,
+-			       unsigned int id, int len);
++			       struct vring_used_elem *, int len);
+ void vhost_add_used_and_signal_n(struct vhost_dev *, struct vhost_virtqueue *,
+ 			       struct vring_used_elem *heads, unsigned count);
+ void vhost_signal(struct vhost_dev *, struct vhost_virtqueue *);
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 34bc3ab..59a01cd 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -98,11 +98,12 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 
+ 	for (;;) {
+ 		struct virtio_vsock_pkt *pkt;
++		struct vring_used_elem used;
+ 		struct iov_iter iov_iter;
+ 		unsigned out, in;
+ 		size_t nbytes;
+ 		size_t len;
+-		int head;
++		int ret;
+ 
+ 		spin_lock_bh(&vsock->send_pkt_list_lock);
+ 		if (list_empty(&vsock->send_pkt_list)) {
+@@ -116,16 +117,9 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 		list_del_init(&pkt->list);
+ 		spin_unlock_bh(&vsock->send_pkt_list_lock);
+ 
+-		head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
+-					 &out, &in, NULL, NULL);
+-		if (head < 0) {
+-			spin_lock_bh(&vsock->send_pkt_list_lock);
+-			list_add(&pkt->list, &vsock->send_pkt_list);
+-			spin_unlock_bh(&vsock->send_pkt_list_lock);
+-			break;
+-		}
+-
+-		if (head == vq->num) {
++		ret = vhost_get_vq_desc(vq, &used, vq->iov, ARRAY_SIZE(vq->iov),
++					&out, &in, NULL, NULL);
++		if (ret == -ENOSPC) {
+ 			spin_lock_bh(&vsock->send_pkt_list_lock);
+ 			list_add(&pkt->list, &vsock->send_pkt_list);
+ 			spin_unlock_bh(&vsock->send_pkt_list_lock);
+@@ -139,6 +133,12 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 			}
+ 			break;
+ 		}
++		if (ret < 0) {
++			spin_lock_bh(&vsock->send_pkt_list_lock);
++			list_add(&pkt->list, &vsock->send_pkt_list);
++			spin_unlock_bh(&vsock->send_pkt_list_lock);
++			break;
++		}
+ 
+ 		if (out) {
+ 			virtio_transport_free_pkt(pkt);
+@@ -146,7 +146,7 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 			break;
+ 		}
+ 
+-		len = iov_length(&vq->iov[out], in);
++		len = vhost32_to_cpu(vq, used.len);
+ 		iov_iter_init(&iov_iter, READ, &vq->iov[out], in, len);
+ 
+ 		nbytes = copy_to_iter(&pkt->hdr, sizeof(pkt->hdr), &iov_iter);
+@@ -163,7 +163,7 @@ vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+ 			break;
+ 		}
+ 
+-		vhost_add_used(vq, head, sizeof(pkt->hdr) + pkt->len);
++		vhost_add_used(vq, &used, sizeof(pkt->hdr) + pkt->len);
+ 		added = true;
+ 
+ 		if (pkt->reply) {
+@@ -346,7 +346,8 @@ static void vhost_vsock_handle_tx_kick(struct vhost_work *work)
+ 	struct vhost_vsock *vsock = container_of(vq->dev, struct vhost_vsock,
+ 						 dev);
+ 	struct virtio_vsock_pkt *pkt;
+-	int head;
++	struct vring_used_elem used;
++	int ret;
+ 	unsigned int out, in;
+ 	bool added = false;
+ 
+@@ -367,18 +368,17 @@ static void vhost_vsock_handle_tx_kick(struct vhost_work *work)
+ 			goto no_more_replies;
+ 		}
+ 
+-		head = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
+-					 &out, &in, NULL, NULL);
+-		if (head < 0)
+-			break;
+-
+-		if (head == vq->num) {
++		ret = vhost_get_vq_desc(vq, &used, vq->iov, ARRAY_SIZE(vq->iov),
++					&out, &in, NULL, NULL);
++		if (ret == -ENOSPC) {
+ 			if (unlikely(vhost_enable_notify(&vsock->dev, vq))) {
+ 				vhost_disable_notify(&vsock->dev, vq);
+ 				continue;
+ 			}
+ 			break;
+ 		}
++		if (ret < 0)
++			break;
+ 
+ 		pkt = vhost_vsock_alloc_pkt(vq, out, in);
+ 		if (!pkt) {
+@@ -397,7 +397,7 @@ static void vhost_vsock_handle_tx_kick(struct vhost_work *work)
+ 		else
+ 			virtio_transport_free_pkt(pkt);
+ 
+-		vhost_add_used(vq, head, sizeof(pkt->hdr) + len);
++		vhost_add_used(vq, &used, sizeof(pkt->hdr) + len);
+ 		added = true;
+ 	}
+ 
 -- 
 2.7.4
 
