@@ -3,138 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E14C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC16FC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFB324790
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:31:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFB324790
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 925BF2462D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925BF2462D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753165AbeGCUbn (ORCPT
+        id S1753000AbeGCUdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:31:43 -0400
-Received: from mga12.intel.com ([192.55.52.136]:41690 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752647AbeGCUbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:31:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 13:31:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,305,1526367600"; 
-   d="scan'208";a="72011303"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by orsmga002.jf.intel.com with ESMTP; 03 Jul 2018 13:31:36 -0700
-Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
- ORSMSX109.amr.corp.intel.com (10.22.240.7) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 3 Jul 2018 13:31:36 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.236]) by
- ORSMSX116.amr.corp.intel.com ([169.254.7.230]) with mapi id 14.03.0319.002;
- Tue, 3 Jul 2018 13:31:36 -0700
-From:   "Schmauss, Erik" <erik.schmauss@intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jeremy Linton <jeremy.linton@arm.com>
-CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: RE: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
- continue loading table after error"
-Thread-Topic: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
- continue loading table after error"
-Thread-Index: AQHUEk16taaoNplRM0+eF95VPrt6a6R87tKAgAAKawCAAJzkAIAAXc9Q
-Date:   Tue, 3 Jul 2018 20:31:35 +0000
-Message-ID: <CF6A88132359CE47947DB4C6E1709ED53BB365F0@ORSMSX110.amr.corp.intel.com>
-References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
- <CAJZ5v0h5+O8xf_EqRPfdvtjQ7BvxLp8veaxB-7WsD8wq7RUFpA@mail.gmail.com>
- <9a9ef2bc-a66f-2af7-8766-b74426f062a6@arm.com>
- <CAJZ5v0j+9QOw1s3W07QRPDRydsdw7uSAgpvOwF_5302+zeViOg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j+9QOw1s3W07QRPDRydsdw7uSAgpvOwF_5302+zeViOg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWI0ZjdjZDItMzAzMy00NWY3LWFlZTAtNmUxNzE4NzdjMjhlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUVgwXC9xZlM1QmVFRkR4bVBaciswd25hSE5CeVJ4aStoU1U4UU1BVENvVklMMlRKVW9KU3NVeWEycENCdldUaVwvIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Tue, 3 Jul 2018 16:33:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752620AbeGCUcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 16:32:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1132181A4EAD;
+        Tue,  3 Jul 2018 20:32:21 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 32D90111CA17;
+        Tue,  3 Jul 2018 20:32:18 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Set DRIVER_ATOMIC cap earlier to fix debugfs
+Date:   Tue,  3 Jul 2018 16:31:41 -0400
+Message-Id: <20180703203144.24785-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 20:32:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 03 Jul 2018 20:32:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtYWNwaS1vd25l
-ckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1hY3BpLQ0KPiBvd25lckB2Z2VyLmtlcm5l
-bC5vcmddIE9uIEJlaGFsZiBPZiBSYWZhZWwgSi4gV3lzb2NraQ0KPiBTZW50OiBUdWVzZGF5LCBK
-dWx5IDMsIDIwMTggMTI6NTIgQU0NCj4gVG86IEplcmVteSBMaW50b24gPGplcmVteS5saW50b25A
-YXJtLmNvbT4NCj4gQ2M6IFJhZmFlbCBKLiBXeXNvY2tpIDxyYWZhZWxAa2VybmVsLm9yZz47IFNj
-aG1hdXNzLCBFcmlrDQo+IDxlcmlrLnNjaG1hdXNzQGludGVsLmNvbT47IGxpbnV4LWFjcGlAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgUmFmYWVsIEog
-LiBXeXNvY2tpIDxyandAcmp3eXNvY2tpLm5ldD47IGxpbnV4LWFybS0NCj4ga2VybmVsQGxpc3Rz
-LmluZnJhZGVhZC5vcmc7IExvcmVuem8gUGllcmFsaXNpIDxsb3JlbnpvLnBpZXJhbGlzaUBhcm0u
-Y29tPg0KPiBTdWJqZWN0OiBSZTogNC4xOHJjMyBUWDIgYm9vdCBmYWlsdXJlIHdpdGggIkFDUElD
-QTogQU1MIHBhcnNlcjogYXR0ZW1wdCB0bw0KPiBjb250aW51ZSBsb2FkaW5nIHRhYmxlIGFmdGVy
-IGVycm9yIg0KPiANCj4gT24gVHVlLCBKdWwgMywgMjAxOCBhdCAxMjozMCBBTSwgSmVyZW15IExp
-bnRvbiA8amVyZW15LmxpbnRvbkBhcm0uY29tPg0KPiB3cm90ZToNCj4gPiBIaSwNCj4gPg0KPiA+
-IE9uIDA3LzAyLzIwMTggMDQ6NTIgUE0sIFJhZmFlbCBKLiBXeXNvY2tpIHdyb3RlOg0KPiA+Pg0K
-PiA+PiBPbiBNb24sIEp1bCAyLCAyMDE4IGF0IDExOjQxIFBNLCBKZXJlbXkgTGludG9uDQo+ID4+
-IDxqZXJlbXkubGludG9uQGFybS5jb20+DQo+ID4+IHdyb3RlOg0KPiA+Pj4NCj4gPj4+IEhpLA0K
-PiA+Pj4NCj4gPj4+IEknbSBleHBlcmllbmNpbmcgdHdvIHByb2JsZW1zIHdpdGggY29tbWl0IDUw
-ODg4MTRhNmU5MzEgd2hpY2ggaXMNCj4gIkFDUElDQToNCj4gPj4+IEFNTCBwYXJzZXI6IGF0dGVt
-cHQgdG8gY29udGludWUgbG9hZGluZyB0YWJsZSBhZnRlciBlcnJvciINCj4gPj4+DQo+ID4+PiBU
-aGUgZmlyc3QgaXMgdGhpcyBib290IGZhaWx1cmUgb24gYSB0aHVuZGVyWDI6DQo+ID4+Pg0KPiA+
-Pj4gWyAgIDEwLjc3MDA5OF0gQUNQSSBFcnJvcjogSWdub3JlIGVycm9yIGFuZCBjb250aW51ZSB0
-YWJsZSBsb2FkDQo+ID4+PiAoMjAxODA1MzEvcHNvYmplY3QtNjA0KQ0KPiA+Pj4gICAgICBbICAg
-MTAuNzc3OTI2XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVu
-Y2UgYXQNCj4gPj4+ICAgICAgWyAgIDEwLjk1MDE5OV0gQ2FsbCB0cmFjZToNCj4gPj4+DQo+ID4+
-PiAgICAgIFsgICAxMC45NTI2NjNdICBhY3BpX3BzX3BlZWtfb3Bjb2RlKzB4MWMvMHg0MA0KPiA+
-Pj4gICAgICBbICAgMTAuOTU2Nzk3XSAgYWNwaV9wc19jcmVhdGVfb3ArMHg1NC8weDI3OA0KPiA+
-Pj4gICAgICBbICAgMTAuOTYwODQyXSAgYWNwaV9wc19wYXJzZV9sb29wKzB4MWI0LzB4NmM4DQo+
-ID4+PiAgICAgIFsgICAxMC45NjUwNjNdICBhY3BpX3BzX3BhcnNlX2FtbCsweGUwLzB4MmI0DQo+
-ID4+PiAgICAgIFsgICAxMC45NjkxMDhdICBhY3BpX3BzX2V4ZWN1dGVfdGFibGUrMHhhMC8weDEw
-NA0KPiA+Pj4gICAgICBbICAgMTAuOTczNTA1XSAgYWNwaV9uc19leGVjdXRlX3RhYmxlKzB4MTIw
-LzB4MTk0DQo+ID4+PiAgICAgIFsgICAxMC45Nzc5ODldICBhY3BpX25zX3BhcnNlX3RhYmxlKzB4
-MzQvMHg2OA0KPiA+Pj4gICAgICBbICAgMTAuOTgyMTIyXSAgYWNwaV9uc19sb2FkX3RhYmxlKzB4
-NGMvMHhiYw0KPiA+Pj4gICAgICBbICAgMTAuOTg2MTY5XSAgYWNwaV90Yl9sb2FkX25hbWVzcGFj
-ZSsweDFkNC8weDI0MA0KPiA+Pj4gICAgICBbICAgMTAuOTkwNzQ0XSAgYWNwaV9sb2FkX3RhYmxl
-cysweDUwLzB4YmMNCj4gPj4+ICAgICAgWyAgIDEwLjk5NDYxNF0gIGFjcGlfaW5pdCsweGI4LzB4
-Mzc0DQo+ID4+PiAgICAgIFsgICAxMC45OTc5NTldICBkb19vbmVfaW5pdGNhbGwrMHg1NC8weDIw
-OA0KPiA+Pj4gICAgICBbICAgMTEuMDAxODI5XSAga2VybmVsX2luaXRfZnJlZWFibGUrMHgyMjQv
-MHgzMDANCj4gPj4+ICAgICAgWyAgIDExLjAwNjIyOV0gIGtlcm5lbF9pbml0KzB4MTgvMHgxMTgN
-Cj4gPj4+ICAgICAgWyAgIDExLjAwOTc0N10gIHJldF9mcm9tX2ZvcmsrMHgxMC8weDE4DQo+ID4+
-PiAgICAgIFsgICAxMS4wMTMzNTRdIENvZGU6IGFhMDAwM2YzIGFhMWUwM2UwIGQ1MDMyMDFmIGY5
-NDAwNjYxICgzOTQwMDAyMCkNCj4gPj4+ICAgICAgWyAgIDExLjAxOTUzNV0gLS0tWyBlbmQgdHJh
-Y2UgMmJkODA2ODU5M2NmOGFjYyBdLS0tDQo+ID4+PiAgICAgIFsgICAxMS4wMjQxOTVdIEtlcm5l
-bCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBGYXRhbCBleGNlcHRpb24NCj4gPj4+ICAgICAgWyAgIDEx
-LjAyOTQ4OF0gU01QOiBzdG9wcGluZyBzZWNvbmRhcnkgQ1BVcw0KPiA+Pj4gICAgICBbICAgMTEu
-MDMzNDgwXSAtLS1bIGVuZCBLZXJuZWwgcGFuaWMgLSBub3Qgc3luY2luZzogRmF0YWwgZXhjZXB0
-aW9uDQo+ID4+PiBdLS0tDQo+ID4+Pg0KPiA+Pj4gV2hpY2ggZG9lcyBhcHBlYXIgdG8gYmUgdGhl
-IHJlc3VsdCBvZiBzb21lIGJhZCBkYXRhIGluIHRoZSB0YWJsZSwNCj4gPj4+IGJ1dCBpdCB3YXMg
-d29ya2luZyB3aXRoIDQuMTcsIGFuZCByZXZlcnRpbmcgdGhpcyBjb21taXQgc29sdmVzIHRoZQ0K
-PiA+Pj4gcHJvYmxlbS4NCj4gPj4NCj4gPj4NCj4gPj4gQnV0IHRoaXMgY29tbWl0IGZpeGVzIGFu
-b3RoZXIgcmVncmVzc2lvbiB3aGljaCB3YXMgbW9yZSB3aWRlc3ByZWFkLg0KPiA+Pg0KPiA+PiBB
-cHBhcmVudGx5LCB3ZSBjYW4ndCB3b3JrIGFyb3VuZCBhbGwgb2YgdGhlIGVycm9ycyBpbiB0aGUg
-dGFibGVzIG91dA0KPiA+PiB0aGVyZSBhdCB0aGUgc2FtZSB0aW1lLiA6LS8NCj4gPg0KPiA+DQo+
-ID4gTlAsIExldCBtZSBzZWUgaWYgSSBjYW4gY29tZSB1cCB3aXRoIGEgd2F5IHRvIGhhcmRlbiB0
-aGUNCj4gPiBwYXJzZV9sb29wL2NyZWF0ZV9vcCBjb2RlIGVub3VnaCB0aGF0IGl0IGRvZXNuJ3Qg
-Y3Jhc2ggdGhlIG1hY2hpbmUuDQo+IA0KPiBTdXJlLiAgSSdsbCBsb29rIGF0IGl0IHRvby4NCg0K
-SSBpdCBsb29rcyBsaWtlIHRoZXJlIGFyZSBlcnJvciBjYXNlcyB0aGF0IGhhdmUgeWV0IHRvIGJl
-IGltcGxlbWVudGVkLi4uDQpKZXJlbXksIGNvdWxkIHNlbmQgYW4gQUNQSSBkdW1wIG9mIHRoaXMg
-dGh1bmRlclgyIG1hY2hpbmU/DQoNClRoYW5rcywNCkVyaWsNCg0KPiAtLQ0KPiBUbyB1bnN1YnNj
-cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtYWNw
-aSIgaW4gdGhlIGJvZHkgb2YNCj4gYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5v
-cmcgTW9yZSBtYWpvcmRvbW8gaW5mbyBhdA0KPiBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
-ZG9tby1pbmZvLmh0bWwNCg==
+Currently nouveau doesn't actually expose the state debugfs file that's
+usually provided for any modesetting driver that supports atomic, even
+if nouveau is loaded with atomic=1. This is due to the fact that the
+standard debugfs files that DRM creates for atomic drivers is called
+when drm_get_pci_dev() is called from nouveau_drm.c. This happens well
+before we've initialized the display core, which is currently
+responsible for setting the DRIVER_ATOMIC cap.
+
+So, move the atomic option into nouveau_drm.c and just add the
+DRIVER_ATOMIC cap whenever it's enabled on the kernel commandline. This
+shouldn't cause any actual issues, as the atomic ioctl will still fail
+as expected even if the display core doesn't disable it until later in
+the init sequence. This also provides the added benefit of being able to
+use the state debugfs file to check the current display state even if
+clients aren't allowed to modify it through anything other than the
+legacy ioctls.
+
+Additionally, disable the DRIVER_ATOMIC cap in nv04's display core, as
+this was already disabled there previously.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/dispnv04/disp.c | 3 +++
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 6 ------
+ drivers/gpu/drm/nouveau/nouveau_drm.c   | 7 +++++++
+ 3 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/dispnv04/disp.c b/drivers/gpu/drm/nouveau/dispnv04/disp.c
+index 501d2d290e9c..70dce544984e 100644
+--- a/drivers/gpu/drm/nouveau/dispnv04/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv04/disp.c
+@@ -55,6 +55,9 @@ nv04_display_create(struct drm_device *dev)
+ 	nouveau_display(dev)->init = nv04_display_init;
+ 	nouveau_display(dev)->fini = nv04_display_fini;
+ 
++	/* Pre-nv50 doesn't support atomic, so don't expose the ioctls */
++	dev->driver->driver_features &= ~DRIVER_ATOMIC;
++
+ 	nouveau_hw_save_vga_fonts(dev, 1);
+ 
+ 	nv04_crtc_create(dev, 0);
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+index 9382e99a0bc7..d9da69c83ae7 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -2126,10 +2126,6 @@ nv50_display_destroy(struct drm_device *dev)
+ 	kfree(disp);
+ }
+ 
+-MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
+-static int nouveau_atomic = 0;
+-module_param_named(atomic, nouveau_atomic, int, 0400);
+-
+ int
+ nv50_display_create(struct drm_device *dev)
+ {
+@@ -2154,8 +2150,6 @@ nv50_display_create(struct drm_device *dev)
+ 	disp->disp = &nouveau_display(dev)->disp;
+ 	dev->mode_config.funcs = &nv50_disp_func;
+ 	dev->driver->driver_features |= DRIVER_PREFER_XBGR_30BPP;
+-	if (nouveau_atomic)
+-		dev->driver->driver_features |= DRIVER_ATOMIC;
+ 
+ 	/* small shared memory area we use for notifiers and semaphores */
+ 	ret = nouveau_bo_new(&drm->client, 4096, 0x1000, TTM_PL_FLAG_VRAM,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 775443c9af94..0452b18d36b9 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -81,6 +81,10 @@ MODULE_PARM_DESC(modeset, "enable driver (default: auto, "
+ int nouveau_modeset = -1;
+ module_param_named(modeset, nouveau_modeset, int, 0400);
+ 
++MODULE_PARM_DESC(atomic, "Expose atomic ioctl (default: disabled)");
++static int nouveau_atomic = 0;
++module_param_named(atomic, nouveau_atomic, int, 0400);
++
+ MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1)");
+ static int nouveau_runtime_pm = -1;
+ module_param_named(runpm, nouveau_runtime_pm, int, 0400);
+@@ -509,6 +513,9 @@ static int nouveau_drm_probe(struct pci_dev *pdev,
+ 
+ 	pci_set_master(pdev);
+ 
++	if (nouveau_atomic)
++		driver_pci.driver_features |= DRIVER_ATOMIC;
++
+ 	ret = drm_get_pci_dev(pdev, pent, &driver_pci);
+ 	if (ret) {
+ 		nvkm_device_del(&device);
+-- 
+2.17.1
+
