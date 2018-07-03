@@ -2,236 +2,147 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E369AC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F25C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96AC5249D5
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:53:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AC5249D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E2E524169
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Gvi5aTna"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2E524169
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934339AbeGCRxy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:53:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49072 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933569AbeGCRxx (ORCPT
+        id S934389AbeGCR6l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:58:41 -0400
+Received: from mail.efficios.com ([167.114.142.138]:57994 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934194AbeGCR6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:53:53 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63HnPS6015318
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 13:53:52 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0dpdgjk4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 13:53:52 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
-        Tue, 3 Jul 2018 13:53:51 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 13:53:49 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63Hrm0P7602584
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 17:53:48 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDC92112067;
-        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93878112064;
-        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
-Received: from localhost (unknown [9.18.235.193])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
-Date:   Tue, 3 Jul 2018 14:53:46 -0300
-From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 2/2] powerpc: Enable CPU_FTR_ASYM_SMT for interleaved
- big-cores
-References: <cover.1530609795.git.ego@linux.vnet.ibm.com>
- <573a559dff87da1d68a55bf6ada97b7697102909.1530609795.git.ego@linux.vnet.ibm.com>
+        Tue, 3 Jul 2018 13:58:39 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id AE3A7230B57;
+        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id mHMxNb1nyohs; Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 21B28230B54;
+        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 21B28230B54
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1530640718;
+        bh=QcS7yCbkT8TT4SKz7LTEzJemkpNiJcXtHzR2En3GBzY=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=Gvi5aTna2aYoJLMgXX/WLgt9GhJA7CEePLT/Ef1vLurY0TTsO5P+JtcBbkAKzMmoi
+         TVKLa4PK8ln94NeOsFu+yNEilQFeDux/9mT8iHN5qQoZK/Z3oJP00HrPpYhmpoqWD+
+         M+LwoJdhdMggMcMGXee9rUKVECWHo75nq3MwsHQOKLvNvnJCXba+jUT5pGrzvm6aG7
+         n68Lah6YqZd8c9A9+mP8Ym5ZzQ9+qZWskH6jDc5n1GBvO8c2E6yEaE857WWzgPInOn
+         QKncDraQmqsx+Njpo3MlO+nFHM9eH+k89Ht0mV+sX51fOT8rywI9o3q9IqirDHtvKg
+         B8Dt9ac79uHYg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id KhcRl4Z08dv3; Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 03B2C230B4D;
+        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
+Date:   Tue, 3 Jul 2018 13:58:37 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        heiko carstens <heiko.carstens@de.ibm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
+        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
+Message-ID: <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com> <20180703085546.GJ3704@osiris> <20180703092113.GV2494@hirez.programming.kicks-ass.net> <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org> <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com> <20180703173451.GX2494@hirez.programming.kicks-ass.net> <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com> <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <573a559dff87da1d68a55bf6ada97b7697102909.1530609795.git.ego@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-TM-AS-GCONF: 00
-x-cbid: 18070317-0060-0000-0000-00000286D03B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009302; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01056043; UDB=6.00541694; IPR=6.00833966;
- MB=3.00021978; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 17:53:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070317-0061-0000-0000-000045AACB63
-Message-Id: <20180703175346.GB6474@kermit-br-ibm-com.br.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030203
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
+Thread-Index: iuuWVjAu2z6iRXS9/u0IY59Kxde0hw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 04:33:51PM +0530, Gautham R. Shenoy wrote:
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-> 
-> A pair of IBM POWER9 SMT4 cores can be fused together to form a big-core
-> with 8 SMT threads. This can be discovered via the "ibm,thread-groups"
-> CPU property in the device tree which will indicate which group of
-> threads that share the L1 cache, translation cache and instruction data
-> flow. If there are multiple such group of threads, then the core is a
-> big-core.
-> 
-> Furthermore, if the thread-ids of the threads of the big-core can be
-> obtained by interleaving the thread-ids of the thread-groups
-> (component small core), then such a big-core is called an interleaved
-> big-core.
-> 
-> Eg: Threads in the pair of component SMT4 cores of an interleaved
-> big-core are numbered {0,2,4,6} and {1,3,5,7} respectively.
-> 
-> The SMT4 cores forming a big-core are more or less independent
-> units. Thus when multiple tasks are scheduled to run on the fused
-> core, we get the best performance when the tasks are spread across the
-> pair of SMT4 cores.
-> 
-> This patch enables CPU_FTR_ASYM_SMT bit in the cpu-features on
-> detecting the presence of interleaved big-cores at boot up. This will
-> will bias the load-balancing of tasks on smaller numbered threads,
-> which will automatically result in spreading the tasks uniformly
-> across the associated pair of SMT4 cores.
-> 
-> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-> ---
->  arch/powerpc/kernel/setup-common.c | 67 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 66 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-> index a78ec66..f63d797 100644
-> --- a/arch/powerpc/kernel/setup-common.c
-> +++ b/arch/powerpc/kernel/setup-common.c
-> @@ -537,6 +537,56 @@ int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
->  	return -1;
->  }
->  
-> +/*
-> + * check_interleaved_big_core - Checks if the thread group tg
-> + * corresponds to a big-core whose threads are interleavings of the
-> + * threads of the component small cores.
-> + *
-> + * @tg: A thread-group struct for the core.
-> + *
-> + * Returns true if the core is a interleaved big-core.
-> + * Returns false otherwise.
-> + */
-> +static inline bool check_interleaved_big_core(struct thread_groups *tg)
-> +{
-> +	int nr_groups;
-> +	int threads_per_group;
-> +	int cur_cpu, next_cpu, i, j;
-> +
-> +	nr_groups = tg->nr_groups;
-> +	threads_per_group = tg->threads_per_group;
-> +
-> +	if (tg->property != 1)
-> +		return false;
-> +
-> +	if (nr_groups < 2 || threads_per_group < 2)
-> +		return false;
-> +
-> +	/*
-> +	 * In case of an interleaved big-core, the thread-ids of the
-> +	 * big-core can be obtained by interleaving the the thread-ids
-> +	 * of the component small
-> +	 *
-> +	 * Eg: On a 8-thread big-core with two SMT4 small cores, the
-> +	 * threads of the two component small cores will be
-> +	 * {0, 2, 4, 6} and {1, 3, 5, 7}.
-> +	 */
-> +	for (i = 0; i < nr_groups; i++) {
-> +		int group_start = i * threads_per_group;
-> +
-> +		for (j = 0; j < threads_per_group - 1; j++) {
-> +			int cur_idx = group_start + j;
-> +
-> +			cur_cpu = tg->thread_list[cur_idx];
-> +			next_cpu = tg->thread_list[cur_idx + 1];
-> +			if (next_cpu != cur_cpu + nr_groups)
-> +				return false;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  /**
->   * setup_cpu_maps - initialize the following cpu maps:
->   *                  cpu_possible_mask
-> @@ -560,6 +610,7 @@ void __init smp_setup_cpu_maps(void)
->  	struct device_node *dn;
->  	int cpu = 0;
->  	int nthreads = 1;
-> +	bool has_interleaved_big_core = true;
->  
->  	DBG("smp_setup_cpu_maps()\n");
->  
-> @@ -613,6 +664,12 @@ void __init smp_setup_cpu_maps(void)
->  		if (parse_thread_groups(dn, &tg) ||
->  		    tg.nr_groups < 1 || tg.property != 1) {
->  			has_big_cores = false;
-> +			has_interleaved_big_core = false;
-> +		}
-> +
-> +		if (has_interleaved_big_core) {
-> +			has_interleaved_big_core =
-> +				check_interleaved_big_core(&tg);
->  		}
->  
->  		if (cpu >= nr_cpu_ids) {
-> @@ -669,7 +726,15 @@ void __init smp_setup_cpu_maps(void)
->  	vdso_data->processorCount = num_present_cpus();
->  #endif /* CONFIG_PPC64 */
->  
-> -        /* Initialize CPU <=> thread mapping/
-> +	if (has_interleaved_big_core) {
-> +		int key = __builtin_ctzl(CPU_FTR_ASYM_SMT);
-> +
-> +		cur_cpu_spec->cpu_features |= CPU_FTR_ASYM_SMT;
-> +		static_branch_enable(&cpu_feature_keys[key]);
-> +		pr_info("Detected interleaved big-cores\n");
-> +	}
+----- On Jul 3, 2018, at 1:48 PM, Peter Zijlstra peterz@infradead.org wrote:
 
-Shouldn't we use cpu_has_feature(CPU_FTR_ASYM_SMT) before setting it?
-
-> +
-> +	/* Initialize CPU <=> thread mapping/
->  	 *
->  	 * WARNING: We assume that the number of threads is the same for
->  	 * every CPU in the system. If that is not the case, then some code
-> -- 
-> 1.9.4
+> On Tue, Jul 03, 2018 at 01:38:59PM -0400, Mathieu Desnoyers wrote:
+>> ----- On Jul 3, 2018, at 1:34 PM, Peter Zijlstra peterz@infradead.org wrote:
+>> 
+>> > On Tue, Jul 03, 2018 at 10:10:37AM -0700, Linus Torvalds wrote:
+>> >> On Tue, Jul 3, 2018 at 9:40 AM Andi Kleen <andi@firstfloor.org> wrote:
+>> >> >
+>> >> > So it sounds like architectures that don't have an instruction atomic u64
+>> >> > *_user need to disable interrupts during the access, and somehow handle that
+>> >> > case when a page fault happens?
+>> >> 
+>> >> No. It's actually the store by *user* space that is the critical one.
+>> >> Not the whole 64-bit value, just the low pointer part.
+>> >> 
+>> >> The kernel could do it as a byte-by-byte load, really. It's
+>> >> per-thread, and once the kernel is running, it's not going to change.
+>> >> The kernel never changes the value, it just loads it from user space.
+>> > 
+>> > The kernel doesn't change _this_ value, but the kernel does change other
+>> > values, like for instance rseq->cpu_id. But even there, it could use
+>> > byte stores and it is again the userspace load of that field that is
+>> > critical again and needs to be a single op.
+>> 
+>> I can simply document that loads/stores from/to all struct rseq fields
+>> should be thread-local then ?
 > 
+> I'm not sure that covers things sufficiently. You really want the
+> userspace load/stores to be single instructions.
+
+Yes, of course. More specifically, I would document that those need to
+be single-copy atomicity load/store performed by the local thread.
+
+> Also, I think it was rseq_update_cpu_id() where we wanted to use a
+> single u64 store if possible but you worried about the stores.
+
+With this added bit of restriction on thread-local loads, indeed we
+can then update them without caring about atomicity at kernel level.
+
+I can modify the ABI to put the cpu_id_start and cpu_id fields inside
+a union, and update it with a single store.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
 
 -- 
-Murilo
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
