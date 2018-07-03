@@ -2,103 +2,121 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AE9C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F74C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D20C24267
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D22C524267
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:26:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KsmKFU/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D20C24267
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKcGoFYr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22C524267
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933611AbeGCJZM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:25:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37104 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753973AbeGCJZL (ORCPT
+        id S933512AbeGCJZ5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:25:57 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34770 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753973AbeGCJZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:25:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OcRZbgC02JeXu8fjaxbVbSzV+bK1QgZvLnF0LtFPpM4=; b=KsmKFU/oM3OR3qXOJZalwSJ/s
-        ys1uuBr3cvbYxpUpIZvpFLxUOdkABxTZiHGOf/5S1z2OaqzCYqZx7vrR4Nuvuv1ddpeWuyDebeh5f
-        E7VQFMsvVVUvPTcGBhrsnC63JQ/52Sk7cKYeCyRZPnbn+QnJYDdf5VpUjxGlIrLvQeCcqyNY8sxC5
-        ZCC273v2YHS+deyzKEIdtQhmqOg+0+f/zca3ZyiHLY6MHK/rCzVfdWakq5VPMeaAeTjqh8QLE9Mmx
-        92PNnSWkyq7cqpTnJ0SbO/mOPVinqjAW6DLPkGQCCViStnzHf8BRhjXZF+0n0m4n2qu4lxYj4FLRD
-        OxRAafi3A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faHXz-0008J8-SN; Tue, 03 Jul 2018 09:24:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E58F42028932F; Tue,  3 Jul 2018 11:24:29 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 11:24:29 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
-Message-ID: <20180703092429.GW2494@hirez.programming.kicks-ass.net>
-References: <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
- <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
- <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
- <20180703081449.GT2494@hirez.programming.kicks-ass.net>
- <20180703082955.GH3704@osiris>
- <20180703084312.GU2494@hirez.programming.kicks-ass.net>
- <20180703085546.GJ3704@osiris>
- <20180703091717.GK3704@osiris>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703091717.GK3704@osiris>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 3 Jul 2018 05:25:54 -0400
+Received: by mail-wm0-f67.google.com with SMTP id l15-v6so9893707wmc.1;
+        Tue, 03 Jul 2018 02:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MV2tf7Cos/ugmcs4fcvYnhqynJC/6b6iyfl3G5AyvXE=;
+        b=BKcGoFYrhQ4hBI3WY9NGHaz4OKD5uNldTnSGbpsaY1p0QyUSCXd5zyPcItECFLSRtK
+         2LN0pTfVlkdfMcct1FvxhcUKbvt8DwQEoF7we+0w9ZJFbgrjmPp06yjVXGlErAQjzG1v
+         CCUa8ietBjsscIqxmg0/sIQPjDDI+GAzDb5fXi7NJJnOcJIKE+lZxVBGOsjlADSWNfwG
+         J2sFwJYbUf5TjPch6A4Epl58L9aw1GUK5i364dyGBoQgM71LXDIflbWbMhLZLR67qvTw
+         46veCobqpOQh5+CPMa1Asf6XYu0RFc3yhDT5ra/L8EvWv1WNPk6HdqXZCKkC2yhvVTUL
+         XKYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MV2tf7Cos/ugmcs4fcvYnhqynJC/6b6iyfl3G5AyvXE=;
+        b=MGS9nxt7HQuwgGgm+8JTgvWi88x8aVQxgdWEoYNG6rXPa1GrI8XfTVTvaNpKnkcnkl
+         lHY3ZRiWnab+DLvNEd2lRWxYsa6f3h4/XxipsBLhovc9ICdT7rz8nFanM214+sXIjHPD
+         XXWlHPuQ2t1CYvT7c8YUTS6AFiSNHu0IQ+FXq+Cuz7Rdhw5jE8snnsIHcAJFY9eIoY93
+         OfaDNLnoDhG02vD/YKUbE+e1nop+zqFlTaT84qwN1/U9lZXqINXv44DXnwqfbZraocsM
+         tic/drp8hDpDkyEH32zf4G51rxad4HzvDxFnAjVoGTQDRz2Ym1VWzDWdcZDc0tW+IRsV
+         aYlQ==
+X-Gm-Message-State: APt69E32FaSRZq+sWoaeW1DosKczpLjqCNb3Hr2PFWz7ApfekIs8amU6
+        4NjtIabiN+nYjA1FpcXunSQ=
+X-Google-Smtp-Source: AAOMgpfn/F4CHflMu0+ZNqINBpO0lBCOHSMhp/I5dHmllUcSjxu6kLq/J94kpzMiUkS+8LQV+hecrg==
+X-Received: by 2002:a1c:f906:: with SMTP id x6-v6mr10513191wmh.63.1530609952355;
+        Tue, 03 Jul 2018 02:25:52 -0700 (PDT)
+Received: from xpert.denx.de ([62.91.23.180])
+        by smtp.gmail.com with ESMTPSA id r194-v6sm1819280wmd.36.2018.07.03.02.25.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 02:25:51 -0700 (PDT)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     afaerber@suse.de, sboyd@kernel.org,
+        manivannan.sadhasivam@linaro.org
+Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, devicetree@vger.kernel.org,
+        support@cubietech.com, thomas.liau@actions-semi.com,
+        jeff.chen@actions-semi.com, linux@cubietech.com,
+        darren@cubietech.com, mp-cs@actions-semi.com, pn@denx.de,
+        sravanhome@gmail.com
+Subject: [PATCH v3 0/5] Add clock driver for Actions S700 SoC
+Date:   Tue,  3 Jul 2018 11:25:19 +0200
+Message-Id: <20180703092524.1697111-1-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 11:17:17AM +0200, Heiko Carstens wrote:
+Changelog v3:
+- Splitted uart clock DTS changes into separate patch
+- Splitted REGMAP Kconfig selection into separate patch
+- General naming convention as "Actions Semi" in dt-binding documentation
+- Patch re-oredering
+- Cleanup and fixed review findings
 
-> And to answer also your question: we don't use a regular load, since we
-> would have to use 'sacf' construct surrounding the load instruction which
-> would be much slower.
-> We have something like that implemented for the futex atomic ops, and we
-> could also implement something like that for this use case
-> (e.g. get_user_atomic()), if really needed.
+Changelog v2:
+Fixed 0 day compilation warning
+Modified existing dts Actions S900 clock bindings common to Actions
+Soc family
 
-/me digs out the s390-PoO PDF and understands.. this is because of the
-split user/kernel address space stuff.
+This patchset adds clock support for Actions Semi OWL series S700 SoC
+with relevant clock bindings and device tree info. 
 
-Fair enough.
+Changed the UART clock using CMU instance and changes are tested in
+cubieboard7
+
+Thanks and regards,
+Saravanan,
+Parthiban
+
+Saravanan Sekar (5):
+  dt-bindings: clock: Rename document generic to Actions Semi Soc's
+  clk: actions: Add S700 SoC clock support
+  clk: actions: Add REGMAP as dependency
+  arm64: dts: actions: Enable clock controller for S700
+  arm64: dts: actions: Set UART clock reference from CMU
+
+ .../{actions,s900-cmu.txt => actions,owl-cmu.txt}  |  20 +-
+ arch/arm64/boot/dts/actions/s700-cubieboard7.dts   |   8 +-
+ arch/arm64/boot/dts/actions/s700.dtsi              |  14 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |   1 +
+ drivers/clk/actions/owl-s700.c                     | 610 +++++++++++++++++++++
+ include/dt-bindings/clock/actions,s700-cmu.h       | 128 +++++
+ 7 files changed, 779 insertions(+), 16 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
+ create mode 100644 drivers/clk/actions/owl-s700.c
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+
+-- 
+2.14.4
+
