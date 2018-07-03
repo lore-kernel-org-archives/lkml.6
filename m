@@ -2,102 +2,134 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD45C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E257C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D402E24871
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:59:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Kzffljbi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D402E24871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 2539F24C86
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:01:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2539F24C86
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753055AbeGCL7g (ORCPT
+        id S1752961AbeGCMBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:59:36 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:41978 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752560AbeGCL7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:59:33 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w63BxVoq153421;
-        Tue, 3 Jul 2018 11:59:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2017-10-26;
- bh=MquAp1GWWgLxMcx32kt4OSv8JnOFlVGxz6OlP/GcF3Q=;
- b=KzffljbiepGbAmfzqMrUnI/wmaLGYsEtm1VkFCp5eIMucYYrx7ikHovO4IUIH+WvmtBK
- 7m2laQDYGQxTnN2RiEhj9iTbo6eDDViJ/aFWkhJ5Lk7lBgwF96CGICcUhQKWMVLDeZ9p
- iDnXGdw1WzKsWS7DvHP6FUPKJpTzhZ7hpRAYVagYI3HAIlPXHi80sALpKnZoMpahOhfR
- vGt8VQzxHase+q6Uw/Woyc8lqHwH4HdYRYy7fmN0FwWCxmOkLyCx1c7UE2iY1EsFc/mi
- +WBBSKg6lZGqvi7K41FSWPx5GBVcpouXwYkGf+mLAI7nFT6rDkHR5/IFV43RTbTysiGI tA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2jwyccrc0k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Jul 2018 11:59:31 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w63BxUgQ010832
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Jul 2018 11:59:30 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w63BxUwr015049;
-        Tue, 3 Jul 2018 11:59:30 GMT
-Received: from kili.mountain (/197.157.0.57)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Jul 2018 04:59:29 -0700
-Date:   Tue, 3 Jul 2018 14:59:22 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] gnss: fix potential error pointer dereference
-Message-ID: <20180703115921.7h35wi73oym3use5@kili.mountain>
+        Tue, 3 Jul 2018 08:01:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:48196 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752533AbeGCMBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 08:01:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DD9F80D;
+        Tue,  3 Jul 2018 05:01:53 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D01C63F5BA;
+        Tue,  3 Jul 2018 05:01:51 -0700 (PDT)
+Subject: Re: [PATCH 1/1] mmc: sunxi: Disable irq during pm_suspend
+To:     Stefan Mavrodiev <stefan@olimex.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1530602925-7714-1-git-send-email-stefan@olimex.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <627d5e40-651a-062c-aac4-742727b23ddb@arm.com>
+Date:   Tue, 3 Jul 2018 13:01:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8942 signatures=668704
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=626
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807030139
+In-Reply-To: <1530602925-7714-1-git-send-email-stefan@olimex.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The gnss_allocate_device() function returns a mix of NULL and error
-pointers on error.  It should only return one or the other.  Since the
-callers both check for NULL, I've modified it to return NULL on error.
+On 03/07/18 08:28, Stefan Mavrodiev wrote:
+> When mmc host controller enters suspend state, the clocks are
+> disabled, but irqs are not. For some reason the irqchip emmits
 
-Fixes: 10f146639fee ("gnss: add receiver type support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Not so much the irqchip, but the device itself.
 
-diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
-index f30ef8338b3a..4291a0dd22aa 100644
---- a/drivers/gnss/core.c
-+++ b/drivers/gnss/core.c
-@@ -235,7 +235,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
- 	id = ida_simple_get(&gnss_minors, 0, GNSS_MINORS, GFP_KERNEL);
- 	if (id < 0) {
- 		kfree(gdev);
--		return ERR_PTR(id);
-+		return NULL;
- 	}
- 
- 	gdev->id = id;
-@@ -270,7 +270,7 @@ struct gnss_device *gnss_allocate_device(struct device *parent)
- err_put_device:
- 	put_device(dev);
- 
--	return ERR_PTR(-ENOMEM);
-+	return NULL;
- }
- EXPORT_SYMBOL_GPL(gnss_allocate_device);
- 
+> false interrupts, which causes system lock loop.
+
+I'm not sure the interrupts are fake. They are indicative of some state
+of the HW...
+
+> 
+> Debug log is:
+>   ...
+>   sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+>   sunxi-mmc 1c11000.mmc: enabling the clock
+>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+>   mmc1: new DDR MMC card at address 0001
+>   mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+>   mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+>   mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+>   sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+>   sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+>    mmcblk1: p1
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+>   sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+> and so on...
+
+The clock is off, and yet the thing manages to generate interrupts. Great...
+
+> 
+> This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+> tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+> 
+> Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>  drivers/mmc/host/sunxi-mmc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+> index e747259..acae7a8 100644
+> --- a/drivers/mmc/host/sunxi-mmc.c
+> +++ b/drivers/mmc/host/sunxi-mmc.c
+> @@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+>  	sunxi_mmc_init_host(host);
+>  	sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+>  	sunxi_mmc_set_clk(host, &mmc->ios);
+> +	enable_irq(host->irq);
+>  
+>  	return 0;
+>  }
+> @@ -1455,6 +1456,7 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
+>  	struct mmc_host	*mmc = dev_get_drvdata(dev);
+>  	struct sunxi_mmc_host *host = mmc_priv(mmc);
+>  
+> +	disable_irq(host->irq);
+>  	sunxi_mmc_reset_host(host);
+>  	sunxi_mmc_disable(host);
+>  
+> 
+
+For the record, this patch fixes the boot issues I've observed on my
+cubietruck.
+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Tested-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
