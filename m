@@ -2,105 +2,128 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0751EC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FA9C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53B124DD8
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:12:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8U8bl0s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53B124DD8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B9D8424DF1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D8424DF1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754226AbeGCHMf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:12:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752839AbeGCHMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:12:34 -0400
-Received: from dragon (unknown [104.237.91.44])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3809224DCC;
-        Tue,  3 Jul 2018 07:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530601953;
-        bh=ylrF7964J9Fk0nW7a0GxHSh/5AhJpRYjIDXweoA1g4o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i8U8bl0sl97OSG7/KHRJMqa30I/txstM/9Jj5JogAEIuFdnSdaE+wwKaHRkqC3GhK
-         MECT9JC6UuBXTjy4tf1ibhNKd12oIDQf+r7v9yFVhPUUgJ2Ee13deYG2C40VYaZj+S
-         b/u/Ct4lPQ8bx5d5yVzugPA2nCSTv0/xNSJNqmOw=
-Date:   Tue, 3 Jul 2018 15:12:16 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Lucas Stach <l.stach@pengutronix.de>, arm@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, chris.redpath@arm.com,
-        ionela.voinescu@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 15/15] arm: dts: imx: Add missing OPP properties for CPUs
-Message-ID: <20180703071215.GM4348@dragon>
-References: <cover.1527244200.git.viresh.kumar@linaro.org>
- <264124e14b966a1bbc07c364fbd89fc55aa765e6.1527244201.git.viresh.kumar@linaro.org>
- <1527248760.3472.6.camel@pengutronix.de>
- <20180528110739.ewmhlf72sl7u5ju7@vireshk-i7>
+        id S932286AbeGCHOr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:14:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45361 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752719AbeGCHOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:14:46 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1faFWO-0008RX-AO; Tue, 03 Jul 2018 07:14:44 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        "Guilherme G . Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] misc: genwqe: remove several redundant variables
+Date:   Tue,  3 Jul 2018 08:14:43 +0100
+Message-Id: <20180703071443.28921-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180528110739.ewmhlf72sl7u5ju7@vireshk-i7>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 28, 2018 at 04:37:39PM +0530, Viresh Kumar wrote:
-> Hi Lucas,
-> 
-> On 25-05-18, 13:46, Lucas Stach wrote:
-> > This is a lot of duplicate information for what is effectively a shared
-> >  cluster wide thing. This does absolutely not _feel_ right.
-> 
-> I cannot agree more :)
-> 
-> > What problem are you solving here? Why do we need all this duplicate
-> > information? Why can't we fix it by falling back to looking at cpu0 if
-> > needed?
-> 
-> Let me try explaining one of the problem scenarios to you as your
-> platform is a single cluster one. Make cpufreq driver as module, don't
-> insert it, hotplug out CPU0 and now insert the cpufreq driver. The
-> cpufreq core will try adding the cpufreq policy for CPU1 but wouldn't
-> find the required information in the DT node of CPU1 and so will fail
-> or behave incorrectly.
-> 
-> We can't look at CPU0 as we don't know they are related at all.
-> Nothing tells that to us. The right solution to fix the duplication is
-> to move to OPP-v2 bindings, which allow us to create a single OPP
-> table node and refer to it from all the CPU nodes. Because in case of
-> imx platforms getting updated here, we use the old and some platforms
-> specific frequency tables, we have to duplicate it everywhere.
-> 
-> But looking from DT otherwise, all the device should anyway have all
-> the information required right in their node. That can be simplified
-> with things like phandle to opp-v2 node, but still everything needs to
-> be there. We shouldn't really rely on other CPU nodes to make it work.
-> That would be an incomplete definition of the hardware IMHO.
+From: Colin Ian King <colin.king@canonical.com>
 
-Lucas,
+The variables val16, type, pci_dev and type are set but are never used
+hence they are redundant and can be removed.
 
-Are you fine with the patch now considering the respond from Viresh?
+Cleans up clang warnings:
+warning: variable 'type' set but not used [-Wunused-but-set-variable]
+warning: variable 'val16' set but not used [-Wunused-but-set-variable]
+warning: variable 'pci_dev' set but not used [-Wunused-but-set-variable]
+warning: variable 'type' set but not used [-Wunused-but-set-variable]
 
-Shawn
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/misc/genwqe/card_debugfs.c | 4 ----
+ drivers/misc/genwqe/card_dev.c     | 5 -----
+ 2 files changed, 9 deletions(-)
+
+diff --git a/drivers/misc/genwqe/card_debugfs.c b/drivers/misc/genwqe/card_debugfs.c
+index f921dd590271..c6b82f09b3ba 100644
+--- a/drivers/misc/genwqe/card_debugfs.c
++++ b/drivers/misc/genwqe/card_debugfs.c
+@@ -305,7 +305,6 @@ GENWQE_DEBUGFS_RO(ddcb_info, genwqe_ddcb_info_show);
+ static int genwqe_info_show(struct seq_file *s, void *unused)
+ {
+ 	struct genwqe_dev *cd = s->private;
+-	u16 val16, type;
+ 	u64 app_id, slu_id, bitstream = -1;
+ 	struct pci_dev *pci_dev = cd->pci_dev;
+ 
+@@ -315,9 +314,6 @@ static int genwqe_info_show(struct seq_file *s, void *unused)
+ 	if (genwqe_is_privileged(cd))
+ 		bitstream = __genwqe_readq(cd, IO_SLU_BITSTREAM);
+ 
+-	val16 = (u16)(slu_id & 0x0fLLU);
+-	type  = (u16)((slu_id >> 20) & 0xffLLU);
+-
+ 	seq_printf(s, "%s driver version: %s\n"
+ 		   "    Device Name/Type: %s %s CardIdx: %d\n"
+ 		   "    SLU/APP Config  : 0x%016llx/0x%016llx\n"
+diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
+index 0dd6b5ef314a..f453ab82f0d7 100644
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -304,14 +304,12 @@ static int genwqe_open(struct inode *inode, struct file *filp)
+ {
+ 	struct genwqe_dev *cd;
+ 	struct genwqe_file *cfile;
+-	struct pci_dev *pci_dev;
+ 
+ 	cfile = kzalloc(sizeof(*cfile), GFP_KERNEL);
+ 	if (cfile == NULL)
+ 		return -ENOMEM;
+ 
+ 	cd = container_of(inode->i_cdev, struct genwqe_dev, cdev_genwqe);
+-	pci_dev = cd->pci_dev;
+ 	cfile->cd = cd;
+ 	cfile->filp = filp;
+ 	cfile->client = NULL;
+@@ -864,7 +862,6 @@ static int ddcb_cmd_fixups(struct genwqe_file *cfile, struct ddcb_requ *req)
+ 	struct genwqe_dev *cd = cfile->cd;
+ 	struct genwqe_ddcb_cmd *cmd = &req->cmd;
+ 	struct dma_mapping *m;
+-	const char *type = "UNKNOWN";
+ 
+ 	for (i = 0, asiv_offs = 0x00; asiv_offs <= 0x58;
+ 	     i++, asiv_offs += 0x08) {
+@@ -933,11 +930,9 @@ static int ddcb_cmd_fixups(struct genwqe_file *cfile, struct ddcb_requ *req)
+ 
+ 			m = genwqe_search_pin(cfile, u_addr, u_size, NULL);
+ 			if (m != NULL) {
+-				type = "PINNING";
+ 				page_offs = (u_addr -
+ 					     (u64)m->u_vaddr)/PAGE_SIZE;
+ 			} else {
+-				type = "MAPPING";
+ 				m = &req->dma_mappings[i];
+ 
+ 				genwqe_mapping_init(m,
+-- 
+2.17.1
+
