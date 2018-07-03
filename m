@@ -2,121 +2,93 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D471C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205ADC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE71524A6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:39:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE71524A6A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C4E3924A6A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:40:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="ny2o5vZF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E3924A6A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933402AbeGCPjo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:39:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932273AbeGCPjm (ORCPT
+        id S933368AbeGCPk3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:40:29 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:59942 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932261AbeGCPk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:39:42 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63FdXD8137990
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 11:39:41 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k0a3hnxxu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 11:39:41 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 16:39:40 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 16:39:37 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63FdapZ37683206
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 15:39:36 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A89C7A404D;
-        Tue,  3 Jul 2018 18:40:01 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ACEE5A4053;
-        Tue,  3 Jul 2018 18:40:00 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.206.209])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  3 Jul 2018 18:40:00 +0100 (BST)
-Date:   Tue, 3 Jul 2018 18:39:33 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Sam Creasey <sammy@sammy.net>, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] m68k/page_no.h: force __va argument to be unsigned
- long
-References: <1530613795-6956-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1530613795-6956-3-git-send-email-rppt@linux.vnet.ibm.com>
- <20180703142054.GL16767@dhcp22.suse.cz>
- <20180703150315.GC4809@rapoport-lnx>
- <20180703150535.GA21590@bombadil.infradead.org>
- <20180703151401.GQ16767@dhcp22.suse.cz>
+        Tue, 3 Jul 2018 11:40:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dwcp1Sgd3kyrBbBGB/TF96dfsCdhJDZd5DXRGUm9U2A=; b=ny2o5vZFduYX2AvecitCoBhyaM
+        fL/oeG/uuHJIOMbXHNiH+fdJ61gHxDWPGVWGB/e3oimKDUQRqdLo4tuBtbkMo36HGM2r34dLydpAc
+        zmHAy10mxTDuZkEvMtfYUJ2s6TqggsE9fsAX+mmdJw/e/qsPzsn4n9fbPSPv1ZdGMXoP2cP5OzyIS
+        rYKG0WccgH28PDeuUDvD0S1D/7+ZJVddF+TrALbkMflPTkXAgaDMq1MkYHwUlJNoOa1270h8XA3GG
+        zFdGqaMoNZXGpqPhDXcQP1Ry0MnxEmDZJICyid4T7UDnTXjZUiEJw2+SonMu2RoqHzAZ3O4O2ao6F
+        xWFOMBNA==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:38406 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1faNPn-001C5l-Vo; Tue, 03 Jul 2018 15:40:28 +0000
+Date:   Tue, 3 Jul 2018 08:40:27 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] fsi/sbefifo: Add dependency on OF_ADDRESS
+Message-ID: <20180703154027.GA1180@roeck-us.net>
+References: <1530625429-5506-1-git-send-email-linux@roeck-us.net>
+ <fb51cbf8adfe2b50ce2b3fe0e6851ef5982d12db.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180703151401.GQ16767@dhcp22.suse.cz>
+In-Reply-To: <fb51cbf8adfe2b50ce2b3fe0e6851ef5982d12db.camel@kernel.crashing.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18070315-0012-0000-0000-0000028659B4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070315-0013-0000-0000-000020B7D727
-Message-Id: <20180703153932.GE4809@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=860 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030178
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 05:14:01PM +0200, Michal Hocko wrote:
-> On Tue 03-07-18 08:05:35, Matthew Wilcox wrote:
-> > On Tue, Jul 03, 2018 at 06:03:16PM +0300, Mike Rapoport wrote:
-> > > On Tue, Jul 03, 2018 at 04:20:54PM +0200, Michal Hocko wrote:
-> > > > On Tue 03-07-18 13:29:54, Mike Rapoport wrote:
-> > > > > Add explicit casting to unsigned long to the __va() parameter
-> > > > 
-> > > > Why is this needed?
-> > > 
-> > > To make it consitent with other architecures and asm-generic :)
-> > > 
-> > > But more importantly, __memblock_free_late() passes u64 to page_to_pfn().
+On Wed, Jul 04, 2018 at 12:23:20AM +1000, Benjamin Herrenschmidt wrote:
+> On Tue, 2018-07-03 at 06:43 -0700, Guenter Roeck wrote:
+> > The driver calls of_platform_device_create() which is only available
+> > if OF_ADDRESS is enabled. When building sparc64 images, this results
+> > in
 > > 
-> > Why does memblock work in terms of u64 instead of phys_addr_t?
+> > ERROR: "of_platform_device_create" [drivers/fsi/fsi-sbefifo.ko] undefined!
+> > 
+> > Fixes: 9f4a8a2d7f9d ("fsi/sbefifo: Add driver for the SBE FIFO")
+> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > 
-> Yes, phys_addr_t was exactly that came to my mind as well. Casting
-> physical address to unsigned long just screams for potential problems.
-
-Heh, that's what we have:
-
-~/git/linux $ git grep 'define __va.*\(unsigned long\)' | wc -l
-22
- 
-> -- 
-> Michal Hocko
-> SUSE Labs
+> Thanks Guenter ! I'll include this into the fsi tree.
 > 
+> (I was wondering what that kbuild report on sparc64 was about... I must
+> have misread the code, I didn't realize of_platform_device_create
+> wasn't under CONFIG_OF alone).
+> 
+No worries; pretty much everyone using one of the affected functions
+falls into that trap.
 
--- 
-Sincerely yours,
-Mike.
-
+Guenter
