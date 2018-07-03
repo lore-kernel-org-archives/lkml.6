@@ -2,180 +2,153 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA335C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF2CC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92DF623C49
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:29:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gVMDDq9x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92DF623C49
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6565923C82
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:30:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6565923C82
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeGCW3B (ORCPT
+        id S1753429AbeGCWav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:29:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35182 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753196AbeGCW27 (ORCPT
+        Tue, 3 Jul 2018 18:30:51 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:42506 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753076AbeGCWat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:28:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2cCsu1sKw6dTzMeMpwQeljfxK+OSae6Bq0jUBFMoULY=; b=gVMDDq9xAHg1q4ZWwuBTolhei
-        gICk65PLO4f+iqUjgtjwFiYrIJdQ375lIxptmX298nrjKC78YL+XXcKk1hdiWU7XqXP1lj96sb2lE
-        qzTu2mXHWeQshiiPeWYwHKpYZtSSk99JoBEBQYOFMmEIdSulkn4+zc5BL6fVo+1GoMHlSMFNKONVn
-        0+oSr7xnZ6MZr3EzCDeJH1oUohVrxQ51KBUzfnyAP7N9feFOIk5n3aMFZ1Lhb5zVW7K58+jqRcLrB
-        rgttXJg2cMpdBcDEdWlMls/NXm+RvE5Tv9brvXixWS3M8mK5byKL9WmBfbx1hKNlWPah7FZeNyoXB
-        NHQBl3UXA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faTn7-0003bq-Vr; Tue, 03 Jul 2018 22:28:58 +0000
-Subject: Re: [PATCH 13/14] Documentation: add a doc for blk-iolatency
-To:     Josef Bacik <josef@toxicpanda.com>, axboe@kernel.dk,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, tj@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, kernel-team@fb.com
-Cc:     Josef Bacik <jbacik@fb.com>
-References: <20180703151503.2549-1-josef@toxicpanda.com>
- <20180703151503.2549-14-josef@toxicpanda.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5b4d3156-d11c-d256-cd0b-3c4bc0bc9296@infradead.org>
-Date:   Tue, 3 Jul 2018 15:28:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 18:30:49 -0400
+Received: by mail-yb0-f195.google.com with SMTP id c7-v6so6464ybk.9;
+        Tue, 03 Jul 2018 15:30:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gcawMRGgyn5yqqgB9JZ4UOoqIdafSX7kmok1KkgLQOQ=;
+        b=uRv2zIR788brVsuujujtEa14d5/AbO4dXLnZ+5VIAnka7ZzBslTfct6K7tP0nYhtUl
+         SoRKW2ixpYvmvf9iBt6xM+NTj2eab+Od+3gXuj4bZT8qHLvdBL9Gw56obwgTKfJsJnxC
+         6dCaniwgfU3uUUCMUGlfrYvu2P9tkYQSxPNawpwkqF3xRWfIGNInEgmoHYQ5X3NOX1WK
+         8ufsIoRGOVfOKnlfQoZ2r+BzoKjwbhGK61tZFACqqPMObDi/JxTbmEqj6aAqTtrw2qAM
+         lNSQJN7Y7bO3eShHW1oIwAHPYZbVX4KST26OinjDUECJeV4Mk0HVgK52Zc7vr3SgZM4r
+         F6/w==
+X-Gm-Message-State: APt69E0I3V9LFx/OBomo8urNBSHT6Sw5tRBBozg+63LPXLQLHw22i7p5
+        rkbyQ2Ik5Q38FIUKhhvNxA==
+X-Google-Smtp-Source: AAOMgpc54UvaTpqr6h4rHJEc3y2LfSwS4B+M9BD+k9hbv0tF5FEesWR68WJGIgJNm+xd7NPCMxQMZQ==
+X-Received: by 2002:a25:d894:: with SMTP id p142-v6mr7256409ybg.227.1530657049056;
+        Tue, 03 Jul 2018 15:30:49 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id g83-v6sm779705ywa.106.2018.07.03.15.30.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 15:30:48 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 16:30:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/14] dt-bindings: fsi: Document binding for the
+ fsi-master-ast-cf "device"
+Message-ID: <20180703223046.GA20184@rob-hp-laptop>
+References: <20180626232605.13420-1-benh@kernel.crashing.org>
+ <20180626232605.13420-12-benh@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <20180703151503.2549-14-josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180626232605.13420-12-benh@kernel.crashing.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/18 08:15, Josef Bacik wrote:
-> From: Josef Bacik <jbacik@fb.com>
+On Wed, Jun 27, 2018 at 09:26:02AM +1000, Benjamin Herrenschmidt wrote:
+> This isn't per-se a real device, it's a pseudo-device that
+> represents the use of the Aspeed built-in ColdFire to
+> implement the FSI protocol by bitbanging the GPIOs instead
+> of doing it from the ARM core.
 > 
-> A basic documentation to describe the interface, statistics, and
-> behavior of io.latency.
+> Thus it's a drop-in replacement for the existing
+> fsi-master-gpio pseudo-device for use on systems for which
+> a corresponding firmware file exists. It has most of the
+> same properties, plus some more needed to operate the
+> coprocessor.
 > 
-> Signed-off-by: Josef Bacik <jbacik@fb.com>
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 > ---
->  Documentation/admin-guide/cgroup-v2.rst | 79 +++++++++++++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
+>  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
 > 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index 8a2c52d5c53b..569ce27b85e5 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -51,6 +51,9 @@ v1 is available under Documentation/cgroup-v1/.
->       5-3. IO
->         5-3-1. IO Interface Files
->         5-3-2. Writeback
-> +       5-3-3. IO Latency
-> +         5-3-3-1. How IO Latency Throttling Works
-> +         5-3-3-2. IO Latency Interface Files
->       5-4. PID
->         5-4-1. PID Interface Files
->       5-5. Device
-> @@ -1446,6 +1449,82 @@ writeback as follows.
->  	vm.dirty[_background]_ratio.
->  
->  
-> +IO Latency
-> +~~~~~~~~~~
+> diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> new file mode 100644
+> index 000000000000..50913ae685cc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> @@ -0,0 +1,36 @@
+> +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
+> +------------------------------------------------------------------------
 > +
-> +This is a cgroup v2 controller for IO workload protection.  You provide a group
-> +with a latency target, and if the average latency exceeds that target the
-> +controller will throttle any peers that have a lower latency target than the
-> +protected workload.
-> +
-> +The limits are only applied at the peer level in the hierarchy.  This means that
-> +in the diagram below, only groups A, B, and C will influence each other, and
-> +groups D and F will influence each other.  Group G will influence nobody.
-> +
-> +			[root]
-> +		/	   |		\
-> +		A	   B		C
-> +	       /  \        |
-> +	      D    F	   G
-> +
-> +
-> +So the ideal way to configure this is to set io.latency in groups A, B, and C.
-> +Generally you do not want to set a value lower than the latency your device
-> +supports.  Experiment to find the value that works best for your workload.
-> +Start at higher than the expected latency for your device and watch the
-> +total_lat_avg value in io.stat for your workload group to get an idea of the
-> +latency you see during normal operation.  Use this value as a basis for your
-> +real setting, setting at 10-15% higher than the value in io.stat.
-> +Experimentation is key here because total_lat_avg is a running total, so is the
-> +"statistics" portion of "lies, damned lies, and statistics."
-> +
-> +How IO Latency Throttling Works
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +io.latency is work conserving; so as long as everybody is meeting their latency
-> +target the controller doesn't do anything.  Once a group starts missing its
-> +target it begins throttling any peer group that has a higher target than itself.
-> +This throttling takes 2 forms:
-> +
-> +- Queue depth throttling.  This is the number of outstanding IO's a group is
-> +  allowed to have.  We will clamp down relatively quickly, starting at no limit
-> +  and going all the way down to 1 IO at a time.
-> +
-> +- Artificial delay induction.  There are certain types of IO that cannot be
-> +  throttled without possibly adversely affecting higher priority groups.  This
-> +  includes swapping and metadata IO.  These types of IO are allowed to occur
-> +  normally, however they are "charged" to the originating group.  If the
-> +  originating group is being throttled you will see the use_delay and delay
-> +  fields in io.stat increase.  The delay value is how many microseconds that are
-> +  being added to any process that runs in this group.  Because this number can
-> +  grow quite large if there is a lot of swapping or metadata IO occurring we
-> +  limit the individual delay events to 1 second at a time.
-> +
-> +Once the victimized group starts meeting its latency target again it will start
-> +unthrottling any peer groups that were throttled previously.  If the victimized
-> +group simply stops doing IO the global counter will unthrottle appropriately.
-> +
-> +IO Latency Interface Files
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +  io.latency
-> +	This takes a similar format as the other controllers.
-> +
-> +		"MAJOR:MINOR target=<target time in microseconds"
+> +Required properties:
+> + - compatible =
+> +   	      "fsi-master-ast-2400-cf" for an AST2400 based system
+> +	    or
+> +	      "fsi-master-ast-2500-cf" for an AST2500 based system
 
-(repeat comment:)                                in microseconds>"
+<vendor>,<soc>-<block>
 
 > +
-> +  io.stat
-> +	If the controller is enabled you will see extra stats in io.stat in
-> +	addition to the normal ones.
+> + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
+> + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
+> + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
+> + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
+> + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
+
+So the gpio info is pased to the CF? Otherwise, what's the point of 
+having these in DT?
+
+> +                                          functions (eg, external FSI masters)
+> + - memory-region = <phandle>;		: Reference to the reserved memory for
+> +                                          the ColdFire. Must be 2M aligned on
+> +					  AST2400 and 1M aligned on AST2500
+
+> + - sram = <phandle>;			: Reference to the SRAM node.
+> + - cvic = <phandle>;			: Reference to the CVIC node.
+
+Vendor prefixes.
+
+> + - fw-name = <string>;			: The name used to construct the firmware
+> +   	     				  file name (cf-fsi-<name>.bin)
+
+firmware-name is used in some other places (and is the full filename).
+
+> + - fw-platform-sig = <value>;		: A signature value that must match the one
+> +   		     			  contained in the firmware image. Known
+> +					  values are listed in the firmware interface
+> +					  file cf-fsi-fw.h
+
+Vendor prefix unless you think this could be common.
+
+> +Examples:
 > +
-> +	  depth
-> +		This is the current queue depth for the group.
-> +
-> +	  avg_lat
-> +		The running average IO latency for this group in microseconds.
-> +		Running average is generally flawed, but will give an
-> +		administrator a general idea of the overall latency they can
-> +		expect for their workload on the given disk.
-> +
->  PID
->  ---
->  
+> +    fsi-master {
+> +        compatible = "fsi-master-gpio", "fsi-master";
+
+Forget to update the example?
+
+> +        clock-gpios = <&gpio 0>;
+> +        data-gpios = <&gpio 1>;
+> +        enable-gpios = <&gpio 2>;
+> +        trans-gpios = <&gpio 3>;
+> +        mux-gpios = <&gpio 4>;
+> +    }
+> -- 
+> 2.17.1
 > 
-
-
--- 
-~Randy
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
