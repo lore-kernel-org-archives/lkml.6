@@ -2,113 +2,180 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904DBC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9FDC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54BAC24E9A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:09:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54BAC24E9A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D6B924E9A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6B924E9A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932734AbeGCGJZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:09:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56456 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932360AbeGCGJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:09:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F02FADE3;
-        Tue,  3 Jul 2018 06:09:23 +0000 (UTC)
-Date:   Tue, 3 Jul 2018 08:09:21 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
- large mapping
-Message-ID: <20180703060921.GA16767@dhcp22.suse.cz>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
- <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
- <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
- <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
- <20180702140502.GZ19043@dhcp22.suse.cz>
- <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
+        id S1754359AbeGCGKe convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:10:34 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:7211 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753999AbeGCGKd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:10:33 -0400
+Subject: Re: [PATCH] docs: update kernel versions and dates in tables
+To:     Tim Bird <tbird20d@gmail.com>, <corbet@lwn.net>
+CC:     <tim.bird@sony.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1527114014-26240-1-git-send-email-tim.bird@sony.com>
+From:   peter enderborg <peter.enderborg@sony.com>
+Message-ID: <4111a2f2-b03b-5f07-929a-680c86b71771@sony.com>
+Date:   Tue, 3 Jul 2018 08:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1527114014-26240-1-git-send-email-tim.bird@sony.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 02-07-18 13:48:45, Andrew Morton wrote:
-> On Mon, 2 Jul 2018 16:05:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > On Fri 29-06-18 20:15:47, Andrew Morton wrote:
-> > [...]
-> > > Would one of your earlier designs have addressed all usecases?  I
-> > > expect the dumb unmap-a-little-bit-at-a-time approach would have?
-> > 
-> > It has been already pointed out that this will not work.
-> 
-> I said "one of".  There were others.
+On 05/24/2018 12:20 AM, Tim Bird wrote:
+> Every once in a while, we should update the examples
+> to reflect more recent kernel versions.
+>
+> Update the tables describing kernel releases, the merge window,
+> and current longterm maintained kernel, from 2.6-era kernels
+> to 4.x.
+>
+> Signed-off-by: Tim Bird <tim.bird@sony.com>
+> ---
+>  Documentation/process/2.Process.rst | 72 +++++++++++++++++++------------------
+>  1 file changed, 38 insertions(+), 34 deletions(-)
+>
+> diff --git a/Documentation/process/2.Process.rst b/Documentation/process/2.Process.rst
+> index ce5561b..a9c46dd 100644
+> --- a/Documentation/process/2.Process.rst
+> +++ b/Documentation/process/2.Process.rst
+> @@ -18,17 +18,17 @@ major kernel release happening every two or three months.  The recent
+>  release history looks like this:
+>  
+>  	======  =================
+> -	2.6.38	March 14, 2011
+> -	2.6.37	January 4, 2011
+> -	2.6.36	October 20, 2010
+> -	2.6.35	August 1, 2010
+> -	2.6.34	May 15, 2010
+> -	2.6.33	February 24, 2010
+> +	4.11	April 30, 2017
+> +	4.12	July 2, 2017
+> +	4.13	September 3, 2017
+> +	4.14	November 12, 2017
+> +	4.15	January 28, 2018
+> +	4.16	April 1, 2018
+>  	======  =================
+>  
+> -Every 2.6.x release is a major kernel release with new features, internal
+> -API changes, and more.  A typical 2.6 release can contain nearly 10,000
+> -changesets with changes to several hundred thousand lines of code.  2.6 is
+> +Every 4.x release is a major kernel release with new features, internal
+> +API changes, and more.  A typical 4.x release contain about 13,000
+> +changesets with changes to several hundred thousand lines of code.  4.x is
+>  thus the leading edge of Linux kernel development; the kernel uses a
+>  rolling development model which is continually integrating major changes.
+>  
+> @@ -70,20 +70,19 @@ will get up to somewhere between -rc6 and -rc9 before the kernel is
+>  considered to be sufficiently stable and the final 2.6.x release is made.
+>  At that point the whole process starts over again.
+>  
+> -As an example, here is how the 2.6.38 development cycle went (all dates in
+> -2011):
+> +As an example, here is how the 4.16 development cycle went (all dates in
+> +2018):
+>  
+>  	==============  ===============================
+> -	January 4	2.6.37 stable release
+> -	January 18	2.6.38-rc1, merge window closes
+> -	January 21	2.6.38-rc2
+> -	February 1	2.6.38-rc3
+> -	February 7	2.6.38-rc4
+> -	February 15	2.6.38-rc5
+> -	February 21	2.6.38-rc6
+> -	March 1		2.6.38-rc7
+> -	March 7		2.6.38-rc8
+> -	March 14	2.6.38 stable release
+> +	January 28	4.15 stable release
+> +	February 11	4.16-rc1, merge window closes
+> +	February 18	4.16-rc2
+> +	February 25	4.16-rc3
+> +	March 4		4.16-rc4
+> +	March 11	4.16-rc5
+> +	March 18	4.16-rc6
+> +	March 25	4.16-rc7
+> +	April 1		4.17 stable release
+>  	==============  ===============================
+>  
+>  How do the developers decide when to close the development cycle and create
+> @@ -99,37 +98,42 @@ release is made.  In the real world, this kind of perfection is hard to
+>  achieve; there are just too many variables in a project of this size.
+>  There comes a point where delaying the final release just makes the problem
+>  worse; the pile of changes waiting for the next merge window will grow
+> -larger, creating even more regressions the next time around.  So most 2.6.x
+> +larger, creating even more regressions the next time around.  So most 4.x
+>  kernels go out with a handful of known regressions though, hopefully, none
+>  of them are serious.
+>  
+>  Once a stable release is made, its ongoing maintenance is passed off to the
+>  "stable team," currently consisting of Greg Kroah-Hartman.  The stable team
+> -will release occasional updates to the stable release using the 2.6.x.y
+> +will release occasional updates to the stable release using the 4.x.y
+>  numbering scheme.  To be considered for an update release, a patch must (1)
+>  fix a significant bug, and (2) already be merged into the mainline for the
+>  next development kernel.  Kernels will typically receive stable updates for
+>  a little more than one development cycle past their initial release.  So,
+> -for example, the 2.6.36 kernel's history looked like:
+> +for example, the 4.13 kernel's history looked like:
+>  
+>  	==============  ===============================
+> -	October 10	2.6.36 stable release
+> -	November 22	2.6.36.1
+> -	December 9	2.6.36.2
+> -	January 7	2.6.36.3
+> -	February 17	2.6.36.4
+> +	September 3 	4.13 stable release
+> +	September 13	4.13.1
+> +	September 20	4.13.2
+> +	September 27	4.13.3
+> +	October 5	4.13.4
+> +	October 12  	4.13.5
+> +	...		...
+> +	November 24	4.13.16
+>  	==============  ===============================
+>  
+> -2.6.36.4 was the final stable update for the 2.6.36 release.
+> +4.13.16 was the final stable update of the 4.13 release.
+>  
+>  Some kernels are designated "long term" kernels; they will receive support
+>  for a longer period.  As of this writing, the current long term kernels
+>  and their maintainers are:
+>  
+> -	======  ======================  ===========================
+> -	2.6.27	Willy Tarreau		(Deep-frozen stable kernel)
+> -	2.6.32	Greg Kroah-Hartman
+> -	2.6.35	Andi Kleen		(Embedded flag kernel)
+> +	======  ======================  ==============================
+> +	3.16	Ben Hutchings		(very long-term stable kernel)
+> +	4.1	Sasha Levin
+> +	4.4	Greg Kroah-Hartman	(very long-term stable kernel)
+> +	4.9	Greg Kroah-Hartman
+> +	4.14	Greg Kroah-Hartman
+>  	======  ======================  ===========================
 
-Well, I was aware only about two potential solutions. Either do the
-heavy lifting under the shared lock and do the rest with the exlusive
-one and this, drop the lock per parts. Maybe I have missed others?
+Is  4.14 not very long-term stable kernel ?
 
-> > You simply
-> > cannot drop the mmap_sem during unmap because another thread could
-> > change the address space under your feet. So you need some form of
-> > VM_DEAD and handle concurrent and conflicting address space operations.
-> 
-> Unclear that this is a problem.  If a thread does an unmap of a range
-> of virtual address space, there's no guarantee that upon return some
-> other thread has not already mapped new stuff into that address range. 
-> So what's changed?
+>  
+>  The selection of a kernel for long-term support is purely a matter of a
 
-Well, consider the following scenario:
-Thread A = calling mmap(NULL, sizeA)
-Thread B = calling munmap(addr, sizeB)
 
-They do not use any external synchronization and rely on the atomic
-munmap. Thread B only munmaps range that it knows belongs to it (e.g.
-called mmap in the past). It should be clear that ThreadA should not
-get an address from the addr, sizeB range, right? In the most simple case
-it will not happen. But let's say that the addr, sizeB range has
-unmapped holes for what ever reasons. Now anytime munmap drops the
-exclusive lock after handling one VMA, Thread A might find its sizeA
-range and use it. ThreadB then might remove this new range as soon as it
-gets its exclusive lock again.
-
-Is such a code safe? No it is not and I would call it fragile at best
-but people tend to do weird things and atomic munmap behavior is
-something they can easily depend on.
-
-Another example would be an atomic address range probing by
-MAP_FIXED_NOREPLACE. It would simply break for similar reasons.
-
-I remember my attempt to make MAP_LOCKED consistent with mlock (if the
-population fails then return -ENOMEM) and that required to drop the
-shared mmap_sem and take it in exclusive mode (because we do not
-have upgrade_read) and Linus was strongly against [1][2] for very
-similar reasons. If you drop the lock you simply do not know what
-happened under your feet.
-
-[1] http://lkml.kernel.org/r/CA+55aFydkG-BgZzry5DrTzueVh9VvEcVJdLV8iOyUphQk=0vpw@mail.gmail.com
-[2] http://lkml.kernel.org/r/CA+55aFyajquhGhw59qNWKGK4dBV0TPmDD7-1XqPo7DZWvO_hPg@mail.gmail.com
--- 
-Michal Hocko
-SUSE Labs
