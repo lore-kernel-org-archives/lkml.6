@@ -2,102 +2,89 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F920C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE872C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C27208A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C27208A4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
+	by mail.kernel.org (Postfix) with ESMTP id A9E40208A4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:31:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E40208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932302AbeGCH3P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:29:15 -0400
-Received: from olimex.com ([184.105.72.32]:53984 "EHLO olimex.com"
+        id S1754536AbeGCHbF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:31:05 -0400
+Received: from mout.web.de ([212.227.15.14]:33337 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753591AbeGCH3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:29:13 -0400
-Received: from localhost.localdomain ([195.238.85.143])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AES(128):Mac=SHA256) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 00:29:12 -0700
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
-        DIGITAL (SD) AND...),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 1/1] mmc: sunxi: Disable irq during pm_suspend
-Date:   Tue,  3 Jul 2018 10:28:43 +0300
-Message-Id: <1530602925-7714-1-git-send-email-stefan@olimex.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753831AbeGCHbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:31:04 -0400
+Received: from [192.168.1.3] ([92.228.103.75]) by smtp.web.de (mrweb003
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MYw31-1fdsYF2o31-00VkHH; Tue, 03
+ Jul 2018 09:30:48 +0200
+To:     Elena Reshetova <elena.reshetova@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        kernel-janitors@vger.kernel.org
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+Subject: [PATCH 0/6] Coccinelle: atomic_as_refcounter: Improvements for source
+ code search specifications
+From:   SF Markus Elfring <elfring@users.sourceforge.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Coccinelle <cocci@systeme.lip6.fr>
+Message-ID: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+Date:   Tue, 3 Jul 2018 09:30:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:NixHgcJO41MhS0ho1v6Xrx3OjQhLcR7vgN+JXg1TLGIwa9vUoVR
+ ELzX/oaj9edLLWU90TtcUM4gUgbupq2/MWB1c3DRZVG25wWUnqYrkCjejblJA0seluJk5YD
+ U+PSMsSG/hYVNDJKT7o8DP9GhexScrT2Nr+HFNADhQ0eG82kPXY/A0mIq/mbsbzEqPyk7ij
+ DyFOB5BNk5z7WaSoEiEig==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KpmuBE4+bL0=:C3HBI9dpwleE7huiZisPHv
+ jBvWcAm+shxxIqNnay25ecPq8p2H6dFHvhx7oFyFwdt+9Hnn5WUDbdtP23NcphLhICWSpAM5K
+ 446UODPwaeCACXuOa32PyiowJjBYiqnnHbjc9wCHrCnJwj/jrbbdIC+MxhqRe2gmmRi46RO9A
+ Kg0JmxLBSWI/fN9UZIR1nZID5LuISqhdVzC+/ULzGH51KbQDBeo7ZRDIqyB1eOlADrWRBUsYP
+ qR8NwiFbtbmvc91KvvpmF+3zo6LkaLVofmLiSmK6cDebdZFsq1G57B9Bs0lIJuM3j72mfu1E/
+ 0MiiWwJCwTC43CTtX2XPlHAT/aEor1P4X+Wuf09p4XOJ49P/KYFvxzEgEzIaMPXjFnhhYEuBO
+ SD94/PjbI9DUBI0nrs1+ytcF0MS3cInGnXt2qKEorQDoSD25wOUlhuN3QWqAdOJ7Yj8J+ul2f
+ 90/wZmdcgpqO3WvEX8pxXZZYX0od7kUFmqSI6X/MGbDn3pY+gHztqp61wt26htM9A2Y9soGq0
+ fGzos7ZYxxZ1A5tsobuuEL6U9mkcnb08vLFWAM81U3j/nESDcGhGIB5YgxBbL4su3KiOV7xWC
+ QOdgOsSwujRNaYPjmFjAOsnSXs2qAxbdcKk/XlJ7vX4iT/Q45ncQP+IhW5IYZNh3QBK2OWzp3
+ 6cw716BJ1q/yW/Jh2v9glDyxQnBolzMkLSKP+a3m4Gd801Ulh1GYDiUQ+eUHdretzIyINU4zy
+ C2x86uucXrAgMbueYMaFEs/y96UD3hezYiNcrxUR/pRPpiDmj9Q0YtJxdFBMYPO2ztLgiVCGM
+ MFAPS6+
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When mmc host controller enters suspend state, the clocks are
-disabled, but irqs are not. For some reason the irqchip emmits
-false interrupts, which causes system lock loop.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 3 Jul 2018 09:15:26 +0200
 
-Debug log is:
-  ...
-  sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
-  sunxi-mmc 1c11000.mmc: enabling the clock
-  sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
-  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-  sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
-  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-  sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
-  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
-  mmc1: new DDR MMC card at address 0001
-  mmcblk1: mmc1:0001 AGND3R 14.6 GiB
-  mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
-  mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
-  sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
-  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
-   mmcblk1: p1
-  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
-and so on...
+This source code search pattern was programmed in the way that
+some implementation details could be improved further.
+I suggest to avoid unnecessary code repetition also in this script
+for the semantic patch language.
 
-This issue apears on eMMC cards, routed on MMC2 slot. The patch is
-tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+Markus Elfring (6):
+  Omit placeholder specifications from two SmPL constraints
+  Optimise a disjunction in the first SmPL rule
+  Use type “expression” for another metavariable
+  Replace disjunction by a constraint in two SmPL rules
+  Use nested disjunctions in two SmPL rules
+  Use format strings directly in SmPL rules
 
-Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
- drivers/mmc/host/sunxi-mmc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../coccinelle/api/atomic_as_refcounter.cocci | 104 +++++++-----------
+ 1 file changed, 39 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index e747259..acae7a8 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
- 	sunxi_mmc_init_host(host);
- 	sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
- 	sunxi_mmc_set_clk(host, &mmc->ios);
-+	enable_irq(host->irq);
- 
- 	return 0;
- }
-@@ -1455,6 +1456,7 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
- 	struct mmc_host	*mmc = dev_get_drvdata(dev);
- 	struct sunxi_mmc_host *host = mmc_priv(mmc);
- 
-+	disable_irq(host->irq);
- 	sunxi_mmc_reset_host(host);
- 	sunxi_mmc_disable(host);
- 
 -- 
-2.7.4
+2.18.0
 
