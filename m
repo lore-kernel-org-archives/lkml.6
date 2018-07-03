@@ -1,119 +1,141 @@
-Return-Path: <SRS0=/0sc=JS=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E401C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E17C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC894246E9
-	for <linux-kernel@archiver.kernel.org>; Mon,  2 Jul 2018 23:59:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLap2syq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC894246E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id E828724E2D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:01:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E828724E2D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753673AbeGBX7t (ORCPT
+        id S1753798AbeGCABs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 19:59:49 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34201 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753205AbeGBX7q (ORCPT
+        Mon, 2 Jul 2018 20:01:48 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:35939 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753639AbeGCABr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 19:59:46 -0400
-Received: by mail-pg0-f67.google.com with SMTP id y5-v6so80636pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 16:59:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=evF58zRqCwWmnT0aAXmXG229hKCPXbUldLYrasJlK64=;
-        b=vLap2syqO4FsG96RkVXeOg5lt5nVFjrUEqsAcg6mcJZ/QtWg6ikCdtmFn5t7ykC5tz
-         wF6DLG1E8N0WMg9P3/7Bx5y4mJRD15x/cNoKM5yc2EEtJ9cXK+rWySa1ZQHvxhExsN2J
-         wB1DpxRwjsT+I6G5Lfrv9KNEmimf0uv6q4j8YclCaWWEkQXCO+sSQEczXvy/JSFA8qRY
-         iWWtpl3wuBsXAqpt8W0qc5gQsj9tlwRBVktosrgfrDpDlLzljjRra60i3dFYHs7i/6Aa
-         96YbezbhD5Etyx2E1xEdLxen6UKme0wQinnsSvLnu6wPcjh1zil1IlgCF573k9TKkHrw
-         DbCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=evF58zRqCwWmnT0aAXmXG229hKCPXbUldLYrasJlK64=;
-        b=IYVPwLzcxvE2lBbReI4rELf3SO9PAaZv4ZBU0Onofu9WvJy8N7kPRxOE6BXwzC4By1
-         3SWvUfMCnyA1hB06dMU8WTvttOu08KE86v6OS3JKaOSTQK98kbqmiMNvAfKmMxyjVHYB
-         UFDZCK71Ud+t/RbNxcczISS5aH2pFFIhk1qw8irT6W/peW/MySetkin3Y0gGwt1nhYkF
-         IM+K2HaUA7kYdfHeKGBUs7NQzN8SI0pH1PByHJz2Vadx2rgRAJmkVGEhO1DeKtb9d9y1
-         LlSK2rFc2mvzshdoxOTy9/nuzkzP5iRbGRscwOj1crqhvi5hkKb5r0JHGtdC5L4qO62O
-         5dzA==
-X-Gm-Message-State: APt69E2OvbLnY7mO61xzbkd3eT5LKGfLIG/ckiD5WatwCT3YvvLl/8yg
-        ngqITzdRmqTFNLuEY93S6OQFnwdg1Hk=
-X-Google-Smtp-Source: ADUXVKLCCFkRMFToziG57JFfysAsSkPpn+2va/df6lVD5YynjZQcQLhoPNN3ciYpGKk0tGG7Ru6fbg==
-X-Received: by 2002:a65:611a:: with SMTP id z26-v6mr23326154pgu.61.1530575985725;
-        Mon, 02 Jul 2018 16:59:45 -0700 (PDT)
-Received: from drosen.mtv.corp.google.com ([2620:0:1000:1611:7129:1142:3149:848c])
-        by smtp.gmail.com with ESMTPSA id k15-v6sm25011486pfi.37.2018.07.02.16.59.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Jul 2018 16:59:44 -0700 (PDT)
-From:   Daniel Rosenberg <drosen@google.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Daniel Rosenberg <drosen@google.com>, stable@vger.kernel.org
-Subject: [PATCH] HID: debug: check length before copy_to_user()
-Date:   Mon,  2 Jul 2018 16:59:37 -0700
-Message-Id: <20180702235937.111619-1-drosen@google.com>
-X-Mailer: git-send-email 2.18.0.399.gad0ab374a1-goog
+        Mon, 2 Jul 2018 20:01:47 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3rk.0Y_1530576073;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3rk.0Y_1530576073)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 03 Jul 2018 08:01:21 +0800
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
+ <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
+ <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+ <ce2f93d3-fe0e-89c2-5465-94cfa974f1ea@linux.alibaba.com>
+Message-ID: <06df816f-b8b7-f6c0-3710-baad99fb3213@linux.alibaba.com>
+Date:   Mon, 2 Jul 2018 17:01:12 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <ce2f93d3-fe0e-89c2-5465-94cfa974f1ea@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If our length is greater than the size of the buffer, we
-overflow the buffer
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Cc: stable@vger.kernel.org
----
- drivers/hid/hid-debug.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 8469b6964ff64..b48100236df89 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1154,6 +1154,8 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
- 			goto out;
- 		if (list->tail > list->head) {
- 			len = list->tail - list->head;
-+			if (len > count)
-+				len = count;
- 
- 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1163,6 +1165,8 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
- 			list->head += len;
- 		} else {
- 			len = HID_DEBUG_BUFSIZE - list->head;
-+			if (len > count)
-+				len = count;
- 
- 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1170,7 +1174,9 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
- 			}
- 			list->head = 0;
- 			ret += len;
--			goto copy_rest;
-+			count -= len;
-+			if (count > 0)
-+				goto copy_rest;
- 		}
- 
- 	}
--- 
-2.18.0.399.gad0ab374a1-goog
+On 6/29/18 9:26 PM, Yang Shi wrote:
+>
+>
+> On 6/29/18 8:15 PM, Andrew Morton wrote:
+>> On Fri, 29 Jun 2018 19:28:15 -0700 Yang Shi 
+>> <yang.shi@linux.alibaba.com> wrote:
+>>
+>>>
+>>>> we're adding a bunch of code to 32-bit kernels which will never be
+>>>> executed.
+>>>>
+>>>> I'm thinking it would be better to be much more explicit with "#ifdef
+>>>> CONFIG_64BIT" in this code, rather than relying upon the above magic.
+>>>>
+>>>> But I tend to think that the fact that we haven't solved anything on
+>>>> locked vmas or on uprobed mappings is a shostopper for the whole
+>>>> approach :(
+>>> I agree it is not that perfect. But, it still could improve the most 
+>>> use
+>>> cases.
+>> Well, those unaddressed usecases will need to be fixed at some point.
+>
+> Yes, definitely.
+>
+>> What's our plan for that?
+>
+> As I mentioned in the earlier email, locked and hugetlb cases might be 
+> able to be solved by separating vm_flags update and actual unmap. I 
+> will look into it further later.
+
+By looking into this further， I think both mlocked and hugetlb vmas can 
+be handled.
+
+For mlocked vmas, it is easy since we acquires write mmap_sem before 
+unmapping, so VM_LOCK flags can be cleared here then unmap, just like 
+what the regular path does.
+
+For hugetlb vmas, the VM_MAYSHARE flag is just checked by 
+huge_pmd_share() in hugetlb_fault()->huge_pte_alloc(), another call site 
+is dup_mm()->copy_page_range()->copy_hugetlb_page_range(), we don't care 
+this call chain in this case.
+
+So we may expand VM_DEAD to hugetlb_fault().  Michal suggested to check 
+VM_DEAD in check_stable_address_space(), so it would be called in 
+hugetlb_fault() too (not in current code), then the page fault handler 
+would bail out before huge_pte_alloc() is called.
+
+With this trick, we don't have to care about when the vm_flags is 
+updated, we can unmap hugetlb vmas in read mmap_sem critical section, 
+then update the vm_flags with write mmap_sem held or before the unmap.
+
+Yang
+
+>
+> From my point of view, uprobe mapping sounds not that vital.
+>
+>>
+>> Would one of your earlier designs have addressed all usecases? I
+>> expect the dumb unmap-a-little-bit-at-a-time approach would have?
+>
+> Yes. The v1 design does unmap with holding write map_sem. So, the 
+> vm_flags update is not a problem.
+>
+> Thanks,
+> Yang
+>
+>>
+>>> For the locked vmas and hugetlb vmas, unmapping operations need modify
+>>> vm_flags. But, I'm wondering we might be able to separate unmap and
+>>> vm_flags update. Because we know they will be unmapped right away, the
+>>> vm_flags might be able to be updated in write mmap_sem critical section
+>>> before the actual unmap is called or after it. This is just off the top
+>>> of my head.
+>>>
+>>> For uprobed mappings, I'm not sure how vital it is to this case.
+>>>
+>>> Thanks,
+>>> Yang
+>>>
+>
 
