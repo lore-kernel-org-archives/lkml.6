@@ -2,138 +2,97 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E380C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD500C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F79243D2
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:48:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KvhXSyHO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F79243D2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 58D7121525
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58D7121525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753287AbeGCVs0 (ORCPT
+        id S1753421AbeGCVss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 17:48:26 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44331 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753159AbeGCVsX (ORCPT
+        Tue, 3 Jul 2018 17:48:48 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:34113 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753159AbeGCVsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:48:23 -0400
-Received: by mail-pl0-f68.google.com with SMTP id m16-v6so1632374pls.11
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 14:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Zu0ewdK9sB0im189WeoIEE+LL2ocUAWsXvwjBauS7a4=;
-        b=KvhXSyHOu+OhpqfhktAq8qH0ViswwOUBkg1tJErIZ9gW07NlseZ5A4u9UjxLdgQjM3
-         yL1g3k2C6rYo8A5Z8xE5WqLsQaJdk2M3CQ+7HACGfYng6N606gxBTaEdFnPmHPv6Pkrd
-         X4z6O9rrhHfIsv7okWQVP3vUHxyT1ink9L5l4=
+        Tue, 3 Jul 2018 17:48:46 -0400
+Received: by mail-yb0-f195.google.com with SMTP id e9-v6so1310985ybq.1;
+        Tue, 03 Jul 2018 14:48:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zu0ewdK9sB0im189WeoIEE+LL2ocUAWsXvwjBauS7a4=;
-        b=TgbgR/rg/arEIJnewgVYm0VjK+c88GQ2n6RZphsaJuYGu/tM6oBLFqhXKNvhyczQIy
-         Ct9pnzvwmMYXiqjZaMDWAV0XOcWZczS0nqDOesg9b3o+sddodwK3oE+hguet+D3xiy1m
-         K2HjY8F4MDmTi8E5ViVe/5fb0vvdUpiDMsU3zxYFZ8uZlkpA3ia8eswu+rhY0QAzel4c
-         ZmkKGzZvOUV3Tf0SZfVNvzMEH0Dg61UVbgoCq1L9BOLfJzHeX0jlFeaDZcPiiO3TtOfu
-         jYUO6AkLKuXV1sjmUn3Ciz4FaNwhtymbkHWvGywWpRuxahrQ/4w+LyYO4wUDDh8gp8vf
-         Gzkg==
-X-Gm-Message-State: APt69E0zkr5vTh0pYA7PURtNMBadtWy6taKt5Fqnn6I+vFlnMXp8nU7m
-        hrUuvg+fSP5BG2fCzCvS4IMOOQ==
-X-Google-Smtp-Source: AAOMgpeMeZ3wqR6dzRbZ7AQ3kyOmeQoIQPwJvY41u9etb9SBiVAPugkW+YB9qACKvGbAT9jrllIFww==
-X-Received: by 2002:a17:902:82c3:: with SMTP id u3-v6mr24862446plz.83.1530654503432;
-        Tue, 03 Jul 2018 14:48:23 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id b65-v6sm3742103pfg.34.2018.07.03.14.48.22
+        bh=8SZ/GXO1o9RW2jG4ckwjzTymgePhJLA68sSvAvIYM44=;
+        b=ry+zmrr1aecMhg78R6dFHEATl6K4YH55+JmrqEg4NaNpVWwpV/xmekEx82GcG4E8Oz
+         gnspcB9INzFXHHJD28MjYJQw3VfnMinBGYqYhCnOvxqqmmiCpH6plwhsetN80/Ea4GY/
+         15LZ0dXp9XJF1ab2lncQ/lKzvEs7lyBkCAvfXaq1rPiJJVYW9HgOYp9PhnKz5c0VlLHT
+         N5f0i0TTsEod6E4KZxcTzBZgY0LPHcHRpCFvRliBevkG4qlDz+LhOeYHszQ5kWvHApzJ
+         IJ8XCFHSGceUcHuz1LA4weWyvNG3CAY/87Aqj+CupJ/xkbJHES2UTG2wLfNSOH73Zi8N
+         FE+g==
+X-Gm-Message-State: APt69E1Sw0X4Rdkmxa9W5wT7XJT49KJChrB9cA+AL57zmAyfhZFPSYDG
+        SSrqZ4Yrq0D5bLP6qFEvCQ==
+X-Google-Smtp-Source: AAOMgpcIaB7440RL1Ba4ZtHKLxJxi8NvAZIw/IDw5H9ZKdVsdtgUSmlf4LRYaryNmzlQeN+U0Pr4ZA==
+X-Received: by 2002:a5b:811:: with SMTP id x17-v6mr15523339ybp.86.1530654525909;
+        Tue, 03 Jul 2018 14:48:45 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id d6-v6sm751773ywj.2.2018.07.03.14.48.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 14:48:22 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 14:48:22 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, smohanad@codeaurora.org,
-        vivek.gautam@codeaurora.org, andy.gross@linaro.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v4 6/6] arm64: dts: sdm845: Add tsens nodes
-Message-ID: <20180703214822.GD129942@google.com>
-References: <cover.1530533998.git.amit.kucheria@linaro.org>
- <a52b77ad84867774a0659f51ccb79b17ba7638ab.1530533998.git.amit.kucheria@linaro.org>
+        Tue, 03 Jul 2018 14:48:45 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 15:48:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Andreas Klinger <ak@it-klinger.de>, knaack.h@gmx.de,
+        lars@metafoo.de, pmeerw@pmeerw.net, mark.rutland@arm.com,
+        mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] iio: hx711: add data-ready-delay-ns property in DT
+Message-ID: <20180703214843.GA484@rob-hp-laptop>
+References: <20180625151802.GA6369@arbeit>
+ <20180630183232.540ce031@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a52b77ad84867774a0659f51ccb79b17ba7638ab.1530533998.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180630183232.540ce031@archlinux>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Jul 02, 2018 at 06:14:09PM +0530, Amit Kucheria wrote:
-> SDM845 has two tsens blocks, one with 13 sensors and the other with 8
-> sensors.
+On Sat, Jun 30, 2018 at 06:32:32PM +0100, Jonathan Cameron wrote:
+> On Mon, 25 Jun 2018 17:18:02 +0200
+> Andreas Klinger <ak@it-klinger.de> wrote:
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> > add data-ready-delay-ns property for hx711 ADC
+> > this is the delay after rising PD_SCK until DOUT is read and assumed to be
+> > ready
+> > 
+> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index cdaabeb..edf8505 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -221,6 +221,22 @@
->  			#interrupt-cells = <2>;
->  		};
->  
-> +		tsens0: tsens@c222000 {
-> +			compatible = "qcom,tsens-v2.4.0", "qcom,tsens-v2";
-> +			reg = <0xc263000 0x1ff>, /* TM */
-> +			      <0xc222000 0x1ff>; /* SROT */
-> +			#qcom,sensors = <13>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		tsens1: tsens@c223000 {
-> +			compatible = "qcom,tsens-v2.4.0", "qcom,tsens-v2";
-> +			reg = <0xc265000 0x1ff>, /* TM */
-> +			      <0xc223000 0x1ff>; /* SROT */
-> +			#qcom,sensors = <8>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
->  		spmi_bus: spmi@c440000 {
->  			compatible = "qcom,spmi-pmic-arb";
->  			reg = <0xc440000 0x1100>,
+> Hmm. It's not particularly generic... I think this should have
+> have vendor prefix until we have some visibility of whether it
+> is a common thing we want to standardise around or not.
 
-I tested this series on an SDM845 board. Temperatures can be read from
-the tsens0 sensors, however for tsens1 sensors I get:
+Agreed. Doesn't look like any interface I've seen before.
 
-cat temp
-cat: temp: No data available
+Since it's bit-banging, seems to me it would be better to specify the 
+frequency for PD_SCK and sample DOUT just before or after setting PD_SCK 
+low. 
 
-TRDY_READY_BIT set when reading TRDY_OFFSET in get_temp_tsens_v2().
-Unfortunately I currently have no documentation of the registers or the
-thermal sensors in general and couldn't investigate further.
+Rob
 
-Any idea what could be the problem?
-
-Thanks
-
-Matthias
+> I'll also be waiting for a devicetree ack on this one as it's a
+> tiny bit unusual.
+> 
+> Thanks,
+> 
+> Jonathan
