@@ -2,289 +2,120 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C65EC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE8EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0A123DF1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:41:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0A123DF1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6329423DF1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:42:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqCsnaxV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6329423DF1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753166AbeGCUl1 (ORCPT
+        id S1753064AbeGCUmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:41:27 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45431 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752399AbeGCUl0 (ORCPT
+        Tue, 3 Jul 2018 16:42:35 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:37375 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752466AbeGCUmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:41:26 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faS6t-0002RQ-2V; Tue, 03 Jul 2018 22:41:15 +0200
-Date:   Tue, 3 Jul 2018 22:41:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 09/13] x86/sgx: EPC page allocation routines
-In-Reply-To: <20180703182118.15024-10-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032216390.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-10-jarkko.sakkinen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 3 Jul 2018 16:42:33 -0400
+Received: by mail-vk0-f67.google.com with SMTP id h22-v6so1888396vke.4;
+        Tue, 03 Jul 2018 13:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nE2VyK+IqCv9plnZ54JuQrbq/Ms6Cbv3w5ceCvxdDq0=;
+        b=YqCsnaxVCwrC5HsNkcPJAseekOy4OdHkE+zqn5OF9UIkYn6XxAqIGEHoJDCwwZO1It
+         5xM6/7fIhpIXO5M0PuHF1qcp28lyQJHjA/6LhpZueujooHhMfriBlOr5skLK++xcFr7r
+         YueSIfdJGef3dNeVhIG8dQNuO9EFZyaExCUxDKX9ZARIllvhY6+tm8cUyv2GBcuwGuIa
+         ZJgniTiGHAQXiocMafY6CgPIVLdM4ercUwOgEBiLIFJZzdXnnTvfH7xcUj2YTQgRkWY5
+         mL7B4V7EWnRTl38JHGa/YpvhGy4nbyIWiCxligWlIZG9AGscMnQdpe+dyUZcIXork2ye
+         eV7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nE2VyK+IqCv9plnZ54JuQrbq/Ms6Cbv3w5ceCvxdDq0=;
+        b=ABLfSRIxns65TWHg3Neh2cqAjhSlPl60OxZzwXZL2kDXwDUP1Dgf9O6WVKs7kl9PV3
+         Wek+tTE5usX/OXEYJmxSP5wEdsTQPZnx+XkUmYof2BaW1+OAU0WYbvnpVS2dvzlvjT9o
+         SVVg3N5V/Nx9l3mCXo+BUPzn5yS1SdfQDJyUlExxukfDzE58z+el9t2aAmJ81XIbBq8c
+         sFMpLY8/cMMmjCcM1G992cd3Kr+Ic7YPbTXIaA6CbPLyfoPViFUTUMN2QCTu2RzNekP0
+         WahllS5ST7nAk4STDzXuq7Www+/jAWM+yNUle2yWecYbFgPLxSJfe+ZZW7Q1PZsJEUfy
+         +9Sw==
+X-Gm-Message-State: APt69E3t2r0xzYZskHlBdXRLkRdwZwv/vFzuOnarfMPeZbmA2ryrftVw
+        hK1Xh8G6OeSVditB7AvtCKHTtBnx1j/+YyTx8P8=
+X-Google-Smtp-Source: AAOMgpeVQxM1ZKLB/Z4nvy5EU86n/xVYqNyRVN35dr8A7wfRBHNOkUcAL2pHllNGAYihHjEBxyjGP7A50VZPC3pbbeg=
+X-Received: by 2002:a1f:6dc4:: with SMTP id i187-v6mr4010504vkc.131.1530650552590;
+ Tue, 03 Jul 2018 13:42:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 13:42:31 -0700 (PDT)
+In-Reply-To: <CAHp75VepHb5BaGmB_2eBmMrmyeAAOih9GE4E34s49gDbvKskgA@mail.gmail.com>
+References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
+ <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
+ <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
+ <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
+ <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
+ <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
+ <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
+ <CAHp75VefGpNkF0ANA_wBm627aZXS60NPZ9VAdOYqr_iZ8Hvpzw@mail.gmail.com>
+ <CAOMZO5Ayn4ik4F3sWhTo9Q5DGHG6nuf71M3DLsM+heMi0TFjVg@mail.gmail.com> <CAHp75VepHb5BaGmB_2eBmMrmyeAAOih9GE4E34s49gDbvKskgA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 3 Jul 2018 23:42:31 +0300
+Message-ID: <CAHp75VcRqKhPm-jEVNP5GXAEQ4Z0b1x6rco26-m79WhwzvbFvQ@mail.gmail.com>
+Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
+ using io{read|write}64
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-ntb@googlegroups.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Dan Douglass <dan.douglass@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
->  
-> +#define SGX_NR_TO_SCAN	16
-> +#define SGX_NR_LOW_PAGES 32
-> +#define SGX_NR_HIGH_PAGES 64
-> +
->  bool sgx_enabled __ro_after_init;
->  EXPORT_SYMBOL(sgx_enabled);
->  bool sgx_lc_enabled __ro_after_init;
->  EXPORT_SYMBOL(sgx_lc_enabled);
-> +LIST_HEAD(sgx_active_page_list);
-> +EXPORT_SYMBOL(sgx_active_page_list);
-> +DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> +EXPORT_SYMBOL(sgx_active_page_list_lock);
+On Tue, Jul 3, 2018 at 11:40 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Tue, Jul 3, 2018 at 11:10 PM, Fabio Estevam <festevam@gmail.com> wrote:
+>> On Tue, Jul 3, 2018 at 4:58 PM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>>
+>>> By the way, is there any URL which contains dmesg out of kernel with
+>>> this commit reverted?
+>>
+>> Yes, here is the linux-next 20180626 dmesg (which is the last
+>> linux-next that does not contain 46e4bf08f63 and it boots fine) :
+>> https://storage.kernelci.org/next/master/next-20180626/arm/imx_v6_v7_defconfig/lab-baylibre-seattle/boot-imx6q-wandboard.html
+>
+> Thanks.
+>
+> And here just a wild guess, if you comment out a BUG() in IRQ handler,
+> does it boot?
 
-Why is all of this exported. If done right then no call site has to fiddle
-with the list and the lock at all.
+One more thing, on the working version can you print the value of IRQ
+status register?
 
->  static atomic_t sgx_nr_free_pages = ATOMIC_INIT(0);
->  static struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
->  static int sgx_nr_epc_banks;
-> +static struct task_struct *ksgxswapd_tsk;
-> +static DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> +
-> +static void sgx_swap_cluster(void)
-> +{
-> +	struct sgx_epc_page *cluster[SGX_NR_TO_SCAN + 1];
-> +	struct sgx_epc_page *epc_page;
-> +	int i;
-> +	int j;
+Something like
 
-  	int i, j;
+pr_info_ratelimited("%s %x\n", __func__, irqstatus);
 
-> +	memset(cluster, 0, sizeof(cluster));
-> +
-> +	for (i = 0, j = 0; i < SGX_NR_TO_SCAN; i++) {
-> +		spin_lock(&sgx_active_page_list_lock);
-> +		if (list_empty(&sgx_active_page_list)) {
-> +			spin_unlock(&sgx_active_page_list_lock);
-> +			break;
-> +		}
-> +		epc_page = list_first_entry(&sgx_active_page_list,
-> +					    struct sgx_epc_page, list);
-> +		if (!epc_page->impl->ops->get(epc_page)) {
-> +			list_move_tail(&epc_page->list, &sgx_active_page_list);
-> +			spin_unlock(&sgx_active_page_list_lock);
-> +			continue;
-> +		}
-> +		list_del(&epc_page->list);
-> +		spin_unlock(&sgx_active_page_list_lock);
-> +
-> +		if (epc_page->impl->ops->reclaim(epc_page)) {
-> +			cluster[j++] = epc_page;
-> +		} else {
-> +			spin_lock(&sgx_active_page_list_lock);
-> +			list_add_tail(&epc_page->list, &sgx_active_page_list);
-> +			spin_unlock(&sgx_active_page_list_lock);
-> +			epc_page->impl->ops->put(epc_page);
-> +		}
-> +	}
-> +
-> +	for (i = 0; cluster[i]; i++) {
-> +		epc_page = cluster[i];
-> +		epc_page->impl->ops->block(epc_page);
-> +	}
-> +
-> +	for (i = 0; cluster[i]; i++) {
-> +		epc_page = cluster[i];
-> +		epc_page->impl->ops->write(epc_page);
-> +		epc_page->impl->ops->put(epc_page);
-> +		sgx_free_page(epc_page);
-> +	}
-
-Thanks a lot for commenting this piece of art thoughtfully. It's entirely
-clear how all of this works now.
-
-> +}
-> +
-> +static int ksgxswapd(void *p)
-> +{
-> +	set_freezable();
-> +
-> +	while (!kthread_should_stop()) {
-> +		if (try_to_freeze())
-> +			continue;
-> +
-> +		wait_event_freezable(ksgxswapd_waitq, kthread_should_stop() ||
-> +				     atomic_read(&sgx_nr_free_pages) <
-> +				     SGX_NR_HIGH_PAGES);
-> +
-> +		if (atomic_read(&sgx_nr_free_pages) < SGX_NR_HIGH_PAGES)
-> +			sgx_swap_cluster();
-> +	}
-> +
-> +	pr_info("%s: done\n", __func__);
-
-Really useful. 
-
-> +	return 0;
-> +}
-> +
-> +static struct sgx_epc_page *sgx_try_alloc_page(struct sgx_epc_page_impl *impl)
-> +{
-> +	struct sgx_epc_bank *bank;
-> +	struct sgx_epc_page *page = NULL;
-> +	int i;
-> +
-> +	for (i = 0; i < sgx_nr_epc_banks; i++) {
-> +		bank = &sgx_epc_banks[i];
-> +
-> +		down_write(&bank->lock);
-> +
-> +		if (atomic_read(&bank->free_cnt))
-
-And these atomics are required becasue bank->lock protection is not
-sufficient or what am I missing here?
-
-> +			page = bank->pages[atomic_dec_return(&bank->free_cnt)];
-> +
-> +		up_write(&bank->lock);
-> +
-> +		if (page)
-> +			break;
-> +	}
-> +
-> +	if (page) {
-> +		atomic_dec(&sgx_nr_free_pages);
-> +		page->impl = impl;
-> +	}
-> +
-> +	return page;
-> +}
-> +
-> +/**
-> + * sgx_alloc_page - allocate an EPC page
-> + * @flags:	allocation flags
-> + * @impl:	implementation for the struct sgx_epc_page
-> + *
-> + * Try to grab a page from the free EPC page list. If there is a free page
-> + * available, it is returned to the caller. If called with SGX_ALLOC_ATOMIC,
-> + * the function will return immediately if the list is empty. Otherwise, it
-> + * will swap pages up until there is a free page available. Upon returning the
-> + * low watermark is checked and ksgxswapd is waken up if we are below it.
-> + *
-> + * Return:
-> + *   a &struct sgx_epc_page instace,
-> + *   -ENOMEM if all pages are unreclaimable,
-> + *   -EBUSY when called with SGX_ALLOC_ATOMIC and out of free pages
-> + */
-> +struct sgx_epc_page *sgx_alloc_page(struct sgx_epc_page_impl *impl,
-> +				    unsigned int flags)
-> +{
-> +	struct sgx_epc_page *entry;
-> +
-> +	for ( ; ; ) {
-> +		entry = sgx_try_alloc_page(impl);
-> +		if (entry)
-> +			break;
-> +
-> +		if (list_empty(&sgx_active_page_list))
-> +			return ERR_PTR(-ENOMEM);
-> +
-> +		if (flags & SGX_ALLOC_ATOMIC) {
-> +			entry = ERR_PTR(-EBUSY);
-> +			break;
-> +		}
-> +
-> +		if (signal_pending(current)) {
-> +			entry = ERR_PTR(-ERESTARTSYS);
-> +			break;
-> +		}
-> +
-> +		sgx_swap_cluster();
-> +		schedule();
-> +	}
-> +
-> +	if (atomic_read(&sgx_nr_free_pages) < SGX_NR_LOW_PAGES)
-> +		wake_up(&ksgxswapd_waitq);
-
-What's the logic of SGX_NR_LOW_PAGES vs. SGX_NR_HIGH_PAGES? 
-
-> +
-> +	return entry;
-> +}
-> +EXPORT_SYMBOL(sgx_alloc_page);
-> +
-> +/**
-> + * sgx_free_page - free an EPC page
-> + *
-> + * @page:	any EPC page
-> + *
-> + * Remove an EPC page and insert it back to the list of free pages.
-> + *
-> + * Return: SGX error code
-> + */
-> +int sgx_free_page(struct sgx_epc_page *page)
-> +{
-> +	struct sgx_epc_bank *bank = SGX_EPC_BANK(page);
-> +	int ret;
-> +
-> +	ret = sgx_eremove(page);
-> +	if (ret) {
-> +		pr_debug("EREMOVE returned %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	down_read(&bank->lock);
-> +	bank->pages[atomic_inc_return(&bank->free_cnt) - 1] = page;
-> +	atomic_inc(&sgx_nr_free_pages);
-> +	up_read(&bank->lock);
-
-I have hard time to see the benefit of this reader/writer semaphore
-here. Both sides which fiddle with the bank pages are doing a simple
-de/increment of free_cnt and a store resp. load. So what justifies the
-overhead of a rwsem?
-
->  static __init int sgx_init_epc_bank(unsigned long addr, unsigned long size,
->  				    unsigned long index,
->  				    struct sgx_epc_bank *bank)
-> @@ -114,6 +318,11 @@ static __init void sgx_page_cache_teardown(void)
->  		kfree(bank->pages);
->  		kfree(bank->pages_data);
->  	}
-> +
-> +	if (ksgxswapd_tsk) {
-> +		kthread_stop(ksgxswapd_tsk);
-> +		ksgxswapd_tsk = NULL;
-
-This stops the thread _AFTER_ freeing all the bank memory. Is that actually
-correct?
-
-Thanks,
-
-	tglx
-
-
+-- 
+With Best Regards,
+Andy Shevchenko
