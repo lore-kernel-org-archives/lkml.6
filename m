@@ -6,212 +6,192 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5C1C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6A5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C437C23EDE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C437C23EDE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 100BE23EDE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:02:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100BE23EDE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933702AbeGCQBP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:01:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41711 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932531AbeGCQBL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:01:11 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w63G0IgC338885
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 3 Jul 2018 09:00:18 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w63G0IMe338882;
-        Tue, 3 Jul 2018 09:00:18 -0700
-Date:   Tue, 3 Jul 2018 09:00:18 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Nick Desaulniers <tipbot@zytor.com>
-Message-ID: <tip-d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7@git.kernel.org>
-Cc:     peterz@infradead.org, tstellar@redhat.com, ndesaulniers@google.com,
-        jgross@suse.com, torvalds@linux-foundation.org, mka@chromium.org,
-        arnd@arndb.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        astrachan@google.com, sedat.dilek@gmail.com, tglx@linutronix.de,
-        hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, arnd@arndb.de,
-          mka@chromium.org, torvalds@linux-foundation.org, hpa@zytor.com,
-          tglx@linutronix.de, sedat.dilek@gmail.com, astrachan@google.com,
-          peterz@infradead.org, jgross@suse.com, ndesaulniers@google.com,
-          tstellar@redhat.com
-In-Reply-To: <20180621162324.36656-4-ndesaulniers@google.com>
-References: <20180621162324.36656-4-ndesaulniers@google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/paravirt: Make native_save_fl() extern inline
-Git-Commit-ID: d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S933740AbeGCQB5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:01:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51810 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932531AbeGCQBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:01:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 067EA7A9;
+        Tue,  3 Jul 2018 09:01:55 -0700 (PDT)
+Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A3843F5AD;
+        Tue,  3 Jul 2018 09:01:51 -0700 (PDT)
+Subject: Re: [PATCH 4/7 v5] iommu: arm-smmu: Add support for the fsl-mc bus
+To:     Nipun Gupta <nipun.gupta@nxp.com>, will.deacon@arm.com,
+        robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+        laurentiu.tudor@nxp.com, bhelgaas@google.com
+Cc:     hch@lst.de, joro@8bytes.org, m.szyprowski@samsung.com,
+        shawnguo@kernel.org, frowand.list@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
+References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
+ <1526824191-7000-5-git-send-email-nipun.gupta@nxp.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <83174f21-50f3-2ed2-bf04-6136af591567@arm.com>
+Date:   Tue, 3 Jul 2018 17:01:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1526824191-7000-5-git-send-email-nipun.gupta@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7
-Gitweb:     https://git.kernel.org/tip/d0a8d9378d16eb3c69bd8e6d23779fbdbee3a8c7
-Author:     Nick Desaulniers <ndesaulniers@google.com>
-AuthorDate: Thu, 21 Jun 2018 09:23:24 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 3 Jul 2018 10:56:27 +0200
+On 20/05/18 14:49, Nipun Gupta wrote:
+> Implement bus specific support for the fsl-mc bus including
+> registering arm_smmu_ops and bus specific device add operations.
+> 
+> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+> ---
+>   drivers/iommu/arm-smmu.c |  7 +++++++
+>   drivers/iommu/iommu.c    | 21 +++++++++++++++++++++
+>   include/linux/fsl/mc.h   |  8 ++++++++
+>   include/linux/iommu.h    |  2 ++
+>   4 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 69e7c60..e1d5090 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -52,6 +52,7 @@
+>   #include <linux/spinlock.h>
+>   
+>   #include <linux/amba/bus.h>
+> +#include <linux/fsl/mc.h>
+>   
+>   #include "io-pgtable.h"
+>   #include "arm-smmu-regs.h"
+> @@ -1459,6 +1460,8 @@ static struct iommu_group *arm_smmu_device_group(struct device *dev)
+>   
+>   	if (dev_is_pci(dev))
+>   		group = pci_device_group(dev);
+> +	else if (dev_is_fsl_mc(dev))
+> +		group = fsl_mc_device_group(dev);
+>   	else
+>   		group = generic_device_group(dev);
+>   
+> @@ -2037,6 +2040,10 @@ static void arm_smmu_bus_init(void)
+>   		bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
+>   	}
+>   #endif
+> +#ifdef CONFIG_FSL_MC_BUS
+> +	if (!iommu_present(&fsl_mc_bus_type))
+> +		bus_set_iommu(&fsl_mc_bus_type, &arm_smmu_ops);
+> +#endif
+>   }
+>   
+>   static int arm_smmu_device_probe(struct platform_device *pdev)
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index d2aa2320..6d4ce35 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -32,6 +32,7 @@
+>   #include <linux/pci.h>
+>   #include <linux/bitops.h>
+>   #include <linux/property.h>
+> +#include <linux/fsl/mc.h>
+>   #include <trace/events/iommu.h>
+>   
+>   static struct kset *iommu_group_kset;
+> @@ -987,6 +988,26 @@ struct iommu_group *pci_device_group(struct device *dev)
+>   	return iommu_group_alloc();
+>   }
+>   
+> +/* Get the IOMMU group for device on fsl-mc bus */
+> +struct iommu_group *fsl_mc_device_group(struct device *dev)
+> +{
+> +	struct device *cont_dev = fsl_mc_cont_dev(dev);
+> +	struct iommu_group *group;
+> +
+> +	/* Container device is responsible for creating the iommu group */
+> +	if (fsl_mc_is_cont_dev(dev)) {
 
-x86/paravirt: Make native_save_fl() extern inline
+Why duplicate what fsl_mc_cont_dev() has already figured out?
 
-native_save_fl() is marked static inline, but by using it as
-a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+AFAICS the overall operation here boils down to something like:
 
-paravirt's use of native_save_fl() also requires that no GPRs other than
-%rax are clobbered.
+	cont_dev = fsl_mc_cont_dev(dev);
+	group = iommu_group_get(cont_dev);
+	if (!group)
+		group = iommu_group_alloc();
+	return group;
 
-Compilers have different heuristics which they use to emit stack guard
-code, the emittance of which can break paravirt's callee saved assumption
-by clobbering %rcx.
+> +		group = iommu_group_alloc();
+> +		if (IS_ERR(group))
+> +			return NULL;
 
-Marking a function definition extern inline means that if this version
-cannot be inlined, then the out-of-line version will be preferred. By
-having the out-of-line version be implemented in assembly, it cannot be
-instrumented with a stack protector, which might violate custom calling
-conventions that code like paravirt rely on.
+iommu_group_get_for_dev() expects a PTR_ERR, so I don't think munging 
+the return here is the right thing to do.
 
-The semantics of extern inline has changed since gnu89. This means that
-folks using GCC versions >= 5.1 may see symbol redefinition errors at
-link time for subdirs that override KBUILD_CFLAGS (making the C standard
-used implicit) regardless of this patch. This has been cleaned up
-earlier in the patch set, but is left as a note in the commit message
-for future travelers.
+> +	} else {
+> +		get_device(cont_dev);
 
-Reports:
- https://lkml.org/lkml/2018/5/7/534
- https://github.com/ClangBuiltLinux/linux/issues/16
+If races are a concern, isn't this a bit late? Maybe in that case you 
+want {get,put}_fsl_mc_cont_dev() routines instead of the simple macro 
+below. But on the other hand if dev already has cont_dev as its parent, 
+wouldn't the reference taken in device_add() be sufficient to prevent it 
+from vanishing unexpectedly in this timescale?
 
-Discussion:
- https://bugs.llvm.org/show_bug.cgi?id=37512
- https://lkml.org/lkml/2018/5/24/1371
+Robin.
 
-Thanks to the many folks that participated in the discussion.
-
-Debugged-by: Alistair Strachan <astrachan@google.com>
-Debugged-by: Matthias Kaehlcke <mka@chromium.org>
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Tom Stellar <tstellar@redhat.com>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@redhat.com
-Cc: akataria@vmware.com
-Cc: akpm@linux-foundation.org
-Cc: andrea.parri@amarulasolutions.com
-Cc: ard.biesheuvel@linaro.org
-Cc: aryabinin@virtuozzo.com
-Cc: astrachan@google.com
-Cc: boris.ostrovsky@oracle.com
-Cc: brijesh.singh@amd.com
-Cc: caoj.fnst@cn.fujitsu.com
-Cc: geert@linux-m68k.org
-Cc: ghackmann@google.com
-Cc: gregkh@linuxfoundation.org
-Cc: jan.kiszka@siemens.com
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: joe@perches.com
-Cc: jpoimboe@redhat.com
-Cc: keescook@google.com
-Cc: kirill.shutemov@linux.intel.com
-Cc: kstewart@linuxfoundation.org
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kbuild@vger.kernel.org
-Cc: manojgupta@google.com
-Cc: mawilcox@microsoft.com
-Cc: michal.lkml@markovi.net
-Cc: mjg59@google.com
-Cc: mka@chromium.org
-Cc: pombredanne@nexb.com
-Cc: rientjes@google.com
-Cc: rostedt@goodmis.org
-Cc: thomas.lendacky@amd.com
-Cc: tweek@google.com
-Cc: virtualization@lists.linux-foundation.org
-Cc: will.deacon@arm.com
-Cc: yamada.masahiro@socionext.com
-Link: http://lkml.kernel.org/r/20180621162324.36656-4-ndesaulniers@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index 89f08955fff7..c4fc17220df9 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,7 +13,7 @@
-  * Interrupt control:
-  */
- 
--static inline unsigned long native_save_fl(void)
-+extern inline unsigned long native_save_fl(void)
- {
- 	unsigned long flags;
- 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..8824d01c0c35 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-+obj-y			+= irqflags.o
- 
- obj-y				+= process.o
- obj-y				+= fpu/
-diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
-new file mode 100644
-index 000000000000..ddeeaac8adda
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.S
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <asm/asm.h>
-+#include <asm/export.h>
-+#include <linux/linkage.h>
-+
-+/*
-+ * unsigned long native_save_fl(void)
-+ */
-+ENTRY(native_save_fl)
-+	pushf
-+	pop %_ASM_AX
-+	ret
-+ENDPROC(native_save_fl)
-+EXPORT_SYMBOL(native_save_fl)
-+
-+/*
-+ * void native_restore_fl(unsigned long flags)
-+ * %eax/%rdi: flags
-+ */
-+ENTRY(native_restore_fl)
-+	push %_ASM_ARG1
-+	popf
-+	ret
-+ENDPROC(native_restore_fl)
-+EXPORT_SYMBOL(native_restore_fl)
+> +		group = iommu_group_get(cont_dev);
+> +		put_device(cont_dev);
+> +	}
+> +
+> +	return group;
+> +}
+> +
+>   /**
+>    * iommu_group_get_for_dev - Find or create the IOMMU group for a device
+>    * @dev: target device
+> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
+> index f27cb14..dddaca1 100644
+> --- a/include/linux/fsl/mc.h
+> +++ b/include/linux/fsl/mc.h
+> @@ -351,6 +351,14 @@ struct fsl_mc_io {
+>   #define dev_is_fsl_mc(_dev) (0)
+>   #endif
+>   
+> +/* Macro to check if a device is a container device */
+> +#define fsl_mc_is_cont_dev(_dev) (to_fsl_mc_device(_dev)->flags & \
+> +	FSL_MC_IS_DPRC)
+> +
+> +/* Macro to get the container device of a MC device */
+> +#define fsl_mc_cont_dev(_dev) (fsl_mc_is_cont_dev(_dev) ? \
+> +	(_dev) : (_dev)->parent)
+> +
+>   /*
+>    * module_fsl_mc_driver() - Helper macro for drivers that don't do
+>    * anything special in module init/exit.  This eliminates a lot of
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 19938ee..2981200 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -389,6 +389,8 @@ static inline size_t iommu_map_sg(struct iommu_domain *domain,
+>   extern struct iommu_group *pci_device_group(struct device *dev);
+>   /* Generic device grouping function */
+>   extern struct iommu_group *generic_device_group(struct device *dev);
+> +/* FSL-MC device grouping function */
+> +struct iommu_group *fsl_mc_device_group(struct device *dev);
+>   
+>   /**
+>    * struct iommu_fwspec - per-device IOMMU instance data
+> 
