@@ -4,200 +4,352 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59BAC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2F9C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 839DC23ECE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4481123ECE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHIowl2n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839DC23ECE
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYJU76VG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4481123ECE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933772AbeGCQUQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:20:16 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39278 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933569AbeGCQUN (ORCPT
+        id S933878AbeGCQU3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:20:29 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35826 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933569AbeGCQUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:20:13 -0400
-Received: by mail-wr0-f195.google.com with SMTP id b8-v6so2575450wro.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 09:20:12 -0700 (PDT)
+        Tue, 3 Jul 2018 12:20:25 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i12-v6so4972174oik.2;
+        Tue, 03 Jul 2018 09:20:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EkZjQBQ3lmuTKD+2wPHV/1uQ3NIyz4LgTpDgxXKf9uY=;
-        b=HHIowl2nR+mEjJJukim+y4iGGOeTjQJY+G+hgeaE/KTu/7kD6fuCtf2lfC1U4mr7uX
-         anFqfMixxjQRC3VE8ctcFD28QIQZ8zEAezpzgTTeZRG92BGMSxYhmOK2THaG8JAJtgYJ
-         UF9l6RfRn2tNRvu8juTmvTXju0BBLSIEVlbJjYQK3hSpStqcAUXkgeApIimd2Ol5xZ6z
-         uXmfXxZSTvzSBe/0GbKhYKPz0HoaP5KqGIB54qGdDiUMz5NzE7PpWYdfCIfumtfb/5HV
-         Ez1CEEGU1ZIjmyAjGl3j1T9AhJl+KuALSop57+xk9vAMz5noj/o5Nk5wtUO2+2Vs8u7K
-         uygQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zsgypG04OW6kcYuDEeplrtJIK66q56vyi8ZE06TomNM=;
+        b=oYJU76VGOUofJ9/KvNrZeU9A8xHAwAkjneQ1rGDCRTfIIeKGZEnVkzkAGHDW89717O
+         YsM/BJGXeTJ7dpOFPZpZCap2Gt2vYx5nhIrZqmG1ZRN3BMZJmqrdfg51W3XZxal3cLkQ
+         Swn2EM5lhB/fQd/HIi0cYXtD9A2FHbMqJL4R3MDudublaZoXh3z45PGFcc1lL4aGlAWH
+         CQbwJY539INz45DDJdrwiGRErJla1MYl/1IQa89OOxXZ+uBuC9M9MIbkcQeS6Eh3lgdD
+         XFOeCVTTbZ7IJGNVueVXVjrtnO3T3QMWpwVOqH8qGoXSP5tUXOWwQoisDNORi003WxIO
+         KgiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EkZjQBQ3lmuTKD+2wPHV/1uQ3NIyz4LgTpDgxXKf9uY=;
-        b=caOVnb/+vz28xqLenf1HRLe0JX41GZDQ7DmcdFx06/jApWj4mMLBv4u9hM8DNsBDBb
-         HXcjIOIiWTPf//Tb7fvcq6ddaZEA3PwSeMbS7fSgNCuvYOnQspUYza7t7ZFVrrSIumCo
-         ZDTJoGmwXdYbY5tfp2jG4uMtyTAgxQq7RiI5EBKxDO+2XtyQjHyPZok1aAoWLXbPnyzd
-         xPOign6BRFI9hgquBLYlyFuoi3v4EpalZDNUtGmu/E+dVlXwkAMfaAU8sIETU3Bjar09
-         huKyw6TyUYxyQYqj4VEdbZuSGF3ewSMKxj4U6FjeH2B5VU0bWS04HDo70FfOlpIQVKj/
-         8YeQ==
-X-Gm-Message-State: APt69E1YVrKNfC2fzhAEpkVNmO1G5cpLIlLhnDF3hG07utnFJUtaCneJ
-        oEke3+WSjCCxpzozu28pyt9i69dhdfcUPiR2uRs=
-X-Google-Smtp-Source: AAOMgpdK8cBQ7ZW/J9lFvf31oTc2A1Hm+kKcPIjDrGfPJ3uffuCDNSv9kNNQK/no5QCzhQ98vfjos30PVJTqvN4T8sA=
-X-Received: by 2002:adf:afd3:: with SMTP id y19-v6mr25115693wrd.176.1530634812230;
- Tue, 03 Jul 2018 09:20:12 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zsgypG04OW6kcYuDEeplrtJIK66q56vyi8ZE06TomNM=;
+        b=ghjPQEzwx02KOqhRyUGr1jD1POPySjQxb8e2EAhZRYYPl67SYu1MCFdR2GVvP20azS
+         ZkLJdwqn1C+dW4KIaS9Nvat6GdUhQ+bwZjJ6ftDpf9CGz+D5PcS5BjZUQyUNna6uqyIV
+         i414hQHpdI66HkSL2U1DU4cdsNCFFYmEVEA7kOiWrcnx+8rvJdpJhGNP9n8lCsdviMOC
+         r/bJ+vL0iNLQmSV75zRWMwrcAXW/kfkGvzr8pH1cbxoYV9yraaaSmxcv7RRviURuNReg
+         bbFo5wNCW9bCxQkhyUrEG8EfN46PCIKC9SKy650uTDdX2GF5ebwwytHkmLxLf7QWAcjH
+         xzWg==
+X-Gm-Message-State: APt69E3hFXQDWtIldwwstaZsMARSdU5ijlHmpILVhWszScXElRTJtCcv
+        IsGm/GyNo/5xzQ+KruijcpFAubtH
+X-Google-Smtp-Source: AAOMgpetCILNp77lzoFBTkRsPf04Okd0i1DaNKiDJTJm9xIB4xk/HC7q9ZKvV2iH0By5AmpZzSZwug==
+X-Received: by 2002:aca:3507:: with SMTP id c7-v6mr5996959oia.46.1530634824813;
+        Tue, 03 Jul 2018 09:20:24 -0700 (PDT)
+Received: from [192.168.0.2] (cpe-70-124-142-160.austin.res.rr.com. [70.124.142.160])
+        by smtp.gmail.com with ESMTPSA id w62-v6sm641936otb.0.2018.07.03.09.20.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 09:20:23 -0700 (PDT)
+Subject: [PATCH v5] dcdbas: Add support for WSMT ACPI table
+To:     Mario.Limonciello@dell.com, andy.shevchenko@gmail.com
+Cc:     dvhart@infradead.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
+ <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com>
+ <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
+ <20180609010420.GA112645@localhost.localdomain>
+ <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
+ <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com>
+ <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
+ <8307f1e0-c480-3f78-9327-e248208e5349@gmail.com>
+ <CAHp75VdTGXqE__VHjRphEmpMVfxaVVik=u-_0NRhQAKeq=+ZKA@mail.gmail.com>
+ <b5652ed8-5fff-4f8b-ec0f-467bce853bf8@gmail.com>
+ <CAHp75VfL3v8U6o36-e3+XPL53sb9wMUOXsL6gn3XE4=-kJjuKQ@mail.gmail.com>
+ <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com>
+ <CAHp75VdSVLzNHnrOzzrBMf4X2Cg4QACRrnxKNkQzcYJ0h5W+tw@mail.gmail.com>
+ <e17fbb51b98d45318001adb7eb6a51b2@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75VfNo9NVfgGn4Fqa5fA9zp47TkqHwn1MJ044qMQoMNMB-Q@mail.gmail.com>
+ <73c53c23c0824e4595292bfafc6054ee@ausx13mpc120.AMER.DELL.COM>
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+Message-ID: <4e26f407-58c0-09b6-6735-f004d5e86969@gmail.com>
+Date:   Tue, 3 Jul 2018 11:20:21 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:8e6b:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 09:20:11 -0700 (PDT)
-In-Reply-To: <CAGS+omATU0gus_EvbHtegGK1ZkaKVmSOr1E6QLQjd+LA_tC_LA@mail.gmail.com>
-References: <20180413161601.109431-1-djkurtz@chromium.org> <6e46904a-d721-d583-8ab5-82cb07df7934@amd.com>
- <CAGS+omATU0gus_EvbHtegGK1ZkaKVmSOr1E6QLQjd+LA_tC_LA@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 3 Jul 2018 12:20:11 -0400
-Message-ID: <CADnq5_Nwt+i2Sezh2Rmg9VyYYbc8LAMJyS6eQf9K5yAp-GgAXA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu/acp: Fix slab-out-of-bounds in mfd_add_device
- in acp_hw_init
-To:     Daniel Kurtz <djkurtz@chromium.org>
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Akshu Agrawal <Akshu.Agrawal@amd.com>, jclinton@chromium.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <73c53c23c0824e4595292bfafc6054ee@ausx13mpc120.AMER.DELL.COM>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Antivirus: Avast (VPS 180703-2, 07/03/2018), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 5:48 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> Hi Alex,
->
-> On Sun, Apr 15, 2018 at 9:48 PM Agrawal, Akshu <Akshu.Agrawal@amd.com> wrote:
->>
->>
->>
->> On 4/13/2018 9:45 PM, Daniel Kurtz wrote:
->> > Commit 51f7415039d4 ("drm/amd/amdgpu: creating two I2S instances for
->> > stoney/cz") added support for the "BT_I2S" ACP i2s channel.  As part of
->> > this change, one additional acp resource was added, but the "num_resource"
->> > count was accidentally incremented by 2.
->> >
->> > This incorrect count eventually causes mfd_add_device() to try to access
->> > an invalid memory address (the location of non-existent resource 5.
->> >
->> > This fault was detected by running a KASAN enabled kernel, which produced
->> > the following splat at boot:
->> >
->> > [    6.612987] ==================================================================
->> > [    6.613509] BUG: KASAN: slab-out-of-bounds in mfd_add_device+0x4bc/0x7a7
->> > [    6.613509] Read of size 8 at addr ffff880107d4dc58 by task swapper/0/1
->> > [    6.613509]
->> > [    6.613509] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.33 #349
->> > [    6.613509] Hardware name: Google Grunt/Grunt, BIOS Google_Grunt.10543.0.2018_04_03_1812 04/02/2018
->> > [    6.613509] Call Trace:
->> > [    6.613509]  dump_stack+0x4d/0x63
->> > [    6.613509]  print_address_description+0x80/0x2d6
->> > [    6.613509]  ? mfd_add_device+0x4bc/0x7a7
->> > [    6.613509]  kasan_report+0x255/0x295
->> > [    6.613509]  mfd_add_device+0x4bc/0x7a7
->> > [    6.613509]  ? kasan_kmalloc+0x99/0xa8
->> > [    6.613509]  ? mfd_add_devices+0x58/0xe4
->> > [    6.613509]  ? __kmalloc+0x154/0x178
->> > [    6.613509]  mfd_add_devices+0xa5/0xe4
->> > [    6.613509]  acp_hw_init+0x92e/0xc4a
->> > [    6.613509]  amdgpu_device_init+0x1dfb/0x22a2
->> > [    6.613509]  ? kmalloc_order+0x53/0x5d
->> > [    6.613509]  ? kmalloc_order_trace+0x23/0xb3
->> > [    6.613509]  amdgpu_driver_load_kms+0xce/0x267
->> > [    6.613509]  drm_dev_register+0x169/0x2fb
->> > [    6.613509]  amdgpu_pci_probe+0x217/0x242
->> > [    6.613509]  pci_device_probe+0x101/0x18e
->> > [    6.613509]  driver_probe_device+0x1dd/0x419
->> > [    6.613509]  ? ___might_sleep+0x80/0x1b6
->> > [    6.613509]  __driver_attach+0x9f/0xc9
->> > [    6.613509]  ? driver_probe_device+0x419/0x419
->> > [    6.613509]  bus_for_each_dev+0xbc/0xe1
->> > [    6.613509]  bus_add_driver+0x189/0x2c0
->> > [    6.613509]  driver_register+0x108/0x156
->> > [    6.613509]  ? ttm_init+0x67/0x67
->> > [    6.613509]  do_one_initcall+0xb2/0x161
->> > [    6.613509]  kernel_init_freeable+0x25a/0x308
->> > [    6.613509]  ? rest_init+0xcc/0xcc
->> > [    6.613509]  kernel_init+0x11/0x10d
->> > [    6.613509]  ? rest_init+0xcc/0xcc
->> > [    6.613509]  ret_from_fork+0x22/0x40
->> > [    6.613509]
->> > [    6.613509] Allocated by task 1:
->> > [    6.613509]  save_stack+0x46/0xce
->> > [    6.613509]  kasan_kmalloc+0x99/0xa8
->> > [    6.613509]  kmem_cache_alloc_trace+0x11a/0x13e
->> > [    6.613509]  acp_hw_init+0x210/0xc4a
->> > [    6.613509]  amdgpu_device_init+0x1dfb/0x22a2
->> > [    6.613509]  amdgpu_driver_load_kms+0xce/0x267
->> > [    6.613509]  drm_dev_register+0x169/0x2fb
->> > [    6.613509]  amdgpu_pci_probe+0x217/0x242
->> > [    6.613509]  pci_device_probe+0x101/0x18e
->> > [    6.613509]  driver_probe_device+0x1dd/0x419
->> > [    6.613509]  __driver_attach+0x9f/0xc9
->> > [    6.613509]  bus_for_each_dev+0xbc/0xe1
->> > [    6.613509]  bus_add_driver+0x189/0x2c0
->> > [    6.613509]  driver_register+0x108/0x156
->> > [    6.613509]  do_one_initcall+0xb2/0x161
->> > [    6.613509]  kernel_init_freeable+0x25a/0x308
->> > [    6.613509]  kernel_init+0x11/0x10d
->> > [    6.613509]  ret_from_fork+0x22/0x40
->> > [    6.613509]
->> > [    6.613509] Freed by task 0:
->> > [    6.613509] (stack is not available)
->> > [    6.613509]
->> > [    6.613509] The buggy address belongs to the object at ffff880107d4db08
->> > [    6.613509]  which belongs to the cache kmalloc-512 of size 512
->> > [    6.613509] The buggy address is located 336 bytes inside of
->> > [    6.613509]  512-byte region [ffff880107d4db08, ffff880107d4dd08)
->> > [    6.613509] The buggy address belongs to the page:
->> > [    6.613509] page:ffffea00041f5300 count:1 mapcount:0 mapping:          (null) index:0x0 compound_mapcount: 0
->> > [    6.613509] flags: 0x8000000000008100(slab|head)
->> > [    6.613509] raw: 8000000000008100 0000000000000000 0000000000000000 0000000100120012
->> > [    6.613509] raw: ffffea0004208520 ffff88010b001680 ffff88010b002cc0 0000000000000000
->> > [    6.613509] page dumped because: kasan: bad access detected
->> > [    6.613509]
->> > [    6.613509] Memory state around the buggy address:
->> > [    6.613509]  ffff880107d4db00: fc 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> > [    6.613509]  ffff880107d4db80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->> > [    6.613509] >ffff880107d4dc00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->> > [    6.613509]                                                     ^
->> > [    6.613509]  ffff880107d4dc80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> > [    6.613509]  ffff880107d4dd00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> > [    6.613509] ==================================================================
->> >
->> > Fixes: 51f7415039d4 ("drm/amd/amdgpu: creating two I2S instances for stoney/cz")
->> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
->> Acked-by: Akshu Agrawal <akshu.agrawal@amd.com>
->
->
-> Was this patch ever picked up?  I can't find it in agd5f/linux.
 
-It wasn't applied.  I don't see 51f7415039d4 ("drm/amd/amdgpu:
-creating two I2S instances for stoney/cz") upstream yet either.
-Daniel, Vijendar, which ones do you want applied?  Can you send me the
-patches?
+If the WSMT ACPI table is present and indicates that a fixed communication
+buffer should be used, use the firmware-specified buffer instead of
+allocating a buffer in memory for communications between the dcdbas driver
+and firmare.
 
-Alex
+Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+---
+v2 Bumped driver version to 5.6.0-3.3
+v3 Removed dependency on ACPI in Kconfig
+   Moved the added #include to be in alphabetical order
+   Added comments in smi_request_store()
+   Simplified checksum code
+   Changed loop searching 0xf0000 to be more readable
+   Reworked calculation of remap_size & smi_data_buf_size
+v4 Fixed comment that starts with "Calling Interface SMI"
+   Fixed formatting of first "if" statement in dcdbas_check_wsmt()
+v5 Reworked comment that starts with "Calling Interface SMI"
+   Changed EPS scanning loop to check every 16 bytes
 
->
-> Thanks,
-> -Dan
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+ drivers/firmware/dcdbas.c | 123 +++++++++++++++++++++++++++++++++++++++++++---
+ drivers/firmware/dcdbas.h |  10 ++++
+ 2 files changed, 127 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
+index 0bdea60c65dd..ae28e48ff7dc 100644
+--- a/drivers/firmware/dcdbas.c
++++ b/drivers/firmware/dcdbas.c
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include <linux/platform_device.h>
++#include <linux/acpi.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/errno.h>
+ #include <linux/cpu.h>
+@@ -41,7 +42,7 @@
+ #include "dcdbas.h"
+ 
+ #define DRIVER_NAME		"dcdbas"
+-#define DRIVER_VERSION		"5.6.0-3.2"
++#define DRIVER_VERSION		"5.6.0-3.3"
+ #define DRIVER_DESCRIPTION	"Dell Systems Management Base Driver"
+ 
+ static struct platform_device *dcdbas_pdev;
+@@ -49,19 +50,23 @@ static struct platform_device *dcdbas_pdev;
+ static u8 *smi_data_buf;
+ static dma_addr_t smi_data_buf_handle;
+ static unsigned long smi_data_buf_size;
++static unsigned long max_smi_data_buf_size = MAX_SMI_DATA_BUF_SIZE;
+ static u32 smi_data_buf_phys_addr;
+ static DEFINE_MUTEX(smi_data_lock);
++static u8 *eps_buffer;
+ 
+ static unsigned int host_control_action;
+ static unsigned int host_control_smi_type;
+ static unsigned int host_control_on_shutdown;
+ 
++static bool wsmt_enabled;
++
+ /**
+  * smi_data_buf_free: free SMI data buffer
+  */
+ static void smi_data_buf_free(void)
+ {
+-	if (!smi_data_buf)
++	if (!smi_data_buf || wsmt_enabled)
+ 		return;
+ 
+ 	dev_dbg(&dcdbas_pdev->dev, "%s: phys: %x size: %lu\n",
+@@ -86,7 +91,7 @@ static int smi_data_buf_realloc(unsigned long size)
+ 	if (smi_data_buf_size >= size)
+ 		return 0;
+ 
+-	if (size > MAX_SMI_DATA_BUF_SIZE)
++	if (size > max_smi_data_buf_size)
+ 		return -EINVAL;
+ 
+ 	/* new buffer is needed */
+@@ -169,7 +174,7 @@ static ssize_t smi_data_write(struct file *filp, struct kobject *kobj,
+ {
+ 	ssize_t ret;
+ 
+-	if ((pos + count) > MAX_SMI_DATA_BUF_SIZE)
++	if ((pos + count) > max_smi_data_buf_size)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&smi_data_lock);
+@@ -322,8 +327,20 @@ static ssize_t smi_request_store(struct device *dev,
+ 			ret = count;
+ 		break;
+ 	case 1:
+-		/* Calling Interface SMI */
+-		smi_cmd->ebx = (u32) virt_to_phys(smi_cmd->command_buffer);
++		/*
++		 * Calling Interface SMI
++		 *
++		 * Provide physical address of command buffer field within
++		 * the struct smi_cmd to BIOS.
++		 *
++		 * Because the address that smi_cmd (smi_data_buf) points to
++		 * will be from memremap() of a non-memory address if WSMT
++		 * is present, we can't use virt_to_phys() on smi_cmd, so
++		 * we have to use the physical address that was saved when
++		 * the virtual address for smi_cmd was received.
++		 */
++		smi_cmd->ebx = smi_data_buf_phys_addr +
++				offsetof(struct smi_cmd, command_buffer);
+ 		ret = dcdbas_smi_request(smi_cmd);
+ 		if (!ret)
+ 			ret = count;
+@@ -482,6 +499,93 @@ static void dcdbas_host_control(void)
+ 	}
+ }
+ 
++/* WSMT */
++
++static u8 checksum(u8 *buffer, u8 length)
++{
++	u8 sum = 0;
++	u8 *end = buffer + length;
++
++	while (buffer < end)
++		sum += *buffer++;
++	return sum;
++}
++
++static inline struct smm_eps_table *check_eps_table(u8 *addr)
++{
++	struct smm_eps_table *eps = (struct smm_eps_table *)addr;
++
++	if (strncmp(eps->smm_comm_buff_anchor, SMM_EPS_SIG, 4) != 0)
++		return NULL;
++
++	if (checksum(addr, eps->length) != 0)
++		return NULL;
++
++	return eps;
++}
++
++static int dcdbas_check_wsmt(void)
++{
++	struct acpi_table_wsmt *wsmt = NULL;
++	struct smm_eps_table *eps = NULL;
++	u64 remap_size;
++	u8 *addr;
++
++	acpi_get_table(ACPI_SIG_WSMT, 0, (struct acpi_table_header **)&wsmt);
++	if (!wsmt)
++		return 0;
++
++	/* Check if WSMT ACPI table shows that protection is enabled */
++	if (!(wsmt->protection_flags & ACPI_WSMT_FIXED_COMM_BUFFERS) ||
++	    !(wsmt->protection_flags & ACPI_WSMT_COMM_BUFFER_NESTED_PTR_PROTECTION))
++		return 0;
++
++	/* Scan for EPS (entry point structure) */
++	for (addr = (u8 *)__va(0xf0000);
++	     addr < (u8 *)__va(0x100000 - sizeof(struct smm_eps_table));
++	     addr += 16) {
++		eps = check_eps_table(addr);
++		if (eps)
++			break;
++	}
++
++	if (!eps) {
++		dev_dbg(&dcdbas_pdev->dev, "found WSMT, but no EPS found\n");
++		return -ENODEV;
++	}
++
++	/*
++	 * Get physical address of buffer and map to virtual address.
++	 * Table gives size in 4K pages, regardless of actual system page size.
++	 */
++	if (upper_32_bits(eps->smm_comm_buff_addr + 8)) {
++		dev_warn(&dcdbas_pdev->dev, "found WSMT, but EPS buffer address is above 4GB\n");
++		return -EINVAL;
++	}
++	/*
++	 * Limit remap size to MAX_SMI_DATA_BUF_SIZE + 8 (since the first 8
++	 * bytes are used for a semaphore, not the data buffer itself).
++	 */
++	remap_size = eps->num_of_4k_pages * PAGE_SIZE;
++	if (remap_size > MAX_SMI_DATA_BUF_SIZE + 8)
++		remap_size = MAX_SMI_DATA_BUF_SIZE + 8;
++	eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
++	if (!eps_buffer) {
++		dev_warn(&dcdbas_pdev->dev, "found WSMT, but failed to map EPS buffer\n");
++		return -ENOMEM;
++	}
++
++	/* First 8 bytes is for a semaphore, not part of the smi_data_buf */
++	smi_data_buf_phys_addr = eps->smm_comm_buff_addr + 8;
++	smi_data_buf = eps_buffer + 8;
++	smi_data_buf_size = remap_size - 8;
++	max_smi_data_buf_size = smi_data_buf_size;
++	wsmt_enabled = true;
++	dev_info(&dcdbas_pdev->dev,
++		 "WSMT found, using firmware-provided SMI buffer.\n");
++	return 1;
++}
++
+ /**
+  * dcdbas_reboot_notify: handle reboot notification for host control
+  */
+@@ -548,6 +652,11 @@ static int dcdbas_probe(struct platform_device *dev)
+ 
+ 	dcdbas_pdev = dev;
+ 
++	/* Check if ACPI WSMT table specifies protected SMI buffer address */
++	error = dcdbas_check_wsmt();
++	if (error < 0)
++		return error;
++
+ 	/*
+ 	 * BIOS SMI calls require buffer addresses be in 32-bit address space.
+ 	 * This is done by setting the DMA mask below.
+@@ -635,6 +744,8 @@ static void __exit dcdbas_exit(void)
+ 	 */
+ 	if (dcdbas_pdev)
+ 		smi_data_buf_free();
++	if (eps_buffer)
++		memunmap(eps_buffer);
+ 	platform_device_unregister(dcdbas_pdev_reg);
+ 	platform_driver_unregister(&dcdbas_driver);
+ }
+diff --git a/drivers/firmware/dcdbas.h b/drivers/firmware/dcdbas.h
+index ca3cb0a54ab6..52729a494b00 100644
+--- a/drivers/firmware/dcdbas.h
++++ b/drivers/firmware/dcdbas.h
+@@ -53,6 +53,7 @@
+ #define EXPIRED_TIMER				(0)
+ 
+ #define SMI_CMD_MAGIC				(0x534D4931)
++#define SMM_EPS_SIG				"$SCB"
+ 
+ #define DCDBAS_DEV_ATTR_RW(_name) \
+ 	DEVICE_ATTR(_name,0600,_name##_show,_name##_store);
+@@ -103,5 +104,14 @@ struct apm_cmd {
+ 
+ int dcdbas_smi_request(struct smi_cmd *smi_cmd);
+ 
++struct smm_eps_table {
++	char smm_comm_buff_anchor[4];
++	u8 length;
++	u8 checksum;
++	u8 version;
++	u64 smm_comm_buff_addr;
++	u64 num_of_4k_pages;
++} __packed;
++
+ #endif /* _DCDBAS_H_ */
+ 
+-- 
+2.14.2
+
