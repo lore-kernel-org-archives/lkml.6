@@ -2,144 +2,109 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD570C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A86C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F1F2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:44:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F1F2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E53A2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E53A2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754733AbeGCJoU (ORCPT
+        id S1754709AbeGCJqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:44:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46298 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754540AbeGCJoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:44:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84E8680D;
-        Tue,  3 Jul 2018 02:44:17 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 605F53F5A0;
-        Tue,  3 Jul 2018 02:44:15 -0700 (PDT)
-Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph
- bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Matt Sealey <Matt.Sealey@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Sudeep Holla <Sudeep.Holla@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>,
-        John Horley <John.Horley@arm.com>,
-        "mike.leach@linaro.org" <mike.leach@linaro.org>,
-        "coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
- <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
- <20180612204802.GA15817@rob-hp-laptop>
- <a1c0749b-9c97-b45f-716f-a62ae07af278@arm.com>
- <5448BBB7-93FE-400F-9D87-FABF5DE0539C@arm.com>
- <c0d531ec-9201-bfd8-e6c3-9140698b0697@arm.com>
- <HE1PR0802MB24127EC935B9AF6F82AB3B6EEE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
- <075b99a1-2a29-f6dc-e9f2-99f895c27d35@arm.com>
- <CANLsYkx9cjV-bWg7aLg-kJT7x7DtwTHdsYzzM8A3+cFFnu_mNg@mail.gmail.com>
- <HE1PR0802MB24121F0EEF8D7D643BC391A1EE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
- <5e013d65-9931-6b8d-ce7c-4333309d4ada@arm.com>
- <CAL_Jsq+0kExVY33kdDoR6bAxbr2VzRUzW2j0k+2wmv4CSNVnpQ@mail.gmail.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <79d24815-278a-5465-65eb-afd3535236e7@arm.com>
-Date:   Tue, 3 Jul 2018 10:44:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 05:46:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754469AbeGCJqo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 05:46:44 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w639kMcX120167
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 05:46:43 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k06t5g0f4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:46:43 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Tue, 3 Jul 2018 05:46:43 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 05:46:39 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w639kc7S7274882
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 09:46:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87F02B2068;
+        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 461E2B2065;
+        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
+Received: from sofia.ibm.com (unknown [9.124.35.39])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id B7CBC2E2F42; Tue,  3 Jul 2018 15:16:36 +0530 (IST)
+Date:   Tue, 3 Jul 2018 15:16:36 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        stewart@linux.vnet.ibm.com, benh@kernel.crashing.org,
+        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
+        npiggin@gmail.com, mpe@ellerman.id.au
+Subject: Re: [PATCH v3 1/2] powernv/cpuidle: Parse dt idle properties into
+ global structure
+Reply-To: ego@linux.vnet.ibm.com
+References: <1530609656-13301-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+ <1530609656-13301-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+0kExVY33kdDoR6bAxbr2VzRUzW2j0k+2wmv4CSNVnpQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530609656-13301-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18070309-0072-0000-0000-000003791415
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009300; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01055881; UDB=6.00541596; IPR=6.00833803;
+ MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 09:46:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070309-0073-0000-0000-000048933646
+Message-Id: <20180703094636.GA24693@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Akshay,
 
-On 14/06/18 14:59, Rob Herring wrote:
-> On Thu, Jun 14, 2018 at 2:53 AM, Suzuki K Poulose
-> <Suzuki.Poulose@arm.com> wrote:
->> On 13/06/18 22:07, Matt Sealey wrote:
->>>
->>>
->>>
->>>> -----Original Message-----
->>>> From: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>>
->>>>> So, if the suggestion is to use an existing property "unit", I am fine
->>>>> with it, if people agree to it.
->>>>
->>>>
->>>> If we're going to have something sharply different than ACPI I prefer
->>>> Rob's idea.
->>
->>
->> No, the above comment is about using "unit" ( if it is a standard property
->> for specifying something specific to hardware) instead of "coresight,hwid".
->> I would prefer to stick to the DT graph bindings, because :
+On Tue, Jul 03, 2018 at 02:50:55PM +0530, Akshay Adiga wrote:
+> Device-tree parsing happens twice, once while deciding idle state to be
+> used for hotplug and once during cpuidle init. Hence, parsing the device
+> tree and caching it will reduce code duplication. Parsing code has been
+> moved to pnv_parse_cpuidle_dt() from pnv_probe_idle_states(). In addition
+> to the properties in the device tree the number of available states is
+> also required.
 > 
-> "unit" is not a standard property and I don't like it either.
-> 
->>
->> 1) The connections are bi-directional => Well, not necessarily
->> bi-directional
->> in terms of the data flow. But the connection information is critical. i.e,
->> we need information about both the end-points of a connection, which the DT
->> graph bindings solves.
->>
->> All we are missing is a way for specifying the "hardware port" number and
->> the
->> direction of flow. I don't see why do we need to create something new just
->> for
->> these two properties for something that exists today and works reasonably
->> well
->> for the usecase.
-> 
-> If you have "in-ports" and "out-ports" nodes, then that gives you
-> direction and you can use reg for the "hardware port".
-> 
-> in-ports {
->    port@0 {
->      reg = <0>;
->      endpoint {...};
->    };
->    port@1 {
->      reg = <1>;
->      endpoint {...};
->    };
-> };
-> out-ports {
->    port@0 {
->      reg = <0>;
->      endpoint {...};
->    };
-> };
-> 
-> I'll need to check, but dtc may need an update to not warn about this.
-> 
+> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
 
-I did a quick check with the upstream dtc tool and the above form is
-doesn't generate any errors.
+Looks good.
+Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
 
-Mathieu, Rob,
-
-Shall I proceed with the proposal above ?
-
-
-Suzuki
