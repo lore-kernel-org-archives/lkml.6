@@ -6,188 +6,197 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92871C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02419C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403F720C07
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E2CC20C07
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:53:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NgT5ckm8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NgT5ckm8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 403F720C07
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="savoUrIB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2CC20C07
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeGCKw2 (ORCPT
+        id S1752976AbeGCKxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:52:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50340 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeGCKw0 (ORCPT
+        Tue, 3 Jul 2018 06:53:07 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:34076 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752513AbeGCKxG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:52:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EE89860B27; Tue,  3 Jul 2018 10:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530615145;
-        bh=pdhEUd6zCmB40iuhXUGlHf+DWPrIwzBRuW8mP4Cv8Bw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NgT5ckm8kqX3bsIfYkMYPvGYuEOf5uL0ZWL4hF9gP8wsU2OFbgcBIRV6X7wVu1KV3
-         2BI+Wrpu8s2wzeyzI5bphBlJUrzKnFpGO3B/swjOWgcBD2r08lZI60LFV/CTrCg6r6
-         G01qtruXvF2rWnd3bhf9fLdBCAtcuzTnBlfvb/CA=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 39CF16028D;
-        Tue,  3 Jul 2018 10:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530615145;
-        bh=pdhEUd6zCmB40iuhXUGlHf+DWPrIwzBRuW8mP4Cv8Bw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NgT5ckm8kqX3bsIfYkMYPvGYuEOf5uL0ZWL4hF9gP8wsU2OFbgcBIRV6X7wVu1KV3
-         2BI+Wrpu8s2wzeyzI5bphBlJUrzKnFpGO3B/swjOWgcBD2r08lZI60LFV/CTrCg6r6
-         G01qtruXvF2rWnd3bhf9fLdBCAtcuzTnBlfvb/CA=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 03 Jul 2018 16:22:25 +0530
-From:   poza@codeaurora.org
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Sinan Kaya <okaya@codeaurora.org>, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-In-Reply-To: <20180703083447.GA2689@wunner.de>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
- <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
- <20180703083447.GA2689@wunner.de>
-Message-ID: <324f8cf2fe6f7bdc43ca8a646eea908d@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Tue, 3 Jul 2018 06:53:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XjWtgyf2TWlsQzDIQNLSLJlP8v91SAWXD/ZHw2DIC8Y=; b=savoUrIB0pYHqJwGQSdfz/Ml0
+        wu5SEPiwwYNlW8RPF1O+OYoi9P52LhSnBLBNNq6VCQeXTQJPXJ7oiNP9kNt2oowx3C0+QprMjVBXu
+        1F+qJz+esxmS43Pl9YQYkho99gLTPSYdCsJZ46PtBUkB/GZIvtBqxMYAcBvoQoMS7OES+tCSE/PGF
+        Hmq7JuLDNu9i1RPJ265x89Ua6n5zkLYoxUTL+I+U+CJN55OpTKORDRnMVwTkDlI4giLAA3V4EyIKb
+        UH3+3cbilELaSFiUFfKe+QP+0JnppnKEtHgUpuiycMI/xqsa4AEJpFNVEHtD1Z7SnSBzpuRFllGnT
+        bMrRQm5GA==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faIvI-0001sc-9X; Tue, 03 Jul 2018 10:52:40 +0000
+Message-ID: <1530615159.13595.9.camel@infradead.org>
+Subject: Re: [RFC PATCH] iommu/vt-d: Exclude known RMRRs from reserved
+ ranges
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shameerali.kolothum.thodi@huawei.com" 
+        <shameerali.kolothum.thodi@huawei.com>
+In-Reply-To: <20180607090157.5458a2ae@w520.home>
+References: <20180605190400.22732.2998.stgit@gimli.home>
+         <AADFC41AFE54684AB9EE6CBC0274A5D1911F88AD@SHSMSX101.ccr.corp.intel.com>
+         <20180607090157.5458a2ae@w520.home>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-6d7y9bnk2XUc++v7n9QB"
+Date:   Tue, 03 Jul 2018 11:52:39 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-03 14:04, Lukas Wunner wrote:
-> On Mon, Jul 02, 2018 at 06:52:47PM -0400, Sinan Kaya wrote:
->> If a bridge supports hotplug and observes a PCIe fatal error, the 
->> following
->> events happen:
->> 
->> 1. AER driver removes the devices from PCI tree on fatal error
->> 2. AER driver brings down the link by issuing a secondary bus reset 
->> waits
->> for the link to come up.
->> 3. Hotplug driver observes a link down interrupt
->> 4. Hotplug driver tries to remove the devices waiting for the rescan 
->> lock
->> but devices are already removed by the AER driver and AER driver is 
->> waiting
->> for the link to come back up.
->> 5. AER driver tries to re-enumerate devices after polling for the link
->> state to go up.
->> 6. Hotplug driver obtains the lock and tries to remove the devices 
->> again.
->> 
->> If a bridge is a hotplug capable bridge, mask hotplug interrupts 
->> before the
->> reset and unmask afterwards.
-> 
-> Would it work for you if you just amended the AER driver to skip
-> removal and re-enumeration of devices if the port is a hotplug bridge?
-> Just check for is_hotplug_bridge in struct pci_dev.
-> 
 
-I tend to agree with you Lukas.
+--=-6d7y9bnk2XUc++v7n9QB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-on this line I already have follow up patches
-although I am waiting for Bjorn to review some patch-series before that.
-[PATCH v2 0/6] Fix issues and cleanup for ERR_FATAL and ERR_NONFATAL
+On Thu, 2018-06-07 at 09:01 -0600, Alex Williamson wrote:
+>=20
+> > intel_iommu_get_resv_regions is used not just for IOMMU API. I'm
+> > afraid doing so will make RMRR completely ignored, even in normal
+> > DMA API path...
+>=20
+> Well, I'm a bit stuck then, we have existing IOMMU API users that
+> ignore these ranges and in fact conflict with these ranges blocking us
+> from restricting mappings within these ranges.=C2=A0 My impression is tha=
+t
+> IOMMU reserved ranges should only be ranges which have some fundamental
+> limitation in the IOMMU, not simply mappings for which firmware has
+> requested an identity mapped range.=C2=A0 The latter should simply be a
+> pre-allocation of the IOVA space, for the cases where we choose to
+> honor the RMRR.=C2=A0 Thanks,
 
-It doesn't look to me a an entirely a race condition since its guarded 
-by pci_lock_rescan_remove())
-I observed that both hotplug and aer/dpc comes out of it in a quiet sane 
-state.
+Unfortunately, Intel likes to encourage vendors to do batshit insane
+things in firmware, at runtime, using DMA.
 
-My thinking is: Disabling hotplug interrupts during ERR_FATAL,
-is something little away from natural course of link_down event 
-handling, which is handled by pciehp more maturely.
-so it would be just easy not to take any action e.g. removal and 
-re-enumeration of devices from ERR_FATAL handling point of view.
-
-I leave it to Bjorn.
-
-follwing is the patch wich I am trying to set it right and under test.
-so till now I am in an opinion to handle this by checking in err.c
-
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 410c35c..607a234 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -292,15 +292,17 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, 
-u32 service)
-
-         parent = udev->subordinate;
-         pci_lock_rescan_remove();
--       list_for_each_entry_safe_reverse(pdev, temp, &parent->devices,
--                                        bus_list) {
--               pci_dev_get(pdev);
--               pci_dev_set_disconnected(pdev, NULL);
--               if (pci_has_subordinate(pdev))
--                       pci_walk_bus(pdev->subordinate,
--                                    pci_dev_set_disconnected, NULL);
--               pci_stop_and_remove_bus_device(pdev);
--               pci_dev_put(pdev);
-+       if (!udev->is_hotplug_bridge) {
-+               list_for_each_entry_safe_reverse(pdev, temp, 
-&parent->devices,
-+                                                bus_list) {
-+                       pci_dev_get(pdev);
-+                       pci_dev_set_disconnected(pdev, NULL);
-+                       if (pci_has_subordinate(pdev))
-+                               pci_walk_bus(pdev->subordinate,
-+                                            pci_dev_set_disconnected, 
-NULL);
-+                       pci_stop_and_remove_bus_device(pdev);
-+                       pci_dev_put(pdev);
-+               }
-         }
-
-         result = reset_link(udev, service);
-@@ -318,7 +320,7 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 
-service)
-         }
-
-         if (result == PCI_ERS_RESULT_RECOVERED) {
--               if (pcie_wait_for_link(udev, true))
-+               if (pcie_wait_for_link(udev, true) && 
-!udev->is_hotplug_bridge)
-                         pci_rescan_bus(udev->bus);
-                 pci_info(dev, "Device recovery from fatal error 
-successful\n");
-                 dev->error_state = pci_channel_io_normal;
+Perhaps the way to handle this is for the device drivers to cancel any
+RMRR for their devices, as they take it over. So USB and graphics
+drivers would clear the corresponding RMRRs as they take ownership of
+the device... but anything without a driver, or things like the SCSI
+host controllers which know that there might be some HP insanity going
+on in SMM in parallel with what they're doing, would not (and hence
+would not be assignable, etc.).
 
 
-> That would seem like a much simpler solution, given that it is known
-> that the link will flap on reset, causing the hotplug driver to remove
-> and re-enumerate devices.  That would also cover cases where hotplug is
-> handled by a different driver than pciehp, or by the platform firmware.
-> 
-> Thanks,
-> 
-> Lukas
+--=-6d7y9bnk2XUc++v7n9QB
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MDMxMDUyMzlaMC8GCSqG
+SIb3DQEJBDEiBCDO1dXVlMAuRsqSQeQYcKZIVz23aqEG/cUSXAVGKUJ5DTCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBACznWHGOB5kO
+IT0CJfs3MPK+MhcmPSIjMb0VqYCCuknKpxHPB9XGMnJmef+WUM3PdTv5HLdb4JF/t8Iq2tIoXdgr
+i2wqKBN76+z+pRvF8C73FnUGi4gYNL7sMC4z12anUsvf8S5n3KelErCI2oUqth9gdeFXNW4KDNDH
+hiq+Ovest/ud5gEE3FmGo/QbAwbCiB2ICIy6qdZVitVvZ/Fa7b9+l8ZDeMKKtwNzsBfTuGT9iDpJ
+bZIwC0Wml5Lr8Idbdy4jSFP1lPReIvmJmHW7/fwH1dAr7/t/aO7a8Z+kdt75PYU29vUAvMY1G6LP
+33gmcdAU3rUnEKMXeibAOdmp69wAAAAAAAA=
 
 
-
-
-
-
-
-
-
+--=-6d7y9bnk2XUc++v7n9QB--
 
