@@ -2,111 +2,132 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DD5C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C9EC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39EEB20855
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39EEB20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E6AD323F0E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:07:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfpc5PZs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6AD323F0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933286AbeGCWGw convert rfc822-to-8bit (ORCPT
+        id S1753451AbeGCWHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:06:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932361AbeGCWGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:06:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DCF9DFDE;
-        Tue,  3 Jul 2018 22:06:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-203.rdu2.redhat.com [10.10.123.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5959FF5B;
-        Tue,  3 Jul 2018 22:06:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180703215825.GX30522@ZenIV.linux.org.uk>
-References: <20180703215825.GX30522@ZenIV.linux.org.uk> <20180703183325.GA210265@gmail.com> <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk> <152720678933.9073.11201500538963619904.stgit@warthog.procyon.org.uk> <14124.1530654802@warthog.procyon.org.uk>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     dhowells@redhat.com, Eric Biggers <ebiggers3@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: [PATCH 10/32] VFS: Implement a filesystem superblock creation/configuration context [ver #8]
+        Tue, 3 Jul 2018 18:07:24 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41991 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932434AbeGCWAv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:00:51 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g12-v6so2616874edi.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 15:00:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=1NDtu3iLaFTbyqoVjiuXvC55TtLfjP7L5m+Gsq4zK1Q=;
+        b=hfpc5PZsj1EOVsKOM8EbWqpo83ot/2EYsuB8iNjsz8QcVPQtadLTAlA7qEIVY0lRUe
+         WdkZxo5lartJfFD8m2J9KhYHmqgwy+iofV8BjB59fKPSUQuP7oMUDkaXXepSUFVGq48s
+         pk2LFKSTAEDrhQu85Z5HugYqtt8upxBQB/bb0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=1NDtu3iLaFTbyqoVjiuXvC55TtLfjP7L5m+Gsq4zK1Q=;
+        b=iii/Jt2BtVyRBYyp8hgndXpMT0StiHaTrdA7+KCaSomS65CWH6rFiboureImLI3m8Q
+         5IqmcNfxCrn4l+lrf0XtsYqFUklTDDXysMmCt5PE31NSJehk1+GHeGIPcKvF6H5NZjv7
+         sYKl8EyI9ha3Tk4/TmOOwF7ZaDbHM2x0SLf1kMUlBVxW9yTwf+QbHMIfVbJV1N635deO
+         V6cA9o4FSpos+LaRg60fmzFnE/+0iaT1L9TwOj3zYPP1nDBEHnV4nufeQqh5rQ2P2+hj
+         9Jqi7m5cOGktfc/dKd9Y6iVImmQRDvRTMmg+EVdxOXzj4zhq8aE+iAoKaM6OxkDvtkhk
+         qjmQ==
+X-Gm-Message-State: APt69E32v2OpBJTwIk2aDqbkZ4I7ilqfmkTjzIT8GQwTX4SgujNdZzkd
+        rB1fo+FbzUODO4srLD8/0uybo98JLCngp4K6NLJkMA==
+X-Google-Smtp-Source: AAOMgpedm+869HDuoQ7pcaKuH8kKUfMl6cm1N/KDYRnDI98M+jw4mWkvg+YFHmITgb59KmkypOcEF8bV0qb2lRR7xp8=
+X-Received: by 2002:a50:8fe4:: with SMTP id y91-v6mr29939317edy.295.1530655250672;
+ Tue, 03 Jul 2018 15:00:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19906.1530655609.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 03 Jul 2018 23:06:49 +0100
-Message-ID: <19907.1530655609@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 22:06:50 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 22:06:50 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+References: <1530570810-28929-1-git-send-email-mathieu.poirier@linaro.org>
+ <1530570810-28929-6-git-send-email-mathieu.poirier@linaro.org>
+ <20180703100348.fy43f4fosw3fdc6i@um.fi.intel.com> <20180703105652.psjq5cq4t7o2j6zk@um.fi.intel.com>
+In-Reply-To: <20180703105652.psjq5cq4t7o2j6zk@um.fi.intel.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 3 Jul 2018 16:00:39 -0600
+Message-ID: <CANLsYkw4w-zRczcb2uddO4UsxXrCCoXCSkPko2it-OJX2H0ecA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] perf/core: Use ioctl to communicate driver
+ configuration to kernel
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On Tue, 3 Jul 2018 at 04:57, Alexander Shishkin
+<alexander.shishkin@linux.intel.com> wrote:
+>
+> On Tue, Jul 03, 2018 at 01:03:48PM +0300, Alexander Shishkin wrote:
+> > On Mon, Jul 02, 2018 at 04:33:29PM -0600, Mathieu Poirier wrote:
+> > > +/*
+> > > + * PMU driver configuration works the same way as filter management above,
+> > > + * but without the need to deal with memory mapping.  Driver configuration
+> > > + * arrives through the SET_DRV_CONFIG ioctl() where it is validated and applied
+> > > + * to the event.  When the PMU is ready it calls perf_event_drv_config_sync() to
+> > > + * bring the configuration information within reach of the PMU.
+> >
+> > Wait a second. The reason why we dance around with the generations of filters
+> > is the locking order of ctx::mutex vs mmap_sem. In an mmap path, where we're
+> > notified about mapping changes, we're called under the latter, and we'd need
+> > to grab the former to update the event configuration. In your case, the
+> > update comes in via perf_ioctl(), where we're already holding the ctx::mutex,
+> > so you can just kick the PMU right there, via an event_function_call() or
+> > perf_event_stop(restart=1). In the latter case, your pmu::start() would just
+> > grab the new configuration. Should also be about 90% less code. :)
+>
+> Also, since it affects the AUX buffer configuration, it is probably a one
+> time ioctl command that you issue before you mmap the buffer. If that's
+> the case, you don't even have to worry about stopping the event, as it
+> shouldn't be running, because without the buffer perf_aux_output_begin()
+> should fail and so should the pmu::add() iirc.
+>
 
-> IOW, all of those should be unconditional.
+The idea behind the current approach was to make the SET_DRV_CONFIG
+ioctl() usable by other drivers where multiple ioctl() calls could be
+performed while a session in ongoing.  I also opted to introduce a
+_sync() function to let the PMU refresh its configuration at the time
+of its own choosing rather than having to interrupt the session.
 
-Fair point.  How about the attached, then?
+But all I need for coresight is to have available the sink information
+and PMU configuration (in an upcoming patchset) by the time
+setup_aux() is called.  You are correct, this is a one time
+configuration and since the event isn't running there is no need for
+locking - I should be able to access the PMU when the ioctl is called.
 
-David
----
-commit 1aa76514c426150af429d111cec256e81729fa6f
-Author: David Howells <dhowells@redhat.com>
-Date:   Tue Jul 3 22:35:28 2018 +0100
+If you are fine with this bare-bone scenario and don't care much about
+usability in different situation, I'll do a respin with minimal
+functionality that cover my needs.
 
-    vfs: Locking fix for sget_fc()
-    
-    In sget_fc(), don't drop the s_umount lock before calling
-    destroy_unused_super() as that will drop the lock.
-    
-    Fixes: 8a2e54b8af88 ("vfs: Implement a filesystem superblock creation/configuration context")
-    Reported-by: Eric Biggers <ebiggers3@gmail.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
+Thanks for the review,
+Mathieu
 
-diff --git a/fs/super.c b/fs/super.c
-index 43400f5fa33a..dccd397751b1 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -516,19 +516,12 @@ struct super_block *sget_fc(struct fs_context *fc,
- 				continue;
- 			if (fc->user_ns != old->s_user_ns) {
- 				spin_unlock(&sb_lock);
--				if (s) {
--					up_write(&s->s_umount);
--					destroy_unused_super(s);
--				}
-+				destroy_unused_super(s);
- 				return ERR_PTR(-EBUSY);
- 			}
- 			if (!grab_super(old))
- 				goto retry;
--			if (s) {
--				up_write(&s->s_umount);
--				destroy_unused_super(s);
--				s = NULL;
--			}
-+			destroy_unused_super(s);
- 			return old;
- 		}
- 	}
-@@ -545,7 +538,6 @@ struct super_block *sget_fc(struct fs_context *fc,
- 	if (err) {
- 		s->s_fs_info = NULL;
- 		spin_unlock(&sb_lock);
--		up_write(&s->s_umount);
- 		destroy_unused_super(s);
- 		return ERR_PTR(err);
- 	}
+> Regards,
+> --
+> Alex
