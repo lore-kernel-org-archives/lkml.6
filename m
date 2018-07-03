@@ -2,102 +2,134 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A02C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0109C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89D3824CAF
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR9CS2Id"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D3824CAF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B6AF21F43
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 12:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6AF21F43
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753082AbeGCMLy (ORCPT
+        id S1753231AbeGCMNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 08:11:54 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34326 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752185AbeGCMLw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 08:11:52 -0400
-Received: by mail-lf0-f66.google.com with SMTP id n96-v6so1420202lfi.1;
-        Tue, 03 Jul 2018 05:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YTib2x9GCmUCaliVG7ZVIPVVVTvQXxP9z15ypkIYe4Y=;
-        b=bR9CS2IduYHd8vrttsYpJ1s9ZoD0eG+OGo1RLZ5hdhkWRCjgR6v6S/A097SRyah5PJ
-         Gc2Ak58dn2rZdAjPrpjtXZu7+TFm85q27amh/3nKKw4GCiwAcYOJirTnCH+FISbRW2dD
-         ld3+plS1kl2L4ZcucdbB1b3IVmEuWbNu2a0S4iJOYmeDQrxoNK/DhdGUwvzdlebc/FgI
-         6Op1uuJEC/WXWJv/8bC4UC4MvrOXcl6iG3lOc6WJ+SAX0XwrbiLgDbjEypi6T29CdAnT
-         D2H+iJpBsDnbfMPH/MmkNsHR5Zv+WHpSHCnpCd62psROqdxDUjC4VaafUpe2PFgiyctQ
-         gdZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YTib2x9GCmUCaliVG7ZVIPVVVTvQXxP9z15ypkIYe4Y=;
-        b=Qb6Dg/wwJLYJ5MMp5saqk9mpEo2Pe5irwVsRsNShg+4IFozueZGs59jvN/yLu1BICW
-         bYiaXMpNULXPZAu/UCWQU1jDJ8rvkVz/R0QSOpQxBrRiZPdJ04074YLuQYnaMrYKYETq
-         BScl4Cu3pheJUePen4R0NArAfFPzVy113CIsxYEl4uJTr/zGTINMta4q8nkBSpOdRexf
-         1uHFP4yvymQdD6LnDlupffTvZNRviKwh+IZAub8/zJxIl33R7ZdA8mtgrULzRQ02HzQu
-         hwfZijB7g+qkOg8dC6J4bQobHjByHm+fnnbOWmIRJ/HtlR6RqfHi8/VV7+foxEcN0Ow/
-         3HkA==
-X-Gm-Message-State: APt69E3/xIRWPA4MZ/zx1epWAEhBfSdqkiGs94qTzuhKSJh5jV83QBTd
-        nFSZhM/wefzIhEuduPuhesk=
-X-Google-Smtp-Source: AAOMgpe8bZ6Rt9C0t5a+58itAKDvd7Xt/aVijPCiHpwnrqQBb6DNorQyvcPAxBYQ2ZCuyE+lFpNTzQ==
-X-Received: by 2002:a19:6801:: with SMTP id d1-v6mr7287277lfc.8.1530619911009;
-        Tue, 03 Jul 2018 05:11:51 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id x9-v6sm226053lfb.46.2018.07.03.05.11.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 05:11:50 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1faK9n-0008LN-8F; Tue, 03 Jul 2018 14:11:43 +0200
-Date:   Tue, 3 Jul 2018 14:11:43 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] gnss: fix potential error pointer dereference
-Message-ID: <20180703121143.GP9802@localhost>
-References: <20180703115921.7h35wi73oym3use5@kili.mountain>
+        Tue, 3 Jul 2018 08:13:45 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50763 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752251AbeGCMNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 08:13:42 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9227020D72EA2;
+        Tue,  3 Jul 2018 20:13:39 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.382.0; Tue, 3 Jul 2018 20:13:33 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: let checkpoint flush dnode page of regular
+Date:   Tue, 3 Jul 2018 20:12:53 +0800
+Message-ID: <20180703121253.44560-2-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20180703121253.44560-1-yuchao0@huawei.com>
+References: <20180703121253.44560-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180703115921.7h35wi73oym3use5@kili.mountain>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 02:59:22PM +0300, Dan Carpenter wrote:
-> The gnss_allocate_device() function returns a mix of NULL and error
-> pointers on error.  It should only return one or the other.  Since the
-> callers both check for NULL, I've modified it to return NULL on error.
-> 
-> Fixes: 10f146639fee ("gnss: add receiver type support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fsyncer will wait on all dnode pages of regular writeback before flushing,
+if there are async dnode pages blocked by IO scheduler, it may decrease
+fsync's performance.
 
-Ouch, thanks for catching this!
+In this patch, we choose to let f2fs_balance_fs_bg() to trigger checkpoint
+to flush these dnode pages of regular, so async IO of dnode page can be
+elimitnated, making fsyncer only need to wait for sync IO.
 
-I think you got the wrong commit for the fixes tag above, however. That
-should be:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/node.c    | 8 +++++++-
+ fs/f2fs/node.h    | 5 +++++
+ fs/f2fs/segment.c | 4 +++-
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
-Fixes: 2b6a44035143 ("gnss: add GNSS receiver subsystem")
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0810c8117d46..eeee582cee32 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1384,6 +1384,10 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+ 		goto redirty_out;
+ 
++	if (wbc->sync_mode == WB_SYNC_NONE &&
++			IS_DNODE(page) && is_cold_node(page))
++		goto redirty_out;
++
+ 	/* get old block addr of this node page */
+ 	nid = nid_of_node(page);
+ 	f2fs_bug_on(sbi, page->index != nid);
+@@ -1698,10 +1702,12 @@ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	if (step < 2) {
++		if (wbc->sync_mode == WB_SYNC_NONE && step == 1)
++			goto out;
+ 		step++;
+ 		goto next_step;
+ 	}
+-
++out:
+ 	if (nwritten)
+ 		f2fs_submit_merged_write(sbi, NODE);
+ 
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index b95e49e4a928..b0da4c26eebb 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -135,6 +135,11 @@ static inline bool excess_cached_nats(struct f2fs_sb_info *sbi)
+ 	return NM_I(sbi)->nat_cnt >= DEF_NAT_CACHE_THRESHOLD;
+ }
+ 
++static inline bool excess_dirty_nodes(struct f2fs_sb_info *sbi)
++{
++	return get_pages(sbi, F2FS_DIRTY_NODES) >= sbi->blocks_per_seg * 8;
++}
++
+ enum mem_type {
+ 	FREE_NIDS,	/* indicates the free nid list */
+ 	NAT_ENTRIES,	/* indicates the cached nat entry */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index bbe6e1596611..13f5e3665bf0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -503,7 +503,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	else
+ 		f2fs_build_free_nids(sbi, false, false);
+ 
+-	if (!is_idle(sbi) && !excess_dirty_nats(sbi))
++	if (!is_idle(sbi) &&
++		(!excess_dirty_nats(sbi) && !excess_dirty_nodes(sbi)))
+ 		return;
+ 
+ 	/* checkpoint is the only way to shrink partial cached entries */
+@@ -511,6 +512,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 			!f2fs_available_free_memory(sbi, INO_ENTRIES) ||
+ 			excess_prefree_segs(sbi) ||
+ 			excess_dirty_nats(sbi) ||
++			excess_dirty_nodes(sbi) ||
+ 			f2fs_time_over(sbi, CP_TIME)) {
+ 		if (test_opt(sbi, DATA_FLUSH)) {
+ 			struct blk_plug plug;
+-- 
+2.18.0.rc1
 
-Not sure if you want to send a v2, or if Greg can fix that when
-applying. Apart from that:
-
-Acked-by: Johan Hovold <johan@kernel.org>
-
-Johan
