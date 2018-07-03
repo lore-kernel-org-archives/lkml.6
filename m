@@ -2,96 +2,88 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0490C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668A1C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34C724625
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A6VbSVSX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34C724625
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1927E24625
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1927E24625
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753699AbeGCTcU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:32:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44784 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeGCTcS (ORCPT
+        id S934496AbeGCTc3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 15:32:29 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44386 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933196AbeGCTc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fYgIgyxHLvKpoME8RhL1Rt4pwFWRmLPU3Us/KdAKp3Y=; b=A6VbSVSXi+YnblRCQ3otr3P8P
-        989dBYylfXY+rsrrBE++92I13/SvA96okCGU7E7WO4mPKl/geqUHQskmne9PipekTtG+0XlO1Tqr8
-        dTb2S4hJvz7YUAuQfnh3uYnSzl79kYje6ABvGPTcQ65NA3f2JkjoiSUKLsGvomm1OPVUhS2IB26Cj
-        uJSrorIXtgICbb4jUBAgdyk3B50Y400VOJLGy3GeC5nbyqgNQ32xJrBtBG8pmZgcDELAZapkPAxeh
-        5SnTkFekLRDM4vDXP+TA1sI2mnatTqEXF5QvEdFInZduKc4fkpt/awEFhN9e2UIUZ9DsHo/8Ih1JA
-        4/cU9SEbA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faR25-0000JC-WF; Tue, 03 Jul 2018 19:32:14 +0000
-Subject: Re: [PATCH 12/14] block: introduce blk-iolatency io controller
-To:     Josef Bacik <josef@toxicpanda.com>, axboe@kernel.dk,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, tj@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, kernel-team@fb.com
-Cc:     Josef Bacik <jbacik@fb.com>
-References: <20180703151503.2549-1-josef@toxicpanda.com>
- <20180703151503.2549-13-josef@toxicpanda.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e1f98f78-bf01-272f-3121-02612d01d57e@infradead.org>
-Date:   Tue, 3 Jul 2018 12:32:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 15:32:26 -0400
+Received: by mail-oi0-f65.google.com with SMTP id s198-v6so6099324oih.11;
+        Tue, 03 Jul 2018 12:32:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gIGN36IUEMCStOLlmFeCJzWbXLac1ZeWJE7alWOPrVM=;
+        b=qMwpBH+LkEKK2AJlA2/2l/K53SQjKYmL3s/qakhnY9iQYxjCPZSC2HmQnbmcX7j7hD
+         r2Pp8GsdoxRQmtGAE1HrIY+v8ZhewRP0ShI7UrbRDt1p1U2LBpBvATpwiN81UpKG820e
+         P5nCAxHhEDGtfk37lTRRBkGcdpUTpHW0/O9xjAPF52ZF5EsLMXTeurnzqfKiYDSCw6sj
+         1/WXgd1FqLaUYH/oBxwyubZ5O0e8COxbx8StTzk9Au8xnv3Te6saiRLplTRfvZ6g2Tnc
+         ZSENkUKa+oLCOcY9dI3xxib/mFLcscbUcJVzP/Y3wS0VnSVVwJhy1/5mxxxnDyyto3Kc
+         FLmg==
+X-Gm-Message-State: APt69E3b9/D7Ht0XqLWetd7Y9WO7YcRwfwMkX3fVJnT4y2sGAkHaTtGP
+        Xx5ZkbTmpFSxCDwwyE9H4ssz+devm+S8M4BRNIM=
+X-Google-Smtp-Source: AAOMgpeqDeuJ+WX9XvzawN3Ed6bH+RnsqAvEhFjV63D/CkiH0FZVbN3GAo7idsvKNs4g7zvEf6awDDiWsmRn/cYrVE0=
+X-Received: by 2002:aca:5e07:: with SMTP id s7-v6mr22819060oib.353.1530646345795;
+ Tue, 03 Jul 2018 12:32:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180703151503.2549-13-josef@toxicpanda.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180703123214.23090-1-paul@crapouillou.net>
+In-Reply-To: <20180703123214.23090-1-paul@crapouillou.net>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Tue, 3 Jul 2018 21:32:13 +0200
+Message-ID: <CA+7wUsykjQkSHshNNVJaZJ4d_U9Q4fhaoRaNOTHhjoj43xRPLg@mail.gmail.com>
+Subject: Re: [PATCH 00/14] dma-jz4780 improvements
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     vkoul@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        dansilsby@gmail.com, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03/2018 08:15 AM, Josef Bacik wrote:
-> diff --git a/block/Kconfig b/block/Kconfig
-> index 28ec55752b68..074c6099c31f 100644
-> --- a/block/Kconfig
-> +++ b/block/Kconfig
-> @@ -149,6 +149,18 @@ config BLK_WBT
->  	dynamically on an algorithm loosely based on CoDel, factoring in
->  	the realtime performance of the disk.
->  
-> +config BLK_CGROUP_IOLATENCY
-> +	bool "Enable support for latency based cgroup IO protection"
-> +	depends on BLK_CGROUP=y
-> +	default n
-> +	---help---
-> +	Enabling this option enables the .latency interface for IO throttling.
-> +	The IO controller will attempt to maintain average IO latencies below
-> +	the configured latency target, throttling anybody with a higher latency
+On Tue, Jul 3, 2018 at 2:32 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> Hi,
+>
+> This set of patches by myself and Daniel extends the dma-jz4780 driver
+> to support other SoCs (JZ4770, JZ4740, JZ4725B).
+>
+> Some fixes are also included, for proper residue reporting, which fixes
+> errors with ALSA.
+>
+> Finally, the last two patches update the devicetree bindings for the
+> JZ4780 SoC and add a binding for the JZ4770 SoC.
+>
+> This patchset was tested on JZ4780, JZ4770 and JZ4725B, but was not tested
+> on the JZ4740, so it would be fantastic if somebody could test it there.
 
-	Could that be:                            any process {or any task}
-	I don't want to see it throttling any bodies.
+For the entire series, everything works as expected on JZ4780 (Creator
+CI20), including reading from sdcard.
 
-> +	target than the victimized group.
-> +
-> +	Note, this is an experimental interface and could be changed someday.
-> +
->  config BLK_WBT_SQ
->  	bool "Single queue writeback throttling"
->  	default n
+Tested-by: Mathieu Malaterre <malat@debian.org>
 
-
--- 
-~Randy
+> Regards,
+> -Paul
+>
