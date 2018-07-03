@@ -2,98 +2,111 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F373DC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBBFC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA3F5208A5
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:44:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3F5208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A9E5208A5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:47:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvGU7w1/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9E5208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752832AbeGCLow (ORCPT
+        id S1752840AbeGCLrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:44:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40700 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752185AbeGCLov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:44:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2801972634;
-        Tue,  3 Jul 2018 11:44:51 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-173.pek2.redhat.com [10.72.12.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8D63A111AF02;
-        Tue,  3 Jul 2018 11:44:43 +0000 (UTC)
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
-        bhe@redhat.com
-References: <20180702072639.10110-1-lijiang@redhat.com>
- <20180702072639.10110-2-lijiang@redhat.com> <20180702101451.GB28730@zn.tnic>
- <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
- <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
- <20180703111428.GB5748@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <4fbb843b-9597-a48b-8b6f-00e354b91950@redhat.com>
-Date:   Tue, 3 Jul 2018 19:44:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Tue, 3 Jul 2018 07:47:16 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46065 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752251AbeGCLrO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:47:14 -0400
+Received: by mail-lj1-f195.google.com with SMTP id q5-v6so1280973ljh.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N0H+5Cnux2S7B9hfOa5H91RvHRE0YC/gGCCeoabzBfQ=;
+        b=BvGU7w1//5IsinDXiqh16H97UxFvsFXvJHKdI9prWC6nC9B1vBc/jkcaub70fGME4r
+         s3iwsAnD5SQ5aL978NzI9K9XTZcbeT5ERy8W0t+3sAI04ynl8kRBrBiRW0GUH3qQIJRt
+         s4L2kcDZxMJmNfPvlSUu/TyU27XtY+14itvyHAg2aQOZFwaHih+KFapye70JgIHuxGXk
+         VDsZ9FTgskWrm/RhQ/K/QdVBNmiMs/CJZ/zv0IWEjl+orZgCcNGVxT/5BcdsflONnMj/
+         XXD/qZ0TBLKuaIFSn45I6nX2iDu3dYZkoJm9DXSsOe3QQGeconiD/XulsOMeGO0r7NJS
+         DWXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N0H+5Cnux2S7B9hfOa5H91RvHRE0YC/gGCCeoabzBfQ=;
+        b=WK7/i+hpOmrrnCBdtl9fWb4opEXs5SRt0fFjE6Up5S+snVhQ+XgMrf/tGGz+etBVzO
+         Xzhp0ox64W3y5cd+fdKCFtlqWIAcEWRvndbW6iuAmX57cS3mY5cijsVgZxZSkP6qF7m/
+         HjsU7NT7N0VqsH/TFj98Iw8oJ5mcTjZdWdP6ORD+CS/N14rAeyEMzXgiW1hLABYl+egF
+         pE5AZzUfFZzKqWrxaa31Chn0FP54iig4qbpEJdgTugGpXu4fRKxRc8O0rteI7EjUNCEU
+         P+VfdWRq7tKTKCkbVuuEYcoA69CvcvS03zZIxWklzsR4yUm02UXwW4Pe40ytKJ16DHmM
+         I8xA==
+X-Gm-Message-State: APt69E1I7jASdQ/NEa924tvtB7MIte51DreJ39KoBXgWI/RFB62QM5YQ
+        y656/8R/cR0LRAnFmhbY75k=
+X-Google-Smtp-Source: AAOMgpeNvjtVV2RJcmYdzd2QK3vrSzVP7GaVjSLwSmFuj8f0xUqC8kUJbygd/X1ZWc/ME9ZqxsR+vA==
+X-Received: by 2002:a2e:6a04:: with SMTP id f4-v6mr1649709ljc.109.1530618432399;
+        Tue, 03 Jul 2018 04:47:12 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id o128-v6sm216377lfo.69.2018.07.03.04.47.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 04:47:11 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1faJlv-0008AF-Rl; Tue, 03 Jul 2018 13:47:04 +0200
+Date:   Tue, 3 Jul 2018 13:47:03 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] misc: sram: enable clock before registering regions
+Message-ID: <20180703114703.GO9802@localhost>
+References: <20180703100548.30214-1-johan@kernel.org>
+ <20180703100548.30214-2-johan@kernel.org>
+ <e736a83f-bdd9-d136-070d-7093f5e8be2c@mentor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180703111428.GB5748@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 11:44:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 03 Jul 2018 11:44:51 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e736a83f-bdd9-d136-070d-7093f5e8be2c@mentor.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年07月03日 19:14, Borislav Petkov 写道:
-> On Tue, Jul 03, 2018 at 06:58:14PM +0800, lijiang wrote:
->> For kdump, the elf header finally use the crash kernel reserved memory, it is not an old memory.
+On Tue, Jul 03, 2018 at 01:23:30PM +0300, Vladimir Zapolskiy wrote:
+> Hi Johan,
 > 
-> Lamme repeat my suggestion:
+> On 07/03/2018 01:05 PM, Johan Hovold wrote:
+> > Make sure to enable the clock before registering regions and exporting
+> > partitions to user space at which point we must be prepared for I/O.
+> > 
+> > Fixes: ee895ccdf776 ("misc: sram: fix enabled clock leak on error path")
+> > Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
-> So beef up the logic in __ioremap_caller() to figure out based on the
-> address whether to access the memory encrypted or not. In general, you
-> can deduce, based on the region you're mapping, whether you need to map
-> in encrypted or decrypted.
+> thank you for the change, however please note that the identified commit
+> for the fix is incorrect one apparently.
 > 
-> For example:
+> In my opinion the proper tag contents would be
 > 
->         addr = elfcorehdr_addr;
+> Fixes: b4c3fcb3c71f ("misc: sram: extend usage of reserved partitions")
 > 
->         /* Read Elf header */
->         rc = elfcorehdr_read((char *)&ehdr, sizeof(Elf64_Ehdr), &addr);
->         if (rc < 0)
->                 return rc;
-> 
-> elfcorehdr_addr has that elfcorehdr address. So you can check which address
-> you're mapping and do:
-> 
-> __ioremap_caller:
-> 
-> ...
-> 	prot = __ioremap_compute_prot(...);
-> 
-> and that __ioremap_compute_prot() function which you will add will have
-> all that logic to determine encrypted or not by comparing addresses etc.
-> 
-> Does that make more sense?
-> 
-Thank you, Boris. Good idea, I will rethink about this issue and post it again.
+> I hope you agree to it, also I would suggest to swap the changes in
+> the series.
 
-Regards,
-Lianbo
+No, I think I used the right commit in the Fixes tag as that was the
+commit which moved the clock enable to after the memory-region
+registration (at which point the memory could potentially be accessed).
+
+Johan
