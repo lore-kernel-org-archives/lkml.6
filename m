@@ -2,110 +2,276 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C48C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E536C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4633022BD0
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:56:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DxawjJi6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DxawjJi6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4633022BD0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id CC02F22BD0
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:57:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC02F22BD0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bfs.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933829AbeGCQ4b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:56:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43518 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932392AbeGCQ4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:56:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8BDCC606FA; Tue,  3 Jul 2018 16:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530636989;
-        bh=jqi4BWqFSZJJ1xstAtSdcsqPY3+uTMbrWZtQjvJ06qI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DxawjJi6XJw28GSrXCSZcfgt7a5rJUB/N0ico78weTd6C1OCywscqUuISW13tKGhg
-         eqLV1ujXcdXeb/ghSHJr2J5Q/z4m+n/RCr8cLblBfFTcm5W+dTu/HCskDJlasJHxJE
-         Q8SCr82BRySwGy7SiWiqtggzcq6htWnkljP/EvcE=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E071C6028D;
-        Tue,  3 Jul 2018 16:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530636989;
-        bh=jqi4BWqFSZJJ1xstAtSdcsqPY3+uTMbrWZtQjvJ06qI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DxawjJi6XJw28GSrXCSZcfgt7a5rJUB/N0ico78weTd6C1OCywscqUuISW13tKGhg
-         eqLV1ujXcdXeb/ghSHJr2J5Q/z4m+n/RCr8cLblBfFTcm5W+dTu/HCskDJlasJHxJE
-         Q8SCr82BRySwGy7SiWiqtggzcq6htWnkljP/EvcE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E071C6028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     apw@canonical.com, joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        bryanh@codeaurora.org, tsoni@codeaurora.org,
-        Abhijeet Dharmapurikar <adharmap@codeaurora.org>,
-        Stepan Moskovchenko <stepanm@codeaurora.org>,
-        Murali Nalajala <mnalajal@codeaurora.org>
-Subject: [PATCH] checkpatch: check for #if 0/#if 1
-Date:   Tue,  3 Jul 2018 09:56:08 -0700
-Message-Id: <1530636968-17906-1-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S933999AbeGCQ5P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:57:15 -0400
+Received: from mx01-sz.bfs.de ([194.94.69.67]:52627 "EHLO mx01-sz.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932559AbeGCQ5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:57:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mx01-sz.bfs.de (Postfix) with ESMTP id 5397460197;
+        Tue,  3 Jul 2018 18:57:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at bfs.de
+Received: from mx01-sz.bfs.de ([127.0.0.1])
+        by localhost (mx01-sz.bfs.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bR1WhiJkttS2; Tue,  3 Jul 2018 18:57:11 +0200 (CEST)
+Received: from mail-sz.bfs.de (mail-sz.bfs.de [10.129.18.200])
+        by mx01-sz.bfs.de (Postfix) with ESMTPS;
+        Tue,  3 Jul 2018 18:57:11 +0200 (CEST)
+Received: from null (ox-groupware01-sz.bfs.de [10.129.18.42])
+        by mail-sz.bfs.de (Postfix) with ESMTPS id 639817F45D;
+        Tue,  3 Jul 2018 18:57:06 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 18:57:06 +0200 (CEST)
+From:   Walter Harms <wharms@bfs.de>
+To:     Joe Perches <joe@perches.com>, "Hook, Gary" <ghook@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <1540588259.84011.1530637026831@ox-groupware.bfs.de>
+Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev31
+X-Originating-Client: com.openexchange.ox.gui.dhtml
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
 
-The #if 0 and #if 1 are used to toggle features. Warn if #if 1 or #if 0 
-is present. If #if 0 is present, warn about that part of code being 
-redundant and that it could be removed. Also, if #if 1 is present, suggest
-that if the code is required then the #if 1 can be removed. In either 
-case, the preprocessor directives can be removed.
 
-Signed-off-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
-Signed-off-by: Stepan Moskovchenko <stepanm@codeaurora.org>
-Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
----
- scripts/checkpatch.pl | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Am 03.07.2018 18:38, schrieb Joe Perches:
+> On Tue, 2018-07-03 at 11:27 -0500, Hook, Gary wrote:
+>> On 7/3/2018 11:24 AM, Colin Ian King wrote:
+>>> On 03/07/18 17:21, Hook, Gary wrote:
+>>>> On 7/3/2018 10:55 AM, Joe Perches wrote:
+>>>>> On Tue, 2018-07-03 at 07:56 -0500, Gary R Hook wrote:
+>>>>>> On 07/03/2018 05:07 AM, Joe Perches wrote:
+>>>>>>> On Tue, 2018-07-03 at 07:40 +0100, Colin King wrote:
+>>>>>>>> Currently tag is being assigned but not used, it is missing from
+>>>>>>>> the dev_err message, so add it in.
+>>>>>>>>
+>>>>>>>> Cleans up clang warning:
+>>>>>>>> warning: variable 'tag' set but not used [-Wunused-but-set-variable]
+>>>>>>>
+>>>>>>> []
+>>>>>>>> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+>>>>>>>
+>>>>>>> []
+>>>>>>>> @@ -616,9 +616,9 @@ static void iommu_print_event(struct amd_iommu
+>>>>>>>> *iommu, void *__evt)
+>>>>>>>>             pasid = ((event[0] >> 16) & 0xFFFF)
+>>>>>>>>                 | ((event[1] << 6) & 0xF0000);
+>>>>>>>>             tag = event[1] & 0x03FF;
+>>>>>>>> -        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
+>>>>>>>> pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+>>>>>>>> +        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
+>>>>>>>> pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%03x]\n",
+>>>>>>>>                 PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>>>>>>>> -            pasid, address, flags);
+>>>>>>>> +            pasid, address, flags, tag);
+>>>>>>>
+>>>>>>> Seems to have a superfluous ] that should be removed.
+>>>>>>
+>>>>>> Yeah, I pretty much messed up all of the log messages in that function.
+>>>>>> My apologies. I'll create a patch for that problem; it shouldn't be
+>>>>>> fixed here.
+>>>>
+>>>> Well, no, I misremembered. The extraneous square brace has been there
+>>>> forever. Needs fixin', though.
+>>>>
+>>>
+>>> The opening square bracket is much earlier:
+>>>
+>>> dev_err(dev, "AMD-Vi: Event logged [");
+>>>
+>>> ..and all the subsequent dev_err messages have the trailing square bracket.
+>>
+>> Gah! Mystery solved. I'd forgotten about that.
+>>
+>> "Never mind."
+>>
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index a9c0550..a3dc0c8 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5374,9 +5374,16 @@ sub process {
- 
- # warn about #if 0
- 		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
--			CHK("REDUNDANT_CODE",
--			    "if this code is redundant consider removing it\n" .
--				$herecurr);
-+			WARN("IF_0",
-+			     "if this code is redundant consider removing it\n"
-+				.  $herecurr);
-+		}
-+
-+# warn about #if 1
-+		if ($line =~ /^.\s*\#\s*if\s+1\b/) {
-+			WARN("IF_1",
-+			     "if this code is required consider removing"
-+				. " #if 1\n" .  $herecurr);
- 		}
- 
- # check for needless "if (<foo>) fn(<foo>)" uses
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+It is only cosmetics but even the author got lost about the loose bracket.
+I would suggest to remove all the brackets or if needed to move the [ in the
+message. We have enought memory this days.
 
+> -               printk(KERN_ERR "AMD-Vi: Event logged [");
+> +               dev_err(dev, "AMD-Vi: Event logged [");
+
+just my 2 cents,
+
+re,
+ wh
+
+> 
+> It stems from the misconversion from printk to dev_err
+> 
+> The initial dev_err is fine but all the dev_err uses
+> in the switch/case should use pr_cont, not dev_err
+> 
+> (there's a suggested patch below this commit reference)
+> 
+> ---
+>>From 90ca3859f5ea90050d00e695355934b37357e7bb Mon Sep 17 00:00:00 2001
+> From: Gary R Hook <gary.hook@amd.com>
+> Date: Thu, 8 Mar 2018 18:34:41 -0600
+> Subject: [PATCH] iommu/amd: Use dev_err to send events to the system log
+> 
+> Remove printk and use a more preferable error logging function.
+> 
+> Signed-off-by: Gary R Hook <gary.hook@amd.com>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  drivers/iommu/amd_iommu.c | 55
+> ++++++++++++++++++++++++++++---------------------------
+>  1 file changed, 28 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> index 997a947ddc3b..4cd19f93ca15 100644
+> --- a/drivers/iommu/amd_iommu.c
+> +++ b/drivers/iommu/amd_iommu.c
+> @@ -547,6 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16
+> domain_id,
+>  
+>  static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+>  {
+> +       struct device *dev = iommu->iommu.dev;
+>         int type, devid, domid, flags;
+>         volatile u32 *event = __evt;
+>         int count = 0;
+> @@ -573,53 +574,53 @@ static void iommu_print_event(struct amd_iommu *iommu,
+> void *__evt)
+>                 amd_iommu_report_page_fault(devid, domid, address, flags);
+>                 return;
+>         } else {
+> -               printk(KERN_ERR "AMD-Vi: Event logged [");
+> +               dev_err(dev, "AMD-Vi: Event logged [");
+>         }
+>  
+>         switch (type) {
+>         case EVENT_TYPE_ILL_DEV:
+> -               printk("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
+> -                      "address=0x%016llx flags=0x%04x]\n",
+> -                      PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+> -                      address, flags);
+> +               dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
+> +                       "address=0x%016llx flags=0x%04x]\n",
+> +                       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+> +                       address, flags);
+> 
+> etc...
+> 
+> so this could be:
+> 
+> ---
+>  drivers/iommu/amd_iommu.c | 23 +++++++++++------------
+>  1 file changed, 11 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> index 596b95c50051..f78cfa094301 100644
+> --- a/drivers/iommu/amd_iommu.c
+> +++ b/drivers/iommu/amd_iommu.c
+> @@ -572,43 +572,42 @@ static void iommu_print_event(struct amd_iommu *iommu,
+> void *__evt)
+>  	if (type == EVENT_TYPE_IO_FAULT) {
+>  		amd_iommu_report_page_fault(devid, pasid, address, flags);
+>  		return;
+> -	} else {
+> -		dev_err(dev, "AMD-Vi: Event logged [");
+>  	}
+>  
+> +	dev_err(dev, "AMD-Vi: Event logged [");
+> +
+>  	switch (type) {
+>  	case EVENT_TYPE_ILL_DEV:
+> -		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			pasid, address, flags);
+>  		dump_dte_entry(devid);
+>  		break;
+>  	case EVENT_TYPE_DEV_TAB_ERR:
+> -		dev_err(dev, "DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
+> -			"address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x address=0x%016llx
+> flags=0x%04x]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			address, flags);
+>  		break;
+>  	case EVENT_TYPE_PAGE_TAB_ERR:
+> -		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x
+> address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x
+> address=0x%016llx flags=0x%04x]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			pasid, address, flags);
+>  		break;
+>  	case EVENT_TYPE_ILL_CMD:
+> -		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
+> +		pr_cont("ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
+>  		dump_command(address);
+>  		break;
+>  	case EVENT_TYPE_CMD_HARD_ERR:
+> -		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
+>  			address, flags);
+>  		break;
+>  	case EVENT_TYPE_IOTLB_INV_TO:
+> -		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
+> +		pr_cont("IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			address);
+>  		break;
+>  	case EVENT_TYPE_INV_DEV_REQ:
+> -		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			pasid, address, flags);
+>  		break;
+> @@ -616,12 +615,12 @@ static void iommu_print_event(struct amd_iommu *iommu,
+> void *__evt)
+>  		pasid = ((event[0] >> 16) & 0xFFFF)
+>  			| ((event[1] << 6) & 0xF0000);
+>  		tag = event[1] & 0x03FF;
+> -		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+> +		pr_cont("INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x
+> address=0x%016llx flags=0x%04x]\n",
+>  			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+>  			pasid, address, flags);
+>  		break;
+>  	default:
+> -		dev_err(dev, "UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x
+> event[3]=0x%08x\n",
+> +		pr_cont("UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x
+> event[3]=0x%08x\n",
+>  			event[0], event[1], event[2], event[3]);
+>  	}
+>  
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
