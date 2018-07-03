@@ -2,752 +2,353 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34011C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8696C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1E3205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:20:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1E3205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AEA424C21
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:30:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3U+AFWT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEA424C21
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753916AbeGCEUe (ORCPT
+        id S1753867AbeGCEa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 00:20:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:7077 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752527AbeGCEUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 00:20:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jul 2018 21:20:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,302,1526367600"; 
-   d="gz'50?scan'50,208,50";a="69182791"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga001.fm.intel.com with ESMTP; 02 Jul 2018 21:20:30 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1faCnl-000VFG-F0; Tue, 03 Jul 2018 12:20:29 +0800
-Date:   Tue, 3 Jul 2018 12:19:34 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org,
-        rjw@rjwysocki.net, stewart@linux.vnet.ibm.com,
-        benh@kernel.crashing.org, svaidy@linux.vnet.ibm.com,
-        ego@linux.vnet.ibm.com, npiggin@gmail.com, mpe@ellerman.id.au,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 1/2] powernv/cpuidle: Parse dt idle properties into
- global structure
-Message-ID: <201807031012.AMXpLQNJ%fengguang.wu@intel.com>
-References: <1530541401-19726-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+        Tue, 3 Jul 2018 00:30:28 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46179 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752527AbeGCEa0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 00:30:26 -0400
+Received: by mail-pf0-f195.google.com with SMTP id l123-v6so351501pfl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 21:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yfxNY3tklC6M9vr1y0Iu0LWfFe7HXDbw9iOiKyATP4w=;
+        b=Q3U+AFWTitJReEhgQ/bZdjXfxmfoYoSXw1RsMtC26vPe54BK5XVpBvO4uh8/sVpuL0
+         o0afJO/+XjgMRuYDW+DEyAzPWVCg8fhRWdJOMeez2AdlYXyQ1qyNo0UDXsPQbBqGIe4X
+         N5HcqS+6p1ovovJ71N7eADCP75i8R1nzXlHsrfqgQxDVapIRONHu93TNfS+rFfg3jgLl
+         7tCjbJXZLRZHQo/BLEbUNvnGNc7Fd7gC+zfMsv3irBJsS0ReZSws0hfGvywfeSROzlDV
+         CiWrDFSc0RFPHAPgOxjLK/Trh924l5LJXGGMzbTBgYfuObJeZCBTjtHksNILBpqurhcS
+         Dq6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yfxNY3tklC6M9vr1y0Iu0LWfFe7HXDbw9iOiKyATP4w=;
+        b=jbk/8Jr8NvzsYM9CgX59vHXSPVzz9npWJ5apG9p7wbJQwr+YOj9OIz2Pyjm/GH7+MD
+         lUXQVjF0Z+X2AZe+ZZNqM0dSgfdNXsG2NOkxgfsPHw8dHQaZEmpJsJyl6SnyIxEMxGbm
+         KUWwr92EfrVOSrCiWF53I2D5QWf7ejtVqHiH8POojXn58qacYQ9g3RXQjQE3+7whd9Zq
+         DQRGhmFUprfmeQkNiMiZCEBOvrmpaesdsbX0dIgsLyrQHJB3QGE7gcj0IyDITxO1M2Xp
+         gieYwjbEhssTdUxPl5jIZbcUkze8NixQ+MVsLzts/WRnq8ic++34wgDEaBMGm6IUqR5N
+         BGcA==
+X-Gm-Message-State: APt69E07ycK/xLxwsfYPf7VjfjagA54h2w92XoKZfFcr3Av+7T1uBlEI
+        IxI6SPhe4r8DhcSx2ptu01I=
+X-Google-Smtp-Source: AAOMgpfxCnSwko9+8mUc/4da01XyTV5v05mFl7xTC+ZbPA/vWdd1Qtucw2eQju1wPOuOSwiMfdRmJQ==
+X-Received: by 2002:a65:4b4e:: with SMTP id k14-v6mr15426966pgt.31.1530592225688;
+        Mon, 02 Jul 2018 21:30:25 -0700 (PDT)
+Received: from localhost ([175.223.22.36])
+        by smtp.gmail.com with ESMTPSA id c8-v6sm282713pgu.19.2018.07.02.21.30.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 21:30:24 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 13:30:21 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tejun Heo <tj@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: printk() from NMI backtrace can delay a lot
+Message-ID: <20180703043021.GA547@jagdpanzerIV>
+References: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="9jxsPFA5p3P2qPhR"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1530541401-19726-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Cc-ing Linus, Tejun, Andrew
+[I'll keep the entire lockdep report]
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On (07/02/18 19:26), Tetsuo Handa wrote:
+[..]
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606834] swapper/0/0 is trying to acquire lock:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606835] 00000000316e1432 (console_owner){-.-.}, at: console_unlock+0x1ce/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606840] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606841] but task is already holding lock:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606842] 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606847] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606848] which lock already depends on the new lock.
+> ...
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606851] the existing dependency chain (in reverse order) is:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606852] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606852] -> #4 (&(&pool->lock)->rlock){-.-.}:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606857]        _raw_spin_lock+0x2a/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606858]        __queue_work+0xfb/0x780
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606859]        queue_work_on+0xde/0x110
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606861]        put_pwq+0x85/0x90
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606862]        put_pwq_unlocked.part.29+0x1d/0x30
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606863]        destroy_workqueue+0x2df/0x320
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606865]        tipc_topsrv_stop+0x1a0/0x290
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606866]        tipc_exit_net+0x15/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606867]        ops_exit_list.isra.8+0x4e/0x90
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606869]        cleanup_net+0x219/0x390
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606870]        process_one_work+0x2ec/0x800
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606871]        worker_thread+0x45/0x4d0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606872]        kthread+0x14c/0x170
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606874]        ret_from_fork+0x3a/0x50
 
-Hi Akshay,
+I assume this one is
 
-Thank you for the patch! Yet something to improve:
+	pwq->pool->lock -> last_pool->lock ?
 
-[auto build test ERROR on powerpc/next]
-[also build test ERROR on v4.18-rc3 next-20180702]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606874] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606875] -> #3 (&pool->lock/1){-.-.}:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606880]        _raw_spin_lock+0x2a/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606881]        __queue_work+0xfb/0x780
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606882]        queue_work_on+0xde/0x110
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606884]        tty_flip_buffer_push+0x2f/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606885]        pty_write+0xb0/0xc0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606886]        n_tty_write+0x244/0x620
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606887]        tty_write+0x1e3/0x3f0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606888]        __vfs_write+0x54/0x270
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606890]        vfs_write+0xf0/0x230
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606891]        redirected_tty_write+0x61/0xb0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606892]        do_iter_write+0x1ce/0x220
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606893]        vfs_writev+0xb0/0x140
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606895]        do_writev+0x6d/0x120
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606896]        __x64_sys_writev+0x20/0x30
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606897]        do_syscall_64+0x81/0x260
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606899]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-url:    https://github.com/0day-ci/linux/commits/Akshay-Adiga/powernv-cpuidle-Device-tree-parsing-cleanup/20180703-024607
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-config: powerpc-defconfig (attached as .config)
-compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=7.2.0 make.cross ARCH=powerpc 
+So #3 is
 
-Note: the linux-review/Akshay-Adiga/powernv-cpuidle-Device-tree-parsing-cleanup/20180703-024607 HEAD 4beae9263d77036dae7f43905823867c6d982690 builds fine.
-      It only hurts bisectibility.
+	tty_port->lock -> WQ pool->lock
 
-All errors (new ones prefixed by >>):
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606900] -> #2 (&(&port->lock)->rlock){-.-.}:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606905]        _raw_spin_lock_irqsave+0x56/0x70
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606906]        tty_port_tty_get+0x20/0x60
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606907]        tty_port_default_wakeup+0x15/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606909]        tty_port_tty_wakeup+0x20/0x30
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606910]        uart_write_wakeup+0x26/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606911]        serial8250_tx_chars+0x1ae/0x2d0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606913]        serial8250_handle_irq.part.23+0x108/0x130
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606915]        serial8250_default_handle_irq+0x7a/0x90
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606916]        serial8250_interrupt+0x77/0x110
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606918]        __handle_irq_event_percpu+0x80/0x480
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606919]        handle_irq_event_percpu+0x35/0x90
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606920]        handle_irq_event+0x39/0x60
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606922]        handle_edge_irq+0xa5/0x230
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606923]        handle_irq+0xae/0x120
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606924]        do_IRQ+0x53/0x110
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606925]        ret_from_intr+0x0/0x1e
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606927]        free_unref_page_list+0x333/0x590
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606928]        release_pages+0x44a/0x5c0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606930]        free_pages_and_swap_cache+0x107/0x150
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606931]        tlb_flush_mmu_free+0x4e/0x70
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606932]        arch_tlb_finish_mmu+0x61/0xa0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606934]        tlb_finish_mmu+0x36/0x50
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606935]        exit_mmap+0x10a/0x230
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606936]        mmput+0x92/0x1c0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606937]        do_exit+0x365/0x10b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606938]        do_group_exit+0x60/0x100
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606940]        __x64_sys_exit_group+0x1c/0x20
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606941]        do_syscall_64+0x81/0x260
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606943]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-   drivers/cpuidle/cpuidle-powernv.c: In function 'powernv_add_idle_states':
->> drivers/cpuidle/cpuidle-powernv.c:417:28: error: 'state' undeclared (first use in this function); did you mean 'statx'?
-      if (has_stop_states && !(state->valid))
-                               ^~~~~
-                               statx
-   drivers/cpuidle/cpuidle-powernv.c:417:28: note: each undeclared identifier is reported only once for each function it appears in
+#2 is
+	hard IRQ uart_port->lock -> tty_port->lock
 
-vim +417 drivers/cpuidle/cpuidle-powernv.c
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606943] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606944] -> #1 (&port_lock_key){-.-.}:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606948]        _raw_spin_lock_irqsave+0x56/0x70
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606950]        serial8250_console_write+0x30c/0x3b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606951]        univ8250_console_write+0x35/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606953]        console_unlock+0x650/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606954]        register_console+0x339/0x540
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606955]        univ8250_console_init+0x30/0x3a
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606957]        console_init+0x2c6/0x424
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606958]        start_kernel+0x466/0x61f
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606959]        x86_64_start_reservations+0x2a/0x2c
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606961]        x86_64_start_kernel+0x72/0x75
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606962]        secondary_startup_64+0xa5/0xb0
 
-   262	
-   263	extern u32 pnv_get_supported_cpuidle_states(void);
-   264	static int powernv_add_idle_states(void)
-   265	{
-   266		struct device_node *power_mgt;
-   267		int nr_idle_states = 1; /* Snooze */
-   268		int dt_idle_states, count;
-   269		u32 latency_ns[CPUIDLE_STATE_MAX];
-   270		u32 residency_ns[CPUIDLE_STATE_MAX];
-   271		u32 flags[CPUIDLE_STATE_MAX];
-   272		u64 psscr_val[CPUIDLE_STATE_MAX];
-   273		u64 psscr_mask[CPUIDLE_STATE_MAX];
-   274		const char *names[CPUIDLE_STATE_MAX];
-   275		u32 has_stop_states = 0;
-   276		int i, rc;
-   277		u32 supported_flags = pnv_get_supported_cpuidle_states();
-   278	
-   279	
-   280		/* Currently we have snooze statically defined */
-   281	
-   282		power_mgt = of_find_node_by_path("/ibm,opal/power-mgt");
-   283		if (!power_mgt) {
-   284			pr_warn("opal: PowerMgmt Node not found\n");
-   285			goto out;
-   286		}
-   287	
-   288		/* Read values of any property to determine the num of idle states */
-   289		dt_idle_states = of_property_count_u32_elems(power_mgt, "ibm,cpu-idle-state-flags");
-   290		if (dt_idle_states < 0) {
-   291			pr_warn("cpuidle-powernv: no idle states found in the DT\n");
-   292			goto out;
-   293		}
-   294	
-   295		count = of_property_count_u32_elems(power_mgt,
-   296						    "ibm,cpu-idle-state-latencies-ns");
-   297	
-   298		if (validate_dt_prop_sizes("ibm,cpu-idle-state-flags", dt_idle_states,
-   299					   "ibm,cpu-idle-state-latencies-ns",
-   300					   count) != 0)
-   301			goto out;
-   302	
-   303		count = of_property_count_strings(power_mgt,
-   304						  "ibm,cpu-idle-state-names");
-   305		if (validate_dt_prop_sizes("ibm,cpu-idle-state-flags", dt_idle_states,
-   306					   "ibm,cpu-idle-state-names",
-   307					   count) != 0)
-   308			goto out;
-   309	
-   310		/*
-   311		 * Since snooze is used as first idle state, max idle states allowed is
-   312		 * CPUIDLE_STATE_MAX -1
-   313		 */
-   314		if (dt_idle_states > CPUIDLE_STATE_MAX - 1) {
-   315			pr_warn("cpuidle-powernv: discovered idle states more than allowed");
-   316			dt_idle_states = CPUIDLE_STATE_MAX - 1;
-   317		}
-   318	
-   319		if (of_property_read_u32_array(power_mgt,
-   320				"ibm,cpu-idle-state-flags", flags, dt_idle_states)) {
-   321			pr_warn("cpuidle-powernv : missing ibm,cpu-idle-state-flags in DT\n");
-   322			goto out;
-   323		}
-   324	
-   325		if (of_property_read_u32_array(power_mgt,
-   326			"ibm,cpu-idle-state-latencies-ns", latency_ns,
-   327			dt_idle_states)) {
-   328			pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-latencies-ns in DT\n");
-   329			goto out;
-   330		}
-   331		if (of_property_read_string_array(power_mgt,
-   332			"ibm,cpu-idle-state-names", names, dt_idle_states) < 0) {
-   333			pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-names in DT\n");
-   334			goto out;
-   335		}
-   336	
-   337		/*
-   338		 * If the idle states use stop instruction, probe for psscr values
-   339		 * and psscr mask which are necessary to specify required stop level.
-   340		 */
-   341		has_stop_states = (flags[0] &
-   342				   (OPAL_PM_STOP_INST_FAST | OPAL_PM_STOP_INST_DEEP));
-   343		if (has_stop_states) {
-   344			count = of_property_count_u64_elems(power_mgt,
-   345							    "ibm,cpu-idle-state-psscr");
-   346			if (validate_dt_prop_sizes("ibm,cpu-idle-state-flags",
-   347						   dt_idle_states,
-   348						   "ibm,cpu-idle-state-psscr",
-   349						   count) != 0)
-   350				goto out;
-   351	
-   352			count = of_property_count_u64_elems(power_mgt,
-   353							    "ibm,cpu-idle-state-psscr-mask");
-   354			if (validate_dt_prop_sizes("ibm,cpu-idle-state-flags",
-   355						   dt_idle_states,
-   356						   "ibm,cpu-idle-state-psscr-mask",
-   357						   count) != 0)
-   358				goto out;
-   359	
-   360			if (of_property_read_u64_array(power_mgt,
-   361			    "ibm,cpu-idle-state-psscr", psscr_val, dt_idle_states)) {
-   362				pr_warn("cpuidle-powernv: missing ibm,cpu-idle-state-psscr in DT\n");
-   363				goto out;
-   364			}
-   365	
-   366			if (of_property_read_u64_array(power_mgt,
-   367						       "ibm,cpu-idle-state-psscr-mask",
-   368							psscr_mask, dt_idle_states)) {
-   369				pr_warn("cpuidle-powernv:Missing ibm,cpu-idle-state-psscr-mask in DT\n");
-   370				goto out;
-   371			}
-   372		}
-   373	
-   374		count = of_property_count_u32_elems(power_mgt,
-   375						    "ibm,cpu-idle-state-residency-ns");
-   376	
-   377		if (count < 0) {
-   378			rc = count;
-   379		} else if (validate_dt_prop_sizes("ibm,cpu-idle-state-flags",
-   380						  dt_idle_states,
-   381						  "ibm,cpu-idle-state-residency-ns",
-   382						  count) != 0) {
-   383			goto out;
-   384		} else {
-   385			rc = of_property_read_u32_array(power_mgt,
-   386							"ibm,cpu-idle-state-residency-ns",
-   387							residency_ns, dt_idle_states);
-   388		}
-   389	
-   390		for (i = 0; i < dt_idle_states; i++) {
-   391			unsigned int exit_latency, target_residency;
-   392			bool stops_timebase = false;
-   393	
-   394			/*
-   395			 * Skip the platform idle state whose flag isn't in
-   396			 * the supported_cpuidle_states flag mask.
-   397			 */
-   398			if ((flags[i] & supported_flags) != flags[i])
-   399				continue;
-   400			/*
-   401			 * If an idle state has exit latency beyond
-   402			 * POWERNV_THRESHOLD_LATENCY_NS then don't use it
-   403			 * in cpu-idle.
-   404			 */
-   405			if (latency_ns[i] > POWERNV_THRESHOLD_LATENCY_NS)
-   406				continue;
-   407			/*
-   408			 * Firmware passes residency and latency values in ns.
-   409			 * cpuidle expects it in us.
-   410			 */
-   411			exit_latency = DIV_ROUND_UP(latency_ns[i], 1000);
-   412			if (!rc)
-   413				target_residency = DIV_ROUND_UP(residency_ns[i], 1000);
-   414			else
-   415				target_residency = 0;
-   416	
- > 417			if (has_stop_states && !(state->valid))
-   418				continue;
-   419	
-   420			if (flags[i] & OPAL_PM_TIMEBASE_STOP)
-   421				stops_timebase = true;
-   422	
-   423			/*
-   424			 * For nap and fastsleep, use default target_residency
-   425			 * values if f/w does not expose it.
-   426			 */
-   427			if (flags[i] & OPAL_PM_NAP_ENABLED) {
-   428				if (!rc)
-   429					target_residency = 100;
-   430				/* Add NAP state */
-   431				add_powernv_state(nr_idle_states, "Nap",
-   432						  CPUIDLE_FLAG_NONE, nap_loop,
-   433						  target_residency, exit_latency, 0, 0);
-   434			} else if (has_stop_states && !stops_timebase) {
-   435				add_powernv_state(nr_idle_states, names[i],
-   436						  CPUIDLE_FLAG_NONE, stop_loop,
-   437						  target_residency, exit_latency,
-   438						  psscr_val[i], psscr_mask[i]);
-   439			}
-   440	
-   441			/*
-   442			 * All cpuidle states with CPUIDLE_FLAG_TIMER_STOP set must come
-   443			 * within this config dependency check.
-   444			 */
-   445	#ifdef CONFIG_TICK_ONESHOT
-   446			else if (flags[i] & OPAL_PM_SLEEP_ENABLED ||
-   447				 flags[i] & OPAL_PM_SLEEP_ENABLED_ER1) {
-   448				if (!rc)
-   449					target_residency = 300000;
-   450				/* Add FASTSLEEP state */
-   451				add_powernv_state(nr_idle_states, "FastSleep",
-   452						  CPUIDLE_FLAG_TIMER_STOP,
-   453						  fastsleep_loop,
-   454						  target_residency, exit_latency, 0, 0);
-   455			} else if (has_stop_states && stops_timebase) {
-   456				add_powernv_state(nr_idle_states, names[i],
-   457						  CPUIDLE_FLAG_TIMER_STOP, stop_loop,
-   458						  target_residency, exit_latency,
-   459						  psscr_val[i], psscr_mask[i]);
-   460			}
-   461	#endif
-   462			else
-   463				continue;
-   464			nr_idle_states++;
-   465		}
-   466	out:
-   467		return nr_idle_states;
-   468	}
-   469	
+Must be
+  console_sem / console_owner -> uart_port->lock ?
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606963] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606963] -> #0 (console_owner){-.-.}:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606968]        lock_acquire+0xbf/0x220
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606969]        console_unlock+0x23e/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606970]        vprintk_emit+0x394/0x680
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606971]        vprintk_default+0x28/0x30
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606973]        vprintk_func+0x57/0xc0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606974]        printk+0x5e/0x7d
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606975]        show_workqueue_state+0x448/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606977]        wq_watchdog_timer_fn+0x1df/0x320
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606978]        call_timer_fn+0xb0/0x420
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606979]        run_timer_softirq+0x2da/0x870
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606981]        __do_softirq+0xd0/0x4fe
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606982]        irq_exit+0xd4/0xe0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606983]        smp_apic_timer_interrupt+0x9a/0x2b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606985]        apic_timer_interrupt+0xf/0x20
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606986]        native_safe_halt+0x6/0x10
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606987]        default_idle+0x2e/0x1a0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606988]        arch_cpu_idle+0x10/0x20
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606990]        default_idle_call+0x1e/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606991]        do_idle+0x205/0x2e0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606992]        cpu_startup_entry+0x6e/0x70
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606993]        rest_init+0xc7/0xd0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606995]        start_kernel+0x5fc/0x61f
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606996]        x86_64_start_reservations+0x2a/0x2c
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606997]        x86_64_start_kernel+0x72/0x75
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606999]        secondary_startup_64+0xa5/0xb0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606999] 
 
---9jxsPFA5p3P2qPhR
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+#0 is
+	softirq WQ pool->lock -> console_sem / console_owner -> uart_port->lock
 
-H4sICOTZOlsAAy5jb25maWcAlDzbctw2su/5iinn5ZyHzcqyLNvnlB5AEOQgQxIQAM5IemHJ
-0thRRRevJG+Sv99ugBcABMfZVCURuxu3RqNvaMzPP/28It9fnx6uX+9uru/v/1p93T/un69f
-97erL3f3+/9f5WLVCLNiOTe/AHF19/j9z39+e/pj//ztZnXyy9sPvxz94/nm3Wqzf37c36/o
-0+OXu6/foYe7p8effv6JiqbgZSclPT05++sngPy8ks9PN/uXl6fn1cv3b9+enl8Dui4TYvNO
-d5b+51WMYIBY3b2sHp9eVy/716FhyRqmOO2obP1mlFUVwvwWU59ix9T7w+jTw+gPh9EfD6M/
-xegZF2AtHqywi+sBpDJ8y+gE2OqLkFybvKtrv4mi6441JKtYp2XFTSfrvJOmEnQTNlUk5xdh
-4wDc5awgbWXSfa/bkklSsq7mpSKGiybspq47XXHKouWtyZbBjNpOt1IKZUKsZKroqFFeo0Io
-Ciup5QQKPhqFDNZn7479jnIhVAZy4XEu1+Ld8fQNjboM/s+anJMmkCfAAN8MLNIhE7t3epLx
-mDFyfak7kueqM0l8XpMF9HwD65rITjU5TNHoriYXZ8efDhHw5uztSZqAiloSM3X09t3foIP+
-Pgxkdss0M63E/bHsIYoRbwsYy0cUqzP4KrjSpqPrttkEW8XVuT57/3bcq6bmHZc8lIIdMXSd
-i9LbcUPoxiiCkhDLjQNDx0VFSj3Ho+DnTM4RaqdZ3V3QdQm7AketFIqbdT0RDPpmvWO8XMfb
-uSbabilwBni3Zoo1Bhisw1M2fTCiqstOKt4Yn4Q0MILhNROtOXv78WiUT7sdHgsu9ZYDc2Zw
-ugZ+ixoOeqFIDYdLwAhMxQJFLvuzByompyHD2zwru7en798fzRdvMn3ZePSkBSth+5zTZq23
-Z6AdpEIVN2Mcz5hqrMqAyWrNQZ1EJLrVEs5eAm0PN1UgtlzMoCFAFJ2siAEFUsOq+WwIKw6w
-hwym3aEqIxXIyhJZK5XIfG12JRqGAuArFVkaqxwrtmWVPhtPJEhntxPK2/es5VWO296xC9dG
-O+G01rO0BvoeNc73b5Pl5A2wnjVbmBrINYc999QeVcAsKx4cGPbmjafQHKwzTJuELoNFk2rL
-lEYdDu0SYNh147HbCtIGNpFVXXnFZRpzcTXBQ+JxZiNlYlq99enWQpsGBPvszf88Pj3u/3ec
-oN4ROTsf8wMD/6fGMwQgU2jfzlvWsjR01sSxtma1UJcdMaCM1v4qWs0qniVdAHtaEouzfLIC
-ZilwQGKtld1+EBdwmz6//PXyun+Ytn84ZihNei128wM4YJwApvEJe70mKkfNDCztFNNw8iYc
-NmE52HkmOBA2eeXrFsTmoia8mQ9Wa474kNia87wza7AgOW98HS+J0qxvMTLQn7k9qYU+4Bna
-A7WduBk7jmgLgDON0bFOAmVuON10mRIkp0Sbg60PktUCtUVODBv209w97J9fUltqxwRFApvm
-ddWIbn2Fx7YWgWcCQDCzXOScJpjgWvHcqsuxjYMWbVUtNfHkAMwcCoDlo3XC7PTBrP/TXL/8
-vnqFdayuH29XL6/Xry+r65ubp++Pr3ePX6cFbbkyzkWgVLSNcVs8zsauN0QnppXopEODsQ1W
-lqKCTUiew0yDMVEC3FGN5KkjacB0g5/hiwaCQOoqsJ3YKFgIoi4WusJJcS2q4ZhZLirarnRC
-AhRjHeD8zuETzAJsdapz7Yj95iEIW8NCMCgaJMjDWGdNs5JmFffF1xok8P6aY0+H8o37Yw6x
-3PSdLOyhAOXDC3RjfDhyAxxPHz+6oM4d6jQpWNxH6KaOdrhpwefKSEUaGslWiEltS6lEK7Xf
-BnQ6LdMSU236Bkm0Qznv6xCB5Lk+hFfgQRzCF7C/V0wdIsFIzFRZWg7BO/UjMNg0nFKPCaIe
-11nOthC0HRoOmsZiP1s0hHGL/O8yWSQHBuWeEndBNyMNMX7YAU4BGI0gxGxRQrxvdACaYMdh
-3QpAqYgc+OK3bcCxD9s6Xxt9oWXBAONToFMpFaNgAvLEQAo1infyKlQyW+vdKd/y4jepoTct
-WrCanm+m8sjvAkAGgOMAUl3VJAD4HpnFi+j7xPN5wIGWYAf4FUOjbfcUPGk4XIESjsk0/JHa
-xcijIg04lbwRub95jgg0H2XSRgc2tIucS0m13KjRs/fYGIrVov6swankKAXewHCAMHLrZp6D
-280ZuHCOUOw+jmYz0G7xNwa9vt71Y6aqAKWt/I4Xl0vAWUKz7s2qNewi+uz84JpJESyOlw2p
-Ck/k7AJ8gHV3fIBeg8r09tGPwki+5ZoN3PL4AE0yohT3eb5BkstazyFdwOoRaheMR6f3A6Zt
-9/ZnUt8A/hUD1WpHLjW4WMnDimJgo4widU5Hz3Caf4fjZIRuAr1gcx558qw7mcW01uh3Wm+g
-T6XK/fOXp+eH68eb/Yr9e/8IXhUB/4qiXwUuo5c0DboYPKDagTrr/wSip6s2czo1OK19jkdt
-0rqrIikzgn35PZMMOKIgJJgShEEX1mihd9EpOCaiXhxrIsQIBPznFAftStCHgPjAcOJHckoU
-vAqCCKsxbAbE4wVVRK+jc7VhF4xGMLtXHJwIi5zgwg3Ezh4CyhE8dRrnCH5ta9nBQlkgm+hl
-QqCwYSCYEDoWC3E56NW4v1kSwk6EFQWnHOWghfMMhxqNFEVfN4pyQNytnweuMnjEQfi8UWw2
-muMHsAhThIA0EWq2XAdd6imxHr8bOKNdkdL4gbqcAmdLuhbC069DCKaB6xgH9WFmItYDXWp4
-cTlY1rB7xUpQQk3u0o49Kzsi42nYhK7k4zHzcesdnDJGNlYWYxM2neXE4jAlOs+Auk7hlGAQ
-at0lw6gBgxtm4qb+cREpuPV/3MLyto5TN5ZBgdQGjIH4wSWr8ODO2NpP3jrztJaYWY1odsAR
-1OEMdTmh5y1XcTc7AnKMbptLBwx5qQRRr8z+Fq2oco8+tWjNKBJ0cKKD7OkS3LYswf2RVVvy
-0E/0wEsmAf4G62ysFG8CFWbR6TA6lmK0esw682i4f9wFHpD4eKtzlzVJDRQctgYTNKhkhpuf
-JBdFYbocRr6MsLXIewrJKAd95XkHIm8rOP+ondABQhufmCW7AHOOXiPmuFB+Ewyxza3NATc0
-Nb/g2iTqIMRN1ymJ1t5dyVInPsl4lUIrTBqj/7CDo+y1RfkEd6zPe3umy/XSowk1c/nGddur
-JyNQIwV5BFbYTZ2lf1ySmYrtPz5fv+xvV787b+Tb89OXu3uXz/GEWWz7RO0hH8mS9RYx9OBA
-DGt0RX3Fb505XSPdUSQHQXhuQf0dYCVIyj/oadoG8YuNHTrpiQBdrznSkXrfj1Z0zIaH3JxR
-8nRKoUfjniqwKEkao3gNk4WzkHcb9HsXV6xd7qcCC9h6ajwLL3oxuNRUc5CF85YFCZ8+7Mx0
-mQRWPAsc6jFKNaxU3FwuZk2QCi9H0ty2eZU6B7eNObWdzm0g2S5LuUVuCLyzKXQ8QeSakGQu
-6/L6+fUOyxVW5q9ve9+vRqfSBpsQvWBwG4gQAQexmWjSKX4I/A5TCF38qI8aDvePaAxRPE0z
-yAWhE97TrzoXOkAEadGc64019mmZ5Q2sT7fZ4clhslNx3V18PP3BMlroD5Qf+8G4VV7/oCNd
-LnBjGqqC0/SjzdHtjzZ4Q1S9sDlD/FfwNH/xDur04w/6907D4gj2VM/uflHk6/PwcrOHofX3
-Y/MerJyFcLdMYqVvftvffr8PIk0uXJqrEcJTKwM0B38aZzvH0CK4uBmu74YGB274FlriBA60
-6sc9e3Pz5V9jYgyWuDxTD7m5zKwzNw46ILLiPJUaBE1bS5wSRA08CLR5YzdPS4ip0MjANoWX
-Xg6PcUiPP4RLtt2BumVLjX1k2DrMmxMDThHtVO1dG1qz7KYOClDsGt/BdeURC0g72gKuT1l7
-cbp0l4HgC9V+zInwC06jCiFO5XTZE8HX2ximwb0gOu4zbouQZKcWobFSIYRrOGrBQYbv1P2j
-My7316+YxUmXutkqsGbr94YmCmQq5c1gi228IAlWkseVVFpWoDEmWB5ccrsWHQbEpeeLQ8QA
-klJOmQwu+hRSIDrYMy3K5CzicNfOpQ7nQmsvR7jepuq6eFZvfQUF39BvvHAwaXPI6UkkW0TG
-JSIS/EsbWbsNIiu9f7hbyZ36cndzt398XT19Q2/gxXd0p3Zdw2qxsDk9BReuaCvV2uJsdsD6
-noc7qvO4kEXqd+PE9btJukRiyvrd6LekhgH0GgJ2m5U/Oz4KG+aXDUGVEN1AeRTblgQVegCC
-f8k2BIGRgy1oICJUEcIIhXHigw9Esx9CFBy1AFBURK9DUCWRxp9+ySruKpcW+EuD8r8BMrsT
-HRFJnZPVDplVJPczFReg9kClDftE9/f3q+z56fr2M16Ps8evd497T8aG0wfRODitD/43RkLe
-wcnAHMTHf5wF1maYrDUmXsBIYZVNT/Hgd2rWTPlstkeJhzRUtqC7z+20SgHBTiPURDGkOwfG
-Tv7Rtu7KNsphTrlxWwYG2oGgS7KwVynei8IWj2HqoZYitOS23stlN4pAq9hKNrQImGABp5TF
-ekqC0bsAOx8UHdbS5iMmp1fa8pVSLUyXfzx+/8kbFKSaxKWsoVmyU2JKCYXX3GWQZRmooRMW
-XtcjMLxnt6DofGApXNdsgU3hinBea+NKLkNEpsSGNZgiDNOjjK3DaX36cAR7E5ls+WEO403O
-FaOmk7E2GzHzij2YNhbFESXaJverTVbF8/5f3/ePN3+tXm6u74MCE7vnIKXemekhKLNYnaU6
-d7WdQs9rakY0ZuXT/vlAMXie2JF3HfpfNMLTqcn2v2iC6Vp7yb1QZjJrIJqcwbTy5Bp9Qjwg
-TG3tyfv787Fecmt4KhcUcDq8L05SDNxYwI9LX8B7K01v9bS+JDMWlzOK4ZdYDFe3z3f/DqKl
-sTdQoL6F8uGoaQ9z2Howhziacnt6B6LX2h7OOZweYlgQv73f90sA0LhMBIcriovIBpjlGZjC
-nKVUY0BVs6Yd3RickaTjYKs8ZuPgW+Iko4v1cTHxpEpUYYamo3peS5wIqKPZzvZXrzPrvL7q
-3h4d+SMA5Pj9UXIAQL07WkRBP0cJBq2vzgAz+eIYcK4V1sR5Cx5DzSZY7QDfiqptDFHp/FtP
-lcog8KaoDWbIZ9nlFAo+wstR/LI3RqM6wGT7GuxHEA73fWmquDQzcM019XwO6DK6g3KlTLYa
-2zqtEAspTmYV4PY6wmXDIZIKKhKc871mlQwDfL3jIl0ltRYGL2v6Z0WDh4fBs711xsvJ4c4q
-wvdPYfrC4L6fiAZz4zuC2RdL9aMeFPwVeUKnJ1MU3xMWhFft7Do7+uzCy+lxNg4pW1USE8wI
-FikoMT27vVuEEbxUQu5u2Pu9HBsWxIIS9HiHQ9yrLb/gqvXrlWxxUF8MONYT4h0RbCxujC33
-QyLQOZ4E2csmy6UKb22jEqP+qq+yDonjZQ0UVUxhM9NA0G/QInr2RAqDoXG3enEu/LC3qliJ
-0b97pQHyXbXs7OjP97d7CB72+y9H7p+xv0NzneYBdrAlKYzHTyz8tMVPqBkjvnhsQx2imX9p
-7XHjAgWUpVBb+A/efcUMm1HMB42uLAKw2+F5s+Gqv/TvPhphQ4Zg2f2i/HJcv/rTO7ip2hP3
-gM647CsK60nUb4aPRnynvQc43Rrd16Vgqedzyw/JMnCVfYcIdd2QlPSOv/YYMKhruzs1b2zP
-ZydHn05DmV5UMTG7ekyqhPrgLXEK29dn+aMkyWpXW/Y3xrS2gxKwrYEDA+q7sdCk2SyUaAwW
-xKR0W3inCp/zWtU5NvlMAbH4dA5vhMcmV1KI9B3IVdam79Cu7M2pSLs+sN8QaGKRt1EtRmTI
-P6wlTVJbf82SDJUIhy553ZsnWyIcqURQzNq9H9hi3guf4iVMj8Sap8Crcbrc1t0n51diwTBr
-6LomYdFaaCUkaTqBOY5RsQWJuZONXWOy6hfQpwPeE1ZbOTTUoo+n3l0mYzU7skIocH7OPoVj
-2bsylEMlltIdFHMpUebHeYO6jtIIOWswiqq4nmmv4d4oi+Rn8OBAV5MOPMUSS8Cn2uGxKEYP
-mXpbjKKEbz7iOoThQd6U25/c3ek5X2q5+AyYMT9d0EP6Z7wT72pbWW1xad+2hmlv0BnZJDey
-jnpbPqW7cxdXeJVzvZZM2QBXABSlnMGe9bI8HCRNhoKwIezJvr/Mo4zh2WBkmLEpKmg8CSzC
-6dKiK9aUJvHqsh858Lx01VVZ6pGQDRwpRI1rERzi4A4RCdyrLh0CE4W2AGZoOLI2uSnQCDAL
-1gyxLovqAbAoLCyvtdNZ3Ew7L9Om398hkovtIk6qdGRucUTzZElvHy84lk3nYAKDq0DT/fpE
-ei3TGtwn6uPfw9PolCRecWqI6HJ7N/PQx/vXt3ssNgbkfnXz9Pj6/HR/7x6nDXdXwdZ2FAI8
-cDnsM8xZKJ3vX+6+Pu6un22HK/oEf+ixIxf7A/y3p5dXbzAvizKSsMfbb093j/H4+ALfusrz
-Szdo9PLH3evNb+meQ/nYYfxn6Nqw5KGglPgvLyStKSfxty1A6ij3K4uhmbu06uf0j5vr59vV
-5+e726/7YBaXoGTSD31kfvrh+FPaOH88Pvp0nNLtGBSAdqfBkwcFuifnqYurRjRj0TEWcnlL
-Q1MligJTpkd/3hyF/0zxpH2nC32oQ2TouHJQECNhTGBtjyvQ83Wcn611KQmAgW3DoFnr0DDj
-qxzwUpSrbrYsbvavfzw9/475uZm6BX97Ez50cpAu5yTl6mB5ik+N3zPayVetUkrvovAfauCX
-/XWB6YRakH2C4mUMLRCchw4vO2g6vWNpXMSQdmRdJ7jVGnZ7aXJYA4sm7cFnKpgzfzo96OBo
-uk6dJh5sKJcu6Owfy06yLceby06J1iQzikAkGxl0Bt9dvqZzIEZ+MhoB4YqolFtv5UiGz9Ed
-rMREF6vbi8VWnWmbJqzpx2XaZSQfP2E4KDY8dExdX1uTthSILUT6h2V63DST1EbjNnTEuyey
-AKalv8sDDFXAQn0ld/MMBcYCrSj1rAgxI39m5JjB6GO24Mc4YorDHWSMxW3xjEYgQ+UADhfc
-5nL5TFsKRXY/oEAsiAkEWSJ9VnF0+LM8dEE/0tA280uih5h9wJ+9ufn++e7mTdh7nb9fKjUF
-uTpdEh28c0OvdimiYpjxgHErojUvLiORta1B0duqcdA0tUzHjEA6lsz77R0wyRRnL9GHAI3+
-5e7+FQz6wm9NTR1NtmCG6o1IoOZCVBfUwjT4+K5pbCAcQO0rZndz6GtIh4CuICJOccDrzl7j
-+nnAAFkYmZ5FxxWNhpxwMHDGhU4/Zg0oNY/6Nx5vEpszcKesWnAAU0ERdAIhX9BpY802y1ke
-rBLB8foQ5lYWwtw8/dUiVDF3g5yW58K9SEnyYFyQ+4kVPTjBF6/Xn+/3L+A4Pny+e9zfrh6e
-sAryJSVfF/ijPmoTN329fv66f11q4aLuSLp8Ase8BOunxg2+SV2wXHPiwo11sMcUIw+Qg4qp
-9YxnD9fgch9glcHfNIFoz1xKtrB4R5Q6anMq5wwdJHEh80Ngi8GdXdCL3XZewMfl//0NlVOg
-WlbEKteTpfPqUL544gN2Z+lPliQ4b+UMHyoZ8GFmGmk2DcV+xbuCGdwetxSwJvq8ZYrgHUqA
-BzYBCZfjsQngvV6PoKOQ4SRiZKAsAvppDjFBTZqyijcWl0l26ScDiuPv1AAFy+Y6we8kpzSd
-YkLJoSaNUws/5GD4QhhPTPrla3VsUsda+0rSrSX+7nhZwwyxMHr+Tss6JZrEHiaAkrPYVqTp
-Ph4dvz1PonNGG5b8tagqsEjw+R/Grq25cRtZ/xXVeTiVVG0qoi629JAHEAQljAmSJqiL50Xl
-OE7GtbOeKdtzdvPvDxrgBSC7qU3VzETdTQAEceludH9YEG/PMjzL+LxY4/3CSsKJsy9yaj4L
-IeAl1ujcEbVzq7aG4v2P5x/Pxkz8tYl7H2Q6NfIXHuN90vL3Nd7Ojp9qfES0AmUVWukjAWsx
-TTeiIvJrWr5Opxup0+nya3GPn0p0AnE6yecxPl9a/u7aGyR6qKGORMy/Ap9kXSEVnl/U9fT9
-1Y/B98Udbv+2EvdX+pLDse2kRHr/XwlND7v99Acp5fRbNJr0dBkZ4YXt+nvsR3dT7Ovj+/vL
-ny9PY0XeWBoju9iQ4HxE0vMIJGou80ScJ2WsUU7svI1Iiu8nLfuwxFe4rgZ9xHcMX4C0xlwL
-smK6DWMkomFnlenQe9MWTGTYtSJWiaIyGq17wEpM1M1CaCzrd4CDR1Dd6CEHIpDROimgZDW1
-TICIZmoQPDcSkeV0LTkR+dm9iUiI49OuEVLRY8AK3MVXC+H6QC9mIAB7NvEdgI2MgaZqVUz3
-oUynO9C5Y8AfSG+zRi1MC38cJByLtkpyDXHsBUBL+tKxUZeYzcJEW1KUIj86Hz6uzjg1m1y9
-rD1LenTMCKLXvVzjVe71xNZiWzrwCwQS2RJUXzBkpqRyriXSiVXpx5anFtPOd5edQ5SzBj7L
-enao3c6TcZ4fzF9lXWOA5KYfLiGWUHzv/3DgO8HnBZieuhJMIVm/XumwYDXQpqF3f/bx/P6B
-KGzlXU2B/ln1tyrKiypyWRf419ozBYjXRKcwAk4Qn8jMGCfnijIH0ssdV8hrnyREF/ourJYC
-Z/geFfAiwqBMS2oyBPpGpztQiaPxHtwyXp+f/3iffXyb/f48e34Fu/6P2Z/f3maKcSvQb88t
-BYxsiODY29gHm07kZROdpKHiRlN6Jye2li0BrsckrspwUe4vFNZqnuIdX17ZIajFLzu5ZQ9b
-xADcuokxakhm+tjMmJEqY6Y3LD5IKYDJDAGNjcTAnhP9LGrOWv/v5ckPne6Rgl+eGrKXI9YU
-dXDZfV08LEY2M7Le//Y/v77//vL665dvH9+//virCxcxjatV6bsuW4qZVocgTLBmecKyIkjU
-qVxFqayUzfq2MJM9Pz3ZU1W/aS5upX0gADLupB2KTdP6tIHkQnoYoqROFpDAizX2bFxAEUgq
-eSRUpEZAHCvCl+AEICi2Kebi4ndxRwGIMUDTboVtbDHSbO+iAxsTY+XGgR/APh4y84PFMpN1
-kCJaiV0QNel+X6SF9+zCU/6wgyo4qW5C50t1GYR09LOwMNOCUwuqqrGdI6l9QK3g2LpI4ZS1
-plCwUogmq+sAcMgQHZw6yror4k8Bocl0DGjgowwWXUMLcmDN7+Ag0/wOczWL1CbkVUeIqxVq
-8EqQP5cxTF9yODGAKN8hspstsTkO61ctR0KebzA2gt21gd3IDzZXEZsKrYgP5seTKkxzboUg
-8kNr81q1LJeLM762t8IJ49sbPBWiFTkoge18LTsLoAZ8qg1YtRg2v23GxfLqoayLbIATMG5g
-FWNDsuu0OPHV5pas72gAE8s/byYKDbLxPGLzMtENxrP76s16vbzxJht8I9ByeHLEG8TM1gyj
-7SJqzEpzSBBQj/+WPdXCw0y+6aD7xnwdjhCnth2V8GKBxkMV+OiWbBg0LK7lhhu9LV29vD9h
-qxlL1ov1+ZKUBa6ymT1BPcDEJzyPLK8pAMMdhJZx3LVQy1TZPQf3WnK9XS70ah6hbJHzrNCH
-Cm7dqI5whwquuZrVPMP1VlYmemsUN0aYNVJni+18vpxgLvAZrUWui0pfaiO0JnKjWpl4H93e
-TovYhm7n+AKzV/xmucadL4mObjY466Djxv66pJptVxuiCWbG4R/dCzsbJbz083IxXJ7tsBPC
-bNYKi6ZzHDNbF/iQafiQHkJE/zQSRte+2dziPvRGZLvkZ9zj1AjIpL5stvtSaLzreXwbzUcD
-2IHZP//n8X0mX98/3n78yyKWvn95fDMWxMfb4+s7vPXsK2S//2Fm5Mt3+N9Au2g+fCb1EpQR
-fPjC+RIDhbIcJ2bK14/nrzOznc/+d/b2/NVeY/Uexhz2IqDjJEHCo+bGthiTj2YPGVP7gvYQ
-wkgxOQT9IdWQ8t++d9dj6Q/zBjP1+Pr41zN05+wnXmj181DPh/Z1xXUdZTTB0z2+xgi+xyIB
-+TkbQg4YCksPrU5a+K4F4DkcsJ7gIQKMCyucQK8MSg3J7fp8oSJiewkzb5EGO/y/JMjmMD9H
-w8LuYm4DGOOwWAQ0VXiqT8VkYpPFfTgG7sci22eCQG1LaQMnAnAYKP0e8337EhZ8Pe2iFm2D
-m5bOPv7+/jz7yUyZf/5j9vH4/fkfM578Yibqz/07dHqHr8DtK0cLoglaaqFRjborqBprKLq6
-GHstKSqkjhBJuKWinmH7vtwGnTok3rCvGggEfFkGAYCpcaYS/p3rdql5H3xjXUrsqxqNoSGH
-H1Pav7EHNNMdfdA2BqtXbP6hXlxXJVqbsUXbe1m8zRY4NUezJC3PgmBYHPJBE/l5Fy+dEMJZ
-oZw4Py+GjFgsBhQziVuMiZHetjxdzuY/O4HoD7gviWNnyzVlbM+EVdEKDPo35DMIvJ5gMz7d
-PCb57WQDQGB7RWC7mhJQx8k3UMcDAQrgiofwOPPRJyQqrggHtOULU/2CsNCNimHXv1ycKN9p
-JzOhj3QyE3NBlfXSsAfD0FAXMI+sM3EnfosWG+ypKf7ClTqYm4pVdXk/0bGHVO/55MA1ZhFu
-TppJT3gYXd25nOAm6ryMttFEzbukxs8Z3EpVkl0MSFrI1gXklA863hG7ixUGdeQAPzjRhlyy
-iAA9cF1QCyxo2vEe1HrJN2blWAyX2o7T3pAotAa0Ygj1/W1OybYhspBp2JvTAykYQFbiZkVJ
-BLA0TV9XY8rwMoqOPvQqWsa92eIkv5hxi+FANCLsMvo+QGwX48GeWU4NvoQvt+v/TKwW8Lrb
-W9zysBKn5DbaTqxndAKWU27UlSW3VJs5Ye+6nSllA7ve5zZwlsNO4XuRaVmYBwsiQ8Hfd5s8
-HqqOZD9U/vaXKmF8VKuhG9tb4yf2rYRAcyNaLssObFRuoRM3B9nAt9qaRf7tN+D1cWk9eRIk
-LwHDKPJxAXDagDjlvRXwSjtcm1jrPv/r3y8fX0yFr7/oNJ29Pn4YU2P2ApdQ/Pn45KHD2CLY
-3s8WtCRVxIANlpWqDdn0zoe6h7p7THCzDyS4OOKag+XeFxURF2XrML3Ho5sFMYxtK0BzsGVh
-XwcktMwWq7A7TZd0Wrvpnadhtz39eP/49q+Z9Vl5XdZ7FBKjflIeLVvpvabc6a5NZyy+DTix
-8hBdQRZvoRUL/GIwEqREl2v7PQP/siXl+DG1G1TGVhnk5w/eQOKngA0T3dws63gaNeSQERu8
-HfpyopuPsjZ7y9h4LP/7jivtKMqw4eNYKoDecrSqJnQKx67Nh5jkl5ubW3xQWwGukpvVFP+B
-Bhy3AmYvxUef5RqdaHmDu5M6/lTzgH9e4HpmL4A7Iy1f1ptFdI0/0YBPSvIKT0+3Y51xWYw+
-mlElzZ6Bj1orkIuaTwvI/BMjgsecgN7criLck2cFiiwZTtKBgFFXqYXFCpilZzFfTH0dWJxM
-PbQAhEdQpogTSIiDdzuBiYAdx4TTswpSiiaKN0vHDeHDLZHVI2TWhd7LeKKD6kqmGRFDWE4t
-KJZ5knlc5OMsplIWv3x7/fr3cFEZrSR26s5J75gbidNjwI2iiQ6CQTLx/UdK0YA/tWW77/95
-iHcWhCb8+fj16++PT/+c/Tr7+vzX49PfYxQ9KKU51R7Nw7EB2pqfydh/5dOUu6rP3ZQTkAE2
-w4crNiRQXucjSjSmzD3gTUdarW8CmsNYgpAKn2qtlSDDNh7h0QxeJlHtbU3jF02Cc1sjifsf
-fQnqhkVbTRpq1614AzzfwPta2G/KcZfAvRXaTKcSTXU0bHtc23eKoeiclfbq27Dqei9zUCmO
-Eq7bmKiQRvQxTFFhqj50lbRqcVgnZNSgYJu+0NDE6TmfRVUEr4aMAp9qLD2CoYe9YS+gxWt1
-YTyDkZBmbBCo6XPNektd3gEfhI6wbPrI4s0T0TDqyu0gTcoPeS6aHvQARcYdnAghZtFyu5r9
-lL68PZ/Mn5+xE7ZUVgJC5/CyG6YxmjS6mhglIIfdojkI8eGLkthYTQHad0MyixOKuw03cejw
-CSAJdVCFGWRxjekiZi9JjB7mxQ20FDCeI78wj3GL6xedRKWW0URlpoRthNYYRQucvgiaYt8V
-ct+UwHP4XX6sDK5pVdKzH3MxDGuELRUSnPoJAqf0/rQQ9wejg1MX49pAUlwnkRNpMbUgToTN
-Kw5Dr/sCS5J1PFMcU6BGkUhApxwCVxtaGGtrw14Li2VucZuCG9nrQ5CkbH5ejraH7R32RBjk
-cTJ0BMKg/LjyTKG6tD7kO6EgNzyYKdUwkcxNWQjx7E+MB4gwycv7x9vL7z/gbFc7kBf29vTl
-5eP56ePH2/NYgRCA/RWEa9lYrQDgwh1sXZaDqx0acJclXxPusV5gs8U6qajg2lW/zx/KfYF2
-kdcMlrCyFjxcVCzJoqekEkXY8wswG3LgwxV1tIwo0Ir2oYxxWMDtnYG9bZxJXmgihbp/tBbB
-5WNc5NLzX7rfl0JJM5PkDm5qC17OnenXKIifX41in/1qAlZ4OZNKNlEUEWFPJQy75SK4NcB9
-yFxxOo+ircqsL3ktGd6OiuN0GIRFcNzJ6oxKj8xwZygw8EkKHCpegs6Batt2MCoPpg/ZtcFh
-PA22K+w03isxrgqWDOZSvMKnUMwVqPfoaXR+9g4EeDCk7DBaemub/X3ZnwKYfCghmH/GWK2F
-Gobn9I3Jz0QKvPdqnIUhB3FOdV7zDGdHeQg6o94fcohVhllR4vHsvsjxuki8w7+zL1PtsCXA
-tQ5wPfwWZvL+MESMGjEHDUPe3Dnh/YgB55WvozAqoaVeIswM6fhLbzi0tBVa0gptWsuGwBVs
-A+BS88DdIwYnd8gjcF1sHuRWm61O5rLbeHCFGB/yXsFJuANYLeSQSSrTr31qGIGSZAviRmcz
-MIZ3FIzLM3pp5t8cHouF2/OD38N55xfwme9DKCVHueRlezeMgjQAYg3wSzr7hrlehGbp8by7
-8irp4ZOs9QHZ4FN1/BRtruyP++Al9mWE4rj7DxzYSUi0U2Tsw5LHCpSsAM0gVpBbiQ09sRds
-IHq8OkjB9vK0ROHA7L1fw59hTNUOV4wNHZ1l8rzzphf8EoOf3XjpywIyXtpqHiI9mN/Egkjl
-lKYqmlN4Rm0PbRbrcwDv9kldGU+NFzjYGo+KWjP13Y44A7l7wHD8/IpMLSwvvFmosvPKzBjP
-iwQEaymFpMGFXJ0YuNQWQcuz85q2vg1XnybZYaI08g6SV2F4053ebNaReRZ3k9/pz5vNahQc
-iJT8UPn39Zhf0XwXjJhUsCy/MrtzVjfXgvUrriPh6pPeLDeLKwuA+d+qyAsVTKY8vbKC5/iS
-sVlu58jSxc7UDpOLxR3tPHZPlwSSh9+co9npQwRZADpOcNXae7C4C3rTyBfUKtXgLop8J8Ob
-LfZG5TebBfoKDwIyuFJ5RV3vrntr37y5W43hirqLzvDbcJ+xJRUQdp9xfO29z3YhxNFZ5Ben
-wPYPow4ivy0HlgG2WNAauG1wuDV03Epd/Z6VAHMrUBE20XJLoN4Aqy7wFa3aRDeY1RtUlkOw
-GdrTVRJ0c3UzX12ZTxXkcVdoYZop8DEElqvdaK4OUy38C3J8hjSLbhi9s13MUY9Z8FQY0yr1
-lgqLkjraXnlje3duav6EEVlUuE/KIeORX/MvaKU5spRoxbcR3+JGqSglJwO8THnbiDhltczV
-taVSF1wWeZDT7HNre0ob9EGtrNv06uc95OGCUpYPSjAsc9c5qYJIZkh2z4kdQB6ma67F/lAH
-S6CjXHkqfALwos3OywjnXH3VW9Eccvbd6i5HDHR4RxrnmutSJg7yDzWWjuG2YH5eqv3gOt+A
-ewSA9sEBwLjYk/ych7C8jnI5rakB2Aksr+nkZ2nsozM6yM6ywt1/wFigMZb+OHvIi1KHNxgk
-J345ZztqsU6ThEACl2WJDRPQLUdXLFiiA5ru9TFL43DqJqnanYysY0acobUFw62INhSyEhOC
-ewmh9OTGZGUKDm5Cmt/4KjCP3f4hyDXRJ+dKdvl9Us7MzzbDA8H5ZiqBInAHWePOowXqzXx5
-JtmmmyFefIq/uR3ze67TgNwLeqBuzoNmXea+f0NyltBtbZwRJD9hZvC4UnF+CWrtYpq/2kzz
-b26Jl00lXK85OASQvMzMIKNKtJbr5XxiD6RIBiHtdTSPIk7LnGuiUY0VN2xWSza2BFmos2km
-2YV1dUxKWHWUknCXZzC6kvvJxxtlb4Jv9TOabzSuyTeA3Z1m1iKaE9Fr4PE3Ax9u6aYebyLy
-SL5byy87M/8XFfyNLRylh5xoflxinYRw1UBMBIAFBDYjkB2YJW4/GbYqS3yvs0w4tCfAPQy/
-EGELbEJTSLJoEHUYF6Jx/5/O9t7DkOTq8G3aw+rueWBxRlyMCMw7dhJErgGwS7FjmoB+AH5V
-Z5uISP3t+XRurlFnbjeErQV884cyd4Etyz2uEJ6cKu/96s/alLOGMF4dHIVBBAYd6m6465G9
-jRaqfFecz/KOTRBu65tGWAP33pBVGVMmUIILSJ/Fh24ltUIRM/1Ce88XxhSJZGSfVizEswl4
-nWmKMf0sFp+ha5xeE/KfHxLfIvVZVhUQeejNb7TAij3wMTywsBBJs9MLoBz9NL5t4meAUnp/
-fp59fGmlEP3kRMQCuPgILfHQA6kT4rGjGjVUvn7/8UEmwcq8PASo+eYnBLAEaVSOmqaAaJJR
-McNOCEIQKOwyJ+Hu/rtTxDh0QorVlTwPhez7HN6f377ChepdVH3Qo83zEFEz3Y5PxQMO0e7Y
-4ghwKqNOEMfBMuD18QiMKXjyTjzEhUvK6F2dDc0sRuV6vdmgzR0IYY6XXqS+i/Ea7o2eROAu
-eDKLiABt6WSSBjSvutngMcqdZHZ3R2CEdCI1ZzerCI8i94U2q+hK32Rqs1zg0eCBzPKKjJmn
-t8s1fvNOL8TxKdALlFW0wI/yO5lcnGrCJupkAOAQfO9XqtN1cWInhitLvdQhv/pBCjPj8NP6
-/nOoxaUuDnxPxRN2kuf6an2clVF0xjz03jz2TN7C3vWqFwjpwjIfpaCnxw8JRgZ3r/m3LDGm
-UcFYCTrqJNMowfEBFWmSKzCWxYS3OCKB1dHxRQZbERFv6TVCwNYvCaO7r81+KYm5hnuhtOCw
-//I9+rZq6GOwLLibm+EHOE6AlWUmbPUTQsYKXlMZiE6CP7ASD0R3fOguEjPEiRy1MdPZVCH9
-F50uqZcb4FKM9xa4agk/fnciFoyewC93AtB12tiZAnP0NdNDhv5cR2XJbURk/jQCoInC3KM/
-jxOMFaOU+mY7XJ7nl/hQ16jnuVEJuC7vqvFWqpRZ1ydLNyawxc6rBW44dBurverTSU4JnutP
-xJ1qje5yEpWi7rVyMg+CDW27gQRX0XyqloP9Z6oZPN1QYYftBz5ny8kvLJWxrjl+UVTbTLac
-E17VpoxEmKmXgOlpjB8iF8yJJtVxcXOzBif78IYxVPJ2UrJScoXDDO0f3/74N1wsKH8tZkOo
-D7MgeVYSAqg3kLA/L3IzXwXn4Y5s/iZjxZyEMfjM8ojZ5JadydjtU4PHqIsqHLfxbJxLfRkU
-PhBsIienhQxXUbkfTTEVv1ZRGVMCByuBsnZMCRQKi395fHt8ghtVely25hnweHQf5xhc/2eD
-n90NYe7Cbu1LtgIYbXjR7P6ESvfkSyxdnHkPi5rL83ZzKWv/ZleXgEQSG0S/xfom7E+W+fnZ
-uA1XfC6o2IPLTuMWocUhuGhqZYILXkXJyuqyPxp9CLZ69PjImDwD0EpDuRvgNLqs4ue3l8ev
-45jr5iUtECf3A8MaxmaxnqNEU5NRmbhZfRObm+a+8bDzrGQKrg3MveYLjb6yzwwutvUZTaQZ
-Wi16c6IvkFeXA6tq7z54n1uZASGV6ETQOsS5FnlCgNv7gkyXcAvwEUq70qxUZ9QrJfRa1DW7
-Xmw2xAGvJ6aKM5Fi7YSKFM0ZdKiQ315/gUIMxQ4qG/yPpPI0RcErZxK/VNFJhIkjHtEbFcNS
-IWXlszRGAV0sHKB40ByO+EmrwE/rqJrznPB/dxLRjdS3FFqQE2pW+U812w0/NCF6TazZYMz+
-crXAiog1cOyqpHcNw7aXTZfX6uBw8s/gpm25M72bUXAHThpSHPEbpffHFj7ZW+kNLcDuBQLy
-/YFcZIn5F0XVt+ySZWE5Vc30sJBDEmODx7A8pKMme6ZtRx8cGatLrL37s5o7nk3dF6PcigBA
-T5ZKGq0mTzL0zNRsZs11ut4zHdHe0fj/jF3JkuO2sv0VxV3ZC98nUqJEvRdeQCAlwcWpCVAl
-9UZRXaVuV9waOmqIuP33D5mcSSTohd0l5AGIGQkgcVKv22b23RYGDyuex8GVVZUx5bJw1lQz
-aMuu97COqCxxN+l8sVmZFWHYXcJ4HE0m1cvle4Oe0fanc8LxGItQQIEOBPxOLCkFuQUsKeaj
-3KUU9Ky2tzBUFLoYHXRkoCvC8PAo+xqF7gJ7fgj5TdmmZs2A6/8yU1Pr9Ib80np2iM6DIVYe
-cOpt8fjs2O1Y0ukfFzzTEcku7QeX7psHYQcN7fNVQ7DZwS5IKl53eLzdTwm8KG9bRnzIabNN
-APLO96Hr8ZmMIZz2P97Lkd7uOd7CfNTZyFcEaW4tJ3gsUB4Ha29FFLp6zTSsJb1nMR8uopAi
-VwAhkAYQO0stTdDAk9hra7kU0vM2dF1o+WpBbClL8WZFDAotpjgVKlmWp6NuGd/dT7Zmt/Tl
-Bp93+8r7r/eP6/PsG/Del3Fmvz3rxJ5+za7P364PD9eH2f9UqD+0onL/9+PP34edJAil2Cfo
-y8DKjDDEEja6OBIIjyEgS0dnwt1CsqE5M4byCdKGsoFiFdKfLXWHUSOE/9XT7IvW2zTmf8rW
-uHu4+/lBj6lApHBqVxBnbWUpcP+tt9F6B0+i8nSbql3x9esllYR3EIAplspLeKQLrkRyHh7p
-YabTj791MdqCdbpJv2tVKkK/OlVBHBKCMGKES4iykwDPAs0V3kBg9puAUB4bZEYwJmXE9vNg
-VJCyvlsh/XN8V17OvJmc3T89luzQY+0eIupVGV4E3dDLWQcVBYJwqdgB7TMxnjYgJz+AiOTu
-4/VtvEKoTOfz9f4/4xUPXGA7nu/r1FN+U08j1VVwack1g6vJhHKJ3bkTvnt4eISbYj1w8Gvv
-/+7Vhki4ys3n61Amyt/NrXlhwJnvwo4EKQ5KwW+FeaiVcllonctkSDV60oMBdR8+iPEdblJS
-yRmmh4YDPlgvHYKZsAsxXwu2kNiZExdxfYx5UetjzPeUfYz55LeHWUzmZ+NSamWDUSS7Tx8z
-9S2NWVEbuQ5mirEfMRN1KPl6NdUWeKphh6hTZk8kkKsJPwXgJ2AiJ8K70dqXeYzVmN3aW6w9
-YnKtMPvIc3zi0K6DcedTmPVqTh2wNAh7Qx7EYeUsTGbSTaG3cb0J+zWO/xdf2j+g4+aOO1H3
-SLNEPYirMYq7m6W9OyFmM/EtxZeOZ29owLgE3VoP49oLj5jpPC9dwsCij7HnWe8IndV8Zf8Y
-ghz7fISYlX0OBcxmPQVZTQ0oxCwms7NaTXQyxEz4GEHMdJ4XznqiA8U8W0ytH4qvPPtCFcXE
-/rAFrCcBEz0rXtuLqwH2Zo5iyiVKC5jKJGER1AFMZXJqQMfEI6UOYCqTG89dTLWXxiwnpg3E
-2MubKL2zOOgdp6CJXGsoV2t/bi8bYDZze9bx7nhD6IAxuROoYsuDmujsGrEgGKVbBJ9Iw3KK
-UGPCmDtLwhVRB+M605jVrUtRTNcZiiVfrmNnom9JpeR6YjWRcbyamJdZwB3XD/xJ1VU684l1
-SWPWvjuRjq4Bf0rZSZhL2Cx0IeRdRQNZuJOTJUU3XgMOMZ+Y3VWcORNDBSH2noEQe9VpCOWN
-qwuZKPJRsJW/sutuR+W7E9uCW3+xXi8IsvUOxqfcCXQwpMuBLsb9Bxh7FSPE3oM1JFr7HuGi
-uY9aEc/VcIolTNFuwUt5YL7Ug1cNqZRiO7gPNHoc2vKYGeEgGO1v48+nj8fvny/3sMG3PE+L
-dwG40va1skuYpwFALtbEPq4WE7ppFgteWg0TSjnGR2MwoLvlhFO7FnWIOEHrCxg05psTswQC
-go23duJbs1k2fuaUufMTaYWHBQrYZr6gPwJiz6UN+WqIuWPWYmIv1YjNPb8SUzZzKI4SOmm9
-6gHjgDXzB6FVZAerwojR6y+cAQtuzmKU8YsgbghARt0ewKf/YsnXC49TiukEMDdhnBHE0SD2
-ffT5MCGn2wblK8I3IFah3q4sPUIbrgDrNXVC0AJ882lPCyAmvwbgL60AfzO35tHfEGdSjZzY
-4LRy8+qGcqW3YpboYbJznW1Md8KjyMCbBGXDBJA8VGb7QxBqPdXTg4iuoTzgC4q+HeXKm9ui
-c095xH4F5Tc+sfijNPHUitDPQC5DbqHEAYBYrlenCUzsEcoFSm/Ovu7H9FQBSqtRyLYnbz52
-09iPrPUWi/QsOfVaW4sVeI5ZLLzTRUnOLOtBlC02lkEQZf6aePJSfSaKLT2IRTHhS0tlcuXM
-PYIWTwu9OcF9j99FgGX4lwBip9oAXIceX1A0XXjLIlYhPGIv0fmKpQIB4BMXrg1g49jXSg3S
-8zWhnKrbSO/SLJ1NA4Ddxd4bbyPHXS/smCheeJbxrvjC8wlPRThfnXzLgs9y8TVNmLUebmN/
-aVm3tHjh2BdugHjzKchmY94g5eG+iIY+gFqpbUKCZ5l4e2MyyN2/3f38+/HeeCXH9qY3x8c9
-OC/pcDJUAWioss8K9LzVpBEYDP4Yz2a/sc+Hx9cZf81qr6e/g+uh748/Pt/uQG2ur+NYHMyi
-x29vd2+/Zm+vnx+PL9eGEnj3dvd8nX37/P79+lY9v+vcy+46edyJPMY7d10ZnedAuy04W4hK
-8qk2LEmV2J17QUHA+9H0fzsRRXnPj0Al4Gl21h9jI4GI2T7cRqIfRU+4bVrPA0GT1lDQptVl
-PNsCS1co9gm4KxZGK9/6i+DVtZtozEC361Jy68At4zd4Cd8LBVxlktOHKxFhnlRpQj1upb9r
-2xzDdggqSeQ5cUq1A3Z184IIEc/bMHfnRhoYLU53PSKzrd42iUhXj/nCE1tKKlKoezzxahE+
-ZX20B5XvBA5JLAa9D4nXKGkuCF9YkOm1kUkL21blXR7BJugS644XJiVN7VgI75i+FKFJtjcF
-gk3YsyEdduySFkIxWNBjjm6C+mZlbXC3I/bqoxTT7/OhsdXZIc7JSinZVOYlByTsSF1jgZRw
-PwOtG6Z64BKbNy2/Oefm3ZWWLYId2WuOaRqkqXmdBrHyV8QDWRi2uQhCejCw3PyuAIckmShn
-eUyxQkEdaQ22oMtTBCaqLujk2/iyP6ml1+UuhZzIRa+H6d+NQ0gpvoaX+M9Nv0pErgri4Ai6
-bk3iSAK2ukrpYYykDvIQEkYVUK1FerlxKE/32I30ZtpSgWvH9ACpGSmXiAf1wt95paIDecSk
-bBml2hMALTOZiY1SHiQwkhsc97RCvYXfLB2t9xF3/S2SBZnvEzemAxRhotCpjHhBXUB2QEfP
-na8js+l+C9sGeodhVvA72cr5iSdj1yVazXl/fdIr4OP7z6e72vORSQEDzYqXpuKG1kAHGOOH
-Lr1g/W9UxIn805+b5Xl6C1bFzbjJWaxn0t0uzE3G8gbxpfSlBAQiMcuJmdQQLU8VPuUyFCxK
-92lvaEMAvI3JOxoVhmnNDTjK9DA1CnCdNkp4VCi369JRpkXSMXjHn+AsffiYpBd+gSdLEROd
-tVP2UkmC0jS7H5TxuB8gwy/1WOqF6+8ADXcvdb1gn3Q1atEoUTJQj+liL7qv5mphmbvu8bcW
-HHLaAA/kwTlhcBKrZ/c0N76KSpp5B99WsEwMPt24ve8E1g5KQbiTw0y1UpEogtgc8kY4tMIk
-YiZV17S+qvsCHB3khiapPMyY0OO6hhix1twupf+lnszAyITB8AGyKCxKCQ+RWBi9oxEEjyB2
-E5UxwjknZrZ8S+WsPOq6DdLIisENWK/7iGF5WOD4PnGRiAWSC4pJtBSTLy5KufCW1AUsyGmX
-ma0Yty6ErRWACt+nDOsqMWXgVIkJA3gU3xLXliD7qhYL6i5Xy7fKJw6tQMrZ3JkT9okgjgVl
-a47TzOlMuXzH2HLp+nS1a/GKuhoGsTrt6E8HLI+YpUb3eDdNiiN2tkYvkyeunOvkaXGZPC3X
-Cw9xsYvzNC0L+SGlLnMTcPgcCMKuuxVTdPMNIPhrMgW62eokaIRemZz5Dd0vKrklgUQ6C8qy
-tJFbPiCdzYIeMSCmbNu0eBdTr2hwCQwkPZOAkJ5C9CruDBTzsdzSqZDTzT/R9VID6CzcpPne
-cS15iNKI7pzRabVcLYnzC+zZLJR6b0Tc/pcqCvnyU4uT2PXoySrjpwOte+QCvNsS9qMgj0PC
-u24l3dBfRilx51IumsRpOgrTRPCj2FrqzbbLLpd05pNWNq18YgnDbW0q6dnheCKNWbX0HO8G
-a0VJvRH8gSe2PWN9HAus7JCElgDyDPj9opTjNvzP1bKnRWR8oBrWj7SeTaH4AFCrU8NI3b1/
-FdBu/pXujKXHzD/hhLCLYynrR9QBlx3b6r0rzP5pocbiNDmfxqHwIngcmOpeEY7DcRsBvEqk
-5CLcgbSQ26G+BdSXrCAdj1SIgjmWma5k1zy5tB5acocK9sWKWA29040QB7Gj3KiihsOD4fnt
-KIksJaySWvnBjlBpMmImGYGOTGvHppeo1baJ9wnQy0GVgZMCOt0swJbi5mdq5QzCx8NOBONn
-SAfR4/jTPy9bpvTO5qz7eh4me4LIVQMp+pniYHRiC0m3Rzkl88fP6z2wNECE0VM4wLPl0JUg
-hnJe0HRTJSI3vv5FGZCJjZKEQGFeKlBOEdaisMjNzgCwNsPoRiSjOg5Vml12JldFIOaHMM87
-l0ZlmNC/zsOUuN42M0vO9Q44EMBrRSI43upROWnY53pxdOPv0yQX0jwGARLGclDAvpjyXVoK
-Q8qCrBQbmQFA8lUXdZjZfRhvBWFegvId8ZAVhIc0GjDE9OOm6T4KwccMdcqBKLXyF7RY59ne
-n2/OdD0XHL3NkPJbFqnUdPmKGTvneHI2rDJgiDedE6JMjYbPX3qVMyuBIFW3IjGTBJWFT6TQ
-88w4ExHHpZpMlzrzLWVJeqR6CVSYaWKpw+FHZtbZGwjRtUGeF/E2CjMWuDbUfrOc2+S3hzCM
-rEMI736QTdACOe8iJk101ihG7vh0p/pTjd6L6hVgPJCQj9zeUxNFuaMAWS7MG1WQgptbExMT
-TmIsAdPcKO1z3naCbfWUhUkMHFpU4qFi0Tk5DUubAY0Mp7tYBuyaOajq9NyKJ9lmLRzEOdwL
-ETsQlKecM7MeAGI98dN1ZvBmhMF6DaEThDeTJCkhIhT0SiReob5bJOCMYfjdnHoJDrMQMFMy
-SRxyYKKx1rv/Ss+QMj3PiKNZe0VhmknqQSjKD3oSopcBdcgLqcpDX3oqBp0I9guWydi2rt0K
-QfJOgvwkdEcmpV/DPLXWD5CW6/FOL7ulkfzlQHANoK4T9Z3YlDzacmvWLktVfaRhZkYFsQKX
-VC4tAUsv3SYZ5HEhk0kPXFy2Yl8ZrqDnmQ4LX40A4xK9eJegvjycTGF0GYp7mzTu+TDFXRXQ
-Rx6YvBx40JP0YYMzcIyZJHre4iEQPFeXOuPKjx/f769PT3cv19fPd2yKija+3wz1DhbMbIRU
-w0/R9zA9WKrME3glu9weBFAJS9NcCxionOd+tFusty3bmbsVkLHwlowlGJv6YPzV+jSfQw2T
-2TtBiw4AwwYvW6gXDcPzNFUwLC6KKhjClIKWklp7Dwy9ydDA9UeRVTE1r2B9nI13BRvhVLjO
-/JBZq0LIzHFWJytmp5tTp2SpsZSosbRfKL3XoXM7gBrvpvvAcSWm/7hyCkMX6AFk5DuOFZH7
-bLXyNmsrCDKjQqnwdM3YrSt+f/509/5uMl/D0c/pkuDNJbES4aAK6LgqHp8NJHrZ+d8ZVoFK
-c7BGerj+vL48vM9eX2aSSzH79vkx20Y3yJwng9nz3a/acvLu6f119u06e7leH64P/zcDVpJu
-Sofr08/Z99e32fPr23X2+PL9tT8zVbjhvFAFW6yxuqjK7cckLmCK7Zh5fevidloloZbqLk5I
-OGmahOm/CT2ui5JBkBOPJ4cwwgS5C/uriDN5SKc/yyJWBGbdqwtLEwsHexd4w/J4OrnqZOGi
-G4RPt0eY6ErcrlyLX6CCmTUT8Xz3A7ypGNj7cEkKOPWKCMWwRbL0LJHR5tIYHyeEgGDAxKX3
-lnhfVQlpT0dAiAPU2taJft23eWqqBalRialnzMjfROurG0T8MBbEq7dKShDg4LQXFKowb5nK
-rB0l4UMQ52eRepbWjMJ9qshDBURY5vW6y/LzmhPP9koYviOlWyWgN+249Cqw/DB75cQagsPK
-QLct3EIMZ00h9T/HPd0niBd1uDLkTGubR7HNydcBmP/0luW6omkELH4WZUaGqlwfd+KkCsvg
-ERKs33bEObMGnHVsuq+EX7E6T3RXBJ1O/+t6zomegw5SK8b6j4VHPATvgpYrglcB6x6YQnWr
-hbm9iviBpXLgFKUZgdnfv94f7++eZtHdLzMxXpJmpcrLQ2G226knhwVxmwPyPQv2xCWEOmcE
-uR9OxFEmSKq44tZc0TH1RDCMR/4v6mLqXRH6l+qwpgeytCftjos29DI6DOuDtjn0twTGONC4
-Aylq/8gAaxnOHQ21XqbA4xVle9MCPAsAnyeZZ7BaThHbNPKNax4UCMg423jExXaZAjy2M3fi
-Su55BFNBKyeeDNdyYnmo5D71nrGWU4a8bQGJN3sNYEU8mSsbKXApChWUg7MpjzDaLQER9zYO
-cf/eNLNn5j9BuZALZxctHOIlWhczuOcf9FFUvb89Pb785zfnd5xA8v12Vp2df748aIThHm72
-W3so9vu4l8NEZrLqLqt3zL6M4XF0otz/ohycQBgLot4ef/wwjTY4UN6HxHkF4zwEkgURmd1F
-C/3/RGxZ18q2DcPcXGJmEZYf6HujaRDhKaudOIC5qcTZqmBGn8yjr4YdK+COEN+mxPBXxvY9
-xxIdENO7g9K/hVEcqwNnxjKhpNxuGWPy0367MMYEyZKoB7Gci1tDmXVnWPabwBQ7IUxgupXC
-gUDbXqsiS7uOkYeSCzfXdymsa8RYuhaBW0t7NmSemTMhw5yoACjb0bwIg+iSn0xHJmEA5i0q
-hRM9yfOic9SIotHZJYQOMFXnlWfZN6BGIWUajcIxbTAG8zAyP5Apcwv81MTb4BZAkJeU6Wd8
-QHRQV5Til57nbwgotYRe0IGrVJ7NgbVN/b/ePu7n/+oCtFClB96PVQUOYrVNp+gqBFlS+U7B
-CS8HV7tdB5UdoEjUrmmiYTgYvxuCB1zp3fBLIUIwtjS3E+Y6P45U1+asHnJqUIzqeGy79b6G
-xO1ICzr5c5PtRg0IpNZa1/1yteFjBtmBnIeJ3nIQnqo7UIJcqgNZrc0aQg05nGOfonOvMUAv
-uCH2qzUmlx5fTHxLyMhxCRqKPoYw1xuAzNvzGnTSEPP5U41A8jhCB+xhKPqbHmjxT0D/BEPQ
-eDStsXQUQV1YQ7ZfFq75LKhGSK2+bwiC1RqzixcOoeM3ra6HAfF6oAPxCGP6bioE+UsNCePF
-3DWrsk0qR9/vb31L8y2tzPSHfHdKAZ8DsObhe50GD5TW/2CqCOTCJbYonQZ1ncmM67Jt+ido
-JTH3092H1oufp/LB45RwLNfOAy5B8NGBeMS61YV49r4JE47vXXYsFtHk7LUmNogtxF0SxxRN
-N1Y3zlox+5QSL301UXqAED4vuhDCT24DkfHKnSjU9suS2rQ1/SHzOLGzrCHQY0wP32v5kJ2/
-Dv96Tr7EY3ry15c/eFZMdbPKLtI+Zyj919SUQNkeNK2aELztTQ2tB0dCjemovL68653kREk6
-ZgTw8M/4La23UpfZWrQtdp0b7CYSONoBZgtzkqw4VQeipjNTkfaOScFpEuHiAWRZ1SIiN1sp
-AybQ+tkUhlFHZKVPSJ4SbVWUHiGtnQIwSaiIo09IIC8I5+ogjXcr4tXIcWf0uqTLedmeMzhC
-0/tPtu8/9IRnAvW7REPk0pfTyHFVHCZFh/mlDIT73SEQKqPcjYzgW3gM0LcpqCS0a9T687HB
-nUP8eP/2+v76/WN2+PXz+vbHcfbj8/r+YXQhp3APbvzE4VavdQk4dhh9gaM7CPn6+dbjcazr
-2Xe9xaXyCFGF8ehmGwWlqFvrMRPRNjWpyiKN46L/UrYMavd9JWEPOK54vJ+hcJbd/bh+oPsJ
-ObTjSXdlAp2XEugCUvGwEZR7levz68f159vrvXGSQLe6sC0ZVUv+8/n9hzFOFsu9wR1Y2w7w
-yuFWGFy8ghH8b7J0ypO+zDi425m9w1nXd13o1pKk5AZ6fnr9oYPla3d+Q9H27fXu4f712SR7
-/Hd8MoV/+bx70lGGcTq5BlcxoyyfHp8eX/5LRao87h0Jb7xZDHu4XR6a56TwpDjFxaYbhtgT
-CaLaE2U+x///xo5suXEj9yuuedqt2iRjW+N4HuaBIltij3i5SUqyX1iORzvjSmxP+ahN/n6B
-bh59AJSrkvIIAPvuBhpAA3BzZXX/1S4M4IQnKCZCInKCqSs0cE5rLlJw5qKPUrTvCvXl1Gpk
-FcUbtlqdjQSDBTSqzDLG9rcivCKq9Br2wh8mY9PUsP5gxpQsXvjWboOxv9CghEh6DNLrrtpH
-3dllkWuj0XEqLI+lyqOqSstCdHmSX1wwV0mtkY0j2qU5j8NkRdXhGcXj20c4pB6eHu9fn57D
-CVI6caHZPY/fnp/uvzkRv4pElZI2NmZyWWwTmZO55CLHExe1Egn5gMZRkqS7k9fn2zu085Nn
-NZOwCV+bdcwTl1XFWFFXNfMImX0Em0k/YLqJZnUPh61ZXXassRrP1Mha+LBzz5wQBz2g20dN
-o0JwVdZy30VxFqJqEbdKNs7CBdw54Ch13r5Z+BUv+BoWMzUsOlHE6rry43S4NJxS7OsycRJg
-42+WGBqRL+MoTq1gG0qgkhUwK0dhP4J17kPm9OhJdKAJTElI3Q6m4v1JsVHEsNloa+iGfg4t
-tn4ThXxlxh3hvP+U/gojp9R+/vSB3wTjhZCrtiQV3Xuvbc5HzCs5RJUFBs0zemqWaBcpetns
-Z7u4XtVn9NJeNsob2wFCd2LEmiyZeHKslWTCfY3Eqi26OiqATmtNaf5kqPlOGDzI3oIZxak6
-sUJrk1xR16BCZmY0nCB/Z/pLeheZo3j6Te56FCg9C0EP65YoyMKNmSwernJa0HXsWGjcQt+T
-ax9vHb7MQTLi/YiLiQ+QBqBtbU7RkUGQY8ytenxEvKoXzkpaQcneOMeew88gWMNswaXVI56g
-MKOJxFiOXeK+8ZuhjLJdpGMywtVoZ/fPIpZFwvjNWER7GCjdv/ASc3v3w/WkW9X6wA0pk19U
-mf+WbBPN7QJmJ+vyM4gtnbuCvpaZZFxPbuALcr22ycqZBPxdZKOEkpT1b6uo+a1o6IYAzuF0
-eQ1fOJBtT/JgfzK41cdlIir0Yl2c/07hZYlpakEO/fLh/uXp8vLT519OP9hLbyJtmxWtdSua
-YK8aYe3l8Pbt6eS/VLeC6EgasHEjUWnYNieAGL+5yTwg9hM9+SVsVOc5FiJBZM8SJaituRGq
-cAI1uXarJq+Cn9SRYxAel03btWiypV1AD9LNtS8R/WuMtVxHRSPjAT9tVf2HOxZzWRs9FJr4
-RO4s21Khw1Dw5SQSJzO4FY8T+ryj25N6XAx+4yMg70SZoNOI0qxkpvnLmRZywxWrKLebZ34b
-zmAMkcNiuGqjOrVJB4hhBYM8NwnVDtqcfUQDRrIE/bmrDt+aZnRBPYV+5UjL8RQlvqhBFe9M
-1d5aHeE3xiodlp/dLObKy25KorT9DVnWTd0wYQwGioX26kfnfgyqMU8r8qVIEkG9CZkmREXr
-HDOm6jkzkTrOLQ3Bnl9HuSxgcTLIMuc/TCsed1XsF7PYCx6r5iqt0DudGbDrest91nKbZcj1
-6h4vA3LlsiP8vT3zfp/7v92jU8MW9jJBSL1jNAOGvKOitukXUYXLtZEcJZ/ecyQpyD72RMgM
-4O6dFG6XLHcr/AU9DHqQ+N1MqH4mYUcTc+yYWCxch5MOn7sco8EcNzhLR+kM8y++wuFEy6tr
-FcUCzxBZWo/G9PHo/TQdsoYRuhx68iDCf4VYt4VyYuPo393ajevQQ9mohwa9r1SjXY8c6VZU
-KXP+S08Olv2lk94aGr0T0aardsilac2MpmqrOMqoqBsa6x25GqY5n8PppRlFrpDA82uC0gq5
-CY/xGKuOjbthCMleeEOVL88Z4/GAJ3ifJcskES9xcMdQZu/JrB4k0y8f3l7/e/nBxgxibwdi
-r7PbbNzv57SV3iVi0lI6RJfM8x+PiJ4cj+hd1b2j4ZwrskdEz6FH9J6GM34uHhFt3fOI3jME
-F7R53yOirfcO0efzd5T0+T0T/JnxDHGJFu9o0yXj5YVEcM/Ea1rH3MXsYk65Z2k+FcVJkSaq
-YyndPTdUf+pvqwHBj8FAwS+UgeJ47/klMlDwszpQ8JtooOCnahyG451hcrw7JHx3NqW87GjT
-0IimzW6IxnByICoyIY0GiljAfYE2+EwkRSNaJmz/SKTKqJHHKrtWMsuOVLeOxFESJZjXjwOF
-jPGxGn3JGGmKVjJykj18xzrVtGojyXA2SIGak2kXLWURqWvzVHo1qIGI9C+DRBvJ5KKrriyF
-sGyUQJ8GS30w2P7qRhVxdQ13nTIfFIkESSYKBguyPrRX2qx2tCvG0rcADSgPrJUZKE3HebWP
-UyMoKrGyBB9M5xPLprGv4LEdyRwpmtOPiVw5JJ1s2s796twxwWhAV4ts5fsDuwSwvsTy+pL4
-1GDoXduTRGoXMQFRDMWSWVWAZQv+nWgs3MR1gbEjrKr4kqDd71EydcxIsPzLfH44Lhdnvd6g
-D6jWw1EJgGalLGqEBwW5y4XCxb8bS3iwoVTJ2c2CrrFuEqIYDbboR8T+BsHT9+Z3t7+8CGDa
-0FyFtDK6WATASOUUrEnbfBkg6ipSYbnL+KtjaTJQZgamvnXrG9uxwEIsAXFGYrKbPCIRWu9C
-0ZcMfBHuax3TNDL61OH0gcPHNmBGidx3CDNqp1Il9rES1XUZS+AKWwFjqCI7eGCkDcr2myID
-0jH1nfME4YndzXqdmbZZ50XVdsr5Krmyrt7rrHR0Wvh7blsUWX9Ts+4sKmF4UpJQRhB0TqvK
-zGoEbJ5VYl2KSx1ray3hSLZTcZVFY12gJ2U8wEmTFdJf/n3plXD5t32c1uhtUVptGRXOgInT
-SBYEqkJ3Qsdfa0S15pVZt8raOvWM2jWcfmYmpkt8A+xuTQ645n+bw/Pj4a+TH7d3f94/fh+8
-lX4+3z++/qmds789HF6+Uw6YJllC4NU5TppJxZFhOMQtKnb6O+NoDcmhFygGBxQLa377KESB
-DqJPdvLw8/6vwy+v9w+Hk7sfh7s/X3ST7wz8mWq1uYwzVntRREtoM9qWgRATcMBpa6ldenze
-1o0x+1ozj2lI9Jdfzj4uLt0JqGA75l19nXP+SFGiCwYqWkFYAE/H5Jn5sswY1aOOyLErBLUh
-TKcdWwhUCYLM2AtvfGqjnkLjRo5prin1j0diRq0ssuuwuFWpYtGrcTBNC6kd19ELUU+qrmz7
-7wgc7WFmFr58/PuUojKhKuyTFltgtIuD0JcfHp5A5ksOf7x9/26WvTuQYt9gFErGM8UUiYT6
-KOTnoyolhu5mnEKnYtBOP0NSLlFdyMT+ztrhvSHTWk0RaNjGA34rhiGCMyeDKQqnb8CwKwtK
-jzcgd3qGM4Pckk5dGmXcDGE3yib8rl8pyJCOtFxXj3bqlTFwh22zkP5KTz2XbWMcxpVxkj3d
-/fn205wp6e3jd+tygHJ1W/X5iWwujcEzQ+RkMivLBgSXKLcJK7jnxEQXeeJuG2UtbIFpMFTy
-rlotwuO1+sR+rX12prQFBtNE9cYeerNVR5RmExjx/PTsI9mukfAdzXJpx1aNxe6u4DCCIykp
-6Y1nPoOzq6RdURy832kdzc1/FW2AyFU8mN53Dj/WlGbDiCKZ8TMz6xPHbSNE5R0i5u6KnuPj
-IXbyr5ef94/oTf7yn5OHt9fD3wf4x+H17tdff/23u3JN2WstGITiTqVguwyuNmTTdBnYtZmG
-oyjZNmLPPNjudx/hFe+eEKaIcN/udgYHx1u5qyLGZbNvyq4WDOs1BLo//FluiIbn0xnMxpGy
-cGBBehulLrpuXSvsVIx4w4d/mTrKy8x6OTVoOLIHSjNk6BWIDxjpFJaduZbONH5jWA07HfB/
-nysrnBE/yqN/nMtjFPUcm9SeWJIL7WBoYiUwBwaw/9AnRsUtze8Bgaxmxc8AUnDTZJEgr4KJ
-gPEezrqzUxsfzA8CxdWco1+/1K96AUoFopNHafzrQHhB+z2jB4FWpnCSZoY1NmLwg6fVbP2o
-d0KpUtF2y+madNS2icqLIr5uSuuyiLGJ9NDYzjvI21dtYSTMeexaRVVK0wy3h9Uw9E4BGtjl
-MUaCBgEsNrGkbRJ0dtLziZQgyxWN7Y6ka9RvD7ziTcGx+2hH38JMmkLrPoHZ3DS94/SIM4KT
-WO8kCtZ+36yi9KG10wZ7t36nvEGp4BfUE4Y2Y3/A2KngZsHiJULkVYM3ct1ZJnqHugIJZ9V/
-Tx1wmmuGxac7WFLEZ9OaNJPRzyTF7Pt5rItIB0e0S/dQo0Tq+0cMEgpGS0uRfWoPpKIshMdW
-NRyD+OLGS/oPGAY5ksMCnCU0sgQ7dEOMTln663QDVSxFPy8TuKXBy2oVwGjKYNtNszEsl75z
-VHuZfRnMKCbeAcGUPbVTYDbz8YCmbd0t4VhKcy4Vsb3h3k95tIWmIwLkS7zj8G9ZMawLShNs
-gBAYKOA4uiKsv39HOckZm4R57qJj7iFXhgsG40quSVisWUK17dJO0i0H+URLMTOsVis5ebwO
-cosDNk9mPPB4vBHlLhakTDVR6SfGxgzETyKOTyr26N4xM4BGC9dntefpNkDYMI+GNIExXvF4
-owDk8W3LvMDSWIV2jAa1KzN95ZxwzGLazKw0HcsqLivaod60v6I7t5KYxUke26l9EEmVg+w7
-0wfjxTzTUJ3Qa246I3QUZr15zFzmTEKpXOT8RtF6HB06CvXequXfR9URJvBmVSNaYbxZJ47y
-HX8TH0zK5SXsZLObMat5lDlPXjR27nPgM6i4lrWRS2zVKe6AuOkp7ELx8buNozc0+qHJ2mhn
-tSxKXduByCBtDoXHu2GRiaiaFFPETTxCi3e89xmWiNGPNLfmVGjoz9FVqG+wFe1TEzDsMki+
-S5F1KxHpW4S+9LsPHBgi/k1bozBaKvCXsMa8lv1BYCOdXqFAhkol4Dw1X8neC52EvwfdDkOu
-pwlTSy8z+8mN1jfYkiOqc0ByBjHXmiwc7khl1756xUOYj/0u2QRZFdHyIEXYpVvmAadPvabd
-RXwy1aAJJyoEfcSQ5HGYip39ACb2nZRVVOtI6H7cef6D+nzNeoD4xBj6pOOyvpHE7x5pOAhw
-RFjaqmEZLqJXUd0MmTrMLSpQCNSHu7fn+9d/wuwYeKxbUjL80sbxyN1EJm0G3t+AArk780ai
-L4JE9g/XRMKTAKJLUhg9YRJzMXeA/q0nxiGp9QN3faTO0s4i6aclyFdQKQz3SROZEpm5Y6ue
-jlafjGbrIFjiy7u6bBWXvtHwWiwGV7ERoUgFVZ+RcxwKO4Khj/3yYXRb3ZfKKE4sDwcj+un3
-Tx4MF2Z17UOhDB9kOw7ZkiTeaLa2Gw0sgHIwTMXP//x8fTq5w8QIT88nPw5//Tw8TyvTEMOA
-rx3bsAM+C+HCDlpqAUNSuCzGskrthPU+JvxIO79QwJBUFeugZICRhKM9OGg625JNVRHdx83r
-eSqZOmr6OX+PThhfc4MVcUJZRXvsFBOHhFOt8YPdkh+OQpDWKgfFr1enZ5cgrwRDVrQZDaRa
-Uum/fFvwScpVK1pBfKv/0GLv0JOQxJuvtknhYAyaq8UYHyiKtSxwk5qoE2+vPw6Pr/d3t6+H
-byfi8Q63ExzuJ/+7f/1xEr28PN3da1Ry+3obbKs4zl1nLzOmTNaV4aM0gv/OPlZldn16/pEK
-N9pT1uJKBhsfs7VHstAIE1tGhwN6ePpmuyIOdS1jooHxihLpB2SjqE9oQXZo0ZL4JFNU0N5x
-xZAt23OPOvrdKq53KgpDpKW3Lz+4EXCSNw9HTa5P+qB2aNRc9Vv4LDT83n8/vLyG9RpXQH+/
-GXC3rfK6pdaOxs9MjopHR0viU4PrS+dLWfvOh8OkHF2RebIIBjNPPlEwnUs7gEtYvHBjgb9E
-/SpPTpnA9xYF81hiouDSuU8U52R8vmHXpdFp0HAEkj0CBNRHLCZAfGJy3k8UtEv6gM/P+VY2
-a3X6+Sxozq6CSoeTIb7/+cOJDTZy8ppoMEC9eFIevmiXsg55q4rDNQHS0W4l9SKjEcMDM2IZ
-R7nIMjKb8EiBzlT893Uzs4IRfRE0KxE1UdTqCFvbpNENISjVUVbD+U61rT/6Z2ddkE9jR6yq
-4AZBlF3nnLeyQVeCNJqPrDIK2eeuJOewh09TMLrWPR9eXoB5Bgtu8EL2S0IH17Anl0yUzvGj
-2Y4COiWCw90+fnt6OCneHv44PJuodbevpqnBPihq2cWVKij9xtAhtey15sFKQgzDXwyOfZJo
-EQETnq88qPerxJTrAg2z1TUxqCbdQCWP1j8S1r3Q/C5ixfh9+HR4ieB7lu4ChomGqGLPgIfr
-MLGfNTp0XKfxXWXy0R6n6/NSEHOLlBJGH6iL4tOnPRVvzKLd5nSnAG71iqolhgttTYbYtIsZ
-AmaSJcRKMEFQ6+s8F6gJ0GoETNITbKX48PyK4Q9BLH7RmUFe7r8/3r6+PfcetZ63hHmFDgd/
-FG+04ahXfnDags02D+P22ZiVb3RHuLYo2hgEYiRSFzJqZYhy++ikBHKLpiFzI5elE8wEh7mN
-MnkzpECf6nIrXpbl5ryGIosks295Fu5iMYtOt/j6uJbLTDCfT7vAK9XJo+LiKnp7u/WKvWzQ
-RYWeNaTdy7h2W7WXW6ud27SsMbOptVM1yIm6qmkwm3g9KOJMGAC7zv8DEoUM0Cp8AQA=
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607001] other info that might help us debug this:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607001] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607002] Chain exists of:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607003]   console_owner --> &pool->lock/1 --> &(&pool->lock)->rlock
 
---9jxsPFA5p3P2qPhR--
+I don't quite understand how that direct "console_owner -> pool->lock" is
+possible, there should be uart/tty somewhere in between. For instance:
+
+	console_owner -> uart_port->lock -> pool->lock -> &(&pool->lock)->rlock
+
+
+But anyway. So we can have [but I'm not completely sure. Maybe lockdep has
+something else on its mind] something like this:
+
+	CPU1					CPU0
+
+	#IRQ					#soft irq
+	serial8250_handle_irq()			wq_watchdog_timer_fn()
+	 spin_lock(&uart_port->lock)		 show_workqueue_state()
+	  serial8250_rx_chars()			   spin_lock(&pool->lock)
+	   tty_flip_buffer_push()		    printk()
+	    tty_schedule_flip()			     serial8250_console_write()
+	     queue_work()			      spin_lock(&uart_port->lock)
+	      __queue_work()
+	       spin_lock(&pool->lock)
+
+We need to break the pool->lock -> uart_port->lock chain.
+
+- use printk_deferred() to show WQs states [show_workqueue_state() is
+  a timer callback, so local IRQs are enabled]. But show_workqueue_state()
+  is also available via sysrq.
+
+- what Alan Cox suggested: use spin_trylock() in serial8250_console_write()
+  and just discard (do not print anything on console) console->writes() that
+  can deadlock us [uart_port->lock is already locked]. This basically means
+  that sometimes there will be no output on a serial console, or there
+  will be missing line. Which kind of contradicts the purpose of print
+  out.
+
+We are facing the risk of no output on serial consoles in both case. Thus
+there must be some other way out of this.
+
+Any thoughts?
+
+
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607009] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607010]  Possible unsafe locking scenario:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607011] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607012]        CPU0                    CPU1
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607014]        ----                    ----
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607014]   lock(&(&pool->lock)->rlock);
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607017]                                lock(&pool->lock/1);
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607021]                                lock(&(&pool->lock)->rlock);
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607024]   lock(console_owner);
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607026] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607027]  *** DEADLOCK ***
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607027] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607028] 4 locks held by swapper/0/0:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607029]  #0: 00000000acb744a0 ((&wq_watchdog_timer)){+.-.}, at: call_timer_fn+0x0/0x420
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607034]  #1: 00000000918be876 (rcu_read_lock_sched){....}, at: show_workqueue_state+0x0/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607040]  #2: 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607045]  #3: 000000005fd39989 (console_lock){+.+.}, at: vprintk_emit+0x386/0x680
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607050] 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607051] stack backtrace:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607053] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O      4.18.0-rc3 #643
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607056] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607057] Call Trace:
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607058]  <IRQ>
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607059]  dump_stack+0xe9/0x148
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607061]  print_circular_bug.isra.39+0x1f3/0x201
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607062]  __lock_acquire+0x135f/0x1400
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607063]  lock_acquire+0xbf/0x220
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607065]  ? console_unlock+0x215/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607066]  ? lock_acquire+0xbf/0x220
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607067]  ? console_unlock+0x1ce/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607068]  console_unlock+0x23e/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607070]  ? console_unlock+0x1ce/0x8b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607071]  vprintk_emit+0x394/0x680
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607072]  vprintk_default+0x28/0x30
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607073]  vprintk_func+0x57/0xc0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607074]  printk+0x5e/0x7d
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607076]  show_workqueue_state+0x448/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607077]  ? wq_watchdog_timer_fn+0x1a6/0x320
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607078]  wq_watchdog_timer_fn+0x1df/0x320
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607080]  ? show_workqueue_state+0x900/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607081]  ? show_workqueue_state+0x900/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607082]  call_timer_fn+0xb0/0x420
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607084]  ? show_workqueue_state+0x900/0x900
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607085]  run_timer_softirq+0x2da/0x870
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607086]  __do_softirq+0xd0/0x4fe
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607087]  irq_exit+0xd4/0xe0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607089]  smp_apic_timer_interrupt+0x9a/0x2b0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607090]  apic_timer_interrupt+0xf/0x20
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607091]  </IRQ>
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607092] RIP: 0010:native_safe_halt+0x6/0x10
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607093] Code: 53 18 fe 65 48 8b 04 25 40 5e 01 00 f0 80 48 02 20 48 8b 00 a8 08 0f 84 57 ff ff ff eb a6 90 90 90 90 90 90 55 48 89 e5 fb f4 <5d> c3 0f 1f 84 00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90 
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607135] RSP: 0018:ffffffff84003df8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607138] RAX: ffffffff8406d7c0 RBX: 0000000000000000 RCX: 0000000000000000
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607140] RDX: ffffffff8406d7c0 RSI: 0000000000000001 RDI: ffffffff8406d7c0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607142] RBP: ffffffff84003df8 R08: 0000000000000001 R09: 0000000000000000
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607144] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607146] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff84098920
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607148]  ? trace_hardirqs_on+0xd/0x10
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607149]  default_idle+0x2e/0x1a0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607150]  arch_cpu_idle+0x10/0x20
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607151]  default_idle_call+0x1e/0x40
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607152]  do_idle+0x205/0x2e0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607154]  ? do_idle+0xf9/0x2e0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607155]  cpu_startup_entry+0x6e/0x70
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607156]  rest_init+0xc7/0xd0
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607158]  ? trace_event_define_fields_vector_alloc_managed+0x8b/0x8b
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607159]  start_kernel+0x5fc/0x61f
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607161]  x86_64_start_reservations+0x2a/0x2c
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607162]  x86_64_start_kernel+0x72/0x75
+> 2018-07-02 12:13:13 192.168.159.129:6666 [  151.607163]  secondary_startup_64+0xa5/0xb0
+> 2018-07-02 12:13:44 192.168.159.129:6666 [  182.238928] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0 nice=0 stuck for 92s!
+> 2018-07-02 12:13:44 192.168.159.129:6666 [  182.241803] Showing busy workqueues and worker pools:
+> 2018-07-02 12:13:44 192.168.159.129:6666 [  182.243616] workqueue mm_percpu_wq: flags=0x8
+> 2018-07-02 12:13:44 192.168.159.129:6666 [  182.245141]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
+> 2018-07-02 12:13:44 192.168.159.129:6666 [  182.247130]     pending: vmstat_update
+> 2018-07-02 12:14:11 192.168.159.129:6666 [  209.030165] INFO: rcu_sched detected stalls on CPUs/tasks:
+> 2018-07-02 12:14:11 192.168.159.129:6666 [  209.032175] 	2-...0: (0 ticks this GP) idle=0be/1/4611686018427387904 softirq=5544/5544 fqs=27833 
+> 2018-07-02 12:14:11 192.168.159.129:6666 [  209.035069] 	(detected by 3, t=120007 jiffies, g=2553, c=2552, q=1155)
+> 2018-07-02 12:14:11 192.168.159.129:6666 [  209.037220] Sending NMI from CPU 3 to CPUs 2:
+
+	-ss
