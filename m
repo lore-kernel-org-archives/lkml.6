@@ -2,87 +2,247 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CF6C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A8EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E65072086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A182124F11
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 04:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXv73hN+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65072086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mfGt5U51"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A182124F11
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932702AbeGCDeG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 23:34:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932301AbeGCDeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 23:34:04 -0400
-Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com [74.125.82.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E40DE24EE3
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 03:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530588844;
-        bh=6PZHqHwuOPTuln9V+I3wdJ3Zpqx7ws0aJZMENaOhU0o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hXv73hN+io8IMpb1iikeHPOUWFZfrgLVwiEpDgW88bTWchgynr6bv4FSYvXzHRmY0
-         M6V3x81XX5WDCN5x0nyBwenw4kufg8iMGsCB+ticAoaDkvbNvK6hsUxmGJa8GY/nIu
-         erTPtutavUQKBoGKSEvC4f7hGaqLMrd0HxvoZpAw=
-Received: by mail-wm0-f41.google.com with SMTP id b188-v6so666579wme.3
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 20:34:03 -0700 (PDT)
-X-Gm-Message-State: APt69E04nVt2Snh/mcNcZ2/WSHFot2XhSPxz5zBW6qB3DxYGRDfohad7
-        0JoMpgExdNa8p8Fxm2+RuvMaSTRflTEfpINrn7kF3w==
-X-Google-Smtp-Source: AAOMgpcjjTruQaUIp9sQDOBDuV7/b+57ufAffloyfhQPQC4o9XfshiBNY8Y3mH5bsJ/+bdgb/3rRO5kDlXFO/Esh1KA=
-X-Received: by 2002:a1c:c241:: with SMTP id s62-v6mr10101860wmf.146.1530588842371;
- Mon, 02 Jul 2018 20:34:02 -0700 (PDT)
+        id S1753255AbeGCEDD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 00:03:03 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:32825 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeGCEDB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 00:03:01 -0400
+Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com [209.85.213.51]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w6342qwr027435;
+        Tue, 3 Jul 2018 13:02:53 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w6342qwr027435
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1530590573;
+        bh=ceMLrxyluIsh+bLGHTWx/aXMzhYhtcpk/8Ah/Dz47nQ=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=mfGt5U51MMqD4Y8Yj4lTV4bJacFZ1SwQyyI8xZesFkdYQPjcmZrpM+kI8poDQNXZB
+         xRNWarz7AbFvfJCgiXskbaWuJ5kCjaoxWeBaQK39UbRNjCmdi+ljaD5zjAk798OdLY
+         qkpfTA3t5+DXWvtUT4DUGMQIxM43yIr1t66IRkqghMVm6XxAeNniBGFjwHY2U0UA4n
+         5N0IlhjH3MMNqm2mS5lUBnd2FUFaD8Q6Bq5Je20zac1YF/c/3sXCyz10wVyhA5jq6E
+         yArqV9a3ZzzVOeaaZLkBR5UM3XmKrNp+DVf3hWNdNxkRCuZBXIH/Lg1tuwCVUPHPNy
+         L2q+TvI8xSFBg==
+X-Nifty-SrcIP: [209.85.213.51]
+Received: by mail-vk0-f51.google.com with SMTP id b77-v6so308703vkb.5;
+        Mon, 02 Jul 2018 21:02:52 -0700 (PDT)
+X-Gm-Message-State: APt69E3n0jt4IZ6aNwJO4TYMDzi1scIP0YZ7aVc/z417VXjoEmO1wNWp
+        CeCasUh1bZIpOIEg6H8YFDHDLZcjdYfvNCm1/KY=
+X-Google-Smtp-Source: AAOMgpcmtdg0pnQPzIAuBPWWr29urEDDdag3OFXTYdqW8mhBcgkwLCx/lSMYBfKYVlaiVXfuv774Ugf8b15eK2Cn3ZA=
+X-Received: by 2002:a1f:d982:: with SMTP id q124-v6mr16597235vkg.166.1530590571665;
+ Mon, 02 Jul 2018 21:02:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1530465325.git.ren_guo@c-sky.com> <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
-In-Reply-To: <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 2 Jul 2018 21:33:51 -0600
-X-Gmail-Original-Message-ID: <CABGGiswb+SmdAi9qV80Yum3Uf=ohrSMpZKWkvJXK8n=GjTzxhQ@mail.gmail.com>
-Message-ID: <CABGGiswb+SmdAi9qV80Yum3Uf=ohrSMpZKWkvJXK8n=GjTzxhQ@mail.gmail.com>
-Subject: Re: [PATCH V2 01/19] csky: Build infrastructure
-To:     ren_guo@c-sky.com
-Cc:     linux-arch@vger.kernel.org,
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 21:02:11 -0700 (PDT)
+In-Reply-To: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1529944823-22228-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 3 Jul 2018 13:02:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ_8k3k3qA2jL3PBpKz6smRAdqUvJR9v9QF=xpFH_G+Xw@mail.gmail.com>
+Message-ID: <CAK7LNAQ_8k3k3qA2jL3PBpKz6smRAdqUvJR9v9QF=xpFH_G+Xw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: move bin2c back to scripts/ from scripts/basic/
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        X86 ML <x86@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
-        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-security-module@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 11:36 AM Guo Ren <ren_guo@c-sky.com> wrote:
+2018-06-26 1:40 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Commit 8370edea81e3 ("bin2c: move bin2c in scripts/basic") moved bin2c
+> to the scripts/basic/ directory, incorrectly stating "Kexec wants to
+> use bin2c and it wants to use it really early in the build process.
+> See arch/x86/purgatory/ code in later patches."
 >
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> ---
+> Commit bdab125c9301 ("Revert "kexec/purgatory: Add clean-up for
+> purgatory directory"") and commit d6605b6bbee8 ("x86/build: Remove
+> unnecessary preparation for purgatory") removed the redundant
+> purgatory build magic entirely.
+>
+> That means that the move of bin2c was unnecessary in the first place.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[...]
 
-> +config CSKY_BUILTIN_DTB
-> +       bool "Use kernel builtin dtb"
-> +
-> +config CSKY_BUILTIN_DTB_NAME
-> +       string "kernel builtin dtb name"
-> +       depends on CSKY_BUILTIN_DTB
-> +endmenu
+Applied to linux-kbuild.
 
-These options generally exist for backwards compatibility with legacy
-bootloaders that don't support DT which shouldn't apply here given
-this is a new arch. If we need this for other reasons, it should not
-be an architecture specific option.
 
-Rob
+>
+>  arch/powerpc/purgatory/Makefile | 3 +--
+>  arch/s390/purgatory/Makefile    | 3 +--
+>  arch/x86/purgatory/Makefile     | 3 +--
+>  kernel/Makefile                 | 2 +-
+>  scripts/.gitignore              | 1 +
+>  scripts/Makefile                | 1 +
+>  scripts/basic/.gitignore        | 1 -
+>  scripts/basic/Makefile          | 1 -
+>  scripts/{basic => }/bin2c.c     | 0
+>  security/tomoyo/Makefile        | 2 +-
+>  10 files changed, 7 insertions(+), 10 deletions(-)
+>  rename scripts/{basic => }/bin2c.c (100%)
+>
+> diff --git a/arch/powerpc/purgatory/Makefile b/arch/powerpc/purgatory/Makefile
+> index 30e05de..4314ba5 100644
+> --- a/arch/powerpc/purgatory/Makefile
+> +++ b/arch/powerpc/purgatory/Makefile
+> @@ -6,9 +6,8 @@ LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined
+>  $(obj)/purgatory.ro: $(obj)/trampoline.o FORCE
+>                 $(call if_changed,ld)
+>
+> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+>  quiet_cmd_bin2c = BIN2C   $@
+> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
+> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+>
+>  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+>         $(call if_changed,bin2c)
+> diff --git a/arch/s390/purgatory/Makefile b/arch/s390/purgatory/Makefile
+> index 1ace023..445c460 100644
+> --- a/arch/s390/purgatory/Makefile
+> +++ b/arch/s390/purgatory/Makefile
+> @@ -27,9 +27,8 @@ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+>  $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+>                 $(call if_changed,ld)
+>
+> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+>  quiet_cmd_bin2c = BIN2C   $@
+> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
+> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+>
+>  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+>         $(call if_changed,bin2c)
+> diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+> index 2e9ee02..d6ac098 100644
+> --- a/arch/x86/purgatory/Makefile
+> +++ b/arch/x86/purgatory/Makefile
+> @@ -28,9 +28,8 @@ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+>
+>  targets += kexec-purgatory.c
+>
+> -CMD_BIN2C = $(objtree)/scripts/basic/bin2c
+>  quiet_cmd_bin2c = BIN2C   $@
+> -      cmd_bin2c = $(CMD_BIN2C) kexec_purgatory < $< > $@
+> +      cmd_bin2c = $(objtree)/scripts/bin2c kexec_purgatory < $< > $@
+>
+>  $(obj)/kexec-purgatory.c: $(obj)/purgatory.ro FORCE
+>         $(call if_changed,bin2c)
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 04bc07c..7a63d56 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -123,7 +123,7 @@ targets += config_data.gz
+>  $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
+>         $(call if_changed,gzip)
+>
+> -      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
+> +      filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/bin2c; echo "MAGIC_END;")
+>  targets += config_data.h
+>  $(obj)/config_data.h: $(obj)/config_data.gz FORCE
+>         $(call filechk,ikconfiggz)
+> diff --git a/scripts/.gitignore b/scripts/.gitignore
+> index 0442c06..12d302d 100644
+> --- a/scripts/.gitignore
+> +++ b/scripts/.gitignore
+> @@ -1,6 +1,7 @@
+>  #
+>  # Generated files
+>  #
+> +bin2c
+>  conmakehash
+>  kallsyms
+>  pnmtologo
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 25ab143..59c21ec 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -10,6 +10,7 @@
+>
+>  HOST_EXTRACFLAGS += -I$(srctree)/tools/include
+>
+> +hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
+>  hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
+>  hostprogs-$(CONFIG_LOGO)         += pnmtologo
+>  hostprogs-$(CONFIG_VT)           += conmakehash
+> diff --git a/scripts/basic/.gitignore b/scripts/basic/.gitignore
+> index 9528ec9..a776371 100644
+> --- a/scripts/basic/.gitignore
+> +++ b/scripts/basic/.gitignore
+> @@ -1,2 +1 @@
+>  fixdep
+> -bin2c
+> diff --git a/scripts/basic/Makefile b/scripts/basic/Makefile
+> index 0372b33..af49b44 100644
+> --- a/scripts/basic/Makefile
+> +++ b/scripts/basic/Makefile
+> @@ -9,7 +9,6 @@
+>  # fixdep:       Used to generate dependency information during build process
+>
+>  hostprogs-y    := fixdep
+> -hostprogs-$(CONFIG_BUILD_BIN2C)     += bin2c
+>  always         := $(hostprogs-y)
+>
+>  # fixdep is needed to compile other host programs
+> diff --git a/scripts/basic/bin2c.c b/scripts/bin2c.c
+> similarity index 100%
+> rename from scripts/basic/bin2c.c
+> rename to scripts/bin2c.c
+> diff --git a/security/tomoyo/Makefile b/security/tomoyo/Makefile
+> index b7c6a7f..cca5a30 100644
+> --- a/security/tomoyo/Makefile
+> +++ b/security/tomoyo/Makefile
+> @@ -4,7 +4,7 @@ obj-y = audit.o common.o condition.o domain.o environ.o file.o gc.o group.o load
+>  targets += builtin-policy.h
+>  define do_policy
+>  echo "static char tomoyo_builtin_$(1)[] __initdata ="; \
+> -$(objtree)/scripts/basic/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
+> +$(objtree)/scripts/bin2c <$(firstword $(wildcard $(obj)/policy/$(1).conf $(srctree)/$(src)/policy/$(1).conf.default) /dev/null); \
+>  echo ";"
+>  endef
+>  quiet_cmd_policy  = POLICY  $@
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
