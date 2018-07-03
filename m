@@ -3,108 +3,241 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E0CC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F052EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:36:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D9421925
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D9421925
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTP id AB47321925
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:36:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB47321925
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754602AbeGCHgA (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:36:00 -0400
-Received: from mout.web.de ([212.227.15.3]:48145 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932098AbeGCHfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:35:36 -0400
-Received: from [192.168.1.3] ([92.228.103.75]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MCNY9-1fR91a1PRx-009AQN; Tue, 03
- Jul 2018 09:35:27 +0200
-Subject: [PATCH 1/6] Coccinelle: atomic_as_refcounter: Omit placeholder
- specifications from two SmPL constraints
-From:   SF Markus Elfring <elfring@users.sourceforge.net>
-To:     Elena Reshetova <elena.reshetova@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        kernel-janitors@vger.kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Coccinelle <cocci@systeme.lip6.fr>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+        id S932910AbeGCHgt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:36:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44496 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932441AbeGCHgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:36:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B43D8AE06;
+        Tue,  3 Jul 2018 07:36:45 +0000 (UTC)
+Subject: Re: [REGRESSION] "Locked" and "Pss" in /proc/*/smaps are the same
+To:     Thomas Lindroth <thomas.lindroth@gmail.com>, dancol@google.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>
+References: <69eb77f7-c8cc-fdee-b44f-ad7e522b8467@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
-Message-ID: <420481d3-0ec7-3990-30b3-0ef2118e5be8@users.sourceforge.net>
-Date:   Tue, 3 Jul 2018 09:35:26 +0200
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <ebf6c7fb-fec3-6a26-544f-710ed193c154@suse.cz>
+Date:   Tue, 3 Jul 2018 09:36:45 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+In-Reply-To: <69eb77f7-c8cc-fdee-b44f-ad7e522b8467@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:GgxJUwqfXaJ6RP5uSwVR8VwtElIf6r/oBIFXhRDyO5CW7wwf8iH
- /SsFSqVBcHSJfRVnaajhZmC1NPUn7q4bOGEl/PJNnsVGNnID8kvy8ZQaLUuY/OApRP8OzYm
- QmOjzTV3T9OY6QqaoOZlL93pjU7GkpdGvuEqU5zR97GqdCpLntU4AsmxTMB3J7hcoT+mvUl
- KNsPB8jjaVBPBh6sl3JTg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:lrijex5WGto=:OBUrH4ucMZyjso+H2ZYJkR
- V/pebeZ1sGYGUQNEtxXbjXRfPWjeIA3ZnQIHuKryW0pvPlXhtxFLRYNImsjY2JHdRGYoSDJJi
- JWiw584gNDC4GEjGcNIRJc9RNIh+BYYoFsf7/2dZTQ2In9N21ZvMJ/jozVCbpXCKAjIGHGG02
- PIw5HhLtWf7QBRph7VHlpR/BUKVBtDDkzvJrQHBYqio7rTSZWDLE2X/htnGn1wR+AB9rxHAke
- SfA5UDKggmoAonD/Ae4VPUqKR3+cUMiJzXoN8zOlN+CjCCY4GkE6HbMKKuyepEohOsG1tZCzt
- ywIAsgMtdZ8vOkkEWkh8tuOgSXmX/bApv+mPHHpYrRNpHa3WYBYtKYmalYclV3XqJ8iVSGwoP
- it1A0LfE6qYjkZ0mU4k+g71M8ImphSToAGZzrcm9zUIilmPBlVOd31EbP0a8Ml6syQvETGnm+
- rqR6320e9VpByvsXhU2Lqu7Idv4CLosLQJwyLujKidhFRvLcwFQsn6IZUs1Ws38gpm7OjHtut
- wMXmwjW9K+7xZECWmMJfeF6kCjC6TDKSb4ZIA+U5OZqlB8Tw8Ui6anjHW1/eEEnruRW1oA8kI
- XMgWrnRDKBOvBQnMYIh5zeS6dVko3nxzGVwskL6xvxcuPswapJesPfhRwalqPrawJ0NXEEjpp
- Fl94Pd812+ohzq0SZNEHi6amHiol057GiN5tUtT3qXB0DcZEcGYptCC9dgGUEYGEKVgxcFO38
- 6DJHNEDnRTAho1ssgjXKIfO9cZ+Y1fTUnfVg2Q3rXgVKNUWkfb53sapeEDqLWCTgAEUrSTjYS
- rSOkd9i
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 2 Jul 2018 16:33:46 +0200
++CC
 
-A string was enclosed by placeholder specifications for
-regular expressions as constraints for metavariables in a script
-for the semantic patch language.
-The desired search functionality can be achieved also without
-the notation “.*”. Thus delete it.
+On 07/01/2018 08:31 PM, Thomas Lindroth wrote:
+> While looking around in /proc on my v4.14.52 system I noticed that
+> all processes got a lot of "Locked" memory in /proc/*/smaps. A lot
+> more memory than a regular user can usually lock with mlock().
+> 
+> commit 493b0e9d945fa9dfe96be93ae41b4ca4b6fdb317 (v4.14-rc1) seems
+> to have changed the behavior of "Locked".
+> 
+> commit 493b0e9d945fa9dfe96be93ae41b4ca4b6fdb317
+> Author: Daniel Colascione <dancol@google.com>
+> Date:   Wed Sep 6 16:25:08 2017 -0700
+> 
+>     mm: add /proc/pid/smaps_rollup
+> 
+> Before that commit the code was like this. Notice the VM_LOCKED
+> check.
+> 
+> seq_printf(m,
+>            "Size:           %8lu kB\n"
+>            "Rss:            %8lu kB\n"
+>            "Pss:            %8lu kB\n"
+>            "Shared_Clean:   %8lu kB\n"
+>            "Shared_Dirty:   %8lu kB\n"
+>            "Private_Clean:  %8lu kB\n"
+>            "Private_Dirty:  %8lu kB\n"
+>            "Referenced:     %8lu kB\n"
+>            "Anonymous:      %8lu kB\n"
+>            "LazyFree:       %8lu kB\n"
+>            "AnonHugePages:  %8lu kB\n"
+>            "ShmemPmdMapped: %8lu kB\n"
+>            "Shared_Hugetlb: %8lu kB\n"
+>            "Private_Hugetlb: %7lu kB\n"
+>            "Swap:           %8lu kB\n"
+>            "SwapPss:        %8lu kB\n"
+>            "KernelPageSize: %8lu kB\n"
+>            "MMUPageSize:    %8lu kB\n"
+>            "Locked:         %8lu kB\n",
+>            (vma->vm_end - vma->vm_start) >> 10,
+>            mss.resident >> 10,
+>            (unsigned long)(mss.pss >> (10 + PSS_SHIFT)),
+>            mss.shared_clean  >> 10,
+>            mss.shared_dirty  >> 10,
+>            mss.private_clean >> 10,
+>            mss.private_dirty >> 10,
+>            mss.referenced >> 10,
+>            mss.anonymous >> 10,
+>            mss.lazyfree >> 10,
+>            mss.anonymous_thp >> 10,
+>            mss.shmem_thp >> 10,
+>            mss.shared_hugetlb >> 10,
+>            mss.private_hugetlb >> 10,
+>            mss.swap >> 10,
+>            (unsigned long)(mss.swap_pss >> (10 + PSS_SHIFT)),
+>            vma_kernel_pagesize(vma) >> 10,
+>            vma_mmu_pagesize(vma) >> 10,
+>            (vma->vm_flags & VM_LOCKED) ?
+>                 (unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
+> 
+> After that commit Locked is now the same as Pss. This looks like a
+> mistake.
+> 
+> seq_printf(m,
+>            "Rss:            %8lu kB\n"
+>            "Pss:            %8lu kB\n"
+>            "Shared_Clean:   %8lu kB\n"
+>            "Shared_Dirty:   %8lu kB\n"
+>            "Private_Clean:  %8lu kB\n"
+>            "Private_Dirty:  %8lu kB\n"
+>            "Referenced:     %8lu kB\n"
+>            "Anonymous:      %8lu kB\n"
+>            "LazyFree:       %8lu kB\n"
+>            "AnonHugePages:  %8lu kB\n"
+>            "ShmemPmdMapped: %8lu kB\n"
+>            "Shared_Hugetlb: %8lu kB\n"
+>            "Private_Hugetlb: %7lu kB\n"
+>            "Swap:           %8lu kB\n"
+>            "SwapPss:        %8lu kB\n"
+>            "Locked:         %8lu kB\n",
+>            mss->resident >> 10,
+>            (unsigned long)(mss->pss >> (10 + PSS_SHIFT)),
+>            mss->shared_clean  >> 10,
+>            mss->shared_dirty  >> 10,
+>            mss->private_clean >> 10,
+>            mss->private_dirty >> 10,
+>            mss->referenced >> 10,
+>            mss->anonymous >> 10,
+>            mss->lazyfree >> 10,
+>            mss->anonymous_thp >> 10,
+>            mss->shmem_thp >> 10,
+>            mss->shared_hugetlb >> 10,
+>            mss->private_hugetlb >> 10,
+>            mss->swap >> 10,
+>            (unsigned long)(mss->swap_pss >> (10 + PSS_SHIFT)),
+>            (unsigned long)(mss->pss >> (10 + PSS_SHIFT)));
+> 
+> The latest git has changed a bit but the functionality is the
+> same.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+----8<----
+From fa721521c981167c24ac8f4be446443d293d741e Mon Sep 17 00:00:00 2001
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Tue, 3 Jul 2018 09:24:27 +0200
+Subject: [PATCH] mm: fix Locked field in /proc/pid/smaps*
+
+Thomas reports:
+
+: While looking around in /proc on my v4.14.52 system I noticed that
+: all processes got a lot of "Locked" memory in /proc/*/smaps. A lot
+: more memory than a regular user can usually lock with mlock().
+:
+: commit 493b0e9d945fa9dfe96be93ae41b4ca4b6fdb317 (v4.14-rc1) seems
+: to have changed the behavior of "Locked".
+:
+: Before that commit the code was like this. Notice the VM_LOCKED
+: check.
+:
+:          (vma->vm_flags & VM_LOCKED) ?
+:               (unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
+:
+: After that commit Locked is now the same as Pss. This looks like a
+: mistake.
+:
+: (unsigned long)(mss->pss >> (10 + PSS_SHIFT)));
+
+Indeed, the commit has added mss->pss_locked with the correct value that
+depends on VM_LOCKED, but forgot to actually use it. Fix it.
+
+Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
+Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: stable@vger.kernel.org
 ---
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/proc/task_mmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 988120e0fd67..94373a35744e 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -12,7 +12,7 @@ virtual report
- @r1 exists@
- identifier a, x;
- position p1, p2;
--identifier fname =~ ".*free.*";
-+identifier fname =~ "free";
- identifier fname2 =~ ".*destroy.*";
- identifier fname3 =~ ".*del.*";
- identifier fname4 =~ ".*queue_work.*";
-@@ -60,8 +60,7 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
- @r4 exists@
- identifier a, x, y;
- position p1, p2;
--identifier fname =~ ".*free.*";
--
-+identifier fname =~ "free";
- @@
- 
- (
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index e9679016271f..dfd73a4616ce 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -831,7 +831,8 @@ static int show_smap(struct seq_file *m, void *v, int is_pid)
+ 		SEQ_PUT_DEC(" kB\nSwap:           ", mss->swap);
+ 		SEQ_PUT_DEC(" kB\nSwapPss:        ",
+ 						mss->swap_pss >> PSS_SHIFT);
+-		SEQ_PUT_DEC(" kB\nLocked:         ", mss->pss >> PSS_SHIFT);
++		SEQ_PUT_DEC(" kB\nLocked:         ",
++						mss->pss_locked >> PSS_SHIFT);
+ 		seq_puts(m, " kB\n");
+ 	}
+ 	if (!rollup_mode) {
 -- 
 2.18.0
+
 
