@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFD7C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A82DC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F4C24574
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F4C24574
+	by mail.kernel.org (Postfix) with ESMTP id 2A7D7223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7D7223B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753456AbeGCWCV (ORCPT
+        id S1753485AbeGCWCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:02:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53327 "EHLO mail.bootlin.com"
+        Tue, 3 Jul 2018 18:02:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53289 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933034AbeGCWBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:01:24 -0400
+        id S933197AbeGCWBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:01:21 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5A130208EF; Wed,  4 Jul 2018 00:01:22 +0200 (CEST)
+        id 6D2DC208FA; Wed,  4 Jul 2018 00:01:19 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E6609207DA;
-        Wed,  4 Jul 2018 00:01:20 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 071AF20949;
+        Wed,  4 Jul 2018 00:01:17 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +55,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 28/32] mtd: rawnand: docg4: convert driver to nand_scan()
-Date:   Wed,  4 Jul 2018 00:00:25 +0200
-Message-Id: <20180703220029.19565-29-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 26/32] mtd: rawnand: atmel: convert driver to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:23 +0200
+Message-Id: <20180703220029.19565-27-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
@@ -73,94 +73,147 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/docg4.c | 51 ++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
+ drivers/mtd/nand/raw/atmel/nand-controller.c | 70 +++++++++++-----------------
+ 1 file changed, 27 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/docg4.c b/drivers/mtd/nand/raw/docg4.c
-index bb96cb33cd6b..50954c74e960 100644
---- a/drivers/mtd/nand/raw/docg4.c
-+++ b/drivers/mtd/nand/raw/docg4.c
-@@ -1227,10 +1227,9 @@ static void __init init_mtd_structs(struct mtd_info *mtd)
- 	 * required within a nand driver because they are performed by the nand
- 	 * infrastructure code as part of nand_scan().  In this case they need
- 	 * to be initialized here because we skip call to nand_scan_ident() (the
--	 * first half of nand_scan()).  The call to nand_scan_ident() is skipped
--	 * because for this device the chip id is not read in the manner of a
--	 * standard nand device.  Unfortunately, nand_scan_ident() does other
--	 * things as well, such as call nand_set_defaults().
-+	 * first half of nand_scan()).  The call to nand_scan_ident() could be
-+	 * skipped because for this device the chip id is not read in the manner
-+	 * of a standard nand device.
- 	 */
+diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+index e686fe73159e..0b5695b3c8c1 100644
+--- a/drivers/mtd/nand/raw/atmel/nand-controller.c
++++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+@@ -202,7 +202,7 @@ struct atmel_nand_controller_ops {
+ 	int (*remove)(struct atmel_nand_controller *nc);
+ 	void (*nand_init)(struct atmel_nand_controller *nc,
+ 			  struct atmel_nand *nand);
+-	int (*ecc_init)(struct atmel_nand *nand);
++	int (*ecc_init)(struct nand_chip *chip);
+ 	int (*setup_data_interface)(struct atmel_nand *nand, int csline,
+ 				    const struct nand_data_interface *conf);
+ };
+@@ -1133,9 +1133,8 @@ static int atmel_nand_pmecc_init(struct nand_chip *chip)
+ 	return 0;
+ }
  
- 	struct nand_chip *nand = mtd_to_nand(mtd);
-@@ -1315,6 +1314,23 @@ static int __init read_id_reg(struct mtd_info *mtd)
- 
- static char const *part_probes[] = { "cmdlinepart", "saftlpart", NULL };
- 
-+static int docg4_attach_chip(struct nand_chip *chip)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct docg4_priv *doc = (struct docg4_priv *)(chip + 1);
-+
-+	init_mtd_structs(mtd);
-+
-+	/* Initialize kernel BCH algorithm */
-+	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
-+	if (!doc->bch)
-+		return -EINVAL;
-+
-+	reset(mtd);
-+
-+	return read_id_reg(mtd);
-+}
-+
- static int __init probe_docg4(struct platform_device *pdev)
+-static int atmel_nand_ecc_init(struct atmel_nand *nand)
++static int atmel_nand_ecc_init(struct nand_chip *chip)
  {
- 	struct mtd_info *mtd;
-@@ -1350,26 +1366,16 @@ static int __init probe_docg4(struct platform_device *pdev)
- 	mtd->dev.parent = &pdev->dev;
- 	doc->virtadr = virtadr;
- 	doc->dev = dev;
+-	struct nand_chip *chip = &nand->base;
+ 	struct atmel_nand_controller *nc;
+ 	int ret;
+ 
+@@ -1170,12 +1169,11 @@ static int atmel_nand_ecc_init(struct atmel_nand *nand)
+ 	return 0;
+ }
+ 
+-static int atmel_hsmc_nand_ecc_init(struct atmel_nand *nand)
++static int atmel_hsmc_nand_ecc_init(struct nand_chip *chip)
+ {
+-	struct nand_chip *chip = &nand->base;
+ 	int ret;
+ 
+-	ret = atmel_nand_ecc_init(nand);
++	ret = atmel_nand_ecc_init(chip);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1558,22 +1556,6 @@ static void atmel_hsmc_nand_init(struct atmel_nand_controller *nc,
+ 	chip->select_chip = atmel_hsmc_nand_select_chip;
+ }
+ 
+-static int atmel_nand_detect(struct atmel_nand *nand)
+-{
+-	struct nand_chip *chip = &nand->base;
+-	struct mtd_info *mtd = nand_to_mtd(chip);
+-	struct atmel_nand_controller *nc;
+-	int ret;
 -
--	init_mtd_structs(mtd);
+-	nc = to_nand_controller(chip->controller);
 -
--	/* initialize kernel bch algorithm */
--	doc->bch = init_bch(DOCG4_M, DOCG4_T, DOCG4_PRIMITIVE_POLY);
--	if (doc->bch == NULL) {
--		retval = -EINVAL;
--		goto free_nand;
+-	ret = nand_scan_ident(mtd, nand->numcs, NULL);
+-	if (ret)
+-		dev_err(nc->dev, "nand_scan_ident() failed: %d\n", ret);
+-
+-	return ret;
+-}
+-
+ static int atmel_nand_unregister(struct atmel_nand *nand)
+ {
+ 	struct nand_chip *chip = &nand->base;
+@@ -1595,7 +1577,6 @@ static int atmel_nand_register(struct atmel_nand *nand)
+ 	struct nand_chip *chip = &nand->base;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	struct atmel_nand_controller *nc;
+-	int ret;
+ 
+ 	nc = to_nand_controller(chip->controller);
+ 
+@@ -1626,21 +1607,6 @@ static int atmel_nand_register(struct atmel_nand *nand)
+ 		}
+ 	}
+ 
+-	ret = nand_scan_tail(mtd);
+-	if (ret) {
+-		dev_err(nc->dev, "nand_scan_tail() failed: %d\n", ret);
+-		return ret;
 -	}
 -
- 	platform_set_drvdata(pdev, doc);
- 
--	reset(mtd);
--	retval = read_id_reg(mtd);
--	if (retval == -ENODEV) {
--		dev_warn(dev, "No diskonchip G4 device found.\n");
--		goto free_bch;
+-	ret = mtd_device_register(mtd, NULL, 0);
+-	if (ret) {
+-		dev_err(nc->dev, "Failed to register mtd device: %d\n", ret);
+-		nand_cleanup(chip);
+-		return ret;
 -	}
 -
--	retval = nand_scan_tail(mtd);
-+	/*
-+	 * Asking for 0 chips is useless here but it warns the user that the use
-+	 * of the nand_scan() function is a bit abused here because the
-+	 * initialization is actually a bit specific and re-handled again in the
-+	 * ->attach_chip() hook. It will probably leak some memory though.
-+	 */
-+	nand->controller->attach_chip = docg4_attach_chip;
-+	retval = nand_scan(mtd, 0);
- 	if (retval)
- 		goto free_bch;
+-	list_add_tail(&nand->node, &nc->chips);
+-
+ 	return 0;
+ }
  
-@@ -1389,7 +1395,6 @@ static int __init probe_docg4(struct platform_device *pdev)
- 	nand_cleanup(nand);
- free_bch:
- 	free_bch(doc->bch);
--free_nand:
- 	kfree(nand);
- unmap:
- 	iounmap(virtadr);
+@@ -1755,6 +1721,8 @@ static int
+ atmel_nand_controller_add_nand(struct atmel_nand_controller *nc,
+ 			       struct atmel_nand *nand)
+ {
++	struct nand_chip *chip = &nand->base;
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	int ret;
+ 
+ 	/* No card inserted, skip this NAND. */
+@@ -1765,15 +1733,31 @@ atmel_nand_controller_add_nand(struct atmel_nand_controller *nc,
+ 
+ 	nc->caps->ops->nand_init(nc, nand);
+ 
+-	ret = atmel_nand_detect(nand);
+-	if (ret)
++	chip->controller->attach_chip = nc->caps->ops->ecc_init;
++	ret = nand_scan(mtd, nand->numcs);
++	if (ret) {
++		dev_err(nc->dev, "NAND scan failed: %d\n", ret);
+ 		return ret;
++	}
+ 
+-	ret = nc->caps->ops->ecc_init(nand);
++	ret = atmel_nand_register(nand);
+ 	if (ret)
+-		return ret;
++		goto cleanup_nand;
++
++	ret = mtd_device_register(mtd, NULL, 0);
++	if (ret) {
++		dev_err(nc->dev, "Failed to register mtd device: %d\n", ret);
++		goto cleanup_nand;
++	}
++
++	list_add_tail(&nand->node, &nc->chips);
++
++	return 0;
++
++cleanup_nand:
++	nand_cleanup(chip);
+ 
+-	return atmel_nand_register(nand);
++	return ret;
+ }
+ 
+ static int
 -- 
 2.14.1
 
