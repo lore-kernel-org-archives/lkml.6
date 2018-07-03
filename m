@@ -2,158 +2,153 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7B1C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DFFC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B682248BC
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:41:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="c2hn0iUF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B682248BC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CA9D248BC
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA9D248BC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934553AbeGCSlG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:41:06 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33412 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934514AbeGCSlD (ORCPT
+        id S934585AbeGCSlZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:41:25 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38253 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934399AbeGCSlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:41:03 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 77F1223076F;
-        Tue,  3 Jul 2018 14:41:02 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Nallk0_ds1Ns; Tue,  3 Jul 2018 14:41:02 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0BC4023076C;
-        Tue,  3 Jul 2018 14:41:02 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0BC4023076C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530643262;
-        bh=diPdcaiZSxGj+ZAIRAO/+s3rcg3AVdoI46D/JFFE9dg=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=c2hn0iUFZHLZKDl9JdBfYHpXI5U92Tm+sfLDoCEKpM6Y6Vgkkvq2EC08kqvedcxJO
-         vEV3ItX0ALa6eK/LUazisrGF8Egq0ydSj+06qC2RMwr627bx9CkJaprbm3njHFweO1
-         vSDi72ttfuPK6q+LpG1st40eed2k5ZYeFCdqYF8Qv8TPA9znZf1Hda8+QF30LihKvo
-         mjRdbBJNVxp+Ma1j09LSgVbZ8wuefTAByQVkR6+N4OsZYmlmejMAMikDqgNksMkHtF
-         DVz44Rt3fK38SwQ+fkur/S0wWX5FM4Pa0mmi11PJIlQDXfUZCbLlmNsJSW3V/2MamS
-         jfcbv8SIAoTtA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id khWHDsH_6CW2; Tue,  3 Jul 2018 14:41:01 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id DC375230762;
-        Tue,  3 Jul 2018 14:41:01 -0400 (EDT)
-Date:   Tue, 3 Jul 2018 14:41:01 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        heiko carstens <heiko.carstens@de.ibm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
-Message-ID: <1368400582.11897.1530643261772.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180703182837.GC2494@hirez.programming.kicks-ass.net>
-References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com> <20180703173451.GX2494@hirez.programming.kicks-ass.net> <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com> <20180703174833.GZ2494@hirez.programming.kicks-ass.net> <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com> <20180703181143.GB2494@hirez.programming.kicks-ass.net> <1708848118.11868.1530641734202.JavaMail.zimbra@efficios.com> <20180703182837.GC2494@hirez.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
+        Tue, 3 Jul 2018 14:41:24 -0400
+X-Originating-IP: 54.36.30.212
+Received: from w540 (unknown [54.36.30.212])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 17AE520007;
+        Tue,  3 Jul 2018 18:41:27 +0000 (UTC)
+Date:   Tue, 3 Jul 2018 20:41:17 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Philipp Zabel <pza@pengutronix.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Discussion of the development of and with GStreamer 
+        <gstreamer-devel@lists.freedesktop.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
+Message-ID: <20180703184117.GC5611@w540>
+References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+ <20180531190659.xdp4q2cjro33aihq@pengutronix.de>
+ <CAMty3ZCeR3uEx8oy18-Ur7ma7pciKUf_myDk6_SpWvxc6DvygQ@mail.gmail.com>
+ <CAOMZO5AOpOSAx=L4tOU1Na6hm8Tex3PHNxCYDB81C0+NPHzTZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
-Thread-Index: SR4kmDGS9PpmQ3sS6yVWOtbnSeZRbg==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0lnxQi9hkpPO77W3"
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5AOpOSAx=L4tOU1Na6hm8Tex3PHNxCYDB81C0+NPHzTZQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 3, 2018, at 2:28 PM, Peter Zijlstra peterz@infradead.org wrote:
 
-> On Tue, Jul 03, 2018 at 02:15:34PM -0400, Mathieu Desnoyers wrote:
->> ----- On Jul 3, 2018, at 2:11 PM, Peter Zijlstra peterz@infradead.org wrote:
->> 
->> > On Tue, Jul 03, 2018 at 01:58:37PM -0400, Mathieu Desnoyers wrote:
->> >> I can modify the ABI to put the cpu_id_start and cpu_id fields inside
->> >> a union, and update it with a single store.
->> >> 
->> >> Thoughts ?
->> > 
->> > Let's keep them for now, we can always frob this later, they are aligned
->> > and proper, no need to expose that union to userspace.
->> 
->> Isn't it weird to change the API of an exposed public uapi header ?
-> 
-> Sure, just keep it as is. We don't need an exposed union to do a single
-> store there.
-> 
-> Something like the ugly below preserves API but still does a single
-> store.
-> 
-> But sure, if you want to expose that union for some reason, then now is
-> the time.
+--0lnxQi9hkpPO77W3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-User-space won't ever want to read cpu_id_start and cpu_id from a single
-u64 load, it serves no purpose to do so. So I'm OK with keeping those as
-is and defining a local union for the __put_user() update.
+Hi Fabio,
+  thanks for pointing Jagan to my series, but..
 
-Thanks!
+On Fri, Jun 29, 2018 at 06:46:39PM -0300, Fabio Estevam wrote:
+> Hi Jagan,
+>
+> On Fri, Jun 1, 2018 at 2:19 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> > I actually tried even on video0 which I forgot to post the log [4].
+> > Now I understand I'm trying for wrong device to capture look like
+> > video0 which is ipu1 prepenc firing kernel oops. I'm trying to debug
+> > this and let me know if have any suggestion to look into.
+> >
+> > [   56.800074] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x000002b0
+> > [   57.369660] ipu1_ic_prpenc: EOF timeout
+> > [   57.849692] ipu1_ic_prpenc: wait last EOF timeout
+> > [   57.855703] ipu1_ic_prpenc: pipeline start failed with -110
+>
+> Could you please test this series from Jacopo?
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg133191.html
+>
+> It seems that it would fix this problem.
 
-Mathieu
+... unfortunately it does not :(
 
-> 
-> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> index 22b6acf1ad63..e956c48b5f83 100644
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -85,10 +85,17 @@ static int rseq_update_cpu_id(struct task_struct *t)
-> {
-> 	u32 cpu_id = raw_smp_processor_id();
-> 
-> -	if (__put_user(cpu_id, &t->rseq->cpu_id_start))
-> -		return -EFAULT;
-> -	if (__put_user(cpu_id, &t->rseq->cpu_id))
-> +	union {
-> +		struct {
-> +			u32 cpu_id_start;
-> +			u32 cpu_id;
-> +		};
-> +		u64 val;
-> +	} x = { { .cpu_id_start = cpu_id, .cpu_id = cpu_id, } };
-> +
-> +	if (__put_user(x.val, (u64 *)&t->rseq->cpu_id_start))
-> 		return -EFAULT;
-> +
-> 	trace_rseq_update(t);
-> 	return 0;
->  }
+I've been able to test on the same platform where Jagan has reported
+this issue, and the CSI-2 bus still fails to startup properly...
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+I do not have CSI-2 receiver driver documentation for the other platform
+I am testing on and where my patches improved stability, but the i.MX6 error
+reported by Jagan could be useful to help debugging what's wrong with the
+serial bus initialization on that platform.
+
+The error comes from register MIPI_CSI_PHY_STATE of the i.MX6 MIPI_CSI-2
+interface and reads as:
+
+0x2b0 : BIT(9) -> clock in ULPS state
+	BIT(7) -> lane3 in stop state
+	BIT(5) -> lane1 in stop state
+	BIT(4) -> lane0 in stop state
+
+The i.MX6 driver wants instead that register to be:
+
+0x430 : BIT(10) -> clock in stop state
+	BIT(5) -> lane1 in stop state
+	BIT(4) -> lane0 in stop state
+
+So indeed it represents a useful debugging tool to have an idea of what's going
+on there.
+
+I'm a bit puzzled by the BIT(7) as lane3 is not connected, as ov5640 is a 2
+lanes sensor, and I would have a question for Jagan here: has the sensor been
+validated with BSP/vendor kernels on that platform? There's a flat cable
+connecting the camera module to the main board, and for high speed
+differential signals that's maybe not the best possible solution...
+
+Also, anyone interested in my mumbling on the ov5640 MIPI bus
+initialization, I've collected some thoughts here:
+https://paste.debian.net/1031942/
+
+Any comment is of course welcome, and if I have a confirmation that
+the Engicam platform works with that flat cable, I'll keep working on
+it..
+
+Thanks
+   j
+
+
+> Thanks
+
+--0lnxQi9hkpPO77W3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbO8NNAAoJEHI0Bo8WoVY8x3oP/2taIopgpZrgje+iXYy4EMcY
+5Qv3ITPlrEH0nVQs7xGNtkJ2t33IbfpQ3BZr0bKKzvUO4owGss9999mnjXufJtS9
+A86jFb1Y4J9fls7918NUqxM4RFl1R9qEB6ogDDdF85B/9DH0PV6YKQp8BwQ57XZL
+EdwL8z8kBx1X92dN/7Q9Rxgc20z1OHiHOPocwMMUV6FCt875TF6bQXKk3u6gLclG
+9lnBmTW5uQUBARuJDBaP+0IkwFNF+S00ycsENFsKZwAcxR7CTPcatDht4tlzBPug
+8FmCIu4Zb105lwxD+6HizFnOx308vZ/F1hhQfteOulDfyHmA3gQzp9ppX4NkMJbi
+9AjZNdWllexNynh4TT5xOQK1DFuW67kbbtTTCxffcoJzvXFVUUprVvf54QJx4qmr
+OFQJD5lR4FWPELw6wPCZnEJD2Qa6kC0/4lBDo1y80nMHdavX1GS3qHIA0xtbMavr
+QyZ63OaeMcyfiSHyXxEhA2x3x0NJBbgHGkWHPHG7U77uqXae+n/AYl1wpMAKUdDh
+/Oa7UaNtGmRRookLMiclNOYjSUl8GMJc3vZzXWuVTE06nsM4k25rn5AQu/8a8PnB
+jk4MY2s669+7rZMBApw4k+gpd3bODo2VAL1XgiCiN0XCXOtpwbmVZZahTZ4pL239
+2BuAjyOS5HmmCM7xY5Zm
+=jUOJ
+-----END PGP SIGNATURE-----
+
+--0lnxQi9hkpPO77W3--
