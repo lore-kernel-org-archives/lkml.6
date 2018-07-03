@@ -3,110 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C09DC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6429C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1662A23D49
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:26:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1662A23D49
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 689DE23D37
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689DE23D37
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753547AbeGCO00 (ORCPT
+        id S1753588AbeGCO1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:26:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50042 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753129AbeGCO0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:26:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25BEA7A9;
-        Tue,  3 Jul 2018 07:26:25 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15A073F5AD;
-        Tue,  3 Jul 2018 07:26:23 -0700 (PDT)
-Subject: Re: [PATCH] mmc: core: Fix struct mmc_gpio corruption
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20180703141114.11609-1-marc.zyngier@arm.com>
- <CAOMZO5AhGi97jkkGCm4hOCBmESHd7TeQifNDOXZdO=--9=V9nQ@mail.gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <18d70b54-15c9-fff4-6dc3-f2cffb08f836@arm.com>
-Date:   Tue, 3 Jul 2018 15:26:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 10:27:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44229 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752684AbeGCO1l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 10:27:41 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faMHK-0002j6-Nk; Tue, 03 Jul 2018 16:27:38 +0200
+Date:   Tue, 3 Jul 2018 16:27:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+cc:     Gabriel C <nix.or.die@gmail.com>,
+        Benjamin Gilbert <bgilbert@redhat.com>,
+        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch, Andi Kleen <ak@linux.intel.com>
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+In-Reply-To: <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
+Message-ID: <alpine.DEB.2.21.1807031623460.1601@nanos.tec.linutronix.de>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com> <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com> <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
+ <20180703142150.tqckl7miou3wf33q@kshutemo-mobl1>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5AhGi97jkkGCm4hOCBmESHd7TeQifNDOXZdO=--9=V9nQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/07/18 15:14, Fabio Estevam wrote:
-> Hi Marc,
+On Tue, 3 Jul 2018, Kirill A. Shutemov wrote:
+> On Tue, Jul 03, 2018 at 03:44:03PM +0300, Kirill A. Shutemov wrote:
+> > On Tue, Jul 03, 2018 at 01:24:49PM +0200, Gabriel C wrote:
+> > > 2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
+> > > > On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
+> > > >> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
+> > > >> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
+> > > >> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
+> > > >> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
+> > > >> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
+> > > >> config for reference, and am happy to test patches, provide sample QCOW
+> > > >> images, etc.
+> > > >
+> > > 
+> > > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
+> > > 
+> > > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
+> > > too with the same symptoms
+> > 
+> > I tracked it down to -flto in LDFLAGS. I'll look more into this.
 > 
-> On Tue, Jul 3, 2018 at 11:11 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> I recently realised that something was amiss with /proc/interrupts
->> on my cubietruck:
->>
->>  51:          0          0     GICv2  41 Level     mv64xxx_i2c
->>  59:       1047          0     GICv2 117 Level     eth0
->>  66:          2          0  sunxi_pio_edge   1 Edge   XXXXX
->>
->> where XXXXX has some non-ASCII characters, while I was expecting:
->>
->>  66:          0          0  sunxi_pio_edge   1 Edge      1c0f000.mmc cd
->>
->> It turns out that the cd_debounce_delay_ms field was recently to
->> struct mmc_gpio, and carefully placed at the one spot where it could
->> cause damage: right *after* the zero-sized array that contains the
->> associated label. This label ends up being passed to the IRQ
->> subsystem, and then overwritten by the cd_debounce_delay_ms field.
->>
->> Funky!
->>
->> Let's move that field to a less crowded location.
->>
->> Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card after card is inserted")
->> Cc: Shawn Lin <shawn.lin@rock-chips.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  drivers/mmc/core/slot-gpio.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
->> index ef05e0039378..1ccf9dc07395 100644
->> --- a/drivers/mmc/core/slot-gpio.c
->> +++ b/drivers/mmc/core/slot-gpio.c
->> @@ -27,8 +27,8 @@ struct mmc_gpio {
->>         bool override_cd_active_level;
->>         irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
->>         char *ro_label;
->> -       char cd_label[0];
->>         u32 cd_debounce_delay_ms;
->> +       char cd_label[0];
+> -flto in LDFLAGS screws up this part of paging_prepare():
 > 
-> Ulf has already applied a fix for this:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=fixes&id=60feca8f59a0bbdee9545ab52775cad0171151ff
+> 	/* Copy trampoline code in place */
+> 	memcpy(trampoline_32bit + TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
+> 			&trampoline_32bit_src, TRAMPOLINE_32BIT_CODE_SIZE);
 > 
-> which is more robust as it will give a gcc error when cd_label gets
-> moved in the future.
+> In particular, relocation for trampoline_32bit_src solved in the wrong
+> way. Without -flto, we have rip-realtive address load:
+> 
+>   982d30:	48 8d 35 09 cc ff ff 	lea    -0x33f7(%rip),%rsi        # 97f940 <trampoline_32bit_src>
+>
+> With -flto we have immediate load:
+> 
+>   982cf0:	48 c7 c6 f0 f8 97 00 	mov    $0x97f8f0,%rsi
+> 
+> It only would be okay if bootloader loads kernel at the address we compile
+> it for. But it's not usually the case.
+> 
+> As result we copy garbage into trampoline and crash when trying to execute
+> it.
+> 
+> I don't know how to solve it. As far as I know we don't support compiling
+> kernel with LTO in mainline.
+> 
+> Any suggestions?
 
-Ah, good. Thanks for the heads-up.
+LTO is broken. The boot code is compiled as position independent, so this
+'optimization' is pure garbage.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks,
+
+	tglx
+
