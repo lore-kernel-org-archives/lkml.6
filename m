@@ -2,124 +2,167 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32986C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB53C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E133F24B36
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:53:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Y+3eWb87"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E133F24B36
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D6A424C8E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6A424C8E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932155AbeGCLxJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:53:09 -0400
-Received: from 8bytes.org ([81.169.241.247]:45386 "EHLO theia.8bytes.org"
+        id S1753014AbeGCLyc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 07:54:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:48102 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752491AbeGCLwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:52:32 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id DD83E577; Tue,  3 Jul 2018 13:52:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1530618750; bh=ENfulY4LWVUYhmfGGktbr3cigMS5/69AHhXEsTw5eRs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y+3eWb875m0VBynwYhHhL2qT99UfGJxDnSm23eWWGenDkHEc8ic1NEbE0jwgDgRDa
-         VqdfxpO60OPlWN+wgC+51f3VPFn6fyfAz/zZquPf1RptwJwsm2dRkkJM9zs7p6sTkV
-         lr6UySeqZHZqd+QIWzqp/QeuL5pVff6M+fluKUGIws1YBMMMV34jDDsx4b7ZzQAzja
-         wvbFYZ0SdJoWu2dCMctIkSGKTH05Enwq7xr182zeooSd2m2/UIXt53WXjpznpNNi8U
-         cY3tewFhDmi+mgAn5eu4vIwnqbXCtk1FgWgKQHwqbWBUoxTtauDP9EKQOrdbhII3fN
-         bob8Sw8uYr2cQ==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     hpa@zytor.com, Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 3/3] x86/pti: Call pti_clone_kernel_text() from pti_init()
-Date:   Tue,  3 Jul 2018 13:52:26 +0200
-Message-Id: <1530618746-23116-4-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1530618746-23116-1-git-send-email-joro@8bytes.org>
-References: <1530618746-23116-1-git-send-email-joro@8bytes.org>
+        id S1752067AbeGCLya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:54:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7353C80D;
+        Tue,  3 Jul 2018 04:54:30 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46F083F5BA;
+        Tue,  3 Jul 2018 04:54:28 -0700 (PDT)
+Subject: Re: [PATCH v3 10/20] kvm: arm64: Dynamic configuration of VTTBR mask
+To:     Auger Eric <eric.auger@redhat.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     cdall@kernel.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, julien.grall@arm.com, james.morse@arm.com,
+        kvmarm@lists.cs.columbia.edu
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-11-git-send-email-suzuki.poulose@arm.com>
+ <e0c8dc62-42e8-ee24-5519-e19b2739160b@redhat.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <a6fa912a-b2ff-ac1e-0120-b2f7eabb6f7f@arm.com>
+Date:   Tue, 3 Jul 2018 12:54:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <e0c8dc62-42e8-ee24-5519-e19b2739160b@redhat.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Hi Eric,
 
-The pti_init() function is now called late enough for
-pti_clone_kernel_text(), so call it directly from there.
+On 02/07/18 15:41, Auger Eric wrote:
+> Hi Suzuki,
+> 
+> On 06/29/2018 01:15 PM, Suzuki K Poulose wrote:
+>> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
+>> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
+>> should be 0, where 'x' is defined for a given IPA Size and the
+>> number of levels for a translation granule size. It is defined
+>> using some magical constants. This patch is a reverse engineered
+>> implementation to calculate the 'x' at runtime for a given ipa and
+>> number of page table levels. See patch for more details.
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>> Changes since V2:
+>>   - Part 1 of spilt from VTCR & VTTBR dynamic configuration
+>> ---
+>>   arch/arm64/include/asm/kvm_arm.h | 60 +++++++++++++++++++++++++++++++++++++---
+>>   arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++++++++-
+>>   2 files changed, 80 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+>> index 3dffd38..c557f45 100644
+>> --- a/arch/arm64/include/asm/kvm_arm.h
+>> +++ b/arch/arm64/include/asm/kvm_arm.h
+>> @@ -140,8 +140,6 @@
+>>    * Note that when using 4K pages, we concatenate two first level page tables
+>>    * together. With 16K pages, we concatenate 16 first level page tables.
+>>    *
+>> - * The magic numbers used for VTTBR_X in this patch can be found in Tables
+>> - * D4-23 and D4-25 in ARM DDI 0487A.b.
+> Isn't it a pretty old reference? Could you refer to C.a?
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/include/asm/pti.h | 2 --
- arch/x86/mm/init_64.c      | 6 ------
- arch/x86/mm/pti.c          | 3 ++-
- 3 files changed, 2 insertions(+), 9 deletions(-)
+Sure, I will update the references everywhere.
 
-diff --git a/arch/x86/include/asm/pti.h b/arch/x86/include/asm/pti.h
-index 38a17f1..0b5ef05 100644
---- a/arch/x86/include/asm/pti.h
-+++ b/arch/x86/include/asm/pti.h
-@@ -6,10 +6,8 @@
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- extern void pti_init(void);
- extern void pti_check_boottime_disable(void);
--extern void pti_clone_kernel_text(void);
- #else
- static inline void pti_check_boottime_disable(void) { }
--static inline void pti_clone_kernel_text(void) { }
- #endif
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index a688617..9b19f9a 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1291,12 +1291,6 @@ void mark_rodata_ro(void)
- 			(unsigned long) __va(__pa_symbol(_sdata)));
- 
- 	debug_checkwx();
--
--	/*
--	 * Do this after all of the manipulation of the
--	 * kernel text page tables are complete.
--	 */
--	pti_clone_kernel_text();
- }
- 
- int kern_addr_valid(unsigned long addr)
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 8a80522..dd344f7 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -438,7 +438,7 @@ static inline bool pti_kernel_image_global_ok(void)
-  * For some configurations, map all of kernel text into the user page
-  * tables.  This reduces TLB misses, especially on non-PCID systems.
-  */
--void pti_clone_kernel_text(void)
-+static void pti_clone_kernel_text(void)
- {
- 	/*
- 	 * rodata is part of the kernel image and is normally
-@@ -499,6 +499,7 @@ void pti_init(void)
- 	pti_set_kernel_image_nonglobal();
- 	/* Replace some of the global bits just for shared entry text: */
- 	pti_clone_entry_text();
-+	pti_clone_kernel_text();
- 	pti_setup_espfix64();
- 	pti_setup_vsyscall();
- }
--- 
-2.7.4
+>> + *
+>> + * The algorithm defines the expectations on the BaseAddress (for the page
+>> + * table) bits resolved at each level based on the page size, entry level
+>> + * and T0SZ. The variable "x" in the algorithm also affects the VTTBR:BADDR
+>> + * for stage2 page table.
+>> + *
+>> + * The value of "x" is calculated as :
+>> + *	x = Magic_N - T0SZ
+>> + *
+>> + * where Magic_N is an integer depending on the page size and the entry
+>> + * level of the page table as below:
+>> + *
+>> + *	--------------------------------------------
+>> + *	| Entry level		|  4K    16K   64K |
+>> + *	--------------------------------------------
+>> + *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
+>> + *	--------------------------------------------
+>> + *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
+>> + *	--------------------------------------------
+>> + *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
+>> + *	--------------------------------------------
+>> + *	| Level: 3 (1 level)	| -    | 53  | 51  |
+>> + *	--------------------------------------------
+> I understand entry level = Lookup level in the table.
 
+Entry level => The level at which we start the page table walk for
+a given address (This is in line with the ARM ARM). So,
+
+Entry_level = (4 - Number_of_Page_table_levels)
+
+> But you may want to compute x for BaseAddress matching lookup level 2
+> with number of levels = 4.
+
+No, the BaseAddress is only calcualted for the "Entry_level". So the
+above case doesn't exist at all.
+
+> So shouldn't you s/Number of levels/4 - entry_level?
+
+Ok, I now understood what you are referring to [0]
+> for BADDR we want the BaseAddr of the initial lookup level so
+> effectively the entry level we are interested in is 4 - number of levels
+> and we don't care or d) condition. At least this is my understanding ;-)
+> If correct you may slightly reword the explanation?
+
+
+>> + *
+>> + * We have a magic formula for the Magic_N below.
+>> + *
+>> + *  Magic_N(PAGE_SIZE, Entry_Level) = 64 - ((PAGE_SHIFT - 3) * Number of levels)
+
+[0] ^^^
+
+
+
+>> + *
+>> + * where number of levels = (4 - Entry_Level).
+
+^^^ Doesn't this help make it clear ? Using the expansion makes it a bit more
+unreadable below.
+
+>>   
+>> +/*
+>> + * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
+>> + * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
+>> + * 52bit IPS.
+> Link to the spec?
+
+Sure, will add it.
+
+Thanks for the patience to review :-)
+
+Cheers
+Suzuki
