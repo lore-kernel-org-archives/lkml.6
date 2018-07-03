@@ -3,116 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NORMAL_HTTP_TO_IP,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853C3C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3F9C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473142086B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:41:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473142086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E6B52086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6B52086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932823AbeGCHlw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:41:52 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:39291 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932169AbeGCHlu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:41:50 -0400
-Received: by mail-ua0-f194.google.com with SMTP id n4-v6so612607uad.6;
-        Tue, 03 Jul 2018 00:41:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lo5QfrQYlpMYzMVN8UsWUKjOsGlYwde+su3qxFYumiE=;
-        b=tSlDl8kyQvjzN/gAKhiot9zwBtN4nGRfL4QHZ/h7MaNQr2PkrRPb3fir3U+Q6FiMcG
-         sTVkTiUnRYm9U2yyEmCSaAP30btlb4+GwSBI8PtaU+db8Bz4YH9iPu1EfzMnrm4kdEDq
-         v8fMPCmogMh4MGR6PJ5uMq7qZDmpP38UIioS6KhO1eVzpovo9BC2SntOJnCz+k+sI4vs
-         u/6CqFzk9YyoRlqOI9Vttntpnm9x/OtnAToSAapjJEL46Z0EelyHLGIMICFcu/bbIxz7
-         SkONHkDV8heQv6I9v8kZ+oEmg4U1HaNi93fMU5giJgDb8LwV5SV/oTgB030dh4PJNIqk
-         zcQA==
-X-Gm-Message-State: APt69E3DlvvhFszQ/e27syiSL2dMcMjzvkk30GoMDb5YROc1fVUMEimF
-        fLNY8uLq+IcIQQ0gA29RJ9L9V8AOdBOjJ3iBILY=
-X-Google-Smtp-Source: AAOMgpdwUVQ1wxa7qlPSjFbP2wxzZV4DQqnZNgGvJn1UWAPWnJsDfvHmvVadSElyftMOg8HROk6fW7fK/Uz4SYCFyRA=
-X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr19136263uas.26.1530603709901;
- Tue, 03 Jul 2018 00:41:49 -0700 (PDT)
+        id S1754475AbeGCHnP (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:43:15 -0400
+Received: from mout.web.de ([212.227.15.3]:35911 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753606AbeGCHnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:43:13 -0400
+Received: from [192.168.1.3] ([92.228.103.75]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LrbHJ-1gH2vS13OP-013LWA; Tue, 03
+ Jul 2018 09:43:03 +0200
+Subject: [PATCH 4/6] Coccinelle: atomic_as_refcounter: Replace disjunction by
+ a constraint in two SmPL rules
+From:   SF Markus Elfring <elfring@users.sourceforge.net>
+To:     Elena Reshetova <elena.reshetova@intel.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        kernel-janitors@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Coccinelle <cocci@systeme.lip6.fr>
+References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
+ <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+Openpgp: preference=signencrypt
+Message-ID: <fcd2762c-66bb-3571-e2b7-da20eda5d8ea@users.sourceforge.net>
+Date:   Tue, 3 Jul 2018 09:42:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180702133532.5412-1-geert@linux-m68k.org> <20180702133532.5412-2-geert@linux-m68k.org>
- <1349f685-e4a2-5e04-8227-dd55e11153f6@linux-m68k.org>
-In-Reply-To: <1349f685-e4a2-5e04-8227-dd55e11153f6@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Jul 2018 09:41:38 +0200
-Message-ID: <CAMuHMdUHmWiZOofGRFz6Qqphi4iChHa+TY-me_hKEN-xnrrvnA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] m68k/io: Add missing ioremap define guards, fix typo
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        netdev <netdev@vger.kernel.org>, linux-input@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:eF11gdVuxdcvXWlr8mswvf80TJcKHZrNp3d8RXmvgr4gYOGYGXD
+ d8V4rd+M0pu0N+5AbqRHCcfGo7p1mdPT66oqJt4sr04ALBC/MknqEzvox3gUuTVuz66t7So
+ Ng2NpnNWzablGzEKr2AaP436LWO45ApMgB/Wx+Hs4g0gQsCFS3ST8mtiNe9eaO/Ms4ipk6z
+ dcsQnGOWT5XrwFwTD5CDA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lgTJGz6C98Q=:ZeGGq0ap6zFiZp3usJ6htP
+ A3bGiEOKWxUhZbFslG6dHGDloUN+O7xrPZpWTA3K8yU9Siq64K2wwiqPHL+GULr7zMXng3j/p
+ ylcYxYNm+VRjTSgh2ALe0wAQfV/9oI0FUnDlZeTVURTDD4PaYUgDyZlhmEyVUExtBLYcAr4fU
+ YLjcvo0jqDl4+lBYZ72DlXhbbGrKY0NpY+mwfetMFRykVKCWVaFeGI1jEZtyG5jB8rs+KKzxw
+ DlBlQhWASw+ie3RfsJZiBdxIJaA7MJFEupe1hdW6xIS2q8QnjgiJCTedXhYYC2Bt/x52HKkar
+ +WT3hkFuRIroobKgc7YcvEzks6A2yHmkW1shny4cb/Tte/RP63amQWAioGsfgwp9/sBXfKtBq
+ mawZcjDi2WBXrdxeB05tEY7PJG7a6y7c2eQ/syIDrJqGQ3rcOtyPYvphIzQkJGVwtnx5Kzi85
+ 1Cc5YAoPuq1c7eo/xg9LMChx40R0a0rmQfPjgK9rsXjdbdzktUX+//wblyLs4dVJvH5HoWq1r
+ wBsoCPBkrVf4dyn56cMe2ae1mvIIGXPSDd9FwwWfUwLhG4JQsGjU725eq0EXZdWlJh/SHIRmh
+ 6E2Hw7Vv3s7/XJzpShXolaRy91x9ZaZ0evGb7Yry3fXEPDNcqoi9FB+/q89tT2ddEgvk323NV
+ /ZGta24c/4O/bvdaH7ObYIBMAIb5flFw41Mi3RQ4c5YbHc4Nh7fmNI8+RpCxWFj3wj9q13qV3
+ RXc1ANoZpJqGcq6m+Z4FZjCWMcBOVN4EG9h1zgf7LCPzcv51Qiz98HBNU9nX1+/TYeHnb3Mpb
+ Fsz1rXX
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 2 Jul 2018 18:45:15 +0200
 
-On Tue, Jul 3, 2018 at 4:13 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
-> On 02/07/18 23:35, Geert Uytterhoeven wrote:
-> >    - Add missing define guard for ioremap_wt(),
-> >    - Fix typo s/ioremap_fillcache/ioremap_fullcache/,
-> >    - Add define guard for iounmap() for consistency with other
-> >      architectures.
-> >
-> > Fixes: 9746882f547d2f00 ("m68k: group io mapping definitions and functions")
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> If I build for the m5475evb defconfig then I get warnings like this:
->
->    CC      init/main.o
-> In file included from ./include/asm-generic/io.h:19:0,
->                   from ./arch/m68k/include/asm/io_no.h:147,
->                   from ./arch/m68k/include/asm/io.h:3,
->                   from ./include/linux/bio.h:28,
->                   from ./include/linux/blkdev.h:21,
->                   from init/main.c:80:
-> ./include/asm-generic/iomap.h:79:0: warning: "ioremap_wt" redefined
->   #define ioremap_wt ioremap_nocache
->   ^
-> In file included from ./arch/m68k/include/asm/io_no.h:145:0,
->                   from ./arch/m68k/include/asm/io.h:3,
->                   from ./include/linux/bio.h:28,
->                   from ./include/linux/blkdev.h:21,
->                   from init/main.c:80:
-> ./arch/m68k/include/asm/kmap.h:37:0: note: this is the location of the previous definition
->   #define ioremap_wt ioremap_wt
->   ^
+Three function names were specified for a search of function calls
+by the means of a disjunction in two rules of a script for
+the semantic patch language.
+Use a regular expression as a constraint for this source code search
+pattern instead so that duplication of SmPL code can be avoided.
 
-Thanks, I did some m68knommu compile tests, but didn't see this warning, which
-happens for Coldfire+MMU only.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ .../coccinelle/api/atomic_as_refcounter.cocci | 21 +++++--------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
-The issue is that there are two ways to declare an architecture has
-ioremap_wt():
-  1. By defining ioremap_wt,
-  2. By defining ARCH_HAS_IOREMAP_WT.
-
-1 is done in arch/m68k/include/asm/kmap.h.
-2 is done in arch/m68k/include/asm/io_mm.h. Moving that to kmap.h fixes
-the warning. Will send an update shortly.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+index 57af2db9463e..372ae99591fd 100644
+--- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
++++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+@@ -80,17 +80,11 @@ coccilib.report.print_report(p1[0], msg % (p2[0].line))
+ 
+ @r2 exists@
+ expression a;
+-identifier x;
++identifier F =~ "^atomic(?:64|_long)?_add_unless$", x;
+ position p1;
+ @@
+ 
+-(
+-atomic_add_unless(&(a)->x,-1,1)@p1
+-|
+-atomic_long_add_unless(&(a)->x,-1,1)@p1
+-|
+-atomic64_add_unless(&(a)->x,-1,1)@p1
+-)
++ F(&(a)->x, -1, 1)@p1
+ 
+ @script:python depends on report@
+ p1 << r2.p1;
+@@ -99,17 +93,12 @@ msg = "atomic_add_unless"
+ coccilib.report.print_report(p1[0], msg)
+ 
+ @r3 exists@
+-identifier x;
++expression E;
++identifier F =~ "^atomic(?:64|_long)?_add_return$";
+ position p1;
+ @@
+ 
+-(
+-x = atomic_add_return@p1(-1, ...);
+-|
+-x = atomic_long_add_return@p1(-1, ...);
+-|
+-x = atomic64_add_return@p1(-1, ...);
+-)
++ E = F@p1(-1, ...);
+ 
+ @script:python depends on report@
+ p1 << r3.p1;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.18.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
