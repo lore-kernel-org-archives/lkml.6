@@ -6,80 +6,107 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B9FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C09DC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834A423D37
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:23:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834A423D37
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 1662A23D49
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1662A23D49
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932458AbeGCOXz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:23:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932133AbeGCOXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:23:54 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821C123D49;
-        Tue,  3 Jul 2018 14:23:52 +0000 (UTC)
-Date:   Tue, 3 Jul 2018 10:23:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 0/7] Centralize and unify usage of preempt/irq
- tracepoints
-Message-ID: <20180703102350.38d4e3fc@gandalf.local.home>
-In-Reply-To: <20180703141537.GA108396@joelaf.mtv.corp.google.com>
-References: <20180628182149.226164-1-joel@joelfernandes.org>
-        <20180703141537.GA108396@joelaf.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753547AbeGCO00 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:26:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50042 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753129AbeGCO0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 10:26:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25BEA7A9;
+        Tue,  3 Jul 2018 07:26:25 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15A073F5AD;
+        Tue,  3 Jul 2018 07:26:23 -0700 (PDT)
+Subject: Re: [PATCH] mmc: core: Fix struct mmc_gpio corruption
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20180703141114.11609-1-marc.zyngier@arm.com>
+ <CAOMZO5AhGi97jkkGCm4hOCBmESHd7TeQifNDOXZdO=--9=V9nQ@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <18d70b54-15c9-fff4-6dc3-f2cffb08f836@arm.com>
+Date:   Tue, 3 Jul 2018 15:26:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAOMZO5AhGi97jkkGCm4hOCBmESHd7TeQifNDOXZdO=--9=V9nQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018 07:15:37 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
-> On Thu, Jun 28, 2018 at 11:21:42AM -0700, Joel Fernandes wrote:
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > This is a posting of v9 preempt/irq tracepoint clean up series rebased
-> > onto v4.18-rc2. No changes in the series, just a rebase + repost.
-> > 
-> > All patches have a Reviewed-by tags now from reviewers. This series has
-> > been well tested and is a simplification/refactoring of existing code,
-> > along with giving a speed-up for tracepoints using the rcu-idle API.
-> > With this our users will find it easier to use tools depending on
-> > existing preempt tracepoints since it simplifies the configuration for
-> > them.  
+On 03/07/18 15:14, Fabio Estevam wrote:
+> Hi Marc,
 > 
-> Steve, all patches of this tracing series have been reviewed and/or acked and
-> there haven't been additional changes for a couple of reposts. Are you Ok
-> with it?
+> On Tue, Jul 3, 2018 at 11:11 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>> I recently realised that something was amiss with /proc/interrupts
+>> on my cubietruck:
+>>
+>>  51:          0          0     GICv2  41 Level     mv64xxx_i2c
+>>  59:       1047          0     GICv2 117 Level     eth0
+>>  66:          2          0  sunxi_pio_edge   1 Edge   XXXXX
+>>
+>> where XXXXX has some non-ASCII characters, while I was expecting:
+>>
+>>  66:          0          0  sunxi_pio_edge   1 Edge      1c0f000.mmc cd
+>>
+>> It turns out that the cd_debounce_delay_ms field was recently to
+>> struct mmc_gpio, and carefully placed at the one spot where it could
+>> cause damage: right *after* the zero-sized array that contains the
+>> associated label. This label ends up being passed to the IRQ
+>> subsystem, and then overwritten by the cd_debounce_delay_ms field.
+>>
+>> Funky!
+>>
+>> Let's move that field to a less crowded location.
+>>
+>> Fixes: bfd694d5e21c ("mmc: core: Add tunable delay before detecting card after card is inserted")
+>> Cc: Shawn Lin <shawn.lin@rock-chips.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  drivers/mmc/core/slot-gpio.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/core/slot-gpio.c b/drivers/mmc/core/slot-gpio.c
+>> index ef05e0039378..1ccf9dc07395 100644
+>> --- a/drivers/mmc/core/slot-gpio.c
+>> +++ b/drivers/mmc/core/slot-gpio.c
+>> @@ -27,8 +27,8 @@ struct mmc_gpio {
+>>         bool override_cd_active_level;
+>>         irqreturn_t (*cd_gpio_isr)(int irq, void *dev_id);
+>>         char *ro_label;
+>> -       char cd_label[0];
+>>         u32 cd_debounce_delay_ms;
+>> +       char cd_label[0];
 > 
+> Ulf has already applied a fix for this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git/commit/?h=fixes&id=60feca8f59a0bbdee9545ab52775cad0171151ff
+> 
+> which is more robust as it will give a gcc error when cd_label gets
+> moved in the future.
 
-I'm currently chasing down some fires, but I'll try to get to it this
-week.
+Ah, good. Thanks for the heads-up.
 
-Thanks for the patience ;-)
-
--- Steve
+	M.
+-- 
+Jazz is not dead. It just smells funny...
