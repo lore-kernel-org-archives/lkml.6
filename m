@@ -2,131 +2,93 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B54C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DB5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 201F12175A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 201F12175A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D1862175A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1862175A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932213AbeGCWgA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:36:00 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:39763 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeGCWf6 (ORCPT
+        id S932357AbeGCWgd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:36:33 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.43]:20487 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932079AbeGCWgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:35:58 -0400
-Received: by mail-yb0-f195.google.com with SMTP id k127-v6so1348273ybk.6;
-        Tue, 03 Jul 2018 15:35:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R1ySuh5OZkuaI1wPY3sXyQa5Ft6yJdbu/YK3TSu6Tkk=;
-        b=oAYh0izJFctb63FRDP6p7Iw+hMUPyfpl4EsBs04RN4LLPgN9kGQx69QNOg2+VHHQOy
-         vAEyV4ujS5EJj1Y8uq7TTibzsPBKiDWchbXtIjupBd3A5Rzf3t290u42RlBAhfKe+FDw
-         z03bSEa3Hhl0Ltg3Zi1TbCAY8GIAJOa+liCSQbkn0x5vGnFbuxPMpjXrSGe1sv6/iqvd
-         rvDlxp4PvUSAe7HjdakAywgPO/8AG/cICHs0GhYItEVh5r2SXNDV0eoDoXbgoz3yAsgG
-         iRxVWVzAbpm7sbhVhHaQveIy/xtu398ukavFAnD3b2iuhdoRYuSAGoqG4qp9Hb5D7CP+
-         T3zQ==
-X-Gm-Message-State: APt69E2wG7qMZhFoHAIzFIVo2Gt9QBB1mChJQctZlSJZfaVaue/BI2bn
-        qiEAaqdt4MOykAKyeF/dbg==
-X-Google-Smtp-Source: ADUXVKIDLwETdIm9e/Klumxj13UXxMUuQTFAfpUTRiRR15WeapIsbOnypJ0mDUMpQAsBkHF1Cm4Uww==
-X-Received: by 2002:a25:44d7:: with SMTP id r206-v6mr16143933yba.475.1530657358161;
-        Tue, 03 Jul 2018 15:35:58 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id m128-v6sm769168ywe.100.2018.07.03.15.35.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 15:35:57 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 16:35:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
- driver bindings
-Message-ID: <20180703223554.GA32313@rob-hp-laptop>
-References: <20180627045234.27403-1-rnayak@codeaurora.org>
- <20180627045234.27403-3-rnayak@codeaurora.org>
+        Tue, 3 Jul 2018 18:36:32 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id D5849400CEBA9
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 17:36:31 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aTuRfqVIG79N3aTuRfFalQ; Tue, 03 Jul 2018 17:36:31 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=51376 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1faTuR-0048Ac-Cd; Tue, 03 Jul 2018 17:36:31 -0500
+Date:   Tue, 3 Jul 2018 17:36:29 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] misc: mic: mark expected switch fall-through
+Message-ID: <20180703223629.GA11229@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180627045234.27403-3-rnayak@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1faTuR-0048Ac-Cd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:51376
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 27, 2018 at 10:22:30AM +0530, Rajendra Nayak wrote:
-> Add DT bindings to describe the rpm/rpmh power domains found on Qualcomm
-> Technologies, Inc. SoCs. These power domains communicate a performance
-> state to RPM/RPMh, which then translates it into corresponding voltage on a
-> PMIC rail.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  .../devicetree/bindings/power/qcom,rpmpd.txt  | 146 ++++++++++++++++++
->  include/dt-bindings/power/qcom-rpmpd.h        |  39 +++++
->  2 files changed, 185 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
->  create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
-> 
-> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> new file mode 100644
-> index 000000000000..8825080afa5a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> @@ -0,0 +1,146 @@
-> +Qualcomm RPM/RPMh Power domains
-> +
-> +For RPM/RPMh Power domains, we communicate a performance state to RPM/RPMh
-> +which then translates it into a corresponding voltage on a rail
-> +
-> +Required Properties:
-> + - compatible: Should be one of the following
-> +	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
-> +	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
-> + - power-domain-cells: number of cells in Power domain specifier
-> +	must be 1.
-> + - operating-points-v2: Phandle to the OPP table for the Power domain.
-> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
-> +
-> +Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
-> +various OPPs for different platforms as well as Power domain indexes
-> +
-> +Example: rpmh power domain controller and OPP table
-> +
-> +#include <dt-bindings/power/qcom-rpmhpd.h>
-> +
-> +qcom,level values specified in the OPP tables for RPMh power domains
-> +should use the RPMH_REGULATOR_LEVEL_* constants from
-> +<dt-bindings/power/qcom-rpmhpd.h>
-> +
-> +	rpmhpd: power-controller {
-> +		compatible = "qcom,sdm845-rpmhpd";
-> +		#power-domain-cells = <1>;
-> +		operating-points-v2 = <&rpmhpd_opp_table>;
-> +	};
-> +
-> +	rpmhpd_opp_table: opp-table {
-> +		compatible = "operating-points-v2-qcom-level";
-> +
-> +		rpmhpd_opp_ret: opp1 {
-> +			qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-> +		};
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-I don't see the point in using the OPP binding here when you aren't 
-using *any* of the properties from it.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/misc/mic/scif/scif_api.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rob
+diff --git a/drivers/misc/mic/scif/scif_api.c b/drivers/misc/mic/scif/scif_api.c
+index 7b2dddc..463f06d 100644
+--- a/drivers/misc/mic/scif/scif_api.c
++++ b/drivers/misc/mic/scif/scif_api.c
+@@ -187,6 +187,7 @@ int scif_close(scif_epd_t epd)
+ 	case SCIFEP_ZOMBIE:
+ 		dev_err(scif_info.mdev.this_device,
+ 			"SCIFAPI close: zombie state unexpected\n");
++		/* fall through */
+ 	case SCIFEP_DISCONNECTED:
+ 		spin_unlock(&ep->lock);
+ 		scif_unregister_all_windows(epd);
+-- 
+2.7.4
+
