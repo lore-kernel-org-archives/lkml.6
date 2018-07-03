@@ -2,124 +2,155 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCB8C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1A5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D5E2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:48:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D5E2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A9B502075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:48:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B502075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754803AbeGCJsL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:48:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45292 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754702AbeGCJsI (ORCPT
+        id S933649AbeGCJsS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:48:18 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34830 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754805AbeGCJsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:48:08 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w639jHec058010
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 05:48:08 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k06sqr2tw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:48:07 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 05:48:06 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 05:48:02 -0400
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w639m1oM1311270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 09:48:01 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C18CC28059;
-        Tue,  3 Jul 2018 05:47:34 -0400 (EDT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5076028065;
-        Tue,  3 Jul 2018 05:47:34 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 05:47:34 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 541252E2F42; Tue,  3 Jul 2018 15:17:59 +0530 (IST)
-Date:   Tue, 3 Jul 2018 15:17:59 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        stewart@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        npiggin@gmail.com, mpe@ellerman.id.au
-Subject: Re: [PATCH v3 2/2] powernv/cpuidle: Use parsed device tree values
- for cpuidle_init
-Reply-To: ego@linux.vnet.ibm.com
-References: <1530609656-13301-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
- <1530609656-13301-3-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530609656-13301-3-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18070309-0060-0000-0000-000002865E6A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009300; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055881; UDB=6.00541596; IPR=6.00833804;
- MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 09:48:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070309-0061-0000-0000-000045A976D7
-Message-Id: <20180703094759.GB24693@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=967 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030112
+        Tue, 3 Jul 2018 05:48:12 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w639l4ul020999;
+        Tue, 3 Jul 2018 12:47:04 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 01E1C63045; Tue,  3 Jul 2018 12:47:04 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
+        linux@roeck-us.net, avifishman70@gmail.com, yuenn@google.com,
+        brendanhiggins@google.com, venture@google.com, joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v7 1/2] dt-binding: hwmon: Add NPCM7xx PWM and Fan controller documentation
+Date:   Tue,  3 Jul 2018 12:47:00 +0300
+Message-Id: <20180703094701.255662-2-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180703094701.255662-1-tmaimon77@gmail.com>
+References: <20180703094701.255662-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akshay,
+Added device tree binding documentation for Nuvoton BMC
+NPCM7xx Pulse Width Modulation (PWM)  and Fan tach controller.
+The PWM controller can support upto 8 PWM output ports.
+The Fan tach controller can support upto 16 tachometer inputs.
 
-On Tue, Jul 03, 2018 at 02:50:56PM +0530, Akshay Adiga wrote:
-> Export pnv_idle_states and nr_pnv_idle_states so that its accessible to
-> cpuidle driver. Use properties from pnv_idle_states structure for powernv
-> cpuidle_init.
-> 
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-> ---
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ .../devicetree/bindings/hwmon/npcm750-pwm-fan.txt  | 87 ++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
 
-[..snip..]
-
-> 
->  		/*
->  		 * For nap and fastsleep, use default target_residency
->  		 * values if f/w does not expose it.
->  		 */
-
-This comment can also go, since we are no longer hard-coding the
-residency values in the kernel.
-
-Otherwise looks good to me.
-
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
-
-
---
-Thanks and Regards
-gautham.
+diff --git a/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+new file mode 100644
+index 000000000000..c56d72d03717
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+@@ -0,0 +1,87 @@
++Nuvoton NPCM7xx PWM and Fan Tacho controller device
++
++The NPCM7xx has two identical Pulse-width modulation (PWM) controller modules,
++Each PWM module has four PWM controller outputs, Totally 8 PWM controller outputs.
++
++The NPCM7xx has eight identical Fan tachometer controller modules,
++Each Fan module has two Fan controller inputs, Totally 16 Fan controller inputs.
++
++Required properties for pwm-fan node
++- #address-cells : should be 1.
++- #size-cells 	: should be 0.
++- compatible	: "nuvoton,npcm750-pwm-fan" for Poleg NPCM7XX.
++- reg 			: specifies physical base address and size of the registers.
++- reg-names 	: must contain:
++					* "pwm" for the PWM registers.
++ 					* "fan" for the Fan registers.
++- clocks		: phandle of reference clocks.
++- clock-names	: must contain
++					* "clk_apb3" for clock of PWM controller.
++ 					* "clk_apb4" for clock of Fan controller.
++- interrupts	: contain the Fan interrupts with flags for falling edge.
++- pinctrl-names	: a pinctrl state named "default" must be defined.
++- pinctrl-0 	: phandle referencing pin configuration of the PWM and Fan
++					controller ports.
++
++fan subnode format:
++===================
++Under fan subnode can be upto 8 child nodes, each child node representing a fan.
++Each fan subnode must have one PWM channel and atleast one Fan tach channel.
++
++For PWM channel can be configured cooling-levels to create cooling device.
++Cooling device could be bound to a thermal zone for the thermal control.
++
++Required properties for each child node:
++- reg : specify the PWM output channel.
++	integer value in the range 0 through 7, that represent
++	the PWM channel number that used.
++
++- fan-tach-ch : specify the Fan tach input channel.
++		integer value in the range 0 through 15, that represent
++		the fan tach channel number that used.
++
++		At least one Fan tach input channel is required
++
++Optional property for each child node:
++- cooling-levels: PWM duty cycle values in a range from 0 to 255
++                  which correspond to thermal cooling states.
++
++Examples:
++
++pwm_fan:pwm-fan-controller@103000 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "nuvoton,npcm750-pwm-fan";
++	reg = <0x103000 0x2000>,
++		<0x180000 0x8000>;
++	reg-names = "pwm", "fan";
++	clocks = <&clk NPCM7XX_CLK_APB3>,
++		<&clk NPCM7XX_CLK_APB4>;
++	clock-names = "clk_apb3","clk_apb4";
++	interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm0_pins &pwm1_pins &pwm2_pins
++			&fanin0_pins &fanin1_pins &fanin2_pins
++			&fanin3_pins &fanin4_pins>;
++	fan@0 {
++		reg = <0x00>;
++		fan-ch = /bits/ 8 <0x00 0x01>;
++		cooling-levels = <127 255>;
++	};
++	fan@1 {
++		reg = <0x01>;
++		fan-ch = /bits/ 8 <0x02 0x03>;
++	};
++	fan@2 {
++		reg = <0x02>;
++		fan-ch = /bits/ 8 <0x04>;
++	};
++
++};
+\ No newline at end of file
+-- 
+2.14.1
 
