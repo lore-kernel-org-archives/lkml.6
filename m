@@ -2,179 +2,150 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C75C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EC2C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8827A2443A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CIO+dPMM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8827A2443A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 469B72443A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:17:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469B72443A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932778AbeGCJRd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:17:33 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33057 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754602AbeGCJR3 (ORCPT
+        id S1754709AbeGCJRc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:17:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754606AbeGCJR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Jul 2018 05:17:29 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k7-v6so1179550wrq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 02:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=sApgy0aNJbjOBy8ZSdCdHw4MsQN885nC7CRiyY0ZK4I=;
-        b=CIO+dPMMlct8xGBzXmRi+w2/d2b/XQdg2yl6rAJyrwfq7sxdnrt8Hfy1qrWDZbm8/2
-         9Olk0su8gArh+ee++d9ruaKhOJ5bIhRGHe5Wjn1Zx9EfX0i57B+KP19yFPnNgTWYhNsO
-         d6CtcDjMRbzvhS9xQ5jkkAdpTGjL2SmTC1Jkw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=sApgy0aNJbjOBy8ZSdCdHw4MsQN885nC7CRiyY0ZK4I=;
-        b=WuffYM21sIGyktN5QjKQBT0GavwsACFaXMnZZS9J2tk3mUpItUYFIjQQ6Cor/GOvQ6
-         emxOh5XIOc4RpBvZzrmw1Rs+acueJvLM58rSqjjQtcSQMJQJIwvG+1mMCElpbWtIfMfF
-         9jR/QQOXyFDKspbJ2ggy/8cQ2KvYA9ymSplhs1skm5cQZB4nvYC5TOK7fpPKlwUtayuJ
-         E/dI04eSmcMqv8zgKfzJI+LTgGYYUx4qDhY3MFRGBcU3OAA3vMf62K7hn0ldQTSTd3M4
-         c16hEafTOp0fPqHWpZ+fr8ctX82E5vj5sbY3e57xNQviYNPmtaxzKL7LCZqQveeTNHu4
-         8wPA==
-X-Gm-Message-State: APt69E2Oc18l93oHp3CXdOwht9BvxwbfkvFaTW0ebPCSJhP+OcAoeSsB
-        RE/44oghjNvcOuglc6PsMTws9w==
-X-Google-Smtp-Source: AAOMgpcmOqImedp+Bazlx6dUY2mrehZgvhJiYzbzwmI8MWLMZCTxGMbWY+oD+EzRbWMRwOimaVih5Q==
-X-Received: by 2002:adf:9527:: with SMTP id 36-v6mr1818926wrs.99.1530609448435;
-        Tue, 03 Jul 2018 02:17:28 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id a184-v6sm1168295wmf.30.2018.07.03.02.17.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 02:17:27 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 10:17:26 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>, chen.zhong@mediatek.com,
-        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH] input: mtk-pmic-keys: Fix probe when no DT node present
-Message-ID: <20180703091726.GM20176@dell>
-References: <20180622114228.8619-1-matthias.bgg@gmail.com>
- <20180622183114.GA92912@dtor-ws>
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w639EBgQ113897
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 05:17:29 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k02ec9mfe-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:17:28 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 3 Jul 2018 10:17:26 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 10:17:21 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w639HKxB27852902
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 09:17:20 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A2321A404D;
+        Tue,  3 Jul 2018 12:17:45 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EEA83A4040;
+        Tue,  3 Jul 2018 12:17:44 +0100 (BST)
+Received: from osiris (unknown [9.152.212.90])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  3 Jul 2018 12:17:44 +0100 (BST)
+Date:   Tue, 3 Jul 2018 11:17:17 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
+References: <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
+ <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
+ <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
+ <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
+ <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
+ <20180703081449.GT2494@hirez.programming.kicks-ass.net>
+ <20180703082955.GH3704@osiris>
+ <20180703084312.GU2494@hirez.programming.kicks-ass.net>
+ <20180703085546.GJ3704@osiris>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20180703085546.GJ3704@osiris>
+X-TM-AS-GCONF: 00
+x-cbid: 18070309-0016-0000-0000-000001E2D1FA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070309-0017-0000-0000-000032372EB2
+Message-Id: <20180703091717.GK3704@osiris>
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180622183114.GA92912@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=425 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 22 Jun 2018, Dmitry Torokhov wrote:
-
-> On Fri, Jun 22, 2018 at 01:42:28PM +0200, Matthias Brugger wrote:
-> > The drivers gets probed from a mfd devices. So the driver runs
-> > probe although no DT node exists. This leads to a NULL pointer
-> > dereference in the probe function. Check if a node exists and
-> > error out in case none is present.
-> 
-> Hmm, if a cell specifies of_compatible and no such node is present in DT
-> maybe we should bail out in mfd_add_device() instead of pushing the
-> check into individual drivers? Something like:
-> 
-> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-> index 94e3f32ce935..36a5fd98000d 100644
-> --- a/drivers/mfd/mfd-core.c
-> +++ b/drivers/mfd/mfd-core.c
-> @@ -137,6 +137,18 @@ static inline void mfd_acpi_add_device(const struct mfd_cell *cell,
->  }
->  #endif
->  
-> +static struct device_node *mfd_get_node_for_cell(struct device *parent,
-> +						 const struct mfd_cell *cell)
-> +{
-> +	struct device_node *np;
-> +
-> +	for_each_child_of_node(parent->of_node, np)
-> +		if (of_device_is_compatible(np, cell->of_compatible))
-> +			return np;
-> +
-> +	return NULL;
-> +}
-> +
->  static int mfd_add_device(struct device *parent, int id,
->  			  const struct mfd_cell *cell, atomic_t *usage_count,
->  			  struct resource *mem_base,
-> @@ -144,7 +156,6 @@ static int mfd_add_device(struct device *parent, int id,
->  {
->  	struct resource *res;
->  	struct platform_device *pdev;
-> -	struct device_node *np = NULL;
->  	int ret = -ENOMEM;
->  	int platform_id;
->  	int r;
-> @@ -176,11 +187,11 @@ static int mfd_add_device(struct device *parent, int id,
->  		goto fail_res;
->  
->  	if (parent->of_node && cell->of_compatible) {
-> -		for_each_child_of_node(parent->of_node, np) {
-> -			if (of_device_is_compatible(np, cell->of_compatible)) {
-> -				pdev->dev.of_node = np;
-> -				break;
-> -			}
-> +		pdev->dev.of_node = mfd_get_node_for_cell(parent, cell);
-> +		if (!pdev->dev.of_node) {
-> +			dev_err(parent, "unable to locate node for %s (%s)\n",
-> +				cell->name, cell->of_compatible);
-> +			goto fail_res;
->  		}
->  	}
->  
-> Lee?
-
-This change results the wrong semantics.  MFD overrides Device Tree,
-such that if a device is supplied and registered using
-mfd_add_device(s) it should be probed.  The only reason we provide a
-pointer to the of_node is for the child device to pull properties
-from.
-
-If a device should only be probed if an OF node exists, then it should
-not be registered at the MFD level.
-
-> > Fixes: 3e9f0b3e2b27 ("input: Add MediaTek PMIC keys support")
-> > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > ---
-> >  drivers/input/keyboard/mtk-pmic-keys.c | 3 +++
-> >  1 file changed, 3 insertions(+)
+On Tue, Jul 03, 2018 at 10:55:46AM +0200, Heiko Carstens wrote:
+> > > > We're piece-wise enabling rseq across architectures anyway, and when the
+> > > > relevant maintains do this, they can have a look at their
+> > > > {get,put}_user() implementations and fix them.
+> > > > 
+> > > > If you rely on get_user(u64) working, that means microblaze is already
+> > > > broken, but I suppose it already was, since their rseq enablement patch
+> > > > is extremely dodgy. Michal?
+> > > 
+> > > s390 uses the mvcos instruction to implement get_user(). That instruction
+> > > is not defined to be atomic, but may copy bytes piecemeal.. I had the
+> > > impression that the rseq fields are supposed to be updated within the
+> > > context of a single thread (user + kernel space).
+> > > 
+> > > However if another user space thread is allowed to do this as well, then
+> > > the get_user() approach won't fly on s390.
+> > > 
+> > > That leaves the question: does it even make sense for a thread to update
+> > > the rseq structure of a different thread?
 > > 
-> > diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
-> > index 02c67a1749fc..388043e1939c 100644
-> > --- a/drivers/input/keyboard/mtk-pmic-keys.c
-> > +++ b/drivers/input/keyboard/mtk-pmic-keys.c
-> > @@ -257,6 +257,9 @@ static int mtk_pmic_keys_probe(struct platform_device *pdev)
-> >  	const struct of_device_id *of_id =
-> >  		of_match_device(of_mtk_pmic_keys_match_tbl, &pdev->dev);
-> >  
-> > +	if (of_id == NULL)
-> > +		return -ENODEV;
-> > +
-> >  	keys = devm_kzalloc(&pdev->dev, sizeof(*keys), GFP_KERNEL);
-> >  	if (!keys)
-> >  		return -ENOMEM;
+> > The problem is interrupts; we need interrupts on the CPU doing the store
+> > to observe either the old or the new value, not a mix.
+> > 
+> > If mvcos does not guarantee that, we're having problems. Is there a
+> > reason get_user() cannot use a 'regular' load?
 > 
-> Thanks.
+> Well, that's single instruction semantics. This is something we actually
+> can guarantee, since the mvcos instruction itself won't be interrupted and
+> copies all 1/2/4/8 bytes in a row.
 > 
+> So we are talking about that single instructions are required and not
+> atomic accesses?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+And to answer also your question: we don't use a regular load, since we
+would have to use 'sacf' construct surrounding the load instruction which
+would be much slower.
+We have something like that implemented for the futex atomic ops, and we
+could also implement something like that for this use case
+(e.g. get_user_atomic()), if really needed.
+
