@@ -2,111 +2,97 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1036FC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EF1C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C2F23DF1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:40:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WB2NR+Kq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C2F23DF1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BB90E23DF1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:40:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB90E23DF1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753001AbeGCUkE (ORCPT
+        id S1753143AbeGCUk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:40:04 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:38191 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752237AbeGCUkC (ORCPT
+        Tue, 3 Jul 2018 16:40:26 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43212 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753038AbeGCUkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 16:40:02 -0400
-Received: by mail-vk0-f68.google.com with SMTP id b77-v6so1883470vkb.5;
-        Tue, 03 Jul 2018 13:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Lkz0lhyO++gyonTUc6mhLRo6vsDFV7xUhH17a3fpTAE=;
-        b=WB2NR+Kqh8LrljfxntRw20s05hfrlkKhPDNBgHL5g61j6A/wiwXwMFvBHCw9Dm08iS
-         dhBf1k7D4wKokRN+MRcaExXHOvRbIfG88SIMO2OgluI/CPc48UuPB+mfjS/xPr03ZeG+
-         lh5gffmuXJlBKqrlU5kJryJSZzpVFD8mTRlThqARTZktweVEUeqF1s3ueZTCn9yssUOq
-         VMwhslEXOG8pcLAmY/5FJbbfWP7YHY24gS6tXnmN0E5W5CX7pQHFV7aVKmZ5a44H9yU4
-         4JpSRlDS0YeETc8r5l5oNNGt76V7P7sct8B7pBW5P5R2YkpPhCV046FL88Wq72f72d6X
-         yfcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Lkz0lhyO++gyonTUc6mhLRo6vsDFV7xUhH17a3fpTAE=;
-        b=NcaAFTikKISYRt6wbYwCUFjU+PFBavScLIwB00izefbkfEK7XWpvGV3KfRMk2GpDLm
-         rPBjyHcG08LMJCujXtT6XblVIhDjOZQ4rrOUjEz1xZk3uNM1bjMrZLxLbavcOB/JwD4d
-         eRY0wcUiBzll48IWGQQExKmmOATAa6QmBI7GDp4pVzJiyfa4trhId8Y4UHaXIAScbHkn
-         +0z9oR7ippbIGs1g3zunBJp1Oa6FTURCPJL9y3JdKzawNJP1fHWuqbuIlcaLjhuXwYyN
-         3El775beiNB3Lo4XqMtT1nEeELcpKn1+q+BCsEygO6Xw0d16NBLUx/S1ug1B5QQ2bZoI
-         taDg==
-X-Gm-Message-State: APt69E0TYkaIO/PBCzH5aSdpYl1cGy5hgohjE2wxh4UuBSy8H4sbJxgP
-        rjwgzNtxFE0P2TCXUEtAMADCECzQyd6AZBci6kA=
-X-Google-Smtp-Source: AAOMgpfM6OdhTDipG6e3hmGalFSWhuGBSj5Xm+LngOPDakhq9P30yp2bE59Fo7pToWBHZdjA84AQHc50JnE1wOa+KH4=
-X-Received: by 2002:a1f:6dc4:: with SMTP id i187-v6mr4005881vkc.131.1530650401107;
- Tue, 03 Jul 2018 13:40:01 -0700 (PDT)
+        Tue, 3 Jul 2018 16:40:24 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1faS4k-0008JF-53; Tue, 03 Jul 2018 20:39:02 +0000
+Date:   Tue, 3 Jul 2018 21:39:02 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        stummala@codeaurora.org, gregkh@linuxfoundation.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Roman Gushchin <guro@fb.com>, mka@chromium.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Chris Wilson <chris@chris-wilson.co.uk>, longman@redhat.com,
+        Minchan Kim <minchan@kernel.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>, jbacik@fb.com,
+        Guenter Roeck <linux@roeck-us.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, lirongqing@baidu.com,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v8 03/17] mm: Assign id to every memcg-aware shrinker
+Message-ID: <20180703203901.GV30522@ZenIV.linux.org.uk>
+References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
+ <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
+ <20180703152723.GB21590@bombadil.infradead.org>
+ <CALvZod7xAP9AjRWp2XX1uJBkuOprYKCf7hzAXNTdw89dc-n4OA@mail.gmail.com>
+ <20180703174744.GB4834@bombadil.infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 13:40:00 -0700 (PDT)
-In-Reply-To: <CAOMZO5Ayn4ik4F3sWhTo9Q5DGHG6nuf71M3DLsM+heMi0TFjVg@mail.gmail.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
- <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
- <CAHp75VcCNsx2sHcYG2aNiw354exTvO=NUOS9P_BTmcM3siAepg@mail.gmail.com>
- <13ea3f97-4a33-3a24-1b7e-b819be73d867@deltatee.com> <CAOMZO5CfUfNZd0kG=VVnH4BjP+XMpGh3bPCUrTwi_4w6YEGX7g@mail.gmail.com>
- <CAHp75VcDudrwV4kRnVR+vtddFhxHsU672YqOJgPPchuLvPV3nA@mail.gmail.com>
- <CAOMZO5A4bsu9dXCPb4QeSbnnLi=pr1=WYWn8p2AfU3rEG=RWXg@mail.gmail.com>
- <6e5224b9-343f-990c-19bd-fe37c6fbdc9b@deltatee.com> <CAOMZO5CJ_iG=p_+xL=Q_Rv3F5vtGggsgatar4XVTL+UFVnHBTA@mail.gmail.com>
- <CAHp75VefGpNkF0ANA_wBm627aZXS60NPZ9VAdOYqr_iZ8Hvpzw@mail.gmail.com> <CAOMZO5Ayn4ik4F3sWhTo9Q5DGHG6nuf71M3DLsM+heMi0TFjVg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 3 Jul 2018 23:40:00 +0300
-Message-ID: <CAHp75VepHb5BaGmB_2eBmMrmyeAAOih9GE4E34s49gDbvKskgA@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-ntb@googlegroups.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703174744.GB4834@bombadil.infradead.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 11:10 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> On Tue, Jul 3, 2018 at 4:58 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->
->> By the way, is there any URL which contains dmesg out of kernel with
->> this commit reverted?
->
-> Yes, here is the linux-next 20180626 dmesg (which is the last
-> linux-next that does not contain 46e4bf08f63 and it boots fine) :
-> https://storage.kernelci.org/next/master/next-20180626/arm/imx_v6_v7_defconfig/lab-baylibre-seattle/boot-imx6q-wandboard.html
+On Tue, Jul 03, 2018 at 10:47:44AM -0700, Matthew Wilcox wrote:
+> On Tue, Jul 03, 2018 at 08:46:28AM -0700, Shakeel Butt wrote:
+> > On Tue, Jul 3, 2018 at 8:27 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > This will actually reduce the size of each shrinker and be more
+> > > cache-efficient when calling the shrinkers.  I think we can also get
+> > > rid of the shrinker_rwsem eventually, but let's leave it for now.
+> > 
+> > Can you explain how you envision shrinker_rwsem can be removed? I am
+> > very much interested in doing that.
+> 
+> Sure.  Right now we have 3 uses of shrinker_rwsem -- two for adding and
+> removing shrinkers to the list and one for walking the list.  If we switch
+> to an IDR then we can use a spinlock for adding/removing shrinkers and
+> the RCU read lock for looking up an entry in the IDR each iteration of
+> the loop.
+> 
+> We'd need to stop the shrinker from disappearing underneath us while we
+> drop the RCU lock, so we'd need a refcount in the shrinker, and to free
+> the shrinkers using RCU.  We do similar things for other data structures,
+> so this is all pretty well understood.
 
-Thanks.
+<censored>
+struct super_block {
+...
+        struct shrinker s_shrink;       /* per-sb shrinker handle */
+...
+}
+<censored>
 
-And here just a wild guess, if you comment out a BUG() in IRQ handler,
-does it boot?
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+What was that about refcount in the shrinker and taking over the lifetime
+rules of the objects it might be embedded into, again?
