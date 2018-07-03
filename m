@@ -5,124 +5,124 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D324C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4ACC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C5420779
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:24:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C5420779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 515C92083E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515C92083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754794AbeGCKYa (ORCPT
+        id S1754762AbeGCK2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:24:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36638 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754757AbeGCKY3 (ORCPT
+        Tue, 3 Jul 2018 06:28:12 -0400
+Received: from smtp-out4.electric.net ([192.162.216.187]:58657 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754665AbeGCK2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:24:29 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63AONqw134129
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 06:24:28 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k067fk24m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 06:24:28 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 3 Jul 2018 11:24:26 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 11:24:21 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63AOKiJ37027938
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 10:24:20 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4CA6AE053;
-        Tue,  3 Jul 2018 13:24:22 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 667D8AE058;
-        Tue,  3 Jul 2018 13:24:20 +0100 (BST)
-Received: from [9.124.31.159] (unknown [9.124.31.159])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 13:24:20 +0100 (BST)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [RFC 2/4] perf: Pass pmu pointer to perf_paranoid_* helpers
-To:     Tvrtko Ursulin <tursulin@ursulin.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Tue, 3 Jul 2018 06:28:10 -0400
+Received: from 1faIXM-00029Z-Vs by out4c.electric.net with emc1-ok (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1faIXW-00034N-VS; Tue, 03 Jul 2018 03:28:06 -0700
+Received: by emcmailer; Tue, 03 Jul 2018 03:28:06 -0700
+Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
+        by out4c.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1faIXM-00029Z-Vs; Tue, 03 Jul 2018 03:27:56 -0700
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 3 Jul 2018 11:29:36 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 3 Jul 2018 11:29:36 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jan Beulich' <JBeulich@suse.com>
+CC:     Borislav Petkov <bp@alien8.de>,
+        "brgerst@gmail.com" <brgerst@gmail.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        x86@kernel.org, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180626153642.5587-1-tvrtko.ursulin@linux.intel.com>
- <20180626153642.5587-3-tvrtko.ursulin@linux.intel.com>
-Date:   Tue, 3 Jul 2018 15:54:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180626153642.5587-3-tvrtko.ursulin@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+        Andrew Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>
+Subject: RE: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
+Thread-Topic: [tip:x86/asm] x86/entry/64: Add two more instruction suffixes
+Thread-Index: AQHUEqkqUgcuA0q28EukrINgYR6YAqR9LYhQgAAHfQCAABRHwA==
+Date:   Tue, 3 Jul 2018 10:29:36 +0000
+Message-ID: <b244577958e34a6f9063a37826f660ec@AcuMS.aculab.com>
+References: <5B3A02DD02000078001CFB78@prv1-mh.provo.novell.com>
+ <tip-6709812f094d96543b443645c68daaa32d3d3e77@git.kernel.org>
+ <dd366701851f48e4897ebe0f62f0fd94@AcuMS.aculab.com>
+ <5B3B4AB802000078001D0216@prv1-mh.provo.novell.com>
+In-Reply-To: <5B3B4AB802000078001D0216@prv1-mh.provo.novell.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070310-0028-0000-0000-000002D7ACED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070310-0029-0000-0000-0000238F2D6D
-Message-Id: <5b618e5f-0dcd-5acb-96a0-a0560815c0d7@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=789 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030120
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (s)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tvrtko,
-
-> @@ -199,7 +199,7 @@ static inline void perf_get_data_addr(struct pt_regs *regs, u64 *addrp)
->  	if (!(mmcra & MMCRA_SAMPLE_ENABLE) || sdar_valid)
->  		*addrp = mfspr(SPRN_SDAR);
->  
-> -	if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
-> +	if (perf_paranoid_kernel(ppmu) && !capable(CAP_SYS_ADMIN) &&
->  		is_kernel_addr(mfspr(SPRN_SDAR)))
->  		*addrp = 0;
->  }
-
-This patch fails for me on powerpc:
-
-arch/powerpc/perf/core-book3s.c: In function ‘perf_get_data_addr’:
-arch/powerpc/perf/core-book3s.c:202:27: error: passing argument 1 of ‘perf_paranoid_kernel’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-  if (perf_paranoid_kernel(ppmu) && !capable(CAP_SYS_ADMIN) &&
-                           ^~~~
-In file included from arch/powerpc/perf/core-book3s.c:13:0:
-./include/linux/perf_event.h:1191:20: note: expected ‘const struct pmu *’ but argument is of type ‘struct power_pmu *’
- static inline bool perf_paranoid_kernel(const struct pmu *pmu)
-                    ^~~~~~~~~~~~~~~~~~~~
-arch/powerpc/perf/core-book3s.c: In function ‘power_pmu_bhrb_read’:
-arch/powerpc/perf/core-book3s.c:470:8: error: too few arguments to function ‘perf_paranoid_kernel’
-    if (perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN) &&
-        ^~~~~~~~~~~~~~~~~~~~
-In file included from arch/powerpc/perf/core-book3s.c:13:0:
-./include/linux/perf_event.h:1191:20: note: declared here
- static inline bool perf_paranoid_kernel(const struct pmu *pmu)
-                    ^~~~~~~~~~~~~~~~~~~~
-  CC      net/ipv6/route.o
-
+RnJvbTogSmFuIEJldWxpY2gNCj4gU2VudDogMDMgSnVseSAyMDE4IDExOjA3DQo+ID4+PiBPbiAw
+My4wNy4xOCBhdCAxMDo0NiwgPERhdmlkLkxhaWdodEBBQ1VMQUIuQ09NPiB3cm90ZToNCj4gPiBG
+cm9tOiBKYW4gQmV1bGljaA0KPiA+PiBTZW50OiAwMyBKdWx5IDIwMTggMDk6MzYNCj4gPiAuLi4N
+Cj4gPj4gQXMgc2FpZCB0aGVyZSwgb21pdHRpbmcgc3VmZml4ZXMgZnJvbSBpbnN0cnVjdGlvbnMg
+aW4gQVQmVCBtb2RlIGlzIGJhZA0KPiA+PiBwcmFjdGljZSB3aGVuIG9wZXJhbmQgc2l6ZSBjYW5u
+b3QgYmUgZGV0ZXJtaW5lZCBieSB0aGUgYXNzZW1ibGVyIGZyb20NCj4gPj4gcmVnaXN0ZXIgb3Bl
+cmFuZHMsIGFuZCBpcyBsaWtlbHkgZ29pbmcgdG8gYmUgd2FybmVkIGFib3V0IGJ5IHVwc3RyZWFt
+DQo+ID4+IGdhcyBpbiB0aGUgZnV0dXJlIChtaW5lIGRvZXMgYWxyZWFkeSkuDQo+ID4gLi4uDQo+
+ID4+IC0JYnQJJDksIEVGTEFHUyglcnNwKQkJLyogaW50ZXJydXB0cyBvZmY/ICovDQo+ID4+ICsJ
+YnRsCSQ5LCBFRkxBR1MoJXJzcCkJCS8qIGludGVycnVwdHMgb2ZmPyAqLw0KPiA+DQo+ID4gSG1t
+bS4uLi4NCj4gPiBEb2VzIHRoZSBvcGVyYW5kIHNpemUgbWFrZSBhbnkgZGlmZmVyZW5jZSBhdCBh
+bGwgZm9yIHRoZSBiaXQgaW5zdHJ1Y3Rpb25zPw0KPiA+IEknbSBwcmV0dHkgc3VyZSB0aGF0IHRo
+ZSBjcHVzICgzODYgb253YXJkcykgaGF2ZSBhbHdheXMgZG9uZSBhbGlnbmVkIDMyYml0DQo+ID4g
+dHJhbnNmZXJzICh0aGUgZG9jcyBuZXZlciBhY3R1YWxseSBzYWlkIGFsaWduZWQpLg0KPiA+IEkg
+Y2FuJ3QgcmVtZW1iZXIgd2hldGhlciA2NGJpdCBtb2RlIGFsbG93cyBpbW1lZGlhdGVzIGFib3Zl
+IDMxLg0KPiA+DQo+ID4gU28gZ2FzIGFjY2VwdGluZyAnYnRiICRuLG1lbW9yeScgaXMgZ2l2aW5n
+IGEgZmFsc2UgaW1wcmVzc2lvbiBvZg0KPiA+IHdoYXQgYWN0dWFsbHkgaGFwcGVucy4NCj4gDQo+
+IEJUQiBkb2VzIG5vdCBleGlzdCBhdCBhbGwuIEJUVyBhbmQgKG9uIDY0LWJpdCkgQlRRIGRvIGV4
+aXN0IHRob3VnaCwNCj4gYW5kIHRoZXkgaGF2ZSBiZWhhdmlvciBkaWZmZXJpbmcgZnJvbSBCVEwu
+IFRoZSBvbmx5IEFUJlQgc3ludGF4IGRvYw0KPiBJIGhhdmUgc2F5cyB0aGF0IEwgaXMgdGhlIGRl
+ZmF1bHQgc3VmZml4IHRvIGJlIHVzZWQsIGJ1dCB0aGVyZSBhcmUgY2FzZXMNCj4gd2hlcmUgdGhp
+cyB3YXNuJ3QgKGFuZCBtYXliZSBzdGlsbCBpc24ndCkgdGhlIGNhc2UsIHNvIG9taXR0aW5nIGEg
+c3VmZml4DQo+IHdoZW4gcmVnaXN0ZXIgb3BlcmFuZHMgYXJlbid0IGF2YWlsYWJsZSB0byBzaXpl
+IGluc3RydWN0aW9ucyBoYXMgYWx3YXlzDQo+IGJlZW4gYSByaXNreSBnYW1lLg0KDQpJJ3ZlIGp1
+c3QgbG9va2VkIGl0IHVwIDotKQ0KVGhlcmUgYXJlIG9ubHkgMTZiaXQsIDMyYml0IGFuZCA2NGJp
+dCB2YXJpYW50cy4NClRoZXkgbW9zdGx5IGFmZmVjdCBob3cgbXVjaCBvZiAlY3ggaXMgdXNlZCBm
+b3IgdGhlIGJpdCBvZmZzZXQuDQpXaXRoIHRoZSBhZGRpdGlvbiAnbWF5JyBjbGF1c2VzIGJlbG93
+IC0gd2hpY2ggYXJlIG1vcmUgZXhwbGljaXQNCnRoYW4gdGhleSB1c2VkIHRvIGJlLg0KDQoiV2hl
+biBhY2Nlc3NpbmcgYSBiaXQgaW4gbWVtb3J5LCB0aGUgcHJvY2Vzc29yIG1heSBhY2Nlc3MgNCBi
+eXRlcyBzdGFydGluZw0KZnJvbSB0aGUgbWVtb3J5IGFkZHJlc3MgZm9yIGEgMzItYml0IG9wZXJh
+bmQgc2l6ZSwgdXNpbmcgYnkgdGhlIGZvbGxvd2luZw0KcmVsYXRpb25zaGlwOg0KICAgIEVmZmVj
+dGl2ZSBBZGRyZXNzICsgKDQgKiAoQml0T2Zmc2V0IERJViAzMikpDQoNCk9yLCBpdCBtYXkgYWNj
+ZXNzIDIgYnl0ZXMgc3RhcnRpbmcgZnJvbSB0aGUgbWVtb3J5IGFkZHJlc3MgZm9yIGEgMTYtYml0
+DQpvcGVyYW5kLCB1c2luZyB0aGlzIHJlbGF0aW9uc2hpcDoNCiAgICBFZmZlY3RpdmUgQWRkcmVz
+cyArICgyICogKEJpdE9mZnNldCBESVYgMTYpKQ0KDQpJdCBtYXkgZG8gc28gZXZlbiB3aGVuIG9u
+bHkgYSBzaW5nbGUgYnl0ZSBuZWVkcyB0byBiZSBhY2Nlc3NlZCB0byByZWFjaA0KdGhlIGdpdmVu
+IGJpdC4gV2hlbiB1c2luZyB0aGlzIGJpdCBhZGRyZXNzaW5nIG1lY2hhbmlzbSwgc29mdHdhcmUg
+c2hvdWxkDQphdm9pZCByZWZlcmVuY2luZyBhcmVhcyBvZiBtZW1vcnkgY2xvc2UgdG8gYWRkcmVz
+cyBzcGFjZSBob2xlcy4iDQooQSBzdHJhbmdlIHF1YWxpZnlpbmcgY2xhdXNlLikNCg0KCURhdmlk
+DQoNCg==
