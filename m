@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F619C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2173AC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C56247DD
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:48:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C56247DD
+	by mail.kernel.org (Postfix) with ESMTP id CE866247DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE866247DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932261AbeGCXr5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:47:57 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45922 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753675AbeGCXrl (ORCPT
+        id S932423AbeGCXsO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 19:48:14 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37754 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753667AbeGCXrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:47:41 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y24-v6so1720321pfe.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 16:47:41 -0700 (PDT)
+        Tue, 3 Jul 2018 19:47:40 -0400
+Received: by mail-pg0-f67.google.com with SMTP id n15-v6so1646503pgv.4
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 16:47:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/chklxYGnds1v6AD2Nh4VsBa5gEuMWGNfrXOybMzQM0=;
-        b=narUffdyTN7mcF88Ds9eiaOP1m2dd1RZkN9kd3KCYjcsjrMAzO/qqgfuvkzGImTLw5
-         Snk4mWmjuJRzlf+GG+pCH3Dm6J2FaVeK+AkP/1dS9nN3YL9eaKna5WQP3FEzqPINaIX4
-         5MSH2VkrkoE/nE7O0uyogYT3gJeKPFKhcCOFH2+m7WamMMDwBOKezV6TN4qQCVnQf7Uo
-         oafw7jQsba2up7pNRtchS86COV9hCPF3DBZWOOI1fC9ahb7kF+qkNSwnOTlhXfsr/jr+
-         1kmjq3bHB/BiDpAOsKslJorsSa8wtTb9T5DiKyEml6eVcom3ovyUtPSDowxhIKGRfh4z
-         WsuA==
-X-Gm-Message-State: APt69E0R99ZxiNNabFb6uZQ1+4wrnkO337PjVSBZK9W2dgXZFFMMNlAP
-        DCVWshDUFU8SplOX1+evzZojog==
-X-Google-Smtp-Source: AAOMgpfEkJPE/bSzUYXj77mTpULFHM7K+ltuKSaZPVt0YU3Vi4tFZ9KLQSjGrgk9FBxF1Fqo7RzTVQ==
-X-Received: by 2002:a63:7a43:: with SMTP id j3-v6mr10683080pgn.363.1530661660879;
-        Tue, 03 Jul 2018 16:47:40 -0700 (PDT)
+        bh=evgsf5Vq1O4jyiTSQjyAxO4d4xwVuctkoeX7GhDuJA4=;
+        b=UsYUL0nA8M22MW46wL0su9h175Y/9e7TxdT7KmDIfs+VGVsmRG3+oEd/FG3J2BUG6w
+         f+Y3lcE4MvX1oyd5cSl8B3mKLw/gIwAjYlvyg+Zs82lndc7EsxpChxutgRfZjZHhN+FK
+         kcRp8AdCF7qD8JTWcqAyys1Wjndbquralf1dPBVuTIM7Igx0dLInj/G06LNfBpOq7LNi
+         vUhAOSWzpzOjia7ChcRWw7u5GTLnB12ZiU3Kx5NrnqWaopy9aqWQuVGgjgmXYg32bnNl
+         2CQzWpSxYTFA2rYfyioiP1ryeMyRhmPP8vEvHxoxBvCkT6ZRpajE+fXSgzSGPsdn3UIi
+         RGZA==
+X-Gm-Message-State: APt69E1l5Lkzv9EibLthOyDMSYVCPJPZcb/ESRAs1gQ/DSy0/dY6jTAx
+        sj4xzAnOxUxudyvQAyNdpMC5ww==
+X-Google-Smtp-Source: ADUXVKLhkZC9eW4caWohFeHUzRLm85ApWJDHLm8jT0Q3fSNQC/tBOyD20ZpkVwAV770ImSSBc2nowg==
+X-Received: by 2002:a63:be4a:: with SMTP id g10-v6mr26943834pgo.378.1530661659339;
+        Tue, 03 Jul 2018 16:47:39 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id l85-v6sm6608562pfk.79.2018.07.03.16.47.39
+        by smtp.gmail.com with ESMTPSA id l85-v6sm6608562pfk.79.2018.07.03.16.47.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 16:47:40 -0700 (PDT)
+        Tue, 03 Jul 2018 16:47:38 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -62,9 +62,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Benson Leung <bleung@chromium.org>,
         Olof Johansson <olof@lixom.net>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v5 12/12] mfd: cros_ec: Add throttler sub-device
-Date:   Tue,  3 Jul 2018 16:47:05 -0700
-Message-Id: <20180703234705.227473-13-mka@chromium.org>
+Subject: [PATCH v5 11/12] misc: throttler: Add Chrome OS EC throttler
+Date:   Tue,  3 Jul 2018 16:47:04 -0700
+Message-Id: <20180703234705.227473-12-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180703234705.227473-1-mka@chromium.org>
 References: <20180703234705.227473-1-mka@chromium.org>
@@ -73,61 +73,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instantiate the CrOS EC throttler if it is enabled in the kernel
-configuration.
+The driver subscribes to throttling events from the Chrome OS
+embedded controller and enables/disables system throttling based
+on these events.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Reviewed-by: Brian Norris <briannorris@chromium.org>
 ---
 Changes in v5:
-- added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+- none
 
 Changes in v4:
-- register throttler in cros_ec_dev.c instead of cros_ec.c
+- adapt to parent being struct cros_ec_dev instead of struct
+  cros_ec_device
+- added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
 
 Changes in v3:
-- patch added to series
----
- drivers/mfd/cros_ec_dev.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+- change module license to GPL v2 as in the SPDX identifier
+- don't instantiate the throttler through the DT (instantiation
+  by CrOS EC MFD in a separate patch)
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index eafd06f62a3a..9e56c2793075 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -383,6 +383,22 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
+Changes in v2:
+- added SPDX line instead of license boiler-plate
+- use macro to avoid splitting line
+- changed variable name for throttler from 'cte' to 'ce_thr'
+- formatting fixes
+- Kconfig: removed odd dashes around 'help'
+- added 'Reviewed-by' tag
+---
+ drivers/misc/throttler/Kconfig             |  10 ++
+ drivers/misc/throttler/Makefile            |   1 +
+ drivers/misc/throttler/cros_ec_throttler.c | 111 +++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
+
+diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+index 8b2e63b2ef48..ef984c96f67b 100644
+--- a/drivers/misc/throttler/Kconfig
++++ b/drivers/misc/throttler/Kconfig
+@@ -20,4 +20,14 @@ menuconfig THROTTLER_DEBUG
  
-+static const struct mfd_cell ec_throttler_cells[] = {
-+	{ .name = "cros-ec-throttler" }
+ 	  Choose N unless you want to debug throttler drivers.
+ 
++config CROS_EC_THROTTLER
++	tristate "Throttler event monitor for the Chrome OS Embedded Controller"
++	depends on MFD_CROS_EC
++	help
++	  This driver adds support to throttle the system in reaction to
++	  Chrome OS EC events.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_throttler.
++
+ endif # THROTTLER
+diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
+index c8d920cee315..d9b2a77dabc9 100644
+--- a/drivers/misc/throttler/Makefile
++++ b/drivers/misc/throttler/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_THROTTLER)		+= core.o
++obj-$(CONFIG_CROS_EC_THROTTLER)	+= cros_ec_throttler.o
+diff --git a/drivers/misc/throttler/cros_ec_throttler.c b/drivers/misc/throttler/cros_ec_throttler.c
+new file mode 100644
+index 000000000000..82a25415a264
+--- /dev/null
++++ b/drivers/misc/throttler/cros_ec_throttler.c
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for throttling triggered by events from the Chrome OS Embedded
++ * Controller.
++ *
++ * Copyright (C) 2018 Google, Inc.
++ */
++
++#include <linux/kernel.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/throttler.h>
++
++#define nb_to_ce_thr(nb) container_of(nb, struct cros_ec_throttler, nb)
++
++struct cros_ec_throttler {
++	struct cros_ec_device *ec;
++	struct throttler *throttler;
++	struct notifier_block nb;
 +};
 +
-+static void cros_ec_throttler_register(struct cros_ec_dev *ec)
++static int cros_ec_throttler_event(struct notifier_block *nb,
++	unsigned long queued_during_suspend, void *_notify)
 +{
-+	int ret;
++	struct cros_ec_throttler *ce_thr = nb_to_ce_thr(nb);
++	u32 host_event;
 +
-+	ret = mfd_add_devices(ec->dev, 0, ec_throttler_cells,
-+			      ARRAY_SIZE(ec_throttler_cells),
-+			      NULL, 0, NULL);
-+	if (ret)
-+		dev_err(ec->dev,
-+			"failed to add cros-ec-throttler device: %d\n", ret);
++	host_event = cros_ec_get_host_event(ce_thr->ec);
++	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_START)) {
++		throttler_set_level(ce_thr->throttler, 1);
++
++		return NOTIFY_OK;
++	} else if (host_event &
++		   EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_STOP)) {
++		throttler_set_level(ce_thr->throttler, 0);
++
++		return NOTIFY_OK;
++	}
++
++	return NOTIFY_DONE;
 +}
 +
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -422,6 +438,9 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
-+	if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER))
-+		cros_ec_throttler_register(ec);
++static int cros_ec_throttler_probe(struct platform_device *pdev)
++{
++	struct cros_ec_throttler *ce_thr;
++	struct device *dev = &pdev->dev;
++	struct cros_ec_dev *ec;
++	int ret;
 +
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
++	ce_thr = devm_kzalloc(dev, sizeof(*ce_thr), GFP_KERNEL);
++	if (!ce_thr)
++		return -ENOMEM;
++
++	ec = dev_get_drvdata(pdev->dev.parent);
++	ce_thr->ec = ec->ec_dev;
++
++	/*
++	 * The core code uses the DT node of the throttler to identify its
++	 * throttling devices and rates. The CrOS EC throttler is a sub-device
++	 * of the CrOS EC MFD device and doesn't have its own device node. Use
++	 * the node of the MFD device instead.
++	 */
++	dev->of_node = ce_thr->ec->dev->of_node;
++
++	ce_thr->throttler = throttler_setup(dev);
++	if (IS_ERR(ce_thr->throttler))
++		return PTR_ERR(ce_thr->throttler);
++
++	dev_set_drvdata(dev, ce_thr);
++
++	ce_thr->nb.notifier_call = cros_ec_throttler_event;
++	ret = blocking_notifier_chain_register(&ce_thr->ec->event_notifier,
++					       &ce_thr->nb);
++	if (ret < 0) {
++		dev_err(dev, "failed to register notifier\n");
++		throttler_teardown(ce_thr->throttler);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int cros_ec_throttler_remove(struct platform_device *pdev)
++{
++	struct cros_ec_throttler *ce_thr = platform_get_drvdata(pdev);
++
++	blocking_notifier_chain_unregister(&ce_thr->ec->event_notifier,
++					   &ce_thr->nb);
++
++	throttler_teardown(ce_thr->throttler);
++
++	return 0;
++}
++
++static struct platform_driver cros_ec_throttler_driver = {
++	.driver = {
++		.name = "cros-ec-throttler",
++	},
++	.probe		= cros_ec_throttler_probe,
++	.remove		= cros_ec_throttler_remove,
++};
++
++module_platform_driver(cros_ec_throttler_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Matthias Kaehlcke <mka@chromium.org>");
++MODULE_DESCRIPTION("Chrome OS EC Throttler");
 -- 
 2.18.0.203.gfac676dfb9-goog
 
