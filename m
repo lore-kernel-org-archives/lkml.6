@@ -2,131 +2,187 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B8DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7416EC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F6C922544
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:30:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="JlA1AKLU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6C922544
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DD4A22544
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 02:30:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD4A22544
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753921AbeGCCaN (ORCPT
+        id S1753941AbeGCCaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 22:30:13 -0400
-Received: from mail.efficios.com ([167.114.142.138]:59960 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753706AbeGCCaL (ORCPT
+        Mon, 2 Jul 2018 22:30:46 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37656 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753804AbeGCCan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 22:30:11 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 459FD22FD30;
-        Mon,  2 Jul 2018 22:30:10 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 1W68cIJ80Sih; Mon,  2 Jul 2018 22:30:09 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id D064522FD29;
-        Mon,  2 Jul 2018 22:30:09 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D064522FD29
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530585009;
-        bh=+KUZ1VTGTmbZBd9AREP6dWvJckviNduqiah83Zoyy8o=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=JlA1AKLU5NTZYq/O3L44voykzuvmfl94WDsL267bMeX6ZxHpXln1m0IhXFmpTcC8f
-         9tt9C54Mv99qBLU+WP+DgtUhgjtqJaemPEMvCKM3S0otbJ6OPXfP64xLDsK8QxthCK
-         M9diPE+EpQh8DN1r64uLcJg/B3Yyk7x05EidUOvoMLYE1oZnIIGbGOruZRUZ/BLAXL
-         kQ38RrZgTMEEiI+VeJ2xjMhGbVQJoCLXc4fgPClDDH8/WHY8ZXb6ooVZxeiu2ucayl
-         2l1Nvc9nmDk4f2wXmOAVdFwjNdqaTV+oguEo9ZHPe7OhFGEyBnJngdpNtjkRgjEabh
-         moO8IEPBngSQQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id GSmUOubAJN4i; Mon,  2 Jul 2018 22:30:09 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id B24F022FD1F;
-        Mon,  2 Jul 2018 22:30:09 -0400 (EDT)
-Date:   Mon, 2 Jul 2018 22:30:09 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Message-ID: <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
-References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com> <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com> <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com> <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com> <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com> <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com> <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
+        Mon, 2 Jul 2018 22:30:43 -0400
+Received: by mail-yw0-f193.google.com with SMTP id w76-v6so147369ywg.4;
+        Mon, 02 Jul 2018 19:30:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yiXP+aodzuuIPomqwKt45jrMYdZ1MCiJ+9WAjicnxLE=;
+        b=mUpzHfuAtABbQ40FlbBPIg5PiHZ7LQTMWUp9vKwZIJY7ybQJBCX31OV/+GvX3SDwbc
+         aZtFXOWfJlOQDtdgRROWZC99vBW4JCUwlC/UiPscqI5Btf+2kN1MUKgw9eykTCgCPc2E
+         kdzb/iMrlMMIci85sFSwx8U4ACdaYa3MlecIYsQqTL/ylBy5+CmajOrCnk+895RhfNxw
+         FdmBSK5u8x+ZRQBghc0aYByu1m/ixx/UWRtGvNGDSLkJuYj2FLFznj1mNKEKI+o5Z3Qm
+         Gia+Bjbvc8c97DSCNrOBWjwXhTX+IHoVI2/9lkdeVqXCzqR6Dh0bJzh9oeA/HePZbUqT
+         MQjQ==
+X-Gm-Message-State: APt69E3UtzMqroQvv/6nKuBcF+O5kfcf3xtsGbj82ZvDOqQ4pDmUQnQA
+        SRRxVlD1hb7pzCBmrTVQcg==
+X-Google-Smtp-Source: AAOMgpcenjf7GGF+G7sqq6Pz/2kzNzLLIhHYX5mi47d2SKU4iW0utcQAPh7KXBzty2e+koFlqbPliQ==
+X-Received: by 2002:a0d:d105:: with SMTP id t5-v6mr14186829ywd.53.1530585042983;
+        Mon, 02 Jul 2018 19:30:42 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id 204-v6sm8501ywk.86.2018.07.02.19.30.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 19:30:42 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 20:30:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Houlong Wei <houlong.wei@mediatek.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        CK HU <ck.hu@mediatek.com>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Monica Wang <monica.wang@mediatek.com>,
+        HS Liao <hs.liao@mediatek.com>, ginny.chen@mediatek.com,
+        enzhu.wang@mediatek.com
+Subject: Re: [PATCH v22 1/4] dt-bindings: soc: Add documentation for the
+ MediaTek GCE unit
+Message-ID: <20180703023040.GA24508@rob-hp-laptop>
+References: <1530098172-31385-1-git-send-email-houlong.wei@mediatek.com>
+ <1530098172-31385-2-git-send-email-houlong.wei@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
-Thread-Index: HFYlUXtgtR1KQGyi/tBiamfT2/dVeg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530098172-31385-2-git-send-email-houlong.wei@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 2, 2018, at 10:18 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
-
-> On Mon, Jul 2, 2018 at 7:01 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> One thing to consider is how we will implement the load of that pointer
->> on the kernel side.
+On Wed, Jun 27, 2018 at 07:16:09PM +0800, Houlong Wei wrote:
+> This adds documentation for the MediaTek Global Command Engine (GCE) unit
+> found in MT8173 SoCs.
 > 
-> Use "get_user()". It works for 64-bit objects too, and it will be
-> atomic in the 32-bit sub-parts on a 32-bit architecture.
-
-Is it really ? Last time we had this discussion, not all architectures
-guaranteed that reading a 64-bit integer would happen in two atomic
-32-bit sub-parts. This was the main motivation for the LINUX_FIELD_u32_u64()
-macro as it stands today (rather than using a union).
-
+> Signed-off-by: Houlong Wei <houlong.wei@mediatek.com>
+> Signed-off-by: HS Liao <hs.liao@mediatek.com>
+> ---
+> Hi Rob,
+>   I don't add your ACK in this version since the dt-binding description
+> has been changed. Thanks.
+> ---
+>  .../devicetree/bindings/mailbox/mtk-gce.txt        |   65 ++++++++++++++++++++
+>  include/dt-bindings/gce/mt8173-gce.h               |   48 +++++++++++++++
+>  2 files changed, 113 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+>  create mode 100644 include/dt-bindings/gce/mt8173-gce.h
 > 
-> Again: there is no point in trying to be atomic in the full 64 bits
-> (when you're running on 32-bit). The upper bits don't have to "match"
-> the lower bits. They just have to be zero. So doing it as two loads is
-> fine - the same way it's perfectly fine to do it as two stores (since
-> the store to the upper bits will always be zero).
+> diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> new file mode 100644
+> index 0000000..26f65a4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
+> @@ -0,0 +1,65 @@
+> +MediaTek GCE
+> +===============
+> +
+> +The Global Command Engine (GCE) is used to help read/write registers with
+> +critical time limitation, such as updating display configuration during the
+> +vblank. The GCE can be used to implement the Command Queue (CMDQ) driver.
+> +
+> +CMDQ driver uses mailbox framework for communication. Please refer to
+> +mailbox.txt for generic information about mailbox device-tree bindings.
+> +
+> +Required properties:
+> +- compatible: Must be "mediatek,mt8173-gce"
+> +- reg: Address range of the GCE unit
+> +- interrupts: The interrupt signal from the GCE block
+> +- clock: Clocks according to the common clock binding
+> +- clock-names: Must be "gce" to stand for GCE clock
+> +- thread-num: Maximum threads count of GCE.
 
-I'd be fine with two atomic loads, but I'd rather have a strong
-confirmation about this, because last time around there were
-architectures where it was not true as far as I recall.
+mediatek,thread-num
 
-Thanks,
+Is this needed for anything other than error checking the thread id in 
+the mbox cells? if that's it, then drop it. 
 
-Mathieu
+> +- #mbox-cells: Should be 4.
+> +	<&phandle channel timeout priority atomic_exec>
+> +	phandle: Label name of a gce node.
+> +	channel: Channel of mailbox. Be equal to the thread id of GCE.
+> +	timeout: Maximum time of software waiting GCE processing done, in unit
+> +		of millisecond.
+> +	priority: Priority of GCE thread.
+> +	atomic_exec: GCE processing continuous packets of commands in atomic
+> +		way.
+> +
+> +Required properties for a client device:
+> +- mboxes: Client use mailbox to communicate with GCE, it should have this
+> +  property and list of phandle, mailbox specifiers.
+> +- gce-subsys: Specify the sub-system id which is corresponding to the register
+> +  address.
 
+What is this for?
 
-> 
->             Linus
+> +
+> +Optional properties for a client device:
+> +- gce-event: Specify the event if the client has any. Because the event is
+> +  parsed by client, so client can replace 'gce-event' with other meaningful
+> +  name.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+If the client sets the name, then no point having here. It must be 
+documented in the client binding. But then, what is this for in the 
+first place?
+
+> +
+> +Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'. Such as
+> +thread number, sub-system ids, thread priority, event ids.
+> +
+> +Example:
+> +
+> +	gce: gce@10212000 {
+
+mailbox@...
+
+> +		compatible = "mediatek,mt8173-gce";
+> +		reg = <0 0x10212000 0 0x1000>;
+> +		interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&infracfg CLK_INFRA_GCE>;
+> +		clock-names = "gce";
+> +		thread-num = CMDQ_THR_MAX_COUNT;
+> +		#mbox-cells = <4>;
+> +	};
+> +
+> +Example for a client device:
+> +
+> +	mmsys: clock-controller@14000000 {
+> +		compatible = "mediatek,mt8173-mmsys";
+> +		mboxes = <&gce 0 2000 CMDQ_THR_PRIO_LOWEST 1>,
+> +			 <&gce 1 2000 CMDQ_THR_PRIO_LOWEST 1>;
+> +		gce-subsys = <SUBSYS_1400XXXX>;
+> +		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
+> +				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
+> +
+> +		...
+> +	};
