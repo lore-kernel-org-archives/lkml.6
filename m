@@ -2,146 +2,90 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CE2C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F64BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE6621502
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:09:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF11A25177
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 00:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zsz7neUm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE6621502
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KrLv1eou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF11A25177
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932236AbeGCAJM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 20:09:12 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33650 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932100AbeGCAJK (ORCPT
+        id S1752873AbeGCATS (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 20:19:18 -0400
+Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:53894 "EHLO
+        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752185AbeGCATQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 20:09:10 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 6-v6so94566plb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 17:09:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=kiGPGwNZ4IUkNPqITG5crCOZrcsIuNCmTWRzqfgxC1Q=;
-        b=Zsz7neUmi4LdbmrV7KtW98Y4B7UFiK954a1hHJBf5auZ3pb7cKr8KRjmMRhqROeV31
-         WxrN587Rxwndg4u+QbrNexcHb+hKTyNiLXkepE/h7um48rHfo+IoL5yAqCn/9e/csQVQ
-         8v8/2CUdFp8+ExqZO3q29UkFoYas/0yBC8yEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=kiGPGwNZ4IUkNPqITG5crCOZrcsIuNCmTWRzqfgxC1Q=;
-        b=MNDD1KLcn6UzKUDA48HL+vQVCDpwG7ahTR6/j3T1oiWr8u6LAmnyJmIXGeSJ0+4NuT
-         Voq5QFEwdDeyqRgYYCSG0tMQ2br4LNzZVKRu0uJmEeQLhhZj3rnoMAWbLugO45ajcLwu
-         1RynOOqW8dYxwJTvlc1N3ztWwzk9hFfRzlTzirCBHXVc+sqF1pevHFLxPcussaDAaMbE
-         V6+8M8vgaxr9IZPaiw40xvjefrb4XcYvbiALOaM6J7sicrHDPu57BrGyN9ci3QHRu6k/
-         2LD0do+N7qlTD+EB98FLg6i+5/R7DQ/GlpeYUjrsc3k5W9fPfbQiUgz5fnUpOugB1iKy
-         TKOQ==
-X-Gm-Message-State: APt69E3LeaaKsIDHYUMS2wwpI8ADr837CIRFOHV8LCYprjlBl5UmSkcV
-        cRgC7d/q1QGb6R3J7JxTEq+TcA==
-X-Google-Smtp-Source: ADUXVKLGP5IXshUq7KgfRZg9Zmc0Tegqyslcikw2J/m8+sju69kKbzY/0xrxNHiMWhxpV4exP4kHeA==
-X-Received: by 2002:a17:902:381:: with SMTP id d1-v6mr27760110pld.309.1530576550366;
-        Mon, 02 Jul 2018 17:09:10 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id b1-v6sm1338426pff.141.2018.07.02.17.09.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 17:09:08 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 17:09:07 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org
-Subject: [PATCH] kernel.h: Documentation for roundup() vs round_up()
-Message-ID: <20180703000907.GA27014@beast>
+        Mon, 2 Jul 2018 20:19:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1530577155;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=RQU1jAGk60ABGvTib7k+xOaAi4kPSl51pi+dTRI2Ga8=;
+        b=KrLv1eouBFXt3uEaesSE2ICRg8N6YbAnQpa3nRsv7jP3jV+kjOgQ9I6uMvQFDDEJ
+        jAausQocx7BL1mwcNy0IMeCZfKD/OpZkZrfateqCpiM+uUYmjMtPkQuR2UT4RBKkW7V
+        urKf8Bipvb4dWyKuIkWwgVfVaq/MqKvTpkZKszq4=
+Date:   Tue, 3 Jul 2018 00:19:15 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields, validate
+ user inputs
+In-Reply-To: <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+Message-ID: <010001645d81f652-8a506dd2-cd49-47f9-950a-24ef52bda9f7-000000@email.amazonses.com>
+References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com> <CA+55aFxrX+wRoe+5HDaTrRXg1K-Qpks4jJ9Buc_OevoG8hoGFw@mail.gmail.com> <415287289.10831.1530572418907.JavaMail.zimbra@efficios.com> <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
+ <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.07.03-54.240.9.99
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Things like commit 3619dec5103d ("dh key: fix rounding up KDF output
-length") expose the lack of explicit documentation for roundup() vs
-round_up(). At least we can try to document it better if anyone goes
-looking.
+On Mon, 2 Jul 2018, Mathieu Desnoyers wrote:
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/kernel.h | 35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+> Are there any kind of guarantees that a __u64 update on a 32-bit architecture
+> won't be torn into something daft like byte-per-byte stores when performed
+> from C code ?
+>
+> I don't worry whether the upper bits get updated or how, but I really care
+> about not having store tearing of the low bits update.
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 941dc0a5a877..28f8830e1b3c 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -85,7 +85,23 @@
-  * arguments just once each.
-  */
- #define __round_mask(x, y) ((__typeof__(x))((y)-1))
-+/**
-+ * round_up - round up to next specified power of 2
-+ * @x: the value to round
-+ * @y: multiple to round up to (must be a power of 2)
-+ *
-+ * Rounds @x up to next multiple of @y (which must be a power of 2).
-+ * To perform arbitrary rounding up, use roundup() below.
-+ */
- #define round_up(x, y) ((((x)-1) | __round_mask(x, y))+1)
-+/**
-+ * round_down - round down to next specified power of 2
-+ * @x: the value to round
-+ * @y: multiple to round down to (must be a power of 2)
-+ *
-+ * Rounds @x down to next multiple of @y (which must be a power of 2).
-+ * To perform arbitrary rounding down, use rounddown() below.
-+ */
- #define round_down(x, y) ((x) & ~__round_mask(x, y))
- 
- /**
-@@ -110,13 +126,30 @@
- # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
- #endif
- 
--/* The `const' in roundup() prevents gcc-3.3 from calling __divdi3 */
-+/**
-+ * roundup - round up to the next specified multiple
-+ * @x: the value to up
-+ * @y: multiple to round up to (must be a power of 2)
-+ *
-+ * Rounds @x up to next multiple of @y. If @y will always be a power
-+ * of 2, consider using the faster round_up().
-+ *
-+ * The `const' hereprevents gcc-3.3 from calling __divdi3
-+ */
- #define roundup(x, y) (					\
- {							\
- 	const typeof(y) __y = y;			\
- 	(((x) + (__y - 1)) / __y) * __y;		\
- }							\
- )
-+/**
-+ * rounddown - round down to next specified multiple
-+ * @x: the value to round
-+ * @y: multiple to round down to
-+ *
-+ * Rounds @x down to next multiple of @y. If @y will always be a power
-+ * of 2, consider using the faster round_down().
-+ */
- #define rounddown(x, y) (				\
- {							\
- 	typeof(x) __x = (x);				\
--- 
-2.17.1
+Platforms with 32 bit word size only guarantee atomicity of a 32 bit
+write or RMV instruction.
 
+Special instructions may exist on a platform to perform 64 bit atomic
+updates. We use cmpxchg64 f.e. on Intel 32 bit platforms to guarantee
+atomicity8.
 
--- 
-Kees Cook
-Pixel Security
+So use the macros that we have to guarantee 64 bit ops and you should be
+fine. See linux/arch/x86/include/asm/atomic64_32.h
