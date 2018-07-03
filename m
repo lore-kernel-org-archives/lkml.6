@@ -2,104 +2,94 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B90C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462B2C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106FB24C8C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="WDK+HdfF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106FB24C8C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id DD83624CC7
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD83624CC7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933614AbeGCIMP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:12:15 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39424 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754309AbeGCIMK (ORCPT
+        id S933653AbeGCIMg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:12:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46283 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932441AbeGCIMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:12:10 -0400
-Received: by mail-pg0-f67.google.com with SMTP id n2-v6so607677pgq.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GoJfZE856ldxfVFGysRD97W0EZBirPjDWRnCchmOeCU=;
-        b=WDK+HdfFFoIP3WwSj8+GfMTviuiUf4zPVs4mgrgJiz5+LSkmsCIDOKOTpaHtL+1mPj
-         VHqONe9qtgcAk7frJbJhLWG+cszOLegSQX3Gs7qKraWb2B0HyoVNDsajBGUNqePEBTNa
-         EKMydcvCQScQjWWHVZezlNoDtZg+yHjLDDN8DsOetj2pwu3gw20dq+23imOEfTRQFq2z
-         QoAeoMnGvC+rzVMID8tFYwZF1HcFgOlYnNbAUm0K5UNRoM6kTT3VTw2X8e88+GGL2r3q
-         aJGxZM3qAnS+OBOsgDkJZIQUA1sHPJkAWE1CSeacT4H6Fwng2GdFEQI27SbMKYhG8CPR
-         tEVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GoJfZE856ldxfVFGysRD97W0EZBirPjDWRnCchmOeCU=;
-        b=aDSa2BHkxzM3Wjzefi63wsFhkbheVXHdE3RWgpKEdCPNaBvEGaTPTJ8ma8EDebAeLp
-         tKWxECJ1tBAtCPLvTE+wK/w/KMia/PMMOZ0ScOQj8BB13qfbb/YLuTlvcaha6neKWnoo
-         94iU0wtr0cwgIGo/LlXdJ8q97hLFtCtAF3pjR88/HbpXZQ7Q2TnfJA3dTBa+msDmOrwe
-         1RVrN6HIPWO+EBYavYOAf8UtRHNSnb6DgKK6BUn2c1HdTn/D/4eD8hPot8c/QZTWRdCb
-         R1gt5GqtKJS3KRJSfana1BHJKyN2S6NMyUTCmz27IEBsNGNUuVlnLNK9Yi0VxfrIVUEn
-         Secg==
-X-Gm-Message-State: APt69E2wSZZ+BN8WX7P76c6YLhVLERCpBqJ6euSSTWs0rnD6I4f+B2eA
-        Tq7EuEHqD8JgUzD3XhZCM5zzaw==
-X-Google-Smtp-Source: ADUXVKI2Rmu9QFAFbyi46oRTP7wkBNcvu2vMloDNmhklF4m6mw94nYSn9lxHssrhrKyG64JYMPYUuA==
-X-Received: by 2002:a65:602c:: with SMTP id p12-v6mr24502297pgu.209.1530605530133;
-        Tue, 03 Jul 2018 01:12:10 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id 133-v6sm1388399pfu.158.2018.07.03.01.12.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 01:12:09 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 87E9230003C; Tue,  3 Jul 2018 11:12:05 +0300 (+03)
-Date:   Tue, 3 Jul 2018 11:12:05 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
- large mapping
-Message-ID: <20180703081205.3ue5722pb3ko4g2w@kshutemo-mobl1>
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
- <20180702123350.dktmzlmztulmtrae@kshutemo-mobl1>
- <20180702124928.GQ19043@dhcp22.suse.cz>
+        Tue, 3 Jul 2018 04:12:34 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1faGQ2-0003Yd-HX; Tue, 03 Jul 2018 08:12:14 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Han Xu <han.xu@nxp.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: gpmi: remove redundant variable payload_virt
+Date:   Tue,  3 Jul 2018 09:12:14 +0100
+Message-Id: <20180703081214.32754-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180702124928.GQ19043@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 02:49:28PM +0200, Michal Hocko wrote:
-> On Mon 02-07-18 15:33:50, Kirill A. Shutemov wrote:
-> [...]
-> > I probably miss the explanation somewhere, but what's wrong with allowing
-> > other thread to re-populate the VMA?
-> 
-> We have discussed that earlier and it boils down to how is racy access
-> to munmap supposed to behave. Right now we have either the original
-> content or SEGV. If we allow to simply madvise_dontneed before real
-> unmap we could get a new page as well. There might be (quite broken I
-> would say) user space code that would simply corrupt data silently that
-> way.
+From: Colin Ian King <colin.king@canonical.com>
 
-Okay, so we add a lot of complexity to accommodate broken userspace that
-may or may not exist. Is it right? :)
+Variable payload_virt is being assigned but is never used hence it is
+redundant and can be removed.
 
+Cleans up clang warning:
+warning: variable 'payload_virt' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+index f6aa358a3452..58d4e4a93a93 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-nand.c
+@@ -957,7 +957,6 @@ static int gpmi_ecc_read_page_data(struct nand_chip *chip,
+ 	struct gpmi_nand_data *this = nand_get_controller_data(chip);
+ 	struct bch_geometry *nfc_geo = &this->bch_geometry;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+-	void          *payload_virt;
+ 	dma_addr_t    payload_phys;
+ 	unsigned int  i;
+ 	unsigned char *status;
+@@ -967,7 +966,6 @@ static int gpmi_ecc_read_page_data(struct nand_chip *chip,
+ 
+ 	dev_dbg(this->dev, "page number is : %d\n", page);
+ 
+-	payload_virt = this->payload_virt;
+ 	payload_phys = this->payload_phys;
+ 
+ 	if (virt_addr_valid(buf)) {
+@@ -976,7 +974,6 @@ static int gpmi_ecc_read_page_data(struct nand_chip *chip,
+ 		dest_phys = dma_map_single(this->dev, buf, nfc_geo->payload_size,
+ 					   DMA_FROM_DEVICE);
+ 		if (!dma_mapping_error(this->dev, dest_phys)) {
+-			payload_virt = buf;
+ 			payload_phys = dest_phys;
+ 			direct = true;
+ 		}
 -- 
- Kirill A. Shutemov
+2.17.1
+
