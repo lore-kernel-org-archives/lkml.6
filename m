@@ -2,151 +2,248 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD1AC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FA7C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071BF24156
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WOicj+Jz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071BF24156
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id BD1B72254D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:48:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1B72254D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeGCKr4 (ORCPT
+        id S1752946AbeGCKsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:47:56 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:10756 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeGCKry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:47:54 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180703104753epoutp03f12e4f416c29a60744c5e27d86c4e073~91h4eW7gG0218102181epoutp035
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 10:47:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180703104753epoutp03f12e4f416c29a60744c5e27d86c4e073~91h4eW7gG0218102181epoutp035
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1530614873;
-        bh=EWW6JZaAeX9LPP20GR7p0crIRtO3/c3xajacVH9Q/Es=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=WOicj+JzoKLz0S7zHMFUTeA4t+PVT589Xo+b4crN86bpFGGUBgS7ayhB943hH8ja/
-         0wZmJVK1mDcsTrKl3Ec+Lehvd33ITYEoiS+GpqEXdCLnqVwMjDyJ9XXkJLKuaUZ2SO
-         /OtW+Uy3Im7ose0mF4p/NqAfRHmwuXJSmbgW23qs=
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180703104750epcas1p4352376b18d666b307b9858d8f501211b~91h1q1Ojp0578805788epcas1p4Y;
-        Tue,  3 Jul 2018 10:47:50 +0000 (GMT)
-X-AuditID: b6c32a35-ba1ff70000000fe2-06-5b3b5456befe
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        14.E6.04066.6545B3B5; Tue,  3 Jul 2018 19:47:50 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when
- drivers are built as modules.
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     "akhilpo@codeaurora.org" <akhilpo@codeaurora.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-CC:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <7c67974e40afd15abfca5907b27de097@codeaurora.org>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180703104749epcms1p473b2160f6e2bbe3c6b87827b30e8473b@epcms1p4>
-Date:   Tue, 03 Jul 2018 19:47:49 +0900
-X-CMS-MailID: 20180703104749epcms1p473b2160f6e2bbe3c6b87827b30e8473b
+        Tue, 3 Jul 2018 06:48:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47376 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752596AbeGCKsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:48:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2C5180D;
+        Tue,  3 Jul 2018 03:48:31 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 966E23F5BA;
+        Tue,  3 Jul 2018 03:48:29 -0700 (PDT)
+Subject: Re: [PATCH v3 13/20] kvm: arm64: Configure VTCR per VM
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, james.morse@arm.com,
+        cdall@kernel.org, eric.auger@redhat.com, julien.grall@arm.com,
+        will.deacon@arm.com, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, qemu-devel@nongnu.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-14-git-send-email-suzuki.poulose@arm.com>
+ <df7d8f89-1af4-4131-217d-000a25ba1fce@arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <9107b977-c861-e0e1-15e8-f7801e190145@arm.com>
+Date:   Tue, 3 Jul 2018 11:48:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <df7d8f89-1af4-4131-217d-000a25ba1fce@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA12Sa0hTYRjHeXd2OZNmb9PsRSPXAQMLp2c2d7KsII1VBoLRByXsoKdNcpd2
-        NlO/NJVu5m0rTJaWs6iwKLXUk0bRigpq+6DdLIwuEwk1jWkYFrWbGX16f/zf/3PlwTGpXRiL
-        F+vNjElPlxDCCH7vw0R50t49G/NTmqYFlKN+VEh9cSVSr2fGBNT1dy5A3emcEVG3PLUCyl01
-        IaKG+luElK/uEdgqVg/V1/HU3MgloK6/3QHUvu5VOfw8ZpOWoYsYk4zRFxqKivWaDGJXbsG2
-        AmVaCplEbqBUhExP65gMIjM7J2l7cYm/FUJWSpdY/FIOzbJE8uZNJoPFzMi0BtacQeSTpEJO
-        pqjkCoX/Td2XrlD6LfsZ7Zi9X2isW1JW/d4msgKPuAaIcQTXI5fbJqwBEbgUcgA1zFRiNQDH
-        JXAZ+sVFBTxRUIMefHTyAiyFBLIO38NCejI68aEXBFgIk1BP5wg/wNGQRtXf7IJATgz28VDv
-        9DVeqJgENR8f5Yc4DvVd6QkGi+FmdPRnjyikL0fD1yb/8tTjCyDE0ejoezcW4mXow4+BsB6L
-        vJPOsP8Ieu1r5wUKI9gI0Pyb3+GPZPTpxTlhgCVwN/Ie44I6HyagienmcKJMNGg9FfRgMB71
-        TbYEF4HBRHSzP3mhf2vXvOh/xmAk+jpbK1jQufPe8LxrkGvgUti/Ej076wymRFCNbNO6RrDa
-        sbhpxz91HYt12wDWAWIYI6vTMCxpJOUsrWMteo280KDrBsF7XKvkwBlPtgtAHBBLJGXx6flS
-        AV3KlutcAOEYES3pTfBLkiK6vIIxGQpMlhKGdQGlf3wbFru80OC/br25gFQqUlNTqfVkmpIk
-        iRWSsmGYL4Ua2swcZBgjY1qI4+HiWCtom2g0tuY+2ZnmzrrVcCOC4xwnq+0SsmX8gOeQZibm
-        3tJ1Oy52FIPTW+bnTLaX9iq7+e1oYuusbCCrVTXYbqi82hQ9pSVq7/oiYx55nCMVeZcj7a+c
-        KncpkXtFrbLo7ntvrtttPMbN7csb801in+Oior53j8c/V3SBp28Ot1wl+KyWJtdiJpb+Aw1w
-        OwqlAwAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180622212233epcas2p3308116579442dc8a42a9db7445ce8ef8
-References: <7c67974e40afd15abfca5907b27de097@codeaurora.org>
-        <20180621220430.25644-1-enric.balletbo@collabora.com>
-        <0383b4a703a0b619023c0654a4a7637419c72ebd.camel@collabora.com>
-        <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org>
-        <1e792d3c972998f92109c127886243e32c4cde71.camel@collabora.com>
-        <CGME20180622212233epcas2p3308116579442dc8a42a9db7445ce8ef8@epcms1p4>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> Adding to Ezequiel's point, shouldn't we take more granular lock
-> >> (devfreq->lock) first and then call devfreq_list_lock at the time of
-> >> adding to the list?
-> >> 
-> > 
-> > Not sure why we should do that. devfreq->lock should be used to
-> > protect the struct devfreq state, while the devfreq_list_lock
-> > is apparently protecting the two lists (which seem unrelated
-> > lists).
+On 02/07/18 13:16, Marc Zyngier wrote:
+> On 29/06/18 12:15, Suzuki K Poulose wrote:
+>> We set VTCR_EL2 very early during the stage2 init and don't
+>> touch it ever. This is fine as we had a fixed IPA size. This
+>> patch changes the behavior to set the VTCR for a given VM,
+>> depending on its stage2 table. The common configuration for
+>> VTCR is still performed during the early init as we have to
+>> retain the hardware access flag update bits (VTCR_EL2_HA)
+>> per CPU (as they are only set for the CPUs which are capabile).
+> 
+> capable
+> 
+>> The bits defining the number of levels in the page table (SL0)
+>> and and the size of the Input address to the translation (T0SZ)
+>> are programmed for each VM upon entry to the guest.
+>>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>> Change since V2:
+>>   - Load VTCR for TLB operations
+>> ---
+>>   arch/arm64/include/asm/kvm_arm.h  | 19 +++++++++----------
+>>   arch/arm64/include/asm/kvm_asm.h  |  2 +-
+>>   arch/arm64/include/asm/kvm_host.h |  9 ++++++---
+>>   arch/arm64/include/asm/kvm_hyp.h  | 11 +++++++++++
+>>   arch/arm64/kvm/hyp/s2-setup.c     | 17 +----------------
+>>   5 files changed, 28 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+>> index 11a7db0..b02c316 100644
+>> --- a/arch/arm64/include/asm/kvm_arm.h
+>> +++ b/arch/arm64/include/asm/kvm_arm.h
+>> @@ -120,9 +120,7 @@
+>>   #define VTCR_EL2_IRGN0_WBWA	TCR_IRGN0_WBWA
+>>   #define VTCR_EL2_SL0_SHIFT	6
+>>   #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
+>> -#define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
+>>   #define VTCR_EL2_T0SZ_MASK	0x3f
+>> -#define VTCR_EL2_T0SZ_40B	24
+>>   #define VTCR_EL2_VS_SHIFT	19
+>>   #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
+>>   #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
+>> @@ -137,43 +135,44 @@
+>>    * VTCR_EL2.PS is extracted from ID_AA64MMFR0_EL1.PARange at boot time
+>>    * (see hyp-init.S).
+>>    *
+>> + * VTCR_EL2.SL0 and T0SZ are configured per VM at runtime before switching to
+>> + * the VM.
+>> + *
+>>    * Note that when using 4K pages, we concatenate two first level page tables
+>>    * together. With 16K pages, we concatenate 16 first level page tables.
+>>    *
+>>    */
+>>   
+>> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
+>>   #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
+>>   				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
+>> +#define VTCR_EL2_PRIVATE_MASK	(VTCR_EL2_SL0_MASK | VTCR_EL2_T0SZ_MASK)
+> 
+> What does "private" mean here? It really is the IPA configuration, so
+> I'd rather have a naming that reflects that.
+> 
+>>   #ifdef CONFIG_ARM64_64K_PAGES
+>>   /*
+>>    * Stage2 translation configuration:
+>>    * 64kB pages (TG0 = 1)
+>> - * 2 level page tables (SL = 1)
+>>    */
+>> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
+>> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
+>>   #define VTCR_EL2_TGRAN_SL0_BASE		3UL
+>>   
+>>   #elif defined(CONFIG_ARM64_16K_PAGES)
+>>   /*
+>>    * Stage2 translation configuration:
+>>    * 16kB pages (TG0 = 2)
+>> - * 2 level page tables (SL = 1)
+>>    */
+>> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
+>> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
+>>   #define VTCR_EL2_TGRAN_SL0_BASE		3UL
+>>   #else	/* 4K */
+>>   /*
+>>    * Stage2 translation configuration:
+>>    * 4kB pages (TG0 = 0)
+>> - * 3 level page tables (SL = 1)
+>>    */
+>> -#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
+>> +#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
+>>   #define VTCR_EL2_TGRAN_SL0_BASE		2UL
+>>   #endif
+>>   
+>> -#define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+>> +#define VTCR_EL2_FLAGS		(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
+>> +
+>>   /*
+>>    * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
+>>    * Interestingly, it depends on the page size.
+>> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+>> index 102b5a5..91372eb 100644
+>> --- a/arch/arm64/include/asm/kvm_asm.h
+>> +++ b/arch/arm64/include/asm/kvm_asm.h
+>> @@ -72,7 +72,7 @@ extern void __vgic_v3_init_lrs(void);
+>>   
+>>   extern u32 __kvm_get_mdcr_el2(void);
+>>   
+>> -extern u32 __init_stage2_translation(void);
+>> +extern void __init_stage2_translation(void);
+>>   
+>>   /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
+>>   #define __hyp_this_cpu_ptr(sym)						\
+>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>> index fe8777b..328f472 100644
+>> --- a/arch/arm64/include/asm/kvm_host.h
+>> +++ b/arch/arm64/include/asm/kvm_host.h
+>> @@ -442,10 +442,13 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
+>>   
+>>   static inline void __cpu_init_stage2(void)
+>>   {
+>> -	u32 parange = kvm_call_hyp(__init_stage2_translation);
+>> +	u32 ps;
+>>   
+>> -	WARN_ONCE(parange < 40,
+>> -		  "PARange is %d bits, unsupported configuration!", parange);
+>> +	kvm_call_hyp(__init_stage2_translation);
+>> +	/* Sanity check for minimum IPA size support */
+>> +	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
+>> +	WARN_ONCE(ps < 40,
+>> +		  "PARange is %d bits, unsupported configuration!", ps);
+>>   }
+>>   
+>>   /* Guest/host FPSIMD coordination helpers */
+>> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
+>> index 82f9994..3e8052d1 100644
+>> --- a/arch/arm64/include/asm/kvm_hyp.h
+>> +++ b/arch/arm64/include/asm/kvm_hyp.h
+>> @@ -20,6 +20,7 @@
+>>   
+>>   #include <linux/compiler.h>
+>>   #include <linux/kvm_host.h>
+>> +#include <asm/kvm_mmu.h>
+>>   #include <asm/sysreg.h>
+>>   
+>>   #define __hyp_text __section(.hyp.text) notrace
+>> @@ -158,6 +159,16 @@ void __noreturn __hyp_do_panic(unsigned long, ...);
+>>   /* Must be called from hyp code running at EL2 */
 
-Correct.
+Marc,
 
-devfreq->lock protects an instance of devfreq.
-devfreq_list_lock protects the global devfreq data (list of devfreq / governors)
+>>   static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
+>>   {
+>> +	/*
+>> +	 * Configure the VTCR translation control bits
+>> +	 * for this VM.
+>> +	 */
+>> +	u64 vtcr = read_sysreg(vtcr_el2);
+>> +
+>> +	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
+>> +	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
+>> +		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
+>> +	write_sysreg(vtcr, vtcr_el2);
+> 
+> Can't we generate the whole vtcr value in one go, without reading it
+> back? Specially given that on patch 16, you're actually switching to a
+> per-VM variable, and it would make a lot of sense to start with that here.
 
-> > 
-> > So, the two locks are not correlated.
-> > 
-> > Regards,
-> > Eze
-> In governor_store(), we do 'df->governor = governor;' without taking 
-> df->lock. So it is possible to switch governor while update_devfreq() is 
-> in progress.
+...
 
-Yup. that's possible.
-
-> I smell trouble there. Don't you think so?
-> I am assuming df->lock protects 'struct devfreq' and devfreq_list_lock 
-> protects both device and governor lists.
-
-devfreq_list_lock is not supposed to protect a device.
-
-Assuming a memory read of a word is atomic (I'm not aware of one that's not
-unless in a case where the address is unaligned in some archtectures),
-update_devfreq won't cause such issues because it reads "devfreq->governor"
-only one in its execution except for the null check.
-
-Thus, if there could be an error, it'd be a case where someone else is
-doing "devfreq->governor = NULL" without devfreq->lock.
-And, find_devfreq_governor() does not return NULL.
-
-
-Cheers,
-MyungJoo
+>> -u32 __hyp_text __init_stage2_translation(void)
+>> +void __hyp_text __init_stage2_translation(void)
+..
 
 > 
-> -Akhil.
-> 
+> And then most of the code here could run on a per-VM basis.
+
+There is one problem with generating the entire vtcr for a VM.
+On a system with mismatched CPU features, we need to have either :
+
+  - Per CPU VTCR fixed bits
+     OR
+  - Track system wide safe VTCR bits. (Not ideal with dirty bit and access
+  flag updates, if and when we support them ).
+
+So far the only fields of interest are HA & HD, which may be turned on
+for CPUs that can support the feature. Rest can be filled in from the
+sanitised EL1 system registers and IPA limit and the others would need
+to be filled as RES0. This could potentially have some issues on
+newer versions of the architecture running on older kernels.
+
+What do you think ?
+
+Suzuki
