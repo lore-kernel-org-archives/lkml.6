@@ -2,124 +2,153 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1C4C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9350FC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B25A2463B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B25A2463B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4961924768
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4961924768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932170AbeGCXWI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:22:08 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39089 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeGCXWG (ORCPT
+        id S1752740AbeGCXYf (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 19:24:35 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34901 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752049AbeGCXYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:22:06 -0400
-Received: by mail-oi0-f67.google.com with SMTP id d189-v6so7182443oib.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 16:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TS/I98vAAnKjAyOMeCs7V10nIa69dIv5vbdlsKj9C98=;
-        b=DX4S0QVntEa7anOX/Y/Spy5WdIjls7SvLf3uQcAXCEKOwQfQw/pe/cRwbGuIe9v4FN
-         cQTk7vO5w64LIdRwQUWyJ1K8VB1NDbqT2K0G+osqNuy7ooWh4Krwi5sSnG0bHEzehtwj
-         O2imbCmPg8yj9V4ov7ads7J/QExJdG9mf20wtlE0q6ufLR7VVGkYQ7G7La4PqyCenWuy
-         QWv5Rk6hFBN7JGQHQBJwR4VK/sPUudT+TsO58mu36PVP1LmVD+sX/oR25Bh7VSVjlbt+
-         uK25fnU07a1ILXWC1tzW0dkUbW3xfojTrOMpTvwuEeZUrb0K5IA8GlJSyrGYCWWUpmKi
-         klVQ==
-X-Gm-Message-State: APt69E2lIJrbP9m8OX0o36DzIzKOxPY0bYvUvGvmmlf52hpOXGii0+1T
-        SdQuf2ZV3hMYMnIil4JxnEErlQ==
-X-Google-Smtp-Source: AAOMgpepXTbSnP4YY7Hq1m15g+rhmEscf84yIOh4gPhdBvcyOvxeNlJENyrcOTqJAExDH1Ynk/F4WQ==
-X-Received: by 2002:aca:cc0b:: with SMTP id c11-v6mr19895206oig.314.1530660126099;
-        Tue, 03 Jul 2018 16:22:06 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc::f0c1])
-        by smtp.gmail.com with ESMTPSA id 17-v6sm946587oir.27.2018.07.03.16.22.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 16:22:04 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
-        Nick Clifton <nickc@redhat.com>,
-        Cary Coutant <ccoutant@gmail.com>,
-        linux-kbuild@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCHv5 0/4] Salted build ids via ELF notes
-Date:   Tue,  3 Jul 2018 16:21:56 -0700
-Message-Id: <20180703232200.11315-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 3 Jul 2018 19:24:33 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w63NNTH5003523;
+        Wed, 4 Jul 2018 02:23:29 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id B6E6C6307C; Wed,  4 Jul 2018 02:23:29 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, jdelvare@suse.com,
+        linux@roeck-us.net, avifishman70@gmail.com, yuenn@google.com,
+        brendanhiggins@google.com, venture@google.com, joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v8 1/2] dt-binding: hwmon: Add NPCM7xx PWM and Fan controller documentation
+Date:   Wed,  4 Jul 2018 02:23:25 +0300
+Message-Id: <20180703232326.355718-2-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180703232326.355718-1-tmaimon77@gmail.com>
+References: <20180703232326.355718-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Added device tree binding documentation for Nuvoton BMC
+NPCM7xx Pulse Width Modulation (PWM)  and Fan tach controller.
+The Nuvoton BMC NPCM7XX supports 8 PWM controller outputs
+and 16 Fan tachometer controller inputs.
 
-Hi,
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ .../devicetree/bindings/hwmon/npcm750-pwm-fan.txt  | 84 ++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
 
-This is v5 of the series to allow unique build ids in the kernel. As a
-reminder of the context:
-
-""
-In Fedora, the debug information is packaged separately (foo-debuginfo) and
-can be installed separately. There's been a long standing issue where only one
-version of a debuginfo info package can be installed at a time. Mark Wielaard
-made an effort for Fedora 27 to allow parallel installation of debuginfo (see
-https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo for
-more details)
-
-Part of the requirement to allow this to work is that build ids are
-unique between builds. The existing upstream rpm implementation ensures
-this by re-calculating the build-id using the version and release as a
-seed. This doesn't work 100% for the kernel because of the vDSO which is
-its own binary and doesn't get updated. After poking holes in a few of my
-ideas, there was a discussion with some people from the binutils team about
-adding --build-id-salt to let ld do the calculation debugedit is doing. There
-was a counter proposal made to add in the salt while building. The
-easiest proposal was to add an item in the linker script vs. linking in
-an object since we need the salt to go in every module as well as the
-kernel and vmlinux.
-""
-
-v5 uses the approach suggested by Masahiro Yamada which uses the
-existing ELF note macro to more easily add the salt (vs previous
-approaches which tried to adjust via linker section).
-
-If arch maintainers are okay, I'd like acks for this so this can go
-through the kbuild tree.
-
-Thanks,
-Laura
-
-Laura Abbott (4):
-  kbuild: Add build salt to the kernel and modules
-  x86: Add build salt to the vDSO
-  powerpc: Add build salt to the vDSO
-  arm64: Add build salt to the vDSO
-
- arch/arm64/kernel/vdso/note.S     |  3 +++
- arch/powerpc/kernel/vdso32/note.S |  3 +++
- arch/x86/entry/vdso/vdso-note.S   |  3 +++
- arch/x86/entry/vdso/vdso32/note.S |  3 +++
- include/linux/build-salt.h        | 20 ++++++++++++++++++++
- init/Kconfig                      |  9 +++++++++
- init/version.c                    |  3 +++
- scripts/mod/modpost.c             |  3 +++
- 8 files changed, 47 insertions(+)
- create mode 100644 include/linux/build-salt.h
-
+diff --git a/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+new file mode 100644
+index 000000000000..d22da14c696f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/npcm750-pwm-fan.txt
+@@ -0,0 +1,84 @@
++Nuvoton NPCM7xx PWM and Fan Tacho controller device
++
++The Nuvoton BMC NPCM7XX supports 8 Pulse-width modulation (PWM)
++controller outputs and 16 Fan tachometer controller inputs.
++
++Required properties for pwm-fan node
++- #address-cells : should be 1.
++- #size-cells 	: should be 0.
++- compatible	: "nuvoton,npcm750-pwm-fan" for Poleg NPCM7XX.
++- reg 			: specifies physical base address and size of the registers.
++- reg-names 	: must contain:
++					* "pwm" for the PWM registers.
++ 					* "fan" for the Fan registers.
++- clocks		: phandle of reference clocks.
++- clock-names	: must contain
++					* "pwm" for PWM controller operating clock.
++ 					* "fan" for Fan controller operating clock.
++- interrupts	: contain the Fan interrupts with flags for falling edge.
++- pinctrl-names	: a pinctrl state named "default" must be defined.
++- pinctrl-0 	: phandle referencing pin configuration of the PWM and Fan
++					controller ports.
++
++fan subnode format:
++===================
++Under fan subnode can be upto 8 child nodes, each child node representing a fan.
++Each fan subnode must have one PWM channel and atleast one Fan tach channel.
++
++For PWM channel can be configured cooling-levels to create cooling device.
++Cooling device could be bound to a thermal zone for the thermal control.
++
++Required properties for each child node:
++- reg : specify the PWM output channel.
++	integer value in the range 0 through 7, that represent
++	the PWM channel number that used.
++
++- fan-tach-ch : specify the Fan tach input channel.
++		integer value in the range 0 through 15, that represent
++		the fan tach channel number that used.
++
++		At least one Fan tach input channel is required
++
++Optional property for each child node:
++- cooling-levels: PWM duty cycle values in a range from 0 to 255
++                  which correspond to thermal cooling states.
++
++Examples:
++
++pwm_fan:pwm-fan-controller@103000 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	compatible = "nuvoton,npcm750-pwm-fan";
++	reg = <0x103000 0x2000>,
++		<0x180000 0x8000>;
++	reg-names = "pwm", "fan";
++	clocks = <&clk NPCM7XX_CLK_APB3>,
++		<&clk NPCM7XX_CLK_APB4>;
++	clock-names = "pwm","fan";
++	interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm0_pins &pwm1_pins &pwm2_pins
++			&fanin0_pins &fanin1_pins &fanin2_pins
++			&fanin3_pins &fanin4_pins>;
++	fan@0 {
++		reg = <0x00>;
++		fan-tach-ch = /bits/ 8 <0x00 0x01>;
++		cooling-levels = <127 255>;
++	};
++	fan@1 {
++		reg = <0x01>;
++		fan-tach-ch = /bits/ 8 <0x02 0x03>;
++	};
++	fan@2 {
++		reg = <0x02>;
++		fan-tach-ch = /bits/ 8 <0x04>;
++	};
++
++};
+\ No newline at end of file
 -- 
-2.17.1
+2.14.1
 
