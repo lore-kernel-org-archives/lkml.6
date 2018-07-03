@@ -2,133 +2,122 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D3BC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF78C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1255B21386
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:03:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1255B21386
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id 516CC24339
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 23:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516CC24339
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753438AbeGCXC7 (ORCPT
+        id S1753494AbeGCXEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 19:02:59 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:35214
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753183AbeGCXC6 (ORCPT
+        Tue, 3 Jul 2018 19:04:15 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:34061 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753183AbeGCXEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 19:02:58 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with SMTP
-        id aUJ3fIInU8JHPaUJ3fngVE; Tue, 03 Jul 2018 16:01:57 -0700
-x-originating-ip: 107.180.71.197
-Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
-        id 1faUJ3-0003xE-8f; Tue, 03 Jul 2018 16:01:57 -0700
-From:   kys@linuxonhyperv.com
-To:     x86@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 1/1] X86/Hyper-V:: Fix the circular dependency in IPI enlightenment.
-Date:   Tue,  3 Jul 2018 16:01:55 -0700
-Message-Id: <20180703230155.15160-1-kys@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfAkRkJcJP1PSqvhVCbWgdwfHM96hOH8x5G1FN3icjS46Si4vLzCt32aBG5h8esR4SBL2yyYpzYn6X/Ye+w4ZRzz/BlHd3WB0K2JvLSqBqQdec5svJEut
- v1GjG8jRUpyfSNu0Sr3h9PhS9am/AGjZG1JPKRmFaCWqsObNkX9YVhDs417OYXbjJp/unHKbTvMJPeltw20GeWdZMVV0wGdlKBHbDGK2kGYj4ABtIvXs6fDr
- 8A/m4tbJUSYQcnJnc7gQBQLLySdNvslTeSN886Z/tvJ+5wJ8HeSoFHqwN4VECyyoZE0sV5f8CzizK/j93zxODyQMZ27TFcG4Us9B6zwVH8XJLSeNkkJnmK56
- KCa4q7Zd3dvvbBxGazXdhC8HT99wtRNRr/WRLm0Qo2MnVzEX2RA1rMJSAhSLycL91f0VNY7klH+A2WpWpilW62NZHGI4ZXFvlI0Wo7up1vtI22l1qYXRnsPH
- Z8YJ/rv5T8deeNfsO8teYBHpf9KP4LsSgmyrWhFWvDxpORgH5xinudqIMrlA5KDIUlmKdYxJX4ano+oYbvK8qt4IB9zFhtGWgZFlikYTchu566ZQjPpFnnWE
- irJjMwKMilXSNvNrbi7FMvx9
+        Tue, 3 Jul 2018 19:04:14 -0400
+Received: by mail-yb0-f193.google.com with SMTP id e9-v6so1368854ybq.1;
+        Tue, 03 Jul 2018 16:04:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M4c/qRNwuftgh6yH3z4mrzKMRpisdWqttzu/c4Di/nA=;
+        b=Kfoc/foxD+EqBDbfsJzD/nHl7ayAffnVzZjV0gUKPSH4gfPSWmOZu6f/lE1gxjoTC/
+         GYEKOrzNCehr9dnlEAksNdyckDEeaT2IgtYO5CmucswtLnYPbTsmLwNZoaR5PYIzDIZZ
+         s6bWOAgLZQlIXQghy5BobsdGWTCY4WUHOlopyBlbmSc24lajys6kPBd5KZRW3kVcaZC4
+         L38Fty4hNn3g3VDLh+395RJO8VEWyDTlsLssqDhjjze8x53/Ui6yqcbXSNY/js5tyUy5
+         sMRMbyjPU8/Fhxjje42XTLVYoMRAFHb95PZDS5BXyytFduaT5E6WeF2hOyEqgvI2ylTa
+         syOg==
+X-Gm-Message-State: APt69E2YkL6Q7QqE3HFFnX+ImuI+GJ5q0FGuKBXZrufaU3Pz2TRjws9u
+        Nc3lzYvTVYQN5wtWkTpUmw==
+X-Google-Smtp-Source: ADUXVKKc2gnMBGK+Ua/a/cmc9D20SYJhHASDMVyT2c0j0n6NqSDIFYD6qYCA5ru5iNx70URBCKWNZA==
+X-Received: by 2002:a25:9a49:: with SMTP id r9-v6mr15886103ybo.451.1530659053341;
+        Tue, 03 Jul 2018 16:04:13 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id p134-v6sm925114ywe.30.2018.07.03.16.04.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 16:04:12 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 17:04:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luis Araneda <luaraneda@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/5] dt-bindings: xilinx: Add missing zynq boards
+Message-ID: <20180703230410.GA31330@rob-hp-laptop>
+References: <20180628054205.17737-1-luaraneda@gmail.com>
+ <20180628054205.17737-3-luaraneda@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628054205.17737-3-luaraneda@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+On Thu, Jun 28, 2018 at 01:42:02AM -0400, Luis Araneda wrote:
+> The bindings were missing when adding the device-tree files
+> Also, improve description of existing boards
+> 
+> Signed-off-by: Luis Araneda <luaraneda@gmail.com>
+> ---
+>  .../devicetree/bindings/arm/xilinx.txt        | 22 +++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
+> index b9043bc35..f1e911058 100644
+> --- a/Documentation/devicetree/bindings/arm/xilinx.txt
+> +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
+> @@ -8,15 +8,33 @@ Required root node properties:
+>  
+>  Additional compatible strings:
+>  
+> -- Xilinx internal board cc108
+> +- Xilinx CC108 board
+>    "xlnx,zynq-cc108"
+>  
+> -- Xilinx internal board zc770 with different FMC cards
+> +- Avnet MicroZed board
+> +  "avnet,zynq-microzed"
+> +
+> +- Adapteva Parallella board
+> +  "adapteva,parallella"
 
-The IPI hypercalls depend on being able to map the Linux notion of CPU ID
-to the hypervisor's notion of the CPU ID. The array hv_vp_index[] provides
-this mapping. Code for populating this array depends on the IPI functionality.
-Break this circular dependency.
+This is documented in adapteva.txt, but I'd prefer if you put it 
+here and remove adapteva.txt.
 
-Fixes: 68bb7bfb7985 ("X86/Hyper-V: Enable IPI enlightenments")
-
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Tested-by: Michael Kelley <mikelley@microsoft.com>
----
- arch/x86/hyperv/hv_apic.c       | 5 +++++
- arch/x86/hyperv/hv_init.c       | 5 ++++-
- arch/x86/include/asm/mshyperv.h | 2 ++
- 3 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index f68855499391..63d7c196739f 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -114,6 +114,8 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
- 		ipi_arg->vp_set.format = HV_GENERIC_SET_SPARSE_4K;
- 		nr_bank = cpumask_to_vpset(&(ipi_arg->vp_set), mask);
- 	}
-+	if (nr_bank == -1)
-+		goto ipi_mask_ex_done;
- 	if (!nr_bank)
- 		ipi_arg->vp_set.format = HV_GENERIC_SET_ALL;
- 
-@@ -158,6 +160,9 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
- 
- 	for_each_cpu(cur_cpu, mask) {
- 		vcpu = hv_cpu_number_to_vp_number(cur_cpu);
-+		if (vcpu == -1)
-+			goto ipi_mask_done;
-+
- 		/*
- 		 * This particular version of the IPI hypercall can
- 		 * only target upto 64 CPUs.
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index 4c431e1c1eff..04159893702e 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -265,7 +265,7 @@ void __init hyperv_init(void)
- {
- 	u64 guest_id, required_msrs;
- 	union hv_x64_msr_hypercall_contents hypercall_msr;
--	int cpuhp;
-+	int cpuhp, i;
- 
- 	if (x86_hyper_type != X86_HYPER_MS_HYPERV)
- 		return;
-@@ -293,6 +293,9 @@ void __init hyperv_init(void)
- 	if (!hv_vp_index)
- 		return;
- 
-+	for (i = 0; i < num_possible_cpus(); i++)
-+		hv_vp_index[i] = -1;
-+
- 	hv_vp_assist_page = kcalloc(num_possible_cpus(),
- 				    sizeof(*hv_vp_assist_page), GFP_KERNEL);
- 	if (!hv_vp_assist_page) {
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 3cd14311edfa..dee3f7347253 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -281,6 +281,8 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
- 	 */
- 	for_each_cpu(cpu, cpus) {
- 		vcpu = hv_cpu_number_to_vp_number(cpu);
-+		if (vcpu == -1)
-+			return -1;
- 		vcpu_bank = vcpu / 64;
- 		vcpu_offset = vcpu % 64;
- 		__set_bit(vcpu_offset, (unsigned long *)
--- 
-2.17.1
-
+> +
+> +- Xilinx ZC702 board
+> +  "xlnx,zynq-zc702"
+> +
+> +- Xilinx ZC706 board
+> +  "xlnx,zynq-zc706"
+> +
+> +- Xilinx ZC770 board, with different FMC cards
+>    "xlnx,zynq-zc770-xm010"
+>    "xlnx,zynq-zc770-xm011"
+>    "xlnx,zynq-zc770-xm012"
+>    "xlnx,zynq-zc770-xm013"
+>  
+> +- Avnet ZedBoard board
+> +  "avnet,zynq-zed"
+> +
+> +- Digilent Zybo board
+> +  "digilent,zynq-zybo"
+> +
+>  - Digilent Zybo Z7 board
+>    "digilent,zynq-zybo-z7"
+>  
+> -- 
+> 2.18.0
+> 
