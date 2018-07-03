@@ -2,303 +2,170 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD92C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038AAC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC10F2409E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:47:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC10F2409E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B75422409E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:47:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75422409E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeGCTq7 (ORCPT
+        id S1752776AbeGCTrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:46:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45307 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751646AbeGCTq5 (ORCPT
+        Tue, 3 Jul 2018 15:47:41 -0400
+Received: from gateway20.websitewelcome.com ([192.185.44.20]:36407 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751950AbeGCTrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:46:57 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faRG7-0001cx-GE; Tue, 03 Jul 2018 21:46:43 +0200
-Date:   Tue, 3 Jul 2018 21:46:43 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 07/13] x86/sgx: data structures for tracking available
- EPC pages
-In-Reply-To: <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032110460.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-8-jarkko.sakkinen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 3 Jul 2018 15:47:40 -0400
+X-Greylist: delayed 1456 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Jul 2018 15:47:40 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id D0D3E400C81C9
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 14:23:23 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id aQtGfCrb2SjJAaQtRfhow4; Tue, 03 Jul 2018 14:23:23 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=49242 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1faQtG-002Re3-Bg; Tue, 03 Jul 2018 14:23:06 -0500
+Date:   Tue, 3 Jul 2018 14:23:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ide: mark expected switch fall-throughs
+Message-ID: <20180703192305.GA3413@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1faQtG-002Re3-Bg
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:49242
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> SGX has a set of data structures to maintain information about the enclaves
-> and their security properties. BIOS reserves a fixed size region of
-> physical memory for these structures by setting Processor Reserved Memory
-> Range Registers (PRMRR). This memory area is called Enclave Page Cache
-> (EPC).
-> 
-> This commit adds a database of EPC banks for kernel to easily access the
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/ide/hpt366.c       | 5 +++--
+ drivers/ide/ide-floppy.c   | 1 +
+ drivers/ide/ide-probe.c    | 1 +
+ drivers/ide/ide-taskfile.c | 3 ++-
+ drivers/ide/sis5513.c      | 1 +
+ 5 files changed, 8 insertions(+), 3 deletions(-)
 
-Add a ....
+diff --git a/drivers/ide/hpt366.c b/drivers/ide/hpt366.c
+index e52c58c..4d565b0 100644
+--- a/drivers/ide/hpt366.c
++++ b/drivers/ide/hpt366.c
+@@ -574,13 +574,14 @@ static u8 hpt3xx_udma_filter(ide_drive_t *drive)
+ 		if (!HPT370_ALLOW_ATA100_5 ||
+ 		    check_in_drive_list(drive, bad_ata100_5))
+ 			return ATA_UDMA4;
++		/* else: fall through */
+ 	case HPT372 :
+ 	case HPT372A:
+ 	case HPT372N:
+ 	case HPT374 :
+ 		if (ata_id_is_sata(drive->id))
+ 			mask &= ~0x0e;
+-		/* Fall thru */
++		/* fall through */
+ 	default:
+ 		return mask;
+ 	}
+@@ -600,7 +601,7 @@ static u8 hpt3xx_mdma_filter(ide_drive_t *drive)
+ 	case HPT374 :
+ 		if (ata_id_is_sata(drive->id))
+ 			return 0x00;
+-		/* Fall thru */
++		/* else: fall through */
+ 	default:
+ 		return 0x07;
+ 	}
+diff --git a/drivers/ide/ide-floppy.c b/drivers/ide/ide-floppy.c
+index 5bd2aaf..a8df300 100644
+--- a/drivers/ide/ide-floppy.c
++++ b/drivers/ide/ide-floppy.c
+@@ -427,6 +427,7 @@ static int ide_floppy_get_capacity(ide_drive_t *drive)
+ 				 * (maintains previous driver behaviour)
+ 				 */
+ 				break;
++			/* else: fall through */
+ 		case CAPACITY_CURRENT:
+ 			/* Normal Zip/LS-120 disks */
+ 			if (memcmp(cap_desc, &floppy->cap_desc, 8))
+diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
+index 416a2f3..3b75a7b 100644
+--- a/drivers/ide/ide-probe.c
++++ b/drivers/ide/ide-probe.c
+@@ -142,6 +142,7 @@ static void ide_classify_atapi_dev(ide_drive_t *drive)
+ 		}
+ 		/* Early cdrom models used zero */
+ 		type = ide_cdrom;
++		/* fall through */
+ 	case ide_cdrom:
+ 		drive->dev_flags |= IDE_DFLAG_REMOVABLE;
+ #ifdef CONFIG_PPC
+diff --git a/drivers/ide/ide-taskfile.c b/drivers/ide/ide-taskfile.c
+index 89b2902..c21d5c5 100644
+--- a/drivers/ide/ide-taskfile.c
++++ b/drivers/ide/ide-taskfile.c
+@@ -128,7 +128,7 @@ ide_startstop_t do_rw_taskfile(ide_drive_t *drive, struct ide_cmd *orig_cmd)
+ 			return pre_task_out_intr(drive, cmd);
+ 		}
+ 		handler = task_pio_intr;
+-		/* fall-through */
++		/* fall through */
+ 	case ATA_PROT_NODATA:
+ 		if (handler == NULL)
+ 			handler = task_no_data_intr;
+@@ -140,6 +140,7 @@ ide_startstop_t do_rw_taskfile(ide_drive_t *drive, struct ide_cmd *orig_cmd)
+ 		hwif->expiry = dma_ops->dma_timer_expiry;
+ 		ide_execute_command(drive, cmd, ide_dma_intr, 2 * WAIT_CMD);
+ 		dma_ops->dma_start(drive);
++		/* fall through */
+ 	default:
+ 		return ide_started;
+ 	}
+diff --git a/drivers/ide/sis5513.c b/drivers/ide/sis5513.c
+index c3062b5..024bc7b 100644
+--- a/drivers/ide/sis5513.c
++++ b/drivers/ide/sis5513.c
+@@ -494,6 +494,7 @@ static int init_chipset_sis5513(struct pci_dev *dev)
+ 		pci_read_config_byte(dev, 0x09, &reg);
+ 		if ((reg & 0x0f) != 0x00)
+ 			pci_write_config_byte(dev, 0x09, reg&0xf0);
++		/* fall through */
+ 	case ATA_16:
+ 		/* force per drive recovery and active timings
+ 		   needed on ATA_33 and below chips */
+-- 
+2.7.4
 
-> available EPC pages. On UMA architectures there is a singe bank of EPC
-
-singe? Spell checkers exist for a reason.
-
-> pages. On NUMA architectures there is an EPC bank for each node.
-
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 2130e639ab49..77b2294fcfb0 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -4,9 +4,39 @@
->  #ifndef _ASM_X86_SGX_H
->  #define _ASM_X86_SGX_H
->  
-> +#include <asm/sgx_arch.h>
-> +#include <asm/asm.h>
-
-asm includes go below.
-
-> +#include <linux/bitops.h>
-> +#include <linux/err.h>
-> +#include <linux/rwsem.h>
->  #include <linux/types.h>
->  
-> +#define SGX_MAX_EPC_BANKS 8
-> +
-> +#define SGX_EPC_BANK(epc_page) \
-> +	(&sgx_epc_banks[(unsigned long)(epc_page->desc) & ~PAGE_MASK])
-> +#define SGX_EPC_PFN(epc_page) PFN_DOWN((unsigned long)(epc_page->desc))
-> +#define SGX_EPC_ADDR(epc_page) ((unsigned long)(epc_page->desc) & PAGE_MASK)
-
-And these need to be macros because MACROS_ARE_SO_PROMINENT, while inline
-functions are so boring and type safe.
-
-> +static atomic_t sgx_nr_free_pages = ATOMIC_INIT(0);
-> +static struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
-> +static int sgx_nr_epc_banks;
-> +
-> +/**
-> + * sgx_get_page - pin an EPC page
-
-Description starts with an uppercase letter.
-
-> + * @page:	an EPC page
-
-That's not an EPC page. It's a pointer to an EPC page. Please make these
-comments useful and do not add them just that they exist.
-
-> + *
-> + * Return: a pointer to the pinned EPC page
-> + */
-> +void *sgx_get_page(struct sgx_epc_page *page)
-> +{
-> +	struct sgx_epc_bank *bank = SGX_EPC_BANK(page);
-> +
-> +	if (IS_ENABLED(CONFIG_X86_64))
-
-And this is needed because the SGX config switch has:
-
-       depends on X86_64 && CPU_SUP_INTEL
-
-So what is this for and why do you need the 32bit implementation at all?
-
-> +		return (void *)(bank->va + SGX_EPC_ADDR(page) - bank->pa);
-> +
-> +	return kmap_atomic_pfn(SGX_EPC_PFN(page));
-> +}
-> +EXPORT_SYMBOL(sgx_get_page);
-> +
-> +/**
-> + * sgx_put_page - unpin an EPC page
-> + * @ptr:	a pointer to the pinned EPC page
-> + */
-> +void sgx_put_page(void *ptr)
-> +{
-> +	if (IS_ENABLED(CONFIG_X86_64))
-> +		return;
-
-Ditto
-
->
-> +	kunmap_atomic(ptr);
-> +}
-> +EXPORT_SYMBOL(sgx_put_page);
-> +
-> +static __init int sgx_init_epc_bank(unsigned long addr, unsigned long size,
-> +				    unsigned long index,
-> +				    struct sgx_epc_bank *bank)
-> +{
-> +	unsigned long nr_pages = size >> PAGE_SHIFT;
-> +	unsigned long i;
-> +	void *va;
-> +
-> +	if (IS_ENABLED(CONFIG_X86_64)) {
-
-And more.
-
-> +		va = ioremap_cache(addr, size);
-> +		if (!va)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	bank->pages_data = kzalloc(nr_pages * sizeof(struct sgx_epc_page),
-> +				   GFP_KERNEL);
-> +	if (!bank->pages_data) {
-> +		if (IS_ENABLED(CONFIG_X86_64))
-> +			iounmap(va);
-> +
-> +		return -ENOMEM;
-> +	}
-
-  	if (!bank->pages_data)
-		goto out_iomap;
-
-> +
-> +	bank->pages = kzalloc(nr_pages * sizeof(struct sgx_epc_page *),
-> +			      GFP_KERNEL);
-> +	if (!bank->pages) {
-> +		if (IS_ENABLED(CONFIG_X86_64))
-> +			iounmap(va);
-> +		kfree(bank->pages_data);
-> +		bank->pages_data = NULL;
-> +		return -ENOMEM;
-> +	}
-
-  	if (!bank->pages)
-		goto out_pdata;
-
-> +	for (i = 0; i < nr_pages; i++) {
-> +		bank->pages[i] = &bank->pages_data[i];
-> +		bank->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
-> +	}
-> +
-> +	bank->pa = addr;
-> +	bank->size = size;
-> +	if (IS_ENABLED(CONFIG_X86_64))
-> +		bank->va = (unsigned long)va;
-
-Why is bank->va unsigned long and not a void *? That's spare the type casts.
-
-> +
-> +	atomic_set(&bank->free_cnt, nr_pages);
-> +	init_rwsem(&bank->lock);
-> +	atomic_add(nr_pages, &sgx_nr_free_pages);
-> +	return 0;
-
-out_iomap:
-	iounmap(va);
-out_pdata:
-	kfree(bank->pages_data);
-	bank->pages_data = NULL;
-	return -ENOMEM;
-
-
-> +static __init int sgx_page_cache_init(void)
-> +{
-> +	unsigned long size;
-> +	unsigned int eax;
-> +	unsigned int ebx;
-> +	unsigned int ecx;
-> +	unsigned int edx;
-> +	unsigned long pa;
-> +	int i;
-> +	int ret;
-
-Please aggregate the declarations of the same type. No point in wasting all
-the screen space. And please use 'u32' for ea-dx
-
-> +
-> +	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
-> +		cpuid_count(SGX_CPUID, i + SGX_CPUID_EPC_BANKS, &eax, &ebx,
-> +			    &ecx, &edx);
-> +		if (!(eax & 0xf))
-> +			break;
-> +
-> +		pa = ((u64)(ebx & 0xfffff) << 32) + (u64)(eax & 0xfffff000);
-> +		size = ((u64)(edx & 0xfffff) << 32) + (u64)(ecx & 0xfffff000);
-
-These magic constants should be 'U', using uppercase 'F' and defines. Plus
-this wants a comment how pa and size are cobbled together from the cpuid
-regs.
-
-> +
-> +		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
-
-	size - 1 because the bank does not reach into the next page.
-
-> +		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
-> +		if (ret) {
-> +			sgx_page_cache_teardown();
-> +			return ret;
-> +		}
-> +
-> +		sgx_nr_epc_banks++;
-> +	}
-> +
-> +	return 0;
-
-This returns success even when the number of detected banks is zero.
-
-> + }
-
-This whole thing can be written readable.
-
-{
-	int i, cnt = SGX_CPUID_EPC_BANKS;
-
-	for (i = 0; i < SGX_MAX_EPC_BANKS; i++, cnt++) {
-	     	u32 eax, ebx, ecx, edx;
-		unsigned long pa, size;
-		int ret;
-
-		cpuid_count(SGX_CPUID, cnt, &eax, &ebx, &ecx, &edx);
-		if (!(eax & 0xF))
-			break;
-
-		pa = combine_regs(ebx, eax);
-		size = combine_regs(edx, ecx);
-
-		pr_info("EPC bank 0x%lx-0x%lx\n", pa, pa + size);
-
-		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
-		if (ret) {
-			sgx_page_cache_teardown();
-			return ret;
-		}
-		sgx_nr_epc_banks++;
-	}
-
-	return sgx_nr_epc_banks ? : -ENODEV;
-}
-
-You get the idea...
-
-Thanks,
-
-	tglx
