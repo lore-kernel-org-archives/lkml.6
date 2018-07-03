@@ -2,123 +2,138 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5942C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED7CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D34C2238E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:55:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D34C2238E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id A16732238E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:56:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16732238E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932950AbeGCIzv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:55:51 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3237 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753560AbeGCIzt (ORCPT
+        id S933320AbeGCI4D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:56:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58884 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933104AbeGCI4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:55:49 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b3b3a150000>; Tue, 03 Jul 2018 01:55:49 -0700
-Received: from HQMAIL103.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 03 Jul 2018 01:55:48 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 03 Jul 2018 01:55:48 -0700
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Jul
- 2018 08:55:48 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Tue, 3 Jul 2018 08:55:48 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.21.132.122]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b3b3a120001>; Tue, 03 Jul 2018 01:55:47 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Shardar Shariff Md <smohammed@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH] i2c: tegra: Fix NACK error handling
-Date:   Tue, 3 Jul 2018 09:55:43 +0100
-Message-ID: <1530608143-9222-1-git-send-email-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 3 Jul 2018 04:56:01 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w638srcn012528
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 04:56:00 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k03jaxdxg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:56:00 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 3 Jul 2018 09:55:56 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 09:55:49 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w638tmPg41222396
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 08:55:48 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5D6952057;
+        Tue,  3 Jul 2018 11:56:13 +0100 (BST)
+Received: from osiris (unknown [9.152.212.90])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 0B8D752050;
+        Tue,  3 Jul 2018 11:56:13 +0100 (BST)
+Date:   Tue, 3 Jul 2018 10:55:46 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
+ validate user inputs
+References: <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
+ <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
+ <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
+ <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
+ <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
+ <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
+ <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
+ <20180703081449.GT2494@hirez.programming.kicks-ass.net>
+ <20180703082955.GH3704@osiris>
+ <20180703084312.GU2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180703084312.GU2494@hirez.programming.kicks-ass.net>
+X-TM-AS-GCONF: 00
+x-cbid: 18070308-0016-0000-0000-000001E2CF8B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070308-0017-0000-0000-000032372C0D
+Message-Id: <20180703085546.GJ3704@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=347 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
-resume from suspend (which is caused by the reset signal for the I2C
-mux not being configured correctl). However, this NACK is causing the
-Tegra30 to hang on resuming from suspend which is not expected as we
-detect NACKs and handle them. The hang observed appears to occur when
-resetting the I2C controller to recover from the NACK.
+> > > We're piece-wise enabling rseq across architectures anyway, and when the
+> > > relevant maintains do this, they can have a look at their
+> > > {get,put}_user() implementations and fix them.
+> > > 
+> > > If you rely on get_user(u64) working, that means microblaze is already
+> > > broken, but I suppose it already was, since their rseq enablement patch
+> > > is extremely dodgy. Michal?
+> > 
+> > s390 uses the mvcos instruction to implement get_user(). That instruction
+> > is not defined to be atomic, but may copy bytes piecemeal.. I had the
+> > impression that the rseq fields are supposed to be updated within the
+> > context of a single thread (user + kernel space).
+> > 
+> > However if another user space thread is allowed to do this as well, then
+> > the get_user() approach won't fly on s390.
+> > 
+> > That leaves the question: does it even make sense for a thread to update
+> > the rseq structure of a different thread?
+> 
+> The problem is interrupts; we need interrupts on the CPU doing the store
+> to observe either the old or the new value, not a mix.
+> 
+> If mvcos does not guarantee that, we're having problems. Is there a
+> reason get_user() cannot use a 'regular' load?
 
-Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
-additional error handling for some error cases including NACK, however,
-it appears that this change conflicts with an early fix by commit
-f70893d08338 ("i2c: tegra: Add delay before resetting the controller
-after NACK"). After commit 77821b4678f9 was made we now disable 'packet
-mode' before the delay from commit f70893d08338 happens. Testing shows
-that moving the delay to before disabling 'packet mode' fixes the hang
-observed on Tegra30. The delay was added to give the I2C controller
-chance to send a stop condition and so it makes sense to move this to
-before we disable packet mode. Please note that packet mode is always
-enabled for Tegra.
+Well, that's single instruction semantics. This is something we actually
+can guarantee, since the mvcos instruction itself won't be interrupted and
+copies all 1/2/4/8 bytes in a row.
 
-Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
-
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 5fccd1f1bca8..797def5319f1 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -545,6 +545,14 @@ static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 cnfg;
- 
-+	/*
-+	 * NACK interrupt is generated before the I2C controller generates
-+	 * the STOP condition on the bus. So wait for 2 clock periods
-+	 * before disabling the controller so that the STOP condition has
-+	 * been delivered properly.
-+	 */
-+	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
-+
- 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
- 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
- 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
-@@ -706,15 +714,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
- 
--	/*
--	 * NACK interrupt is generated before the I2C controller generates
--	 * the STOP condition on the bus. So wait for 2 clock periods
--	 * before resetting the controller so that the STOP condition has
--	 * been delivered properly.
--	 */
--	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
--		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
--
- 	tegra_i2c_init(i2c_dev);
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
--- 
-1.9.1
+So we are talking about that single instructions are required and not
+atomic accesses?
 
