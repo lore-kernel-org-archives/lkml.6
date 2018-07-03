@@ -2,105 +2,104 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BDFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39E1C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F2E24D63
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:15:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hd5R6ie6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F2E24D63
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 737D124DE2
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:16:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737D124DE2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932910AbeGCIPj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:15:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49560 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753560AbeGCIPh (ORCPT
+        id S933536AbeGCIQE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:16:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41762 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933013AbeGCIQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:15:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZrYoh/t/fLnf5vc0rVVajIBxjuDvZDIvPUWILNmluxs=; b=hd5R6ie65m1//9JGU7bo1R8hR
-        AX4x563kgxD7Ipq34WRyZLOwxNMN66ipPsrxq7xPdq1IkIJ04h/Z8mIVVJ/lSeY7EI1/Q48blvhK9
-        9T0VXmNCHUNbLJ7ULCsFa1kTnK4pAA801GqSds9Z8Wo1UYKx3t2QcjiSXZNCp51km38UYTgNpf8HH
-        KCmm574Vsfu23TDwIS4M74DoWOa2x9VFIrT/Jo3vIVLfNM4OKP4/qndX/7BXIG/iNj97CWy8fe4gF
-        LwgaMJquEcboVNMYer1RcZeNpfDe1LXmUHXJup6+WJ+M74CBM33VcfNtY+Iery/E8WlZRraUWE/os
-        fBxWDM7dQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faGSa-000844-1l; Tue, 03 Jul 2018 08:14:52 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A21212028932F; Tue,  3 Jul 2018 10:14:49 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 10:14:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
-        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, michal.simek@xilinx.com
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
-Message-ID: <20180703081449.GT2494@hirez.programming.kicks-ass.net>
-References: <20180702223143.4663-1-mathieu.desnoyers@efficios.com>
- <CA+55aFzZYOatOtjrm7fD7878_SzCAmEoEu74n0+pgd7faH-sTQ@mail.gmail.com>
- <825871008.10839.1530573419561.JavaMail.zimbra@efficios.com>
- <1959930320.10843.1530573742647.JavaMail.zimbra@efficios.com>
- <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net>
- <459661281.10865.1530580742205.JavaMail.zimbra@efficios.com>
- <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com>
- <CA+55aFxWMjwx-4TGBHt0H6bh6FXC3NKMsjp=eKGw5cgA4wMBUA@mail.gmail.com>
- <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
+        Tue, 3 Jul 2018 04:16:02 -0400
+Received: by mail-qt0-f193.google.com with SMTP id y20-v6so818105qto.8
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=w0Hk1efeEbNyru1ZbH88RMPRNQqUWfrRs5O2hrfBIQk=;
+        b=hbtPS9D52rYkITLQLDCqB+S+W7gACWrWjxC0Vs+Kyjr5CR9mKILIhaI1CR8ctJMMnB
+         MOM/wuRjMfxOcWMCZGbUCDNx2D619GJiv33plAlBS4qnAJa6IOyTtgSTG+S0xds+XDe3
+         celuFdHMCOXSjaQDR/Ep5BebXTo3TFhcfLrj8t9R+p5FCrm7qGiqpvNPx4Cld6uaR7K9
+         gI4NQISnkbjBDQrO3PL29+zGSCTRWdj1rd32I1chN9jSeeqFjBGYyKjY1N9VKoB/BGEG
+         n1TPA5UsksUJVu9XL67zY8zYoDTGWaI/eN3OwfN4WjJ7hNlPL7+E3mp16f8lIMDAOyE/
+         Beog==
+X-Gm-Message-State: APt69E2OyMx/utMsn40KX0e7u0F38m5rH2ZhdCEIwDIRbRUgW/J7sCZ7
+        doD72LVnFwirabnTY4vUTvcjGO1oFI8jUOKb1SGdiA==
+X-Google-Smtp-Source: AAOMgpfulP4Qi2pY0hD96pKu9O7WKxcH5pypCKquetLuxP5mYRfdEHC/oxFivvJRHHjgiSas9xxgCX6QkAGBf59JOGU=
+X-Received: by 2002:ac8:2dc6:: with SMTP id q6-v6mr23317213qta.178.1530605762020;
+ Tue, 03 Jul 2018 01:16:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1776351430.10902.1530585009519.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:ac8:2fca:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 01:16:01 -0700 (PDT)
+In-Reply-To: <0aaacf083be5b68a830f9e174f9abee3b00c5a51.1530402641.git.joeypabalinas@gmail.com>
+References: <cover.1530402641.git.joeypabalinas@gmail.com> <0aaacf083be5b68a830f9e174f9abee3b00c5a51.1530402641.git.joeypabalinas@gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 3 Jul 2018 10:16:01 +0200
+Message-ID: <CAO-hwJJpAfvvP+s9Cqmi8v7pHsEw3tKTrySQaEg8TUzPTFcQfA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] HID: multitouch: don't check HID_GROUP_MULTITOUCH_WIN_8
+ for serial protocol
+To:     Joey Pabalinas <joeypabalinas@gmail.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Daniel Martin <consume.noise@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 10:30:09PM -0400, Mathieu Desnoyers wrote:
-> > Use "get_user()". It works for 64-bit objects too, and it will be
-> > atomic in the 32-bit sub-parts on a 32-bit architecture.
-> 
-> Is it really ? Last time we had this discussion, not all architectures
-> guaranteed that reading a 64-bit integer would happen in two atomic
-> 32-bit sub-parts. This was the main motivation for the LINUX_FIELD_u32_u64()
-> macro as it stands today (rather than using a union).
+On Sun, Jul 1, 2018 at 2:19 AM, Joey Pabalinas <joeypabalinas@gmail.com> wrote:
+> The HID_GROUP_MULTITOUCH_WIN_8 group never needs to check for the serial
+> protocol, so avoid setting `td->serial_maybe = true;` in order to avoid
+> an unnecessary mt_post_parse_default_settings() call
+>
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+>
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index a793076139d7d0db9b..c0654db0b736543ca0 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -1460,11 +1460,13 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>         if (!td->fields) {
+>                 dev_err(&hdev->dev, "cannot allocate multitouch fields data\n");
+>                 return -ENOMEM;
+>         }
+>
+> -       if (id->vendor == HID_ANY_ID && id->product == HID_ANY_ID)
+> +       if (id->vendor == HID_ANY_ID
+> +                       && id->product == HID_ANY_ID
+> +                       && id->group != HID_GROUP_MULTITOUCH_WIN_8)
 
-Just state, as a requirement for supporting rseq, that the arch
-{get,put}_user(u64) on 32bit targets must be exactly 2 u32 loads/stores.
+There is a tiny difference between the HID group (this device looks
+like it is used as a Win 8 device) and the device class (this is
+effectively a Win8 device)
 
-We're piece-wise enabling rseq across architectures anyway, and when the
-relevant maintains do this, they can have a look at their
-{get,put}_user() implementations and fix them.
+It makes sense to remove this check for Win8 devices, but I don't
+think it should be done for all devices.
 
-If you rely on get_user(u64) working, that means microblaze is already
-broken, but I suppose it already was, since their rseq enablement patch
-is extremely dodgy. Michal?
+All in all, it won't change much.
+
+Cheers,
+Benjamin
+
+>                 td->serial_maybe = true;
+>
+>         /* This allows the driver to correctly support devices
+>          * that emit events over several HID messages.
+>          */
+> --
+> 2.18.0
+>
