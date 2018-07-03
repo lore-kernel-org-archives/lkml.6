@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D926CC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37B3C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 958C124574
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 958C124574
+	by mail.kernel.org (Postfix) with ESMTP id 773F1223B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:00:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773F1223B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932339AbeGCWAq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:00:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52861 "EHLO mail.bootlin.com"
+        id S932537AbeGCWAw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:00:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52923 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932207AbeGCWAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:00:44 -0400
+        id S932355AbeGCWAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:00:49 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DACEE20875; Wed,  4 Jul 2018 00:00:41 +0200 (CEST)
+        id A7BAA208F7; Wed,  4 Jul 2018 00:00:47 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7DFB820719;
-        Wed,  4 Jul 2018 00:00:40 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3A88E208EA;
+        Wed,  4 Jul 2018 00:00:46 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -54,9 +54,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 02/32] mtd: rawnand: brcmnand: convert driver to nand_scan()
-Date:   Tue,  3 Jul 2018 23:59:59 +0200
-Message-Id: <20180703220029.19565-3-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 06/32] mtd: rawnand: fsl_elbc: convert driver to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:03 +0200
+Message-Id: <20180703220029.19565-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
@@ -72,76 +72,42 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/brcmnand/brcmnand.c | 43 ++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 19 deletions(-)
+ drivers/mtd/nand/raw/fsl_elbc_nand.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index 1306aaa7a8bf..99ab7b93756c 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -2208,6 +2208,28 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
- 	return 0;
+diff --git a/drivers/mtd/nand/raw/fsl_elbc_nand.c b/drivers/mtd/nand/raw/fsl_elbc_nand.c
+index 51f0b340bc0d..e535c8440f63 100644
+--- a/drivers/mtd/nand/raw/fsl_elbc_nand.c
++++ b/drivers/mtd/nand/raw/fsl_elbc_nand.c
+@@ -637,9 +637,9 @@ static int fsl_elbc_wait(struct mtd_info *mtd, struct nand_chip *chip)
+ 	return (elbc_fcm_ctrl->mdr & 0xff) | NAND_STATUS_WP;
  }
  
-+static int brcmnand_attach_chip(struct nand_chip *chip)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	struct brcmnand_host *host = nand_get_controller_data(chip);
-+	int ret;
-+
-+	if (chip->bbt_options & NAND_BBT_USE_FLASH)
-+		chip->bbt_options |= NAND_BBT_NO_OOB;
-+
-+	if (brcmnand_setup_dev(host))
-+		return -ENXIO;
-+
-+	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
-+
-+	/* only use our internal HW threshold */
-+	mtd->bitflip_threshold = 1;
-+
-+	ret = brcmstb_choose_ecc_layout(host);
-+
-+	return ret;
-+}
-+
- static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
+-static int fsl_elbc_chip_init_tail(struct mtd_info *mtd)
++static int fsl_elbc_attach_chip(struct nand_chip *chip)
  {
- 	struct brcmnand_controller *ctrl = host->ctrl;
-@@ -2267,10 +2289,6 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
- 	nand_writereg(ctrl, cfg_offs,
- 		      nand_readreg(ctrl, cfg_offs) & ~CFG_BUS_WIDTH);
+-	struct nand_chip *chip = mtd_to_nand(mtd);
++	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	struct fsl_elbc_mtd *priv = nand_get_controller_data(chip);
+ 	struct fsl_lbc_ctrl *ctrl = priv->ctrl;
+ 	struct fsl_lbc_regs __iomem *lbc = ctrl->regs;
+@@ -910,15 +910,8 @@ static int fsl_elbc_nand_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err;
  
 -	ret = nand_scan_ident(mtd, 1, NULL);
 -	if (ret)
--		return ret;
+-		goto err;
 -
- 	chip->options |= NAND_NO_SUBPAGE_WRITE;
- 	/*
- 	 * Avoid (for instance) kmap()'d buffers from JFFS2, which we can't DMA
-@@ -2279,21 +2297,8 @@ static int brcmnand_init_cs(struct brcmnand_host *host, struct device_node *dn)
- 	 */
- 	chip->options |= NAND_USE_BOUNCE_BUFFER;
- 
--	if (chip->bbt_options & NAND_BBT_USE_FLASH)
--		chip->bbt_options |= NAND_BBT_NO_OOB;
--
--	if (brcmnand_setup_dev(host))
--		return -ENXIO;
--
--	chip->ecc.size = host->hwcfg.sector_size_1k ? 1024 : 512;
--	/* only use our internal HW threshold */
--	mtd->bitflip_threshold = 1;
--
--	ret = brcmstb_choose_ecc_layout(host);
+-	ret = fsl_elbc_chip_init_tail(mtd);
 -	if (ret)
--		return ret;
+-		goto err;
 -
 -	ret = nand_scan_tail(mtd);
-+	chip->controller->attach_chip = brcmnand_attach_chip;
++	priv->chip->controller->attach_chip = fsl_elbc_attach_chip;
 +	ret = nand_scan(mtd, 1);
  	if (ret)
- 		return ret;
+ 		goto err;
  
 -- 
 2.14.1
