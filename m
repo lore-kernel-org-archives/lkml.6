@@ -2,418 +2,277 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF112C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10936C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F91C24D6B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:29:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="TJfdSQlL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F91C24D6B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id B893E2438D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B893E2438D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753999AbeGCF3X (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:29:23 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44660 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753822AbeGCF3V (ORCPT
+        id S932360AbeGCFbO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 01:31:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38794 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753834AbeGCFbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:29:21 -0400
-Received: by mail-qt0-f195.google.com with SMTP id b15-v6so571202qtp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 22:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=rwU9pFNNv9L/MnrMA0kZnm5scorxyWFO0MXGe31BueM=;
-        b=TJfdSQlLG5UhzH+q4c0QoxTqaNBiCcqWZLlL034OA+u/8rNls5dBVuEkc+otWRyITn
-         CEkkC6vvkp59YIscs6ogyHy070ebInhFvdrehsGUBiM/otIgl8BDhiDGqUDJWHOaaUDW
-         Q8PD2Or9Kpt6KoT3JHKeJ+Y7vAJ+1Cu/8wX1hZ1VtwHli/p4cgCmcB96T9L1f41xKeta
-         DlAlnYVyudtWG74uGuEY2+1wY03cFz7TTSoKn2lCMeNgyM8DoAt2GcZNHE819R7WH1X3
-         Omld1b69Y5RlChLtWdvpB8vLq6kF9SrOEUyHwKGipYpXJq92riY8GcTFt+BbeQJ5qquK
-         KFMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=rwU9pFNNv9L/MnrMA0kZnm5scorxyWFO0MXGe31BueM=;
-        b=YekM0jgw75KbHEKxtvRs4UYWpYq7ZKujOhv1aFb6MYryH3LttRo0X1XlqSwM/zOkK3
-         xmc4CrAJpMomN+TF6UVjjz211128BUyTbcpvQ5leXWODHBgdc3Jy7mH6Cecqmaq7epu3
-         aIIeyLSqbxlLZxciodCiX+P8B21LRI5MCY2R0dsmMckMvypm+eTFqdyMKU2c3glFa4ht
-         92rFxZlyKjIx2XsDkYfqfdZrpe7r7dMNyACRBmMN3irbCffIwg4OFVcuA18yuq188rPd
-         Ss0Aqyl4aGHJqcyQUXMD54d5Fb8+HUHhlq9DopnLPDXEf8GVxeNrTvWKq5RJsKu/Mffa
-         ME0w==
-X-Gm-Message-State: APt69E3S1jZM1XMA1PcX3Fk4jJNVLwx1WiztEekbMM/yZBzwQ4aR5iKm
-        OpK/Wn11XVeiBD6zSANbW0UZ7w==
-X-Google-Smtp-Source: AAOMgpfKeJ6m5rJPk92jJiHxEaKzGBqHhYmYgJx3Gkt0SAOLpt8BpeLokcQBynFz6mcyQM62JETw7g==
-X-Received: by 2002:a0c:c309:: with SMTP id f9-v6mr24832060qvi.104.1530595760755;
-        Mon, 02 Jul 2018 22:29:20 -0700 (PDT)
-Received: from cakuba.netronome.com ([75.53.12.129])
-        by smtp.gmail.com with ESMTPSA id g64-v6sm192597qkd.77.2018.07.02.22.29.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 22:29:20 -0700 (PDT)
-Date:   Mon, 2 Jul 2018 22:29:16 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Okash Khawaja <osk@fb.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        "Quentin Monnet" <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v2 3/3] bpf: btf: print map dump and lookup
- with btf info
-Message-ID: <20180702222916.295e8012@cakuba.netronome.com>
-In-Reply-To: <20180702191324.683291855@fb.com>
-References: <20180702183913.669030439@fb.com>
-        <20180702191324.683291855@fb.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 3 Jul 2018 01:31:12 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w635OPxA104128
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 01:31:12 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k02ec1790-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:31:11 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Tue, 3 Jul 2018 06:31:09 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 06:31:03 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w635V2Xx36831322
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 05:31:02 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CBDEA4C04E;
+        Tue,  3 Jul 2018 08:31:27 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 755CA4C040;
+        Tue,  3 Jul 2018 08:31:24 +0100 (BST)
+Received: from [9.124.31.159] (unknown [9.124.31.159])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Jul 2018 08:31:24 +0100 (BST)
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com>
+ <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Tue, 3 Jul 2018 11:00:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180702180156.GA31400@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070305-0020-0000-0000-000002A2743B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070305-0021-0000-0000-000020EE891A
+Message-Id: <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Jul 2018 11:39:16 -0700, Okash Khawaja wrote:
-> This patch augments the output of bpftool's map dump and map lookup
-> commands to print data along side btf info, if the correspondin btf
-> info is available. The outputs for each of  map dump and map lookup
-> commands are augmented in two ways:
+Hi Oleg,
+
+On 07/02/2018 11:31 PM, Oleg Nesterov wrote:
+> On 07/02, Ravi Bangoria wrote:
+>>
+>> Hi Oleg,
+>>
+>> On 07/02/2018 02:39 AM, Oleg Nesterov wrote:
+>>> On 06/28, Ravi Bangoria wrote:
+>>>>
+>>>> @@ -294,6 +462,15 @@ int uprobe_write_opcode(struct uprobe *uprobe, struct mm_struct *mm,
+>>>>  	if (ret <= 0)
+>>>>  		goto put_old;
+>>>>
+>>>> +	/* Update the ref_ctr if we are going to replace instruction. */
+>>>> +	if (!ref_ctr_updated) {
+>>>> +		ret = update_ref_ctr(uprobe, mm, is_register);
+>>>> +		if (ret)
+>>>> +			goto put_old;
+>>>> +
+>>>> +		ref_ctr_updated = 1;
+>>>> +	}
+>>>
+>>> Why can't this code live in install_breakpoint() and remove_breakpoint() ?
+>>> this way we do not need to export "struct uprobe" and change set_swbp/set_orig_insn,
+>>> and the logic will be more simple.
+>>
+>> IMO, it's more easier with current approach. Updating reference counter
+>> inside uprobe_write_opcode() makes it tightly coupled with instruction
+>> patching. Basically, reference counter gets incremented only when first
+>> consumer gets activated and will get decremented only when last consumer
+>> is going away.
+>>
+>> Advantage is, we can get rid of sdt_mm_list patch*, because increment and
+>> decrement are anyway happening in sync. This makes the implementation lot
+>> more simpler. If I do it inside install_breakpoit()/ remove_breakpoint(),
+>> I've to reintroduce sdt_mm_list which makes code more complicated and ugly.
 > 
-> 1. when neither of -j and -p are supplied, btf-ful map data is printed
-> whose aim is human readability. This means no commitments for json- or
-> backward- compatibility.
+> Why? I do not understand. Afaics you can have the same logic, but the resulting
+> code will be simpler and more clear.
+
+
+Ok let me explain the difference.
+
+Current approach:
+
+    ------------
+    register_for_each_vma() / uprobe_mmap()
+      install_breakpoint()
+        uprobe_write_opcode() {
+                if (instruction is not already patched) {
+                        /* Gets called only _once_. */
+                        increment the reference counter;
+                        patch the instruction;
+                }
+        }
+    ------------
+
+Here, reference counter is updated only if we are going to patch the
+instruction. No matter how many consumers are there, no matter how many
+times install_breakpoint() gets called. Same case for decrement as well.
+Reference counter will get decremented only when we are going to reset
+the instruction.
+
+Now, if I put it inside install_breakpoint():
+
+    ------------
+    uprobe_register()
+      register_for_each_vma()
+        install_breakpoint() {
+                /* Called _for each consumer_ */
+                increment the reference counter _once_;
+                uprobe_write_opcode()
+		...
+        }
+
+  OR
+
+    uprobe_mmap()
+      install_breakpoint() {
+                increment the reference counter _for each consumer_;
+                uprobe_write_opcode()
+		...
+      }
+    ------------
+
+By putting it inside install_breaopoint() / remove_breakpoint(), we
+increment and decremnet the counter for each consumer.
+
+Consider this python example:
+
+    ------------
+    # readelf -n /usr/lib64/libpython2.7.so.1.0 | grep -A2 Provider
+      Provider: python
+      Name: function__entry
+      ... Semaphore: 0x00000000002899d8
+
+    # sudo perf probe sdt_python:function__entry
+
+    # strace python
+      mmap(NULL, 2738968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fff92460000
+      mmap(0x7fff926a0000, 327680, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x230000) = 0x7fff926a0000
+      mprotect(0x7fff926a0000, 65536, PROT_READ) = 0
+    ------------
+
+The first mmap() maps the whole library into one region. Second mmap()
+and third mprotect() split out the whole region into smaller vmas and
+sets appropriate protection flags.
+
+Now, in this case, install_breakpoint() will update reference counter
+twice -- by second mmap() call and by third mprotect() call -- because
+both regions contains the same reference counter. But, remove_brekpoint()
+will decrement the reference counter only once, which will left counter
+greater than 0 even when no one is tracing on that uprobe.
+
+To solve this issue, I have to re-introduced sdt_mm_list, a list of
+{consumer,mm} tuple for each uprobe. This tells us, for X consumer
+we already have incremented the counter in Y mm so that we don't
+increment same counter again. This additional complexity is to make
+sure increment and decrement happen in sync.
+
+Fortunately, we don't need to maintain this list with current approach,
+because we know for sure that, increment and decrement will happen only
+once when we patch/up-patch the instruction.
+
+In short, if I put it inside install_breakpoint()/remove_breakpoint(),
+I'll have to put the same logic there with more complication to
+increment / decrement counter for each consumer. And additionally,
+I've to maintain sdt_mm_list to make sure increment and decrement
+happen in sync. With current approach, this all happens by default :)
+
+
 > 
-> 2. when either -j or -p are supplied, a new json object named
-> "formatted" is added for each key-value pair. This object contains the
-> same data as the key-value pair, but with btf info. "formatted" object
-> promises json- and backward- compatibility. Below is a sample output.
+>> BTW, is there any harm in exporting struct uprobe outside of uprobe.c?
 > 
-> $ bpftool map dump -p id 8
-> [{
->         "key": ["0x0f","0x00","0x00","0x00"
->         ],
->         "value": ["0x03", "0x00", "0x00", "0x00", ...
->         ],
->         "formatted": {
->                 "key": 15,
->                 "value": {
->                         "int_field":  3,
->                         ...
->                 }
->         }
-> }
-> ]
+> I think it is always better to avoid the exporting if possible (and avoid
+> changing the arch-dependant set_swbp/set_orig_insn). But once again, I think
+> this only complicates the code for no reason.> 
+>>> So why do we need a counter but not a boolean? IIRC, because the counter can
+>>> be shared, in particular 2 different uprobes can have the same >ref_ctr_offset,
+>>> right?
+>>
+>> Actually, it's by design. This counter keeps track of current tracers
+>> tracing on a particular SDT marker. So only boolean can't work here.
+>> Also, yes, multiple markers can share the same reference counter.
 > 
-> This patch calls btf_dumper introduced in previous patch to accomplish
-> the above. Indeed, btf-ful info is only displayed if btf data for the
-> given map is available. Otherwise existing output is displayed as-is.
+> markers or uprobes? OK, I'll assume that multiple uprobes can share the counter.
+
+
+Yes, I meant uprobe.
+
+
 > 
-> Signed-off-by: Okash Khawaja <osk@fb.com>
+>>> But who else can use this counter and how? Say, can userspace update it too?
+>>
+>> There are many different ways user can change the reference counter.
+>> Ex, systemtap and bcc both uses uprobe to probe on a marker but reference
+>> counter update logic is different in both of them. Systemtap records all
+>> exec/mmap events and updates the counter when it finds interested process/
+>> vma. bcc directly hooks into process's memory (/proc/pid/mem).
 > 
-> ---
->  tools/bpf/bpftool/map.c |  174 +++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 166 insertions(+), 8 deletions(-)
+> OK, and how exactly they update the counter? I mean, can we assume that, say,
+> bcc or systemtap can only increment or decrement it?
+
+
+I don't think we can assume anything here because this is all in user's
+control. User can even manually go and update the counter by directly
+hooking into the memory. Ex, Brendan Gregg's blog on USDT explains how
+to change counter manually in "Hacking with Ftrace: Is-Enabled" section
+of his blog:
+  http://www.brendangregg.com/blog/2015-07-03/hacking-linux-usdt-ftrace.html
+
+
 > 
-> --- a/tools/bpf/bpftool/map.c
-> +++ b/tools/bpf/bpftool/map.c
-> @@ -41,9 +41,13 @@
->  #include <unistd.h>
->  #include <sys/types.h>
->  #include <sys/stat.h>
-> +#include <linux/err.h>
->  
->  #include <bpf.h>
->  
-> +#include "json_writer.h"
-> +#include "btf.h"
-> +#include "btf_dumper.h"
->  #include "main.h"
+> If yes, perhaps we can simplify the kernel code...
 
-Please keep the headers in alphabetical order.
 
->  static const char * const map_type_name[] = {
-> @@ -148,8 +152,99 @@ int map_parse_fd_and_info(int *argc, cha
->  	return fd;
->  }
->  
-> +static int do_dump_btf(const struct btf_dumper *d,
-> +		       struct bpf_map_info *map_info, void *key,
-> +		       void *value)
-> +{
-> +	int ret;
-> +
-> +	/* start of key-value pair */
-> +	jsonw_start_object(d->jw);
-> +
-> +	jsonw_name(d->jw, "key");
-> +
-> +	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
-> +	if (ret)
-> +		return ret;
+Sure, let me know if you have any better idea.
 
-goto err_end_obj;
-
-> +	jsonw_name(d->jw, "value");
-> +
-> +	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
-
-err_end_obj:
-
-> +	/* end of key-value pair */
-> +	jsonw_end_object(d->jw);
-> +
-> +	return ret;
-> +}
-> +
-> +static struct btf *get_btf(struct bpf_map_info *map_info)
-> +{
-> +	int btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
-
-No failing functions in initializers please.
-
-> +	struct bpf_btf_info btf_info = { 0 };
-> +	__u32 len = sizeof(btf_info);
-> +	void *ptr = NULL, *temp_ptr;
-> +	struct btf *btf = NULL;
-> +	uint32_t last_size;
-> +	int err;
-> +
-> +	if (btf_fd < 0)
-> +		return NULL;
-> +
-> +	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
-> +	 * let's start with a sane default - 4KiB here - and resize it only if
-> +	 * bpf_obj_get_info_by_fd() needs a bigger buffer. the do-while loop
-> +	 * below should run a maximum of two iterations and that will be when
-> +	 * we have to resize to a bigger buffer.
-> +	 */
-> +	btf_info.btf_size = 4096;
-> +	do {
-> +		last_size = btf_info.btf_size;
-> +		temp_ptr = realloc(ptr, last_size);
-> +		if (!temp_ptr) {
-> +			p_err("unable to allocate memory for debug info");
-> +			goto exit_free;
-> +		}
-> +
-> +		ptr = temp_ptr;
-> +		bzero(ptr, last_size);
-> +		btf_info.btf = ptr_to_u64(ptr);
-> +		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
-> +	} while (!err && btf_info.btf_size > last_size && last_size == 4096);
-> +
-> +	if (err || btf_info.btf_size > last_size) {
-> +		p_info("can't get btf info. debug info won't be displayed. error: %s",
-> +		       err ? strerror(errno) : "exceeds size retry");
-> +		goto exit_free;
-> +	}
-
-This "run me twice while handling realloc failure" loop seems very
-unappealing.  Could you just open code this?
-
-> +	btf = btf__new((uint8_t *)btf_info.btf,
-> +		       btf_info.btf_size, NULL);
-> +	if (IS_ERR(btf)) {
-> +		printf("error when initialising btf: %s\n",
-> +		       strerror(PTR_ERR(btf)));
-
-printfs are not allowed, they break JSON.
-
-> +		btf = NULL;
-> +	}
-> +
-> +exit_free:
-> +	close(btf_fd);
-> +	free(ptr);
-> +
-> +	return btf;
-> +}
-> +
-> +static json_writer_t *get_btf_writer(void)
-> +{
-> +	json_writer_t *jw = jsonw_new(stdout);
-> +
-> +	if (!jw)
-> +		return NULL;
-> +	jsonw_pretty(jw, true);
-> +
-> +	return jw;
-> +}
-> +
->  static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
-> -			     unsigned char *value)
-> +			     unsigned char *value, struct btf *btf)
->  {
->  	jsonw_start_object(json_wtr);
->  
-> @@ -158,6 +253,15 @@ static void print_entry_json(struct bpf_
->  		print_hex_data_json(key, info->key_size);
->  		jsonw_name(json_wtr, "value");
->  		print_hex_data_json(value, info->value_size);
-> +		if (btf) {
-> +			struct btf_dumper d = {
-> +				.btf = btf,
-> +				.jw = json_wtr,
-> +				.is_plain_text = false,
-> +			};
-
-Empty line after variables, please fix everywhere.
-
-> +			jsonw_name(json_wtr, "formatted");
-> +			do_dump_btf(&d, info, key, value);
-> +		}
->  	} else {
->  		unsigned int i, n;
->  
-> @@ -508,10 +612,12 @@ static int do_show(int argc, char **argv
->  
->  static int do_dump(int argc, char **argv)
->  {
-> +	struct bpf_map_info info = {};
->  	void *key, *value, *prev_key;
->  	unsigned int num_elems = 0;
-> -	struct bpf_map_info info = {};
->  	__u32 len = sizeof(info);
-> +	json_writer_t *btf_wtr;
-> +	struct btf *btf = NULL;
->  	int err;
->  	int fd;
->  
-> @@ -537,8 +643,22 @@ static int do_dump(int argc, char **argv
->  	}
->  
->  	prev_key = NULL;
-> +
-> +	btf = get_btf(&info);
->  	if (json_output)
->  		jsonw_start_array(json_wtr);
-> +	else
-> +		if (btf) {
-> +			btf_wtr = get_btf_writer();
-> +			if (!btf_wtr) {
-> +				p_info("failed to create json writer for btf. falling back to plain output");
-> +				btf__free(btf);
-> +				btf = NULL;
-> +			} else {
-> +				jsonw_start_array(btf_wtr);
-
-Do we need to start array for non-JSON output?
-
-> +			}
-> +		}
-> +
->  	while (true) {
->  		err = bpf_map_get_next_key(fd, prev_key, key);
->  		if (err) {
-> @@ -549,9 +669,18 @@ static int do_dump(int argc, char **argv
->  
->  		if (!bpf_map_lookup_elem(fd, key, value)) {
->  			if (json_output)
-> -				print_entry_json(&info, key, value);
-> +				print_entry_json(&info, key, value, btf);
->  			else
-> -				print_entry_plain(&info, key, value);
-> +				if (btf) {
-> +					struct btf_dumper d = {
-> +						.btf = btf,
-> +						.jw = btf_wtr,
-> +						.is_plain_text = true,
-> +					};
-> +					do_dump_btf(&d, &info, key, value);
-> +				} else {
-> +					print_entry_plain(&info, key, value);
-> +				}
->  		} else {
->  			if (json_output) {
->  				jsonw_name(json_wtr, "key");
-> @@ -574,14 +703,19 @@ static int do_dump(int argc, char **argv
->  
->  	if (json_output)
->  		jsonw_end_array(json_wtr);
-> -	else
-> +	else if (btf) {
-> +		jsonw_end_array(btf_wtr);
-> +		jsonw_destroy(&btf_wtr);
-> +	} else {
->  		printf("Found %u element%s\n", num_elems,
->  		       num_elems != 1 ? "s" : "");
-> +	}
->  
->  exit_free:
->  	free(key);
->  	free(value);
->  	close(fd);
-> +	btf__free(btf);
->  
->  	return err;
->  }
-> @@ -637,6 +771,8 @@ static int do_lookup(int argc, char **ar
->  {
->  	struct bpf_map_info info = {};
->  	__u32 len = sizeof(info);
-> +	json_writer_t *btf_wtr;
-> +	struct btf *btf = NULL;
->  	void *key, *value;
->  	int err;
->  	int fd;
-> @@ -662,10 +798,31 @@ static int do_lookup(int argc, char **ar
->  
->  	err = bpf_map_lookup_elem(fd, key, value);
->  	if (!err) {
-> -		if (json_output)
-> -			print_entry_json(&info, key, value);
-> -		else
-> +		btf = get_btf(&info);
-> +		if (json_output) {
-> +			print_entry_json(&info, key, value, btf);
-> +		} else if (btf) {
-> +			/* if here json_wtr wouldn't have been initialised,
-> +			 * so let's create separate writer for btf
-> +			 */
-> +			btf_wtr = get_btf_writer();
-> +			if (!btf_wtr) {
-> +				p_info("failed to create json writer for btf. falling back to plain output");
-> +				btf__free(btf);
-> +				btf = NULL;
-> +				print_entry_plain(&info, key, value);
-> +			} else {
-> +				struct btf_dumper d = {
-> +					.btf = btf,
-> +					.jw = btf_wtr,
-> +					.is_plain_text = true,
-> +				};
-> +				do_dump_btf(&d, &info, key, value);
-> +				jsonw_destroy(&btf_wtr);
-> +			}
-> +		} else {
-
-This is way too much code in a if (!err) branch.
-
-Please refactor so that err = bpf_map_lookup_elem(fd, key, value); is
-followed by error handling and the actual printing is non-indented.
-
->  			print_entry_plain(&info, key, value);
-> +		}
->  	} else if (errno == ENOENT) {
->  		if (json_output) {
->  			jsonw_null(json_wtr);
-> @@ -682,6 +839,7 @@ exit_free:
->  	free(key);
->  	free(value);
->  	close(fd);
-> +	btf__free(btf);
->  
->  	return err;
->  }
-> 
+Thanks,
+Ravi
 
