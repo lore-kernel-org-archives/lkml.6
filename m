@@ -2,99 +2,102 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72B7C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F920C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7544623C6D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7544623C6D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 58C27208A4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C27208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754597AbeGCH27 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:28:59 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:33856 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753213AbeGCH26 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:28:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4549060B5C38;
-        Tue,  3 Jul 2018 09:28:57 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id C77BoF04kTPk; Tue,  3 Jul 2018 09:28:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id EBDDC60B5C39;
-        Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id yV6RGVr_PYUt; Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id C53E960B5C38;
-        Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        y2038@lists.linaro.org, Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ubifs: tnc: use monotonic znode timestamp
-Date:   Tue, 03 Jul 2018 09:28:56 +0200
-Message-ID: <58899545.Szx3E6bSux@blindfold>
-In-Reply-To: <31916482.81kKL2104G@blindfold>
-References: <20180620082937.719067-1-arnd@arndb.de> <31916482.81kKL2104G@blindfold>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S932302AbeGCH3P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:29:15 -0400
+Received: from olimex.com ([184.105.72.32]:53984 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753591AbeGCH3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:29:13 -0400
+Received: from localhost.localdomain ([195.238.85.143])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AES(128):Mac=SHA256) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 00:29:12 -0700
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
+        DIGITAL (SD) AND...),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support), linux-kernel@vger.kernel.org (open list)
+Cc:     Stefan Mavrodiev <stefan@olimex.com>
+Subject: [PATCH 1/1] mmc: sunxi: Disable irq during pm_suspend
+Date:   Tue,  3 Jul 2018 10:28:43 +0300
+Message-Id: <1530602925-7714-1-git-send-email-stefan@olimex.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 2. Juli 2018, 16:24:15 CEST schrieb Richard Weinberger:
-> Arnd,
-> 
-> Am Mittwoch, 20. Juni 2018, 10:29:11 CEST schrieb Arnd Bergmann:
-> > The tnc uses get_seconds() based timestamps to check the age of a znode,
-> > which has two problems: on 32-bit architectures this may overflow in
-> > 2038 or 2106, and it gives incorrect information when the system time
-> > is updated using settimeofday().
-> > 
-> > Using montonic timestamps with ktime_get_seconds() solves both thes
-> > problems.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  fs/ubifs/shrinker.c | 2 +-
-> >  fs/ubifs/tnc.c      | 4 ++--
-> >  fs/ubifs/tnc_misc.c | 2 +-
-> >  fs/ubifs/ubifs.h    | 2 +-
-> >  4 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/ubifs/shrinker.c b/fs/ubifs/shrinker.c
-> > index 9a9fb94a41c6..9d10cbdec2cc 100644
-> > --- a/fs/ubifs/shrinker.c
-> > +++ b/fs/ubifs/shrinker.c
-> > @@ -71,7 +71,7 @@ static int shrink_tnc(struct ubifs_info *c, int nr, int age, int *contention)
-> >  {
-> >  	int total_freed = 0;
-> >  	struct ubifs_znode *znode, *zprev;
-> > -	int time = get_seconds();
-> > +	time64_t time = ktime_get_seconds();
-> 
-> ubifs does
-> 	abs(time - znode->time) >= age) {
-> 
-> Is this still legit with time64_t?
+When mmc host controller enters suspend state, the clocks are
+disabled, but irqs are not. For some reason the irqchip emmits
+false interrupts, which causes system lock loop.
 
-Answering my own question, yes.
-abs() seems to be able to deal with 64bit numbers and time64_t is just a number.
+Debug log is:
+  ...
+  sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded 51200000
+  sunxi-mmc 1c11000.mmc: enabling the clock
+  sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+  sunxi-mmc 1c11000.mmc: cmd 6(80000146) arg 3210101 ie 0x0000bbc6 len 0
+  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+  sunxi-mmc 1c11000.mmc: cmd 13(8000014d) arg 10000 ie 0x0000bbc6 len 0
+  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00000004 idi 00000000
+  mmc1: new DDR MMC card at address 0001
+  mmcblk1: mmc1:0001 AGND3R 14.6 GiB
+  mmcblk1boot0: mmc1:0001 AGND3R partition 1 4.00 MiB
+  mmcblk1boot1: mmc1:0001 AGND3R partition 2 4.00 MiB
+  sunxi-mmc 1c11000.mmc: cmd 18(80003352) arg 0 ie 0x0000fbc2 len 409
+  sunxi-mmc 1c11000.mmc: irq: rq (ptrval) mi 00004000 idi 00000002
+   mmcblk1: p1
+  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+  sunxi-mmc 1c11000.mmc: irq: rq   (null) mi 00000000 idi 00000000
+and so on...
 
-Thanks,
-//richard
+This issue apears on eMMC cards, routed on MMC2 slot. The patch is
+tested with A20-OLinuXino-MICRO/LIME/LIME2 boards.
+
+Fixes: 9a8e1e8cc2c0 ("mmc: sunxi: Add runtime_pm support")
+Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+---
+ drivers/mmc/host/sunxi-mmc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index e747259..acae7a8 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1446,6 +1446,7 @@ static int sunxi_mmc_runtime_resume(struct device *dev)
+ 	sunxi_mmc_init_host(host);
+ 	sunxi_mmc_set_bus_width(host, mmc->ios.bus_width);
+ 	sunxi_mmc_set_clk(host, &mmc->ios);
++	enable_irq(host->irq);
+ 
+ 	return 0;
+ }
+@@ -1455,6 +1456,7 @@ static int sunxi_mmc_runtime_suspend(struct device *dev)
+ 	struct mmc_host	*mmc = dev_get_drvdata(dev);
+ 	struct sunxi_mmc_host *host = mmc_priv(mmc);
+ 
++	disable_irq(host->irq);
+ 	sunxi_mmc_reset_host(host);
+ 	sunxi_mmc_disable(host);
+ 
+-- 
+2.7.4
+
