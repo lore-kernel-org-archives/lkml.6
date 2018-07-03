@@ -2,123 +2,81 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA80C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8C1C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91932147E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:15:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+nFdqwj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91932147E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B368E2147E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:16:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B368E2147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933954AbeGCQPt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:15:49 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45305 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932668AbeGCQPq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S933672AbeGCQPs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:15:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52116 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932440AbeGCQPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Jul 2018 12:15:46 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q5-v6so1997697ljh.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 09:15:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1Mf23BocOjkmT1UOBTx+cUgy+bCAfH7DVH0a1RYWhjU=;
-        b=W+nFdqwjGTICsC3avADr8P28VILmMNIPMckzkpyQSPNWA6/pWtaAptPPaehJsodses
-         gLGzwpUSm2rrKa85b6hNlse0W1VSGu8e1l6tmMjjQk6IuaRCzrtmf/WWzHxCOhiX10yo
-         IHCjgZ+984x1lBQVhsxro4j8FnaYxfn1hroSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1Mf23BocOjkmT1UOBTx+cUgy+bCAfH7DVH0a1RYWhjU=;
-        b=qCBW3n0amDGvTikrDGIq5WDlpUzApIIJGlIWg3AhBE480oyEA/clHdu5qW+oJ85DG/
-         qkzi2Zz+dsWmfRlnCpDKdL+NUHF6EW4JYaYigH5QOzr8zSsjhcPIX5BEMu+UF3XQs+CE
-         THQx3lEBJlFlt4cCB7fmZVzd2KIVRuXg/Up8lP5HgHOsNKyZEtBwToFTOXckbVpvY+Pc
-         bGtZzvRZkUSWoBC4+tbANCtnjjokJ/nH3WFmc3wlYgNEY98fMhdo5PzYodMT4T+vGO5j
-         kPLeFtLETbhjQV9eUFY8+JAcXwrj/1OcdJcIvZxNFasXTjUetqd1pkU3TvASiR0EFaw6
-         pArw==
-X-Gm-Message-State: APt69E1tYx30T2fXrA7VctWv0ARZl4hG+ijYB4bnoRHgA9MjMa49Irwz
-        fn4pZP+ROEGNs2udH/L+buH3QA==
-X-Google-Smtp-Source: AAOMgperVLJxvbBKv11xrDsu89T0JlOsj904UkhalCkYV9xCTfamWdvJZ4sCDc66i8rhDis4/1CX8A==
-X-Received: by 2002:a2e:259:: with SMTP id 86-v6mr10692292ljc.107.1530634545226;
-        Tue, 03 Jul 2018 09:15:45 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id s80-v6sm315151lfg.89.2018.07.03.09.15.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 09:15:44 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 18:15:42 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs
-Message-ID: <20180703161542.GA9243@centauri.lan>
-References: <20180703072034.20213-7-niklas.cassel@linaro.org>
- <201807032156.Cu0UKJEA%fengguang.wu@intel.com>
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2C5B7A9;
+        Tue,  3 Jul 2018 09:15:45 -0700 (PDT)
+Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DDEC3F5BA;
+        Tue,  3 Jul 2018 09:15:41 -0700 (PDT)
+Subject: Re: [PATCH 6/7 v5] bus: fsl-mc: set coherent dma mask for devices on
+ fsl-mc bus
+To:     Nipun Gupta <nipun.gupta@nxp.com>, will.deacon@arm.com,
+        robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, gregkh@linuxfoundation.org,
+        laurentiu.tudor@nxp.com, bhelgaas@google.com
+Cc:     hch@lst.de, joro@8bytes.org, m.szyprowski@samsung.com,
+        shawnguo@kernel.org, frowand.list@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+        bharat.bhushan@nxp.com, stuyoder@gmail.com, leoyang.li@nxp.com
+References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
+ <1526824191-7000-7-git-send-email-nipun.gupta@nxp.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <79ac0aab-9620-b6ed-f3ee-0553a733a044@arm.com>
+Date:   Tue, 3 Jul 2018 17:15:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201807032156.Cu0UKJEA%fengguang.wu@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1526824191-7000-7-git-send-email-nipun.gupta@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 11:10:53PM +0800, kbuild test robot wrote:
-> Hi Niklas,
+On 20/05/18 14:49, Nipun Gupta wrote:
+> of_dma_configure() API expects coherent_dma_mask to be correctly
+> set in the devices. This patch does the needful.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+> ---
+>   drivers/bus/fsl-mc/fsl-mc-bus.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Thank you for the patch! Yet something to improve:
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> index fa43c7d..624828b 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> @@ -627,6 +627,7 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
+>   		mc_dev->icid = parent_mc_dev->icid;
+>   		mc_dev->dma_mask = FSL_MC_DEFAULT_DMA_MASK;
+>   		mc_dev->dev.dma_mask = &mc_dev->dma_mask;
+> +		mc_dev->dev.coherent_dma_mask = mc_dev->dma_mask;
+>   		dev_set_msi_domain(&mc_dev->dev,
+>   				   dev_get_msi_domain(&parent_mc_dev->dev));
+>   	}
 > 
-> [auto build test ERROR on agross/for-next]
-> [also build test ERROR on next-20180702]
-> [cannot apply to v4.18-rc3]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Niklas-Cassel/soc-qcom-Allow-COMPILE_TEST-of-qcom-SoC-Kconfigs/20180703-173055
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git for-next
-> config: parisc-allmodconfig (attached as .config)
-> compiler: hppa-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=parisc 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/interrupt.h:6:0,
->                     from drivers//rpmsg/qcom_smd.c:7:
->    drivers//rpmsg/qcom_smd.c: In function 'qcom_smd_channel_open':
-> >> drivers//rpmsg/qcom_smd.c:817:36: error: 'SZ_4K' undeclared (first use in this function)
->      bb_size = min(channel->fifo_size, SZ_4K);
->                                        ^
-
-Hi kbuild test robot,
-
-Thank you for your suggestion! Yet something to improve:
-
-This is already fixed in commit
-67cd0eec5b62 ("rpmsg: smd: Add missing include of sizes.h")
-
-which is part of the latest linux-next tag.
-
-$ git tag --contains 67cd0eec5b62
-next-20180703
-
-This tag already existed before I sent my patch series.
-
-A suggestion is that you use the latest linux-next tag when building.
-
-Best regards,
-Niklas
