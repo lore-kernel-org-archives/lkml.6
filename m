@@ -2,125 +2,418 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 543C0C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF112C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E03208C2
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E03208C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F91C24D6B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:29:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="TJfdSQlL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F91C24D6B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754114AbeGCFYf (ORCPT
+        id S1753999AbeGCF3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:24:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753822AbeGCFYe (ORCPT
+        Tue, 3 Jul 2018 01:29:23 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44660 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753822AbeGCF3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:24:34 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w635OQUp140712
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 01:24:33 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jywu71jn0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 01:24:33 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 01:24:33 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 01:24:30 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w635OTKn15991208
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 05:24:29 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70CAA112063;
-        Tue,  3 Jul 2018 01:24:22 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EEB0112061;
-        Tue,  3 Jul 2018 01:24:22 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 01:24:22 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 03BE92E2F3D; Tue,  3 Jul 2018 10:54:27 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     akshay.adiga@linux.vnet.ibm.com,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH] cpuidle:powernv: Add the CPUIDLE_FLAG_POLLING for snooze
-Date:   Tue,  3 Jul 2018 10:54:16 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18070305-0072-0000-0000-00000378D3A5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009299; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055793; UDB=6.00541544; IPR=6.00833716;
- MB=3.00021972; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 05:24:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070305-0073-0000-0000-000048927830
-Message-Id: <1530595456-32352-1-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=882 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030062
+        Tue, 3 Jul 2018 01:29:21 -0400
+Received: by mail-qt0-f195.google.com with SMTP id b15-v6so571202qtp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 22:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=rwU9pFNNv9L/MnrMA0kZnm5scorxyWFO0MXGe31BueM=;
+        b=TJfdSQlLG5UhzH+q4c0QoxTqaNBiCcqWZLlL034OA+u/8rNls5dBVuEkc+otWRyITn
+         CEkkC6vvkp59YIscs6ogyHy070ebInhFvdrehsGUBiM/otIgl8BDhiDGqUDJWHOaaUDW
+         Q8PD2Or9Kpt6KoT3JHKeJ+Y7vAJ+1Cu/8wX1hZ1VtwHli/p4cgCmcB96T9L1f41xKeta
+         DlAlnYVyudtWG74uGuEY2+1wY03cFz7TTSoKn2lCMeNgyM8DoAt2GcZNHE819R7WH1X3
+         Omld1b69Y5RlChLtWdvpB8vLq6kF9SrOEUyHwKGipYpXJq92riY8GcTFt+BbeQJ5qquK
+         KFMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=rwU9pFNNv9L/MnrMA0kZnm5scorxyWFO0MXGe31BueM=;
+        b=YekM0jgw75KbHEKxtvRs4UYWpYq7ZKujOhv1aFb6MYryH3LttRo0X1XlqSwM/zOkK3
+         xmc4CrAJpMomN+TF6UVjjz211128BUyTbcpvQ5leXWODHBgdc3Jy7mH6Cecqmaq7epu3
+         aIIeyLSqbxlLZxciodCiX+P8B21LRI5MCY2R0dsmMckMvypm+eTFqdyMKU2c3glFa4ht
+         92rFxZlyKjIx2XsDkYfqfdZrpe7r7dMNyACRBmMN3irbCffIwg4OFVcuA18yuq188rPd
+         Ss0Aqyl4aGHJqcyQUXMD54d5Fb8+HUHhlq9DopnLPDXEf8GVxeNrTvWKq5RJsKu/Mffa
+         ME0w==
+X-Gm-Message-State: APt69E3S1jZM1XMA1PcX3Fk4jJNVLwx1WiztEekbMM/yZBzwQ4aR5iKm
+        OpK/Wn11XVeiBD6zSANbW0UZ7w==
+X-Google-Smtp-Source: AAOMgpfKeJ6m5rJPk92jJiHxEaKzGBqHhYmYgJx3Gkt0SAOLpt8BpeLokcQBynFz6mcyQM62JETw7g==
+X-Received: by 2002:a0c:c309:: with SMTP id f9-v6mr24832060qvi.104.1530595760755;
+        Mon, 02 Jul 2018 22:29:20 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id g64-v6sm192597qkd.77.2018.07.02.22.29.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 22:29:20 -0700 (PDT)
+Date:   Mon, 2 Jul 2018 22:29:16 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Okash Khawaja <osk@fb.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        "Quentin Monnet" <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next v2 3/3] bpf: btf: print map dump and lookup
+ with btf info
+Message-ID: <20180702222916.295e8012@cakuba.netronome.com>
+In-Reply-To: <20180702191324.683291855@fb.com>
+References: <20180702183913.669030439@fb.com>
+        <20180702191324.683291855@fb.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On Mon, 2 Jul 2018 11:39:16 -0700, Okash Khawaja wrote:
+> This patch augments the output of bpftool's map dump and map lookup
+> commands to print data along side btf info, if the correspondin btf
+> info is available. The outputs for each of  map dump and map lookup
+> commands are augmented in two ways:
+> 
+> 1. when neither of -j and -p are supplied, btf-ful map data is printed
+> whose aim is human readability. This means no commitments for json- or
+> backward- compatibility.
+> 
+> 2. when either -j or -p are supplied, a new json object named
+> "formatted" is added for each key-value pair. This object contains the
+> same data as the key-value pair, but with btf info. "formatted" object
+> promises json- and backward- compatibility. Below is a sample output.
+> 
+> $ bpftool map dump -p id 8
+> [{
+>         "key": ["0x0f","0x00","0x00","0x00"
+>         ],
+>         "value": ["0x03", "0x00", "0x00", "0x00", ...
+>         ],
+>         "formatted": {
+>                 "key": 15,
+>                 "value": {
+>                         "int_field":  3,
+>                         ...
+>                 }
+>         }
+> }
+> ]
+> 
+> This patch calls btf_dumper introduced in previous patch to accomplish
+> the above. Indeed, btf-ful info is only displayed if btf data for the
+> given map is available. Otherwise existing output is displayed as-is.
+> 
+> Signed-off-by: Okash Khawaja <osk@fb.com>
+> 
+> ---
+>  tools/bpf/bpftool/map.c |  174 +++++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 166 insertions(+), 8 deletions(-)
+> 
+> --- a/tools/bpf/bpftool/map.c
+> +++ b/tools/bpf/bpftool/map.c
+> @@ -41,9 +41,13 @@
+>  #include <unistd.h>
+>  #include <sys/types.h>
+>  #include <sys/stat.h>
+> +#include <linux/err.h>
+>  
+>  #include <bpf.h>
+>  
+> +#include "json_writer.h"
+> +#include "btf.h"
+> +#include "btf_dumper.h"
+>  #include "main.h"
 
-In the situations where snooze is the only cpuidle state due to
-firmware not exposing any platform idle states, the idle CPUs will
-remain in snooze for a long time with interrupts disabled causing the
-Hard-lockup detector to complain.
+Please keep the headers in alphabetical order.
 
-watchdog: CPU 51 detected hard LOCKUP on other CPUs 59
-watchdog: CPU 51 TB:535296107736, last SMP heartbeat TB:527472229239 (15281ms ago)
-watchdog: CPU 59 Hard LOCKUP
-watchdog: CPU 59 TB:535296252849, last heartbeat TB:526554725466 (17073ms ago)
+>  static const char * const map_type_name[] = {
+> @@ -148,8 +152,99 @@ int map_parse_fd_and_info(int *argc, cha
+>  	return fd;
+>  }
+>  
+> +static int do_dump_btf(const struct btf_dumper *d,
+> +		       struct bpf_map_info *map_info, void *key,
+> +		       void *value)
+> +{
+> +	int ret;
+> +
+> +	/* start of key-value pair */
+> +	jsonw_start_object(d->jw);
+> +
+> +	jsonw_name(d->jw, "key");
+> +
+> +	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
+> +	if (ret)
+> +		return ret;
 
-Fix this by adding CPUIDLE_FLAG_POLLING flag to the state, so that the
-cpuidle governor will do the right thing, such as not stopping the
-tick if it is going to put the idle cpu to snooze.
+goto err_end_obj;
 
-Reported-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- drivers/cpuidle/cpuidle-powernv.c | 1 +
- 1 file changed, 1 insertion(+)
+> +	jsonw_name(d->jw, "value");
+> +
+> +	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
 
-diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
-index d29e4f0..b73041b 100644
---- a/drivers/cpuidle/cpuidle-powernv.c
-+++ b/drivers/cpuidle/cpuidle-powernv.c
-@@ -156,6 +156,7 @@ static int stop_loop(struct cpuidle_device *dev,
- 	{ /* Snooze */
- 		.name = "snooze",
- 		.desc = "snooze",
-+		.flags = CPUIDLE_FLAG_POLLING,
- 		.exit_latency = 0,
- 		.target_residency = 0,
- 		.enter = snooze_loop },
--- 
-1.9.4
+err_end_obj:
+
+> +	/* end of key-value pair */
+> +	jsonw_end_object(d->jw);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct btf *get_btf(struct bpf_map_info *map_info)
+> +{
+> +	int btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
+
+No failing functions in initializers please.
+
+> +	struct bpf_btf_info btf_info = { 0 };
+> +	__u32 len = sizeof(btf_info);
+> +	void *ptr = NULL, *temp_ptr;
+> +	struct btf *btf = NULL;
+> +	uint32_t last_size;
+> +	int err;
+> +
+> +	if (btf_fd < 0)
+> +		return NULL;
+> +
+> +	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
+> +	 * let's start with a sane default - 4KiB here - and resize it only if
+> +	 * bpf_obj_get_info_by_fd() needs a bigger buffer. the do-while loop
+> +	 * below should run a maximum of two iterations and that will be when
+> +	 * we have to resize to a bigger buffer.
+> +	 */
+> +	btf_info.btf_size = 4096;
+> +	do {
+> +		last_size = btf_info.btf_size;
+> +		temp_ptr = realloc(ptr, last_size);
+> +		if (!temp_ptr) {
+> +			p_err("unable to allocate memory for debug info");
+> +			goto exit_free;
+> +		}
+> +
+> +		ptr = temp_ptr;
+> +		bzero(ptr, last_size);
+> +		btf_info.btf = ptr_to_u64(ptr);
+> +		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
+> +	} while (!err && btf_info.btf_size > last_size && last_size == 4096);
+> +
+> +	if (err || btf_info.btf_size > last_size) {
+> +		p_info("can't get btf info. debug info won't be displayed. error: %s",
+> +		       err ? strerror(errno) : "exceeds size retry");
+> +		goto exit_free;
+> +	}
+
+This "run me twice while handling realloc failure" loop seems very
+unappealing.  Could you just open code this?
+
+> +	btf = btf__new((uint8_t *)btf_info.btf,
+> +		       btf_info.btf_size, NULL);
+> +	if (IS_ERR(btf)) {
+> +		printf("error when initialising btf: %s\n",
+> +		       strerror(PTR_ERR(btf)));
+
+printfs are not allowed, they break JSON.
+
+> +		btf = NULL;
+> +	}
+> +
+> +exit_free:
+> +	close(btf_fd);
+> +	free(ptr);
+> +
+> +	return btf;
+> +}
+> +
+> +static json_writer_t *get_btf_writer(void)
+> +{
+> +	json_writer_t *jw = jsonw_new(stdout);
+> +
+> +	if (!jw)
+> +		return NULL;
+> +	jsonw_pretty(jw, true);
+> +
+> +	return jw;
+> +}
+> +
+>  static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
+> -			     unsigned char *value)
+> +			     unsigned char *value, struct btf *btf)
+>  {
+>  	jsonw_start_object(json_wtr);
+>  
+> @@ -158,6 +253,15 @@ static void print_entry_json(struct bpf_
+>  		print_hex_data_json(key, info->key_size);
+>  		jsonw_name(json_wtr, "value");
+>  		print_hex_data_json(value, info->value_size);
+> +		if (btf) {
+> +			struct btf_dumper d = {
+> +				.btf = btf,
+> +				.jw = json_wtr,
+> +				.is_plain_text = false,
+> +			};
+
+Empty line after variables, please fix everywhere.
+
+> +			jsonw_name(json_wtr, "formatted");
+> +			do_dump_btf(&d, info, key, value);
+> +		}
+>  	} else {
+>  		unsigned int i, n;
+>  
+> @@ -508,10 +612,12 @@ static int do_show(int argc, char **argv
+>  
+>  static int do_dump(int argc, char **argv)
+>  {
+> +	struct bpf_map_info info = {};
+>  	void *key, *value, *prev_key;
+>  	unsigned int num_elems = 0;
+> -	struct bpf_map_info info = {};
+>  	__u32 len = sizeof(info);
+> +	json_writer_t *btf_wtr;
+> +	struct btf *btf = NULL;
+>  	int err;
+>  	int fd;
+>  
+> @@ -537,8 +643,22 @@ static int do_dump(int argc, char **argv
+>  	}
+>  
+>  	prev_key = NULL;
+> +
+> +	btf = get_btf(&info);
+>  	if (json_output)
+>  		jsonw_start_array(json_wtr);
+> +	else
+> +		if (btf) {
+> +			btf_wtr = get_btf_writer();
+> +			if (!btf_wtr) {
+> +				p_info("failed to create json writer for btf. falling back to plain output");
+> +				btf__free(btf);
+> +				btf = NULL;
+> +			} else {
+> +				jsonw_start_array(btf_wtr);
+
+Do we need to start array for non-JSON output?
+
+> +			}
+> +		}
+> +
+>  	while (true) {
+>  		err = bpf_map_get_next_key(fd, prev_key, key);
+>  		if (err) {
+> @@ -549,9 +669,18 @@ static int do_dump(int argc, char **argv
+>  
+>  		if (!bpf_map_lookup_elem(fd, key, value)) {
+>  			if (json_output)
+> -				print_entry_json(&info, key, value);
+> +				print_entry_json(&info, key, value, btf);
+>  			else
+> -				print_entry_plain(&info, key, value);
+> +				if (btf) {
+> +					struct btf_dumper d = {
+> +						.btf = btf,
+> +						.jw = btf_wtr,
+> +						.is_plain_text = true,
+> +					};
+> +					do_dump_btf(&d, &info, key, value);
+> +				} else {
+> +					print_entry_plain(&info, key, value);
+> +				}
+>  		} else {
+>  			if (json_output) {
+>  				jsonw_name(json_wtr, "key");
+> @@ -574,14 +703,19 @@ static int do_dump(int argc, char **argv
+>  
+>  	if (json_output)
+>  		jsonw_end_array(json_wtr);
+> -	else
+> +	else if (btf) {
+> +		jsonw_end_array(btf_wtr);
+> +		jsonw_destroy(&btf_wtr);
+> +	} else {
+>  		printf("Found %u element%s\n", num_elems,
+>  		       num_elems != 1 ? "s" : "");
+> +	}
+>  
+>  exit_free:
+>  	free(key);
+>  	free(value);
+>  	close(fd);
+> +	btf__free(btf);
+>  
+>  	return err;
+>  }
+> @@ -637,6 +771,8 @@ static int do_lookup(int argc, char **ar
+>  {
+>  	struct bpf_map_info info = {};
+>  	__u32 len = sizeof(info);
+> +	json_writer_t *btf_wtr;
+> +	struct btf *btf = NULL;
+>  	void *key, *value;
+>  	int err;
+>  	int fd;
+> @@ -662,10 +798,31 @@ static int do_lookup(int argc, char **ar
+>  
+>  	err = bpf_map_lookup_elem(fd, key, value);
+>  	if (!err) {
+> -		if (json_output)
+> -			print_entry_json(&info, key, value);
+> -		else
+> +		btf = get_btf(&info);
+> +		if (json_output) {
+> +			print_entry_json(&info, key, value, btf);
+> +		} else if (btf) {
+> +			/* if here json_wtr wouldn't have been initialised,
+> +			 * so let's create separate writer for btf
+> +			 */
+> +			btf_wtr = get_btf_writer();
+> +			if (!btf_wtr) {
+> +				p_info("failed to create json writer for btf. falling back to plain output");
+> +				btf__free(btf);
+> +				btf = NULL;
+> +				print_entry_plain(&info, key, value);
+> +			} else {
+> +				struct btf_dumper d = {
+> +					.btf = btf,
+> +					.jw = btf_wtr,
+> +					.is_plain_text = true,
+> +				};
+> +				do_dump_btf(&d, &info, key, value);
+> +				jsonw_destroy(&btf_wtr);
+> +			}
+> +		} else {
+
+This is way too much code in a if (!err) branch.
+
+Please refactor so that err = bpf_map_lookup_elem(fd, key, value); is
+followed by error handling and the actual printing is non-indented.
+
+>  			print_entry_plain(&info, key, value);
+> +		}
+>  	} else if (errno == ENOENT) {
+>  		if (json_output) {
+>  			jsonw_null(json_wtr);
+> @@ -682,6 +839,7 @@ exit_free:
+>  	free(key);
+>  	free(value);
+>  	close(fd);
+> +	btf__free(btf);
+>  
+>  	return err;
+>  }
+> 
 
