@@ -2,184 +2,122 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FA6C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C864C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1145822412
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4671322412
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:30:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W4aNS2fi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="otPbden5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1145822412
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t0cTeS5H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4671322412
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932739AbeGCDaI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 23:30:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932301AbeGCDaG (ORCPT
+        id S932775AbeGCDay (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 23:30:54 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41431 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932198AbeGCDaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 23:30:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8228760B67; Tue,  3 Jul 2018 03:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530588605;
-        bh=1QJCvMaFcA5vFBcTC+hoiH/OKuJ1yPHJLvL00X9HP0k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=W4aNS2fiBgNtbdcBb7Mm7NUpYbjgvLMRv/T0ZBKB4B8CaEtR0S703tvJCt0Xhp/Bp
-         JyXGTGsqMvAMw1G4Youxeu0UKcQ8J7ZA34/RiUaPu3vwkZkIL40ZLE/fvFEi182yiz
-         YSje6Y59M5+vbIyBQAUfVxQTuFt9pHo+V8TUbndw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 1231960452;
-        Tue,  3 Jul 2018 03:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1530588604;
-        bh=1QJCvMaFcA5vFBcTC+hoiH/OKuJ1yPHJLvL00X9HP0k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=otPbden5oqv7cQcN8gz2BOfxIhQJcEDl99Kq7jB/WTieESQEJwal6c/YwCQCjpKHX
-         EiJ0q/D65NXmO/uQ7dAe/TDKJ46a9d5wJrW1tlc8f4WJpm1vVg/qMHgD0vyrxiQq31
-         ytKWc2ymiL8bmrY4IyRa2gdTtpsnlrkkItG4/4MI=
+        Mon, 2 Jul 2018 23:30:52 -0400
+Received: by mail-pg0-f65.google.com with SMTP id l65-v6so281824pgl.8;
+        Mon, 02 Jul 2018 20:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=7/2CQEpXdYXzWD3rY3Dn6+9tXbxWxFQCo6LttwkWi7M=;
+        b=t0cTeS5HfSYU8YdMirndOS3w7WxVtqi+93IEfNLl6q1Lt9GG6EbmGRbiPLUJXmQ6xb
+         a30qqUeRhVB/96zPwzRnN6uZpKjE6AQYna7gcSyDW6QkMUPKWYa750Xh73FEeUbPXQDf
+         5IiAWWMPs5LpSGulzwCpLYY4diEzeS3QnumeoClt10mftwepMZQk/Gfm8ycOGCcHhvKt
+         uXrUixhMuOQRwcD9Tg4CHcOzzqa9PlYYcfIQnZOtFsMao+tTIf02i8PjeLeUhgTKfVo3
+         e9yzDm0rFEOYvqLcT0RiipBrhFBoXDKHpm6BlAEM4yYaRveYPe/xVNuTC8nnZ6yj7Jl3
+         /6/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=7/2CQEpXdYXzWD3rY3Dn6+9tXbxWxFQCo6LttwkWi7M=;
+        b=fYdidJA34i+MXlheY8Tw9n3smOACuurXMpzvTfUxs0Ee7YsGeeJJS+YfLVJ0gPQ/V4
+         l1xv2Tbccn3sg8Tn6A6g7mCjuEtCN8VYoDQmxOWCT++UK5jZS8sYI0uJuZlQAANfasWy
+         VuTd7sRN+7iwknHMQafSz4hpNNiB/h1xqpw3xW5XZ9/eo4gEsHN0HgA4HUc66xivJH4+
+         Gb2/IVHcXA3YcUAv/BBdouaXVEv34gCqtjuE7+86W18pUdl5YdzpNxGUn4RxPK7T2kXs
+         43OkcQ6LW1SN3q2KNo/p3KT/LoBtjOo1ttCSn8AwvKWv3RpseQHbBnpli94cUokRZhtt
+         IKuQ==
+X-Gm-Message-State: APt69E3KdS9GhLbTl25dgRSk9LfirEclB8QiOmvX1BzY/nCaPpsie6nK
+        YGlU0nPPR39XGCPDHqXbaJb2sg==
+X-Google-Smtp-Source: ADUXVKJi9/zrLdr6R0t/2GC62Oqi7/m1BxtbR4+id9S9lMStvzf2vCEmlx6CYoq1TVHq2DIv8jKFvA==
+X-Received: by 2002:a65:5ac9:: with SMTP id d9-v6mr23932131pgt.238.1530588651925;
+        Mon, 02 Jul 2018 20:30:51 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id 63-v6sm213065pfo.1.2018.07.02.20.30.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Jul 2018 20:30:51 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 13:30:45 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        stewart@linux.vnet.ibm.com, benh@kernel.crashing.org,
+        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 1/2] powernv/cpuidle: Parse dt idle properties into
+ global structure
+Message-ID: <20180703133045.3ec45faf@roar.ozlabs.ibm.com>
+In-Reply-To: <1530541401-19726-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+References: <1530541401-19726-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+        <1530541401-19726-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 03 Jul 2018 09:00:04 +0530
-From:   Abhishek Sahu <absahu@codeaurora.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v4 00/15] Update for QCOM NAND driver
-In-Reply-To: <20180701200959.2edb3306@xps13>
-References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
- <20180701200959.2edb3306@xps13>
-Message-ID: <275b38646a2b629ad7122f4cb4348371@codeaurora.org>
-X-Sender: absahu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-01 23:39, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> Abhishek Sahu <absahu@codeaurora.org> wrote on Wed, 20 Jun 2018
-> 12:57:27 +0530:
-> 
->> * v4:
->> 
->> 1. Added patch to make other ECC configurations function static.
->> 2. Clubbed the DT update patches.
->> 3. Removed the bad block related patch. Discussion is going on
->>    related with for proper solution so planning to submit separate
->>    patch series for all bad block related changes.
->> 4. Made the single codeword raw read function and used the same
->>    for raw page read.
->> 5. Changes in erased codeword detection to raw read function.
->> 
->> * v3:
->> 
->> 1. Addressed all review comments in v2.
->> 2. Added patch for removing redundant nand-ecc-step-size DT property.
->> 3. Renamed ECC configuration setup function with minor code changes.
->> 4. Modified comments and commit message for few patches.
->> 
->> * v2:
->> 
->> 1. Addressed all review comments in v1.
->> 1. Make the generic helper function for NAND ECC parameters setup
->>    and used this helper function for QCOM and Denali nand driver
->>    for ECC setup.
->> 2. Modified commit message for some of the patches and added more
->>    comments.
->> 3. Added new patch for fixing ‘return 0’ for raw read.
->> 4. Removed the read last codeword part for nand oob write.
->> 5. Reorganized bad block check function and removed the
->>    read_last_cw function completely.
->> 
->> * v1:
->> 
->> This patch series mainly deals with error handling and erased page
->> bitflip detection for QCOM NAND driver.
->> 
->> 1. The error handling was missing for some of the cases so fixed
->>    the same.
->> 
->> 2. Add the support for taking ECC strength from ONFI parameter.
->>    The earlier QCOM boards were coming with 4-bit ECC chip but
->>    now the same boards are coming with 8-bit ECC chip since the
->>    earlier 4-bit parts are obsolete from some vendors.
->> 
->> 3. We got few issues related with NAND erased page bitflips. The
->>    QCOM NAND controller can’t detect the bitflip in completely erased
->>    page so added the support to detect the same. It implemented the
->>    logic mentioned in patch [1] which didn’t go in mainline and later
->>    the generic functions were provided [2] to count the number of
->>    bitflips and make all 0xff. This patch series did some optimization
->>    logic to prevent the unnecessary full page raw read and data copy
->>    from QCOM NAND controller to DMA.
->> 
->> 4. Following are the testing done for these patches in QCOM IPQ8074
->>    HK01 (4-bit and 8-bit ECC chip) and IPQ806x AP148 boards.
->>     a. Run all mtd test and check if it passes
->>     b. Introduce custom bitflips in erased page and check if it
->>        returns no error/EUCLEAN/EBADMSG depending upon number of
->>        bitflips and position.
->>     c. Introduce failure condition for operational failure and
->>        check if it detects the same.
->> 
->> [1]: https://patchwork.ozlabs.org/patch/328994/
->> [2]: https://patchwork.ozlabs.org/patch/509970/
->> 
->> Abhishek Sahu (15):
->>   mtd: rawnand: helper function for setting up ECC configuration
->>   mtd: rawnand: denali: use helper function for ecc setup
->>   dt-bindings: qcom_nandc: update for ECC strength and step size
->>   mtd: rawnand: qcom: remove dt property nand-ecc-step-size
->>   mtd: rawnand: qcom: use the ecc strength from device parameter
->>   mtd: rawnand: qcom: wait for desc completion in all BAM channels
->>   mtd: rawnand: qcom: erased page detection for uncorrectable errors
->>     only
->>   mtd: rawnand: qcom: fix null pointer access for erased page 
->> detection
->>   mtd: rawnand: qcom: parse read errors for read oob also
->>   mtd: rawnand: qcom: modify write_oob to remove read codeword part
->>   mtd: rawnand: qcom: fix return value for raw page read
->>   mtd: rawnand: qcom: check for operation errors in case of raw read
->>   mtd: rawnand: qcom: code reorganization for raw read
->>   mtd: rawnand: qcom: erased page bitflips detection
->>   mtd: rawnand: provide only single helper function for ECC conf
->> 
->>  .../devicetree/bindings/mtd/qcom_nandc.txt         |   7 +-
->>  drivers/mtd/nand/raw/denali.c                      |  30 +-
->>  drivers/mtd/nand/raw/nand_base.c                   |  72 ++-
->>  drivers/mtd/nand/raw/qcom_nandc.c                  | 491 
->> ++++++++++++++-------
->>  include/linux/mtd/rawnand.h                        |  10 +-
->>  5 files changed, 380 insertions(+), 230 deletions(-)
->> 
-> 
-> Thank you very much for the series and the changes you have done.
-> 
+On Mon,  2 Jul 2018 19:53:20 +0530
+Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> wrote:
 
-  Thanks a lot Miquel for your great support and help in
-  reviewing and merging these patches :-)
+> Device-tree parsing happens twice, once while deciding idle state to be
+> used for hotplug and once during cpuidle init. Hence, parsing the device
+> tree and caching it will reduce code duplication. Parsing code has been
+> moved to pnv_parse_cpuidle_dt() from pnv_probe_idle_states(). In addition
+> to the properties in the device tree the number of available states is
+> also required.
+> 
+> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/include/asm/cpuidle.h    |  11 ++
+>  arch/powerpc/platforms/powernv/idle.c | 216 ++++++++++++++++----------
+>  drivers/cpuidle/cpuidle-powernv.c     |  11 +-
+>  3 files changed, 151 insertions(+), 87 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/cpuidle.h b/arch/powerpc/include/asm/cpuidle.h
+> index e210a83eb196..574b0ce1d671 100644
+> --- a/arch/powerpc/include/asm/cpuidle.h
+> +++ b/arch/powerpc/include/asm/cpuidle.h
+> @@ -79,6 +79,17 @@ struct stop_sprs {
+>  	u64 mmcra;
+>  };
+>  
+> +#define PNV_IDLE_NAME_LEN    16
+> +struct pnv_idle_states_t {
+> +	char name[PNV_IDLE_NAME_LEN];
+> +	u32 latency_ns;
+> +	u32 residency_ns;
+> +	u64 psscr_val;
+> +	u64 psscr_mask;
+> +	u32 flags;
+> +	bool valid;
+> +};
 
-> Applied all patches but "erased page bitflips detection" because I'm
-> waiting for one small modification on this one.
 
-  Sure. I will send that updated patch.
+This is a nice looking cleanup.
 
-  Regards,
-  Abhishek
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
