@@ -2,200 +2,122 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE391C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01A2C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63A7B20855
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:58:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kv4u25Db"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A7B20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id A2EEE20855
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2EEE20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752863AbeGCK6F (ORCPT
+        id S1752920AbeGCK60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:58:05 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:37277 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752752AbeGCK6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:58:01 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 43B6E10C0FF9;
-        Tue,  3 Jul 2018 03:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1530615480; bh=4aG1tZ0e4NRdFqjWuCZT3ZUIz9pq5IiaHNmFO6VfmK4=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=kv4u25DbQ9Gw+rGeVhclVDdKGtv/rqi4+uGE+wbpaUYh8+6r8tXo2CzM1Cwu1g5kA
-         5UpA5Sd9F6pCUoeU60Hv4O0199Ov13dYTvHli7hsD7Zn9AMXYmuJW73tKS7LHCZaEB
-         izpzZYdFYk8sdWcxNhe0Bmm3ikypv049x+BhXwk158HlSJPlZCSjtNxJkldp9oNxGi
-         y5tB4CdpcVFlWNYK2BvLhDzS6by78j2Du5wZOKsUNlDH2hhDYJZ3SEQA23CQE77C3+
-         p79YeNmOWcMQbBrifCldjxjrLlAv+AWiDni5sG6a1B7thrx/J1dybCkfi6wVX9u+Z8
-         EiVWlzYNF7HTg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 01F743405;
-        Tue,  3 Jul 2018 03:57:59 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 3 Jul 2018 03:57:59 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 3 Jul 2018 12:57:57 +0200
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "Vineet Gupta" <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Subject: Re: [PATCH] ARC: prevent showing irrelevant exception info in
- signal message
-Thread-Topic: [PATCH] ARC: prevent showing irrelevant exception info in
- signal message
-Thread-Index: AQHUD+Dcq7Gmeq1VYUmK5Tv6B9nu5aR8GxqAgAEdAYA=
-Date:   Tue, 3 Jul 2018 10:57:56 +0000
-Message-ID: <1530615475.30574.52.camel@synopsys.com>
-References: <20180629193907.17227-1-Eugeniy.Paltsev@synopsys.com>
-         <924308fe-efb3-45f7-b5cb-45d876021f32@synopsys.com>
-In-Reply-To: <924308fe-efb3-45f7-b5cb-45d876021f32@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.53]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AED868673C90534DAB7A88C0B744BF2D@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Tue, 3 Jul 2018 06:58:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752215AbeGCK6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:58:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C30E640255C9;
+        Tue,  3 Jul 2018 10:58:24 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-173.pek2.redhat.com [10.72.12.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 18E842026D76;
+        Tue,  3 Jul 2018 10:58:17 +0000 (UTC)
+Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
+ AMD sme enabled
+From:   lijiang <lijiang@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
+        thomas.lendacky@amd.com, dyoung@redhat.com,
+        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
+        bhe@redhat.com
+References: <20180702072639.10110-1-lijiang@redhat.com>
+ <20180702072639.10110-2-lijiang@redhat.com> <20180702101451.GB28730@zn.tnic>
+ <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
+Message-ID: <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
+Date:   Tue, 3 Jul 2018 18:58:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
+In-Reply-To: <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 10:58:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 03 Jul 2018 10:58:24 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA3LTAyIGF0IDEwOjU3IC0wNzAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
-ICtDQyBBbA0KPiANCj4gT24gMDYvMjkvMjAxOCAxMjozOSBQTSwgRXVnZW5peSBQYWx0c2V2IHdy
-b3RlOg0KPiA+IFdlIHByb2Nlc3Mgc2lnbmFscyBpbiB0aGUgZW5kIG9mIHN5c2NhbGwvZXhjZXB0
-aW9uIGhhbmRsZXIuDQo+ID4gSXQgdGhlIHNpZ25hbCBpcyBmYXRhbCB3ZSBwcmludCByZWdpc3Rl
-cidzIGNvbnRlbnQgdXNpbmcNCj4gPiBzaG93X3JlZ3MgZnVuY3Rpb24uIHNob3dfcmVncygpIGFs
-c28gcHJpbnRzIGluZm9ybWF0aW9uIGFib3V0DQo+ID4gbGFzdCBleGNlcHRpb24gaGFwcGVuZWQu
-DQo+ID4gDQo+ID4gSW4gY2FzZSBvZiBtdWx0aWNvcmUgc3lzdGVtIHdlIGNhbiBjYXRjaCB0aGUg
-c2l0dWF0aW9uIHdoZW4gd2UNCj4gPiB3aWxsIHByaW50IHdyb25nIGluZm9ybWF0aW9uIGFib3V0
-IGV4Y2VwdGlvbi4gU2VlIHRoZSBleGFtcGxlOg0KPiA+IF9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXw0KPiA+IENQVS0wOiBzdGFydGVkIHRvIGhhbmRsZSBwYWdlIGZhdWx0DQo+ID4gQ1BV
-LTE6IHNlbnQgc2lnbmFsIHRvIHByb2Nlc3MsIHdoaWNoIGlzIGV4ZWN1dGVkIG9uIENQVS0wDQo+
-ID4gQ1BVLTA6IGVuZGVkIHBhZ2UgZmF1bHQgaGFuZGxlLiBTdGFydGVkIHRvIHByb2Nlc3Mgc2ln
-bmFsIGJlZm9yZQ0KPiA+ICAgICAgICByZXR1cm5pZyB0byB1c2Vyc3BhY2UuIFByb2Nlc3Mgc2ln
-bmFsLCB3aGljaCBpcyBzZW5kIGZyb20NCj4gPiAgICAgICAgQ1BVLTAuIEFzIHRoIHNpZ25hbCBp
-cyBmYXRhbCB3ZSBjYWxsIHNob3dfcmVncygpLg0KPiA+ICAgICAgICBzaG93X3JlZ3MoKSB3aWxs
-IHNob3cgaW5mb3JtYXRpb24gYWJvdXQgbGFzdCBleGNlcHRpb24NCj4gPiAgICAgICAgd2hpY2gg
-aXMgKnBhZ2UgZmF1bHQqIChpbnN0ZWFkIG9mICJ0cmFwIiB3aGljaCBpcyB1c2VkIGZvcg0KPiA+
-ICAgICAgICBzaWduYWxzIGFuZCBoYXBwZW5lZCBvbiBDUFUtMCkNCj4gPiANCj4gPiBTbyB3ZSB3
-aWxsIGdldCBtZXNzYWdlIGxpa2UgdGhpczoNCj4gPiAgICAgL2hvbWUvd2FpdHBpZDAyDQo+ID4g
-ICBwb3RlbnRpYWxseSB1bmV4cGVjdGVkIGZhdGFsIHNpZ25hbCA4Lg0KPiA+ICAgUGF0aDogL2hv
-bWUvd2FpdHBpZDAyDQo+ID4gICBDUFU6IDAgUElEOiAxMDAgQ29tbTogd2FpdHBpZDAyIE5vdCB0
-YWludGVkIDQuMTAuMC1yYzQgIzINCj4gPiAgIHRhc2s6IDlmMTFjMjAwIHRhc2suc3RhY2s6IDlm
-M2FlMDAwDQo+ID4gDQo+ID4gICBbRUNSICAgXTogMHgwMDA1MDIwMCA9PiBJbnZhbGlkIFdyaXRl
-IEAgMHgwMDAwMDAwMCBieSBpbnNuIEAgMHgwMDAxMjNlYw0KPiA+ICAgW0VGQSAgIF06IDB4MDAw
-MDAwMDANCj4gPiAgIFtCTElOSyBdOiAweDEyM2VhDQo+ID4gICBbRVJFVCAgXTogMHgxMjNlYw0K
-PiA+ICAgICBAb2ZmIDB4MTIzZWMgaW4gWy9ob21lL3dhaXRwaWQwMl0NCj4gPiAgICAgVk1BOiAw
-eDAwMDEwMDAwIHRvIDB4MDAwMTYwMDANCj4gPiAgIFtTVEFUMzJdOiAweDgwMDgwODgyIDogSUUg
-VQ0KPiA+ICAgQlRBOiAweDAwMDEyM2VhICBTUDogMHg1ZmZkM2RiMCAgRlA6IDB4MDAwMDAwMDAN
-Cj4gPiAgIExQUzogMHgyMDAzMTY4NCBMUEU6IDB4MjAwMzE2OWEgTFBDOiAweDAwMDAwMDA2DQo+
-ID4gICBbLS0tLS1vdGhlci1pbmZvLS0tLS1dDQo+ID4gDQo+ID4gVGhpcyBtZXNzYWdlIGlzIGNv
-bmZ1c2luZyBiZWNhdXNlIGl0IHNob3cgaW5mb3JtYXRpb24gYWJvdXQgcGFnZSBmYXVsdA0KPiA+
-ICggW0VDUiAgIF06IDB4MDAwNTAyMDAgPT4gSW52YWxpZCBXcml0ZSApIHdoaWNoIGlzIGFic29s
-dXRlbHkgaXJyZWxldmFudA0KPiA+IHRvIHNpZ25hbC4NCj4gDQo+IEFncmVlZCB0aGlzIGlzIG1p
-c2xlYWRpbmcuIEBBbCwgaXMgdGhlcmUgYSB3YXkgdG8gaWRlbnRpZnkgcHJvY2VzcyB0ZXJtaW5h
-dGlvbg0KPiBmcm9tIHNpZ25hbHMgYmVjYXVzZSBpdCBkaWQgc29tZXRoaW5nIHdyb25nIHZzLiBz
-YXkgdW5oYW5kbGVkIHNpZ25hbC4gRm9yIGZvcm1lciwNCj4gd2Ugd2FudCB0byBkdW1wIGFkZGl0
-aW9uYWwgaW5mbyBpbiBzaG93X3JlZ3MoKSBzdWNoIGFzIFBDIC8gRmF1bHQgYWRkcmVzIGV0YyBh
-bmQNCj4gbm90IGluIG90aGVyIHNjZW5hcmlvLg0KPiANCj4gPiBUaGlzIHNpdHVhdGlvbiB3YXMg
-cmVwcm9kdWNlZCB3aXRoIHdhaXRwaWQwMiBMVFAgdGVzdC4NCj4gPiBfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXw0KPiA+IA0KPiA+IFNvIHJlbW92ZSBwcmludGluZyBpbmZvcm1hdGlvbiBh
-Ym91dCBleGNlcHRpb25zIGZyb20gc2hvd19yZWdzKCkNCj4gPiB0byBhdm9pZCBjb25mdXNpbmcg
-bWVzc2FnZXMuIFByaW50IGluZm9ybWF0aW9uIGFib3V0IGV4Y2VwdGlvbnMNCj4gPiBvbmx5IGlu
-IHJlcXVpcmVkIHBsYWNlcyBpbnN0ZWFkIG9mIHNob3dfcmVncygpDQo+ID4gDQo+ID4gTm93IHdl
-IGRvbid0IHByaW50IGluZm9ybWF0aW9uIGFib3V0IGV4Y2VwdGlvbnMgaWYgc2lnbmFsIGlzIHNp
-bXBseQ0KPiA+IHNlbmQgYnkgYW5vdGhlciB1c2Vyc3BhY2UgYXBwLiBTbyBpbiBjYXNlIG9mIHdh
-aXRwaWQwMiB3ZSB3aWxsIHByaW50DQo+ID4gbmV4dCBtZXNzYWdlOg0KPiA+IF9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fDQo+ID4gICAgIC4vd2FpdHBpZDAyDQo+ID4gICBwb3RlbnRpYWxs
-eSB1bmV4cGVjdGVkIGZhdGFsIHNpZ25hbCA4Lg0KPiA+ICAgW1NUQVQzMl06IDB4ODAwODAwODIg
-OiBJRSBVDQo+ID4gICBCVEE6IDB4MjAwMDBmYzQJIFNQOiAweDVmZjhiZDY0CSBGUDogMHgwMDAw
-MDAwMA0KPiA+ICAgTFBTOiAweDIwMDUyNGEwCUxQRTogMHgyMDA1MjRiNglMUEM6IDB4MDAwMDAw
-MDYNCj4gPiAgIFstLS0tLW90aGVyLWluZm8tLS0tLV0NCj4gPiBfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXw0KPiANCj4gVGhlIHByaW50cyBJJ20gc2VlaW5nIG5vdywgZm9yIGEgc2VndiBm
-cm9tIE5VTEwgcG9pbnRlciBhY2Nlc3MgaXMgZXZlbiBtb3JlDQo+IGNvbmZ1c2luZyAhDQo+IFRo
-ZXJlJ3MgYSBtaXh1cCBvZiBwcmludHMuLi4uDQo+IA0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLT44
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gUGF0aDogL3NlZ3YNCj4gQ1BVOiAwIFBJRDogNzAgQ29t
-bTogc2VndiBOb3QgdGFpbnRlZCA0LjE3LjArICM0MTINCj4gDQo+IFtFQ1IgICBdOiAweDAwMDUw
-MjAwID0+IEludmFsaWQgV3JpdGUgQCAweDAwMDAwMDAwIGJ5IGluc24gQCAweDAwMDEwM2FjDQo+
-IFtFRkEgICBdOiAweDAwMDAwMDAwDQo+IFtCTElOSyBdOiAweDIwMDQ3YmIwDQo+IFtFUkVUICBd
-OiAweDEwM2FjDQo+ICAgICBAb2ZmIDB4MTAzYWMgaW4gWy9zZWd2XQ0KPiAgICAgVk1BOiAweDAw
-MDEwMDAwIHRvIDB4MDAwMTIwMDANCj4gDQo+IHBvdGVudGlhbGx5IHVuZXhwZWN0ZWQgZmF0YWwg
-c2lnbmFsIDExLg0KPiBbU1RBVDMyXTogMHg4MDA4MDg4MiA6IElFIFUgICAgDQo+IEJUQTogMHgw
-MDAxMDM5OCAgICAgU1A6IDB4NWZjOTVlMWMgICAgIEZQOiAweDVmYzk1ZTIwDQo+IExQUzogMHgy
-MDAzOWZmYyAgICBMUEU6IDB4MjAwM2EwMDAgICAgTFBDOiAweDAwMDAwMDAwDQo+IHIwMDogMHgw
-MDAwMDAwMSAgICByMDE6IDB4NWZjOTVlOTQgICAgcjAyOiAweDAwMDAwMDAwICAgDQo+IHIwMzog
-MHgwMDAwMDA2NCAgICByMDQ6IDB4ODA4MDgwODAgICAgcjA1OiAweDJmMmYyZjJmICAgDQo+IC4u
-Lg0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gDQo+IGFu
-ZCBmb3IgdGhlIHByb2Nlc3Mga2lsbGVkIGJ5IHNpZ25hbCA4LCB3ZSBnZXQgYmVsb3cuDQo+IA0K
-PiAtLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gW0FSQ0xpbnV4
-XSMga2lsbCAtOCA3MQ0KPiBbQVJDTGludXhdIyBwb3RlbnRpYWxseSB1bmV4cGVjdGVkIGZhdGFs
-IHNpZ25hbCA4Lg0KPiBbU1RBVDMyXTogMHg4MDA4MDg4MiA6IElFIFUgICAgDQo+IEJUQTogMHgy
-MDAyMDY2MCAgICAgU1A6IDB4NWZiY2RkZWMgICAgIEZQOiAweDVmYmNkZTFjDQo+IExQUzogMHgy
-MDAzOWZmYyAgICBMUEU6IDB4MjAwM2EwMDAgICAgTFBDOiAweDAwMDAwMDAwDQo+IHIwMDogMHhm
-ZmZmZmRmYyAgICByMDE6IDB4NWZiY2RkZjAgICAgcjAyOiAweDAwMDAwMDAwICAgDQo+IHIwMzog
-MHgwMDAwMDAwOCAgICByMDQ6IDB4ODA4MDgwODAgICAgcjA1OiAweDJmMmYyZjJmICAgDQo+IHIw
-NjogMHg3YTJmNWY0YSAgICByMDc6IDB4MDAwMDAwMDAgICAgcjA4OiAweDAwMDAwMDY1ICAgDQo+
-IC4uLg0KPiANCj4gDQo+IFsxXSsgIEZsb2F0aW5nIHBvaW50IGV4Y2VwdGlvbiAgIC4vc2xlZXAN
-Cj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IEknbSBub3Qg
-c3VyZSB3aGF0cyB0aGUgaW1wcm92ZW1lbnQgaGVyZSB2cy4gdGhlIHN0YXR1cyBxdW8uDQoNCldo
-eSBkbyB5b3UgdGhpbmsgdGhpcyBpcyBjb25mdXNpbmc/DQpUaGUgbWFpbiBjaGFuZ2UgaXMgdGhh
-dCB3ZSBkb24ndCBwcmludCBleGNlcHRpb24gcmVnaXN0ZXJzIGZvciBzaWduYWwgYmFzZWQga2ls
-bC4NCg0KTW9yZW92ZXIsIG5ldyBiZWhhdmlvciBpcyBtb3JlIGxpa2UgeDg2LTY0IGJlaGF2aW9y
-LiBTZWUgdGhlIGV4YW1wbGU6DQoNCk5VTEwgcG9pbnRlciBhY2Nlc3Mgb24geDg2LTY0Og0KLS0t
-LS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tDQpoZWxsWzM5MjVdOiBzZWdm
-YXVsdCBhdCAwIGlwIDAwMDA3ZjYyMWViNTZjNDEgc3AgMDAwMDdmZmNhYTU5NTFiOCBlcnJvciA0
-IGluIGxpYmMtMi4yNi5zb1s3ZjYyMWVhMDEwMDArMWFjMDAwXQ0KcG90ZW50aWFsbHkgdW5leHBl
-Y3RlZCBmYXRhbCBzaWduYWwgMTEuDQpDUFU6IDEgUElEOiAzOTI1IENvbW06IGhlbGwgTm90IHRh
-aW50ZWQgNC4xNi4xMy0yMDAuZmMyNy54ODZfNjQgIzENCkhhcmR3YXJlIG5hbWU6IERlbGwgSW5j
-LiBMYXRpdHVkZSA3NDgwLzAwRjZEMywgQklPUyAxLjkuMyAwMy8wOS8yMDE4DQpSSVA6IDAwMzM6
-MHg3ZjYyMWViNTZjNDENClJTUDogMDAyYjowMDAwN2ZmY2FhNTk1MWI4IEVGTEFHUzogMDAwMTAy
-ODMNClJBWDogMDAwMDAwMDAwMDAwMDAwZSBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAw
-MDAwMDAwMDAwMDAwDQpSRFg6IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiAwMDAwMDAwMDAxNmViMjYw
-IFJESTogMDAwMDAwMDAwMDAwMDAwMA0KUkJQOiAwMDAwN2ZmY2FhNTk1MWYwIFIwODogMDAwMDAw
-MDAwMDAwMDAwMyBSMDk6IDAwMDAwMDAwMDAwMDAwNzcNClIxMDogMDAwMDAwMDAwMDAwMDAwMCBS
-MTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAwMDAwMDAwMDAwMDAwDQpSMTM6IDAwMDA3ZmZj
-YWE1OTUyZDAgUjE0OiAwMDAwMDAwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMA0KRlM6
-ICAwMDAwN2Y2MjFlZmJmNGMwKDAwMDApIEdTOmZmZmY4ZjZhYmU0ODAwMDAoMDAwMCkga25sR1M6
-MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAw
-MDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAwMDAwMDAwMDAwIENSMzogMDAwMDAwMDQ1NTZhNDAwNSBD
-UjQ6IDAwMDAwMDAwMDAzNjA2ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAw
-MDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2
-OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0KLS0tLS0tLS0tLS0tLS0t
-LS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNClByb2Nlc3Mga2lsbGVkIGJ5IHNpZ25hbCAx
-MSBvbiB4ODYtNjQ6DQotLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0N
-CnBvdGVudGlhbGx5IHVuZXhwZWN0ZWQgZmF0YWwgc2lnbmFsIDExLg0KQ1BVOiAwIFBJRDogMzk5
-OCBDb21tOiBzaCBOb3QgdGFpbnRlZCA0LjE2LjEzLTIwMC5mYzI3Lng4Nl82NCAjMQ0KSGFyZHdh
-cmUgbmFtZTogRGVsbCBJbmMuIExhdGl0dWRlIDc0ODAvMDBGNkQzLCBCSU9TIDEuOS4zIDAzLzA5
-LzIwMTgNClJJUDogMDAzMzoweDdmYzBiMTNkNzQ0ZQ0KUlNQOiAwMDJiOjAwMDA3ZmZmYmE4NTFl
-MzAgRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDEwMQ0KUkFYOiAwMDAw
-MDAwMDAwMDAwMDAzIFJCWDogMDAwMDU1YjNlMjEyNTZhMCBSQ1g6IDAwMDA3ZmMwYjEzZDc0NGUN
-ClJEWDogMDAwMDAwMDAwMDAwMDI0MSBSU0k6IDAwMDA1NWIzZTIxMjU1NDAgUkRJOiBmZmZmZmZm
-ZmZmZmZmZjljDQpSQlA6IDAwMDA3ZmZmYmE4NTFmNDAgUjA4OiAwMDAwMDAwMDAwMDAwMDIwIFIw
-OTogMDAwMDAwMDAwMDAwMDAwMA0KUjEwOiAwMDAwMDAwMDAwMDAwMWI2IFIxMTogMDAwMDAwMDAw
-MDAwMDI0NiBSMTI6IDAwMDAwMDAwMDAwMDAwMGENClIxMzogMDAwMDAwMDAwMDAwMDAwMyBSMTQ6
-IDAwMDAwMDAwMDAwMDAwMDEgUjE1OiAwMDAwNTViM2UyMTI1NTQwDQpGUzogIDAwMDA3ZmMwYjFj
-ZGI3NDAoMDAwMCkgR1M6ZmZmZjhmNmFiZTQwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAw
-MDAwDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpD
-UjI6IDAwMDA3ZmYzM2Q0MDMwMDAgQ1IzOiAwMDAwMDAwM2RjN2VhMDA0IENSNDogMDAwMDAwMDAw
-MDM2MDZmMA0KLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCg0K
-Tk9URTogaW4gYm90aCBjYXNlcyAoQVJDIGFuZCB4ODYtNjQpICIvcHJvYy9zeXMva2VybmVsL3By
-aW50LWZhdGFsLXNpZ25hbHMiIHdhcw0Kc2V0IHRvICIxIg0KDQotLSANCiBFdWdlbml5IFBhbHRz
-ZXY=
+在 2018年07月03日 10:17, lijiang 写道:
+> 在 2018年07月02日 18:14, Borislav Petkov 写道:
+>> On Mon, Jul 02, 2018 at 03:26:35PM +0800, Lianbo Jiang wrote:
+>>> @@ -131,7 +132,8 @@ static void __ioremap_check_mem(resource_size_t addr, unsigned long size,
+>>>   * caller shouldn't need to know that small detail.
+>>>   */
+>>>  static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>>> -		unsigned long size, enum page_cache_mode pcm, void *caller)
+>>> +		unsigned long size, enum page_cache_mode pcm,
+>>> +		void *caller, bool encrypted)
+>>
+>> So instead of sprinkling that @encrypted argument everywhere and then
+>> setting it based on sme_active() ...
+>>
+>>>  {
+>>>  	unsigned long offset, vaddr;
+>>>  	resource_size_t last_addr;
+>>> @@ -199,7 +201,7 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>>>  	 * resulting mapping.
+>>>  	 */
+>>>  	prot = PAGE_KERNEL_IO;
+>>> -	if (sev_active() && mem_flags.desc_other)
+>>> +	if ((sev_active() && mem_flags.desc_other) || encrypted)
+>>
+>> ... why can't you simply do your checks:
+>>
+>> 	sme_active() && is_kdump_kernel()
+>>
+>> here so that __ioremap_caller() can automatically choose the proper
+>> pgprot value when ioremapping the memory in the kdump kernel?
+>>
+>> And this way the callers don't even have to care whether the memory is
+>> encrypted or not?
+>>
+> Thank you, Boris. I'm very glad to read your comments. That's a good idea, but it has some
+> unencrypted memory in kdump mode, for example, the elfcorehdr. In fact, the elfcorehdr and
+> notes call the same function(read_from_oldmem->ioremap_cache), in this case, it is very
+> difficult to properly remap the memory if the caller don't care whether the memory is encrypted.
+> 
+Hi, Boris,
+About this, maybe I should describe the more details.
+For kdump, the elf header finally use the crash kernel reserved memory, it is not an old memory.
+When we load the crash kernel image, kexec tools will copy the elf header from encrypted memory
+region to unencrypted memory region, we know that a page of memory that is marked encrypted will
+be automatically decrypted when read from DRAM if SME is enabled. This operation make us get the
+plaintext, that is to say, it becomes unencrypted data, so we need to remap the elfcorehdr in un-
+encrypted manners in kdump kernel, but elf notes use an old memory, it is encrypted. That is the
+real reason why we need to use the different functions(ioremap_cache/ioremap_encrypted).
+If the elf core header is set to be encrypted, we could need to know which part of memory is
+allocated for the elfcorehdr in kernel space and change the page attribute, maybe which will have
+to modify another common codes and kexec-tools.
+
+If you agree with my explanation, i will add them to patch log and also post it again.
+Welcome to review my patches again.
+
+Thanks.
+Lianbo
+
+> Regards,
+> Lianbo>>>  		prot = pgprot_encrypted(prot);
+>>>  
+>>>  	switch (pcm) {
+>>
