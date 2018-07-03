@@ -2,146 +2,160 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7DFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08609C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B0D22565
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:26:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Omo621aI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B0D22565
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 98F2522565
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:28:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F2522565
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934378AbeGCR0o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:26:44 -0400
-Received: from mail.efficios.com ([167.114.142.138]:56414 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934074AbeGCR0l (ORCPT
+        id S934272AbeGCR2T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:28:19 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:37852 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S933677AbeGCR2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:26:41 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 68007230195;
-        Tue,  3 Jul 2018 13:26:40 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id eSPUoTI7tUqO; Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C1774230192;
-        Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C1774230192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530638799;
-        bh=zgZSJZBAZSDaPGbe9Vl06QB2i7y5d9PRZOyzqbTqMQQ=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Omo621aIh+jWjrkRsdHweQXhQQC4gUpqadLICJqNok54yyVtzAEGmdUNTgYtfVZTh
-         mTwRkyX1+xJYtBOMUt2XCfpYZqZCLkaT6PTjlcInQ4x+KL0hamG0FwO+dw8LuJO+kP
-         Pv9tLyfhOgy/Gd+8vtJD/ihviQFnyPcIDnz7orLx6jWMZQvnh8kXc84rlXDNVu8HdT
-         1c0klrWCeDonp7sBIfv2KWnrBezU3onGqyM7w9LFGM5jDXX/vPS+dj3PSzLuvSMbfu
-         Bk6fwfhBD3nxg7oqcSwr+hSKAGU5/njUkFqyrBuUWh+rK9Y4r3/0URfVek2ZXGf/yw
-         FAVESUnXmBnXg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id eBh6q0wSKmR9; Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id A600023018B;
-        Tue,  3 Jul 2018 13:26:39 -0400 (EDT)
-Date:   Tue, 3 Jul 2018 13:26:39 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andi Kleen <andi@firstfloor.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        heiko carstens <heiko.carstens@de.ibm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Tue, 3 Jul 2018 13:28:18 -0400
+Received: (qmail 5601 invoked by uid 2102); 3 Jul 2018 13:28:17 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 3 Jul 2018 13:28:17 -0400
+Date:   Tue, 3 Jul 2018 13:28:17 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Will Deacon <will.deacon@arm.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        schwidefsky <schwidefsky@de.ibm.com>, gor@linux.ibm.com
-Message-ID: <1047204530.11737.1530638799580.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
-References: <8B2E4CEB-3080-4602-8B62-774E400892EB@amacapital.net> <20180703081449.GT2494@hirez.programming.kicks-ass.net> <20180703082955.GH3704@osiris> <20180703084312.GU2494@hirez.programming.kicks-ass.net> <20180703085546.GJ3704@osiris> <20180703092113.GV2494@hirez.programming.kicks-ass.net> <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org> <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
+ and by locks
+In-Reply-To: <20180625081920.GA5619@andrea>
+Message-ID: <Pine.LNX.4.44L0.1807031228250.1513-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
-Thread-Index: j66OqF9zbUhN0xBsQ1otYplWTFq6fg==
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 3, 2018, at 1:10 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
+Will:
 
-> On Tue, Jul 3, 2018 at 9:40 AM Andi Kleen <andi@firstfloor.org> wrote:
->>
->> So it sounds like architectures that don't have an instruction atomic u64
->> *_user need to disable interrupts during the access, and somehow handle that
->> case when a page fault happens?
+On Mon, 25 Jun 2018, Andrea Parri wrote:
+
+> On Fri, Jun 22, 2018 at 07:30:08PM +0100, Will Deacon wrote:
+> > > > I think the second example would preclude us using LDAPR for load-acquire,
 > 
-> No. It's actually the store by *user* space that is the critical one.
-> Not the whole 64-bit value, just the low pointer part.
+> > I don't think it's a moot point. We want new architectures to implement
+> > acquire/release efficiently, and it's not unlikely that they will have
+> > acquire loads that are similar in semantics to LDAPR. This patch prevents
+> > them from doing so,
 > 
-> The kernel could do it as a byte-by-byte load, really. It's
-> per-thread, and once the kernel is running, it's not going to change.
-> The kernel never changes the value, it just loads it from user space.
+> By this same argument, you should not be a "big fan" of rfi-rel-acq in ppo ;)
+> consider, e.g., the two litmus tests below: what am I missing?
+
+This is an excellent point, which seems to have gotten lost in the 
+shuffle.  I'd like to see your comments.
+
+In essence, if you're using release-acquire instructions that only
+provide RCpc consistency, does store-release followed by load-acquire
+of the same address provide read-read ordering?  In theory it doesn't
+have to, because if the value from the store-release is forwarded to
+the load-acquire then:
+
+	LOAD A
+	STORE-RELEASE X, v
+	LOAD-ACQUIRE X
+	LOAD B
+
+could be executed by the CPU in the order:
+
+	LOAD-ACQUIRE X
+	LOAD B
+	LOAD A
+	STORE-RELEASE X, v
+
+thereby accessing A and B out of program order without violating the
+requirements on the release or the acquire.
+
+Of course PPC doesn't allow this, but should we rule it out entirely?
+
+> C MP+fencewmbonceonce+pooncerelease-rfireleaseacquire-poacquireonce
 > 
-> So all the atomicity worries for the kernel are a red herring. They'd
-> arguably be nice to have - but only for an insane case that makes
-> absolutely no sense (a different thread trying to change the value).
+> {}
 > 
-> Can we please stop the idiocy already? The kernel could read the rseq
-> pointer one bit at a time, and do a little dance with "yield()" in
-> between, and take interrupts and page faults, and it wouldn't matter
-> AT ALL.
+> P0(int *x, int *y)
+> {
+> 	WRITE_ONCE(*x, 1);
+> 	smp_wmb();
+> 	WRITE_ONCE(*y, 1);
+> }
 > 
-> It's not even that we read the value from an interrupt context, it's
-> that as we return to user space (which can be the result of an
-> interrupt) we can read the value.
+> P1(int *x, int *y, int *z)
+> {
+> 	r0 = READ_ONCE(*y);
+> 	smp_store_release(z, 1);
+> 	r1 = smp_load_acquire(z);
+> 	r2 = READ_ONCE(*x);
+> }
 > 
-> This whole thread has been filled with crazy "what if" things that don't matter.
+> exists (1:r0=1 /\ 1:r1=1 /\ 1:r2=0)
+> 
+> 
+> AArch64 MP+dmb.st+popl-rfilq-poqp
+> "DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre"
+> Generator=diyone7 (version 7.49+02(dev))
+> Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+> Com=Rf Fr
+> Orig=DMB.STdWW Rfe PodRWPL RfiLQ PodRRQP Fre
+> {
+> 0:X1=x; 0:X3=y;
+> 1:X1=y; 1:X3=z; 1:X6=x;
+> }
+>  P0          | P1            ;
+>  MOV W0,#1   | LDR W0,[X1]   ;
+>  STR W0,[X1] | MOV W2,#1     ;
+>  DMB ST      | STLR W2,[X3]  ;
+>  MOV W2,#1   | LDAPR W4,[X3] ;
+>  STR W2,[X3] | LDR W5,[X6]   ;
+> exists
+> (1:X0=1 /\ 1:X4=1 /\ 1:X5=0)
 
-Sorry to come back in the thread late, looks like I've missed all the
-fun.
+There's also read-write ordering, in the form of the LB pattern:
 
-I agree with Linus: we can simply document that updates to rseq->rseq_cs
-should be thread-local in the rseq uapi and be done with it. This would
-allow using get_user(u64) even on 32-bit architectures, because we cannot
-care less if an architecture chooses to read the u64 byte-wise while
-standing on its feet.
+P0(int *x, int *y, int *z)
+{
+	r0 = READ_ONCE(*x);
+	smp_store_release(z, 1);
+	r1 = smp_load_acquire(z);
+	WRITE_ONCE(*y, 1);
+}
 
-With this added requirement, Andy's idea of using a union between __u64
-and upper/lower __u32 would fit very nicely.
+P1(int *x, int *y)
+{
+	r2 = READ_ONCE(*y);
+	smp_mp();
+	WRITE_ONCE(*x, 1);
+}
 
-If everyone is OK with that approach, I can prepare an updated patch.
+exists (0:r0=1 /\ 1:r2=1)
 
-Thanks,
+Would this be allowed if smp_load_acquire() was implemented with LDAPR?
+If the answer is yes then we will have to remove the rfi-rel-acq and
+rel-rf-acq-po relations from the memory model entirely.
 
-Mathieu
+Alan
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+PS: Paul, is the patch which introduced rel-rf-acq-po currently present
+in any of your branches?  I couldn't find it.
+
