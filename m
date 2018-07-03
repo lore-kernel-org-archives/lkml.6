@@ -2,111 +2,76 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B9EC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F25CC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686B624B6A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:19:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686B624B6A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id E622220836
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E622220836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933003AbeGCGT2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:19:28 -0400
-Received: from mout.gmx.net ([212.227.15.18]:59689 "EHLO mout.gmx.net"
+        id S933028AbeGCGUL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 02:20:11 -0400
+Received: from muru.com ([72.249.23.125]:49672 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932613AbeGCGT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:19:26 -0400
-Received: from [192.168.20.60] ([92.116.180.62]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MWk7n-1fbhpF1Fsp-00Xp85; Tue, 03
- Jul 2018 08:18:14 +0200
-Subject: Re: Build regressions/improvements in v4.18-rc3
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Parisc List <linux-parisc@vger.kernel.org>
-References: <20180702140050.1660-1-geert@linux-m68k.org>
- <CAMuHMdUHkShW5dT41x06Jz9DUJHim6=Wg6pspgTBJpsoVNphwA@mail.gmail.com>
- <1fa6b973-33e7-53f8-75bb-92d1e8932813@gmx.de>
- <87601xgm6a.fsf@concordia.ellerman.id.au>
-From:   Helge Deller <deller@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=deller@gmx.de; prefer-encrypt=mutual; keydata=
- xsBNBFDPIPYBCAC6PdtagIE06GASPWQJtfXiIzvpBaaNbAGgmd3Iv7x+3g039EV7/zJ1do/a
- y9jNEDn29j0/jyd0A9zMzWEmNO4JRwkMd5Z0h6APvlm2D8XhI94r/8stwroXOQ8yBpBcP0yX
- +sqRm2UXgoYWL0KEGbL4XwzpDCCapt+kmarND12oFj30M1xhTjuFe0hkhyNHkLe8g6MC0xNg
- KW3x7B74Rk829TTAtj03KP7oA+dqsp5hPlt/hZO0Lr0kSAxf3kxtaNA7+Z0LLiBqZ1nUerBh
- OdiCasCF82vQ4/y8rUaKotXqdhGwD76YZry9AQ9p6ccqKaYEzWis078Wsj7p0UtHoYDbABEB
- AAHNHEhlbGdlIERlbGxlciA8ZGVsbGVyQGdteC5kZT7CwJIEEwECADwCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheAFiEE9M/0wAvkPPtRU6Boh8nBUbUeOGQFAlrHzIICGQEACgkQh8nB
- UbUeOGT1GAgAt+EeoHB4DbAx+pZoGbBYp6ZY8L6211n8fSi7wiwgM5VppucJ+C+wILoPkqiU
- +ZHKlcWRbttER2oBUvKOt0+yDfAGcoZwHS0P+iO3HtxR81h3bosOCwek+TofDXl+TH/WSQJa
- iaitof6iiPZLygzUmmW+aLSSeIAHBunpBetRpFiep1e5zujCglKagsW78Pq0DnzbWugGe26A
- 288JcK2W939bT1lZc22D9NhXXRHfX2QdDdrCQY7UsI6g/dAm1d2ldeFlGleqPMdaaQMcv5+E
- vDOur20qjTlenjnR/TFm9tA1zV+K7ePh+JfwKc6BSbELK4EHv8J8WQJjfTphakYLVM7ATQRQ
- zyD2AQgA2SJJapaLvCKdz83MHiTMbyk8yj2AHsuuXdmB30LzEQXjT3JEqj1mpvcEjXrX1B3h
- +0nLUHPI2Q4XWRazrzsseNMGYqfVIhLsK6zT3URPkEAp7R1JxoSiLoh4qOBdJH6AJHex4CWu
- UaSXX5HLqxKl1sq1tO8rq2+hFxY63zbWINvgT0FUEME27Uik9A5t8l9/dmF0CdxKdmrOvGMw
- T770cTt76xUryzM3fAyjtOEVEglkFtVQNM/BN/dnq4jDE5fikLLs8eaJwsWG9k9wQUMtmLpL
- gRXeFPRRK+IT48xuG8rK0g2NOD8aW5ThTkF4apznZe74M7OWr/VbuZbYW443QQARAQABwsBf
- BBgBAgAJBQJQzyD2AhsMAAoJEIfJwVG1HjhkNTgH/idWz2WjLE8DvTi7LvfybzvnXyx6rWUs
- 91tXUdCzLuOtjqWVsqBtSaZynfhAjlbqRlrFZQ8i8jRyJY1IwqgvHP6PO9s+rIxKlfFQtqhl
- kR1KUdhNGtiI90sTpi4aeXVsOyG3572KV3dKeFe47ALU6xE5ZL5U2LGhgQkbjr44I3EhPWc/
- lJ/MgLOPkfIUgjRXt0ZcZEN6pAMPU95+u1N52hmqAOQZvyoyUOJFH1siBMAFRbhgWyv+YE2Y
- ZkAyVDL2WxAedQgD/YCCJ+16yXlGYGNAKlvp07SimS6vBEIXk/3h5Vq4Hwgg0Z8+FRGtYZyD
- KrhlU0uMP9QTB5WAUvxvGy8=
-Message-ID: <b7c41645-f694-4763-4cc3-f7abb0c2432b@gmx.de>
-Date:   Tue, 3 Jul 2018 08:18:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S932883AbeGCGUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:20:10 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3B32E80C8;
+        Tue,  3 Jul 2018 06:23:06 +0000 (UTC)
+Date:   Mon, 2 Jul 2018 23:20:07 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] bus: ti-sysc: Use 2-factor allocator arguments
+Message-ID: <20180703062007.GA112168@atomide.com>
+References: <20180618174549.GA1893@beast>
+ <CAGXu5jJZH0fh_q7o2w2_tX3Xxyn2xm-55J62JcucgfWBUYkU5Q@mail.gmail.com>
+ <20180702112719.GU112168@atomide.com>
+ <CAGXu5j+9kPL2cQyXXjW6FfwBmQM3oHFNV-bD+2cgwWpzE12PQQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87601xgm6a.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:j4YyVoSPh+McraZY6HVoaBSsKUa5i/srDSaort1aR1N7kldaZ9F
- /48jCHXmB+3Iuu5IAmcEVyGOoBf+tUGSllSzAPTwA2a+p95rosnjzxPlDGE/wvQFa9n7eIv
- rlw9rWXjcOVsXrtlSZ/op+IJV+lO1bPydZaCnU5rt3rJSW9fskWB1bGrUaZAGoJaMDTIBsO
- 67ML93RUcAOCmmpKTRLTA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:uUx6lkWcamg=:EZfgSil0eC5JGP/uqwZNcW
- pncoqOdwGggWo9tHUw32XllP3DFitbHVrR9Rp+cYcXfILBrgEygFJBqrU0bq0bbXFmvXeJSzH
- jaVCueb1UOReV3syz4fRrGRohcfjIT6G5A0C6lwF+cXYCW1Eivy6DTkyioI+Acpx/eOJo/EPq
- 3KKL3zaJmS52lW1SE1xAGCiv+8CnKtj4raJdn0kBysBKysnbuMiLb3fB/YqXcEWjRri3u0nbs
- iYdapZS4EC36moSQzI76Br949bBJ+x++9fKvnpPig8yXQijyQLjme/DAVFyCXR9RsBtl1xiSQ
- ohwQs86jscTGADGsMoVS/bNW3cG8Td4AMLtamUGivv7bm71fMf+vsif7cxWDsGNqoJbhBoHK9
- OqIM+b+js9QIOPkrWsG/WYXG0HngHP3njpajVv8n0hAqjS+XHfB1Ww3o9hOnDVKYheR2/z1Q1
- wzNsvTtVfbmPe0O3hCbA/JEsrvPicH/QS1eJX6bNMghiU7MrxpKUpU1uLLzfSz2lX6vyXp46B
- 0DPxD0BE+t7SR9vDoCEgVrJHDAdqp8ijK7GW4o6rPbJkbl1EvJQD4/WFHaSwqqxec1q+1Bm2N
- xbCksRaJRFyBz5BpcK8Txk4h5BT1PAUNeGrK37Q28HVhhVhFzFkU9H2YTaRVhiX8EN/dsGU/x
- izKkC6bbhVsdWG3ZM/QdnipOzgol1gHZWjN7Emeup3pI3OSmd2ghHzlwCQ6arQMNX9d5Q7Dvg
- fi1zk0iINbhH0Cv8gJMzzA95hOsAyBVckmyNeVJgPkjLSlX0xe1v3XqD0k2Zq/4lmIMPFHDwL
- bU8xH4V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+9kPL2cQyXXjW6FfwBmQM3oHFNV-bD+2cgwWpzE12PQQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.07.2018 03:09, Michael Ellerman wrote:
-> Helge Deller <deller@gmx.de> writes:
+* Kees Cook <keescook@chromium.org> [180702 16:17]:
+> On Mon, Jul 2, 2018 at 4:27 AM, Tony Lindgren <tony@atomide.com> wrote:
+> > * Kees Cook <keescook@chromium.org> [180627 21:59]:
+> >> On Mon, Jun 18, 2018 at 10:45 AM, Kees Cook <keescook@chromium.org> wrote:
+> >> > This adjusts the allocator calls to use 2-factor argument call style, as
+> >> > done treewide already for improved defense against allocation overflows.
+> >> >
+> >> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> >>
+> >> Friendly ping! :) This is the last 2-factor devm* allocation left in
+> >> 4.18 to be fixed.
+> >
+> > Sorry for the delay on this one. As we're already at -rc3, I'll apply
+> > this into omap-for-v4.19/ti-sysc. Seems there should not be need to rush
+> > this into v4.18-rc cycle, but please do let me know if that is not the
+> > case.
 > 
->> On 02.07.2018 16:09, Geert Uytterhoeven wrote:
->>> On Mon, Jul 2, 2018 at 4:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->>>> JFYI, when comparing v4.18-rc3[1] to v4.18-rc2[3], the summaries are:
->>> ...
->>
->> Both of the following are simply happening because of old compiler which is being used:
->>
->>>> [Deleted 26903 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
+> I'd like to be able to reason about multiplication vs allocator uses
+> in 4.18 and later. Since all other allocators got fixed in 4.18, I'd
+> really like to have this one fixed too, then the scripts that check
+> for multiplications in single-argument allocators will run clean for
+> 4.18.
 > 
-> It's GCC 4.6.3. Are you saying that's not supported anymore?
-> 
-> I can update to 8.1.0 if that's more useful.
+> So, it's not strictly a "rush", but it would be appreciated. :)
 
-Yes, please.
-Any version >= 7.2.1 should be better.
+OK I'll merge that commit also into omap-for-v4.18/fixes branch
+too.
 
-Helge
+Regards,
+
+Tony
