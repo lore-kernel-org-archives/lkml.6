@@ -2,101 +2,322 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB9BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE251C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CCA224724
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCA224724
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 65E0B24724
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E0B24724
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934450AbeGCSTc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:19:32 -0400
-Received: from smtprelay0237.hostedemail.com ([216.40.44.237]:48597 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934381AbeGCSTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:19:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 67E21837F24D;
-        Tue,  3 Jul 2018 18:19:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: lead82_8cfdd5665a841
-X-Filterd-Recvd-Size: 2555
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Jul 2018 18:19:28 +0000 (UTC)
-Message-ID: <7cce1fcb751a2ffe89af02bcb05f295879ed1040.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Check for illegal return codes
-From:   Joe Perches <joe@perches.com>
-To:     Prakruthi Deepak Heragu <pheragu@codeaurora.org>, apw@canonical.com
-Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org,
-        Patrick Pannuto <ppannuto@codeaurora.org>,
-        Stepan Moskovchenko <stepanm@codeaurora.org>
-Date:   Tue, 03 Jul 2018 11:19:27 -0700
-In-Reply-To: <1530641369-31098-1-git-send-email-pheragu@codeaurora.org>
-References: <1530641369-31098-1-git-send-email-pheragu@codeaurora.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S934476AbeGCSVm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:21:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:2591 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934309AbeGCSVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 14:21:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 11:21:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
+   d="scan'208";a="242707857"
+Received: from cdikicix-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.69])
+  by fmsmga006.fm.intel.com with ESMTP; 03 Jul 2018 11:21:21 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)),
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list),
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: [PATCH v12 00/13] Intel SGX1 support
+Date:   Tue,  3 Jul 2018 21:19:45 +0300
+Message-Id: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-03 at 11:09 -0700, Prakruthi Deepak Heragu wrote:
-> The only legal integer return is 0, anything else
-> following "return" should be -ERRCODE or a function.
-> 
-> http://lkml.org/lkml/2010/7/23/318
->   There's lots of "return -1;" statements in this patch - it's obscene
->   that this is used to indicate "some error occurred" in kernel space
->   rather than a real errno value - even when an existing function
->   (eg, request_irq) gave you an error code already.
-> 
-> Signed-off-by: Patrick Pannuto <ppannuto@codeaurora.org>
-> Signed-off-by: Stepan Moskovchenko <stepanm@codeaurora.org>
-> Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-> ---
->  scripts/checkpatch.pl | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index a9c0550..260d252 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -6197,6 +6197,12 @@ sub process {
->  			     "switch default: should use break\n" . $herectx);
->  		}
->  
-> +# check for return codes on error paths
-> +		if ($line =~ /\breturn\s+-\d+/) {
-> +			ERROR("NO_ERROR_CODE",
-> +			      "illegal return value, please use an error code");
-> +		}
-> +
+Intel(R) SGX is a set of CPU instructions that can be used by applications
+to set aside private regions of code and data. The code outside the enclave
+is disallowed to access the memory inside the enclave by the CPU access
+control.  In a way you can think that SGX provides inverted sandbox. It
+protects the application from a malicious host.
 
-Substitute illegal to invalid as this wouldn't be illegal.
-It might be invalid and this needs a newline and $herecurr
+There is a new hardware unit in the processor called Memory Encryption
+Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
+one or many MEE regions that can hold enclave data by configuring them with
+PRMRR registers.
 
-I'm not sure this is even useful.
+The MEE automatically encrypts the data leaving the processor package to
+the MEE regions. The data is encrypted using a random key whose life-time
+is exactly one power cycle.
 
-There are _way_ too many of these already existing
-and simple return identifiers can be OK.
+The current implementation requires that the firmware sets
+IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
+decide what enclaves it wants run. The implementation does not create
+any bottlenecks to support read-only MSRs later on.
 
-$ git grep -P '\breturn\s*\-(?!0)\d+' | wc -l
-10193
+You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
 
-and
+	cat /proc/cpuinfo  | grep sgx
 
-$ git grep -P '\breturn\s*\-(?!1)\d+' | wc -l
-240
+v12:
+* Split to more narrow scoped commits in order to ease the review process and
+  use co-developed-by tag for co-authors of commits instead of listing them in
+  the source files.
+* Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
+* Removed in-kernel LE i.e. this version of the SGX software stack only
+  supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
+* Refined documentation on launching enclaves, swapping and enclave
+  construction.
+* Refined sgx_arch.h to include alignment information for every struct that
+  requires it and removed structs that are not needed without an LE.
+* Got rid of SGX_CPUID.
+* SGX detection now prints log messages about firmware configuration issues.
+
+v11:
+* Polished ENCLS wrappers with refined exception handling.
+* ksgxswapd was not stopped (regression in v5) in
+  sgx_page_cache_teardown(), which causes a leaked kthread after driver
+  deinitialization.
+* Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
+  invalidated when resuming, which will cause it not function properly
+  anymore.
+* Set EINITTOKEN.VALID to zero for a token that is passed when
+  SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
+  page.
+* Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
+  around the flags field, which causes a #GP. Only flags read is readable.
+* On read access memcpy() call inside sgx_vma_access() had src and dest
+  parameters in wrong order.
+* The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
+  to LE even if “KASAN_SANITIZE := false” was set in the makefile. 
+* Fixed a regression in the #PF handler. If a page has
+  SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
+  It did not, which caused weird races when trying to change other parts of
+  swapping code.
+* EPC management has been refactored to a flat LRU cache and moved to
+  arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
+  of them. It can now swap from multiple enclaves in the same round.
+* For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
+  when an enclave is already initialized or dead instead of zero.
+
+v10:
+* Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
+  of the driver.
+* Unset the reserved flag from an enclave page if EDBGRD/WR fails
+  (regression in v6).
+* Close the anon inode when LE is stopped (regression in v9).
+* Update the documentation with a more detailed description of SGX.
+
+v9:
+* Replaced kernel-LE IPC based on pipes with an anonymous inode.
+  The driver does not require anymore new exports.
+
+v8:
+* Check that public key MSRs match the LE public key hash in the
+  driver initialization when the MSRs are read-only.
+* Fix the race in VA slot allocation by checking the fullness
+  immediately after succeesful allocation.
+* Fix the race in hash mrsigner calculation between the launch
+  enclave and user enclaves by having a separate lock for hash
+  calculation.
+
+v7:
+* Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
+  when it should have been masked with ~PAGE_MASK.
+* Fixed a memory leak in sgx_ioc_enclave_create().
+* Simplified swapping code by using a pointer array for a cluster
+  instead of a linked list.
+* Squeezed struct sgx_encl_page to 32 bytes.
+* Fixed deferencing of an RSA key on OpenSSL 1.1.0.
+* Modified TC's CMAC to use kernel AES-NI. Restructured the code
+  a bit in order to better align with kernel conventions.
+
+v6:
+* Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
+* In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
+* Removed virtualization chapter from the documentation.
+* Changed the default filename for the signing key as signing_key.pem.
+* Reworked EPC management in a way that instead of a linked list of
+  struct sgx_epc_page instances there is an array of integers that
+  encodes address and bank of an EPC page (the same data as 'pa' field
+  earlier). The locking has been moved to the EPC bank level instead
+  of a global lock.
+* Relaxed locking requirements for EPC management. EPC pages can be
+  released back to the EPC bank concurrently.
+* Cleaned up ptrace() code.
+* Refined commit messages for new architectural constants.
+* Sorted includes in every source file.
+* Sorted local variable declarations according to the line length in
+  every function.
+* Style fixes based on Darren's comments to sgx_le.c.
+
+v5:
+* Described IPC between the Launch Enclave and kernel in the commit messages.
+* Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
+  versions except those that exist in the imported TinyCrypt code.
+* Fixed spelling mistakes in the documentation.
+* Forgot to check the return value of sgx_drv_subsys_init().
+* Encapsulated properly page cache init and teardown.
+* Collect epc pages to a temp list in sgx_add_epc_bank
+* Removed SGX_ENCLAVE_INIT_ARCH constant.
+
+v4:
+* Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
+* Removed __exit annotation from sgx_drv_subsys_exit().
+* Fixed a leak of a backing page in sgx_process_add_page_req() in the
+  case when vm_insert_pfn() fails.
+* Removed unused symbol exports for sgx_page_cache.c.
+* Updated sgx_alloc_page() to require encl parameter and documented the
+  behavior (Sean Christopherson).
+* Refactored a more lean API for sgx_encl_find() and documented the behavior.
+* Moved #PF handler to sgx_fault.c.
+* Replaced subsys_system_register() with plain bus_register().
+* Retry EINIT 2nd time only if MSRs are not locked.
+
+v3:
+* Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
+* Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
+* Use unused bits in epc_page->pa to store the bank number.
+* Removed #ifdef for WQ_NONREENTRANT.
+* If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
+* Added --remove-section=.got.plt to objcopy flags in order to prevent a
+  dummy .got.plt, which will cause an inconsistent size for the LE.
+* Documented sgx_encl_* functions.
+* Added remark about AES implementation used inside the LE.
+* Removed redundant sgx_sys_exit() from le/main.c.
+* Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
+* Validate miscselect in sgx_encl_create().
+* Fixed SSA frame size calculation to take the misc region into account.
+* Implemented consistent exception handling to __encls() and __encls_ret().
+* Implemented a proper device model in order to allow sysfs attributes
+  and in-kernel API.
+* Cleaned up various "find enclave" implementations to the unified
+  sgx_encl_find().
+* Validate that vm_pgoff is zero.
+* Discard backing pages with shmem_truncate_range() after EADD.
+* Added missing EEXTEND operations to LE signing and launch.
+* Fixed SSA size for GPRS region from 168 to 184 bytes.
+* Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
+* Check that TCS addresses are in ELRANGE and not just page aligned.
+* Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
+* Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
+
+v2:
+* get_rand_uint32() changed the value of the pointer instead of value
+  where it is pointing at.
+* Launch enclave incorrectly used sigstruct attributes-field instead of
+  enclave attributes-field.
+* Removed unused struct sgx_add_page_req from sgx_ioctl.c
+* Removed unused sgx_has_sgx2.
+* Updated arch/x86/include/asm/sgx.h so that it provides stub
+  implementations when sgx in not enabled.
+* Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
+* return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
+* removed unused global sgx_nr_pids
+* moved sgx_encl_release to sgx_encl.c
+* return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
+
+Jarkko Sakkinen (8):
+  x86/sgx: updated MAINTAINERS
+  x86/sgx: architectural structures
+  x86/sgx: data structures for tracking available EPC pages
+  x86/sgx: wrappers for ENCLS opcode leaf functions
+  x86/sgx: EPC page allocation routines
+  platform/x86: Intel SGX driver
+  platform/x86: ptrace() support for the SGX driver
+  x86/sgx: driver documentation
+
+Kai Huang (1):
+  x86/sgx: add SGX definitions to cpufeature
+
+Sean Christopherson (4):
+  x86/sgx: add SGX definitions to msr-index.h
+  x86/cpufeatures: add Intel-defined SGX leaf CPUID_12_EAX
+  x86/sgx: detect Intel SGX
+  x86/sgx: sgx_einit()
+
+ Documentation/index.rst                       |    1 +
+ Documentation/x86/intel_sgx.rst               |  185 +++
+ MAINTAINERS                                   |    7 +
+ arch/x86/Kconfig                              |   19 +
+ arch/x86/include/asm/cpufeature.h             |    7 +-
+ arch/x86/include/asm/cpufeatures.h            |   10 +-
+ arch/x86/include/asm/disabled-features.h      |    3 +-
+ arch/x86/include/asm/msr-index.h              |    8 +
+ arch/x86/include/asm/required-features.h      |    3 +-
+ arch/x86/include/asm/sgx.h                    |  246 ++++
+ arch/x86/include/asm/sgx_arch.h               |  202 ++++
+ arch/x86/include/asm/sgx_pr.h                 |   29 +
+ arch/x86/include/uapi/asm/sgx.h               |  138 +++
+ arch/x86/kernel/cpu/Makefile                  |    1 +
+ arch/x86/kernel/cpu/common.c                  |    7 +
+ arch/x86/kernel/cpu/intel_sgx.c               |  460 ++++++++
+ arch/x86/kvm/cpuid.h                          |    1 +
+ drivers/platform/x86/Kconfig                  |    2 +
+ drivers/platform/x86/Makefile                 |    1 +
+ drivers/platform/x86/intel_sgx/Kconfig        |   22 +
+ drivers/platform/x86/intel_sgx/Makefile       |   13 +
+ drivers/platform/x86/intel_sgx/sgx.h          |  157 +++
+ drivers/platform/x86/intel_sgx/sgx_encl.c     | 1011 +++++++++++++++++
+ .../platform/x86/intel_sgx/sgx_encl_page.c    |  286 +++++
+ drivers/platform/x86/intel_sgx/sgx_fault.c    |  151 +++
+ drivers/platform/x86/intel_sgx/sgx_ioctl.c    |  231 ++++
+ drivers/platform/x86/intel_sgx/sgx_main.c     |  298 +++++
+ drivers/platform/x86/intel_sgx/sgx_vma.c      |  174 +++
+ 28 files changed, 3668 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/x86/intel_sgx.rst
+ create mode 100644 arch/x86/include/asm/sgx.h
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
+ create mode 100644 arch/x86/include/asm/sgx_pr.h
+ create mode 100644 arch/x86/include/uapi/asm/sgx.h
+ create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
+ create mode 100644 drivers/platform/x86/intel_sgx/Kconfig
+ create mode 100644 drivers/platform/x86/intel_sgx/Makefile
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx.h
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl_page.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_fault.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_ioctl.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_main.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_vma.c
+
+-- 
+2.17.1
 
