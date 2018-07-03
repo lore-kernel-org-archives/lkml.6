@@ -2,104 +2,236 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D51C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E369AC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11DB1208B1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="I0ESZNNH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DB1208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 96AC5249D5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:53:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AC5249D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934374AbeGCRvx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:51:53 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36039 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933569AbeGCRvv (ORCPT
+        id S934339AbeGCRxy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:53:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49072 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933569AbeGCRxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:51:51 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n24-v6so2303812lfh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 10:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I1LbWqS8wY9Ifa8ngXJRg/KG8uqIEK9Iye4KZzq3suA=;
-        b=I0ESZNNHBnkkub6OaRukXUXM/vFV8CRKEOQr4nORmmlFI0DXIJqvvLikVVgPMbK0ok
-         1aAlu79S0ts8Hq26N0dACALn8MsauQB+zAQ/x6RzSmegE0XtKhmGni8T9afNw1TIgnEc
-         n2/KVgt34jQYSqRIf8ipM7xaz2Gcu4mEg9Vo9RcdTQz2DHsJyuexB4FonuQJQcsGHAQ2
-         l9QMRSNy2+5tkUodzKNiKM48mciQcnKXdFTqi/UDpOPev/srbnooZeLchC1fyevntezD
-         0M2F6ux3a8TMPmle2t1XyntYbjkEWk3Svq+giBppcxIitc+lpyCX/x5lZDYIkYKkDNKd
-         wcGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I1LbWqS8wY9Ifa8ngXJRg/KG8uqIEK9Iye4KZzq3suA=;
-        b=LP3TW0955DDmMUaP9Jz07RvZD8Zjma+1y6t4VKYgjJltduVUyPZyg5n/j0ifAHOUCU
-         UCvyEb2vYPy1F+rzQpb7PPJW1/hZ/BX37kjwa+B5JRsYG7LBvzmnRMXs5RFd0G8Zbst+
-         apnZAzXlrwQygqUO0LgmPOTO+wXcCF0tY1eO/z2tzKyhUJJ/aq8Ke+1VPhZ2rLN2hDz9
-         5zEU+a8RNEV0lpbeWtl2q0cHFOTXtyK8NphWsSJGjh/UtbN/h7jHUA6yOsVht/QMMoU0
-         2LXjaw6n9LsuFuepKv4DLUAJVNC/DCzzA3aAcZeQuRMkm5SArmUa9usXQNjT1oZX6pJZ
-         0TgQ==
-X-Gm-Message-State: APt69E3rL729IDrtS540DEUAbTa2AC/l8EFdnuCnyw7HDMt4gEHlxMSm
-        YJebttvg0yq5GnQrZ2M/PZpYug==
-X-Google-Smtp-Source: AAOMgpcL2V6KQJVblgNyGYGlhYgOYBqgNKe8zsaRIlhlqnKKWJmZZT5HZ0TUHNG7WwVpDMY6KaX5ug==
-X-Received: by 2002:a19:73c9:: with SMTP id h70-v6mr14247310lfk.61.1530640310223;
-        Tue, 03 Jul 2018 10:51:50 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id y21-v6sm258431ljc.67.2018.07.03.10.51.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 10:51:48 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 10:51:36 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH] ARM: disable KCOV for trusted foundations code
-Message-ID: <20180703175136.vfx2nap7dsv5zen5@localhost>
-References: <20180529103636.1535457-1-arnd@arndb.de>
+        Tue, 3 Jul 2018 13:53:53 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63HnPS6015318
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 13:53:52 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0dpdgjk4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 13:53:52 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Tue, 3 Jul 2018 13:53:51 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Jul 2018 13:53:49 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63Hrm0P7602584
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 3 Jul 2018 17:53:48 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDC92112067;
+        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93878112064;
+        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
+Received: from localhost (unknown [9.18.235.193])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Tue,  3 Jul 2018 13:53:40 -0400 (EDT)
+Date:   Tue, 3 Jul 2018 14:53:46 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 2/2] powerpc: Enable CPU_FTR_ASYM_SMT for interleaved
+ big-cores
+References: <cover.1530609795.git.ego@linux.vnet.ibm.com>
+ <573a559dff87da1d68a55bf6ada97b7697102909.1530609795.git.ego@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180529103636.1535457-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <573a559dff87da1d68a55bf6ada97b7697102909.1530609795.git.ego@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-TM-AS-GCONF: 00
+x-cbid: 18070317-0060-0000-0000-00000286D03B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009302; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01056043; UDB=6.00541694; IPR=6.00833966;
+ MB=3.00021978; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 17:53:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070317-0061-0000-0000-000045AACB63
+Message-Id: <20180703175346.GB6474@kermit-br-ibm-com.br.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807030203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 12:36:26PM +0200, Arnd Bergmann wrote:
-> The ARM trusted foundations code is currently broken in linux-next
-> when CONFIG_KCOV_INSTRUMENT_ALL is set:
+On Tue, Jul 03, 2018 at 04:33:51PM +0530, Gautham R. Shenoy wrote:
+> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 > 
-> /tmp/ccHdQsCI.s: Assembler messages:
-> /tmp/ccHdQsCI.s:37: Error: .err encountered
-> /tmp/ccHdQsCI.s:38: Error: .err encountered
-> /tmp/ccHdQsCI.s:39: Error: .err encountered
-> scripts/Makefile.build:311: recipe for target 'arch/arm/firmware/trusted_foundations.o' failed
+> A pair of IBM POWER9 SMT4 cores can be fused together to form a big-core
+> with 8 SMT threads. This can be discovered via the "ibm,thread-groups"
+> CPU property in the device tree which will indicate which group of
+> threads that share the L1 cache, translation cache and instruction data
+> flow. If there are multiple such group of threads, then the core is a
+> big-core.
 > 
-> I could not find a function attribute that lets me disable
-> -fsanitize-coverage=trace-pc for just one function, so this
-> turns it off for the entire file instead.
+> Furthermore, if the thread-ids of the threads of the big-core can be
+> obtained by interleaving the thread-ids of the thread-groups
+> (component small core), then such a big-core is called an interleaved
+> big-core.
 > 
-> Fixes: mmotm ("arm: port KCOV to arm")
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Eg: Threads in the pair of component SMT4 cores of an interleaved
+> big-core are numbered {0,2,4,6} and {1,3,5,7} respectively.
+> 
+> The SMT4 cores forming a big-core are more or less independent
+> units. Thus when multiple tasks are scheduled to run on the fused
+> core, we get the best performance when the tasks are spread across the
+> pair of SMT4 cores.
+> 
+> This patch enables CPU_FTR_ASYM_SMT bit in the cpu-features on
+> detecting the presence of interleaved big-cores at boot up. This will
+> will bias the load-balancing of tasks on smaller numbered threads,
+> which will automatically result in spreading the tasks uniformly
+> across the associated pair of SMT4 cores.
+> 
+> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/kernel/setup-common.c | 67 +++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 66 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+> index a78ec66..f63d797 100644
+> --- a/arch/powerpc/kernel/setup-common.c
+> +++ b/arch/powerpc/kernel/setup-common.c
+> @@ -537,6 +537,56 @@ int get_cpu_thread_group_start(int cpu, struct thread_groups *tg)
+>  	return -1;
+>  }
+>  
+> +/*
+> + * check_interleaved_big_core - Checks if the thread group tg
+> + * corresponds to a big-core whose threads are interleavings of the
+> + * threads of the component small cores.
+> + *
+> + * @tg: A thread-group struct for the core.
+> + *
+> + * Returns true if the core is a interleaved big-core.
+> + * Returns false otherwise.
+> + */
+> +static inline bool check_interleaved_big_core(struct thread_groups *tg)
+> +{
+> +	int nr_groups;
+> +	int threads_per_group;
+> +	int cur_cpu, next_cpu, i, j;
+> +
+> +	nr_groups = tg->nr_groups;
+> +	threads_per_group = tg->threads_per_group;
+> +
+> +	if (tg->property != 1)
+> +		return false;
+> +
+> +	if (nr_groups < 2 || threads_per_group < 2)
+> +		return false;
+> +
+> +	/*
+> +	 * In case of an interleaved big-core, the thread-ids of the
+> +	 * big-core can be obtained by interleaving the the thread-ids
+> +	 * of the component small
+> +	 *
+> +	 * Eg: On a 8-thread big-core with two SMT4 small cores, the
+> +	 * threads of the two component small cores will be
+> +	 * {0, 2, 4, 6} and {1, 3, 5, 7}.
+> +	 */
+> +	for (i = 0; i < nr_groups; i++) {
+> +		int group_start = i * threads_per_group;
+> +
+> +		for (j = 0; j < threads_per_group - 1; j++) {
+> +			int cur_idx = group_start + j;
+> +
+> +			cur_cpu = tg->thread_list[cur_idx];
+> +			next_cpu = tg->thread_list[cur_idx + 1];
+> +			if (next_cpu != cur_cpu + nr_groups)
+> +				return false;
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  /**
+>   * setup_cpu_maps - initialize the following cpu maps:
+>   *                  cpu_possible_mask
+> @@ -560,6 +610,7 @@ void __init smp_setup_cpu_maps(void)
+>  	struct device_node *dn;
+>  	int cpu = 0;
+>  	int nthreads = 1;
+> +	bool has_interleaved_big_core = true;
+>  
+>  	DBG("smp_setup_cpu_maps()\n");
+>  
+> @@ -613,6 +664,12 @@ void __init smp_setup_cpu_maps(void)
+>  		if (parse_thread_groups(dn, &tg) ||
+>  		    tg.nr_groups < 1 || tg.property != 1) {
+>  			has_big_cores = false;
+> +			has_interleaved_big_core = false;
+> +		}
+> +
+> +		if (has_interleaved_big_core) {
+> +			has_interleaved_big_core =
+> +				check_interleaved_big_core(&tg);
+>  		}
+>  
+>  		if (cpu >= nr_cpu_ids) {
+> @@ -669,7 +726,15 @@ void __init smp_setup_cpu_maps(void)
+>  	vdso_data->processorCount = num_present_cpus();
+>  #endif /* CONFIG_PPC64 */
+>  
+> -        /* Initialize CPU <=> thread mapping/
+> +	if (has_interleaved_big_core) {
+> +		int key = __builtin_ctzl(CPU_FTR_ASYM_SMT);
+> +
+> +		cur_cpu_spec->cpu_features |= CPU_FTR_ASYM_SMT;
+> +		static_branch_enable(&cpu_feature_keys[key]);
+> +		pr_info("Detected interleaved big-cores\n");
+> +	}
 
-Applied to arm-soc fixes branch for v4.18.
+Shouldn't we use cpu_has_feature(CPU_FTR_ASYM_SMT) before setting it?
 
+> +
+> +	/* Initialize CPU <=> thread mapping/
+>  	 *
+>  	 * WARNING: We assume that the number of threads is the same for
+>  	 * every CPU in the system. If that is not the case, then some code
+> -- 
+> 1.9.4
+> 
 
--Olof
+-- 
+Murilo
+
