@@ -2,147 +2,242 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F57C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445A2C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A0D2064D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:36:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A0D2064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DA73A208D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA73A208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934090AbeGCQgy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:36:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42798 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934030AbeGCQgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:36:50 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D29424078B89;
-        Tue,  3 Jul 2018 16:36:49 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 30CF71C640;
-        Tue,  3 Jul 2018 16:36:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  3 Jul 2018 18:36:49 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 18:36:45 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-Message-ID: <20180703163645.GA23144@redhat.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com>
- <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com>
- <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 03 Jul 2018 16:36:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 03 Jul 2018 16:36:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+        id S933797AbeGCQic (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:38:32 -0400
+Received: from smtprelay0060.hostedemail.com ([216.40.44.60]:36738 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932747AbeGCQib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:38:31 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 97845182CF66E;
+        Tue,  3 Jul 2018 16:38:30 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: sheet02_844f41cb4771b
+X-Filterd-Recvd-Size: 9122
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Jul 2018 16:38:29 +0000 (UTC)
+Message-ID: <4b05b03ac6c3537d06754562efd477ba75413b62.camel@perches.com>
+Subject: Re: [PATCH] iommu/amd: fix missing tag from dev_err message
+From:   Joe Perches <joe@perches.com>
+To:     "Hook, Gary" <ghook@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 03 Jul 2018 09:38:27 -0700
+In-Reply-To: <dc5d5fc0-0c4b-3728-2dba-987840e7c1fc@amd.com>
+References: <20180703064005.18908-1-colin.king@canonical.com>
+         <6763ec382f8d629f5f356f4cc023f20c2f76b26a.camel@perches.com>
+         <d27fe634-89cf-7d9a-3e3d-a2baafabf0be@amd.com>
+         <d93bfa0f52d8907019b16336645986cd339ebf75.camel@perches.com>
+         <f3e15437-68c1-58eb-bc34-93fa70e50dc9@amd.com>
+         <6fbcf273-bc0a-5dbd-fa0e-a7f656c4ccbc@canonical.com>
+         <dc5d5fc0-0c4b-3728-2dba-987840e7c1fc@amd.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/03, Ravi Bangoria wrote:
->
-> Ok let me explain the difference.
->
-> Current approach:
->
->     ------------
->     register_for_each_vma() / uprobe_mmap()
->       install_breakpoint()
->         uprobe_write_opcode() {
->                 if (instruction is not already patched) {
->                         /* Gets called only _once_. */
->                         increment the reference counter;
->                         patch the instruction;
->                 }
->         }
+On Tue, 2018-07-03 at 11:27 -0500, Hook, Gary wrote:
+> On 7/3/2018 11:24 AM, Colin Ian King wrote:
+> > On 03/07/18 17:21, Hook, Gary wrote:
+> > > On 7/3/2018 10:55 AM, Joe Perches wrote:
+> > > > On Tue, 2018-07-03 at 07:56 -0500, Gary R Hook wrote:
+> > > > > On 07/03/2018 05:07 AM, Joe Perches wrote:
+> > > > > > On Tue, 2018-07-03 at 07:40 +0100, Colin King wrote:
+> > > > > > > Currently tag is being assigned but not used, it is missing from
+> > > > > > > the dev_err message, so add it in.
+> > > > > > > 
+> > > > > > > Cleans up clang warning:
+> > > > > > > warning: variable 'tag' set but not used [-Wunused-but-set-variable]
+> > > > > > 
+> > > > > > []
+> > > > > > > diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> > > > > > 
+> > > > > > []
+> > > > > > > @@ -616,9 +616,9 @@ static void iommu_print_event(struct amd_iommu
+> > > > > > > *iommu, void *__evt)
+> > > > > > >             pasid = ((event[0] >> 16) & 0xFFFF)
+> > > > > > >                 | ((event[1] << 6) & 0xF0000);
+> > > > > > >             tag = event[1] & 0x03FF;
+> > > > > > > -        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
+> > > > > > > pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+> > > > > > > +        dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x
+> > > > > > > pasid=0x%05x address=0x%016llx flags=0x%04x tag=0x%03x]\n",
+> > > > > > >                 PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+> > > > > > > -            pasid, address, flags);
+> > > > > > > +            pasid, address, flags, tag);
+> > > > > > 
+> > > > > > Seems to have a superfluous ] that should be removed.
+> > > > > 
+> > > > > Yeah, I pretty much messed up all of the log messages in that function.
+> > > > > My apologies. I'll create a patch for that problem; it shouldn't be
+> > > > > fixed here.
+> > > 
+> > > Well, no, I misremembered. The extraneous square brace has been there
+> > > forever. Needs fixin', though.
+> > > 
+> > 
+> > The opening square bracket is much earlier:
+> > 
+> > dev_err(dev, "AMD-Vi: Event logged [");
+> > 
+> > ..and all the subsequent dev_err messages have the trailing square bracket.
+> 
+> Gah! Mystery solved. I'd forgotten about that.
+> 
+> "Never mind."
+> 
 
-Yes I see. And I am not sure this all is correct. And I still hope we can do
-something better, I'll write another email.
+It stems from the misconversion from printk to dev_err
 
-For now, let's discuss your current approach.
+The initial dev_err is fine but all the dev_err uses
+in the switch/case should use pr_cont, not dev_err
 
-> Now, if I put it inside install_breakpoint():
->
->     ------------
->     uprobe_register()
->       register_for_each_vma()
->         install_breakpoint() {
->                 /* Called _for each consumer_ */
+(there's a suggested patch below this commit reference)
 
-How so? it is not called for each consumer. I think you misread this code.
+---
+From 90ca3859f5ea90050d00e695355934b37357e7bb Mon Sep 17 00:00:00 2001
+From: Gary R Hook <gary.hook@amd.com>
+Date: Thu, 8 Mar 2018 18:34:41 -0600
+Subject: [PATCH] iommu/amd: Use dev_err to send events to the system log
 
->                 increment the reference counter _once_;
->                 uprobe_write_opcode()
-> 		...
->         }
+Remove printk and use a more preferable error logging function.
 
-So. I meant that you can move the _same_ logic into install_breakpoint() and
-remove_breakpoint(). And note that ref_ctr_updated in uprobe_write_opcode() is
-only needed because it can retry the fault.
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/amd_iommu.c | 55 ++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 28 insertions(+), 27 deletions(-)
 
-IOW, you can simply do update_ref_ctr(is_register => 1) at the start of
-install_breakpoint(), and update_ref_ctr(0) in remove_breakpoint(), there are
-no other callers of uprobe_write_opcode(). To clarify, it is indirectly called
-by set_swbp() and set_orig_insn(), but this doesn't matter.
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 997a947ddc3b..4cd19f93ca15 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -547,6 +547,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
+ 
+ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ {
++       struct device *dev = iommu->iommu.dev;
+        int type, devid, domid, flags;
+        volatile u32 *event = __evt;
+        int count = 0;
+@@ -573,53 +574,53 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+                amd_iommu_report_page_fault(devid, domid, address, flags);
+                return;
+        } else {
+-               printk(KERN_ERR "AMD-Vi: Event logged [");
++               dev_err(dev, "AMD-Vi: Event logged [");
+        }
+ 
+        switch (type) {
+        case EVENT_TYPE_ILL_DEV:
+-               printk("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
+-                      "address=0x%016llx flags=0x%04x]\n",
+-                      PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-                      address, flags);
++               dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
++                       "address=0x%016llx flags=0x%04x]\n",
++                       PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
++                       address, flags);
 
-Or you can kill update_ref_ctr() and (roughly) do
+etc...
 
-	rc_vma = find_ref_ctr_vma(...);
-	if (rc_vma)
-		__update_ref_ctr(..., 1);
-	else
-		delayed_uprobe_add(...);
+so this could be:
 
-at the start of install_breakpoint() and
+---
+ drivers/iommu/amd_iommu.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-	rc_vma = find_ref_ctr_vma(...);
-	if (rc_vma)
-		__update_ref_ctr(..., -1);
-	delayed_uprobe_remove(...);
-
-in remove_breakpoint().
-
-
->     uprobe_mmap()
->       install_breakpoint() {
->                 increment the reference counter _for each consumer_;
-
-Again, I do not understand where do you see the "for each consumer" thing.
-
->                 uprobe_write_opcode()
-
-In short. There is a 1:1 relationship between uprobe_write_opcode(is_register => 1)
-and install_breakpoint(), and between uprobe_write_opcode(is_register => 0) and
-remove_breakpoint(). Whatever uprobe_write_opcode() can do if is_register == 1 can be
-done in install_breakpoint(), the same for is_register == 0 and remove_breakpont().
-
-What have I missed?
-
-Oleg.
-
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 596b95c50051..f78cfa094301 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -572,43 +572,42 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 	if (type == EVENT_TYPE_IO_FAULT) {
+ 		amd_iommu_report_page_fault(devid, pasid, address, flags);
+ 		return;
+-	} else {
+-		dev_err(dev, "AMD-Vi: Event logged [");
+ 	}
+ 
++	dev_err(dev, "AMD-Vi: Event logged [");
++
+ 	switch (type) {
+ 	case EVENT_TYPE_ILL_DEV:
+-		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
++		pr_cont("ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+ 		dump_dte_entry(devid);
+ 		break;
+ 	case EVENT_TYPE_DEV_TAB_ERR:
+-		dev_err(dev, "DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
+-			"address=0x%016llx flags=0x%04x]\n",
++		pr_cont("DEV_TAB_HARDWARE_ERROR device=%02x:%02x.%x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			address, flags);
+ 		break;
+ 	case EVENT_TYPE_PAGE_TAB_ERR:
+-		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
++		pr_cont("PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+ 		break;
+ 	case EVENT_TYPE_ILL_CMD:
+-		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
++		pr_cont("ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
+ 		dump_command(address);
+ 		break;
+ 	case EVENT_TYPE_CMD_HARD_ERR:
+-		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
++		pr_cont("COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
+ 			address, flags);
+ 		break;
+ 	case EVENT_TYPE_IOTLB_INV_TO:
+-		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
++		pr_cont("IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			address);
+ 		break;
+ 	case EVENT_TYPE_INV_DEV_REQ:
+-		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
++		pr_cont("INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+ 		break;
+@@ -616,12 +615,12 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 		pasid = ((event[0] >> 16) & 0xFFFF)
+ 			| ((event[1] << 6) & 0xF0000);
+ 		tag = event[1] & 0x03FF;
+-		dev_err(dev, "INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
++		pr_cont("INVALID_PPR_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			pasid, address, flags);
+ 		break;
+ 	default:
+-		dev_err(dev, "UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
++		pr_cont("UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
+ 			event[0], event[1], event[2], event[3]);
+ 	}
+ 
