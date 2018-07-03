@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3DC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B95BC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F241323E80
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D8B523E80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:35:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="LDRTYd3G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F241323E80
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="lUH6aQjD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8B523E80
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933778AbeGCPeV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:34:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37748 "EHLO
+        id S933219AbeGCPf2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:35:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37922 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933726AbeGCPeQ (ORCPT
+        with ESMTP id S933726AbeGCPeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:34:16 -0400
+        Tue, 3 Jul 2018 11:34:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=iCxwgXc3M1LUH8T95w/31pXFtexgrbv/fCrOH6XDNw8=; b=LDRTYd3GHhSR
-        UUl6Id6QdrXwpstwiIM9Wjp4Ag6fTUdndvMYwEaQYu1PMg1aley2XwksnDCtVB+Igf5s7buoNT3hO
-        3CND9u/JQuJIDlXyaa3lkrqOWWyT6HWX1GWCEGXLgmmfgWRtBToLmv++t7BySnPlxwjBPVUY6p3k8
-        MObcg=;
+        List-Archive; bh=Bl04FEFAJaip5H0dVFAs4XEo+w09yICtQW6QN1qhmes=; b=lUH6aQjDNqAm
+        xdrQcq05RtDkYnpB0qb/19Vpo2CsUOr54yoJUVTwFPW/sYt9sOlOAYSqXhUSnhTXZrJrmjunlz6Ho
+        DAZYRBJrzT+QNom/qEgA8hm4apsKvvbWN+lXhtkODlBda0f2BacAS3nLUt4bCO4R/eDEEabMZZsGi
+        234Zg=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1faNJj-0006AT-Kg; Tue, 03 Jul 2018 15:34:11 +0000
+        id 1faNJs-0006B1-8j; Tue, 03 Jul 2018 15:34:20 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1faNJj-0003is-6E; Tue, 03 Jul 2018 16:34:11 +0100
+        id 1faNJr-0003nQ-Qt; Tue, 03 Jul 2018 16:34:19 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Daniel Kurtz <djkurtz@chromium.org>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -56,10 +56,10 @@ Cc:     Mark Brown <broonie@kernel.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Akshu Agrawal <akshu.agrawal@amd.com>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: AMD: Simplify trigger handler" to the asoc tree
-In-Reply-To:  <20180702211956.149355-6-djkurtz@chromium.org>
-Message-Id: <E1faNJj-0003is-6E@debutante>
-Date:   Tue, 03 Jul 2018 16:34:11 +0100
+Subject: Applied "ASoC: AMD: Always subtract bytescount" to the asoc tree
+In-Reply-To:  <20180702211956.149355-3-djkurtz@chromium.org>
+Message-Id: <E1faNJr-0003nQ-Qt@debutante>
+Date:   Tue, 03 Jul 2018 16:34:19 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: AMD: Simplify trigger handler
+   ASoC: AMD: Always subtract bytescount
 
 has been applied to the asoc tree at
 
@@ -92,50 +92,35 @@ to this mail.
 Thanks,
 Mark
 
-From df61f9f76609456efbc60d495b3235baf7d07691 Mon Sep 17 00:00:00 2001
+From 715cdce04487fb23d5c10693b3bc01309fea955a Mon Sep 17 00:00:00 2001
 From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Mon, 2 Jul 2018 15:19:55 -0600
-Subject: [PATCH] ASoC: AMD: Simplify trigger handler
+Date: Mon, 2 Jul 2018 15:19:52 -0600
+Subject: [PATCH] ASoC: AMD: Always subtract bytescount
 
-Now that the I2S channel names are fixed, and DMA data flow order is
-consistent (ch1 then ch2), we can simplify channel start order:
-start the upstream channel and then the downstream channel for both
-playback and capture cases.
+It is always correct to subtract out the starting bytescount value.  Even
+in the case of 2^64 byte rollover (292 Million Years in the future
+@ 48000 Hz) the math still works out.
 
 Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ sound/soc/amd/acp-pcm-dma.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index ab60129f4f26..65c1033bd51c 100644
+index 4665ae12e74e..034fac3de037 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -1024,10 +1024,7 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 		rtd->bytescount = acp_get_byte_count(rtd);
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			acp_dma_start(rtd->acp_mmio, rtd->ch1);
--			acp_dma_start(rtd->acp_mmio, rtd->ch2);
--		} else {
-+		if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
- 			if (rtd->capture_channel == CAP_CHANNEL0) {
- 				acp_dma_cap_channel_disable(rtd->acp_mmio,
- 							    CAP_CHANNEL1);
-@@ -1040,9 +1037,9 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
- 				acp_dma_cap_channel_enable(rtd->acp_mmio,
- 							   CAP_CHANNEL1);
- 			}
--			acp_dma_start(rtd->acp_mmio, rtd->ch2);
--			acp_dma_start(rtd->acp_mmio, rtd->ch1);
- 		}
-+		acp_dma_start(rtd->acp_mmio, rtd->ch1);
-+		acp_dma_start(rtd->acp_mmio, rtd->ch2);
- 		ret = 0;
- 		break;
- 	case SNDRV_PCM_TRIGGER_STOP:
+@@ -995,8 +995,7 @@ static snd_pcm_uframes_t acp_dma_pointer(struct snd_pcm_substream *substream)
+ 	buffersize = frames_to_bytes(runtime, runtime->buffer_size);
+ 	bytescount = acp_get_byte_count(rtd);
+ 
+-	if (bytescount > rtd->bytescount)
+-		bytescount -= rtd->bytescount;
++	bytescount -= rtd->bytescount;
+ 	pos = do_div(bytescount, buffersize);
+ 	return bytes_to_frames(runtime, pos);
+ }
 -- 
 2.18.0.rc2
 
