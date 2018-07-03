@@ -2,111 +2,109 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FBBFC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E464C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9E5208A5
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D4E208A5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:48:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvGU7w1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9E5208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="utxfdLs9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17D4E208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752840AbeGCLrQ (ORCPT
+        id S1752730AbeGCLsd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:47:16 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46065 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752251AbeGCLrO (ORCPT
+        Tue, 3 Jul 2018 07:48:33 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35981 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752067AbeGCLsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:47:14 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q5-v6so1280973ljh.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:47:13 -0700 (PDT)
+        Tue, 3 Jul 2018 07:48:32 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n24-v6so1361242lfh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N0H+5Cnux2S7B9hfOa5H91RvHRE0YC/gGCCeoabzBfQ=;
-        b=BvGU7w1//5IsinDXiqh16H97UxFvsFXvJHKdI9prWC6nC9B1vBc/jkcaub70fGME4r
-         s3iwsAnD5SQ5aL978NzI9K9XTZcbeT5ERy8W0t+3sAI04ynl8kRBrBiRW0GUH3qQIJRt
-         s4L2kcDZxMJmNfPvlSUu/TyU27XtY+14itvyHAg2aQOZFwaHih+KFapye70JgIHuxGXk
-         VDsZ9FTgskWrm/RhQ/K/QdVBNmiMs/CJZ/zv0IWEjl+orZgCcNGVxT/5BcdsflONnMj/
-         XXD/qZ0TBLKuaIFSn45I6nX2iDu3dYZkoJm9DXSsOe3QQGeconiD/XulsOMeGO0r7NJS
-         DWXg==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9WsRTVkTTGUDGgQJHJowwDPzAwvaFRxNgihFnGMkmnA=;
+        b=utxfdLs9bErT1zw9FIZ4SPMC8elrVgu8W9CObwzqJboNcu199cMwPnlr+5ZZoaCD2d
+         AR6Id65XqNRQoY2ROA423tjBMKEjWosyzzU597NYSvKnTjGzZ4Yy4D/vhwIWT9DxK/U4
+         nq4Fj8qAVqERZmYnu6JI3imYtmwIKnE6Ifi2nLYDCcDw4ChhZ9gi5kA45Wg+9pVD4Vs5
+         LQkyyPvA0zz92wX2Mvwf2NjF4jvUGjc0s0iMwX607DYjJUX6/UMoJCdA3PaQLatW9RoF
+         NyFTFJ9OvyzQnUxHuj21+Kxm8wbcOyZSOCN/syWfIOJylkeedsXBHfaInEaX9i/jV4Ms
+         GfPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N0H+5Cnux2S7B9hfOa5H91RvHRE0YC/gGCCeoabzBfQ=;
-        b=WK7/i+hpOmrrnCBdtl9fWb4opEXs5SRt0fFjE6Up5S+snVhQ+XgMrf/tGGz+etBVzO
-         Xzhp0ox64W3y5cd+fdKCFtlqWIAcEWRvndbW6iuAmX57cS3mY5cijsVgZxZSkP6qF7m/
-         HjsU7NT7N0VqsH/TFj98Iw8oJ5mcTjZdWdP6ORD+CS/N14rAeyEMzXgiW1hLABYl+egF
-         pE5AZzUfFZzKqWrxaa31Chn0FP54iig4qbpEJdgTugGpXu4fRKxRc8O0rteI7EjUNCEU
-         P+VfdWRq7tKTKCkbVuuEYcoA69CvcvS03zZIxWklzsR4yUm02UXwW4Pe40ytKJ16DHmM
-         I8xA==
-X-Gm-Message-State: APt69E1I7jASdQ/NEa924tvtB7MIte51DreJ39KoBXgWI/RFB62QM5YQ
-        y656/8R/cR0LRAnFmhbY75k=
-X-Google-Smtp-Source: AAOMgpeNvjtVV2RJcmYdzd2QK3vrSzVP7GaVjSLwSmFuj8f0xUqC8kUJbygd/X1ZWc/ME9ZqxsR+vA==
-X-Received: by 2002:a2e:6a04:: with SMTP id f4-v6mr1649709ljc.109.1530618432399;
-        Tue, 03 Jul 2018 04:47:12 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id o128-v6sm216377lfo.69.2018.07.03.04.47.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Jul 2018 04:47:11 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1faJlv-0008AF-Rl; Tue, 03 Jul 2018 13:47:04 +0200
-Date:   Tue, 3 Jul 2018 13:47:03 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] misc: sram: enable clock before registering regions
-Message-ID: <20180703114703.GO9802@localhost>
-References: <20180703100548.30214-1-johan@kernel.org>
- <20180703100548.30214-2-johan@kernel.org>
- <e736a83f-bdd9-d136-070d-7093f5e8be2c@mentor.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9WsRTVkTTGUDGgQJHJowwDPzAwvaFRxNgihFnGMkmnA=;
+        b=c284r2r/vIto3WdChy0Vh/af3hkYJt5Bcf/n1qJA+ty78X2eLSYWkMselMCQhy497a
+         f/cl+iAUWj6LSCOhu5y0z2OOH31UnLXT8gYGLiYaKs6PLGiyBeDPwtaxXeAuQzQyH4lK
+         c74xHRXsjDhuHnA8FqI3OoyiYA4P4hKc1P2lLX6PTRig7JYqfZ8oQ0YjnQ5SUVuecmLe
+         9e0e8mt6iOYWhQsDtth1/MFvqQnG3b/jNA3C7ov7HlP9tD+d4MjyyFmYNrooYfQmZixR
+         QZ2GlFglT2nZ1MHONDfwnwP3Fiv6wVEQ6ash7tIg56/5cGvfB81qeMylgVyV8Wa0s6CM
+         ekVQ==
+X-Gm-Message-State: APt69E1VBEdKzZE0C4RtWVg2KRYq0jUo0f3BV8NFFpuibj4fbLyAdVP0
+        uxO4goMxq7QoKgVyypIuTrTeZ9cOKvgUN6HUTk0=
+X-Google-Smtp-Source: AAOMgpfswTtvb7vqlB7PjclGobHHjJn0ruaisbBsPxIkaCW7i5lDjbm10B1AeBXoX2v0IZeCfViOxIX0toczyluZqVE=
+X-Received: by 2002:a19:c742:: with SMTP id x63-v6mr18682034lff.9.1530618511155;
+ Tue, 03 Jul 2018 04:48:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e736a83f-bdd9-d136-070d-7093f5e8be2c@mentor.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a19:2b14:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 04:48:30 -0700 (PDT)
+In-Reply-To: <20180703111735.GA3544@bombadil.infradead.org>
+References: <20180625175737.GA20042@jordon-HP-15-Notebook-PC> <20180703111735.GA3544@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 3 Jul 2018 17:18:30 +0530
+Message-ID: <CAFqt6zaiFuHZKwp+Ou67hLX=JiqTzZ9v3hjaHj3+BYQi+-=Ebg@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/vdso: Change return type to vm_fault_t for fault handlers
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 01:23:30PM +0300, Vladimir Zapolskiy wrote:
-> Hi Johan,
-> 
-> On 07/03/2018 01:05 PM, Johan Hovold wrote:
-> > Make sure to enable the clock before registering regions and exporting
-> > partitions to user space at which point we must be prepared for I/O.
-> > 
-> > Fixes: ee895ccdf776 ("misc: sram: fix enabled clock leak on error path")
-> > Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> 
-> thank you for the change, however please note that the identified commit
-> for the fix is incorrect one apparently.
-> 
-> In my opinion the proper tag contents would be
-> 
-> Fixes: b4c3fcb3c71f ("misc: sram: extend usage of reserved partitions")
-> 
-> I hope you agree to it, also I would suggest to swap the changes in
-> the series.
+On Tue, Jul 3, 2018 at 4:47 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Mon, Jun 25, 2018 at 11:27:37PM +0530, Souptick Joarder wrote:
+>> Use new return type vm_fault_t for both fault handler
+>> vdso_fault() and vvar_fault(). Previously vm_insert_pfn()
+>> returns err which has to mapped into VM_FAULT_* type.
+>> The new function vmf_insert_pfn() will replace this
+>> inefficiency by returning correct VM_FAULT_* type.
+>
+>> @@ -105,10 +105,10 @@ static int vvar_fault(const struct vm_special_mapping *sm,
+>>        * the page past the end of the vvar mapping.
+>>        */
+>>       if (sym_offset == 0)
+>> -             return VM_FAULT_SIGBUS;
+>> +             return ret;
+>>
+>>       if (sym_offset == image->sym_vvar_page) {
+>> -             ret = vm_insert_pfn(vma, vmf->address,
+>> +             ret = vmf_insert_pfn(vma, vmf->address,
+>>                                   __pa_symbol(&__vvar_page) >> PAGE_SHIFT);
+>>       } else if (sym_offset == image->sym_pvclock_page) {
+>>               struct pvclock_vsyscall_time_info *pvti =
+>> @@ -124,14 +124,11 @@ static int vvar_fault(const struct vm_special_mapping *sm,
+>
+> Haven't you missed converting vm_insert_pfn_prot() at line 117?
+> Did you test-compile this?
+>
 
-No, I think I used the right commit in the Fixes tag as that was the
-commit which moved the clock enable to after the memory-region
-registration (at which point the memory could potentially be accessed).
+I left it intentionally in this patch. When we will be replacing
+vm_insert_foo() with new API vmf_insert_foo(), vm_insert_pfn_prot
+need to be changed to return vm_fault_t type.
 
-Johan
+I will change the return type of vm_insert_pfn_prot() in that patch.
