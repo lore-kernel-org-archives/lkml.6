@@ -2,230 +2,282 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D32AC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B4EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCAE23E65
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:00:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCAE23E65
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FF9F24494
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 10:01:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF9F24494
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933702AbeGCKAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 06:00:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933536AbeGCKAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 06:00:40 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F2FA087A7D;
-        Tue,  3 Jul 2018 10:00:39 +0000 (UTC)
-Received: from crecklin.bos.com (ovpn-120-13.rdu2.redhat.com [10.10.120.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 31106111AF37;
-        Tue,  3 Jul 2018 10:00:39 +0000 (UTC)
-From:   Chris von Recklinghausen <crecklin@redhat.com>
-To:     keescook@chromium.org, labbott@redhat.com, pabeni@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v6] add param that allows bootline control of hardened usercopy
-Date:   Tue,  3 Jul 2018 06:00:37 -0400
-Message-Id: <1530612037-32512-1-git-send-email-crecklin@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 10:00:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 03 Jul 2018 10:00:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'crecklin@redhat.com' RCPT:''
+        id S933754AbeGCKBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 06:01:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:46598 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932471AbeGCKBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 06:01:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 921F51529;
+        Tue,  3 Jul 2018 03:01:08 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1AE243F5A0;
+        Tue,  3 Jul 2018 03:01:06 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Sterba <dsterba@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] refcount: always allow checked forms
+Date:   Tue,  3 Jul 2018 11:01:02 +0100
+Message-Id: <20180703100102.16615-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling HARDENED_USERCOPY causes measurable regressions in
- networking performance, up to 8% under UDP flood.
+In many cases, it would be useful to be able to use the full
+sanity-checked refcount helpers regardless of CONFIG_REFCOUNT_FULL, as
+this would help to avoid duplicate warnings where callers try to
+sanity-check refcount manipulation.
 
-I'm running an a small packet UDP flood using pktgen vs. a host b2b
-connected. On the receiver side the UDP packets are processed by a
-simple user space process that just reads and drops them:
+This patch refactors things such that the full refcount helpers were
+always built, as refcount_${op}_checked(), such that they can be used
+regardless of CONFIG_REFCOUNT_FULL. This will allow code which *always*
+wants a checked refcount to opt-in, avoiding the need to duplicate the
+logic for warnings.
 
-https://github.com/netoptimizer/network-testing/blob/master/src/udp_sink.c
+There should be no functional change as a result of this patch.
 
-Not very useful from a functional PoV, but it helps to pin-point
-bottlenecks in the networking stack.
-
-When running a kernel with CONFIG_HARDENED_USERCOPY=y, I see a 5-8%
-regression in the receive tput, compared to the same kernel without
-this option enabled.
-
-With CONFIG_HARDENED_USERCOPY=y, perf shows ~6% of CPU time spent
-cumulatively in __check_object_size (~4%) and __virt_addr_valid (~2%).
-
-The call-chain is:
-
-__GI___libc_recvfrom
-entry_SYSCALL_64_after_hwframe
-do_syscall_64
-__x64_sys_recvfrom
-__sys_recvfrom
-inet_recvmsg
-udp_recvmsg
-__check_object_size
-
-udp_recvmsg() actually calls copy_to_iter() (inlined) and the latters
-calls check_copy_size() (again, inlined).
-
-A generic distro may want to enable HARDENED_USERCOPY in their default
-kernel config, but at the same time, such distro may want to be able to
-avoid the performance penalties in with the default configuration and
-disable the stricter check on a per-boot basis.
-
-This change adds a boot parameter that conditionally disables
-HARDENED_USERCOPY at boot time.
-
-This feature is not available on platforms that don't have CONFIG_JUMP_LABEL
-set.
-
-v5->v6:
-	m68k build issue was when changes were in include/linux/thread_info.h.
-		mm/usercopy.c builds just fine without CONFIG_JUMP_LABEL or
-		CONFIG_SMP_BROKEN.
-v4->v5:
-	key off of CONFIG_JUMP_LABEL, not CONFIG_SMP_BROKEN.
-
-v3->v4:
-	fix a couple of nits in commit comments
-	declaration of bypass_usercopy_checks moved inside mm/usercopy.c and
-		made static
-	add blurb to commit comments about not enabling this functionality on
-		platforms with CONFIG_BROKEN_ON_SMP set.
-v2->v3:
-	add benchmark details to commit comments
-	Don't add new item to Documentation/admin-guide/kernel-parameters.rst
-	rename boot param to "hardened_usercopy="
-	update description in Documentation/admin-guide/kernel-parameters.txt
-	static_branch_likely -> static_branch_unlikely
-	add __ro_after_init versions of DEFINE_STATIC_KEY_FALSE,
-		DEFINE_STATIC_KEY_TRUE
-	disable_huc_atboot -> enable_checks (strtobool "on" == true)
-
-v1->v2:
-	remove CONFIG_HUC_DEFAULT_OFF
-	default is now enabled, boot param disables
-	move check to __check_object_size so as to not break optimization of
-		__builtin_constant_p()
-	include linux/atomic.h before linux/jump_label.h
-
-Signed-off-by: Chris von Recklinghausen <crecklin@redhat.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: David Sterba <dsterba@suse.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 11 ++++++++++
- include/linux/jump_label.h                      |  6 ++++++
- mm/usercopy.c                                   | 27 +++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+ include/linux/refcount.h | 27 +++++++++++++++++-------
+ lib/refcount.c           | 53 +++++++++++++++++++++++-------------------------
+ 2 files changed, 45 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc7aa7..560d4dc 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -816,6 +816,17 @@
- 	disable=	[IPV6]
- 			See Documentation/networking/ipv6.txt.
- 
-+	hardened_usercopy=
-+                        [KNL] Under CONFIG_HARDENED_USERCOPY, whether
-+                        hardening is enabled for this boot. Hardened
-+                        usercopy checking is used to protect the kernel
-+                        from reading or writing beyond known memory
-+                        allocation boundaries as a proactive defense
-+                        against bounds-checking flaws in the kernel's
-+                        copy_to_user()/copy_from_user() interface.
-+                on      Perform hardened usercopy checks (default).
-+                off     Disable hardened usercopy checks.
-+
- 	disable_radix	[PPC]
- 			Disable RADIX MMU mode on POWER9
- 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index b46b541..1a0b6f1 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -299,12 +299,18 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_TRUE(name)	\
- 	struct static_key_true name = STATIC_KEY_TRUE_INIT
- 
-+#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
-+	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-+
- #define DECLARE_STATIC_KEY_TRUE(name)	\
- 	extern struct static_key_true name
- 
- #define DEFINE_STATIC_KEY_FALSE(name)	\
- 	struct static_key_false name = STATIC_KEY_FALSE_INIT
- 
-+#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
-+	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-+
- #define DECLARE_STATIC_KEY_FALSE(name)	\
- 	extern struct static_key_false name
- 
-diff --git a/mm/usercopy.c b/mm/usercopy.c
-index e9e9325..7c8a1e9 100644
---- a/mm/usercopy.c
-+++ b/mm/usercopy.c
-@@ -20,6 +20,8 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/thread_info.h>
-+#include <linux/atomic.h>
-+#include <linux/jump_label.h>
- #include <asm/sections.h>
- 
- /*
-@@ -240,6 +242,8 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
- 	}
+Dave pointed out that it would be useful to be able to opt-in to full checks
+regardless of CONFIG_REFCOUNT_FULL, so that we can simplify callsites where we
+always want checks. I've spotted a few of these in code which is still awaiting
+conversion.
+
+I'm assuming that the atomics group is intended to own the refcount code, even
+though this isn't currently the case in MAINTAINERS.
+
+Mark.
+
+diff --git a/include/linux/refcount.h b/include/linux/refcount.h
+index a685da2c4522..b505f75ccf68 100644
+--- a/include/linux/refcount.h
++++ b/include/linux/refcount.h
+@@ -42,17 +42,30 @@ static inline unsigned int refcount_read(const refcount_t *r)
+ 	return atomic_read(&r->refs);
  }
  
-+static DEFINE_STATIC_KEY_FALSE_RO(bypass_usercopy_checks);
++extern __must_check bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r);
++extern void refcount_add_checked(unsigned int i, refcount_t *r);
 +
- /*
-  * Validates that the given object is:
-  * - not bogus address
-@@ -248,6 +252,9 @@ static inline void check_heap_object(const void *ptr, unsigned long n,
++extern __must_check bool refcount_inc_not_zero_checked(refcount_t *r);
++extern void refcount_inc_checked(refcount_t *r);
++
++extern __must_check bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r);
++
++extern __must_check bool refcount_dec_and_test_checked(refcount_t *r);
++extern void refcount_dec_checked(refcount_t *r);
++
+ #ifdef CONFIG_REFCOUNT_FULL
+-extern __must_check bool refcount_add_not_zero(unsigned int i, refcount_t *r);
+-extern void refcount_add(unsigned int i, refcount_t *r);
+ 
+-extern __must_check bool refcount_inc_not_zero(refcount_t *r);
+-extern void refcount_inc(refcount_t *r);
++#define refcount_add_not_zero	refcount_add_not_zero_checked
++#define refcount_add		refcount_add_checked
++
++#define refcount_inc_not_zero	refcount_inc_not_zero_checked
++#define refcount_inc		refcount_inc_checked
++
++#define refcount_sub_and_test	refcount_sub_and_test_checked
+ 
+-extern __must_check bool refcount_sub_and_test(unsigned int i, refcount_t *r);
++#define refcount_dec_and_test	refcount_dec_and_test_checked
++#define refcount_dec		refcount_dec_checked
+ 
+-extern __must_check bool refcount_dec_and_test(refcount_t *r);
+-extern void refcount_dec(refcount_t *r);
+ #else
+ # ifdef CONFIG_ARCH_HAS_REFCOUNT
+ #  include <asm/refcount.h>
+diff --git a/lib/refcount.c b/lib/refcount.c
+index d3b81cefce91..3d514f915999 100644
+--- a/lib/refcount.c
++++ b/lib/refcount.c
+@@ -38,10 +38,8 @@
+ #include <linux/refcount.h>
+ #include <linux/bug.h>
+ 
+-#ifdef CONFIG_REFCOUNT_FULL
+-
+ /**
+- * refcount_add_not_zero - add a value to a refcount unless it is 0
++ * refcount_add_not_zero_checked - add a value to a refcount unless it is 0
+  * @i: the value to add to the refcount
+  * @r: the refcount
+  *
+@@ -58,7 +56,7 @@
+  *
+  * Return: false if the passed refcount is 0, true otherwise
   */
- void __check_object_size(const void *ptr, unsigned long n, bool to_user)
+-bool refcount_add_not_zero(unsigned int i, refcount_t *r)
++bool refcount_add_not_zero_checked(unsigned int i, refcount_t *r)
  {
-+	if (static_branch_unlikely(&bypass_usercopy_checks))
-+		return;
-+
- 	/* Skip all tests if size is zero. */
- 	if (!n)
- 		return;
-@@ -279,3 +286,23 @@ void __check_object_size(const void *ptr, unsigned long n, bool to_user)
- 	check_kernel_text_object((const unsigned long)ptr, n, to_user);
+ 	unsigned int new, val = atomic_read(&r->refs);
+ 
+@@ -79,10 +77,10 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 	return true;
  }
- EXPORT_SYMBOL(__check_object_size);
-+
-+EXPORT_SYMBOL(bypass_usercopy_checks);
-+
-+static bool enable_checks __initdata = true;
-+
-+static int __init parse_hardened_usercopy(char *str)
-+{
-+	return strtobool(str, &enable_checks);
-+}
-+
-+__setup("hardened_usercopy=", parse_hardened_usercopy);
-+
-+static int __init set_hardened_usercopy(void)
-+{
-+	if (enable_checks == false)
-+		static_branch_enable(&bypass_usercopy_checks);
-+	return 1;
-+}
-+
-+late_initcall(set_hardened_usercopy);
+-EXPORT_SYMBOL(refcount_add_not_zero);
++EXPORT_SYMBOL(refcount_add_not_zero_checked);
+ 
+ /**
+- * refcount_add - add a value to a refcount
++ * refcount_add_checked - add a value to a refcount
+  * @i: the value to add to the refcount
+  * @r: the refcount
+  *
+@@ -97,14 +95,14 @@ EXPORT_SYMBOL(refcount_add_not_zero);
+  * cases, refcount_inc(), or one of its variants, should instead be used to
+  * increment a reference count.
+  */
+-void refcount_add(unsigned int i, refcount_t *r)
++void refcount_add_checked(unsigned int i, refcount_t *r)
+ {
+-	WARN_ONCE(!refcount_add_not_zero(i, r), "refcount_t: addition on 0; use-after-free.\n");
++	WARN_ONCE(!refcount_add_not_zero_checked(i, r), "refcount_t: addition on 0; use-after-free.\n");
+ }
+-EXPORT_SYMBOL(refcount_add);
++EXPORT_SYMBOL(refcount_add_checked);
+ 
+ /**
+- * refcount_inc_not_zero - increment a refcount unless it is 0
++ * refcount_inc_not_zero_checked - increment a refcount unless it is 0
+  * @r: the refcount to increment
+  *
+  * Similar to atomic_inc_not_zero(), but will saturate at UINT_MAX and WARN.
+@@ -115,7 +113,7 @@ EXPORT_SYMBOL(refcount_add);
+  *
+  * Return: true if the increment was successful, false otherwise
+  */
+-bool refcount_inc_not_zero(refcount_t *r)
++bool refcount_inc_not_zero_checked(refcount_t *r)
+ {
+ 	unsigned int new, val = atomic_read(&r->refs);
+ 
+@@ -134,10 +132,10 @@ bool refcount_inc_not_zero(refcount_t *r)
+ 
+ 	return true;
+ }
+-EXPORT_SYMBOL(refcount_inc_not_zero);
++EXPORT_SYMBOL(refcount_inc_not_zero_checked);
+ 
+ /**
+- * refcount_inc - increment a refcount
++ * refcount_inc_checked - increment a refcount
+  * @r: the refcount to increment
+  *
+  * Similar to atomic_inc(), but will saturate at UINT_MAX and WARN.
+@@ -148,14 +146,14 @@ EXPORT_SYMBOL(refcount_inc_not_zero);
+  * Will WARN if the refcount is 0, as this represents a possible use-after-free
+  * condition.
+  */
+-void refcount_inc(refcount_t *r)
++void refcount_inc_chcked(refcount_t *r)
+ {
+-	WARN_ONCE(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-after-free.\n");
++	WARN_ONCE(!refcount_inc_not_zero_checked(r), "refcount_t: increment on 0; use-after-free.\n");
+ }
+-EXPORT_SYMBOL(refcount_inc);
++EXPORT_SYMBOL(refcount_inc_checked);
+ 
+ /**
+- * refcount_sub_and_test - subtract from a refcount and test if it is 0
++ * refcount_sub_and_test_checked - subtract from a refcount and test if it is 0
+  * @i: amount to subtract from the refcount
+  * @r: the refcount
+  *
+@@ -174,7 +172,7 @@ EXPORT_SYMBOL(refcount_inc);
+  *
+  * Return: true if the resulting refcount is 0, false otherwise
+  */
+-bool refcount_sub_and_test(unsigned int i, refcount_t *r)
++bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
+ {
+ 	unsigned int new, val = atomic_read(&r->refs);
+ 
+@@ -192,10 +190,10 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ 
+ 	return !new;
+ }
+-EXPORT_SYMBOL(refcount_sub_and_test);
++EXPORT_SYMBOL(refcount_sub_and_test_checked);
+ 
+ /**
+- * refcount_dec_and_test - decrement a refcount and test if it is 0
++ * refcount_dec_and_test_checked - decrement a refcount and test if it is 0
+  * @r: the refcount
+  *
+  * Similar to atomic_dec_and_test(), it will WARN on underflow and fail to
+@@ -207,14 +205,14 @@ EXPORT_SYMBOL(refcount_sub_and_test);
+  *
+  * Return: true if the resulting refcount is 0, false otherwise
+  */
+-bool refcount_dec_and_test(refcount_t *r)
++bool refcount_dec_and_test_checked(refcount_t *r)
+ {
+-	return refcount_sub_and_test(1, r);
++	return refcount_sub_and_test_checked(1, r);
+ }
+-EXPORT_SYMBOL(refcount_dec_and_test);
++EXPORT_SYMBOL(refcount_dec_and_test_checked);
+ 
+ /**
+- * refcount_dec - decrement a refcount
++ * refcount_dec_checked - decrement a refcount
+  * @r: the refcount
+  *
+  * Similar to atomic_dec(), it will WARN on underflow and fail to decrement
+@@ -223,12 +221,11 @@ EXPORT_SYMBOL(refcount_dec_and_test);
+  * Provides release memory ordering, such that prior loads and stores are done
+  * before.
+  */
+-void refcount_dec(refcount_t *r)
++void refcount_dec_checked(refcount_t *r)
+ {
+-	WARN_ONCE(refcount_dec_and_test(r), "refcount_t: decrement hit 0; leaking memory.\n");
++	WARN_ONCE(refcount_dec_and_test_checked(r), "refcount_t: decrement hit 0; leaking memory.\n");
+ }
+-EXPORT_SYMBOL(refcount_dec);
+-#endif /* CONFIG_REFCOUNT_FULL */
++EXPORT_SYMBOL(refcount_dec_checked);
+ 
+ /**
+  * refcount_dec_if_one - decrement a refcount if it is 1
 -- 
-1.8.3.1
+2.11.0
 
