@@ -2,92 +2,87 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01593C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CF6C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB9C22412
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E65072086B
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 03:34:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZY1DUZL0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB9C22412
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXv73hN+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65072086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932802AbeGCDba (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 2 Jul 2018 23:31:30 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40040 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932198AbeGCDb3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Jul 2018 23:31:29 -0400
-Received: by mail-pg0-f65.google.com with SMTP id x5-v6so283354pgp.7;
-        Mon, 02 Jul 2018 20:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2fmhlNGqpsms94A+yO4Dz3lNwY65W+QS7UUjovlY4MU=;
-        b=ZY1DUZL0iFPZeFA/BALX6GI9QhAoP4Zza1X8co/kYvjz3j8A+VSWajJhy5A5MiiNrb
-         uizCY3JwrvO687knnQA0Y6V/Wzexv4IDErBj5Qj3edAAoSwmn0Di7mGj8Dlq0lbiw+Oi
-         1K1X9oSQgg2pOab/MuhnisTPW/8QNESlUXsjEi0YzgMMLMgytu4lv476zhspTrt98/cF
-         EqQ/7+NicuSdlW3ctqWCAZQAr2y+0pZ4ox9ye0sZNOiL9FLrfTGq0nfaau7ncssLheOx
-         MXc34pbYXqtahiYwoNJ0lfolUS1Ey9s+hz4osrM17MiBca8FrV0g2cjULILZLPAM9nTJ
-         d8FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2fmhlNGqpsms94A+yO4Dz3lNwY65W+QS7UUjovlY4MU=;
-        b=NRkTNc0sCrV8/Opzoeo8i7AqfFUicCUXqHmfXsP2x6iP+zHpHXwR3jZu9Rtl+JxOkM
-         B40PEeBCJ6MQpcm7YRkmy8qn7pcKh6z7WkM7GF/pLnS9Tfpe4l8iz5SfrHcA/uDmnsV5
-         x/IqGo4nqNSILoeZf1MDKVFNtBBfuDMNwESnWG1vWPvGUqN6p7DdLvppwv9C62xrszX4
-         d+fCF+uS2aT91Nu3Wtvrse8cGx/1NalUclwKmFZmd3iadRUwcObiP/nlcFw4EtAkDlVU
-         mwo5T6+KyW89orM4+I1FpsRnPBN15FN5XoDSBCtr5OUBzMXP8AMf5jeWifYKi3EQRDsm
-         3Hiw==
-X-Gm-Message-State: APt69E38J2f/O4aoA5wBM3D2PhuaPHhIaCVU2oMHKUhxNdheSjDGJzDN
-        fD/HgQO3gjMD0vcCPLZuRY8=
-X-Google-Smtp-Source: ADUXVKLs39JxmD2qUJUkLpeQ44xTm0/WThU3y51u3ChcmX7Ut4B2BxAVznAIbs9CbWcUWMUUu4NIyg==
-X-Received: by 2002:a65:660c:: with SMTP id w12-v6mr23577197pgv.404.1530588689040;
-        Mon, 02 Jul 2018 20:31:29 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id q77-v6sm187821pfk.152.2018.07.02.20.31.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Jul 2018 20:31:28 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 13:31:22 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        stewart@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH v2 2/2] powernv/cpuidle: Use parsed device tree values
- for cpuidle_init
-Message-ID: <20180703133122.245109d0@roar.ozlabs.ibm.com>
-In-Reply-To: <1530541401-19726-3-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-References: <1530541401-19726-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-        <1530541401-19726-3-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S932702AbeGCDeG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 2 Jul 2018 23:34:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932301AbeGCDeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Jul 2018 23:34:04 -0400
+Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com [74.125.82.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E40DE24EE3
+        for <linux-kernel@vger.kernel.org>; Tue,  3 Jul 2018 03:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1530588844;
+        bh=6PZHqHwuOPTuln9V+I3wdJ3Zpqx7ws0aJZMENaOhU0o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hXv73hN+io8IMpb1iikeHPOUWFZfrgLVwiEpDgW88bTWchgynr6bv4FSYvXzHRmY0
+         M6V3x81XX5WDCN5x0nyBwenw4kufg8iMGsCB+ticAoaDkvbNvK6hsUxmGJa8GY/nIu
+         erTPtutavUQKBoGKSEvC4f7hGaqLMrd0HxvoZpAw=
+Received: by mail-wm0-f41.google.com with SMTP id b188-v6so666579wme.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Jul 2018 20:34:03 -0700 (PDT)
+X-Gm-Message-State: APt69E04nVt2Snh/mcNcZ2/WSHFot2XhSPxz5zBW6qB3DxYGRDfohad7
+        0JoMpgExdNa8p8Fxm2+RuvMaSTRflTEfpINrn7kF3w==
+X-Google-Smtp-Source: AAOMgpcjjTruQaUIp9sQDOBDuV7/b+57ufAffloyfhQPQC4o9XfshiBNY8Y3mH5bsJ/+bdgb/3rRO5kDlXFO/Esh1KA=
+X-Received: by 2002:a1c:c241:: with SMTP id s62-v6mr10101860wmf.146.1530588842371;
+ Mon, 02 Jul 2018 20:34:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1530465325.git.ren_guo@c-sky.com> <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
+In-Reply-To: <a26901aab87306c389e656a3ef200adfbc5195c0.1530465325.git.ren_guo@c-sky.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 2 Jul 2018 21:33:51 -0600
+X-Gmail-Original-Message-ID: <CABGGiswb+SmdAi9qV80Yum3Uf=ohrSMpZKWkvJXK8n=GjTzxhQ@mail.gmail.com>
+Message-ID: <CABGGiswb+SmdAi9qV80Yum3Uf=ohrSMpZKWkvJXK8n=GjTzxhQ@mail.gmail.com>
+Subject: Re: [PATCH V2 01/19] csky: Build infrastructure
+To:     ren_guo@c-sky.com
+Cc:     linux-arch@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Arnd Bergmann <arnd@arndb.de>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, Greentime Hu <green.hu@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  2 Jul 2018 19:53:21 +0530
-Akshay Adiga <akshay.adiga@linux.vnet.ibm.com> wrote:
-
-> Export pnv_idle_states and nr_pnv_idle_states so that its accessible to
-> cpuidle driver. Use properties from pnv_idle_states structure for powernv
-> cpuidle_init.
+On Sun, Jul 1, 2018 at 11:36 AM Guo Ren <ren_guo@c-sky.com> wrote:
 >
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
 
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+[...]
+
+> +config CSKY_BUILTIN_DTB
+> +       bool "Use kernel builtin dtb"
+> +
+> +config CSKY_BUILTIN_DTB_NAME
+> +       string "kernel builtin dtb name"
+> +       depends on CSKY_BUILTIN_DTB
+> +endmenu
+
+These options generally exist for backwards compatibility with legacy
+bootloaders that don't support DT which shouldn't apply here given
+this is a new arch. If we need this for other reasons, it should not
+be an architecture specific option.
+
+Rob
