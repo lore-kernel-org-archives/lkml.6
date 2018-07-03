@@ -2,136 +2,96 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3A9C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB897C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1D424BC3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:19:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1D424BC3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 697CD24BE1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:25:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u9/RRnXt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697CD24BE1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752990AbeGCLT3 (ORCPT
+        id S1752844AbeGCLZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:19:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35580 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752554AbeGCLT1 (ORCPT
+        Tue, 3 Jul 2018 07:25:23 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45877 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752596AbeGCLZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:19:27 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63BIWbb133091
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 07:19:27 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k0667571f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 07:19:27 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 05:19:26 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 05:19:23 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w63BJMGj11862508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 04:19:22 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9069D7805C;
-        Tue,  3 Jul 2018 05:19:22 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C9657805F;
-        Tue,  3 Jul 2018 05:19:22 -0600 (MDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 05:19:21 -0600 (MDT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH] ima: Remove unused is_ima_appraise_enabled() function.
-Date:   Tue,  3 Jul 2018 07:19:17 -0400
-X-Mailer: git-send-email 2.14.4
-X-TM-AS-GCONF: 00
-x-cbid: 18070311-0036-0000-0000-00000A0A3D9E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009300; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055912; UDB=6.00541614; IPR=6.00833834;
- MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 11:19:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070311-0037-0000-0000-000047F7FB41
-Message-Id: <20180703111917.3265212-1-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030131
+        Tue, 3 Jul 2018 07:25:21 -0400
+Received: by mail-lf0-f67.google.com with SMTP id m13-v6so1295644lfb.12;
+        Tue, 03 Jul 2018 04:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=D4LFE8RsTVMobvUDBypDtBsDvlFRgMpKAJ/2uuAdhv0=;
+        b=u9/RRnXtQ99nPHMiE3x49vn5d3Tak7KOzsKT09sVdDfGUBbqyecyLyy5YTpjiefSYf
+         8Cox7Fu4CJxZ0OpHorOAvpJ6QtYn04CWmuLIYJ7f1TImxJW/smSXzIXC9PdsZSz6cEB8
+         ewAF7L2V7bd3WJUeu+sLGwzyKv898KwMshhMi/absi3XM4XfCTOAgEzdwnHpsoK/ULbl
+         Jhy0uZtJ1b38TK0GmK31NsrCrIYwdTPdumuAsuQeyN7X8SAWR3S3zUFnHnokmQbN+pu8
+         NtGTdaR9ULK35AAyZjHxLs1u/AJsk5znZwGnhQaiO0xmJXgad+YCjApvbNqCjiq5UFVj
+         qSIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=D4LFE8RsTVMobvUDBypDtBsDvlFRgMpKAJ/2uuAdhv0=;
+        b=X/4ZYThT2Pfug8hCFBVDNkD8uijyw/pb5acfpD4t0Ao4cBjlPyYyH26BYpjfLbcSoy
+         gP5XycaUTHPt07dRd2EITkhAlBlY3jE9YcO5bTJFewLVDXTWPEuimBn9a/+ud4ZRChGD
+         YP6vuVhHBpl1L92RgcevBi3s7WRE91bprF7BIIKKWLRTQ24BRBByA02HmpuUNDHRImwS
+         ZD/472hJPiguOSbWVHQ7HpPeK6ec+MMNtLsdq3nkp9RG+jRdQlLYN1gZQw/K1p7JTkWU
+         1DOccXyYnSU8DW7CGr8Rn/LCHf+tVRGsMUHAQLElHOLkRFuWxOrCCcq1gCLtpSGikvlf
+         vgIQ==
+X-Gm-Message-State: APt69E0Sq+9LCA0lmBeu/GFHYCASns55FikPLWha7d/GkdPQGt6n/w1i
+        bJ5dDttXFYYwVqHT9ZdXdQzl/cK7OYgOczIcIQ==
+X-Google-Smtp-Source: AAOMgpfOwlcla9WLub0NGMYD743xMeGbPP/k6g32b/Y9OiPRov7Fi1RvyAImv1NT+umthshyCdXzr42CkVNQIO6jM8o=
+X-Received: by 2002:a19:c218:: with SMTP id l24-v6mr2075011lfc.55.1530617119536;
+ Tue, 03 Jul 2018 04:25:19 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:ef16:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 04:24:49 -0700 (PDT)
+In-Reply-To: <20180701213243.GA20180@trogon.sfo.coreos.systems>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com>
+ <20180701213243.GA20180@trogon.sfo.coreos.systems>
+From:   Gabriel C <nix.or.die@gmail.com>
+Date:   Tue, 3 Jul 2018 13:24:49 +0200
+Message-ID: <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com>
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+To:     Benjamin Gilbert <bgilbert@redhat.com>
+Cc:     linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unused is_ima_appraise_enabled() function.
+2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
+> On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
+>> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
+>> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
+>> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
+>> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
+>> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
+>> config for reference, and am happy to test patches, provide sample QCOW
+>> images, etc.
+>
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- include/linux/ima.h                   |  6 ------
- security/integrity/ima/ima_appraise.c | 10 ----------
- 2 files changed, 16 deletions(-)
+Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 0e4647e0eb60..7f6952f8d6aa 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -75,17 +75,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
- #endif
- 
- #ifdef CONFIG_IMA_APPRAISE
--extern bool is_ima_appraise_enabled(void);
- extern void ima_inode_post_setattr(struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
- #else
--static inline bool is_ima_appraise_enabled(void)
--{
--	return 0;
--}
--
- static inline void ima_inode_post_setattr(struct dentry *dentry)
- {
- 	return;
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8bd7a0733e51..7bf7fcacfdbb 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -33,16 +33,6 @@ static int __init default_appraise_setup(char *str)
- 
- __setup("ima_appraise=", default_appraise_setup);
- 
--/*
-- * is_ima_appraise_enabled - return appraise status
-- *
-- * Only return enabled, if not in ima_appraise="fix" or "log" modes.
-- */
--bool is_ima_appraise_enabled(void)
--{
--	return ima_appraise & IMA_APPRAISE_ENFORCE;
--}
--
- /*
-  * ima_must_appraise - set appraise flag
-  *
--- 
-2.17.1
+0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
+too with the same symptoms
 
+BR
