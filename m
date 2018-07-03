@@ -3,30 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274E2C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C81C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E051B20855
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:07:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E051B20855
+	by mail.kernel.org (Postfix) with ESMTP id D220623F0E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 22:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D220623F0E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeGCWHk (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 18:07:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52931 "EHLO mail.bootlin.com"
+        id S932865AbeGCWIB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 18:08:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52906 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932429AbeGCWAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 18:00:51 -0400
+        id S932207AbeGCWAs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 18:00:48 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1BAC9208FA; Wed,  4 Jul 2018 00:00:49 +0200 (CEST)
+        id 3AC1C208EF; Wed,  4 Jul 2018 00:00:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A9619208F8;
-        Wed,  4 Jul 2018 00:00:47 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id BFD8720719;
+        Wed,  4 Jul 2018 00:00:44 +0200 (CEST)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Wenyou Yang <wenyou.yang@microchip.com>,
         Josh Wu <rainyfeeling@outlook.com>,
@@ -55,9 +54,9 @@ Cc:     linux-mtd@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 07/32] mtd: rawnand: fsl_ifc: convert driver to nand_scan()
-Date:   Wed,  4 Jul 2018 00:00:04 +0200
-Message-Id: <20180703220029.19565-8-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 05/32] mtd: rawnand: denali: convert to nand_scan()
+Date:   Wed,  4 Jul 2018 00:00:02 +0200
+Message-Id: <20180703220029.19565-6-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180703220029.19565-1-miquel.raynal@bootlin.com>
 References: <20180703220029.19565-1-miquel.raynal@bootlin.com>
@@ -73,42 +72,191 @@ both nand_scan_ident() and nand_scan_tail().
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/raw/fsl_ifc_nand.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/mtd/nand/raw/denali.c | 134 +++++++++++++++++++++++-------------------
+ 1 file changed, 73 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-index 382b67e97174..faefa186e9d3 100644
---- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-@@ -714,9 +714,9 @@ static int fsl_ifc_write_page(struct mtd_info *mtd, struct nand_chip *chip,
- 	return nand_prog_page_end_op(chip);
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 4d53f41ada08..09b85d749552 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1205,62 +1205,12 @@ static int denali_multidev_fixup(struct denali_nand_info *denali)
+ 	return 0;
  }
  
--static int fsl_ifc_chip_init_tail(struct mtd_info *mtd)
-+static int fsl_ifc_attach_chip(struct nand_chip *chip)
+-int denali_init(struct denali_nand_info *denali)
++static int denali_attach_chip(struct nand_chip *chip)
  {
--	struct nand_chip *chip = mtd_to_nand(mtd);
+-	struct nand_chip *chip = &denali->nand;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+-	u32 features = ioread32(denali->reg + FEATURES);
++	struct denali_nand_info *denali = mtd_to_denali(mtd);
+ 	int ret;
+ 
+-	mtd->dev.parent = denali->dev;
+-	denali_hw_init(denali);
+-
+-	init_completion(&denali->complete);
+-	spin_lock_init(&denali->irq_lock);
+-
+-	denali_clear_irq_all(denali);
+-
+-	ret = devm_request_irq(denali->dev, denali->irq, denali_isr,
+-			       IRQF_SHARED, DENALI_NAND_NAME, denali);
+-	if (ret) {
+-		dev_err(denali->dev, "Unable to request IRQ\n");
+-		return ret;
+-	}
+-
+-	denali_enable_irq(denali);
+-	denali_reset_banks(denali);
+-
+-	denali->active_bank = DENALI_INVALID_BANK;
+-
+-	nand_set_flash_node(chip, denali->dev->of_node);
+-	/* Fallback to the default name if DT did not give "label" property */
+-	if (!mtd->name)
+-		mtd->name = "denali-nand";
+-
+-	chip->select_chip = denali_select_chip;
+-	chip->read_byte = denali_read_byte;
+-	chip->write_byte = denali_write_byte;
+-	chip->read_word = denali_read_word;
+-	chip->cmd_ctrl = denali_cmd_ctrl;
+-	chip->dev_ready = denali_dev_ready;
+-	chip->waitfunc = denali_waitfunc;
+-
+-	if (features & FEATURES__INDEX_ADDR) {
+-		denali->host_read = denali_indexed_read;
+-		denali->host_write = denali_indexed_write;
+-	} else {
+-		denali->host_read = denali_direct_read;
+-		denali->host_write = denali_direct_write;
+-	}
+-
+-	/* clk rate info is needed for setup_data_interface */
+-	if (denali->clk_rate && denali->clk_x_rate)
+-		chip->setup_data_interface = denali_setup_data_interface;
+-
+-	ret = nand_scan_ident(mtd, denali->max_banks, NULL);
+-	if (ret)
+-		goto disable_irq;
+-
+ 	if (ioread32(denali->reg + FEATURES) & FEATURES__DMA)
+ 		denali->dma_avail = 1;
+ 
+@@ -1293,7 +1243,7 @@ int denali_init(struct denali_nand_info *denali)
+ 				   mtd->oobsize - denali->oob_skip_bytes);
+ 	if (ret) {
+ 		dev_err(denali->dev, "Failed to setup ECC settings.\n");
+-		goto disable_irq;
++		return ret;
+ 	}
+ 
+ 	dev_dbg(denali->dev,
+@@ -1337,7 +1287,7 @@ int denali_init(struct denali_nand_info *denali)
+ 
+ 	ret = denali_multidev_fixup(denali);
+ 	if (ret)
+-		goto disable_irq;
++		return ret;
+ 
+ 	/*
+ 	 * This buffer is DMA-mapped by denali_{read,write}_page_raw.  Do not
+@@ -1345,26 +1295,88 @@ int denali_init(struct denali_nand_info *denali)
+ 	 * guarantee DMA-safe alignment.
+ 	 */
+ 	denali->buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+-	if (!denali->buf) {
+-		ret = -ENOMEM;
+-		goto disable_irq;
++	if (!denali->buf)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static void denali_detach_chip(struct nand_chip *chip)
++{
 +	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct fsl_ifc_mtd *priv = nand_get_controller_data(chip);
++	struct denali_nand_info *denali = mtd_to_denali(mtd);
++
++	kfree(denali->buf);
++}
++
++int denali_init(struct denali_nand_info *denali)
++{
++	struct nand_chip *chip = &denali->nand;
++	struct mtd_info *mtd = nand_to_mtd(chip);
++	u32 features = ioread32(denali->reg + FEATURES);
++	int ret;
++
++	mtd->dev.parent = denali->dev;
++	denali_hw_init(denali);
++
++	init_completion(&denali->complete);
++	spin_lock_init(&denali->irq_lock);
++
++	denali_clear_irq_all(denali);
++
++	ret = devm_request_irq(denali->dev, denali->irq, denali_isr,
++			       IRQF_SHARED, DENALI_NAND_NAME, denali);
++	if (ret) {
++		dev_err(denali->dev, "Unable to request IRQ\n");
++		return ret;
+ 	}
  
- 	dev_dbg(priv->dev, "%s: nand->numchips = %d\n", __func__,
-@@ -1046,15 +1046,8 @@ static int fsl_ifc_nand_probe(struct platform_device *dev)
- 	if (ret)
- 		goto err;
- 
--	ret = nand_scan_ident(mtd, 1, NULL);
--	if (ret)
--		goto err;
--
--	ret = fsl_ifc_chip_init_tail(mtd);
--	if (ret)
--		goto err;
--
 -	ret = nand_scan_tail(mtd);
-+	priv->chip.controller->attach_chip = fsl_ifc_attach_chip;
-+	ret = nand_scan(mtd, 1);
++	denali_enable_irq(denali);
++	denali_reset_banks(denali);
++
++	denali->active_bank = DENALI_INVALID_BANK;
++
++	nand_set_flash_node(chip, denali->dev->of_node);
++	/* Fallback to the default name if DT did not give "label" property */
++	if (!mtd->name)
++		mtd->name = "denali-nand";
++
++	chip->select_chip = denali_select_chip;
++	chip->read_byte = denali_read_byte;
++	chip->write_byte = denali_write_byte;
++	chip->read_word = denali_read_word;
++	chip->cmd_ctrl = denali_cmd_ctrl;
++	chip->dev_ready = denali_dev_ready;
++	chip->waitfunc = denali_waitfunc;
++
++	if (features & FEATURES__INDEX_ADDR) {
++		denali->host_read = denali_indexed_read;
++		denali->host_write = denali_indexed_write;
++	} else {
++		denali->host_read = denali_direct_read;
++		denali->host_write = denali_direct_write;
++	}
++
++	/* clk rate info is needed for setup_data_interface */
++	if (denali->clk_rate && denali->clk_x_rate)
++		chip->setup_data_interface = denali_setup_data_interface;
++
++	chip->hwcontrol.attach_chip = denali_attach_chip;
++	chip->hwcontrol.detach_chip = denali_detach_chip;
++	ret = nand_scan(mtd, denali->max_banks);
  	if (ret)
- 		goto err;
+-		goto free_buf;
++		goto disable_irq;
+ 
+ 	ret = mtd_device_register(mtd, NULL, 0);
+ 	if (ret) {
+ 		dev_err(denali->dev, "Failed to register MTD: %d\n", ret);
+ 		goto cleanup_nand;
+ 	}
++
+ 	return 0;
+ 
+ cleanup_nand:
+ 	nand_cleanup(chip);
+-free_buf:
+-	kfree(denali->buf);
+ disable_irq:
+ 	denali_disable_irq(denali);
  
 -- 
 2.14.1
