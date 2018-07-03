@@ -2,158 +2,98 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442AFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA87C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0061E23E80
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF7B923E80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:36:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="YY9Lm4Gd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0061E23E80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vXkSz4QB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF7B923E80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933712AbeGCPfq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:35:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37888 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932730AbeGCPeU (ORCPT
+        id S933956AbeGCPgX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:36:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38573 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932345AbeGCPgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:34:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6dS+RV49xuc8s2RrNYH34kn4Fk7f8z0tw/9LcdB7/bQ=; b=YY9Lm4Gdu1Bp
-        nSkZ3GliQ1Z6ncQmfr7/4tQmsv1mPT3yuPRgmQCoJUufMELf3j/jFr3VjKYjXktebShzqGJIJcnMY
-        daNhTIsCA0pCrxL7g5y4SnXlNGZ8B5DMbCOOJUmeaey0HbMxkBIRQz7MdYkYZrE5itDi4afLWAEeQ
-        0V9mI=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faNJn-0006Af-Vp; Tue, 03 Jul 2018 15:34:16 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1faNJn-0003l5-IK; Tue, 03 Jul 2018 16:34:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Kurtz <djkurtz@chromium.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: AMD: Do not generate interrups for every captured sample" to the asoc tree
-In-Reply-To:  <20180702211956.149355-5-djkurtz@chromium.org>
-Message-Id: <E1faNJn-0003l5-IK@debutante>
-Date:   Tue, 03 Jul 2018 16:34:15 +0100
+        Tue, 3 Jul 2018 11:36:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so2763033wmf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:36:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TEPStAlSV71h0AE8f5p3+BlYM5gBJv+yz/6BPySqo2Y=;
+        b=vXkSz4QBXcKhMPiQzKDNkgF4lAZqrtIPDIx3aUPlA57jJMcFRBk/T8MkuFfPjnEnqK
+         aJkpboxQZT7wDrskinW6EFR6N6QVmdhV1Nmxr2DvxabpijkntM+ERDAT0dS+71czsmzn
+         sY03/W6YaOf5xiri0d0E1niU71TtLPlgJPo8zbSMjEstcDFMIoXmxbiOGNO+d0f+Yy12
+         PxXSi+XgHHe/axmrl0YTwB2RSSdjKyBvLQVX76SvOSltHq9dJbymS0RVNwNq3CWhwOC8
+         ZW0l28PsfhCvm59zro7fXihMu90vVjAIYPq8baaEIZbzXdCwjSR+R98wa2SyBHdVycWn
+         oAkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TEPStAlSV71h0AE8f5p3+BlYM5gBJv+yz/6BPySqo2Y=;
+        b=AhslCoV4MYcUScOu1Ct8sO/q5bSumr8OSGYLQAGf4IWFfeoA18whut5UAOZJ5b0fXm
+         2apGLZ2ndRL4nUnvptfIjdz3U0+spnTzZCFvSxm2Dn7SS2Gh5J7h+W5AFL0t/z5uIa91
+         OydFBVbb5brWz9OzC5l8z9SalVyvgXgxMsf5xjynbDoIA6IBkb+FjcO3j35CLt3ATKJZ
+         uEXwpTMePGpHJyESYYFy8b7WKOqr/mCk8BZj9A3gFb5zRT/Fe9b0+s4MCkF/pubNg4yk
+         17yOwK2JX9ZPhtoLQiwUOu0VFxVQrKOa0AhQX8zcFVWTKuiGuWbCYgyMJWOMCIqaSmok
+         BmxA==
+X-Gm-Message-State: APt69E0kwSM5e6ABFbUwMeZM24XT9thGtRqSL9rrHMJm2ZFN+28YSWVc
+        cmLRa3t//LGOKNLCwRh7xuKqSw==
+X-Google-Smtp-Source: AAOMgpemMn19yST7DwSLBvZF0fgzVOVdCprqcp4NHmp1ClqwoFTZ0iLuqdLfD/Nb0t8PDr7uF4rjmA==
+X-Received: by 2002:a1c:ec1b:: with SMTP id k27-v6mr8990811wmh.157.1530632180355;
+        Tue, 03 Jul 2018 08:36:20 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v9-v6sm2331208wrn.97.2018.07.03.08.36.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 08:36:19 -0700 (PDT)
+Message-ID: <1530632179.2900.210.camel@baylibre.com>
+Subject: Re: [PATCH v3 0/2] ASoC: add es7241 support
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 03 Jul 2018 17:36:19 +0200
+In-Reply-To: <20180703153212.GC13744@sirena.org.uk>
+References: <20180703132845.26554-1-jbrunet@baylibre.com>
+         <20180703153212.GC13744@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, 2018-07-03 at 16:32 +0100, Mark Brown wrote:
+> On Tue, Jul 03, 2018 at 03:28:43PM +0200, Jerome Brunet wrote:
+> > Add support for the es7241 which is a simple 2 channels analog to
+> > digital converter.
+> 
+> Please don't resubmit patches that have already been applied, you should
+> submit patches against current code in the tree you're expecting things
+> to be applied to.  If any updates are needed to a patch that's already
+> been applied you should submit incremental patches which make those
+> updates.  This avoids having to change published git commits which could
+> cause problems for people working against git.
 
-   ASoC: AMD: Do not generate interrups for every captured sample
+Unless I missed something, which entirely possible, I don't think any patches of
+this series have been applied yet. You asked me resubmit after the v1 because of
+ power supply bindings and the mode selection.
 
-has been applied to the asoc tree at
+I don't see anything related to the es7241 in your tree ATM.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 8c6b964eddd2c39a9796899b2be099ece1b6c6ca Mon Sep 17 00:00:00 2001
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Mon, 2 Jul 2018 15:19:54 -0600
-Subject: [PATCH] ASoC: AMD: Do not generate interrups for every captured
- sample
-
-On capture, audio data is first copied from I2S to ACP memory, and then
-from ACP to SYSRAM.  The I2S_TO_ACP_DMA interrupt fires on every sample
-transferred from I2S to ACP memory.  That is it fires ~48000 times per
-second when capturing @ 48 kHz.  Since we don't do anything on this
-interrupt anyway, disable it to save quite a few unnecessary interrupts.
-The real "work" (calling snd_pcm_period_elapsed()) is done when transfer
-from ACP to SYSRAM is complete.
-
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/amd/acp-pcm-dma.c | 15 ---------------
- 1 file changed, 15 deletions(-)
-
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index df53412967e1..cd4d2520ac14 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -412,10 +412,8 @@ static void acp_dma_start(void __iomem *acp_mmio, u16 ch_num)
- 	switch (ch_num) {
- 	case ACP_TO_I2S_DMA_CH_NUM:
- 	case ACP_TO_SYSRAM_CH_NUM:
--	case I2S_TO_ACP_DMA_CH_NUM:
- 	case ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM:
- 	case ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM:
--	case I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM:
- 		dma_ctrl |= ACP_DMA_CNTL_0__DMAChIOCEn_MASK;
- 		break;
- 	default:
-@@ -704,12 +702,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
--	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
--		valid_irq = true;
--		acp_reg_write((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) << 16,
--			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
--	}
--
- 	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
- 		valid_irq = true;
- 		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
-@@ -718,13 +710,6 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
--	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
--		valid_irq = true;
--		acp_reg_write((intr_flag &
--			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
--			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
--	}
--
- 	if (valid_irq)
- 		return IRQ_HANDLED;
- 	else
--- 
-2.18.0.rc2
 
