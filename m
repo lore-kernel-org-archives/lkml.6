@@ -2,112 +2,121 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4278BC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7F5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AEE23F66
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:59:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9CMyt4q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AEE23F66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 209F323F66
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209F323F66
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753818AbeGCG7Z (ORCPT
+        id S1754479AbeGCHA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 02:59:25 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34013 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752636AbeGCG7Y (ORCPT
+        Tue, 3 Jul 2018 03:00:29 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:11708 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753539AbeGCHAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 02:59:24 -0400
-Received: by mail-wr0-f194.google.com with SMTP id a12-v6so740353wro.1;
-        Mon, 02 Jul 2018 23:59:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Mo7sHAkPXcxDt9nHL2ucu3nQkf6MgzEk5hwKTDDkIPA=;
-        b=e9CMyt4qCj9VgOmyLyhif4txDdxM8ydlEZwrl/GBc5SUh/jmlJs8z128Q6OBl2VY+z
-         QVjqLbSNt897NDBbSvSGoCxbzt6/iE/0+7p8ruazwpLM0PeRDXhioqOJeIL/5PmCY9rj
-         lhIVlQASxtNR6GYOUPP8dsl1qXegLp4v4Rvwn3+onibJIzW+RrBvEvCVHOrRuq09c3q5
-         ZCj7JpjdqC7ASWp69JBPwaL0MI+xwdru0SZH0ALkaU4ir/MRKIWlsWMX/pXhNdsSdHz2
-         h4ptKdeQaHS1/oCmmqTQUrhpIYgoOHuDCzuU1WGeVPwb+qBvlE5hWKn0OmbLyJ298LIa
-         mB6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Mo7sHAkPXcxDt9nHL2ucu3nQkf6MgzEk5hwKTDDkIPA=;
-        b=UyehXh1wKAdRK5zvTLRoB+VgkHIwvIa5dgT3mAgXMnHQcIpYhE2OBbAO0vULiznu4Z
-         0fUZUvfu9Xy+Qmgo8jG8ehWNrfWv/kct6BcxnkmFU9847e2fNtmjLCoXg58DjWgGFrRv
-         ikS5nWCCYP8KAZ7dw+Vg5+Y3tNMm4TQbhFPMglsLMWbIIrNc1zyeSwFmfkLr7O8Dx+nK
-         o8qTr6zwSP7KF5XLuvzbN2dBFghgIGq2gG7zzrFwpdiiwJFQjixVX0IbxRWQqWUmAN7B
-         vKDD5L+ydg1WfWI2nRfcloJb7NOLcB80Cnw1wwt8gK7PRfYuTa1yQAnSK0ShpfERVhMN
-         K7bA==
-X-Gm-Message-State: APt69E1QfcTg8sO5//iWxret/3kP0JO5rJF2NCVtHpttUkG1lgL6QJjy
-        zgFlRD+PyRI/uSC1dGswfwd9rn/dpma+Bekto/k=
-X-Google-Smtp-Source: AAOMgpd6XE8iuI5ZoTdzTDe1wiNZcKmtwgXorF9ZSnRGEa9HD7BfeWeXBTmSBOJgRDXisfkVfiOxzDqlSgt2b4gZ+TA=
-X-Received: by 2002:adf:adc9:: with SMTP id w67-v6mr13607392wrc.135.1530601162296;
- Mon, 02 Jul 2018 23:59:22 -0700 (PDT)
+        Tue, 3 Jul 2018 03:00:25 -0400
+Received: from localhost.localdomain (10.18.20.250) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 3 Jul 2018
+ 14:59:34 +0800
+From:   Yixun Lan <yixun.lan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 1/3] clk: meson: add DT documentation for emmc clock controller
+Date:   Tue, 3 Jul 2018 14:57:14 +0000
+Message-ID: <20180703145716.31860-2-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:97c6:0:0:0:0:0 with HTTP; Mon, 2 Jul 2018 23:59:21 -0700 (PDT)
-In-Reply-To: <20180703065413.6098-1-jthumshirn@suse.de>
-References: <20180703065413.6098-1-jthumshirn@suse.de>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Tue, 3 Jul 2018 14:59:21 +0800
-Message-ID: <CACVXFVOVxP+o66RG_Dk-yBTcUo54Y9c_52=3TpCQna9Se1NXkw@mail.gmail.com>
-Subject: Re: [RFC] scsi: switch to scsi-mq by default
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 2:54 PM, Johannes Thumshirn <jthumshirn@suse.de> wrote:
-> It has been more than one year since we tried to change the default
-> from legacy to multi queue in SCSI. Back then we had to retract the
-> change because of performance issues with rotating disks.
->
-> In the meantime there have been a substantial amount of performance
-> improvements, thus we can re-enable scsi-mq without a significant
-> performance penalty.
->
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-> ---
->  drivers/scsi/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 35c909bbf8ba..bd115bab162e 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -49,6 +49,7 @@ config SCSI_NETLINK
->
->  config SCSI_MQ_DEFAULT
->         bool "SCSI: use blk-mq I/O path by default"
-> +       default y
->         depends on SCSI
->         ---help---
->           This option enables the new blk-mq based I/O path for SCSI
-> --
-> 2.16.4
->
+Document the EMMC sub clock controller driver, the potential consumer
+of this driver is EMMC or NAND.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../bindings/clock/amlogic,emmc-clkc.txt      | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
+new file mode 100644
+index 000000000000..5534bd446363
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
+@@ -0,0 +1,45 @@
++* Amlogic EMMC Sub Clock Controller Driver
++
++The Amlogic EMMC clock controller generates and supplies clock to support
++EMMC and NAND controller
++
++Required Properties:
++
++- compatible: should be:
++		"amlogic,emmc-clkc"
++
++- #clock-cells: should be 1.
++
++Two clocks are provided as the parent of this EMMC clock controller driver from
++upper layer clock controller - eg "amlogic,axg-clkc" in AXG platfrom.
++The main consumer of this driver is EMMC or NAND, to specify which the clock
++they may consume, the preprocessor macros in the dt-bindings/clock/emmc-clkc.h
++header and can be used in device tree sources.
++
++Parent node should have the following properties :
++- compatible: "syscon", "simple-mfd, and "amlogic,emmc-clkc"
++- reg: base address and size of the EMMC control register space.
++
++Example: Clock controller node:
++
++sd_emmc_c_clkc: clock-controller@7000 {
++	compatible = "amlogic,emmc-clkc", "syscon", "simple-mfd";
++	reg = <0x0 0x7000 0x0 0x4>;
++	#clock-cells = <1>;
++
++	clock-names = "clkin0", "clkin1";
++	clocks = <&clkc CLKID_SD_EMMC_C_CLK0>,
++			<&clkc CLKID_FCLK_DIV2>;
++};
++
++Example: NAND controller node that consumes the clock generated by the clock
++  controller:
++
++	nand: nfc@7800 {
++		compatible = "amlogic,meson-axg-nfc";
++		reg = <0x0 0x7800 0x0 0x100>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
++		clocks = <&clkc CLKID_SD_EMMC_C>,
++				<&sd_emmc_c_clkc CLKID_EMMC_C_DIV>;
++		clock-names = "core", "device";
++	};
+-- 
+2.18.0
 
-thanks,
-Ming Lei
