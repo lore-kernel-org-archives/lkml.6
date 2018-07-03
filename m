@@ -2,117 +2,86 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C3BC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D24C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1AC24DF1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:17:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1AC24DF1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B6AD724DF1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AD724DF1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754493AbeGCHRB (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:17:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39656 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753770AbeGCHRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:17:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4F81DADE3;
-        Tue,  3 Jul 2018 07:16:59 +0000 (UTC)
-Date:   Tue, 3 Jul 2018 09:16:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Greg Thelen <gthelen@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg, oom: move out_of_memory back to the charge path
-Message-ID: <20180703071658.GC16767@dhcp22.suse.cz>
-References: <20180628151101.25307-1-mhocko@kernel.org>
- <xr93in62jy8k.fsf@gthelen.svl.corp.google.com>
- <20180629072132.GA13860@dhcp22.suse.cz>
- <xr93bmbtju6f.fsf@gthelen.svl.corp.google.com>
- <20180702100301.GC19043@dhcp22.suse.cz>
- <xr938t6skd9m.fsf@gthelen.svl.corp.google.com>
+        id S932381AbeGCHRR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:17:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56694 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753788AbeGCHRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:17:14 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9945D207BD; Tue,  3 Jul 2018 09:17:11 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-39-106.w90-88.abo.wanadoo.fr [90.88.158.106])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 346F2203D9;
+        Tue,  3 Jul 2018 09:17:11 +0200 (CEST)
+Date:   Tue, 3 Jul 2018 09:17:11 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Yixun Lan <yixun.lan@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 0/3] clk: meson: add a sub EMMC clock controller support
+Message-ID: <20180703091711.1d52c278@bbrezillon>
+In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xr938t6skd9m.fsf@gthelen.svl.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03-07-18 00:08:05, Greg Thelen wrote:
-> Michal Hocko <mhocko@kernel.org> wrote:
+On Tue, 3 Jul 2018 14:57:13 +0000
+Yixun Lan <yixun.lan@amlogic.com> wrote:
+
+> This driver will add a EMMC clock controller driver support.
+> The original idea about adding a clock controller is during the
+> discussion in the NAND driver mainline effort[1].
 > 
-> > On Fri 29-06-18 11:59:04, Greg Thelen wrote:
-> >> Michal Hocko <mhocko@kernel.org> wrote:
-> >> 
-> >> > On Thu 28-06-18 16:19:07, Greg Thelen wrote:
-> >> >> Michal Hocko <mhocko@kernel.org> wrote:
-> >> > [...]
-> >> >> > +	if (mem_cgroup_out_of_memory(memcg, mask, order))
-> >> >> > +		return OOM_SUCCESS;
-> >> >> > +
-> >> >> > +	WARN(1,"Memory cgroup charge failed because of no reclaimable memory! "
-> >> >> > +		"This looks like a misconfiguration or a kernel bug.");
-> >> >> 
-> >> >> I'm not sure here if the warning should here or so strongly worded.  It
-> >> >> seems like the current task could be oom reaped with MMF_OOM_SKIP and
-> >> >> thus mem_cgroup_out_of_memory() will return false.  So there's nothing
-> >> >> alarming in that case.
-> >> >
-> >> > If the task is reaped then its charges should be released as well and
-> >> > that means that we should get below the limit. Sure there is some room
-> >> > for races but this should be still unlikely. Maybe I am just
-> >> > underestimating though.
-> >> >
-> >> > What would you suggest instead?
-> >> 
-> >> I suggest checking MMF_OOM_SKIP or deleting the warning.
-> >
-> > So what do you do when you have MMF_OOM_SKIP task? Do not warn? Checking
-> > for all the tasks would be quite expensive and remembering that from the
-> > task selection not nice either. Why do you think it would help much?
+> I've tested this in the S400 board (AXG platform) by using NAND driver.
 > 
-> I assume we could just check current's MMF_OOM_SKIP - no need to check
-> all tasks.
+> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
 
-I still do not follow. If you are after a single task memcg then we
-should be ok. try_charge has a runaway for oom victims
-	if (unlikely(tsk_is_oom_victim(current) ||
-		     fatal_signal_pending(current) ||
-		     current->flags & PF_EXITING))
-		goto force;
+This is much better :-).
 
-regardless of MMF_OOM_SKIP. So if there is a single process in the
-memcg, we kill it and the oom reaper kicks in and sets MMF_OOM_SKIP then
-we should bail out there. Or do I miss your intention?
-
-> My only (minor) objection is that the warning text suggests
-> misconfiguration or kernel bug, when there may be neither.
 > 
-> > I feel strongly that we have to warn when bypassing the charge limit
-> > during the corner case because it can lead to unexpected behavior and
-> > users should be aware of this fact. I am open to the wording or some
-> > optimizations. I would prefer the latter on top with a clear description
-> > how it helped in a particular case though. I would rather not over
-> > optimize now without any story to back it.
+> Yixun Lan (3):
+>   clk: meson: add DT documentation for emmc clock controller
+>   clk: meson: add sub EMMC clock dt-bindings IDs
+>   clk: meson: add sub EMMC clock controller driver
 > 
-> I'm fine with the warning.  I know enough to look at dmesg logs to take
-> an educates that the race occurred.  We can refine it later if/when the
-> reports start rolling in.  No change needed.
+>  .../bindings/clock/amlogic,emmc-clkc.txt      |  45 ++++++
+>  drivers/clk/meson/Kconfig                     |   9 ++
+>  drivers/clk/meson/Makefile                    |   1 +
+>  drivers/clk/meson/emmc-clkc.c                 | 136 ++++++++++++++++++
+>  include/dt-bindings/clock/emmc-clkc.h         |  14 ++
+>  5 files changed, 205 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
+>  create mode 100644 drivers/clk/meson/emmc-clkc.c
+>  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
+> 
 
-OK. Thanks!
-
--- 
-Michal Hocko
-SUSE Labs
