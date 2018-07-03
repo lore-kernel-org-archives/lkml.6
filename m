@@ -2,109 +2,125 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A86C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859C2C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E53A2075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E53A2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D1CC2075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:46:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtMvpaEA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1CC2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754709AbeGCJqp (ORCPT
+        id S1754749AbeGCJqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:46:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46980 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754469AbeGCJqo (ORCPT
+        Tue, 3 Jul 2018 05:46:54 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36829 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754576AbeGCJqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:46:44 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w639kMcX120167
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 05:46:43 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k06t5g0f4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 05:46:43 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Tue, 3 Jul 2018 05:46:43 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 05:46:39 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w639kc7S7274882
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 09:46:39 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87F02B2068;
-        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 461E2B2065;
-        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 05:46:22 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id B7CBC2E2F42; Tue,  3 Jul 2018 15:16:36 +0530 (IST)
-Date:   Tue, 3 Jul 2018 15:16:36 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        stewart@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        npiggin@gmail.com, mpe@ellerman.id.au
-Subject: Re: [PATCH v3 1/2] powernv/cpuidle: Parse dt idle properties into
- global structure
-Reply-To: ego@linux.vnet.ibm.com
-References: <1530609656-13301-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
- <1530609656-13301-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+        Tue, 3 Jul 2018 05:46:51 -0400
+Received: by mail-qt0-f194.google.com with SMTP id f1-v6so979325qti.3;
+        Tue, 03 Jul 2018 02:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=asYnOoOOGsA1RefRlJASHBR+HYhPpzPMD9WAvebcEU0=;
+        b=XtMvpaEAyFTn47NHRNiqIl4SLeTGfmm2hZsmCYzHLDIiHilfaKY6tMbEsCMtr20w1n
+         3q7uV5tamAxNNH4v4VlRBym3+4YLZkfdhlS8zE4CfsG4zpoMR5lZCQpskqm/y9jds8Fu
+         mhj4xwb3jLXIyFih6/tddppR8V5TI7447I1irP5G2ol7gn0EZHRuowo4HQVVrfvMKfET
+         TYy3zjB3vfR9uMTR/8Bk7jxckCtOSfo1asxoHOb8mZ3KGMcNeuAyDfsBcdxT4U0OAYOK
+         9wx8ujKPGKSIwYeqGr2i3HV/RaE/YIZduKK2fP+wP6hLISqo4XR57vu8iuxDVIBCLI7R
+         GCAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=asYnOoOOGsA1RefRlJASHBR+HYhPpzPMD9WAvebcEU0=;
+        b=TMcVtgMoo6sxV7RhTsluQwR61VHoxodseGAGPrjftvPjw3HD2EeHtd7hZJejm2eEP6
+         G+0VhCpylHNJHjq8MtMbATq7fuuwyKhBJ8bJjfLuXIMA11zNA1Cprclz5vLW3vMonIBQ
+         vo7s8j1QvZB07Aen2MimYNnUy+zjJgyLyVpXbIDJ8fKYMo4g6S9hx0DbXBEHygOZYcW4
+         ywbdHF40+GY/Q5btfQlE6fiFcClT47ffnJZB+ZzYNq4kXGg+lDRIlYFbD8SOUfLCL9DP
+         gQ6dqyLopE6lLWisIsnN1A/Q0c/PshYcBRdt+iunkOvccPlpjv9b3B6KapraAtPjjaPp
+         ppyQ==
+X-Gm-Message-State: APt69E1tNxHB/fZpQiOz+XgoNG1rx+aKEC3vXaMRrA/HsqcAbyvloj7e
+        9TB7pM3pWmipy7nRfV3OgQUOTmoVfca5BUxSlD8=
+X-Google-Smtp-Source: AAOMgpe9Yod0b7YpEAwKQrHAiuTL8uR7gCfjeFIQ7lsZ/f7cNgnVc+RJ5XxoCOnJzqLFQUJbkiUxgpq1xu6+ucIaYOg=
+X-Received: by 2002:a0c:b131:: with SMTP id q46-v6mr21745639qvc.168.1530611210492;
+ Tue, 03 Jul 2018 02:46:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530609656-13301-2-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18070309-0072-0000-0000-000003791415
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009300; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01055881; UDB=6.00541596; IPR=6.00833803;
- MB=3.00021975; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-03 09:46:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070309-0073-0000-0000-000048933646
-Message-Id: <20180703094636.GA24693@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030112
+References: <20180502154418.2153-1-enric.balletbo@collabora.com>
+ <20180502154418.2153-3-enric.balletbo@collabora.com> <20180524083420.nna6znszz2lp6jwo@earth.universe>
+In-Reply-To: <20180524083420.nna6znszz2lp6jwo@earth.universe>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 3 Jul 2018 11:46:39 +0200
+Message-ID: <CAFqH_53wvx+v8fLvcg3HaZ6OsAW2itHGsbhU+YPpLRyF0Upz6Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] power: supply: add cros-ec USBPD charger driver.
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Sameer Nanda <snanda@chromium.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        kernel@collabora.com, Fabien Parent <fparent@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akshay,
+Hi Lee, Sebastian,
 
-On Tue, Jul 03, 2018 at 02:50:55PM +0530, Akshay Adiga wrote:
-> Device-tree parsing happens twice, once while deciding idle state to be
-> used for hotplug and once during cpuidle init. Hence, parsing the device
-> tree and caching it will reduce code duplication. Parsing code has been
-> moved to pnv_parse_cpuidle_dt() from pnv_probe_idle_states(). In addition
-> to the properties in the device tree the number of available states is
-> also required.
-> 
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+cc'ing Fabien
 
-Looks good.
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Missatge de Sebastian Reichel <sre@kernel.org> del dia dj., 24 de maig
+2018 a les 10:38:
+>
+> Hi,
+>
+> On Wed, May 02, 2018 at 05:44:17PM +0200, Enric Balletbo i Serra wrote:
+> > From: Sameer Nanda <snanda@chromium.org>
+> >
+> > This driver gets various bits of information about what is connected to
+> > USB PD ports from the EC and converts that into power_supply properties.
+> >
+> > Signed-off-by: Sameer Nanda <snanda@chromium.org>
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > Acked-by: Lee Jones <lee.jones@linaro.org>
+>
+> I suppose Lee's Ack was mainly for the no longer relevant MFD part
+> of this patch.
+>
+> > ---
+>
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+>
+> I would be fine with merging this for 4.18, but it has a dependency
+> on patch 1 for MFD. Lee, can you provide a immutable branch for
+> patch 1?
+>
 
+I guess I already lost the open window to see these in 4.18. Doesn't matter :)
+
+These patches now are blocking [1] to land, and also I have some
+patches close to be ready to send that apply on top of these two
+patchsets. I think both patchsets are fine so would be possible queue
+all these patches for 4.19 and maybe create an immutable branch.
+
+Many thanks,
+ Enric
+
+[1] https://lkml.org/lkml/2018/5/29/1328
+
+> -- Sebastian
