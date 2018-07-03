@@ -2,83 +2,77 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F7EC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2A0C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E238B24968
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E238B24968
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id BE15024968
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:02:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE15024968
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932343AbeGCOAA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:00:00 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:58415 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932219AbeGCN76 (ORCPT
+        id S1753460AbeGCOCV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:02:21 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44100 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752863AbeGCOCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 09:59:58 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id DEE18100E4168;
-        Tue,  3 Jul 2018 15:59:56 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 8866B166A8; Tue,  3 Jul 2018 15:59:56 +0200 (CEST)
-Date:   Tue, 3 Jul 2018 15:59:56 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     poza@codeaurora.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 3/3] PCI: Mask and unmask hotplug interrupts during
- reset
-Message-ID: <20180703135956.GA18639@wunner.de>
-References: <1530571967-19099-1-git-send-email-okaya@codeaurora.org>
- <1530571967-19099-4-git-send-email-okaya@codeaurora.org>
- <20180703083447.GA2689@wunner.de>
- <8b6ce0f415858463d1c0588c29e30415@codeaurora.org>
- <9e871cc3978fbdca12ccf8a91f34ad07@codeaurora.org>
- <2640af5e-f00f-d814-425d-78ac57714f6d@codeaurora.org>
- <bd04c9d1-6dfe-3071-69f9-beb0d649b6c0@codeaurora.org>
+        Tue, 3 Jul 2018 10:02:20 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1faLsn-0002GJ-MX; Tue, 03 Jul 2018 16:02:17 +0200
+Date:   Tue, 3 Jul 2018 16:02:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+cc:     Gabriel C <nix.or.die@gmail.com>,
+        Benjamin Gilbert <bgilbert@redhat.com>,
+        linux-x86_64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        bero@lindev.ch
+Subject: Re: 4.17.x won't boot due to "x86/boot/compressed/64: Handle 5-level
+ paging boot if kernel is above 4G"
+In-Reply-To: <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
+Message-ID: <alpine.DEB.2.21.1807031600550.1601@nanos.tec.linutronix.de>
+References: <CAF=P+=5c-baQp-CK1ViG8h=mMRv6d3EgEsN_U4rbBx-Pwv_Krw@mail.gmail.com> <20180701213243.GA20180@trogon.sfo.coreos.systems> <CAEJqkghSELJRq7r_OrKvixxnT-rUncV==Ej1+jfYZvkMHz=o_w@mail.gmail.com> <20180703124403.veiak4vnbxtmwhv2@kshutemo-mobl1>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd04c9d1-6dfe-3071-69f9-beb0d649b6c0@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 09:31:24AM -0400, Sinan Kaya wrote:
-> Issue is observing hotplug link down event in the middle of AER recovery
-> as in my previous reply.
+On Tue, 3 Jul 2018, Kirill A. Shutemov wrote:
+> On Tue, Jul 03, 2018 at 01:24:49PM +0200, Gabriel C wrote:
+> > 2018-07-01 23:32 GMT+02:00 Benjamin Gilbert <bgilbert@redhat.com>:
+> > > On Sun, Jul 01, 2018 at 05:15:59PM -0400, Benjamin Gilbert wrote:
+> > >> 4.17 kernels built with the CoreOS Container Linux toolchain and kconfig,
+> > >> up to and including 4.17.3, fail to boot on AMD64 running in (at least)
+> > >> QEMU/KVM.  No messages are shown post-GRUB; the VM instantly reboots.
+> > >> Reverting commit 194a9749c73d ("x86/boot/compressed/64: Handle 5-level
+> > >> paging boot if kernel is above 4G") fixes it.  I've attached our kernel
+> > >> config for reference, and am happy to test patches, provide sample QCOW
+> > >> images, etc.
+> > >
+> > 
+> > Also see https://bugzilla.kernel.org/show_bug.cgi?id=200385 ,
+> > 
+> > 0a1756bd2897951c03c1cb671bdfd40729ac2177 is acting up
+> > too with the same symptoms
 > 
-> If we mask hotplug interrupts before secondary bus reset via my patch,
-> then hotplug driver will not observe both link up and link down interrupts.
-> 
-> If we don't mask hotplug interrupts, we have a race condition.
+> I tracked it down to -flto in LDFLAGS. I'll look more into this.
 
-I assume that a bus reset not only causes a link and presence event but
-also clears the Presence Detect State bit in the Slot Status register
-and the Data Link Layer Link Active bit in the Link Status register
-momentarily.
-
-pciehp may access those two bits concurrently to the AER driver
-performing a slot reset.  So it may not be sufficient to mask
-the interrupt.
-
-I've posted this patch to address the issue:
-https://patchwork.ozlabs.org/patch/930391/
+And what sets -flto in LDFLAGS? I can't find anything in the kernel
+build/Makefiles.
 
 Thanks,
 
-Lukas
+	tglx
