@@ -5,91 +5,95 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65133C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCA3C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228422075E
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228422075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id B95D02075E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 11:03:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95D02075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752948AbeGCLCs (ORCPT
+        id S1753000AbeGCLDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 07:02:48 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62603 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752292AbeGCLCr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 07:02:47 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w63B2283015428;
-        Tue, 3 Jul 2018 13:02:39 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2k03gx1ce2-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 03 Jul 2018 13:02:39 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A10B538;
-        Tue,  3 Jul 2018 11:02:38 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F2F22CF4;
-        Tue,  3 Jul 2018 11:02:38 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Jul
- 2018 13:02:38 +0200
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1347.000; Tue, 3 Jul 2018 13:02:38 +0200
-From:   Philippe CORNU <philippe.cornu@st.com>
-To:     Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        "David Airlie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/stm: ltdc: rework reset sequence
-Thread-Topic: [PATCH] drm/stm: ltdc: rework reset sequence
-Thread-Index: AQHUD5t82z/X2PnOW027W5VKoG9fvKR9OfaA
-Date:   Tue, 3 Jul 2018 11:02:38 +0000
-Message-ID: <ff27f873-3d9b-373e-344d-6cd186cf384f@st.com>
-References: <1530271355-5608-1-git-send-email-yannick.fertre@st.com>
-In-Reply-To: <1530271355-5608-1-git-send-email-yannick.fertre@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0EEF523B4047AC439A84F8ABFBFEB968@st.com>
-Content-Transfer-Encoding: base64
+        Tue, 3 Jul 2018 07:03:30 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:42966 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752215AbeGCLD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 07:03:29 -0400
+Received: from ip5f5b7f77.dynamic.kabel-deutschland.de ([95.91.127.119] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1faJ5V-0001Tf-Dw; Tue, 03 Jul 2018 13:03:13 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Damian Kos <dkos@cadence.com>
+Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, ltyrala@cadence.com,
+        pgaj@cadence.com, stelford@cadence.com
+Subject: Re: [PATCH 12/12] drm/rockchip: add support for CDNS MHDP IP controller.
+Date:   Tue, 03 Jul 2018 13:03:11 +0200
+Message-ID: <2647490.Uuqs1CuF1U@diego>
+In-Reply-To: <1530612152-27555-13-git-send-email-dkos@cadence.com>
+References: <1530612152-27555-1-git-send-email-dkos@cadence.com> <1530612152-27555-13-git-send-email-dkos@cadence.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgWWFubmljaywNCg0KDQpPbiAwNi8yOS8yMDE4IDAxOjIyIFBNLCBZYW5uaWNrIEZlcnRyZSB3
-cm90ZToNCj4gUmVzZXQgbXVzdCBiZSBwcm9wZXJseSBhc3NlcnQgYmVmb3JlIGRlYXNzZXJ0Lg0K
-PiBUaGlzIGlzIGltcG9ydGFudCBpZiB0aGVyZSBpcyBhbiBlYXJseSBib290IHNwbGFzaCBzY3Jl
-ZW4NCj4gYmVmb3JlIHRoZSBrZXJuZWwgc3RhcnQgdXAuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZ
-YW5uaWNrIEZlcnRyZSA8eWFubmljay5mZXJ0cmVAc3QuY29tPg0KPiAtLS0NCj4gICBkcml2ZXJz
-L2dwdS9kcm0vc3RtL2x0ZGMuYyB8IDUgKysrKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNl
-cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL3N0bS9sdGRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vc3RtL2x0ZGMuYw0KPiBpbmRleCA5NmQy
-MGMyLi44ZjQ2MDZkIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RtL2x0ZGMuYw0K
-PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vc3RtL2x0ZGMuYw0KPiBAQCAtMTEzMCw4ICsxMTMwLDEx
-IEBAIGludCBsdGRjX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRkZXYpDQo+ICAgCQl9DQo+ICAg
-CX0NCj4gICANCj4gLQlpZiAoIUlTX0VSUihyc3RjKSkNCj4gKwlpZiAoIUlTX0VSUihyc3RjKSkg
-ew0KPiArCQlyZXNldF9jb250cm9sX2Fzc2VydChyc3RjKTsNCj4gKwkJdXNsZWVwX3JhbmdlKDEw
-LCAyMCk7DQo+ICAgCQlyZXNldF9jb250cm9sX2RlYXNzZXJ0KHJzdGMpOw0KPiArCX0NCg0KVGhh
-bmsgeW91IGZvciB5b3VyIHBhdGNoLA0KDQpSZXZpZXdlZC1ieTogUGhpbGlwcGUgQ29ybnUgPHBo
-aWxpcHBlLmNvcm51QHN0LmNvbT4NClRlc3RlZC1ieTogUGhpbGlwcGUgQ29ybnUgPHBoaWxpcHBl
-LmNvcm51QHN0LmNvbT4NCg0KUGhpbGlwcGUgOi0pDQoNCj4gICANCj4gICAJLyogRGlzYWJsZSBp
-bnRlcnJ1cHRzICovDQo+ICAgCXJlZ19jbGVhcihsZGV2LT5yZWdzLCBMVERDX0lFUiwNCj4g
+Hi Damien,
+
+it's very cool to see collaboration from vendors on this.
+
+
+Am Dienstag, 3. Juli 2018, 12:02:23 CEST schrieb Damian Kos:
+>
+
+It would be really nice to explain a bit about the added controller support
+in the commit message, so that people reviewing the patch can get a
+feeling for it.
+
+> Signed-off-by: Damian Kos <dkos@cadence.com>
+> ---
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c |  953
+> +++++++++++++++++++++++++++++++- drivers/gpu/drm/rockchip/cdn-dp-core.h |  
+> 25 +
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.c  |    2 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.h  |    4 +
+
+From the changes below, it looks that this seems to add support for a
+bridge chip based on that IP block. So it seems like the bridge+glue driver
+model would be a perfect fit for this, instead of stapling this onto the
+Rockchip-specific driver.
+
+So essentially, you could take the Rockchip cdn-dp driver, move the common
+parts to drivers/gpu/drm/bridge and then create separate glue drivers for
+both Rockchip and your external bridge IP block.
+
+This would prevent code duplication and also allow your bridge driver to
+be compiled without the Rockchip drm being present :-) .
+And also pave the way for future socs using your DP ip block.
+
+
+Nowadays we have quite a number of examples you could take as
+inspiration for this:
+- bridge/analogix/* (shared between Exynos and Rockchip right now)
+- bridge/synopsys/dw-hdmi* (shared between a quite big number of users)
+- bridge/synopsys/dw-mipi-dsi.c (shared between Rockchip [pending] and stm)
+
+
+Thanks
+Heiko
+
+
+
