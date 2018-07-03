@@ -2,120 +2,110 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610B9C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C48C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215F7243F3
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:53:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 215F7243F3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 4633022BD0
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:56:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DxawjJi6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DxawjJi6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4633022BD0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934080AbeGCQxw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:53:52 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44936 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933929AbeGCQxt (ORCPT
+        id S933829AbeGCQ4b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:56:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43518 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932392AbeGCQ4a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:53:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3vSBRd_1530636810;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3vSBRd_1530636810)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 04 Jul 2018 00:53:38 +0800
-Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
- large mapping
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
- <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
- <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
- <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
- <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
- <20180702140502.GZ19043@dhcp22.suse.cz>
- <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
- <20180703060921.GA16767@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <efe8302c-1409-19fe-e8b4-0b910a9931a7@linux.alibaba.com>
-Date:   Tue, 3 Jul 2018 09:53:29 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180703060921.GA16767@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 3 Jul 2018 12:56:30 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8BDCC606FA; Tue,  3 Jul 2018 16:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530636989;
+        bh=jqi4BWqFSZJJ1xstAtSdcsqPY3+uTMbrWZtQjvJ06qI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DxawjJi6XJw28GSrXCSZcfgt7a5rJUB/N0ico78weTd6C1OCywscqUuISW13tKGhg
+         eqLV1ujXcdXeb/ghSHJr2J5Q/z4m+n/RCr8cLblBfFTcm5W+dTu/HCskDJlasJHxJE
+         Q8SCr82BRySwGy7SiWiqtggzcq6htWnkljP/EvcE=
+Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pheragu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E071C6028D;
+        Tue,  3 Jul 2018 16:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1530636989;
+        bh=jqi4BWqFSZJJ1xstAtSdcsqPY3+uTMbrWZtQjvJ06qI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DxawjJi6XJw28GSrXCSZcfgt7a5rJUB/N0ico78weTd6C1OCywscqUuISW13tKGhg
+         eqLV1ujXcdXeb/ghSHJr2J5Q/z4m+n/RCr8cLblBfFTcm5W+dTu/HCskDJlasJHxJE
+         Q8SCr82BRySwGy7SiWiqtggzcq6htWnkljP/EvcE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E071C6028D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
+From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+To:     apw@canonical.com, joe@perches.com
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        bryanh@codeaurora.org, tsoni@codeaurora.org,
+        Abhijeet Dharmapurikar <adharmap@codeaurora.org>,
+        Stepan Moskovchenko <stepanm@codeaurora.org>,
+        Murali Nalajala <mnalajal@codeaurora.org>
+Subject: [PATCH] checkpatch: check for #if 0/#if 1
+Date:   Tue,  3 Jul 2018 09:56:08 -0700
+Message-Id: <1530636968-17906-1-git-send-email-pheragu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
 
+The #if 0 and #if 1 are used to toggle features. Warn if #if 1 or #if 0 
+is present. If #if 0 is present, warn about that part of code being 
+redundant and that it could be removed. Also, if #if 1 is present, suggest
+that if the code is required then the #if 1 can be removed. In either 
+case, the preprocessor directives can be removed.
 
-On 7/2/18 11:09 PM, Michal Hocko wrote:
-> On Mon 02-07-18 13:48:45, Andrew Morton wrote:
->> On Mon, 2 Jul 2018 16:05:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
->>
->>> On Fri 29-06-18 20:15:47, Andrew Morton wrote:
->>> [...]
->>>> Would one of your earlier designs have addressed all usecases?  I
->>>> expect the dumb unmap-a-little-bit-at-a-time approach would have?
->>> It has been already pointed out that this will not work.
->> I said "one of".  There were others.
-> Well, I was aware only about two potential solutions. Either do the
-> heavy lifting under the shared lock and do the rest with the exlusive
-> one and this, drop the lock per parts. Maybe I have missed others?
+Signed-off-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+Signed-off-by: Stepan Moskovchenko <stepanm@codeaurora.org>
+Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
+---
+ scripts/checkpatch.pl | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-There is the other one which I presented on LSFMM summit. But, actually 
-it turns out that one looks very similar to the current under review one.
-
-Yang
-
->
->>> You simply
->>> cannot drop the mmap_sem during unmap because another thread could
->>> change the address space under your feet. So you need some form of
->>> VM_DEAD and handle concurrent and conflicting address space operations.
->> Unclear that this is a problem.  If a thread does an unmap of a range
->> of virtual address space, there's no guarantee that upon return some
->> other thread has not already mapped new stuff into that address range.
->> So what's changed?
-> Well, consider the following scenario:
-> Thread A = calling mmap(NULL, sizeA)
-> Thread B = calling munmap(addr, sizeB)
->
-> They do not use any external synchronization and rely on the atomic
-> munmap. Thread B only munmaps range that it knows belongs to it (e.g.
-> called mmap in the past). It should be clear that ThreadA should not
-> get an address from the addr, sizeB range, right? In the most simple case
-> it will not happen. But let's say that the addr, sizeB range has
-> unmapped holes for what ever reasons. Now anytime munmap drops the
-> exclusive lock after handling one VMA, Thread A might find its sizeA
-> range and use it. ThreadB then might remove this new range as soon as it
-> gets its exclusive lock again.
->
-> Is such a code safe? No it is not and I would call it fragile at best
-> but people tend to do weird things and atomic munmap behavior is
-> something they can easily depend on.
->
-> Another example would be an atomic address range probing by
-> MAP_FIXED_NOREPLACE. It would simply break for similar reasons.
->
-> I remember my attempt to make MAP_LOCKED consistent with mlock (if the
-> population fails then return -ENOMEM) and that required to drop the
-> shared mmap_sem and take it in exclusive mode (because we do not
-> have upgrade_read) and Linus was strongly against [1][2] for very
-> similar reasons. If you drop the lock you simply do not know what
-> happened under your feet.
->
-> [1] http://lkml.kernel.org/r/CA+55aFydkG-BgZzry5DrTzueVh9VvEcVJdLV8iOyUphQk=0vpw@mail.gmail.com
-> [2] http://lkml.kernel.org/r/CA+55aFyajquhGhw59qNWKGK4dBV0TPmDD7-1XqPo7DZWvO_hPg@mail.gmail.com
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index a9c0550..a3dc0c8 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -5374,9 +5374,16 @@ sub process {
+ 
+ # warn about #if 0
+ 		if ($line =~ /^.\s*\#\s*if\s+0\b/) {
+-			CHK("REDUNDANT_CODE",
+-			    "if this code is redundant consider removing it\n" .
+-				$herecurr);
++			WARN("IF_0",
++			     "if this code is redundant consider removing it\n"
++				.  $herecurr);
++		}
++
++# warn about #if 1
++		if ($line =~ /^.\s*\#\s*if\s+1\b/) {
++			WARN("IF_1",
++			     "if this code is required consider removing"
++				. " #if 1\n" .  $herecurr);
+ 		}
+ 
+ # check for needless "if (<foo>) fn(<foo>)" uses
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
