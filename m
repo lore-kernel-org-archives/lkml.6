@@ -3,111 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CDEC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98C5C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A578F24C34
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A578F24C34
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D94524C34
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:51:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D94524C34
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeGCHuW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:50:22 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45919 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933390AbeGCHuR (ORCPT
+        id S933617AbeGCHvD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:51:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55361 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932212AbeGCHvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:50:17 -0400
-Received: by mail-qt0-f196.google.com with SMTP id y5-v6so769327qti.12
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 00:50:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nJw203+kTuGM/GWtxAgco2/tHTBdPaVv7e6NnXnZVbI=;
-        b=OhP4mRGd7CnRCBcKOUKOjTugMlOKbkUiiLmsM+dcTQ0iRAuowwJATKXebBeaJqcZWD
-         X6B86mTVw9u/Gazo2u4i94fnnHrxWTX68hPF46t79h1XdG6NDk1jZiFViWnSyatLAH9n
-         GIVuHBWxshWxgUUKBo68DGkLvVif1ymrUbJ4JfiEmLTa5QNsgtHXNN92njJnulnbLtD2
-         fcJ6SL1puahih1MaiATmmZxsJsSu3ITbxcEjEsr+27c/tqwDh7S6Jcok7JT01QIRdKR3
-         OcpcEgDQFn+nNM1vTKiu5H19iQISeYV1h2D+DTsd4eW3MyqbVedr5dge0MzzAvyweptC
-         +Vnw==
-X-Gm-Message-State: APt69E38vSc+Uf9CUH7/vYKGi9rLk7vdppiemQiD71tPdNzXKVI8z42H
-        sLyZr/zrY09R8hsbR5Ie9bHa/PC21unWxfWOdt2qWg==
-X-Google-Smtp-Source: AAOMgpdzrC1UhjXLitfMQ/96VXleMccmA17jSL1NdinsIOexZRgKDaZK87f1SkVZiimRHOLc5jJ/Q42q9Irsi3JSQF4=
-X-Received: by 2002:ac8:1a18:: with SMTP id v24-v6mr16081176qtj.115.1530604217132;
- Tue, 03 Jul 2018 00:50:17 -0700 (PDT)
+        Tue, 3 Jul 2018 03:51:00 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w637oc8P201864
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 3 Jul 2018 00:50:38 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w637ocdL201861;
+        Tue, 3 Jul 2018 00:50:38 -0700
+Date:   Tue, 3 Jul 2018 00:50:38 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Xunlei Pang <tipbot@zytor.com>
+Message-ID: <tip-f1d1be8aee6c461652aea8f58bedebaa73d7f4d3@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, bsegall@google.com,
+        xlpang@linux.alibaba.com, hpa@zytor.com, mingo@kernel.org,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+          xlpang@linux.alibaba.com, bsegall@google.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          tglx@linutronix.de
+In-Reply-To: <20180620101834.24455-2-xlpang@linux.alibaba.com>
+References: <20180620101834.24455-2-xlpang@linux.alibaba.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Advance global expiration when period
+ timer is restarted
+Git-Commit-ID: f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:ac8:2fca:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 00:50:16 -0700 (PDT)
-In-Reply-To: <20180702235937.111619-1-drosen@google.com>
-References: <20180702235937.111619-1-drosen@google.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 3 Jul 2018 09:50:16 +0200
-Message-ID: <CAO-hwJLocBwuS7TGaXW88B-V8xSheATNDuvobv-Vk+hU0hei0A@mail.gmail.com>
-Subject: Re: [PATCH] HID: debug: check length before copy_to_user()
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        "3.8+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 3, 2018 at 1:59 AM, Daniel Rosenberg <drosen@google.com> wrote:
-> If our length is greater than the size of the buffer, we
-> overflow the buffer
->
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Cc: stable@vger.kernel.org
-> ---
+Commit-ID:  f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
+Gitweb:     https://git.kernel.org/tip/f1d1be8aee6c461652aea8f58bedebaa73d7f4d3
+Author:     Xunlei Pang <xlpang@linux.alibaba.com>
+AuthorDate: Wed, 20 Jun 2018 18:18:34 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 3 Jul 2018 09:17:29 +0200
 
-Looks good:
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+sched/fair: Advance global expiration when period timer is restarted
 
-Cheers,
-Benjamin
+When period gets restarted after some idle time, start_cfs_bandwidth()
+doesn't update the expiration information, expire_cfs_rq_runtime() will
+see cfs_rq->runtime_expires smaller than rq clock and go to the clock
+drift logic, wasting needless CPU cycles on the scheduler hot path.
 
->  drivers/hid/hid-debug.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-> index 8469b6964ff64..b48100236df89 100644
-> --- a/drivers/hid/hid-debug.c
-> +++ b/drivers/hid/hid-debug.c
-> @@ -1154,6 +1154,8 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
->                         goto out;
->                 if (list->tail > list->head) {
->                         len = list->tail - list->head;
-> +                       if (len > count)
-> +                               len = count;
->
->                         if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
->                                 ret = -EFAULT;
-> @@ -1163,6 +1165,8 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
->                         list->head += len;
->                 } else {
->                         len = HID_DEBUG_BUFSIZE - list->head;
-> +                       if (len > count)
-> +                               len = count;
->
->                         if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
->                                 ret = -EFAULT;
-> @@ -1170,7 +1174,9 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
->                         }
->                         list->head = 0;
->                         ret += len;
-> -                       goto copy_rest;
-> +                       count -= len;
-> +                       if (count > 0)
-> +                               goto copy_rest;
->                 }
->
->         }
-> --
-> 2.18.0.399.gad0ab374a1-goog
->
+Update the global expiration in start_cfs_bandwidth() to avoid frequent
+expire_cfs_rq_runtime() calls once a new period begins.
+
+Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Ben Segall <bsegall@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180620101834.24455-2-xlpang@linux.alibaba.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 791707c56886..840b92ee6f89 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 
+ void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ {
++	u64 overrun;
++
+ 	lockdep_assert_held(&cfs_b->lock);
+ 
+-	if (!cfs_b->period_active) {
+-		cfs_b->period_active = 1;
+-		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
+-		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+-	}
++	if (cfs_b->period_active)
++		return;
++
++	cfs_b->period_active = 1;
++	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
++	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
++	cfs_b->expires_seq++;
++	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+ }
+ 
+ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
