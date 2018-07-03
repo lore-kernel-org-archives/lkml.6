@@ -5,105 +5,85 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54D0C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A96CC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79A6321990
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:11:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A6321990
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2544724C80
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 08:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2544724C80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=juzza.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933607AbeGCILZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 04:11:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932126AbeGCILW (ORCPT
+        id S933112AbeGCIMA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 04:12:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:42025 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754309AbeGCIL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 04:11:22 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w63894jS037218
-        for <linux-kernel@vger.kernel.org>; Tue, 3 Jul 2018 04:11:22 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k04mwhy0d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 04:11:22 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Tue, 3 Jul 2018 09:11:20 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 3 Jul 2018 09:11:14 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w638BDYx14745850
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 08:11:13 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A4DAAE058;
-        Tue,  3 Jul 2018 11:11:16 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF8CDAE056;
-        Tue,  3 Jul 2018 11:11:12 +0100 (BST)
-Received: from [9.124.31.159] (unknown [9.124.31.159])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Jul 2018 11:11:12 +0100 (BST)
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
- <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com>
- <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com>
- <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Tue, 3 Jul 2018 13:41:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 3 Jul 2018 04:11:57 -0400
+Received: from null ([172.19.249.27]) by mrelayeu.kundenserver.de (mreue003
+ [212.227.15.163]) with ESMTPSA (Nemesis) id 0McAjL-1fsCOJ3Zqx-00JXny; Tue, 03
+ Jul 2018 10:11:00 +0200
+Date:   Tue, 3 Jul 2018 09:10:55 +0100 (BST)
+From:   Justin Skists <justin.skists@juzza.co.uk>
+To:     w.d.hubbs@gmail.com, gregkh@linuxfoundation.org,
+        speakup@linux-speakup.org, Tamir Suliman <tsuliman@linuxvaults.com>
+Cc:     devel@driverdev.osuosl.org, chris@the-brannons.com,
+        dhowells@redhat.com, linux-kernel@vger.kernel.org
+Message-ID: <1527895743.93688.1530605455516@email.1and1.co.uk>
+In-Reply-To: <1530603080-1353-1-git-send-email-tsuliman@linuxvaults.com>
+References: <1530603080-1353-1-git-send-email-tsuliman@linuxvaults.com>
+Subject: Re: [PATCH 3/3] drivers/speakup: Fix style and coding warnings
 MIME-Version: 1.0
-In-Reply-To: <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18070308-0020-0000-0000-000002A28542
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070308-0021-0000-0000-000020EE9B27
-Message-Id: <21a40b31-8b2d-7645-70aa-4168d4a5d094@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-03_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=887 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807030093
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev34
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:juLbk6DJAn2MNbuhNCKt3iOFNXzghpzXrRe/ItgLcNz41mixYbZ
+ Y9DdqzgMk7eaLXerZ5I6ZegraHUxMB1tobKO7K/BAzKrOY2HfhbbAReH+iHyzxNM2tD0AOm
+ sHacH3nDePNCKgu8sdSKMT2wUDWJBuxpgxaEnsFUquSZE/MJAz+n6af+xCO/01outDnFKwJ
+ B/nejLBXUQ7eAIhGbvkwg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BxvH5yO6tK0=:zu7WVEaswtKyEw6n8Hc6yr
+ jaSg+YBorH+NG1Lj2gk8y3vY8YX28ODpIoJmHj++CSEgyg1/JcxulAai4Y3tcpH28sfnDKoNi
+ AHhcWoRP/X5xXvuf5Lj9J6kn+iGUPZsMSZSKsNRd37/MO/nO5ELAbDxc/2AV67oEAS9puUb5U
+ ohoihRxoHceIZbbH/rS1VM91bw+7MW1j91vLGO7RFAIw//tPP/PVEdUdJayhbVtd9rLFHK0Xu
+ BAFsuyl+mcynyh4Ou86XxK5LFsEP7asrdoOVO/oTNXy2D1OgsP2gxCiUJfA/5l8vYGcJIcydi
+ QU19WSMzTzP5HWPmTKUCnwlWNC/qASwiE0O+4mJQN8UA8zmZvz0mD/NOSkQntjPuiz07vRYW2
+ 8wRaN+RBF2tYFS9drQbrNHLLFskQd2f6y/WX8aohhehKkYNyGmOFlblhY3V4f8FwTYH9Atzug
+ JVVVvlGJ4rBbL+M26+2/jDhk6CGwg8OHc5H9TiBJwWs3PRL1STHtkjrkR8AFZT9zNJWw1WBpO
+ vic+zieRwXSpdxqVyK1Y9b8POLozBYsoc4W8oT0QcmfSR3PLlVSSG3zSSxS6K/3xAc47/VBTb
+ ZGdSUsPfYbv3t1gk+6Z8ai1i1GxwDTLOTPtL7mBWmIn9hO3Z3raFzKjhbKKym8HHm6qWzv2s9
+ cPQDWVgaET8DoGxpiBf6MFTW4cLJcFFNRl2oWrfSeVwW1xLoAXdaDkXna5h4Cn6DgP73qoYoU
+ 2ey9zTeqMb2fpFYl
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+> On 03 July 2018 at 08:31 Tamir Suliman <tsuliman@linuxvaults.com> wrote:
 
-On 07/03/2018 11:00 AM, Ravi Bangoria wrote:
-> In short, if I put it inside install_breakpoint()/remove_breakpoint(),
-> I'll have to put the same logic there with more complication to
-> increment / decrement counter for each consumer. And additionally,
-> I've to maintain sdt_mm_list to make sure increment and decrement
-> happen in sync. With current approach, this all happens by default :)
+> +++ b/drivers/staging/speakup/keyhelp.c
+> @@ -167,7 +167,7 @@ int spk_handle_help(struct vc_data *vc, u_char type, u_char ch, u_short key)
+>  		synth_printf("%s\n", spk_msg_get(MSG_HELP_INFO));
+>  		build_key_data(); /* rebuild each time in case new mapping */
+>  		return 1;
+> -	} else {
+> +	} else if {
 
-s/this all happens by default/no need to maintain all this/
+Interesting construct...
 
--Ravi
 
+> @@ -787,7 +787,7 @@ static ssize_t message_store_helper(const char *buf, size_t count,
+>  			continue;
+>  		}
+>  
+> -		index = simple_strtoul(cp, &temp, 10);
+> +		index = simple_ktrtoul(cp, &temp, 10);
+
+Did you compile this?
+
+
+Justin.
