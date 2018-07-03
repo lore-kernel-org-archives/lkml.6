@@ -2,153 +2,92 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A09C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE7FC6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDDA23C19
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDDA23C19
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 34D2D23C19
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 16:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34D2D23C19
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934133AbeGCQrg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 12:47:36 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:47023 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933860AbeGCQre (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 12:47:34 -0400
-Received: by mail-yb0-f194.google.com with SMTP id s14-v6so978088ybp.13;
-        Tue, 03 Jul 2018 09:47:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zAuH4LH1gGeLkLg1XUekchSwnDFdQ8jOV8OkLjv4TjU=;
-        b=Fbp6vBJiiPvBd0cymApN+sxwTHskG/DzPdM/LAMYTDnaabQ77XD/2DN8yspoOj7VZX
-         eO+/T0TaepCWfi33Afyvm24av0s8AXAIT5xiGBy+PSP4VI5/J30i+N3igoJ+nf9boLQC
-         WU3p0Iujx3ajhyOWjHTrFdYFoekY/9CB+CpqJRhlJie6VZj5NYea7QXvlMJXy8v4y0vW
-         iiSpkTzaxF7AEkJzp186pzvs4+cirlYOml0eC0UnIXWnc6WNk6SAmrJefhu1bsNZth2M
-         ndGmg52h4RNQGA8Zmoet5hVpv8m1Q2pNCRCOhc+h8UQGwlXccr+PflvXyK2mYvPU8otU
-         /fOw==
-X-Gm-Message-State: APt69E0ccnHB5CbdYc8m1iMZdBMulHPLE122lVtMU9U4RkjdlCuLkhhi
-        smjUrSEIWgb0PHmDqZpEBc14Rdw=
-X-Google-Smtp-Source: ADUXVKKU0PYMF9GX8+tgI4fGfUlk0bGLGlb+o39Y2LuVyCbUTpSaMd5+APV6cLlHz4RmRMkzzpWeNQ==
-X-Received: by 2002:a25:da11:: with SMTP id n17-v6mr16135444ybf.409.1530636453408;
-        Tue, 03 Jul 2018 09:47:33 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id x129-v6sm501002ywe.61.2018.07.03.09.47.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 09:47:32 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 10:47:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH linux-next v6 01/13] dt-bindings: Add a document of PECI
- subsystem
-Message-ID: <20180703164731.GA9150@rob-hp-laptop>
-References: <20180621193721.20588-1-jae.hyun.yoo@linux.intel.com>
- <20180621193947.20645-1-jae.hyun.yoo@linux.intel.com>
+        id S934181AbeGCQrp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 12:47:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62863 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933860AbeGCQrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 12:47:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 09:47:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
+   d="scan'208";a="242334720"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by fmsmga005.fm.intel.com with ESMTP; 03 Jul 2018 09:47:42 -0700
+Date:   Tue, 3 Jul 2018 10:47:41 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     mingo@kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] lib/iov_iter: Fix pipe handling in _copy_to_iter_mcsafe
+Message-ID: <20180703164741.GA30451@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, mingo@kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <153046008813.2019.6356018879675062644.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180621193947.20645-1-jae.hyun.yoo@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <153046008813.2019.6356018879675062644.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 12:39:47PM -0700, Jae Hyun Yoo wrote:
-> This commit adds a document of generic PECI bus, adapter and client
-> driver.
+On Sun, Jul 01, 2018 at 08:52:20AM -0700, Dan Williams wrote:
+> By mistake the ITER_PIPE early-exit / warning from copy_from_iter() was
+> cargo-culted in _copy_to_iter_mcsafe() rather than a machine-check-safe
+> version of copy_to_iter_pipe().
 > 
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> Reviewed-by: James Feist <james.feist@linux.intel.com>
-> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-> Cc: Andrew Jeffery <andrew@aj.id.au>
-> Cc: Joel Stanley <joel@jms.id.au>
-> ---
->  .../devicetree/bindings/peci/peci.txt         | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/peci/peci.txt
+> Implement copy_pipe_to_iter_mcsafe() being careful to return the
+> indication of short copies due to a CPU exception.
 > 
-> diff --git a/Documentation/devicetree/bindings/peci/peci.txt b/Documentation/devicetree/bindings/peci/peci.txt
-> new file mode 100644
-> index 000000000000..5583aa80b78a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/peci/peci.txt
-> @@ -0,0 +1,60 @@
-> +Generic device tree configuration for PECI buses
-> +================================================
-> +
-> +Required properties:
-> +- compatible     : Should be "simple-bus".
-> +- #address-cells : Should be present if the device has sub-nodes.
-> +- #size-cells    : Should be present if the device has sub-nodes.
-> +- ranges         : Should contain PECI controller registers ranges.
-> +
-> +Example:
-> +	peci: peci@10000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10000000 0x1000>;
-> +	};
+> Without this regression-fix all splice reads to dax-mode files fail.
+> 
+> Fixes: 8780356ef630 ("x86/asm/memcpy_mcsafe: Define copy_to_iter_mcsafe()")
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Reported-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-I don't think you need this section. It's just the parent of the 
-controller, right?
-
-> +
-> +Generic device tree configuration for PECI adapters
-> +===================================================
-> +
-> +Required properties:
-> +- #address-cells : Should be <1>. Read more about client addresses below.
-> +- #size-cells    : Should be <0>. Read more about client addresses below.
-> +
-> +The cells properties above define that an address of CPU clients of a PECI bus
-> +are described by a single value.
-> +
-> +Example:
-> +	peci0: peci-bus@0 {
-> +		compatible = "vendor,soc-peci";
-> +		reg = <0x0 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +	};
-> +
-> +Generic device tree configuration for PECI clients
-> +==================================================
-> +
-> +Required properties:
-> +- compatible : Should contain name of PECI client.
-> +- reg        : Should contain address of a client CPU. Address range of CPU
-> +	       clients starts from 0x30 based on PECI specification.
-> +
-> +Example:
-> +	peci-bus@0 {
-> +		compatible = "vendor,soc-peci";
-> +		reg = <0x0 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		peci-client@30 {
-> +			compatible = "vendor,peci-client";
-> +			reg = <0x30>;
-> +		};
-> +
-> +		peci-client@31 {
-> +			compatible = "vendor,peci-client";
-> +			reg = <0x31>;
-> +		};
-> +	};
-> -- 
-> 2.17.1
-> 
+Tested-by: Ross Zwisler <ross.zwisler@linux.intel.com>
