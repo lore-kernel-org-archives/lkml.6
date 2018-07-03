@@ -2,175 +2,147 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48684C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376ADC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F5124886
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E55F2242E5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9u3Ss+l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F5124886
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tFH02Hsw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E55F2242E5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933181AbeGCPbd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:31:33 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:38993 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932209AbeGCPb3 (ORCPT
+        id S933442AbeGCPbv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:31:51 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46220 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932615AbeGCPba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:31:29 -0400
-Received: by mail-oi0-f67.google.com with SMTP id d189-v6so4627193oib.6;
-        Tue, 03 Jul 2018 08:31:28 -0700 (PDT)
+        Tue, 3 Jul 2018 11:31:30 -0400
+Received: by mail-pg0-f65.google.com with SMTP id q14-v6so1139792pgt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=p0UCW/+A7Vked6lPgZm+kSqMpwmRpsHcB09fT536HQ8=;
-        b=d9u3Ss+lQ5xYPOOcXb7BvLYkOo9P/vYlgcGcwQRCpURltC6lGt1Cqf2xYf/7/KJHNe
-         T6TORwRHogM1dwjsBBukFbAXJX6woSW6arZIoXgvYvJO3dk10JPc0Q00TM+LwS+pxFjc
-         yrzc0L89bAgaktGa0vFJQKsoQsCz+2w7N3mwk3+73cp48p+/4QNn8D9+8xGRG+X66Pft
-         JgTek2xWFII98lfVIBXlSDdSThSVv3PiWJXUzD5GY0DBwyi7R+J/xogUrC07q4tFuZw+
-         6d9s8dHQrxf35axMLssYj+GReYF+bSwukXglbQLnJ1jQkN/GwFNWq9u2hJ2si8jOkFIP
-         aI2g==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=U5UcmPhLZVTrhjmGntLj2MrAGsTIp95syWuiee4K5kg=;
+        b=tFH02HswoN9aK3HU1p76Z9QdSW2jaBM4aEeT0BAczIdse2qEcAff2d5c7Y1CsxPY0R
+         PsOjlPV1cA0yi1ycypue7p0nrvu0MJC6LmT/HHjTVMp9S1La5Dx60tWK6/3mvFD2rQzT
+         oL5Xa8CioAZ+ce+xVeGJg3l5ZrYLq/4Y8ENRAL49ULcIZFiSFdQkoEPgu3ZaNopS9kEq
+         4ccHFoep+lWUgz186dMaoc5aRQyg4mulkyatX56YEP5kvOKxiur9DYuxo1Lfi1EqFwA4
+         O0oFRxf0feg0f9tPfL1N8jKIkrAWNTPhYTiomRanmXqvvzewTGDrr3D15p4ESnxvcI5T
+         mVlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=p0UCW/+A7Vked6lPgZm+kSqMpwmRpsHcB09fT536HQ8=;
-        b=bO3XyQPR9vvuy1Nxoc0jLxAtTn6QFHaDrIs9KDnlSq6JnHt1gssQPRLp6FL9UQGRql
-         MFU2RdbyAXvFIHYKF1uQXXMNnJ+rXcaojC/QoBAF9HUhEf+12ljRIIa3ySPDhni4/Gdx
-         AvoksAEnLEeiezEnp7EG+4RkJe9nIGV4XWXRj+RCU9rfAhJ1u4LBvx0qwt14KhaZBdQM
-         k/WoMnVMBplTive4HZG5DSzd4zNNYeF0jR8LdXbGOA2zkJSiCn2bpvhxKSMwU4seoNp+
-         vBvbivhd5J+tTAaSXgFNe0V2tXLnAjwwMmbTnId186jdsybqAp8xF6oLgSWpVI5JGkbY
-         BocQ==
-X-Gm-Message-State: APt69E1wf8DzDxlZRBZg/8lAgMKGZ0rKQ9qGowiE9pov4Qa5CN8bqii7
-        jmAYS5dyMHBHIcyvettdL9WyFdEcYRcbMl5g8Nc=
-X-Google-Smtp-Source: AAOMgpe/ywmDZozCx23Isd0NmXtEvh73LdDQzixL+ECI2lPURvEC42plhdOfMeDeAwClScciddvnXCJnwAx27/wv9hY=
-X-Received: by 2002:aca:d4d7:: with SMTP id l206-v6mr8614157oig.52.1530631886998;
- Tue, 03 Jul 2018 08:31:26 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=U5UcmPhLZVTrhjmGntLj2MrAGsTIp95syWuiee4K5kg=;
+        b=OcjFdQvymwsMqiT1rz51wkDRKHGXU6NrRUq7TXN8bsBXPDJmbTRgH/HDXKqCi0HiDw
+         M0cErumWLZ2W68wO4wmPH73iIojL5YA57nazENwgGFKxQ1bl5ky7EgsFDV+AuEiT0lC8
+         oJOfect0W7LHvhiN1EybBktm30B1k1qGPSfSVBMCwt+BmojZClaoFqnLsrlUcJj8xFXu
+         NoLdv1GPO34aFGAfsCmZo5Gks3Bz3OPwheq3nbrskZgCgo7c+6zkvNp5lBmFvn3urGUM
+         rju29Bkle6p6WQA1CWprHbWsGfQrX/HYc3FMgoLqjTZex2oLME4Iy4casp5faKBMosZI
+         DNmQ==
+X-Gm-Message-State: APt69E19p5GHQ/4NcTvf1p9B9v6LVfudVfGdGvWm7q7CwtJuQ5PgduLL
+        kXjSawcv0edtBdHcaSUHbiQ=
+X-Google-Smtp-Source: ADUXVKI2jSQ8Mlpc/qGL52dTaK6Zz+FhcnQ2lSiau/M8e5ULn+ieZJNJOub3LjWRLavm6COjvgI15A==
+X-Received: by 2002:a63:2c9:: with SMTP id 192-v6mr26536418pgc.354.1530631889265;
+        Tue, 03 Jul 2018 08:31:29 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.19.17])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm2761850pfe.163.2018.07.03.08.31.26
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 03 Jul 2018 08:31:27 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 21:03:53 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     airlied@linux.ie, kraxel@redhat.com
+Cc:     dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, svptas.linux@gmail.com,
+        ajitn.linux@gmail.com, brajeswar.linux@gmail.com,
+        sabyasachi.linux@gmail.com
+Subject: [PATCH v2] gpu: drm: virtio: code cleanup
+Message-ID: <20180703153353.GA3375@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Received: by 2002:a9d:ea3:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 08:31:26 -0700 (PDT)
-In-Reply-To: <20180622194752.11221-7-logang@deltatee.com>
-References: <20180622194752.11221-1-logang@deltatee.com> <20180622194752.11221-7-logang@deltatee.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 3 Jul 2018 12:31:26 -0300
-Message-ID: <CAOMZO5DpwPsidKQ9wfe8mNTgdOpkdHHgqHMa4yQBx9uRrfFmww@mail.gmail.com>
-Subject: Re: [PATCH v18 6/7] crypto: caam: cleanup CONFIG_64BIT ifdefs when
- using io{read|write}64
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, linux-ntb@googlegroups.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Dan Douglass <dan.douglass@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Logan,
+The fault handler code is commented since v4.2.
+If there is no plan to enable the fault handler
+code in future, we can remove this dead code.
 
-On Fri, Jun 22, 2018 at 4:47 PM, Logan Gunthorpe <logang@deltatee.com> wrot=
-e:
-> Clean up the extra ifdefs which defined the wr_reg64 and rd_reg64
-> functions in non-64bit cases in favour of the new common
-> io-64-nonatomic-lo-hi header.
->
-> To be consistent with CAAM engine HW spec: in case of 64-bit registers,
-> irrespective of device endianness, the lower address should be read from
-> / written to first, followed by the upper address. Indeed the I/O
-> accessors in CAAM driver currently don't follow the spec, however this
-> is a good opportunity to fix the code.
->
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Horia Geant=C4=83 <horia.geanta@nxp.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Dan Douglass <dan.douglass@nxp.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+v2: corrected subject line
 
-This is now in linux-next as commit 46e4bf08f6388 and it breaks
-booting imx6 (32-bit ARM):
+ drivers/gpu/drm/virtio/virtgpu_ttm.c | 36 +-----------------------------------
+ 1 file changed, 1 insertion(+), 35 deletions(-)
 
-[    1.872473] caam 2100000.caam: Entropy delay =3D 3200
-[    1.938223] caam 2100000.caam: Instantiated RNG4 SH0
-[    1.998983] caam 2100000.caam: Instantiated RNG4 SH1
-[    2.004019] caam 2100000.caam: device ID =3D 0x0a16010000000000 (Era 4)
-[    2.010484] caam 2100000.caam: job rings =3D 2, qi =3D 0
-[    2.027389] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
-[    2.028867] caam algorithms registered in /proc/crypto
-[    2.035925] mmc1: queuing unknown CIS tuple 0x80 (4 bytes)
-[    2.041187] caam_jr 2101000.jr0: job ring error: irqstate: 00000103
-[    2.049878] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
-[    2.056591] Modules linked in:
-[    2.059671] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
-4.18.0-rc3-next-20180703 #484
-[    2.067338] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[    2.073892] PC is at caam_jr_interrupt+0x120/0x12c
-[    2.078702] LR is at vprintk_emit+0x228/0x43c
-[    2.083069] pc : [<c075eb38>]    lr : [<c01815ec>]    psr: 60000193
-[    2.089344] sp : c1001d80  ip : c1001be0  fp : c1001da4
-[    2.094576] r10: c107ffe7  r9 : ec749e00  r8 : 0000012d
-[    2.099810] r7 : c1001de0  r6 : c17ecc10  r5 : ec7a6010  r4 : 00000103
-[    2.106346] r3 : ba36048e  r2 : ba36048e  r1 : 00000001  r0 : 00000037
-[    2.112884] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
-Segment none
-[    2.120116] Control: 10c5387d  Table: 1000404a  DAC: 00000051
-[    2.125873] Process swapper/0 (pid: 0, stack limit =3D 0x(ptrval))
-[    2.131890] Stack: (0xc1001d80 to 0xc1002000)
-[    2.136262] 1d80: ec5b5f00 ec749e64 00000000 c1001de0 0000012d
-ec749e00 c1001ddc c1001da8
-[    2.144454] 1da0: c0183584 c075ea24 c0176ea4 c0176850 c1001dfc
-c1008908 ec749e64 ec749e00
-[    2.152644] 1dc0: 00000000 00000001 ec008400 f4000100 c1001e04
-c1001de0 c018364c c0183504
-[    2.160834] 1de0: 00000000 ba36048e c0a87070 ec749e00 ec749e64
-c1014ee4 c1001e24 c1001e08
-[    2.169025] 1e00: c01836e0 c0183628 ec749e00 ec749e64 c1014ee4
-00000000 c1001e44 c1001e28
-[    2.177215] 1e20: c0187460 c01836ac c0f840a8 0000012d c1008a90
-00000000 c1001e54 c1001e48
-[    2.185406] 1e40: c018264c c01873b0 c1001e7c c1001e58 c0182cdc
-c0182630 f400010c 000003eb
-[    2.193597] 1e60: 000003ff 00000000 c1001eb8 c10280b0 c1001eb4
-c1001e80 c047686c c0182c7c
-[    2.201787] 1e80: ffffffff f4001100 00000000 c01091e8 20000013
-ffffffff c1001eec 00000000
-[    2.209977] 1ea0: c1000000 c1008908 c1001f14 c1001eb8 c0101a30
-c0476814 00000001 00000001
-[    2.218166] 1ec0: 00000000 c100bfc0 c1000000 c100892c 00000001
-c100896c 00000000 c0f839b0
-[    2.226356] 1ee0: c1008908 c1001f14 c1001ed8 c1001f08 c0174ddc
-c01091e8 20000013 ffffffff
-[    2.234545] 1f00: 00000051 00000000 c1001f24 c1001f18 c0a86e20
-c01091cc c1001f64 c1001f28
-[    2.242735] 1f20: c01587dc c0a86e04 00000000 00000000 c1008900
-ba36048e c1008908 000000c3
-[    2.250925] 1f40: 00000002 c1080480 c1008900 c1080480 c1008908
-c0f66a4c c1001f74 c1001f68
-[    2.259114] 1f60: c0158c88 c015862c c1001f9c c1001f78 c0a7e898
-c0158c74 00000000 00000000
-[    2.267304] 1f80: c0a7e78c c1001f90 c10804d8 ffffffff c1001ff4
-c1001fa0 c0f00d68 c0a7e694
-[    2.275493] 1fa0: ffffffff ffffffff 00000000 c0f00718 00000000
-efffcb40 00000000 c0f66a4c
-[    2.283683] 1fc0: ba32168e 00000000 00000000 c0f00330 00000051
-10c0387d 0000113c 18000000
-[    2.291873] 1fe0: 412fc09a 10c5387d 00000000 c1001ff8 00000000
-c0f009e0 00000000 00000000
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index 11f8ae5..b6f021c 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -106,29 +106,6 @@ static void virtio_gpu_ttm_global_fini(struct virtio_gpu_device *vgdev)
+ 	}
+ }
+ 
+-#if 0
+-/*
+- * Hmm, seems to not do anything useful.  Leftover debug hack?
+- * Something like printing pagefaults to kernel log?
+- */
+-static struct vm_operations_struct virtio_gpu_ttm_vm_ops;
+-static const struct vm_operations_struct *ttm_vm_ops;
+-
+-static int virtio_gpu_ttm_fault(struct vm_fault *vmf)
+-{
+-	struct ttm_buffer_object *bo;
+-	struct virtio_gpu_device *vgdev;
+-	int r;
+-
+-	bo = (struct ttm_buffer_object *)vmf->vma->vm_private_data;
+-	if (bo == NULL)
+-		return VM_FAULT_NOPAGE;
+-	vgdev = virtio_gpu_get_vgdev(bo->bdev);
+-	r = ttm_vm_ops->fault(vmf);
+-	return r;
+-}
+-#endif
+-
+ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
+ {
+ 	struct drm_file *file_priv;
+@@ -143,19 +120,8 @@ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		return -EINVAL;
+ 	}
+ 	r = ttm_bo_mmap(filp, vma, &vgdev->mman.bdev);
+-#if 0
+-	if (unlikely(r != 0))
+-		return r;
+-	if (unlikely(ttm_vm_ops == NULL)) {
+-		ttm_vm_ops = vma->vm_ops;
+-		virtio_gpu_ttm_vm_ops = *ttm_vm_ops;
+-		virtio_gpu_ttm_vm_ops.fault = &virtio_gpu_ttm_fault;
+-	}
+-	vma->vm_ops = &virtio_gpu_ttm_vm_ops;
+-	return 0;
+-#else
++
+ 	return r;
+-#endif
+ }
+ 
+ static int virtio_gpu_invalidate_caches(struct ttm_bo_device *bdev,
+-- 
+1.9.1
 
-Any ideas on how to fix this issue?
