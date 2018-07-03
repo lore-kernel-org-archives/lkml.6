@@ -6,116 +6,370 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBE4C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2D4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FFD24AB4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8595C24B93
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 14:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IPbVLZi6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FFD24AB4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DBiH1Fub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8595C24B93
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753577AbeGCOcv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 10:32:51 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55308 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753129AbeGCOcs (ORCPT
+        id S932392AbeGCOe0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 10:34:26 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:33606 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932133AbeGCOeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 10:32:48 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180703143246euoutp0188a6660c94c50f3d2daae368f3887f4a~94mO05Tor0791707917euoutp01P;
-        Tue,  3 Jul 2018 14:32:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180703143246euoutp0188a6660c94c50f3d2daae368f3887f4a~94mO05Tor0791707917euoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1530628366;
-        bh=oy0GB7Mxz3cd4ehBC62EiePzHhTSklZpJRYc9b6IVoI=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=IPbVLZi6cFfTxpFOhPpoVaTOy1yqLVvk3REPqRgsREIGOct/hHRHsPy/Iq/rOnsjA
-         j27ogr2aDYcXjp/gzcVyeRKuaeRDY0T2E5IncBmjWvrQPOBzOziPtgW1ktEKf//nPy
-         IcXUCvaDsGLgnB8KeYEbbRUvRfbOheoh1N/Gso6o=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180703143245eucas1p2392f9273a3c34a414fe8ea032ff779f9~94mONyPgO0219302193eucas1p2D;
-        Tue,  3 Jul 2018 14:32:45 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id AB.66.05700.D098B3B5; Tue,  3
-        Jul 2018 15:32:45 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180703143244eucas1p2e6651d1ebab472768357e9f7d132721d~94mNj8e0V2384123841eucas1p27;
-        Tue,  3 Jul 2018 14:32:44 +0000 (GMT)
-X-AuditID: cbfec7f2-1dbff70000011644-57-5b3b890d6f14
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8D.BD.04178.C098B3B5; Tue,  3
-        Jul 2018 15:32:44 +0100 (BST)
-Received: from amdc3058.localnet ([106.120.53.102]) by eusync4.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PBA00C3NOEK8A20@eusync4.samsung.com>; Tue, 03 Jul
-        2018 15:32:44 +0100 (BST)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] omapfb: encoder-tpd12s015: fix error return code
-Date:   Tue, 03 Jul 2018 16:32:44 +0200
-Message-id: <2458818.0lnoAlLxQ2@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7djP87q8ndbRBqcOC1pc+fqezWLZg9OM
-        FltvSVuc6PvAanF51xw2i9lL+lks1s+/xebA7rF3S5bH/e7jTB7Hb2xn8vi8SS6AJYrLJiU1
-        J7MstUjfLoErY+rerYwFx5gqVh68ztzA2MrUxcjJISFgIrGi8TmQzcUhJLCCUeLdvYlgCSGB
-        z4wSG3s5YIpeXX8BVbSMUaLlWRc7hPObUWLJ5k9sIFVsAlYSE9tXMYLYIgLqEq0bdoHZzALH
-        GSW+3XIHsYUFXCX2LGlkBrFZBFQlpi39CTSVg4NXQFPi9T0+kLCogJfEln3tYEdwApUfO3kX
-        zOYVEJT4MfkeC8RIeYl9+6eyQtg6EmePrWMEuUdCYAObxNa/p5khrnaRmDpnFxuELSzx6vgW
-        dghbRqKz4yATRMN0Rok3v5ayQDjrGSXWnDkGDRhricPHL0Kt4JOYtG06M8ilEgK8Eh1tQhAl
-        HhJrPr1jhgTXDEaJtpdaExhlZiE5dhaSY2chOXYBI/MqRvHU0uLc9NRiw7zUcr3ixNzi0rx0
-        veT83E2MwARw+t/xTzsYv15KOsQowMGoxMO7otQ6Wog1say4MvcQowQHs5II7zZVq2gh3pTE
-        yqrUovz4otKc1OJDjNIcLErivHEadVFCAumJJanZqakFqUUwWSYOTqkGxqL0E9X+CdvLFxcK
-        tO2OM57L3Nfz50XGuYKt1QL7Tm2tvvqKn1lGfUe3VI8UwxvBC187TXdE3OCsvqdpkBmf7J0d
-        WH59gjlDWx3vvyX8gj9qOY49E67ZOO3y6Ue+zzU1460nRPO2/Vqw7p7GDpuajIlaSxsFn0mt
-        M52UbDI991m1WmDelOImJZbijERDLeai4kQA4d1ihvwCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t/xa7o8ndbRBsdemFhc+fqezWLZg9OM
-        FltvSVuc6PvAanF51xw2i9lL+lks1s+/xebA7rF3S5bH/e7jTB7Hb2xn8vi8SS6AJYrLJiU1
-        J7MstUjfLoErY+rerYwFx5gqVh68ztzA2MrUxcjJISFgIvHq+gsgm4tDSGAJo8TkaYvAEkIC
-        fxklrv5JBLHZBKwkJravYgSxRQTUJVo37GIEaWAWOM4o0b7iNViDsICrxJ4ljcwgNouAqsS0
-        pT+B4hwcvAKaEq/v8YGERQW8JLbsawcr5wQqP3byLtTiWYwSv37PBlvAKyAo8WPyPRYQm1lA
-        XmLf/qmsELaWxPqdx5kmMPLPQlI2C0nZLCRlCxiZVzGKpJYW56bnFhvqFSfmFpfmpesl5+du
-        YgSG77ZjPzfvYLy0MfgQowAHoxIP74pS62gh1sSy4srcQ4wSHMxKIrzbVK2ihXhTEiurUovy
-        44tKc1KLDzFKc7AoifOeN6iMEhJITyxJzU5NLUgtgskycXBKNTAG/Q81mWH3bv/tGaoHXmUn
-        u5a63stRmXD8YIxjz2tJqzOhz85JVT5SUPnes/Fe8d562S9cK77/dX107Z3+zq3nBc9b55TK
-        ThK+t3bLn9BdM09OXfSMfZUnb0dlyL7ZbPxHzBd1hyzqVjoik8ve4TzPi23rzTlPFVN+MhVM
-        /rekgqFWOLk6QaZDiaU4I9FQi7moOBEALH/DC1sCAAA=
-X-CMS-MailID: 20180703143244eucas1p2e6651d1ebab472768357e9f7d132721d
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180610145623epcas2p38562cc47b619add45620b677fb036479
-References: <CGME20180610145623epcas2p38562cc47b619add45620b677fb036479@epcas2p3.samsung.com>
-        <1528640655-18948-1-git-send-email-Julia.Lawall@lip6.fr>
+        Tue, 3 Jul 2018 10:34:21 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w63EXmcP079525;
+        Tue, 3 Jul 2018 14:33:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=q+4alKydhXHAnnNCpZtj6GZckbV5/iIUFCAurlydD3A=;
+ b=DBiH1FubzMcbBCHgFeCv/G6fRB/XvFClG8t0FdNpUhq5fXMPxxZLi/QzOru9URcwOw1B
+ +om3nzxnxCNfZuBrDnPoR0mChKYjECmW4+eXop+cW9NY0paTL/i1LWeKBS/uxqHwPOUv
+ 68TccfIzqyuh9sgSm7cGRkA6bVyFjtar7nVCEqBiPC1O+v7ol7tIFAF7soAR5Hp7xAyf
+ EUjjfN0jWTG6CzFxz7NWinarUFzE4iimAh3g0wtVhF1lMtYKHwk1TYL8CLeU02TIp9XE
+ 03tbjFLsg4Dl8hSbphN1ew7qC9BS3RDWJ/z8opANrEe3NTGEw/n9hZ+w59AI9J0lNPrj ww== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jwyccrym8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Jul 2018 14:33:48 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w63EXjVm002109
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Jul 2018 14:33:45 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w63EXi3k013072;
+        Tue, 3 Jul 2018 14:33:44 GMT
+Received: from [10.159.146.54] (/10.159.146.54)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Jul 2018 07:33:44 -0700
+Subject: Re: [PATCH v6] pidns: introduce syscall translate_pid
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>,
+        Serge Hallyn <serge.hallyn@ubuntu.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+References: <152788068212.768348.15192457501079586650.stgit@buzz>
+From:   Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <0f7cb9cb-f0dd-036d-931d-76a518b4cc4d@oracle.com>
+Date:   Tue, 3 Jul 2018 07:33:35 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <152788068212.768348.15192457501079586650.stgit@buzz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8943 signatures=668704
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=45 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807030168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, June 10, 2018 04:24:13 PM Julia Lawall wrote:
-> Return an error code on failure.
-> 
-> Problem found using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Patch queued for 4.19, thanks.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+On 6/1/2018 12:18 PM, Konstantin Khlebnikov wrote:
+> Each process have different pids, one for each pid namespace it belongs.
+> When interaction happens within single pid-ns translation isn't required.
+> More complicated scenarios needs special handling.
+>
+> For example:
+> - reading pid-files or logs written inside container with pid namespace
+> - writing logs with internal pids outside container for pushing them into
+> - attaching with ptrace to tasks from different pid namespace
+>
+> Generally speaking, any cross pid-ns API with pids needs translation.
+>
+> Currently there are several interfaces that could be used here:
+>
+> Pid namespaces are identified by device and inode of /proc/[pid]/ns/pid.
+>
+> Pids for nested pid namespaces are shown in file /proc/[pid]/status.
+> In some cases pid translation could be easily done using this information.
+> Backward translation requires scanning all tasks and becomes really
+> complicated for deeper namespace nesting.
+>
+> Unix socket automatically translates pid attached to SCM_CREDENTIALS.
+> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
+> into pid namespace, this expose process and could be insecure.
+>
+> This patch adds new syscall for converting pids between pid namespaces:
+>
+> pid_t translate_pid(pid_t pid, int source, int target);
+>
+> Pid-namespaces are referred file descriptors opened to proc files
+> /proc/[pid]/ns/pid or /proc/[pid]/ns/pid_for_children.
+> Negative argument points to current pid namespace.
+>
+> Syscall returns pid in target pid-ns or zero if task have no pid there.
+>
+> Error codes:
+> EBADF    - file descriptor is closed
+> EINVAL   - file descriptor isn't pid namespace
+> ESRCH    - task not found in @source namespace
+>
+> Translation could breach pid-ns isolation and return pids from outer pid
+> namespaces iff process already has file descriptor for these namespaces.
+>
+> Examples:
+> translate_pid(pid, ns, -1)      - get pid in our pid namespace
+> translate_pid(pid, -1, ns)      - get pid in other pid namespace
+> translate_pid(1, ns, -1)        - get pid of init task for namespace
+> translate_pid(pid, -1, ns) > 0  - is pid is reachable from ns?
+> translate_pid(1, ns1, ns2) > 0  - is ns1 inside ns2?
+> translate_pid(1, ns1, ns2) == 0 - is ns1 outside ns2?
+> translate_pid(1, ns1, ns2) == 1 - is ns1 equal ns2?
+>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Reanimated-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+>
+> ---
+>
+> v1: https://lkml.org/lkml/2015/9/15/411
+> v2: https://lkml.org/lkml/2015/9/24/278
+>   * use namespace-fd as second/third argument
+>   * add -pid for getting parent pid
+>   * move code into kernel/sys.c next to getppid
+>   * drop ifdef CONFIG_PID_NS
+>   * add generic syscall
+> v3: https://lkml.org/lkml/2015/9/28/3
+>   * use proc_ns_fdget()
+>   * update description
+>   * rebase to next-20150925
+>   * fix conflict with mlock2
+> v4: https://lkml.org/lkml/2017/10/13/177
+>   * rename from getvpid() into translate_pid()
+>   * remove syscall if CONFIG_PID_NS=n
+>   * drop -pid for parent task
+>   * drop fget-fdget optimizations
+>   * add helper get_pid_ns_by_fd()
+>   * wire only into x86
+> v5: https://lkml.org/lkml/2018/4/4/677
+>   * rewrite commit message
+>   * resolve pidns by task pid or by pidns fd
+>   * add arguments source_type and target_type
+> v6:
+>   * revert back minimized v4 design
+>   * rebase to next-20180601
+>   * fix COND_SYSCALL stub
+>   * use next syscall number, old used for io_pgetevents
+>
+> --- sample tool ---
+>
+> #define _GNU_SOURCE
+> #include <sys/syscall.h>
+> #include <sys/types.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <stdlib.h>
+> #include <stdio.h>
+> #include <err.h>
+>
+> #ifndef SYS_translate_pid
+> #ifdef __x86_64__
+> #define SYS_translate_pid 334
+> #elif defined __i386__
+> #define SYS_translate_pid 386
+> #endif
+> #endif
+>
+> pid_t translate_pid(pid_t pid, int source, int target) {
+> 	return syscall(SYS_translate_pid, pid, source, target);
+> }
+>
+> int main(int argc, char **argv) {
+> 	int pid, source, target;
+> 	char buf[64];
+>
+> 	if (argc != 4)
+> 		errx(1, "usage: %s <pid> <source> <target>", argv[0]);
+>
+> 	pid = atoi(argv[1]);
+> 	source = atoi(argv[2]);
+> 	target = atoi(argv[3]);
+>
+> 	if (source > 0) {
+> 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", source);
+> 		source = open(buf, O_RDONLY);
+> 		if (source < 0)
+> 			err(2, "open source %s", buf);
+> 	}
+>
+> 	if (target > 0) {
+> 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", target);
+> 		target = open(buf, O_RDONLY);
+> 		if (target < 0)
+> 			err(2, "open target %s", buf);
+> 	}
+>
+> 	pid = translate_pid(pid, source, target);
+> 	if (pid < 0)
+> 		err(2, "translate_pid");
+>
+> 	printf("%d\n", pid);
+> 	return 0;
+> }
+>
+> ---
+> ---
+>   arch/x86/entry/syscalls/syscall_32.tbl |    1
+>   arch/x86/entry/syscalls/syscall_64.tbl |    1
+>   include/linux/syscalls.h               |    1
+>   kernel/pid_namespace.c                 |   66 ++++++++++++++++++++++++++++++++
+>   kernel/sys_ni.c                        |    3 +
+>   5 files changed, 72 insertions(+)
+>
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 14a2f996e543..e70685750d43 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -397,3 +397,4 @@
+>   383	i386	statx			sys_statx			__ia32_sys_statx
+>   384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+>   385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+> +386	i386	translate_pid		sys_translate_pid		__ia32_sys_translate_pid
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index cd36232ab62f..ebfd89055424 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -342,6 +342,7 @@
+>   331	common	pkey_free		__x64_sys_pkey_free
+>   332	common	statx			__x64_sys_statx
+>   333	common	io_pgetevents		__x64_sys_io_pgetevents
+> +334	common	translate_pid		__x64_sys_translate_pid
+>   
+>   #
+>   # x32-specific system call numbers start at 512 to avoid cache impact
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 390e814fdc8d..3f33971cf1c8 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -843,6 +843,7 @@ asmlinkage long sys_clock_adjtime(clockid_t which_clock,
+>   				struct timex __user *tx);
+>   asmlinkage long sys_syncfs(int fd);
+>   asmlinkage long sys_setns(int fd, int nstype);
+> +asmlinkage long sys_translate_pid(pid_t pid, int source, int target);
+>   asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
+>   			     unsigned int vlen, unsigned flags);
+>   asmlinkage long sys_process_vm_readv(pid_t pid,
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 2a2ac53d8b8b..3b872cbbe264 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/user_namespace.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/cred.h>
+> +#include <linux/file.h>
+>   #include <linux/err.h>
+>   #include <linux/acct.h>
+>   #include <linux/slab.h>
+> @@ -380,6 +381,71 @@ static void pidns_put(struct ns_common *ns)
+>   	put_pid_ns(to_pid_ns(ns));
+>   }
+>   
+> +static struct pid_namespace *get_pid_ns_by_fd(int fd)
+> +{
+> +	struct pid_namespace *pidns;
+> +	struct ns_common *ns;
+> +	struct file *file;
+> +
+> +	file = proc_ns_fget(fd);
+> +	if (IS_ERR(file))
+> +		return ERR_CAST(file);
+> +
+> +	ns = get_proc_ns(file_inode(file));
+> +	if (ns->ops->type == CLONE_NEWPID)
+> +		pidns = get_pid_ns(to_pid_ns(ns));
+> +	else
+> +		pidns = ERR_PTR(-EINVAL);
+> +
+> +	fput(file);
+> +	return pidns;
+> +}
+> +
+> +/*
+> + * translate_pid - convert pid in source pid-ns into target pid-ns.
+> + * @pid:    pid for translation
+> + * @source: pid-ns file descriptor or -1 for active namespace
+> + * @target: pid-ns file descriptor or -1 for active namesapce
+> + *
+> + * Returns pid in @target pid-ns, zero if task have no pid there,
+> + * or -ESRCH if task with @pid does not found in @source pid-ns.
+> + */
+> +SYSCALL_DEFINE3(translate_pid, pid_t, pid, int, source, int, target)
+> +{
+> +	struct pid_namespace *source_ns, *target_ns;
+> +	struct pid *struct_pid;
+> +	pid_t result;
+> +
+> +	if (source >= 0) {
+> +		source_ns = get_pid_ns_by_fd(source);
+> +		result = PTR_ERR(source_ns);
+> +		if (IS_ERR(source_ns))
+> +			goto err_source;
+> +	} else
+> +		source_ns = task_active_pid_ns(current);
+> +
+> +	if (target >= 0) {
+> +		target_ns = get_pid_ns_by_fd(target);
+> +		result = PTR_ERR(target_ns);
+> +		if (IS_ERR(target_ns))
+> +			goto err_target;
+> +	} else
+> +		target_ns = task_active_pid_ns(current);
+> +
+> +	rcu_read_lock();
+> +	struct_pid = find_pid_ns(pid, source_ns);
+> +	result = struct_pid ? pid_nr_ns(struct_pid, target_ns) : -ESRCH;
+> +	rcu_read_unlock();
+> +
+> +	if (target >= 0)
+> +		put_pid_ns(target_ns);
+> +err_target:
+> +	if (source >= 0)
+> +		put_pid_ns(source_ns);
+> +err_source:
+> +	return result;
+> +}
+> +
+>   static int pidns_install(struct nsproxy *nsproxy, struct ns_common *ns)
+>   {
+>   	struct pid_namespace *active = task_active_pid_ns(current);
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index 06b4ccee0047..bf276e9ace9a 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -153,6 +153,9 @@ COND_SYSCALL_COMPAT(kexec_load);
+>   COND_SYSCALL(init_module);
+>   COND_SYSCALL(delete_module);
+>   
+> +/* kernel/pid_namespace.c */
+> +COND_SYSCALL(translate_pid);
+> +
+>   /* kernel/posix-timers.c */
+>   
+>   /* kernel/printk.c */
+Ping? I believe this patch has been in a limbo for almost a month. Any 
+comments or suggestions or Ack?
+
+Thanks,
+Nagarathnam.
 
