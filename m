@@ -2,274 +2,131 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAFFC6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F74C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934B520890
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:24:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 934B520890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 36E0921D66
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:25:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E0921D66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934761AbeGCSYo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:24:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:1050 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934400AbeGCSYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:24:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jul 2018 11:24:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,304,1526367600"; 
-   d="scan'208";a="242708467"
-Received: from cdikicix-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.69])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Jul 2018 11:24:36 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v12 13/13] x86/sgx: driver documentation
-Date:   Tue,  3 Jul 2018 21:19:58 +0300
-Message-Id: <20180703182118.15024-14-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com>
+        id S934575AbeGCSWh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:22:37 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37459 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934399AbeGCSWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 14:22:35 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0T3vViPq_1530642138;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3vViPq_1530642138)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 04 Jul 2018 02:22:25 +0800
+Subject: Re: [RFC v3 PATCH 4/5] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1530311985-31251-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1530311985-31251-5-git-send-email-yang.shi@linux.alibaba.com>
+ <20180629183501.9e30c26135f11853245c56c7@linux-foundation.org>
+ <084aeccb-2c54-2299-8bf0-29a10cc0186e@linux.alibaba.com>
+ <20180629201547.5322cfc4b52d19a0443daec2@linux-foundation.org>
+ <20180702140502.GZ19043@dhcp22.suse.cz>
+ <20180702134845.c4f536dead5374b443e24270@linux-foundation.org>
+ <20180703060921.GA16767@dhcp22.suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <658e4c7b-d426-11ab-ef9a-018579cbf756@linux.alibaba.com>
+Date:   Tue, 3 Jul 2018 11:22:17 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180703060921.GA16767@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation of the features of the Software Guard eXtensions used
-by the Linux kernel and basic design choices for the core and driver
-and functionality.
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- Documentation/index.rst         |   1 +
- Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
- 2 files changed, 186 insertions(+)
- create mode 100644 Documentation/x86/intel_sgx.rst
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index 3b99ab931d41..b9fb92928e8c 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -100,6 +100,7 @@ implementation.
-    :maxdepth: 2
- 
-    sh/index
-+   x86/index
- 
- Korean translations
- -------------------
-diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
-new file mode 100644
-index 000000000000..f6b7979c41f2
---- /dev/null
-+++ b/Documentation/x86/intel_sgx.rst
-@@ -0,0 +1,185 @@
-+===================
-+Intel(R) SGX driver
-+===================
-+
-+Introduction
-+============
-+
-+Intel(R) SGX is a set of CPU instructions that can be used by applications to
-+set aside private regions of code and data. The code outside the enclave is
-+disallowed to access the memory inside the enclave by the CPU access control.
-+In a way you can think that SGX provides inverted sandbox. It protects the
-+application from a malicious host.
-+
-+You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
-+
-+	``cat /proc/cpuinfo  | grep sgx``
-+
-+Overview of SGX
-+===============
-+
-+SGX has a set of data structures to maintain information about the enclaves and
-+their security properties. BIOS reserves a fixed size region of physical memory
-+for these structures by setting Processor Reserved Memory Range Registers
-+(PRMRR).
-+
-+This memory range is protected from outside access by the CPU and all the data
-+coming in and out of the CPU package is encrypted by a key that is generated for
-+each boot cycle.
-+
-+Enclaves execute in ring-3 in a special enclave submode using pages from the
-+reserved memory range. A fixed logical address range for the enclave is reserved
-+by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
-+the documentation commonly as the ELRANGE.
-+
-+Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-+executing in the enclave mode inside the enclave, #GP is raised. On the other
-+hand enclave code can make memory accesses both inside and outside of the
-+ELRANGE.
-+
-+Enclave can only execute code inside the ELRANGE. Instructions that may cause
-+VMEXIT, IO instructions and instructions that require a privilege change are
-+prohibited inside the enclave. Interrupts and exceptions always cause enclave
-+to exit and jump to an address outside the enclave given when the enclave is
-+entered by using the leaf instruction ENCLS(EENTER).
-+
-+Data types
-+----------
-+
-+The protected memory range contains the following data:
-+
-+* **Enclave Page Cache (EPC):** protected pages
-+* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
-+  pages and link them to an enclave.
-+
-+EPC has a number of different types of pages:
-+
-+* **SGX Enclave Control Structure (SECS)**: describes the global
-+  properties of an enclave.
-+* **Regular (REG):** code and data pages in the ELRANGE.
-+* **Thread Control Structure (TCS):** pages that define entry points inside an
-+  enclave. The enclave can only be entered through these entry points and each
-+  can host a single hardware thread at a time.
-+* **Version Array (VA)**: 64-bit version numbers for pages that have been
-+  swapped outside the enclave. Each page contains 512 version numbers.
-+
-+Launch control
-+--------------
-+
-+To launch an enclave, two structures must be provided for ENCLS(EINIT):
-+
-+1. **SIGSTRUCT:** signed measurement of the enclave binary.
-+2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-+   *launch key*, which is re-generated for each boot cycle.
-+
-+The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-+IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-+key do not require a valid EINITTOKEN and can be authorized with special
-+privileges. One of those privileges is ability to acquire the launch key with
-+ENCLS(EGETKEY).
-+
-+**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
-+IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
-+feature control register and handing over control to the operating system.
-+
-+Enclave construction
-+--------------------
-+
-+The construction is started by filling out the SECS that contains enclave
-+address range, privileged attributes and measurement of TCS and REG pages (pages
-+that will be mapped to the address range) among the other things. This structure
-+is passed out to the ENCLS(ECREATE) together with a physical address of a page
-+in EPC that will hold the SECS.
-+
-+The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
-+SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
-+
-+After all of the pages have been added, the enclave is initialized with
-+ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
-+public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-+the token is valid (CMAC'd with the launch key). If the token is not valid,
-+the CPU will check whether the enclave is signed with a key matching to the
-+IA32_SGXLEPUBKEYHASHn MSRs.
-+
-+Swapping pages
-+--------------
-+
-+Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
-+addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
-+structure (Page Crypto MetaData) as input. The VA page will seal a version
-+number for the page. PCMD is 128 byte structure that contains tracking
-+information for the page, most importantly its MAC. With these structures the
-+enclave is sealed and rollback protected while it resides in the unprotected
-+memory.
-+
-+Before the page can be swapped out it must not have any active TLB references.
-+ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
-+that no new TLB entries can be created to it by the hardware threads.
-+
-+After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
-+increased counter value to the entering hardware threads. ENCLS(EWB) will
-+return SGX_NOT_TRACKED error while there are still threads with the earlier
-+couner value because that means that there might be hardware thread inside
-+the enclave with TLB entries to pages that are to be swapped.
-+
-+Kernel internals
-+================
-+
-+Requirements
-+------------
-+
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
-+
-+
-+Roles and responsibilities
-+--------------------------
-+
-+SGX introduces system resources, e.g. EPC memory, that must be accessible to
-+multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-+and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-+between each SGX entity.  To that end, the kernel owns and manages the shared
-+system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-+that provide appropriate access to the shared resources.  SGX support for
-+user space and VMs is left to the SGX platform driver and KVM respectively.
-+
-+Launching enclaves
-+------------------
-+
-+The current kernel implementation supports only unlocked MSRs i.e.
-+FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
-+MSRs to the hash of the public key modulus of the enclave signer, which is one
-+f the fields in the SIGSTRUCT.
-+
-+EPC management
-+--------------
-+
-+Due to the unique requirements for swapping EPC pages, and because EPC pages
-+(currently) do not have associated page structures, management of the EPC is
-+not handled by the standard Linux swapper.  SGX directly handles swapping
-+of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-+mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-+implement function callbacks that can be invoked by the kernel to age,
-+swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-+controls what happens and when, while the consumers (driver, KVM, etc..) do
-+the actual work.
-+
-+SGX uapi
-+========
-+
-+.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-+   :functions: sgx_ioc_enclave_create
-+               sgx_ioc_enclave_add_page
-+               sgx_ioc_enclave_init
-+
-+.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-+
-+References
-+==========
-+
-+* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
--- 
-2.17.1
+On 7/2/18 11:09 PM, Michal Hocko wrote:
+> On Mon 02-07-18 13:48:45, Andrew Morton wrote:
+>> On Mon, 2 Jul 2018 16:05:02 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+>>
+>>> On Fri 29-06-18 20:15:47, Andrew Morton wrote:
+>>> [...]
+>>>> Would one of your earlier designs have addressed all usecases?  I
+>>>> expect the dumb unmap-a-little-bit-at-a-time approach would have?
+>>> It has been already pointed out that this will not work.
+>> I said "one of".  There were others.
+> Well, I was aware only about two potential solutions. Either do the
+> heavy lifting under the shared lock and do the rest with the exlusive
+> one and this, drop the lock per parts. Maybe I have missed others?
+>
+>>> You simply
+>>> cannot drop the mmap_sem during unmap because another thread could
+>>> change the address space under your feet. So you need some form of
+>>> VM_DEAD and handle concurrent and conflicting address space operations.
+>> Unclear that this is a problem.  If a thread does an unmap of a range
+>> of virtual address space, there's no guarantee that upon return some
+>> other thread has not already mapped new stuff into that address range.
+>> So what's changed?
+> Well, consider the following scenario:
+> Thread A = calling mmap(NULL, sizeA)
+> Thread B = calling munmap(addr, sizeB)
+>
+> They do not use any external synchronization and rely on the atomic
+> munmap. Thread B only munmaps range that it knows belongs to it (e.g.
+> called mmap in the past). It should be clear that ThreadA should not
+> get an address from the addr, sizeB range, right? In the most simple case
+> it will not happen. But let's say that the addr, sizeB range has
+> unmapped holes for what ever reasons. Now anytime munmap drops the
+> exclusive lock after handling one VMA, Thread A might find its sizeA
+> range and use it. ThreadB then might remove this new range as soon as it
+> gets its exclusive lock again.
+
+I'm a little bit confused here. If ThreadB already has unmapped that 
+range, then ThreadA uses it. It sounds not like a problem since ThreadB 
+should just go ahead to handle the next range when it gets its exclusive 
+lock again, right? I don't think of why ThreadB would re-visit that 
+range to remove it.
+
+But, if ThreadA uses MAP_FIXED, it might remap some ranges, then ThreadB 
+remove them. It might trigger SIGSEGV or SIGBUS, but this is not even 
+guaranteed on vanilla kernel too if the application doesn't do any 
+synchronization. It all depends on timing.
+
+>
+> Is such a code safe? No it is not and I would call it fragile at best
+> but people tend to do weird things and atomic munmap behavior is
+> something they can easily depend on.
+>
+> Another example would be an atomic address range probing by
+> MAP_FIXED_NOREPLACE. It would simply break for similar reasons.
+
+Yes, I agree, it could simply break MAP_FIXED_NOREPLACE.
+
+Yang
+
+>
+> I remember my attempt to make MAP_LOCKED consistent with mlock (if the
+> population fails then return -ENOMEM) and that required to drop the
+> shared mmap_sem and take it in exclusive mode (because we do not
+> have upgrade_read) and Linus was strongly against [1][2] for very
+> similar reasons. If you drop the lock you simply do not know what
+> happened under your feet.
+>
+> [1] http://lkml.kernel.org/r/CA+55aFydkG-BgZzry5DrTzueVh9VvEcVJdLV8iOyUphQk=0vpw@mail.gmail.com
+> [2] http://lkml.kernel.org/r/CA+55aFyajquhGhw59qNWKGK4dBV0TPmDD7-1XqPo7DZWvO_hPg@mail.gmail.com
 
