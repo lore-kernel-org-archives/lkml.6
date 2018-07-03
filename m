@@ -2,104 +2,143 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C992C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90D4C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8DB205F4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:28:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88607242E5
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WDUnVbJV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8DB205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vDpiAl4O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88607242E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932747AbeGCP2G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:28:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35094 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752745AbeGCP2F (ORCPT
+        id S1753467AbeGCP3u (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:29:50 -0400
+Received: from mail-yb0-f170.google.com ([209.85.213.170]:45330 "EHLO
+        mail-yb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753307AbeGCP3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:28:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GQ5rpmU5DQJ3Wke4Z+vF7+q6DpMwRy53GSjNlqz+6Dc=; b=WDUnVbJVUxAGaLNUuf18lfFqy
-        SzcUbiWOsZtVYzwScEhaU2oo4l7cuMjfTuC2L55/aKmgBBVsjYfLIui7SVSpDFqhw8DhB/mC1Y2NF
-        H01Z8qiwToUi2G8ExGG9E8726kLP0WyHRIDZ8t75WNMIH908t316Vr4vZfkjkDLnrMMfIM7tj1Xr0
-        LRvaIoSzr40YbaXHhG8cDXJW/vAI6FLAp8nyNJkj4dOV6Te+l0XbZ4O4LtOYPPfvjtlfojTAUhTQ2
-        8cjQI5oA6OeS4gd0hn+gKgiclb9NplSvxXz5enbl0XJj73+sWD3d7iXhVSOJrW3lNygB6JTgggxC7
-        XF8+09S3g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1faND9-0000vb-SG; Tue, 03 Jul 2018 15:27:23 +0000
-Date:   Tue, 3 Jul 2018 08:27:23 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, lirongqing@baidu.com, aryabinin@virtuozzo.com,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v8 03/17] mm: Assign id to every memcg-aware shrinker
-Message-ID: <20180703152723.GB21590@bombadil.infradead.org>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
- <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
+        Tue, 3 Jul 2018 11:29:48 -0400
+Received: by mail-yb0-f170.google.com with SMTP id h127-v6so875848ybg.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DNEQ83OprQEAgHvsRU//nMlE9hnearE9ssNo4dDtMMI=;
+        b=vDpiAl4OiA+ZJct1rGKre6UkfMoAU7DyPeK0M77k4YyNo6cYteFeoqx2fGEAX5/BJo
+         CJEFefEEGgPmbnPPdi7SbXGOCIcAAaJOlqvY+CMIZ90ax87N02vZdagNV3TAolL5vQya
+         3izesFyaSdJEJxcYdWNyvDPUrkK+RdnkcG3T1xTvc19rAAD7YQJpCXuTOpe05OJ58gBj
+         2yLHKmwH2mtTtXOATbDUwRtxlAf5LIYwZESti6KU5n9NSzvB1h0bZRbr0Ixgck/OZksc
+         jQc+GbiythBKSMNBY6rhUItDrZRq6N/WnmjCqDNYkZzI6sp1VwqP79xi5WwUCLCGigyc
+         pgfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DNEQ83OprQEAgHvsRU//nMlE9hnearE9ssNo4dDtMMI=;
+        b=WsqX2tTazW7P4wcVdUQsFf5PeuSpV5sWmm/qJpY23vbHJf8F3WhNzQip8s6bz3GPg4
+         ETjajUZYy+juOztofc2kbwvnfJHow4LbSrr2iZFuAjbGo+xLOg598fGo37JKYy/FsNR+
+         gCeCtnj5tYJXXYCno/eZ4lWb+1iPLHY3H0yfM64XOS7Il/L893Djjp2oY8oX/Vi1oWVF
+         fk4fmQ9FP2/omutzW41bVWSfxy9otDlaOaZlv1BArV/3hgCZXDn6X0EhDfNhQlA/o+xF
+         0w30NVDONnePMeICrCkQVsLjzr4iy6/ZBsTZXPwJZiqDbyG9IkX7F/uV7RHJdmBBfp5Y
+         qylA==
+X-Gm-Message-State: APt69E1QLf320IgYqlpaX/0WJ5PFf/eCAK/zXazDN2+wD4PRzYLvVI92
+        9YF1iAaPFFRbA9Tvqwj5GrM=
+X-Google-Smtp-Source: AAOMgpe71xFcaCCY2gt7870sq6agEgOUQT92KizDjz/uPVBRkl5mcS60xJI78X6UU8CVwLwiGz2PcQ==
+X-Received: by 2002:a25:15c3:: with SMTP id 186-v6mr1049730ybv.165.1530631787601;
+        Tue, 03 Jul 2018 08:29:47 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::3:a4be])
+        by smtp.gmail.com with ESMTPSA id m19-v6sm562059ywd.90.2018.07.03.08.29.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 08:29:46 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 08:29:44 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: printk() from NMI backtrace can delay a lot
+Message-ID: <20180703152944.GQ533219@devbig577.frc2.facebook.com>
+References: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
+ <20180703043021.GA547@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180703043021.GA547@jagdpanzerIV>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 06:09:05PM +0300, Kirill Tkhai wrote:
-> +++ b/mm/vmscan.c
-> @@ -169,6 +169,49 @@ unsigned long vm_total_pages;
->  static LIST_HEAD(shrinker_list);
->  static DECLARE_RWSEM(shrinker_rwsem);
->  
-> +#ifdef CONFIG_MEMCG_KMEM
-> +static DEFINE_IDR(shrinker_idr);
-> +static int shrinker_nr_max;
+Hello, Sergey.
 
-So ... we've now got a list_head (shrinker_list) which contains all of
-the shrinkers, plus a shrinker_idr which contains the memcg-aware shrinkers?
-
-Why not replace the shrinker_list with the shrinker_idr?  It's only used
-twice in vmscan.c:
-
-void register_shrinker_prepared(struct shrinker *shrinker)
-{
-        down_write(&shrinker_rwsem);
-        list_add_tail(&shrinker->list, &shrinker_list);
-        up_write(&shrinker_rwsem);
-}
-
-        list_for_each_entry(shrinker, &shrinker_list, list) {
+On Tue, Jul 03, 2018 at 01:30:21PM +0900, Sergey Senozhatsky wrote:
+> Cc-ing Linus, Tejun, Andrew
+> [I'll keep the entire lockdep report]
+> 
+> On (07/02/18 19:26), Tetsuo Handa wrote:
+> [..]
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606834] swapper/0/0 is trying to acquire lock:
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606835] 00000000316e1432 (console_owner){-.-.}, at: console_unlock+0x1ce/0x8b0
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606840] 
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606841] but task is already holding lock:
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606842] 000000009b45dcb4 (&(&pool->lock)->rlock){-.-.}, at: show_workqueue_state+0x3b2/0x900
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606847] 
+> > 2018-07-02 12:13:13 192.168.159.129:6666 [  151.606848] which lock already depends on the new lock.
 ...
+> But anyway. So we can have [but I'm not completely sure. Maybe lockdep has
+> something else on its mind] something like this:
+> 
+> 	CPU1					CPU0
+> 
+> 	#IRQ					#soft irq
+> 	serial8250_handle_irq()			wq_watchdog_timer_fn()
+> 	 spin_lock(&uart_port->lock)		 show_workqueue_state()
+> 	  serial8250_rx_chars()			   spin_lock(&pool->lock)
+> 	   tty_flip_buffer_push()		    printk()
+> 	    tty_schedule_flip()			     serial8250_console_write()
+> 	     queue_work()			      spin_lock(&uart_port->lock)
+> 	      __queue_work()
+> 	       spin_lock(&pool->lock)
+> 
+> We need to break the pool->lock -> uart_port->lock chain.
+> 
+> - use printk_deferred() to show WQs states [show_workqueue_state() is
+>   a timer callback, so local IRQs are enabled]. But show_workqueue_state()
+>   is also available via sysrq.
+> 
+> - what Alan Cox suggested: use spin_trylock() in serial8250_console_write()
+>   and just discard (do not print anything on console) console->writes() that
+>   can deadlock us [uart_port->lock is already locked]. This basically means
+>   that sometimes there will be no output on a serial console, or there
+>   will be missing line. Which kind of contradicts the purpose of print
+>   out.
+> 
+> We are facing the risk of no output on serial consoles in both case. Thus
+> there must be some other way out of this.
 
-The first is simply idr_alloc() and the second is
+show_workqueue_state() is only used when something is already horribly
+broken or when invoked through sysrq.  I'm not sure it's worthwhile to
+make invasive changes to avoid lockdep warnings.  If anything, we
+should make show_workqueue_state() avoid grabbing pool->lock (e.g. use
+trylock and fallback to probe_kernel_reads if that fails).  I'm a bit
+skeptical how actually useful that'd be tho.
 
-	idr_for_each_entry(&shrinker_idr, shrinker, id) {
+Thanks.
 
-I understand there's a difference between allocating the shrinker's ID and
-adding it to the list.  You can do this by calling idr_alloc with NULL
-as the pointer, and then using idr_replace() when you want to add the
-shrinker to the list.  idr_for_each_entry() skips over NULL entries.
-
-This will actually reduce the size of each shrinker and be more
-cache-efficient when calling the shrinkers.  I think we can also get
-rid of the shrinker_rwsem eventually, but let's leave it for now.
+-- 
+tejun
