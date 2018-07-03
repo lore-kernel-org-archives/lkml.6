@@ -2,81 +2,96 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F358C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0490C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFB1F24625
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB1F24625
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A34C724625
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 19:32:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A6VbSVSX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34C724625
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753656AbeGCTbv (ORCPT
+        id S1753699AbeGCTcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 15:31:51 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:37201 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeGCTbt (ORCPT
+        Tue, 3 Jul 2018 15:32:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeGCTcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 15:31:49 -0400
-Received: by mail-yb0-f195.google.com with SMTP id r3-v6so1179464ybo.4;
-        Tue, 03 Jul 2018 12:31:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q4vXOXJUw1wTY2t37/LrC6PAqcdPogqG4ZVia0dvwFc=;
-        b=ELvPlIqbbgfhVG9PDoAHVx2gtICd5l7UQV4Ic3yfqJBYOGa3ChJDBFnS7o7aPiIRTh
-         2EvTgBJ/a4N/czdie+MMpErfY6vbvq8ILkRlnyfHjtvSkTksstlwSKNvCuSIBCtUlaUg
-         AZp4+BlXAIRLbv6YmYNrNfZAZGeKXOv4ptdnM7drZ8zg7svjX84YX3LlD4A3Qj5kCwES
-         nFXlqRakBZronXxOBNvyXN0LCwywveGT4kBf00tDD0uxfjSuYARqJ1Ls0wYEJ39ZzFzD
-         7vOvPqtdjSt1ijOiXHTdVMI+Ur6rNBAJjgx39UsSIG/QjNcPy8WQCDgjj2lVshhJLUlB
-         GB9g==
-X-Gm-Message-State: APt69E2JqQO9Z08iWnfDUgmzBncbEep3ovUSOVEfYK2EAbSBa/dfThbw
-        Q01qQHWbBSpN4m+V2Jrenw==
-X-Google-Smtp-Source: ADUXVKIHiqrhOzVE+EAlLjj/j7rkF8UM9ABNP9OkF+bThiC64CbTcxjyD6e+6NpMc2vL6akpxDF0Qw==
-X-Received: by 2002:a25:ac8c:: with SMTP id x12-v6mr16775420ybi.43.1530646308725;
-        Tue, 03 Jul 2018 12:31:48 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id u11-v6sm649547ywc.77.2018.07.03.12.31.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 12:31:47 -0700 (PDT)
-Date:   Tue, 3 Jul 2018 13:31:46 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@kernel.org, aisheng.dong@nxp.com,
-        ping.bai@nxp.com, Linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
-Message-ID: <20180703193146.GA29496@rob-hp-laptop>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+        Tue, 3 Jul 2018 15:32:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fYgIgyxHLvKpoME8RhL1Rt4pwFWRmLPU3Us/KdAKp3Y=; b=A6VbSVSXi+YnblRCQ3otr3P8P
+        989dBYylfXY+rsrrBE++92I13/SvA96okCGU7E7WO4mPKl/geqUHQskmne9PipekTtG+0XlO1Tqr8
+        dTb2S4hJvz7YUAuQfnh3uYnSzl79kYje6ABvGPTcQ65NA3f2JkjoiSUKLsGvomm1OPVUhS2IB26Cj
+        uJSrorIXtgICbb4jUBAgdyk3B50Y400VOJLGy3GeC5nbyqgNQ32xJrBtBG8pmZgcDELAZapkPAxeh
+        5SnTkFekLRDM4vDXP+TA1sI2mnatTqEXF5QvEdFInZduKc4fkpt/awEFhN9e2UIUZ9DsHo/8Ih1JA
+        4/cU9SEbA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faR25-0000JC-WF; Tue, 03 Jul 2018 19:32:14 +0000
+Subject: Re: [PATCH 12/14] block: introduce blk-iolatency io controller
+To:     Josef Bacik <josef@toxicpanda.com>, axboe@kernel.dk,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, tj@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, kernel-team@fb.com
+Cc:     Josef Bacik <jbacik@fb.com>
+References: <20180703151503.2549-1-josef@toxicpanda.com>
+ <20180703151503.2549-13-josef@toxicpanda.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e1f98f78-bf01-272f-3121-02612d01d57e@infradead.org>
+Date:   Tue, 3 Jul 2018 12:32:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180703151503.2549-13-josef@toxicpanda.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:32:33PM +0800, Anson Huang wrote:
-> According to Reference Manual Rev.0, 06/2017,
-> there are GPIO LPCGs defined in CCM CCGRs,
-> add them into clock tree.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx6sll.c             | 6 ++++++
+On 07/03/2018 08:15 AM, Josef Bacik wrote:
+> diff --git a/block/Kconfig b/block/Kconfig
+> index 28ec55752b68..074c6099c31f 100644
+> --- a/block/Kconfig
+> +++ b/block/Kconfig
+> @@ -149,6 +149,18 @@ config BLK_WBT
+>  	dynamically on an algorithm loosely based on CoDel, factoring in
+>  	the realtime performance of the disk.
+>  
+> +config BLK_CGROUP_IOLATENCY
+> +	bool "Enable support for latency based cgroup IO protection"
+> +	depends on BLK_CGROUP=y
+> +	default n
+> +	---help---
+> +	Enabling this option enables the .latency interface for IO throttling.
+> +	The IO controller will attempt to maintain average IO latencies below
+> +	the configured latency target, throttling anybody with a higher latency
 
->  include/dt-bindings/clock/imx6sll-clock.h | 9 ++++++++-
+	Could that be:                            any process {or any task}
+	I don't want to see it throttling any bodies.
 
-Acked-by: Rob Herring <robh@kernel.org>
+> +	target than the victimized group.
+> +
+> +	Note, this is an experimental interface and could be changed someday.
+> +
+>  config BLK_WBT_SQ
+>  	bool "Single queue writeback throttling"
+>  	default n
 
->  2 files changed, 14 insertions(+), 1 deletion(-)
+
+-- 
+~Randy
