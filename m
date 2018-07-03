@@ -2,168 +2,167 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242E1C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3516C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB68824CDF
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:57:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB68824CDF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FD2024CDF
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 09:57:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="n2q2+KHQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD2024CDF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933746AbeGCJ5E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 05:57:04 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:63496 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932517AbeGCJ5D (ORCPT
+        id S1754722AbeGCJ5n (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 05:57:43 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51563 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754645AbeGCJ5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 05:57:03 -0400
-Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 3 Jul 2018
- 17:56:14 +0800
-Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
- <20180703145716.31860-3-yixun.lan@amlogic.com>
- <20180703092107.51497a8f@bbrezillon>
- <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
- <1530605373.2900.158.camel@baylibre.com>
-CC:     <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
+        Tue, 3 Jul 2018 05:57:41 -0400
+Received: by mail-wm0-f68.google.com with SMTP id s12-v6so1649163wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 02:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hw+7XphhYRlXjNsAWUjVJoncDHOf8u+qmrZ0TxMwF/I=;
+        b=n2q2+KHQ2/7wf+xbQy9GgvFO6yop9QvkbVDbY1IDLZlDaFP9AMXV78OVFlvMZO4WYI
+         LwfI7dEcH9fFvnivHsFsvzG42LUfZ6zRqWWhlKEWcWeyIScIcYvMzS0JlkQeTBxVF0Aq
+         FwTptZpJo0LxuvqvEh9Tycb0xjBSnjEX/Ys/BHtgPUYk2V8QSDrKBaNGGh6G9dddKxrc
+         LC6lR9SeBK3t6M0vaSN82sbDpC/fUgrXvFBb3i+GrUvvOcV4HiO8wwo+OO72CSf7x934
+         WWEtnVM58wv9id4BdubvC1nvhG/pgF8xorVq+EJoGP7l40Q5S0CXk7e/e8PZnoXjp0JH
+         WHDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hw+7XphhYRlXjNsAWUjVJoncDHOf8u+qmrZ0TxMwF/I=;
+        b=rqKQdKqFyUNKy9Du3UlaCwKfxr+g+ZlAwfWB/eKB4Zh6Kz/QAHEKhraDY4ignYyL7T
+         GGBMtvQWl+SCsMmnxGqlad+4AE6T4iT594PUL6TosbIOwZNzIc9RcCYLW5QpB+m4JU9+
+         KFz+DNSuV9WGCWcMeEC8BrZ11bNjv+xWdzPI5bcs13iU+CJsPi3K7K4HJ7WErkH7Vlok
+         ScYg6K8Cx4zbIGTOiHfi2QzxgcQsblqR92ZISOJbbvjtvPoln85mF2R9oNiDZm9qq32D
+         dDLWOhxzG7YQh0zlMvLjh59ZNo7ky7Gitmjh0e+8thZfXseKV5FKL0OXdSPrr3S9kEbS
+         O6GQ==
+X-Gm-Message-State: APt69E018q6xB4zlHY2gPIaWU1Z+T9NIDiLlPuW5dzQl4SgFG5b8aEEH
+        vOeEdj2NOv3KhCCq+AF3bKh5pw==
+X-Google-Smtp-Source: AAOMgpctVDQ/bCXNzC7liFZ5Kb05iDJg0QQkOfiWpDOsHldqX7QeNHI7L3Rv0OE6yYXeSW6jjDkPkA==
+X-Received: by 2002:a1c:8647:: with SMTP id i68-v6mr10583568wmd.28.1530611860034;
+        Tue, 03 Jul 2018 02:57:40 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b15-v6sm901212wri.14.2018.07.03.02.57.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 02:57:39 -0700 (PDT)
+Message-ID: <1530611858.2900.201.camel@baylibre.com>
+Subject: Re: [PATCH v4] clk: add duty cycle support
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <1aedbb15-1373-adde-f5bb-bce3701d50b0@amlogic.com>
-Date:   Tue, 3 Jul 2018 17:56:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <1530605373.2900.158.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 03 Jul 2018 11:57:38 +0200
+In-Reply-To: <CAMuHMdVTZOS91UUK2zqq019xMPfLUVgDPD8EAWSHntza0-ShVw@mail.gmail.com>
+References: <20180619144141.8506-1-jbrunet@baylibre.com>
+         <CAMuHMdVTZOS91UUK2zqq019xMPfLUVgDPD8EAWSHntza0-ShVw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome:
-
-
-On 07/03/18 16:09, Jerome Brunet wrote:
-> On Tue, 2018-07-03 at 15:36 +0800, Yixun Lan wrote:
->> Hi Broris
->>
->>  thanks for your quick response, and see my comments below
->>
->> On 07/03/18 15:21, Boris Brezillon wrote:
->>> On Tue, 3 Jul 2018 14:57:15 +0000
->>> Yixun Lan <yixun.lan@amlogic.com> wrote:
->>>
->>>> Add two clock bindings IDs which provided by the EMMC clock controller,
->>>> These two clocks will be used by EMMC or NAND driver.
->>>>
->>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>>> ---
->>>>  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
->>>>  1 file changed, 14 insertions(+)
->>>>  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
->>>>
->>>> diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
->>>> new file mode 100644
->>>> index 000000000000..d9972c400e58
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/emmc-clkc.h
->>>> @@ -0,0 +1,14 @@
->>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>> +/*
->>>> + * Meson EMMC sub clock tree IDs
->>>> + *
->>>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#ifndef __EMMC_CLKC_H
->>>> +#define __EMMC_CLKC_H
->>>> +
->>>> +#define CLKID_EMMC_C_MUX				0
->>>
->>> Looks like the MUX clk is the parent of the DIV one, and I guess the clk
->>> driver is able to select the best parent+div pair for a requested rate.
->>> Do you really need to expose the MUX to users?
->>>
->>
->> Yes, It's true, the mux is parent of the div clock.
->>
->> while testing for the NAND driver, I find it's kind of loose about the
->> parent of the clock, so selecting the div (and let CCF decide freely) is
->> actually works fine
->>
->> but for the EMMC driver, especially when running at high clock, it's
->> kind of picky about the parent of the clock, 
+On Tue, 2018-07-03 at 11:27 +0200, Geert Uytterhoeven wrote:
+> Hi Jerome,
 > 
-> It would be nice to get an explanation about this behavior.
-> it seems that even of the rate provided by CLKID_SD_EMMC_X_CLK0 (main clock
-> controller) is correct, the eMMC cannot reliably tune with it.
+> On Tue, Jun 19, 2018 at 4:42 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > Add the possibility to apply and query the clock signal duty cycle ratio.
+> > 
+> > This is useful when the duty cycle of the clock signal depends on some
+> > other parameters controlled by the clock framework.
+> > 
+> > For example, the duty cycle of a divider may depends on the raw divider
+> > setting (ratio = N / div) , which is controlled by the CCF. In such case,
+> > going through the pwm framework to control the duty cycle ratio of this
+> > clock would be a burden.
+> > 
+> > A clock provider is not required to implement the operation to set and get
+> > the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
+> > assumed to be 50%.
+> > 
+> > This change also adds a new flag, CLK_DUTY_CYCLE_PARENT. This flag should
+> > be used to indicate that a clock, such as gates and muxes, may inherit
+> > the duty cycle ratio of its parent clock. If a clock does not provide a
+> > get_duty_cycle() callback and has CLK_DUTY_CYCLE_PARENT, then the call
+> > will be directly forwarded to its parent clock, if any. For
+> > set_duty_cycle(), the clock should also have CLK_SET_RATE_PARENT for the
+> > call to be forwarded
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> Could you elaborate on this ?
+> Thanks for your patch!
 > 
-It's during my own test in AXG platform, I found clock path
-a) fclk_div2 -> sd_emmc_c_clk0_sel -> sd_emmc_c_clk0_div ->
-sd_emmc_c_clk0 -> sd_emmc_c_mux -> sd_emmc_c_div
-
-b) fclk_div2 -> sd_emmc_c_mux -> sd_emmc_c_div
-
-path a) doesn't work in EMMC driver, even both clock parent of them from
-the same fclk_div2 source.
-
- sd_emmc_c_mux -> sd_emmc_c_div is the clock from the EMMC register base.
-I believe it's ASIC design issue
-
->> so the driver may want to
->> manually choose the parent of the mux clock (example fclk_div2 here).
->> That's why I'm exporting this clock ID.
+> > ---
+> > The series has been developed to handled the sample clocks provided by
+> > audio clock controller of amlogic's A113 SoC. To support i2s modes, this
+> > clock need to have a 50% duty cycle ratio, while it should be just one
+> > pulse of the parent clock in dsp modes.
 > 
-> ATM the EMMC driver will not use this provider. If this is the only reason, it
-> could be done later.
-> 
-sure, I'm fine with this.. we could certainly adjust it later.
+> "one pulse" means num = 1, den = the clock rate, right?
 
-I will fix this in next patch version
+No, it would be num = 1, den = divider 
 
-> Is the NAND driver "picky" as well ?
 > 
-No, since the NAND is running at much low clock speed, and during my
-tests, it works fine with various clock parent
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -66,6 +68,17 @@ struct clk_rate_request {
+> >         struct clk_hw *best_parent_hw;
+> >  };
+> > 
+> > +/**
+> > + * struct clk_duty - Struture encoding the duty cycle ratio of a clock
+> > + *
+> > + * @num:       Numerator of the duty cycle ratio
+> > + * @den:       Denominator of the duty cycle ratio
+> > + */
+> > +struct clk_duty {
+> > +       unsigned int num;
+> > +       unsigned int den;
+> 
+> So shouldn't both fields be "unsigned long" instead, to match clock rates?
+> (Yes, I do know we don't support +4.3 GHz clock rates on 32-bit yet ;-)
 
->>
->>
->>>> +#define CLKID_EMMC_C_DIV				1
->>>> +
->>>> +#endif
->>>
->>> .
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Not sure we need to match clock rates, long seems a bit too much.
+In the end, all we want a ratio, so a [0 - 1] number. Fraction using unsigned
+int already provide a pretty good precision (around 0.0002 ppm with 32bit)
+
+Do you have a use case where you need more than that ?
+
 > 
-> .
+> Also, you may want to have a higher precision than degrees for the
+> phase property when handling pulses.
+
+Is this comment related to this patch ?
+
 > 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
