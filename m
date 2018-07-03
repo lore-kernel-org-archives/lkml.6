@@ -2,94 +2,99 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C91D4C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72B7C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87ABE23C6D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87ABE23C6D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7544623C6D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7544623C6D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeGCH2l (ORCPT
+        id S1754597AbeGCH27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:28:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41752 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754571AbeGCH2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:28:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5654FAE06;
-        Tue,  3 Jul 2018 07:28:37 +0000 (UTC)
-Date:   Tue, 3 Jul 2018 09:28:35 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jia He <hejianet@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Vacek <neelx@redhat.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, James Morse <james.morse@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steve Capper <steve.capper@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>, richard.weiyang@gmail.com
-Subject: Re: [PATCH v9 0/6] optimize memblock_next_valid_pfn and
- early_pfn_valid on arm and arm64
-Message-ID: <20180703072835.GE16767@dhcp22.suse.cz>
-References: <1530239363-2356-1-git-send-email-hejianet@gmail.com>
- <20180702114037.GJ19043@dhcp22.suse.cz>
- <779be6bf-db64-9175-f4c0-2baa0ea6defd@gmail.com>
+        Tue, 3 Jul 2018 03:28:59 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:33856 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753213AbeGCH26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 03:28:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 4549060B5C38;
+        Tue,  3 Jul 2018 09:28:57 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id C77BoF04kTPk; Tue,  3 Jul 2018 09:28:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id EBDDC60B5C39;
+        Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yV6RGVr_PYUt; Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id C53E960B5C38;
+        Tue,  3 Jul 2018 09:28:56 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        y2038@lists.linaro.org, Deepa Dinamani <deepa.kernel@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ubifs: tnc: use monotonic znode timestamp
+Date:   Tue, 03 Jul 2018 09:28:56 +0200
+Message-ID: <58899545.Szx3E6bSux@blindfold>
+In-Reply-To: <31916482.81kKL2104G@blindfold>
+References: <20180620082937.719067-1-arnd@arndb.de> <31916482.81kKL2104G@blindfold>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <779be6bf-db64-9175-f4c0-2baa0ea6defd@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03-07-18 10:11:11, Jia He wrote:
-> On 7/2/2018 7:40 PM, Michal Hocko Wrote:
-[...]
-> > So this is 13ms saving when booting 96G machine. Is this really worth
-> > the additional code? Are there any other benefits?
-> Sorry, Michal
-> I missed one thing.
-> This 13ms optimization is merely the result of my patch 3~6
-> Patch 1 is originated by Paul Burton in commit b92df1de5d289.
-> In its description,
-> ===
-> James said "I have tested this patch on a virtual model of a Samurai CPU
->     with a sparse memory map.  The kernel boot time drops from 109 to
->     62 seconds. "
-> ===
+Am Montag, 2. Juli 2018, 16:24:15 CEST schrieb Richard Weinberger:
+> Arnd,
+> 
+> Am Mittwoch, 20. Juni 2018, 10:29:11 CEST schrieb Arnd Bergmann:
+> > The tnc uses get_seconds() based timestamps to check the age of a znode,
+> > which has two problems: on 32-bit architectures this may overflow in
+> > 2038 or 2106, and it gives incorrect information when the system time
+> > is updated using settimeofday().
+> > 
+> > Using montonic timestamps with ktime_get_seconds() solves both thes
+> > problems.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  fs/ubifs/shrinker.c | 2 +-
+> >  fs/ubifs/tnc.c      | 4 ++--
+> >  fs/ubifs/tnc_misc.c | 2 +-
+> >  fs/ubifs/ubifs.h    | 2 +-
+> >  4 files changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/fs/ubifs/shrinker.c b/fs/ubifs/shrinker.c
+> > index 9a9fb94a41c6..9d10cbdec2cc 100644
+> > --- a/fs/ubifs/shrinker.c
+> > +++ b/fs/ubifs/shrinker.c
+> > @@ -71,7 +71,7 @@ static int shrink_tnc(struct ubifs_info *c, int nr, int age, int *contention)
+> >  {
+> >  	int total_freed = 0;
+> >  	struct ubifs_znode *znode, *zprev;
+> > -	int time = get_seconds();
+> > +	time64_t time = ktime_get_seconds();
+> 
+> ubifs does
+> 	abs(time - znode->time) >= age) {
+> 
+> Is this still legit with time64_t?
 
-Those numbers should be in the changelog.
--- 
-Michal Hocko
-SUSE Labs
+Answering my own question, yes.
+abs() seems to be able to deal with 64bit numbers and time64_t is just a number.
+
+Thanks,
+//richard
