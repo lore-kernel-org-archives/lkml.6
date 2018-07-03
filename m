@@ -2,168 +2,193 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5F6C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76458C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87E7C208E4
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E6B208E4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:15:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="hOyVd5Ba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E7C208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="yD3bx0k5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E6B208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933901AbeGCPO7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:14:59 -0400
-Received: from mail-eopbgr30124.outbound.protection.outlook.com ([40.107.3.124]:8064
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932747AbeGCPIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:08:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DHTgvwNcEz1UMo0tHfHk7Ou+OelPDIrwNG1onEdIKqA=;
- b=hOyVd5BaVJuarGPEGOQQfAAXMefyTHCl91Fp214RXNQ4bRUMZWjKjhYngMYfAjVUBXtzmEq0a6dssRHkcqOrmdmw9DayGCAqivdfDjMhJWhQdGD1RyIRCROc3AKzSH7Cg1g3qZxbX+jUCCIkAXUVczIiAWQ8xH68U3uMP8+sr8s=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-Received: from localhost.localdomain (185.231.240.5) by
- VI1PR0801MB1343.eurprd08.prod.outlook.com (2603:10a6:800:3b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.906.26; Tue, 3 Jul
- 2018 15:08:48 +0000
-Subject: [PATCH v8 01/17] list_lru: Combine code under the same define
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
-        aryabinin@virtuozzo.com, akpm@linux-foundation.org,
-        ktkhai@virtuozzo.com
-Date:   Tue, 03 Jul 2018 18:08:45 +0300
-Message-ID: <153063052519.1818.9393587113056959488.stgit@localhost.localdomain>
-In-Reply-To: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: DB6P193CA0018.EURP193.PROD.OUTLOOK.COM (2603:10a6:6:29::28)
- To VI1PR0801MB1343.eurprd08.prod.outlook.com (2603:10a6:800:3b::7)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7a91cd87-8e30-4886-d997-08d5e0f6e2b0
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1343;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;3:myGW0fF/MWCHHxy/raWTrktUMR+VW0rjUiw5jYoaA/Nc6yqpmoJstj6EyRIUppZCz63t3DC8cnNpC+hmYgN0yvIIXINAXnz2Y452Xa6xsU7FDml/xXUnBQxo+InYM/Pjf0oiOTB1+n3h+NIdSPZ90CEN3mpkxdHHgbmojkX5TAm9VvrYr2wqU9v0mhoGEAjocpGAlwS5NDznsTLdfcpemBE//Nl23s3OSQlNRvdKOF36O5oh29ldQ5VDz+V57jmx;25:MUFtAqWk5+eP++7AIjhn2NlgSMeH8TqP9ZMDPklgv51M2yAIVF55DmuzMFBM9ZZkiMqOgOU8VAVI7xwsF+cqSCpj3OWVqUY6uQgGVyjgdyjojuRFBdbL+8X3TFMjCLc4JNmR7CscuIgwO9thzQHO0hzhWoqHfxHXIBq37qVWGqee7CE3yfjzCI8a37IUD2OMFtucjtUCXd430EumBNV6d3D0+PfU87NOVBY9+SGsFqPjECyRUELBHmg9puVv2+/v0fzz/N/HguhU2Qo0Wk0EI3DJu9dGag8EbVgv+V0e+LSyAiU81R8Usom6OXsbWCyddAf9zF1m4zsxQ+9itlamfQ==;31:nnOiQxvoi79/Hge6/xAe6lRZ2hxAuWssTtCxJffJnTzoSrr5GSMP0nj0DiWKo5e7nu0teezY7+ZgrXSzySBLNm1ujx7KZASNUvhSxIY1X1XJsQhhii2G92pW3M342h/UnwJz3m/6BGdPcOgc0H8rKjtnkZuK0CGlQn+jDfAJf9CZlavbEm8VneB7bWgYv7AuemAWy7ix9q6VTSnocfT8OphbD6F/t8t9D3B6n8GKJNA=
-X-MS-TrafficTypeDiagnostic: VI1PR0801MB1343:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;20:ZXVbsb+XMOLVQ5U7ZdfW75zTJIIiFL6ty5j4VXLZKr/eqsvz7m2eoeV/gnO2qkhg2UpcBbsy3L3+F7ml1jBA6GCxlLFnfsCTw8FVzhTbqTUb26KujAtIUD2gd6eSIhOKPXAZXq0wQQwEBrsG6/Xq2k139jO1aUtsCxI730/VGa/XGbt2in52tZmoYtD/484kkC7aEDQfaPxzApSNoD9hpI8no9mjal++yrsyoEfCjoJta7gj3XQJzZgCWVempPqwgPDzcmhd0xSkRqUIPIASJTKq0Rcnw7A2zFU7B3eFpR8WN9XmNPi51eOzyqoViTkNALjSzX6y7xwAQs2dIyL7qQeECoCAg8CrpGrS0bGCScIvf7S1V5nsWXh8dsMx8PRvP/wPIhNNe6onFBJvy0wkoBJ9TsetU2sjHw9VEr86TBir30rIdxBYwBwxcLbeRbNXBu0MLkXtwaDpdPEclJxBx906ds6D1fw2wunrfabZqwoww64jXIllcLofQdXd95Q7;4:iWYic+aC88HT4kI+gZqCrGcaFtEkCNL4ZG6nKOkgioMbOpZWigdm5DfAIvkaGd3IHUAos3qWbnnU+oxS6aaonhIPwoaW24RhTXKinZnZQsvZmwGofPjtIcIJrJzNVK7URWxbowzrDLS2djGP4DFp6/hgqKk4W7MOcCES8XHjX0HFgGSqQ5v+A3NBfMyybxYTaKpUbOkCIJF/uCrxjdWRZbQbHo0ij9KO7kEUCxILlaOFuD8a9uCD4FVIKT7HDLfTYvRwY73RPBWYTBcfi/WaKI6stfBNIVosyjnBm1JjWvWKNA2tsImC31oxOuH0hPNZp7kF1zHyk9q5Zw4lLpHUrH95JvjJ2oSQmHVvdtCNMYAA+y+pCI8+rYuXn+0/mkT/
-X-Microsoft-Antispam-PRVS: <VI1PR0801MB1343ED6EBB84B068306F57C7CD420@VI1PR0801MB1343.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(211936372134217)(153496737603132);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:VI1PR0801MB1343;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1343;
-X-Forefront-PRVS: 0722981D2A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(346002)(376002)(136003)(39850400004)(396003)(189003)(199004)(50466002)(186003)(16526019)(103116003)(26005)(11346002)(230700001)(23676004)(53936002)(39060400002)(3846002)(7696005)(6116002)(76176011)(52116002)(2486003)(33896004)(6506007)(386003)(68736007)(25786009)(81166006)(81156014)(486006)(55016002)(8676002)(106356001)(6666003)(2906002)(446003)(7416002)(66066001)(61506002)(105586002)(305945005)(5660300001)(47776003)(7736002)(956004)(316002)(478600001)(97736004)(476003)(9686003)(58126008)(86362001)(8936002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1343;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDM7MjM6dXltcGY3c3Z3WGp2cFBnS3V3ckUrczNX?=
- =?utf-8?B?ckh5NkNXVUlXYWhtMjViT0tZakRnUk9XMGJGNG5CUFpEWlovRXNFWnJkRGtz?=
- =?utf-8?B?N0lQYUx4TFFieXNKK1c1bXNicXRmRmpuaVZTNW0vSTVyc3lLODhEOTVQblZF?=
- =?utf-8?B?V043NDFUaGJ4MzJOcjh6UTBhK1BTYUJqaFZDQjBEaW1vU1RDVkJrcmpUc3BK?=
- =?utf-8?B?U2w2eERzWjNBTXZyc1hMMFdMY3ZWRjhWb09ZOWFjWUkvMlU4TUJwVFJHN0Jy?=
- =?utf-8?B?RTZBbWpDRkEzRW1NL0ZrNWRuT00yL3JUNzBhaXNZWTVLWllOc2pqNDBtSFNS?=
- =?utf-8?B?SEpNMXlTZGJTNFBFck0yQ3pXODV0VW9zbi8ranVuajY4Q3JKWVJKWk9vQWFl?=
- =?utf-8?B?dkdJWDVSMFB0VlhEdmpkTEdEMTkxcWRFTk9kaURFam9zWnRpWWFvcEJsMXlG?=
- =?utf-8?B?aE1LaW1aQmg1eWlQelhPbFFoRncvaEVzU1liNFY2WTZTUmJWN1g5T1QvL1RN?=
- =?utf-8?B?YlRMVHpzUzU4N0M2WjRUWVE0UnJuaFZLNEhrVE52cnVEWUdBRzN3L3F3ZndU?=
- =?utf-8?B?OHg5dFJaWktJaVNHc2RTODZZWmdiQnlpMCtXUThhNkpTZlJpVkJHQ3hUSVJv?=
- =?utf-8?B?YXlhYU1RQVlnTGRyZ0I1OTRXRDdOQ0xmUmJ5eSt2dTltQTJQL0RiaUt5bG0w?=
- =?utf-8?B?b1JVMnY5cE5xQWxCRml4TkVvekVhb3daNURhaTQ3dS9mcDJubitYNmNyd3Uw?=
- =?utf-8?B?VEJMc2NyMDMraEtFQy93R2RETlhLUXV4L0E1RWdMd2dMRi9ybzZFLzdXVGgx?=
- =?utf-8?B?elJPY0FybWhwSDJMWTFQbSt0eDNXU1BNN0s0YmI4VWh6dStTejZTRGZhYjRu?=
- =?utf-8?B?clc2YWp1TDFtN3Z1SnBURUF5MUlOemJEZUJ0c2lTQllhNUJiQ1VObkxUMWlS?=
- =?utf-8?B?VXFRaVcySHlSbmh5bnNMRnFhMkl1YWZHVTVHcStWRDBNVGk0ZlBMOEM3enVm?=
- =?utf-8?B?Ulh6Q2QyUXgyWHVnb1R5M29sd005YXFSNmdCMEdwYzhvdHEzVjlzL1A5RXNu?=
- =?utf-8?B?VU5RTGErV2FJWm1abkh2YTJQOU5mWmE0UDlFb21TYjRzV2EwK2VtMVpqayt4?=
- =?utf-8?B?a2k5ejBRcldtT2hFZ0tpaWlRbitPcGxZRUplTmNneW5qT0NLTnZJd3hYZjkx?=
- =?utf-8?B?dlZyVzBkTi9uU2dmZGU0SG1nNHUvcFJuVXFHL2dnYWlPOGNJcEV1MVZsUTlY?=
- =?utf-8?B?aXU3RHhTVzErenNVdEJBcEdzbmdyQ3FyZnpoaWtRRVZWTmxpczZRYm4wdkpo?=
- =?utf-8?B?ZnF2K0FrQVY1TzBvODVKUFgxUHFGcmNSVlltOGREUlBucUtFelRrejAvRkhs?=
- =?utf-8?B?aEpzcUNWRHYvUGJEZWJlNzQ0b3Z2Q3ZyRUJZYzFCdUNrcUV2MmlxYWhQK216?=
- =?utf-8?B?UXA3T1h4d1BRMmpFRnR0WWtuQS9waFhRV2h4SmtFek0wZmhQaUNRNjZKTXI4?=
- =?utf-8?B?aTRQQ01ncVVHMmp0bGZ0cTRxdFlNRW1ldEdZU1M3RmQzUzZMSnU0MTA3cXMy?=
- =?utf-8?B?dU9HcndMZXJ0T0VLT2xjME1YNmx3dS9RcHNRY2ozWjFsckhpT3N6MmtxWFFq?=
- =?utf-8?B?Y09zaEhZZ1l1YXNJNEJwVjh5aE9MdDdCdWZpUjVWTzlZS2hzVng1dzhIc0gr?=
- =?utf-8?Q?eVHjdIXwvqvZFHa/rO//SImUn3rfmK0kJ231vEFv4?=
-X-Microsoft-Antispam-Message-Info: /dZSFLPnfdZzLN5mSy3vwgegdAkbwkKA19l01nKEGNoUyW3lioGLm+x03ygtIfUSCl59TTZWtqVklvo5DvnS4WdOvuhGi2zrxI7FqbxvzYfxjdxt0CRsUvoL5yPa86QoAZjYF1br1zZ7QX7j1ZwBSibnunU4Lu9WByBEH1EVcNX0Xy2ln73GATb4YeWUwYqYWQuEGejLXJL524H0tmq9zrzao8epbMJx1oSFhgESggL8TA4zSAvUFdYANyBltYYj6fwHiEOYvtdTUfZNXUM8aH0CD+t5cejKrMmrffa8nTKJ+cO2fo3VuL876uSkdc8eYk+/8IeBnvoZvo90Bd02HNkxGsi1+tAyCWqySYFLc/Y=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;6:Mjg1zIY8zQCXfxvGz7gUBbqcQCDas4+6vHoB09yAo9p2502k4tl7TgP2xdxqzpBwcSH+Iswo2cv61+qAVrdwJi9tDvKQ1jYIknCScZGupJwDxnnS1tl8k9Are65WDcFo8p6ukKYfWEVxsTCn802WsBXe6T4+vyhwF/t9fPUgVMLjV+hJrJFNkpjWupIiBfjj7pki/IVHh6FKzpHfaNc0CnQqRLp3ehyoSq8JEkJXwc+R9hOgsrfoJ+lv9802yNBUAzljm1n8Zw91ITItky3ltYbXZNs1mn2oJ/44rkOkRm7j6828KCmi4TFe9cMj7/mcnR/nGtSEyAo9Lcbfh7mkYcmDnBZZEvkLoMWBmrP9xiJ/N3uM6GUYQ2VsujNpqKzrZJ86T3uWv8Y7pG1m5Fp6Q/4cElu1GKKTJSChqOg+xBGj0oAnNrpo//5gRK4fPuLMWA95xeFwqSDQFvl2yx+UWQ==;5:nXooCj4jjW6h/43t00IQXOzdrEZomBGjmm4dXCb0525u2WhW5TfoXUH4CGa7fdp5gYP5Ze4jEu4VZPX0vtBSdRkrsNf6TyN6NlAg8EYr6TQ5FXpWJCHQ+doLAdw/cuYPBybOxevRzDG8B056z7yeS3fLgDtvJ2EF+ucqauxYbhc=;24:ty7cTtNPT1FUBsTFswWF56qux18qIWEkG8bkvHvS9gmCmHkUTrqrTEyoUCRWz1oeW0rMumCSvrdaG6eNqDONSM2PxN96x3gMG+VYmFQ2LOY=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;7:fUqO9QH+bvgpl1PK3ft1nqHNoO7Z6wmOV6FNz+p2kVzXUsUpQZ1/Ub4KhtVgkEFYV3Cblsm73QW6EQ/GBD4C/0ON9NnHqIeUio2GXQH1Xhk1NUfCfLnES5Yhtg4fvd+fsYXNjqXQHPeqMY2hXbU0KkvIEWR+gYXh3qZwQ8ukDJExNs4awG53qPjJs7Dxyptz7dZ2+ou/1k6MVVlOPnB+NC+REoe8OOA4aUQ+OME4onLfdMrcAs4PTR/7sj7KxKlu;20:WwYWh0e7GQB+Ovz3vHSezWe+qfUdaMMwmzPVeXv8HbKoFOV9/HGjLo6X47BAZ1NLlklroGzK65vOQ9J5Zt3IRY2ORT507DaG5BSAJOo7YDY4qgOMG0xUEyhVq4AwfcclR95pRqe2p4qovt7/n5ihucrX4VWFvicyEQVRHZjuz8I=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 15:08:48.2556 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a91cd87-8e30-4886-d997-08d5e0f6e2b0
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1343
+        id S933999AbeGCPPL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:15:11 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38808 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933661AbeGCPPG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:15:06 -0400
+Received: by mail-qk0-f196.google.com with SMTP id y4-v6so1174840qka.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 08:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=WnMu+d8iqO6rcXVM1kG0kp6PT+2kVN+TNc/uZUplXac=;
+        b=yD3bx0k5JwzZXCGL8Jz4zy2g67rXWhfgoUtGwVD0m7FIjQnjwZD24TOv4Nj8+xDpFi
+         JONTr2B+DRGgdxaiei/zYJ4YcVC6B/8GQkAbutCGXM/OPRShCiZrCQpzpE9I5/bRHTYl
+         d+RMXeYr/u70O4sF7qAMo8KMvBDE4OqtbmwGlcnRXUyHG/vXA3Z3Zb1nvdgn/6x4OXIJ
+         m1rjQxghs8Y28FtqnDIk/AUGqrninV7LEDtGM9JGDLMjaO6odAEpJAfb09MzxQ/CaBvA
+         +BIs5YtM6bfWpRmYi0E1fRK3jb22CFFY9LyRz/QB+6k4HBtkn0SQKpyOksjaUvGDk7k3
+         lV7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=WnMu+d8iqO6rcXVM1kG0kp6PT+2kVN+TNc/uZUplXac=;
+        b=WTgBLDzitSuqxhUqzpt5wkQf0aX0/FId60KWOnOK6A5jqLr1W38u1lvTNif4kkNgwN
+         Pz2Bh5AE2u7yVoqR6T/Pw+5V+26gmEHSfu40+F6pk0pRch56I7QFiY+qWFcqdAYGHv3P
+         2bJBIUjdX9WU/O2dobUC7GbDndr5JBpb9+L/QzXfOVK6sZPF2lma/MmxRAookhZyW+KV
+         Vyk8UBvmqgOqB/vDP5Air7NNdi7G5dSup1FUdjeXBqaOdQfvCHQGtAkK8VWz4cZ2/4N3
+         5W8GPrpTBhy9q3L9MpLhOxrFYJcpjv5cIua0FPT3gutpjGDYNLeeCBylqsdqq+pmelC8
+         Se9w==
+X-Gm-Message-State: APt69E14zH9ewi9+713ATuLw7bWAQLaB7jIn9eVO6Pxh+74xj6bCJH8p
+        6M1v+l5zSPMI1UYOkEA49tPE3Q==
+X-Google-Smtp-Source: AAOMgpdTmrl2e9eMx9z4uMbY8K2fOBxxfObg1+9PAcrJcac3e/csgisAceyaGG/k0dToBXc6+C4bVA==
+X-Received: by 2002:a37:3515:: with SMTP id c21-v6mr19869483qka.355.1530630906057;
+        Tue, 03 Jul 2018 08:15:06 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id u25-v6sm872723qku.3.2018.07.03.08.15.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 08:15:05 -0700 (PDT)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     axboe@kernel.dk, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, hannes@cmpxchg.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH 0/14][V6] Introduce io.latency io controller for cgroups
+Date:   Tue,  3 Jul 2018 11:14:49 -0400
+Message-Id: <20180703151503.2549-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two pairs of blocks of code are under
-the same #ifdef #else #endif.
+kbuild test bot took a while to tell me I had a problem.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Tested-by: Shakeel Butt <shakeelb@google.com>
----
- mm/list_lru.c |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+v5->v6:
+- fix a !CONFIG_BLOCK compile error.
+- added some commenting around the scale cookie change stuff.
+- rebased onto Jens's for-linus branch.
 
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index bff3f6b615f7..b93f64f25414 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -30,17 +30,7 @@ static void list_lru_unregister(struct list_lru *lru)
- 	list_del(&lru->list);
- 	mutex_unlock(&list_lrus_mutex);
- }
--#else
--static void list_lru_register(struct list_lru *lru)
--{
--}
--
--static void list_lru_unregister(struct list_lru *lru)
--{
--}
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
- {
- 	/*
-@@ -90,6 +80,14 @@ list_lru_from_kmem(struct list_lru_node *nlru, void *ptr)
- 	return list_lru_from_memcg_idx(nlru, memcg_cache_id(memcg));
- }
- #else
-+static void list_lru_register(struct list_lru *lru)
-+{
-+}
-+
-+static void list_lru_unregister(struct list_lru *lru)
-+{
-+}
-+
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
- {
- 	return false;
+v4->v5:
+- fix lockdep mess with the stat stuff I hadn't noticed until now.
+- fixed the wait loop so it would actually break properly.
+- fixed a problem where unconfigured groups weren't being throttled.
+- fixed some spelling mistakes.
+
+v3->v4:
+- deal with a child having a configuration but the parent not.
+- fix use of setup_timer, there was an API change between the kernel I
+  wrote/tested these patches on and the current kernel.
+- change the initialization location for iolatency.
+- fix some spelling mistakes in the documentation.
+
+v2->v3:
+- added "skip readahead if the cgroup is congested".  During testing we would
+  see stalls on taking mmap_sem because something was doing 'ps' or some other
+  such thing and getting stuck because the throttled group was getting hit
+  particularly hard trying to do readahead.  This is a weird sort of priority
+  inversion, fixed it by skipping readahead if we're currently congested to not
+  only help the overall latency of the throttled group, but reduce the priority
+  inversion associated with higher priority tasks getting stuck trying to read
+  /proc files for tasks that are stuck.
+- added "block: use irq variant for blkcg->lock" to address a lockdep warning
+  seen during testing.
+- add a blk_cgroup_congested() helper to check for congestion in a hierarchical
+  way.
+- Fixed some assumptions related to accessing blkg out of band that resulted in
+  panics.
+- Made the throttling stuff only throttle if the group has done a decent amount
+  of IO in the last window.
+- Fix the wake up logic to reduce the thundering herd issues we saw in testing.
+- Put a limit on how much of a hole we can dig into the artificial delay stuff.
+  We were seeing in multiple back to back tests that we'd get so deep into the
+  delay count that we'd take hours to unthrottle.  This stuff was originally
+  introduced to keep us from flapping from delay to no delay if we had bursty
+  behavior from the misbehaving group, so capping this keeps that protection
+  while also keeping us from throttling forever.
+- Limit the maximum delay to 250ms from 1 second.  There was a bug in the
+  congestion checking stuff, it wasn't taking into account the hierarchy so we
+  would sometimes not throttle when we needed to, which led me to have a 1
+  second maximum.  However when that bug was fixed it turned out 1 second was
+  too much, so limit to 250ms like balance dirty pages does.
+
+v1->v2:
+- fix how we get the swap device for the page when doing the swap throttling.
+- add a bunch of comments how the throttling works.
+- move the documentation to cgroup-v2.txt
+- address the various other comments.
+
+==== Original message =====
+
+This series adds a latency based io controller for cgroups.  It is based on the
+same concept as the writeback throttling code, which is watching the overall
+total latency of IO's in a given window and then adjusting the queue depth of
+the group accordingly.  This is meant to be a workload protection controller, so
+whoever has the lowest latency target gets the preferential treatment with no
+thought to fairness or proportionality.  It is meant to be work conserving, so
+as long as nobody is missing their latency targets the disk is fair game.
+
+We have been testing this in production for several months now to get the
+behavior right and we are finally at the point that it is working well in all of
+our test cases.  With this patch we protect our main workload (the web server)
+and isolate out the system services (chef/yum/etc).  This works well in the
+normal case, smoothing out weird request per second (RPS) dips that we would see
+when one of the system services would run and compete for IO resources.  This
+also works incredibly well in the runaway task case.
+
+The runaway task usecase is where we have some task that slowly eats up all of
+the memory on the system (think a memory leak).  Previously this sort of
+workload would push the box into a swapping/oom death spiral that was only
+recovered by rebooting the box.  With this patchset and proper configuration of
+the memory.low and io.latency controllers we're able to survive this test with a
+at most 20% dip in RPS.
+
+There are a lot of extra patches in here to set everything up.  The following
+are just infrastructure that should be relatively uncontroversial
+
+[PATCH 01/13] block: add bi_blkg to the bio for cgroups
+[PATCH 02/13] block: introduce bio_issue_as_root_blkg
+[PATCH 03/13] blk-cgroup: allow controllers to output their own stats
+
+The following simply allow us to tag swap IO and assign the appropriate cgroup
+to the bio's so we can do the appropriate accounting inside the io controller
+
+[PATCH 04/13] blk: introduce REQ_SWAP
+[PATCH 05/13] swap,blkcg: issue swap io with the appropriate context
+
+This is so that we can induce delays.  The io controller mostly throttles based
+on queue depth, however for cases like REQ_SWAP/REQ_META where we cannot
+throttle without inducing a priority inversion we have a mechanism to "back
+charge" groups for this IO by inducing an artificial delay at user space return
+time.
+
+[PATCH 06/13] blkcg: add generic throttling mechanism
+[PATCH 07/13] memcontrol: schedule throttling if we are congested
+
+This is more moving things around and refactoring, Jens you may want to pay
+close attention to this to make sure I didn't break anything.
+
+[PATCH 08/13] blk-stat: export helpers for modifying blk_rq_stat
+[PATCH 09/13] blk-rq-qos: refactor out common elements of blk-wbt
+[PATCH 10/13] block: remove external dependency on wbt_flags
+[PATCH 11/13] rq-qos: introduce dio_bio callback
+
+And this is the meat of the controller and it's documentation.
+
+[PATCH 12/13] block: introduce blk-iolatency io controller
+[PATCH 13/13] Documentation: add a doc for blk-iolatency
+
+Jens, I'm sending this through your tree since it's mostly block related,
+however there are the two mm related patches, so if somebody from mm could weigh
+in on how we want to handle those that would be great.  Thanks,
+
+Josef
+
 
