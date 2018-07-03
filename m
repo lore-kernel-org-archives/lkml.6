@@ -2,78 +2,157 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607EAC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A07F5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F336208B1
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:50:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F336208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=manjaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 57CF8208B1
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:50:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="c5W5Ez42"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CF8208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934445AbeGCRuD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:50:03 -0400
-Received: from mail.manjaro.org ([176.9.38.148]:55814 "EHLO manjaro.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934187AbeGCRuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:50:02 -0400
-X-Greylist: delayed 1127 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Jul 2018 13:50:02 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by manjaro.org (Postfix) with ESMTP id 533C030E2F8C;
-        Tue,  3 Jul 2018 19:32:09 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at manjaro.org
-Received: from manjaro.org ([127.0.0.1])
-        by localhost (manjaro.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id X_97Qz5nLl1Z; Tue,  3 Jul 2018 19:32:07 +0200 (CEST)
-Subject: Re: Linux 4.4.139
-From:   =?UTF-8?Q?Philip_M=c3=bcller?= <philm@manjaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     stable@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-References: <d4d62b73-d769-c708-8a3c-8b04189ae366@manjaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=philm@manjaro.org; prefer-encrypt=mutual; keydata=
- xsBNBE+lRkIBCADLJUalcQCQKu9I+nxfF08MJSgc0/FSiIRn490B9SgV9AR41AAxjTOFhFtG
- oLo0IxaqQIOpw4OiEwpodpwdYVB2GPI2iX7Gwx5y4T2E12jZQAIYGaPd7Z+nmjPZ+b/+QFeJ
- E6qys1H6Fjq0bTyg029riGUyOls4NSJeOYOVCRmpAlFe2JvfVZ0i39Hbmu7vg90hcnA838ad
- Ic4N+KXliAmsDxtDLKrgvlBmI0JHA/5qUh9MOjT5wh6svE7aQKRDcSh3YOWKGryK+0oyq5oy
- Cx0pt1imzQ79NloEFSU1dhQ7GoxF/EjbW4DAfMFO3y1wg3equ07su9p1qftkA7vha9MrABEB
- AAHNMlBoaWxpcCBNw7xsbGVyIChDYWxsZWQgTGl0dGxlKSA8cGhpbG1AbWFuamFyby5vcmc+
- wsB4BBMBAgAiBQJPpUZCAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDKpqWWEcfw
- fhUtB/44Q2KsYPu4ILbFmE12XJ83j3UIbzVMtIx0mfzVXJCIm0z+OjHEPT3pRwsfW04yibvf
- Tx4mhbE2crn1trZkmQZMRdKN8WfPMkN36owhdEkAOOdwsEzEhkw78w9nv52kySWlldDyLNMf
- V/g4hgoSBb+vrgJKgSANIT/ROZeeUoymmES+d71vnHmYVOGyNu2F/1J7SxJSqotK3PeycN+p
- K67G7ZWwynBuQuIIX9ZnW2ps8HVHxOfjyLQbyXqu+r8HwU42spGGGnNNH9DPe4dAgngppIn+
- eZvCttGCeNwH8FEX6vMSMQ2Z359yX27n/Ed+1WNRKuuUIrHAeHP/w5Q3GhdbzsBNBE+lRkIB
- CAC1FdgvxabizeXdI/0AtgIhmmoY/xaNOsLOITEQVE0OqcDRrRBMYm50+s6d7sWkAGTMXSmb
- NIgPpdR/5V+TlCP7gOdKMHdSSr/0PIjdqZ58hMI1L8la8HT8kvCbJU/V3f1bv81SpzRwyBF4
- 9z6S6+05WZwhCovCyjQS9IOtV3rplYw7MzMeFYj413LraXheL/DK1ud4lSSzTTFkjdF2njmt
- 6AZGGYgzrQJJ+hKuYcGMLd1QR5xSejR8tsLOaX0SaoKtBkoQE1q1ApFVTbAdYHrqdF4+kgp1
- mJopW/aJ2+QogVT13/BjdUhgj5B5LgQXnbtMmWylcXQP7nQuACjokKsfABEBAAHCwF8EGAEC
- AAkFAk+lRkICGwwACgkQyqallhHH8H6vKggAybxZ4JcUflLmsuYATI6qJUFmlgqcdN2GrTfc
- xMDRRGgHSTPScaXTyy/r17lQqcIHlXi01+E3wAwWKqEjQ0ZezNib5FSf0mtvEIbRGRYwAxK5
- PPMVBVu045U9PJKsdcAj6LbU/50gTqqczGknniNgikjsf6E82Al6rqPKZf35kxbxPi/Dncun
- v31q/xBwNM/NXs8EKcCVncsFmVKYmXi+rDCK/wl8EzNO6XkFX/j5Xi5VYwSoMeKGHbdNMhUP
- 24LtwbGhpyogoDSF1ojDhthZlCjfcPYsZTVh2t92G1ugua4Umb8Ycc0JAgiSQw0/VXz4Rilc
- r40odwkjUugPFtZgUg==
-Message-ID: <e428c411-8095-d9a3-be7e-995f275b01e5@manjaro.org>
-Date:   Tue, 3 Jul 2018 19:32:06 +0200
+        id S934460AbeGCRuv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:50:51 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35702 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934222AbeGCRut (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 13:50:49 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i125-v6so2230331lji.2
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 10:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=my2aTcc0tDHMbOeZhHg5hVGAVQaNoJ8DpDyMqgq3xYk=;
+        b=c5W5Ez42H4msTNwlxG8qfA5QPng1d8uvhLsjWt0hhNo9KdD3XU+d5XjEys7y8dt7cY
+         2JtXqDVPQi4VMTy/kg8KNshyWiprbHf4H0bPcvwMT99GwIMk6ahwACTOQhXqzwjU+hxJ
+         aV4TOm0vuF0mlbh2FI4s+k5JLsCLj+3rhT/uFPvMy7d7kyoWvLC5SrDRfT3Yx4tdG9Kp
+         sbfjCC8MV0m/IHGLs91AikPBNk76Jd9gsScFLrWbGFwSV9NjCPUy2kdcvr3uUs225Ij+
+         /ZkFTHCdglgjFiZywHHtPfPbqtYcohRZEvT0BavUt8myrid4BXS14iuwQgoBx0sUUZmQ
+         GYRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=my2aTcc0tDHMbOeZhHg5hVGAVQaNoJ8DpDyMqgq3xYk=;
+        b=IYG8zH/sva6Qj/X5a9WuNts3xcMdzbHwFglsTXYtVUDVq6DFO1uy03gmAr0YnnEC4v
+         o39tlW+fvQ7crWEXM10yyhldquikgvA4t4rk0ifYgLjx0MoiEwxVyYWC3jMrMBYef35x
+         LwFwAnjzo+AmIh8dFskuhjvW2CIghzDQmi3UwJHHMS+pYVFUl7XFSXC7DEAQzTrGwpNt
+         9DLs//8RP29tof4pK86ZSE2exPpg/4oFf9W3XGhCSb9DIUGvcnYi+wJ/YO+nYz7hPKfV
+         S7qWVOoq9AeRKMek4yn7IJMLeZ6bUE65LzRRk9UC2BSwXMc6j7MiUYZ9Ai3qRuWEKrU5
+         aI6g==
+X-Gm-Message-State: APt69E1yxjSksqXa4Seh5BJgROFtrv/NDvhoz5Uf5A1j19KvKWgkOJEH
+        y4oCFA8/mCaZipphCXp1d1cWl2sabElddMcA9sCJ4w==
+X-Google-Smtp-Source: AAOMgpfLOEQlEHgZYmeM+M0KaxsC330RxZTXalFJHYwJOGFELxwx9Ob2h8JkP8kMHozZoi2ZvwkV+kJVsECi3wd5Ags=
+X-Received: by 2002:a2e:4055:: with SMTP id n82-v6mr9576023lja.99.1530640248257;
+ Tue, 03 Jul 2018 10:50:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <d4d62b73-d769-c708-8a3c-8b04189ae366@manjaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-LU
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Tue, 3 Jul 2018 10:50:46 -0700 (PDT)
+X-Originating-IP: [2620:10d:c090:200::6:181c]
+In-Reply-To: <CAOesGMh6yVYKQ+dJbAsJWU=7wrfwW1cBwVbGoKNiG96_Mh6ebA@mail.gmail.com>
+References: <201806301538.bewm1wka%fengguang.wu@intel.com> <CACT4Y+b+7T3M=5EbHSpJmMAkRQnXih2+JZqeAvxht2zzKyjD2A@mail.gmail.com>
+ <20180630110720.c80f060abe6d163eef78e9a6@linux-foundation.org>
+ <20180630111210.ec9de2c2923a0c58b1357965@linux-foundation.org> <CAOesGMh6yVYKQ+dJbAsJWU=7wrfwW1cBwVbGoKNiG96_Mh6ebA@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Tue, 3 Jul 2018 10:50:46 -0700
+Message-ID: <CAOesGMgGmr4o92subyJMGGbv7CxFYH_zKV01aWK4TwnEgzHTUQ@mail.gmail.com>
+Subject: Re: /tmp/cctnQ1CM.s:35: Error: .err encountered
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi Andrew,
 
-for this kernel there are now patches generated on kernel.org homepage.
+On Sat, Jun 30, 2018 at 1:30 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Sat, Jun 30, 2018 at 11:12 AM, Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+>> On Sat, 30 Jun 2018 11:07:20 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>>
+>>> On Sat, 30 Jun 2018 12:27:09 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>
+>>> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>>> > > head:   1904148a361a07fb2d7cba1261d1d2c2f33c8d2e
+>>> > > commit: 758517202bd2e427664857c9f2aa59da36848aca arm: port KCOV to arm
+>>> > > date:   2 weeks ago
+>>> > > config: arm-allmodconfig (attached as .config)
+>>> > > compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+>>> > > reproduce:
+>>> > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>> > >         chmod +x ~/bin/make.cross
+>>> > >         git checkout 758517202bd2e427664857c9f2aa59da36848aca
+>>> > >         # save the attached .config to linux build tree
+>>> > >         GCC_VERSION=7.2.0 make.cross ARCH=arm
+>>> > >
+>>> > > All errors (new ones prefixed by >>):
+>>> > >
+>>> > >    /tmp/cctnQ1CM.s: Assembler messages:
+>>> > >>> /tmp/cctnQ1CM.s:35: Error: .err encountered
+>>> > >    /tmp/cctnQ1CM.s:36: Error: .err encountered
+>>> > >    /tmp/cctnQ1CM.s:37: Error: .err encountered
+>>> >
+>>> > Hi kbuild test robot,
+>>> >
+>>> > The fix was mailed more than a month ago, but still not merged into
+>>> > the tree. That's linux...
+>>>
+>>> That was a rather unhelpful email.
+>>>
+>>> I've just scanned all your lkml emails since the start of May and
+>>> cannot find anything which looks like a fix for this issue.
+>>>
+>>> Please resend.   About three weks ago :(
+>>
+>> OK, with a bi of amazing sleuthing I found this from Arnd, which is what
+>> I presume you're referring to?
+>>
+>>
+>>
+>> From: Arnd Bergmann <arnd@arndb.de>
+>> Subject: ARM: disable KCOV for trusted foundations code
+>>
+>> The ARM trusted foundations code is currently broken in linux-next when
+>> CONFIG_KCOV_INSTRUMENT_ALL is set:
+>>
+>> /tmp/ccHdQsCI.s: Assembler messages:
+>> /tmp/ccHdQsCI.s:37: Error: .err encountered
+>> /tmp/ccHdQsCI.s:38: Error: .err encountered
+>> /tmp/ccHdQsCI.s:39: Error: .err encountered
+>> scripts/Makefile.build:311: recipe for target 'arch/arm/firmware/trusted_foundations.o' failed
+>>
+>> I could not find a function attribute that lets me disable
+>> -fsanitize-coverage=trace-pc for just one function, so this turns it off
+>> for the entire file instead.
+>>
+>> Link: http://lkml.kernel.org/r/20180529103636.1535457-1-arnd@arndb.de
+>> Fixes: 758517202bd2e4 ("arm: port KCOV to arm")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Dmitry Vyukov <dvyukov@google.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>
+> Solves it on my builder at least. Would be good to get this in.
+>
+> Acked-by: Olof Johansson <olof@lixom.net>
 
-Best, Philip
+Since this doesn't seem to be in your queue at the moment, I've
+applied it to our set of fixes for 4.18 in arm-soc, I'll send to Linus
+at end of week and it'll be in -next as of now through there.
 
+
+Thanks,
+
+-Olof
