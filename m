@@ -2,147 +2,105 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F25C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB65C6778C
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2E524169
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1098247C3
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 17:58:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Gvi5aTna"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2E524169
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A3DesBqH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1098247C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934389AbeGCR6l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 13:58:41 -0400
-Received: from mail.efficios.com ([167.114.142.138]:57994 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934194AbeGCR6j (ORCPT
+        id S934417AbeGCR6o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 13:58:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55936 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934392AbeGCR6m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 13:58:39 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id AE3A7230B57;
-        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id mHMxNb1nyohs; Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 21B28230B54;
-        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 21B28230B54
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1530640718;
-        bh=QcS7yCbkT8TT4SKz7LTEzJemkpNiJcXtHzR2En3GBzY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Gvi5aTna2aYoJLMgXX/WLgt9GhJA7CEePLT/Ef1vLurY0TTsO5P+JtcBbkAKzMmoi
-         TVKLa4PK8ln94NeOsFu+yNEilQFeDux/9mT8iHN5qQoZK/Z3oJP00HrPpYhmpoqWD+
-         M+LwoJdhdMggMcMGXee9rUKVECWHo75nq3MwsHQOKLvNvnJCXba+jUT5pGrzvm6aG7
-         n68Lah6YqZd8c9A9+mP8Ym5ZzQ9+qZWskH6jDc5n1GBvO8c2E6yEaE857WWzgPInOn
-         QKncDraQmqsx+Njpo3MlO+nFHM9eH+k89Ht0mV+sX51fOT8rywI9o3q9IqirDHtvKg
-         B8Dt9ac79uHYg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id KhcRl4Z08dv3; Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 03B2C230B4D;
-        Tue,  3 Jul 2018 13:58:38 -0400 (EDT)
-Date:   Tue, 3 Jul 2018 13:58:37 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        heiko carstens <heiko.carstens@de.ibm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        schwidefsky <schwidefsky@de.ibm.com>, gor <gor@linux.ibm.com>
-Message-ID: <1048940999.11846.1530640717837.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
-References: <858886246.10882.1530583291379.JavaMail.zimbra@efficios.com> <20180703085546.GJ3704@osiris> <20180703092113.GV2494@hirez.programming.kicks-ass.net> <20180703164048.i2te5gjemcafqzwf@two.firstfloor.org> <CA+55aFzYEQgEhCnrwtbGuCy36Wh+aiw0_9rgMcjUgbn1JtZAPQ@mail.gmail.com> <20180703173451.GX2494@hirez.programming.kicks-ass.net> <399697782.11820.1530639539750.JavaMail.zimbra@efficios.com> <20180703174833.GZ2494@hirez.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH for 4.18] rseq: use __u64 for rseq_cs fields,
- validate user inputs
+        Tue, 3 Jul 2018 13:58:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fvBl5fClATPACrpp/5GjJra4Ok63KW4ikU+qS/sH8jQ=; b=A3DesBqHRD2hx5rj6QZeQ/RAv
+        z+C1h2RIa75NV1/z+aDewH4yTdZEdwRh4i7TvCbNzxypge5PiPOmtZ1ueOEr60edvD/fjkVAuiCCe
+        I9HMmewE0DLUofEAcwwquOmuNwy+wftkUc56pfEvKHn8q5CmPHs5iB0MYoaM3lHZTqYmOUCMLGjQM
+        zIEP5BDE0vAfY9Dj2KaPlEW0NCsNZ1WhzDOSx8hnu9g5sMrYlJ/WOX1Ro28CB7TU6woDxPKtiGhiN
+        ZRuvJoh8kYtJuxkyoWEqKgm7ie9AZLHmP7Zpvff6D3JFNPgwVA1PtuC18nIvzKJC8vASCSu5mFRl1
+        H5e0V7EVw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1faPZ2-0005Ou-SA; Tue, 03 Jul 2018 17:58:08 +0000
+Date:   Tue, 3 Jul 2018 10:58:08 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     vdavydov.dev@gmail.com, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, lirongqing@baidu.com, aryabinin@virtuozzo.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v8 03/17] mm: Assign id to every memcg-aware shrinker
+Message-ID: <20180703175808.GC4834@bombadil.infradead.org>
+References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
+ <153063054586.1818.6041047871606697364.stgit@localhost.localdomain>
+ <20180703152723.GB21590@bombadil.infradead.org>
+ <2d845a0d-d147-7250-747e-27e493b6a627@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: use __u64 for rseq_cs fields, validate user inputs
-Thread-Index: iuuWVjAu2z6iRXS9/u0IY59Kxde0hw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d845a0d-d147-7250-747e-27e493b6a627@virtuozzo.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 3, 2018, at 1:48 PM, Peter Zijlstra peterz@infradead.org wrote:
+On Tue, Jul 03, 2018 at 06:46:57PM +0300, Kirill Tkhai wrote:
+> shrinker_idr now contains only memcg-aware shrinkers, so all bits from memcg map
+> may be potentially populated. In case of memcg-aware shrinkers and !memcg-aware
+> shrinkers share the same numbers like you suggest, this will lead to increasing
+> size of memcg maps, which is bad for memory consumption. So, memcg-aware shrinkers
+> should to have its own IDR and its own numbers. The tricks like allocation big
+> IDs for !memcg-aware shrinkers seem bad for me, since they make the code more
+> complicated.
 
-> On Tue, Jul 03, 2018 at 01:38:59PM -0400, Mathieu Desnoyers wrote:
->> ----- On Jul 3, 2018, at 1:34 PM, Peter Zijlstra peterz@infradead.org wrote:
->> 
->> > On Tue, Jul 03, 2018 at 10:10:37AM -0700, Linus Torvalds wrote:
->> >> On Tue, Jul 3, 2018 at 9:40 AM Andi Kleen <andi@firstfloor.org> wrote:
->> >> >
->> >> > So it sounds like architectures that don't have an instruction atomic u64
->> >> > *_user need to disable interrupts during the access, and somehow handle that
->> >> > case when a page fault happens?
->> >> 
->> >> No. It's actually the store by *user* space that is the critical one.
->> >> Not the whole 64-bit value, just the low pointer part.
->> >> 
->> >> The kernel could do it as a byte-by-byte load, really. It's
->> >> per-thread, and once the kernel is running, it's not going to change.
->> >> The kernel never changes the value, it just loads it from user space.
->> > 
->> > The kernel doesn't change _this_ value, but the kernel does change other
->> > values, like for instance rseq->cpu_id. But even there, it could use
->> > byte stores and it is again the userspace load of that field that is
->> > critical again and needs to be a single op.
->> 
->> I can simply document that loads/stores from/to all struct rseq fields
->> should be thread-local then ?
+Do we really have so very many !memcg-aware shrinkers?
+
+$ git grep -w register_shrinker |wc
+     32     119    2221
+$ git grep -w register_shrinker_prepared |wc
+      4      13     268
+(that's an overstatement; one of those is the declaration, one the definition,
+and one an internal call, so we actually only have one caller of _prepared).
+
+So it looks to me like your average system has one shrinker per
+filesystem, one per graphics card, one per raid5 device, and a few
+miscellaneous.  I'd be shocked if anybody had more than 100 shrinkers
+registered on their laptop.
+
+I think we should err on the side of simiplicity and just have one IDR for
+every shrinker instead of playing games to solve a theoretical problem.
+
+> > This will actually reduce the size of each shrinker and be more
+> > cache-efficient when calling the shrinkers.  I think we can also get
+> > rid of the shrinker_rwsem eventually, but let's leave it for now.
 > 
-> I'm not sure that covers things sufficiently. You really want the
-> userspace load/stores to be single instructions.
+> This patchset does not make the cache-efficient bad, since without the patchset the situation
+> is so bad, that it's just impossible to talk about the cache efficiently,
+> so let's leave lockless iteration/etc for the future works.
 
-Yes, of course. More specifically, I would document that those need to
-be single-copy atomicity load/store performed by the local thread.
-
-> Also, I think it was rseq_update_cpu_id() where we wanted to use a
-> single u64 store if possible but you worried about the stores.
-
-With this added bit of restriction on thread-local loads, indeed we
-can then update them without caring about atomicity at kernel level.
-
-I can modify the ABI to put the cpu_id_start and cpu_id fields inside
-a union, and update it with a single store.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+The situation is that bad /for your use case/.  Not so much for others.
+You're introducing additional complexity here, and it'd be nice if we
+can remove some of the complexity that's already there.
