@@ -2,43 +2,43 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80961C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2DDC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060CE21F41
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A1621F41
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 20:02:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Bn0vaF5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 060CE21F41
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="mbHPRlXj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A1621F41
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932379AbeGCUBE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 16:01:04 -0400
-Received: from mail-co1nam03on0044.outbound.protection.outlook.com ([104.47.40.44]:21425
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S932310AbeGCUBA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 16:01:00 -0400
+Received: from mail-eopbgr720081.outbound.protection.outlook.com ([40.107.72.81]:35744
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753070AbeGCT6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753068AbeGCT6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Jul 2018 15:58:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/shWsvt55QGw090+5IOx1zqCqf0lpq7h1EANnXnkFWE=;
- b=Bn0vaF5NzM5fkiBCpSbhXHbkdAoJgoHDXMuAQ7ALf6IjYJaISd9on8l3MgqonCHUHIdbGuiY1TFuX0AfvFG+48eB/eQTSoLouwdXTysC0sAmod+thFw0Hkb6i6amJENjfcnZFk19O/KKR6P9WcWzmTK7yV8GnoMGAKxdV4eDFK8=
-Received: from DM5PR07CA0031.namprd07.prod.outlook.com (2603:10b6:3:16::17) by
- DM6PR07MB4714.namprd07.prod.outlook.com (2603:10b6:5:a1::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.906.24; Tue, 3 Jul 2018 19:58:29 +0000
-Received: from DM3NAM05FT039.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::205) by DM5PR07CA0031.outlook.office365.com
- (2603:10b6:3:16::17) with Microsoft SMTP Server (version=TLS1_2,
+ bh=7lDWWp5QsQ13XSnnvaZ0KGgrIvScahQe5s27K9jxr88=;
+ b=mbHPRlXj260kCFMcnBcJBcp7TTbyzBKbP5NQ1J2UuPajbdKDPzBZbPJ1eXUJ0+FkcJ9GxJS5lx/nGF+vMtZECUglIeldu542aEAGFKOQF2AL3vqeIByOxdDOZhINc96Ac6NDK3cmgyGTIQXpf9rx5sQVeARa1XO0E1JYh7aRbdU=
+Received: from SN1PR0701CA0056.namprd07.prod.outlook.com
+ (2a01:111:e400:52fd::24) by BY2PR07MB2294.namprd07.prod.outlook.com
+ (2a01:111:e400:c50d::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.18; Tue, 3 Jul
+ 2018 19:58:27 +0000
+Received: from DM3NAM05FT003.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::208) by SN1PR0701CA0056.outlook.office365.com
+ (2a01:111:e400:52fd::24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.930.18 via Frontend
- Transport; Tue, 3 Jul 2018 19:58:29 +0000
+ Transport; Tue, 3 Jul 2018 19:58:27 +0000
 Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
@@ -46,34 +46,34 @@ Authentication-Results: spf=softfail (sender IP is 199.43.4.28)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- DM3NAM05FT039.mail.protection.outlook.com (10.152.98.153) with Microsoft SMTP
+ DM3NAM05FT003.mail.protection.outlook.com (10.152.98.108) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:28 +0000
+ 15.20.930.2 via Frontend Transport; Tue, 3 Jul 2018 19:58:26 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMs7006991
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMs5006991
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 3 Jul 2018 15:58:27 -0400
+        Tue, 3 Jul 2018 15:58:25 -0400
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Tue, 3 Jul 2018 21:58:41 +0200
+ 15.0.1367.3; Tue, 3 Jul 2018 21:58:39 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:41 +0200
+ 15.0.1367.3 via Frontend Transport; Tue, 3 Jul 2018 21:58:39 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwORt012301;
-        Tue, 3 Jul 2018 20:58:24 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w63JwMFT012216;
+        Tue, 3 Jul 2018 20:58:22 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwOOn012293;
-        Tue, 3 Jul 2018 20:58:24 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w63JwMr2012211;
+        Tue, 3 Jul 2018 20:58:22 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>
 CC:     <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <pawell@cadence.com>
-Subject: [PATCH 09/15] Introduce Cadence USBSSP DRD Driver - added debugfs files.
-Date:   Tue, 3 Jul 2018 20:57:53 +0100
-Message-ID: <1530647879-10007-10-git-send-email-pawell@cadence.com>
+Subject: [PATCH 07/15] Introduce Cadence USBSSP DRD Driver - added gadget-if.c Driver implements interface between gadget drivers and USBSSP device driver.
+Date:   Tue, 3 Jul 2018 20:57:51 +0100
+Message-ID: <1530647879-10007-8-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1530647879-10007-1-git-send-email-pawell@cadence.com>
 References: <1530647879-10007-1-git-send-email-pawell@cadence.com>
@@ -81,54 +81,55 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(346002)(39860400002)(2980300002)(36092001)(189003)(199004)(476003)(316002)(42186006)(69596002)(4720700003)(107886003)(6666003)(16586007)(8676002)(36756003)(8936002)(53936002)(5660300001)(54906003)(446003)(110136005)(106466001)(97736004)(105596002)(87636003)(478600001)(47776003)(86362001)(575784001)(68736007)(486006)(50226002)(81166006)(76176011)(14444005)(81156014)(48376002)(126002)(426003)(336012)(11346002)(4326008)(50466002)(186003)(2616005)(26826003)(2906002)(26005)(356003)(51416003)(305945005)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4714;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT039;1:BA5RlQxzjm6h+LcEssFv9euS0K4OkQ61ulaBtlaYrgeu6QK0yKvBYq9GCKVcjDatN1T/Lao1xZFLfeBfL2a1PWoM/azDqc3CL/hZlF82YTKrsVNTkfMCoJV8IaYkSv2Q
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(396003)(2980300002)(199004)(189003)(36092001)(486006)(69596002)(50466002)(48376002)(26826003)(478600001)(5660300001)(81166006)(2906002)(36756003)(8936002)(81156014)(8676002)(14444005)(356003)(50226002)(305945005)(68736007)(53936002)(97736004)(186003)(107886003)(16586007)(26005)(42186006)(316002)(51416003)(76176011)(105596002)(54906003)(106466001)(110136005)(126002)(6666003)(2616005)(476003)(336012)(4720700003)(11346002)(87636003)(446003)(426003)(575784001)(4326008)(47776003)(86362001)(217873001)(309714004)(19627235001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR07MB2294;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT003;1:Z6njkLrWm+98i7M7xpNPijoKJddI6ohpd1wy93AApwh62a6c6WfqtuFHJcs7BAgChEO7VmA8JtFs5bK0UCU6fVGOrBv/wUbpH8bZiCB8UaIeQeK9ROSCGeQmM3+zvK8t
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c1c03edc-884a-48cb-4475-08d5e11f589b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM6PR07MB4714;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4714;3:kaqJegfB7KQoayqdgjtWjEModa+A80rXTT/NCYjgKIbM1ie73u5vCj0nLjFOgfzufR8YxDOlG45P2bHa2WFpw608tLI8rhxSwCCp3KGkUbfuPDmiaM3VOdOouLI5tIGjXEec93HbgKmC7p28sgd2VUDWyxS7YxaaRhUlltWrIhvGhKNayZfAm/rPXrUKBOecN5GUdBF3kJDg6Ap3LBJXr1C00bnHKaBOQJGuvdz36Aw2AiEfmQ3REbK3uW4l/h6QIdE8LYuMzDLxYCBgPZCkFol19DnVNiZd+VyDJef9PKPQ/3imiLmuOQO0NUxX/f/crCnx9yQhGBz5umQAInU0jg==;25:X88vf4hFEv4seIghJ2YwzmXqP72AX+Hd4bxjh8MuRns64JsBUhYdjLTJBgWdTvrxmYkpGd9jjbg5LGXa3z8nFlDpB/WAKFc+seYUzkYD+tXcmdqxQOUtVB3fnMAOS2dGnsT3O65yDGZQHhxrruLWQZArPoxDTjl6gTnwMX2rbAcZqPI91jfnaIQVk+GMuw6dBu+KiWQTEErcJAEQnR1uohbbgr1v/dw5+2BXue7yaMt4v90MoEG4Lnh3FrVLPBU89Y+pAfo2KRY3qkkPexkwArbg1MdxZFd6r0HBOP7ONRVEbuqLOS3Y7dMQRXWWjs8xGCgQLRNw19T+Iq8yq/Q9Mw==;31:t3Oyr6UbHP30NQs0A0RqK8jAI8og8OopHcIyyW2cRmCaUxLJ90aGmPXSkmFpJspSgTzBM9Lpsqg0METuTWlPJzc90Ks3JD/RLeS7lD4F6hV92V04mrLpEw0fm90gloRyei1OnwmL1w0mBM4Zd6YlYnkUs9ngxvH5gRRiFz9M0zm7GhN82epnG8DN5w4Hmg0tlCAhef/xuYu72BWaP+gDq788JzurNPZnfLHsM7Igr+g=
-X-MS-TrafficTypeDiagnostic: DM6PR07MB4714:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4714;20:naAOcGKDph8BsQkvH9vt6tJejEw6NT15jz4/YMbPUEZIvX9CXfUlO1OkXqCKAsCDyBQ1wKKzoMPcqW3HfLaWGwkod9elgFyiwbXYBDbUjXn7i5RX3NuujP7ZWQGwtQ8PdpGICYjWOqHBBqucbpC73EfrBtTOFCCQvWZ++OqkffWuIpVr0usMYYuhzlqxYp8suzxwWVn3MP+pbcoFjB6Q9w55TEsu/ADE8IRpPQYr4cb86o25QTQD5EtfOU1B5RIRSBd14jNvTF0upCW13VFeGKrlL5QhK5cvuCNl4zQrbA7wSlkjErB5rZuOTeufslo+PLN601jnh2/i9GThGevq9Rz9nPDhHedxfu9h5lm08VlwpBkG+Lx3lzhGoTlC1PGs5EAe5gYh0YNypxwIWWi/Cvj3rsD7bhqBN/cYcmETe4d/5B4H0nu9Dinjp1WN7c8ADFwpCMt90zBpl3kdJ3VWwr7VFXU1UkO/umY9RZO8w19EpQuYzKjASggrEALVuPJy;4:qxA887ymxDQUPj+7q/HhjnyR9FkLli8IpUBMsgcYLkoYrS/qB1vu4+NfXZmGNfWOHzHWZMbUsOnVAn313zXxAGDdevlg9vI4dlPvPp4BZUHHbBNlm4/xd54XJRFSECrmvueM5ZWa5aQL7syKJRl9x3L3aon8L/S9mHwYbJLB8a9+jiWDs5M4dKgNZDXqzMD2Le7/WFDGQKJYttjQ8HvcTrN4yAw+bS+mtByZxezGMRGdKtdhq2Ton+3JQYSEQdfTeNOEoZn0LrzO2O4EWXpFi6bcxKh9QSNMNqL14ANGCktwG+J0nfG9BZ1XWvwmH1pF
-X-Microsoft-Antispam-PRVS: <DM6PR07MB4714CEF70559E618BFEB31EADD420@DM6PR07MB4714.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 8ad2e37c-c4f9-4392-3de3-08d5e11f5761
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BY2PR07MB2294;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR07MB2294;3:iIuIKdeJGmtZeDi+WHJQQmycavZ/E3B42RCB0yNSCzrLU6Bwi4+3D6/KZKVvAU4TcA9dpY2MQCdo3P6tsoz3uAswMDJ2PUj15gSXKflyOHYq1H+Lz+UjMaWB0M8IopNr7QrE0jkTtdK81UB3DXpiPWZPdPZ4bTH1XhNF/6ah/sLYm1GN13jkCozqRayNYu2fDWL0bry+Kv1bJZ4r85BXo6ACxliBZcXKC3WXhvMRDxMhlvUuy3pj7YEguWhHz7I3nMQuJGJ8ht0dRQ2sOS7B5myVgOLVzaof9BaNGhpBt5pb2U/+jTnZBlvPgidNGlmbwQCAxNMGi8dQsSLMth+S0Q==;25:QRvLCrw7qweWZoZ+G6MiSPqemh94wHrzZHE8ijKfmOvxYZ3smyoM5VoeMMppaDBbJcwL506gt9d2r6oncbFLCqXqqri1LEnrl5VyYotiuIOmNRW1cZym+nc/Dv5ZVsFIBVxM54PYQOFWhObkdkwSt33SyqiOL2HJL5ROn6/5BWidPrMEXxeBTqvnB8bSJLcGt49weoaBmV72ji1R5zQ0U88GcRUmeY8P3Cbx0VQROitrGmddjAJWpbdaZdAoF2dBblTLs1PfyUyrDU7e+Xa0XPyvz0ajHisQs92U02KLnc74KAM6n/h5QjHZmAc8tix2IgSctLwdcLl+htGjYRQ2Iw==;31:nokPE2DEm2oyVKFXiY1+Z/psDC+u0PpbOlQ8EKfxIeMjNMLboM17nPrWfznumautFMgJxrXtVsTtRFVczh63kiN/PQCwL1HByLsTecZjguLUNkPvHBrMQvyrj9BC5ke1lQPK4ogzSD+bXvwFeYxPa0Qoru+wLQOPRxqgDnxaOSYjDXixHFIGWsiBs4EhQTaCIbOM+/ZOBaSmgiFqzLrtrcXU18QA1dSRXiLJcEW3BZI=
+X-MS-TrafficTypeDiagnostic: BY2PR07MB2294:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR07MB2294;20:omfGlL3LOAiyxOBndvNIGPxpl4RdabhM30uiINO3gljOTwsV64bDxSuYrEiXsVzCvxz53tOfJ6BOiVur45nBd5muzT4X1PaKcbmuJIhN+hRFlaTeIvGmAbqiXUtbkyB5PG4Y4jnkyAgvlAU0yiyl3AGeZBHgebak/UZdTajW8smt76DPGuBFr2B4Hnu1VKxgn6UzSP/0nESXH2C51bl3vehEvwTg7QBfzKXZK3+TicPssLeIiJ7JuheMQ/ioUrbRI+QnqLSIwT/QXPuS5QiUMsuR7lU+YBiOyO2jWdwE3cqwZGa5Dl2lsET2S1rFHvyuL5dbULr7pfHjJcJTNWuo0MOQmXXacpTT4UhUhCpK8VI4Bbk5DDkRmScjQQKGxw85VLl0zzsDXBjdlT+aH0mdJnooXP4RKL8xZ62kCKSKT6Vim5C9cRvdZvKOmpIYpvt3xDjDGwz4h+WLlS40uDeAjVEIi0fcSLTHeIBcpyHDYpe7OQsieHXtdbVy7vQf8dpI;4:1U4TKaD3UoAXEPsUOK1X1uxEYtFj08jIRIafrY13OeuJgfm5X31rJdy4v+D1ndE2mW7IaCPiaRcZC1NupSTAOPgRpZDBQ75MfaOB1rrvb4bRZCaM/Xxx+GwzFuip7rsKbzauy03tgBxUT5BoMUAPMdpXmqMXA6dNpNaPTAikHXJctieAk7G/wAgBb32D+tEEyv7jSoivsGvFbkGor54Ref1dXS/RA9Pi3JJOIxXknpZj+kFt30jO5MB/DkSpvvzm5r+8ZQHDkhMUp7bzC6rRpiV82YkE21fZ/ag37M/Wa7/+msMkzZb/WfmDfv9HPR7t
+X-Microsoft-Antispam-PRVS: <BY2PR07MB229456B2FFF354F9E8871CBDDD420@BY2PR07MB2294.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DM6PR07MB4714;BCL:0;PCL:0;RULEID:;SRVR:DM6PR07MB4714;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3002001)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BY2PR07MB2294;BCL:0;PCL:0;RULEID:;SRVR:BY2PR07MB2294;
 X-Forefront-PRVS: 0722981D2A
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4714;23:wWZlsEsxk0tG5Ui96OafOzNG2zGnHIA9SXEuWJJ4D?=
- =?us-ascii?Q?4FkT0sBREFIGmGlvz+mbA2ZgeuSLxUcr8tZ3bzagtj8NBJy3s/9O0695fSur?=
- =?us-ascii?Q?AQPlhZCiSkFPNrqvQlfW8/Cl4cJNrgfBBLYyxm06Cu8pBVukcGQzSG9a3/Oh?=
- =?us-ascii?Q?NqsNiS7BJZ3lspqjVpFfOt/VtotmF7GEMiGO5qpTiU6xAMNZWtXTmAb9M3XA?=
- =?us-ascii?Q?G+ewxl1MSZtRA9QoW1YsERboiHsFPcpJc4NWYA9wCiYkoePPICeSbiU2j1H1?=
- =?us-ascii?Q?8aLIMyerH041NsMB/QAfD/GiH4FcneW3hmK63g+X9VxDclE73AX7MVLjFAyH?=
- =?us-ascii?Q?EX7gg0x84URkc/kTLKATjBl9uSnSvCysimDRsWBKGdZbf6fGpMKY1y3ni6Vk?=
- =?us-ascii?Q?zHULFbE3IFjU5sOQF7G+8EUEXE+wayC3MSE7WqsiVo3j4pem3vFQk7GjG13A?=
- =?us-ascii?Q?DVoBfT0AScIC944EolZE0bZ0ejIbgjcZUDfQJkGWd6jOEQ1RyVK+KzwVo8Q0?=
- =?us-ascii?Q?Jta9aQ2+RRLVM4p2efOl0r2QPH+XxGGOrZevurma9rUb0nWZOsoxma+dHZVt?=
- =?us-ascii?Q?5ThEOp5UG+PdJBM73HLK0kqAB93GpWtSvqJRylNg14UyQoQGwbMF+XxRox8O?=
- =?us-ascii?Q?uDOhLKHTAhAoqJd2mOHYomV0Ks0aXBi6mXBp+nsssquW4CqybM0BPOvfBiFM?=
- =?us-ascii?Q?hJKPDdL3RG2UTdIwkb83CB3JCLOwGouiGw3YESc/9ajxSq2UxXyf9K6nCdke?=
- =?us-ascii?Q?YQBkECRBCbo+dn0ym3akV2WX6gNrzqbAKkKmVSiKxdEXvS7LpZ8WyJuDVlZF?=
- =?us-ascii?Q?Brpzr4iSZowoFygPVW6YHmHCvu/QA9amE7+PyVY6eKKWoDRdmiL5t3AT0DC2?=
- =?us-ascii?Q?r8OKp6868BTAZX0BsFOS/SC1lBdgE1Fohm52XgbHDV8yXXxVR3y8RIpJHf3x?=
- =?us-ascii?Q?cFMi+5SG+zOFPfwCTiVJuqYBl+5WB05495eUzjEh+ncnuWY0vE0NrbP1+6Lz?=
- =?us-ascii?Q?SpEClask4v4Yc57rpc2eRvJkeotgv1uLfYDi5ojX7gbx7+1T3Mla20mN8trv?=
- =?us-ascii?Q?7UU0fn9Us7UZVnMCwtlZ3foVAfqptBjN2wT3yKJ1p24jxcfGvFDW7tHJiGyp?=
- =?us-ascii?Q?R/cVuEMTuUjmjZrOjUtS52iZMzReSeC9mgJJ1cnDu44uU/XkSreBlugZQ2b2?=
- =?us-ascii?Q?eTz/E8AN478d0zDY4VydCZrbULEst43wCaLO9c5U73CKybtDrVBzCoCP+6dp?=
- =?us-ascii?Q?LcCCSh5SXhUxrX914+V0/oTWLA8IaD+zFLTA5c+?=
-X-Microsoft-Antispam-Message-Info: LMzXvbeBV1T7dDwlXgW8EHCDa5R9KBpArfKyOKDD86Ew6gEybI7WEK7s3raMi5OQ9pU9XJNpW544ES/PWeFhJLipCTi4Yh0qhKgzWqUwJlOdRQnX8fL2GnLb/wPUy4VBBUj9ZlceH07dJamXFceTCWONqn2deBZ/VwPCf+DE/Ul012SmOKMqRw9YaENb5woZJk2HfxHv2XawRa7Ugw/2d4Dg3otdkAcA6YBx63pgo35mDsJ4ksO8uYW9b51y3koHLx+SaqC+/Xs5I7UNjty42AswdLF7/Y1v3OownBkg2KIEdh+VixZPnJ8Kb1QCftqtmDCuo24okSD5nFFUMQrby6v1woK3SJbc7JpAuKaTMVqCMc0jCE7MRQVXo1tQ5Uv9xPKsgKGKjGdD8q8z7er8Vg==
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4714;6:89ggKgj7DQXXHs/edKEQqpwJj7PN5AQ2pYwRh7ssxAAtSuru3iO7LwUCyhTswsWuoj5em80U7t7pGwupkBCYpqD7ZbSiQfswyJxgZsRJv9l1KtdSIgnUCtoiRjyNsiMHQiyozWNxSSzCzr89IbuHYJ/5go5Tn3CxlKq/pyhvvvJ+mwTXcftepzxa54ZBmICrRY45W0zl7xVuh+eR0Kme+ACw0h9pQmZ4fqUyrbPA908sM0rRc+mIFKn02m0AdJFk5CZuoEdbYQO2aPZar1A+JIe7LiO24XV8OedqHtF2QTI0K7jz0wAh7tdumXF+NvlK11QffMqr5TFLRQ2P7UNmI7cokfBbETRex50/4Ka4NmGCkfTpDc+IV6qvbZa54wCE8RRi0KPSv6vecwE+p6n1CGcdQwwvegdnToxhubP3KCNZNrni+vqt/x0cZ81GQ5Sx/yKc9UiK6FrbXPFlU0BtMw==;5:TDmuXFGGr6HOOUtoOc55WPj+ciZ+dD3GEQxJWyo9KH9nO5gvrvmH1GEpmJIVqCtiHD6RF5txCQDPubjc1nrP98YexER/kvMBMwUsXXs/T97F22qa2QI1vBdNcaGsmd6J3vHlb5qXwqUKYl45FYYeQZ18FSFbp0MKIpgkLOR59u4=;24:Rsz+XM2zUoEungIy6a6klLuX1DL2/WuvXRS3nqHLgc7gcWH1hDc2EDE7l48iWl90lSgN6sWwGLlolMPO8EQFEuSCxqXL/mtCcL/Gkx/aSVU=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR07MB2294;23:+CL6Fj77htjXfpF65QxElEXtskXpozMDEiws5ATlA?=
+ =?us-ascii?Q?sZIm/WH2HUD7TsqeTId1HkW+OB7U+G9ClIckuBuaR8zWyKDEyJY/9YlHLMe8?=
+ =?us-ascii?Q?2kTFmlsdinFzQNDZsNWzbQ61rxkZoFIC/1/4Eefox7q2jwz4ttMPI3wK/Un8?=
+ =?us-ascii?Q?1orkbpcZpBulGBKOUtEPqksRxrLviM9BC4LKtDuwwxwNbjXlv8OYTsk6eHE/?=
+ =?us-ascii?Q?dBuuWrRLYfmBc9+fgZyYkER4Du9XCWT7q4glDKVytcApJAYNU4EpY5OGtk69?=
+ =?us-ascii?Q?7sY/oq7bWzrv786Z9S/kIJPX5iSBJaAb+Ek7Dz6ytysVPjyW0g8fM+D3JlPm?=
+ =?us-ascii?Q?VTKrki4Z/XblQwJexRg//7WLegZeRrlOneNm1uN8/CmN2uLGbPnyMpNd4TwC?=
+ =?us-ascii?Q?fUyXXrO2S7+4p5Jkt5sbOheAF5lZsjE733Vm7OfdU5iqzYsJMR4+UFBXnxNV?=
+ =?us-ascii?Q?HZEWAwI7epQ/74R1oXsKA6b47P227vYDKV/aHCeLA53S05YEMJTZCzQ1zUyW?=
+ =?us-ascii?Q?jheYrfxJ0oOF4f+ME4tV3rCHuLoeOqL7r5tM/apiY7Lujlv5IPWBcVl8QXWn?=
+ =?us-ascii?Q?27lIiWvBZ7d/P2DfM2a7diERQfdNND2XoTlKNiZ54Cw5wYUZbYDzRlAojLVa?=
+ =?us-ascii?Q?11ILepbXkTpBogkWNZOGGoPVK2q+mLYbTuWD9mE8hyozhBfABPoACMLkCt5p?=
+ =?us-ascii?Q?Ax56wxHcyzKnF1UDH35cju+6JPLLl/xO8rIOrXZUM8wGK4lmXKvZkuO1q0EC?=
+ =?us-ascii?Q?6KMD0EDg5wlJw5ywwZexYRjbBjUR2gFRTPtu0WnTXveHHERUj6b9GpBcwv9u?=
+ =?us-ascii?Q?LbrUMGRUzlkeJh6LMaUHyrujtKwCc2atpMrzTO73tij+e5XRjT+aQtJbjztk?=
+ =?us-ascii?Q?hjvMhk+DcPAVW+vHAXVF0cnF8y7KKY/YV7g3VAoTARg8wpHyRCIf/hci+qJ5?=
+ =?us-ascii?Q?237yLMX8s3+/So7TE97nTvILpFPHin6lfCekqbIXD3NFrMGWvVmGm5n7saXu?=
+ =?us-ascii?Q?12z/COoaV/YdcIzsyrcYoYDqZSpEUfiREBfHLEu8/lBW6xspSsjD92SAfsx1?=
+ =?us-ascii?Q?iC10SpHuwKiNQdX40hv40N3BPMJKkTVjbupyAaUf4mm7gUpH5ElKiDlxf9bH?=
+ =?us-ascii?Q?XfLXtm+UJ9mbZoKC6jftMVqgzy4YObP6BqbNFKsDFedHek5mm1NMW0P88a12?=
+ =?us-ascii?Q?iQkDsKA0bWNVHkKK2QgGrkJJmiE+Kqq2B3Nvvxt7SA5dCci668VZ9b7Zwnl7?=
+ =?us-ascii?Q?7fZDjSZmS+kOH0gWFVOf49Om1vWTwiUsp3T6UOR5lFNqfSUbeOuoTJeGJZ/n?=
+ =?us-ascii?Q?K18zcBhCpMETGRWr25nijE=3D?=
+X-Microsoft-Antispam-Message-Info: pbP4lFwNDBebQuAtrryJ56Qw8CWer1vha+YPLBMzgGbNMrLZCZBQ1+kI0VbMwnRLrDP3rKlvnm1CkAMho/WYC0pZKXk1wuUwOCt9LoBGu/r6dLmltuVrKVNS4aKNkE3Mamu4Ph7kj9o30f3ECCK0Z5fR4p/Y+ajDkzsDEYgKjRK5tRWxqqxTMM+NJtsBtzT3pXrpmWUKMi4UDDm17vG5IgaeSfh8LrXkY7zjuqPFCtK/wT052filSO4D2R7UG2zLET6ZMGRH3L8jhxRo7EqD56UnRgGr/jnGZn9wT8d/2gZ3tilqGxAS2/i7Hx5ckfmoAwkp2mH4oaakobwGzUbasE7XdKOaRWj7rrIZDqsnTb3GE9g7xJC86X7Pb64cSd97p5ab9MuYQc7XBtmWicfpRA==
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR07MB2294;6:HWidlOpzmXkn/lCyeqKesc8giH8hZApvNj5fYTSfmneP3WTHEXbQn3hqNocAlV2Cl3FKCq/h6Jpciaw6sEK8Thjdkx7QayUdEN1TKMpiuBpMgbg9Qog8JaWTPonJ4/jsY35ngihACj6ANS4SGJTXjNBhmza1LngsXVG5pq/wSOFpbymP7wu+ypNhixC/l+NeEfTS/ASNmXu4qF7MzZnUt4Zu8jkB6F72hWbmd3FQePKDmovBwzUjI31ZnyGvFXXU937ujEFtaMaHxTdIG5Z21fLSQ2QNh2nhTeDClnolxzweehrh8kBSWEjiu0+FsdcX2K950wS5fnA/iGQKrJy20XF7d8bdOxuY1Epo9UAEhikUr80NVTeKlinJzhe1UColckn/QV3/57CpYWIBeYW62UbSPru1DzKsG6OknYZ1cA3eBCeMlypDhqKrojeYG13nEgTuskwQRAtbRcEWoJC/0Q==;5:YR6PbthZFe77ct/bPAqPBNBOjiiayHScAtCfpaGfI+gg2eCCcdulpd+39BxXnzZixRQD4K7K7DttR6yCro6xv/Joqm1R9H96fFS3b5Yo6phnL1BKXOQCBC9EUzJJHA5OX9fwYnWvM66KQOA9a2Q+HvrQFGeIopVgRsvCJGSwsAw=;24:7DN7jSggBsGqa+UOfK3R/WaBk/qTvhJiqMDFtsY3KX2+N0ZBRfiC/ym+zXVhG/364t/gVqGPnxF8O4SjXTd45Z4LeHp7wpDfq9xavzT8L1g=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4714;7:MeANZc9LObhxPdyOHlck3UzuaMK+Le5ygE1Xh4lvExEuXYYeEGvbMimIYhc8n42Ox45pQiL3EovD5voJhJ/lLaWH3EdFIb3eEvzf/q67En3JLvupckRRZE/r6DD0tBA9w3O02EW9aALfavzU3s1Sf5M0BE++mKsGBDoKPRxPQpZpPZABjzqFbchElHN1XDeN5DEx76RMRwsbNgMT/5yPzxOdjQiE5kGKX+MdtojUudlP+EvU2smS9+VbH/XANfOk;20:6GlI8Z3WMPpIC1poaWq1Rtui6ajpLNNAsH75iRjaT2HhSnD58WNp2Zy52+2GJgdoIevnS+v1OWYbTWDZY6oB13DYSHHx6deVH5cUdntn4Az5rd1EvpViUsRYWGegoRFeebOrdrVg/wKhElhmLrQOJRZJYdNmC8ddrHQqEoaTrokg2is2UJqnqUzz9ELk74FVh5WZ1qvvffYiK3ZHEI74h/+z0xQR++gbeRpa/gVIs6Vnd3rT8FEkX2jRpvbe4HqP
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR07MB2294;7:jdO3jjNxz7uz3Xa1nHC3BAkmg92a1IucH6qUZYr5it8nnRr04YOPDehzgCUEV6Saub6S9C+aJthlJm6iExSyYdX85VxxuByi2CcIjZnnSRNp94c8j0RTl13TUROYoopiKBMQi7wqpsscOQBOAgtgYJk9uZ8GTgXWNym49Ycji6swnP7iNddnSXkBlvQ/b/cj17/Xcq/pjFOiUeIP7JrDWuO3AN0/r+dqdMMIS9AygKgyJzn5Sp7C2/J4XqFbEwiK;20:3j3/HsY+UN4naqeJ6tLM8KH58w7UfSQBojBdvRtiBNe0ny6yydqEPWoozRjfTZssa30b+n8Oji/TtjouI7xlmpluuo6SWqcH288cIiYfu5Iw4jzZez7VBSbAbeZpWZYJT38A+nIaiY9KujSHWKD9n0kEAXKsQYtcBXjfiRMZZvK+T61gK3yliMUIpz/m8QOXmQsbTqGTDUFv4dVIOzd68stEvA9HbLlJuWyyEPsFTNWE5QTnUerZ5uHgIj0UBpv5
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:28.6786
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 19:58:26.6207
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1c03edc-884a-48cb-4475-08d5e11f589b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad2e37c-c4f9-4392-3de3-08d5e11f5761
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4714
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR07MB2294
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -136,18 +137,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Laszczak Pawel <pawell@cadence.com>
 ---
- drivers/usb/usbssp/gadget-debugfs.c | 514 ++++++++++++++++++++++++++++
- drivers/usb/usbssp/gadget-debugfs.h | 137 ++++++++
- 2 files changed, 651 insertions(+)
- create mode 100644 drivers/usb/usbssp/gadget-debugfs.c
- create mode 100644 drivers/usb/usbssp/gadget-debugfs.h
+ drivers/usb/usbssp/gadget-if.c | 572 +++++++++++++++++++++++++++++++++
+ 1 file changed, 572 insertions(+)
+ create mode 100644 drivers/usb/usbssp/gadget-if.c
 
-diff --git a/drivers/usb/usbssp/gadget-debugfs.c b/drivers/usb/usbssp/gadget-debugfs.c
+diff --git a/drivers/usb/usbssp/gadget-if.c b/drivers/usb/usbssp/gadget-if.c
 new file mode 100644
-index 000000000000..c0d1e96728e6
+index 000000000000..00391560e921
 --- /dev/null
-+++ b/drivers/usb/usbssp/gadget-debugfs.c
-@@ -0,0 +1,514 @@
++++ b/drivers/usb/usbssp/gadget-if.c
+@@ -0,0 +1,572 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * USBSSP device controller driver
@@ -158,653 +157,568 @@ index 000000000000..c0d1e96728e6
 + * Some code borrowed from the Linux XHCI driver.
 + */
 +
-+#include <linux/slab.h>
-+
++#include <linux/usb/gadget.h>
++#include <linux/usb/composite.h>
 +#include "gadget.h"
-+#include "gadget-debugfs.h"
 +
-+static const struct debugfs_reg32 usbssp_cap_regs[] = {
-+	dump_register(CAPLENGTH),
-+	dump_register(HCSPARAMS1),
-+	dump_register(HCSPARAMS2),
-+	dump_register(HCSPARAMS3),
-+	dump_register(HCCPARAMS1),
-+	dump_register(DOORBELLOFF),
-+	dump_register(RUNTIMEOFF),
-+	dump_register(HCCPARAMS2),
-+};
++#define usbssp_g_lock(flag, save_flags) { \
++	if (in_interrupt()) {\
++		spin_lock_irqsave(&usbssp_data->lock, save_flags); \
++	} else { \
++		if (!irqs_disabled()) { \
++			spin_lock_irqsave(&usbssp_data->irq_thread_lock,\
++					usbssp_data->irq_thread_flag);\
++			flag = 1; \
++		} else \
++			spin_lock(&usbssp_data->irq_thread_lock); \
++	} }
 +
-+static const struct debugfs_reg32 usbssp_op_regs[] = {
-+	dump_register(USBCMD),
-+	dump_register(USBSTS),
-+	dump_register(PAGESIZE),
-+	dump_register(DNCTRL),
-+	dump_register(CRCR),
-+	dump_register(DCBAAP_LOW),
-+	dump_register(DCBAAP_HIGH),
-+	dump_register(CONFIG),
-+};
 +
-+static const struct debugfs_reg32 usbssp_runtime_regs[] = {
-+	dump_register(MFINDEX),
-+	dump_register(IR0_IMAN),
-+	dump_register(IR0_IMOD),
-+	dump_register(IR0_ERSTSZ),
-+	dump_register(IR0_ERSTBA_LOW),
-+	dump_register(IR0_ERSTBA_HIGH),
-+	dump_register(IR0_ERDP_LOW),
-+	dump_register(IR0_ERDP_HIGH),
-+};
++#define usbssp_g_unlock(flag, save_flags) { \
++	if (in_interrupt()) \
++		spin_unlock_irqrestore(&usbssp_data->lock, save_flags); \
++	else  { \
++		if (flag) \
++			spin_unlock_irqrestore(&usbssp_data->irq_thread_lock,\
++					usbssp_data->irq_thread_flag);\
++		else \
++			spin_unlock(&usbssp_data->irq_thread_lock); \
++	} }
 +
-+static const struct debugfs_reg32 usbssp_extcap_legsup[] = {
-+	dump_register(EXTCAP_USBLEGSUP),
-+	dump_register(EXTCAP_USBLEGCTLSTS),
-+};
-+
-+static const struct debugfs_reg32 usbssp_extcap_protocol[] = {
-+	dump_register(EXTCAP_REVISION),
-+	dump_register(EXTCAP_NAME),
-+	dump_register(EXTCAP_PORTINFO),
-+	dump_register(EXTCAP_PORTTYPE),
-+	dump_register(EXTCAP_MANTISSA1),
-+	dump_register(EXTCAP_MANTISSA2),
-+	dump_register(EXTCAP_MANTISSA3),
-+	dump_register(EXTCAP_MANTISSA4),
-+	dump_register(EXTCAP_MANTISSA5),
-+	dump_register(EXTCAP_MANTISSA6),
-+};
-+
-+static const struct debugfs_reg32 usbssp_extcap_dbc[] = {
-+	dump_register(EXTCAP_DBC_CAPABILITY),
-+	dump_register(EXTCAP_DBC_DOORBELL),
-+	dump_register(EXTCAP_DBC_ERSTSIZE),
-+	dump_register(EXTCAP_DBC_ERST_LOW),
-+	dump_register(EXTCAP_DBC_ERST_HIGH),
-+	dump_register(EXTCAP_DBC_ERDP_LOW),
-+	dump_register(EXTCAP_DBC_ERDP_HIGH),
-+	dump_register(EXTCAP_DBC_CONTROL),
-+	dump_register(EXTCAP_DBC_STATUS),
-+	dump_register(EXTCAP_DBC_PORTSC),
-+	dump_register(EXTCAP_DBC_CONT_LOW),
-+	dump_register(EXTCAP_DBC_CONT_HIGH),
-+	dump_register(EXTCAP_DBC_DEVINFO1),
-+	dump_register(EXTCAP_DBC_DEVINFO2),
-+};
-+
-+static struct dentry *usbssp_debugfs_root;
-+
-+static struct usbssp_regset *usbssp_debugfs_alloc_regset(
-+				struct usbssp_udc *usbssp_data)
++static int usbssp_gadget_ep_enable(struct usb_ep *ep,
++		const struct usb_endpoint_descriptor *desc)
 +{
-+	struct usbssp_regset *regset;
++	struct usbssp_ep *ep_priv;
++	struct usbssp_udc *usbssp_data;
++	int ret = 0;
++	int irq_disabled_locally = 0;
++	unsigned long flags = 0;
 +
-+	regset = kzalloc(sizeof(*regset), GFP_KERNEL);
-+	if (!regset)
++	if (!ep || !desc || desc->bDescriptorType != USB_DT_ENDPOINT) {
++		pr_err("invalid parameters\n");
++		return -EINVAL;
++	}
++
++	ep_priv = to_usbssp_ep(ep);
++	usbssp_data = ep_priv->usbssp_data;
++
++	if (!desc->wMaxPacketSize) {
++		usbssp_dbg(usbssp_data, "missing wMaxPacketSize\n");
++		return -EINVAL;
++	}
++
++
++
++
++	if (ep_priv->ep_state & USBSSP_EP_ENABLED) {
++		usbssp_dbg(usbssp_data, "%s is already enabled\n",
++			   ep_priv->name);
++		return -EINVAL;
++	}
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret = usbssp_add_endpoint(usbssp_data,  ep_priv);
++	if (ret < 0)
++		goto finish;
++
++	ep_priv->ep_state |= USBSSP_EP_ENABLED;
++
++	/*Update bandwidth information*/
++	ret = usbssp_check_bandwidth(usbssp_data, &usbssp_data->gadget);
++
++	if (ret < 0)
++		ep_priv->ep_state &= ~USBSSP_EP_ENABLED;
++
++finish:
++	usbssp_dbg(usbssp_data, "%s enable endpoint %s\n", ep_priv->name,
++			(ret == 0) ? "success" : "failed");
++	usbssp_g_unlock(irq_disabled_locally, flags);
++	return ret;
++}
++
++int usbssp_gadget_ep_disable(struct usb_ep *ep)
++{
++	struct usbssp_ep *ep_priv;
++	struct usbssp_udc *usbssp_data;
++	int ep_index = 0;
++	int ret;
++	int irq_disabled_locally = 0;
++	unsigned long flags = 0;
++	struct usbssp_request  *req_priv;
++
++	ep_priv = to_usbssp_ep(ep);
++	usbssp_data = ep_priv->usbssp_data;
++	ep_index = usbssp_get_endpoint_index(ep_priv->endpoint.desc);
++
++	if (!(ep_priv->ep_state & USBSSP_EP_ENABLED)) {
++		usbssp_dbg(usbssp_data, "%s is already disabled\n",
++				ep_priv->name);
++		return -EINVAL;
++	}
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++
++	ep_priv->ep_state |= USBSSP_EP_DISABLE_PENDING;
++
++	/*dequeue all USB request from endpoint*/
++	list_for_each_entry(req_priv, &ep_priv->pending_list, list) {
++		usbssp_dequeue(ep_priv, req_priv);
++	}
++
++	ret = usbssp_drop_endpoint(usbssp_data, &usbssp_data->gadget, ep_priv);
++	if (ret)
++		goto finish;
++
++	ret = usbssp_check_bandwidth(usbssp_data, &usbssp_data->gadget);
++	if (ret)
++		goto finish;
++
++	ep_priv->ep_state &= ~USBSSP_EP_ENABLED;
++
++finish:
++	ep_priv->ep_state &= ~USBSSP_EP_DISABLE_PENDING;
++	usbssp_dbg(usbssp_data, "%s disable endpoint %s\n", ep_priv->name,
++			(ret == 0) ? "success" : "failed");
++
++	usbssp_g_unlock(irq_disabled_locally, flags);
++	return ret;
++}
++
++static struct usb_request *usbssp_gadget_ep_alloc_request(struct usb_ep *ep,
++							  gfp_t gfp_flags)
++{
++	struct usbssp_request *req_priv;
++	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++
++	req_priv = kzalloc(sizeof(*req_priv), gfp_flags);
++	if (!req_priv)
 +		return NULL;
 +
-+	/*
-+	 * The allocation and free of regset are executed in order.
-+	 * We needn't a lock here.
-+	 */
-+	INIT_LIST_HEAD(&regset->list);
-+	list_add_tail(&regset->list, &usbssp_data->regset_list);
++	req_priv->epnum = ep_priv->number;
++	req_priv->dep  = ep_priv;
 +
-+	return regset;
++	trace_usbssp_alloc_request(&req_priv->request);
++	return &req_priv->request;
 +}
 +
-+static void usbssp_debugfs_free_regset(struct usbssp_regset *regset)
++static void usbssp_gadget_ep_free_request(struct usb_ep *ep,
++		struct usb_request *request)
 +{
-+	if (!regset)
-+		return;
++	struct usbssp_request *req_priv = to_usbssp_request(request);
 +
-+	list_del(&regset->list);
-+	kfree(regset);
++	trace_usbssp_free_request(&req_priv->request);
++	kfree(req_priv);
 +}
 +
-+static void usbssp_debugfs_regset(struct usbssp_udc *usbssp_data, u32 base,
-+				  const struct debugfs_reg32 *regs,
-+				  size_t nregs, struct dentry *parent,
-+				  const char *fmt, ...)
++static int  usbssp_gadget_ep_queue(struct usb_ep *ep,
++				   struct usb_request *request,
++				   gfp_t gfp_flags)
 +{
-+	struct usbssp_regset *rgs;
-+	va_list args;
-+	struct debugfs_regset32	*regset;
++	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_request *req_priv = to_usbssp_request(request);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	int ret;
 +
-+	rgs = usbssp_debugfs_alloc_regset(usbssp_data);
-+	if (!rgs)
-+		return;
++	if (!ep_priv->endpoint.desc) {
++		usbssp_err(usbssp_data,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		return -ESHUTDOWN;
++	}
 +
-+	va_start(args, fmt);
-+	vsnprintf(rgs->name, sizeof(rgs->name), fmt, args);
-+	va_end(args);
++	if ((ep_priv->ep_state & USBSSP_EP_DISABLE_PENDING ||
++			!(ep_priv->ep_state & USBSSP_EP_ENABLED))) {
++		dev_err(usbssp_data->dev,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		ret = -ESHUTDOWN;
++		goto out;
++	}
 +
-+	regset = &rgs->regset;
-+	regset->regs = regs;
-+	regset->nregs = nregs;
-+	regset->base = usbssp_data->regs + base;
-+
-+	debugfs_create_regset32((const char *)rgs->name, 0444, parent, regset);
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_enqueue(ep_priv, req_priv);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++out:
++	return ret;
 +}
 +
-+static void usbssp_debugfs_extcap_regset(struct usbssp_udc *usbssp_data,
-+					 int cap_id,
-+					 const struct debugfs_reg32 *regs,
-+					 size_t n, const char *cap_name)
++static int usbssp_gadget_ep_dequeue(struct usb_ep *ep,
++				    struct usb_request *request)
 +{
-+	u32 offset;
-+	int index = 0;
-+	size_t psic, nregs = n;
-+	void __iomem *base = &usbssp_data->cap_regs->hc_capbase;
++	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_request *req_priv = to_usbssp_request(request);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int ret;
++	int irq_disabled_locally = 0;
 +
-+	offset = usbssp_find_next_ext_cap(base, 0, cap_id);
-+	while (offset) {
-+		if (cap_id == USBSSP_EXT_CAPS_PROTOCOL) {
-+			psic = USBSSP_EXT_PORT_PSIC(readl(base + offset + 8));
-+			nregs = min(4 + psic, n);
++	if (!ep_priv->endpoint.desc) {
++		usbssp_err(usbssp_data,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		return -ESHUTDOWN;
++	}
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_dequeue(ep_priv, req_priv);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++
++	return ret;
++}
++
++static int usbssp_gadget_ep_set_halt(struct usb_ep *ep, int value)
++{
++	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	int ret;
++	int irq_disabled_locally = 0;
++	unsigned long flags = 0;
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_halt_endpoint(usbssp_data, ep_priv, value);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++	return ret;
++}
++
++static int usbssp_gadget_ep_set_wedge(struct usb_ep *ep)
++{
++	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int ret;
++	int irq_disabled_locally = 0;
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ep_priv->ep_state |= USBSSP_EP_WEDGE;
++	ret =  usbssp_halt_endpoint(usbssp_data, ep_priv, 1);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++
++	return ret;
++}
++
++static const struct usb_ep_ops usbssp_gadget_ep0_ops = {
++	.enable		= usbssp_gadget_ep_enable,
++	.disable	= usbssp_gadget_ep_disable,
++	.alloc_request	= usbssp_gadget_ep_alloc_request,
++	.free_request	= usbssp_gadget_ep_free_request,
++	.queue		= usbssp_gadget_ep_queue,
++	.dequeue	= usbssp_gadget_ep_dequeue,
++	.set_halt	= usbssp_gadget_ep_set_halt,
++	.set_wedge	= usbssp_gadget_ep_set_wedge,
++};
++
++static const struct usb_ep_ops usbssp_gadget_ep_ops = {
++	.enable		= usbssp_gadget_ep_enable,
++	.disable	= usbssp_gadget_ep_disable,
++	.alloc_request	= usbssp_gadget_ep_alloc_request,
++	.free_request	= usbssp_gadget_ep_free_request,
++	.queue		= usbssp_gadget_ep_queue,
++	.dequeue	= usbssp_gadget_ep_dequeue,
++	.set_halt	= usbssp_gadget_ep_set_halt,
++	.set_wedge	= usbssp_gadget_ep_set_wedge,
++};
++
++void usbssp_gadget_giveback(struct usbssp_ep *ep_priv,
++			    struct usbssp_request *req_priv, int status)
++{
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++
++	list_del(&req_priv->list);
++
++	if (req_priv->request.status == -EINPROGRESS)
++		req_priv->request.status = status;
++
++	usb_gadget_unmap_request_by_dev(usbssp_data->dev,
++			&req_priv->request, req_priv->direction);
++
++	trace_usbssp_request_giveback(&req_priv->request);
++
++	if (in_interrupt())
++		spin_unlock(&usbssp_data->lock);
++	else
++		spin_unlock(&usbssp_data->irq_thread_lock);
++
++	if (req_priv != &usbssp_data->usb_req_ep0_in) {
++		usb_gadget_giveback_request(&ep_priv->endpoint,
++				&req_priv->request);
++	}
++
++	if (in_interrupt())
++		spin_lock(&usbssp_data->lock);
++	else
++		spin_lock(&usbssp_data->irq_thread_lock);
++
++}
++
++static struct usb_endpoint_descriptor usbssp_gadget_ep0_desc = {
++	.bLength =		USB_DT_ENDPOINT_SIZE,
++	.bDescriptorType =	USB_DT_ENDPOINT,
++	.bmAttributes =		USB_ENDPOINT_XFER_CONTROL,
++};
++
++static int usbssp_gadget_start(struct usb_gadget *g,
++			       struct usb_gadget_driver *driver)
++{
++	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
++	int ret = 0;
++
++	if (usbssp_data->gadget_driver) {
++		usbssp_err(usbssp_data, "%s is already bound to %s\n",
++				usbssp_data->gadget.name,
++				usbssp_data->gadget_driver->driver.name);
++		ret = -EBUSY;
++		goto err1;
++	}
++
++	usbssp_data->gadget_driver = driver;
++
++	if (pm_runtime_active(usbssp_data->dev)) {
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(512);
++		usbssp_data->ep0state = USBSSP_EP0_UNCONNECTED;
++		ret = usbssp_run(usbssp_data);
++		if (ret < 0)
++			goto err1;
++	}
++	return 0;
++err1:
++	return ret;
++}
++
++static int usbssp_gadget_stop(struct usb_gadget *g)
++{
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	struct usbssp_udc *usbssp_data  = gadget_to_usbssp(g);
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++	if (pm_runtime_suspended(usbssp_data->dev))
++		goto out;
++
++	usbssp_free_dev(usbssp_data);
++	usbssp_stop(usbssp_data);
++out:
++	usbssp_data->gadget_driver = NULL;
++	usbssp_g_unlock(irq_disabled_locally, flags);
++
++	return 0;
++}
++
++static int usbssp_gadget_get_frame(struct usb_gadget *g)
++{
++	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
++
++	return usbssp_get_frame(usbssp_data);
++}
++
++static int usbssp_gadget_wakeup(struct usb_gadget *g)
++{
++	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	__le32 __iomem *port_regs;
++	u32 temp;
++
++	if (!usbssp_data->port_remote_wakeup)
++		return -EINVAL;
++
++	if (!usbssp_data->port_suspended)
++		return -EINVAL;
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++
++	port_regs = usbssp_get_port_io_addr(usbssp_data);
++	temp = readl(port_regs+PORTPMSC);
++
++	if (!(temp & PORT_RWE))
++		return 0;
++
++	temp = readl(port_regs + PORTSC);
++
++	temp &= ~PORT_PLS_MASK;
++	writel(temp, port_regs + PORTPMSC);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++	return 0;
++}
++
++static int usbssp_gadget_set_selfpowered(struct usb_gadget *g,
++		int is_selfpowered)
++{
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
++
++	usbssp_g_lock(irq_disabled_locally, flags);
++
++	g->is_selfpowered = !!is_selfpowered;
++	usbssp_g_unlock(irq_disabled_locally, flags);
++
++	return 0;
++}
++
++static const struct usb_gadget_ops usbssp_gadget_ops = {
++	.get_frame		= usbssp_gadget_get_frame,
++	.wakeup			= usbssp_gadget_wakeup,
++	.set_selfpowered	= usbssp_gadget_set_selfpowered,
++	.udc_start		= usbssp_gadget_start,
++	.udc_stop		= usbssp_gadget_stop,
++};
++
++int usbssp_gadget_init_endpoint(struct usbssp_udc *usbssp_data)
++{
++	int i = 0;
++	struct usbssp_ep *ep_priv;
++
++	usbssp_data->num_endpoints = USBSSP_ENDPOINTS_NUM;
++	INIT_LIST_HEAD(&usbssp_data->gadget.ep_list);
++
++	for (i = 1; i < usbssp_data->num_endpoints; i++) {
++		bool direction = i & 1;  /*start from OUT endpoint*/
++		u8 epnum = (i >>  1);
++
++		ep_priv = &usbssp_data->devs.eps[i-1];
++		ep_priv->usbssp_data = usbssp_data;
++		ep_priv->number = epnum;
++		ep_priv->direction = direction;  /*0 for OUT, 1 for IN*/
++
++		snprintf(ep_priv->name, sizeof(ep_priv->name), "ep%d%s", epnum,
++				(ep_priv->direction) ? "in"  : "out");
++
++		ep_priv->endpoint.name = ep_priv->name;
++
++		if (ep_priv->number < 2) {
++			ep_priv->endpoint.desc = &usbssp_gadget_ep0_desc;
++			ep_priv->endpoint.comp_desc = NULL;
 +		}
 +
-+		usbssp_debugfs_regset(usbssp_data, offset, regs, nregs,
-+				usbssp_data->debugfs_root, "%s:%02d",
-+				cap_name, index);
-+		offset = usbssp_find_next_ext_cap(base, offset, cap_id);
-+		index++;
++		if (epnum == 0) {  //EP0 is  bidirectional endpoint
++			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 512);
++			usbssp_dbg(usbssp_data,
++				"Initializing %s, MaxPack: %04x Type: Ctrl\n",
++				ep_priv->name, 512);
++			ep_priv->endpoint.maxburst = 1;
++			ep_priv->endpoint.ops = &usbssp_gadget_ep0_ops;
++			ep_priv->endpoint.caps.type_control = true;
++
++			usbssp_data->usb_req_ep0_in.epnum = ep_priv->number;
++			usbssp_data->usb_req_ep0_in.dep  = ep_priv;
++
++			if (!epnum)
++				usbssp_data->gadget.ep0 = &ep_priv->endpoint;
++		} else {
++			usb_ep_set_maxpacket_limit(&ep_priv->endpoint, 1024);
++			ep_priv->endpoint.maxburst = 15;
++			ep_priv->endpoint.ops = &usbssp_gadget_ep_ops;
++			list_add_tail(&ep_priv->endpoint.ep_list,
++					&usbssp_data->gadget.ep_list);
++			ep_priv->endpoint.caps.type_iso = true;
++			ep_priv->endpoint.caps.type_bulk = true;
++			ep_priv->endpoint.caps.type_int = true;
++
++		}
++
++		ep_priv->endpoint.caps.dir_in = direction;
++		ep_priv->endpoint.caps.dir_out = !direction;
++
++		usbssp_dbg(usbssp_data, "Init %s, MaxPack: %04x SupType:"
++				" INT/BULK/ISOC , SupDir %s\n",
++				ep_priv->name, 1024,
++				(ep_priv->endpoint.caps.dir_in) ? "IN" : "OUT");
++
++		INIT_LIST_HEAD(&ep_priv->pending_list);
 +	}
-+}
-+
-+static int usbssp_ring_enqueue_show(struct seq_file *s, void *unused)
-+{
-+	dma_addr_t dma;
-+	struct usbssp_ring *ring = *(struct usbssp_ring **)s->private;
-+
-+	dma = usbssp_trb_virt_to_dma(ring->enq_seg, ring->enqueue);
-+	seq_printf(s, "%pad\n", &dma);
-+
 +	return 0;
 +}
 +
-+static int usbssp_ring_dequeue_show(struct seq_file *s, void *unused)
-+{
-+	dma_addr_t dma;
-+	struct usbssp_ring *ring = *(struct usbssp_ring **)s->private;
-+
-+	dma = usbssp_trb_virt_to_dma(ring->deq_seg, ring->dequeue);
-+	seq_printf(s, "%pad\n", &dma);
-+
-+	return 0;
-+}
-+
-+static int usbssp_ring_cycle_show(struct seq_file *s, void *unused)
-+{
-+	struct usbssp_ring *ring = *(struct usbssp_ring **)s->private;
-+
-+	seq_printf(s, "%d\n", ring->cycle_state);
-+
-+	return 0;
-+}
-+
-+static void usbssp_ring_dump_segment(struct seq_file *s,
-+				     struct usbssp_segment *seg)
++void usbssp_gadget_free_endpoint(struct usbssp_udc *usbssp_data)
 +{
 +	int i;
-+	dma_addr_t dma;
-+	union usbssp_trb *trb;
++	struct usbssp_ep *ep_priv;
 +
-+	for (i = 0; i < TRBS_PER_SEGMENT; i++) {
-+		trb = &seg->trbs[i];
-+		dma = seg->dma + i * sizeof(*trb);
-+		seq_printf(s, "%pad: %s\n", &dma,
-+				usbssp_decode_trb(trb->generic.field[0],
-+					trb->generic.field[1],
-+					trb->generic.field[2],
-+					trb->generic.field[3]));
++	for (i = 0; i < usbssp_data->num_endpoints; i++) {
++		ep_priv = &usbssp_data->devs.eps[i];
++
++		if (ep_priv->number != 0)
++			list_del(&ep_priv->endpoint.ep_list);
 +	}
 +}
 +
-+static int usbssp_ring_trb_show(struct seq_file *s, void *unused)
++static void usbssp_disconnect_gadget(struct usbssp_udc *usbssp_data)
 +{
-+	int i;
-+	struct usbssp_ring *ring = *(struct usbssp_ring **)s->private;
-+	struct usbssp_segment *seg = ring->first_seg;
-+
-+	for (i = 0; i < ring->num_segs; i++) {
-+		usbssp_ring_dump_segment(s, seg);
-+		seg = seg->next;
++	if (usbssp_data->gadget_driver &&
++	    usbssp_data->gadget_driver->disconnect) {
++		spin_unlock(&usbssp_data->irq_thread_lock);
++		usbssp_data->gadget_driver->disconnect(&usbssp_data->gadget);
++		spin_lock(&usbssp_data->irq_thread_lock);
 +	}
-+
-+	return 0;
 +}
 +
-+static struct usbssp_file_map ring_files[] = {
-+	{"enqueue",	usbssp_ring_enqueue_show, },
-+	{"dequeue",	usbssp_ring_dequeue_show, },
-+	{"cycle",	usbssp_ring_cycle_show, },
-+	{"trbs",	usbssp_ring_trb_show, },
-+};
-+
-+static int usbssp_ring_open(struct inode *inode, struct file *file)
++void usbssp_suspend_gadget(struct usbssp_udc *usbssp_data)
 +{
-+	int i;
-+	struct usbssp_file_map *f_map;
-+	const char *file_name = file_dentry(file)->d_iname;
-+
-+	for (i = 0; i < ARRAY_SIZE(ring_files); i++) {
-+		f_map = &ring_files[i];
-+
-+		if (strcmp(f_map->name, file_name) == 0)
-+			break;
++	if (usbssp_data->gadget_driver && usbssp_data->gadget_driver->suspend) {
++		spin_unlock(&usbssp_data->lock);
++		usbssp_data->gadget_driver->suspend(&usbssp_data->gadget);
++		spin_lock(&usbssp_data->lock);
 +	}
-+
-+	return single_open(file, f_map->show, inode->i_private);
-+	return 0;
 +}
 +
-+static const struct file_operations usbssp_ring_fops = {
-+	.open = usbssp_ring_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+static int usbssp_slot_context_show(struct seq_file *s, void *unused)
++void usbssp_resume_gadget(struct usbssp_udc *usbssp_data)
 +{
-+	struct usbssp_udc *usbssp_data;
-+	struct usbssp_slot_ctx *slot_ctx;
-+	struct usbssp_slot_priv *priv = s->private;
-+	struct usbssp_device *dev = priv->dev;
-+
-+	usbssp_data = gadget_to_usbssp(dev->gadget);
-+	slot_ctx = usbssp_get_slot_ctx(usbssp_data, dev->out_ctx);
-+	seq_printf(s, "%pad: %s\n", &dev->out_ctx->dma,
-+		   usbssp_decode_slot_context(slot_ctx->dev_info,
-+				slot_ctx->dev_info2, slot_ctx->int_target,
-+				slot_ctx->dev_state));
-+
-+	return 0;
-+}
-+
-+static int usbssp_endpoint_context_show(struct seq_file *s, void *unused)
-+{
-+	int dci;
-+	dma_addr_t dma;
-+	struct usbssp_udc *usbssp_data;
-+	struct usbssp_ep_ctx *ep_ctx;
-+	struct usbssp_slot_priv	*priv = s->private;
-+	struct usbssp_device *dev = priv->dev;
-+
-+	usbssp_data = gadget_to_usbssp(dev->gadget);
-+
-+	for (dci = 1; dci < 32; dci++) {
-+		ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev->out_ctx, dci);
-+		dma = dev->out_ctx->dma +
-+		      dci * CTX_SIZE(usbssp_data->hcc_params);
-+		seq_printf(s, "%pad: %s\n", &dma,
-+			   usbssp_decode_ep_context(ep_ctx->ep_info,
-+					ep_ctx->ep_info2, ep_ctx->deq,
-+					ep_ctx->tx_info));
++	if (usbssp_data->gadget_driver && usbssp_data->gadget_driver->resume) {
++		spin_unlock(&usbssp_data->lock);
++		usbssp_data->gadget_driver->resume(&usbssp_data->gadget);
++		spin_lock(&usbssp_data->lock);
 +	}
-+
-+	return 0;
 +}
 +
-+static int usbssp_device_name_show(struct seq_file *s, void *unused)
++static void usbssp_reset_gadget(struct usbssp_udc *usbssp_data)
 +{
-+	struct usbssp_slot_priv *priv = s->private;
-+	struct usbssp_device *dev = priv->dev;
-+
-+	seq_printf(s, "%s\n", dev_name(&dev->gadget->dev));
-+
-+	return 0;
-+}
-+
-+static struct usbssp_file_map context_files[] = {
-+	{"name",	 usbssp_device_name_show, },
-+	{"slot-context", usbssp_slot_context_show, },
-+	{"ep-context",	 usbssp_endpoint_context_show, },
-+};
-+
-+static int usbssp_context_open(struct inode *inode, struct file *file)
-+{
-+	int i;
-+	struct usbssp_file_map *f_map;
-+	const char *file_name = file_dentry(file)->d_iname;
-+
-+	for (i = 0; i < ARRAY_SIZE(context_files); i++) {
-+		f_map = &context_files[i];
-+
-+		if (strcmp(f_map->name, file_name) == 0)
-+			break;
-+	}
-+
-+	return single_open(file, f_map->show, inode->i_private);
-+}
-+
-+static const struct file_operations usbssp_context_fops = {
-+	.open		= usbssp_context_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static void usbssp_debugfs_create_files(struct usbssp_udc *usbssp_data,
-+					struct usbssp_file_map *files,
-+					size_t nentries, void *data,
-+					struct dentry *parent,
-+					const struct file_operations *fops)
-+{
-+	int i;
-+
-+	for (i = 0; i < nentries; i++)
-+		debugfs_create_file(files[i].name, 0444, parent, data, fops);
-+}
-+
-+static struct dentry *usbssp_debugfs_create_ring_dir(struct usbssp_udc
-+						     *usbssp_data,
-+						     struct usbssp_ring **ring,
-+						     const char *name,
-+						     struct dentry *parent)
-+{
-+	struct dentry *dir;
-+
-+	dir = debugfs_create_dir(name, parent);
-+	usbssp_debugfs_create_files(usbssp_data, ring_files,
-+			ARRAY_SIZE(ring_files), ring, dir, &usbssp_ring_fops);
-+
-+	return dir;
-+}
-+
-+static void usbssp_debugfs_create_context_files(struct usbssp_udc *usbssp_data,
-+						struct dentry *parent,
-+						int slot_id)
-+{
-+	struct usbssp_device	*dev = &usbssp_data->devs;
-+
-+	usbssp_debugfs_create_files(usbssp_data, context_files,
-+			ARRAY_SIZE(context_files), dev->debugfs_private,
-+			parent, &usbssp_context_fops);
-+}
-+
-+void usbssp_debugfs_create_endpoint(struct usbssp_udc *usbssp_data,
-+				    struct usbssp_device *dev,
-+				    int ep_index)
-+{
-+	struct usbssp_ep_priv *epriv;
-+	struct usbssp_slot_priv *spriv = dev->debugfs_private;
-+
-+	if (spriv->eps[ep_index])
++	if (!usbssp_data->gadget_driver)
 +		return;
 +
-+	epriv = kzalloc(sizeof(*epriv), GFP_KERNEL);
-+	if (!epriv)
-+		return;
-+
-+	snprintf(epriv->name, sizeof(epriv->name), "ep%02d", ep_index);
-+	epriv->root = usbssp_debugfs_create_ring_dir(usbssp_data,
-+				&dev->eps[ep_index].ring, epriv->name,
-+				spriv->root);
-+	spriv->eps[ep_index] = epriv;
++	if (usbssp_data->gadget.speed != USB_SPEED_UNKNOWN) {
++		spin_unlock(&usbssp_data->lock);
++		usb_gadget_udc_reset(&usbssp_data->gadget,
++				usbssp_data->gadget_driver);
++		spin_lock(&usbssp_data->lock);
++	}
 +}
 +
-+void usbssp_debugfs_remove_endpoint(struct usbssp_udc *usbssp_data,
-+				    struct usbssp_device *dev,
-+				    int ep_index)
++void usbssp_gadget_disconnect_interrupt(struct usbssp_udc *usbssp_data)
 +{
-+	struct usbssp_ep_priv *epriv;
-+	struct usbssp_slot_priv *spriv = dev->debugfs_private;
-+
-+	if (!spriv || !spriv->eps[ep_index])
-+		return;
-+
-+	epriv = spriv->eps[ep_index];
-+	debugfs_remove_recursive(epriv->root);
-+	spriv->eps[ep_index] = NULL;
-+	kfree(epriv);
++	usbssp_disconnect_gadget(usbssp_data);
 +}
 +
-+void usbssp_debugfs_create_slot(struct usbssp_udc *usbssp_data, int slot_id)
++
++void usbssp_gadget_reset_interrupt(struct usbssp_udc *usbssp_data)
 +{
-+	struct usbssp_slot_priv *priv;
-+	struct usbssp_device *dev = &usbssp_data->devs;
-+
-+	priv = kzalloc(sizeof(*priv), GFP_ATOMIC);
-+	if (!priv)
-+		return;
-+
-+	snprintf(priv->name, sizeof(priv->name), "%02d", slot_id);
-+	priv->root = debugfs_create_dir(priv->name, usbssp_data->debugfs_slots);
-+	priv->dev = dev;
-+	dev->debugfs_private = priv;
-+
-+	usbssp_debugfs_create_ring_dir(usbssp_data, &dev->eps[0].ring,
-+			"ep00", priv->root);
-+
-+	usbssp_debugfs_create_context_files(usbssp_data, priv->root, slot_id);
++	usbssp_reset_gadget(usbssp_data);
++	switch (usbssp_data->gadget.speed) {
++	case USB_SPEED_SUPER_PLUS:
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(512);
++		usbssp_data->gadget.ep0->maxpacket = 512;
++		break;
++	case USB_SPEED_SUPER:
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(512);
++		usbssp_data->gadget.ep0->maxpacket = 512;
++		break;
++	case USB_SPEED_HIGH:
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(64);
++		usbssp_data->gadget.ep0->maxpacket = 64;
++		break;
++	case USB_SPEED_FULL:
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(64);
++		usbssp_data->gadget.ep0->maxpacket = 64;
++		break;
++	case USB_SPEED_LOW:
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(8);
++		usbssp_data->gadget.ep0->maxpacket = 8;
++		break;
++	default:
++		break;
++	}
 +}
-+
-+void usbssp_debugfs_remove_slot(struct usbssp_udc *usbssp_data, int slot_id)
-+{
-+	int i;
-+	struct usbssp_slot_priv *priv;
-+	struct usbssp_device *dev = &usbssp_data->devs;
-+
-+	if (!dev || !dev->debugfs_private)
-+		return;
-+
-+	priv = dev->debugfs_private;
-+
-+	debugfs_remove_recursive(priv->root);
-+
-+	for (i = 0; i < 31; i++)
-+		kfree(priv->eps[i]);
-+
-+	kfree(priv);
-+	dev->debugfs_private = NULL;
-+}
-+
-+void usbssp_debugfs_init(struct usbssp_udc *usbssp_data)
-+{
-+	struct device *dev =  usbssp_data->dev;
-+
-+	usbssp_data->debugfs_root = debugfs_create_dir(dev_name(dev),
-+					usbssp_debugfs_root);
-+
-+	INIT_LIST_HEAD(&usbssp_data->regset_list);
-+
-+	usbssp_debugfs_regset(usbssp_data,
-+			0, usbssp_cap_regs, ARRAY_SIZE(usbssp_cap_regs),
-+			usbssp_data->debugfs_root, "reg-cap");
-+
-+	usbssp_debugfs_regset(usbssp_data,
-+			HC_LENGTH(readl(&usbssp_data->cap_regs->hc_capbase)),
-+			usbssp_op_regs, ARRAY_SIZE(usbssp_op_regs),
-+			usbssp_data->debugfs_root, "reg-op");
-+
-+	usbssp_debugfs_regset(usbssp_data,
-+			readl(&usbssp_data->cap_regs->run_regs_off) & RTSOFF_MASK,
-+			usbssp_runtime_regs, ARRAY_SIZE(usbssp_runtime_regs),
-+			usbssp_data->debugfs_root, "reg-runtime");
-+
-+	usbssp_debugfs_extcap_regset(usbssp_data, USBSSP_EXT_CAPS_PROTOCOL,
-+			usbssp_extcap_protocol,
-+			ARRAY_SIZE(usbssp_extcap_protocol),
-+			"reg-ext-protocol");
-+
-+	usbssp_debugfs_create_ring_dir(usbssp_data, &usbssp_data->cmd_ring,
-+			"command-ring",
-+			usbssp_data->debugfs_root);
-+
-+	usbssp_debugfs_create_ring_dir(usbssp_data, &usbssp_data->event_ring,
-+			"event-ring",
-+			usbssp_data->debugfs_root);
-+
-+	usbssp_data->debugfs_slots = debugfs_create_dir("devices",
-+			usbssp_data->debugfs_root);
-+}
-+
-+void usbssp_debugfs_exit(struct usbssp_udc *usbssp_data)
-+{
-+	struct usbssp_regset *rgs, *tmp;
-+
-+	debugfs_remove_recursive(usbssp_data->debugfs_root);
-+	usbssp_data->debugfs_root = NULL;
-+	usbssp_data->debugfs_slots = NULL;
-+
-+	list_for_each_entry_safe(rgs, tmp, &usbssp_data->regset_list, list)
-+		usbssp_debugfs_free_regset(rgs);
-+}
-+
-+void __init usbssp_debugfs_create_root(void)
-+{
-+	usbssp_debugfs_root = debugfs_create_dir("usbssp", usb_debug_root);
-+}
-+
-+void __exit usbssp_debugfs_remove_root(void)
-+{
-+	debugfs_remove_recursive(usbssp_debugfs_root);
-+	usbssp_debugfs_root = NULL;
-+}
-diff --git a/drivers/usb/usbssp/gadget-debugfs.h b/drivers/usb/usbssp/gadget-debugfs.h
-new file mode 100644
-index 000000000000..53adb028e7f2
---- /dev/null
-+++ b/drivers/usb/usbssp/gadget-debugfs.h
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * USBSSP device controller driver
-+ *
-+ * Copyright (C) 2018 Cadence.
-+ *
-+ * Author: Pawel Laszczak
-+ * Some code borrowed from the Linux XHCI driver.
-+ */
-+
-+#ifndef __LINUX_USBSSP_DEBUGFS_H
-+#define __LINUX_USBSSP_DEBUGFS_H
-+
-+#include <linux/debugfs.h>
-+
-+#define DEBUGFS_NAMELEN 32
-+
-+#define REG_CAPLENGTH		0x00
-+#define REG_HCSPARAMS1		0x04
-+#define REG_HCSPARAMS2		0x08
-+#define REG_HCSPARAMS3		0x0c
-+#define REG_HCCPARAMS1		0x10
-+#define REG_DOORBELLOFF		0x14
-+#define REG_RUNTIMEOFF		0x18
-+#define REG_HCCPARAMS2		0x1c
-+
-+#define	REG_USBCMD		0x00
-+#define REG_USBSTS		0x04
-+#define REG_PAGESIZE		0x08
-+#define REG_DNCTRL		0x14
-+#define REG_CRCR		0x18
-+#define REG_DCBAAP_LOW		0x30
-+#define REG_DCBAAP_HIGH		0x34
-+#define REG_CONFIG		0x38
-+
-+#define REG_MFINDEX		0x00
-+#define REG_IR0_IMAN		0x20
-+#define REG_IR0_IMOD		0x24
-+#define REG_IR0_ERSTSZ		0x28
-+#define REG_IR0_ERSTBA_LOW	0x30
-+#define REG_IR0_ERSTBA_HIGH	0x34
-+#define REG_IR0_ERDP_LOW	0x38
-+#define REG_IR0_ERDP_HIGH	0x3c
-+
-+#define REG_EXTCAP_USBLEGSUP	0x00
-+#define REG_EXTCAP_USBLEGCTLSTS	0x04
-+
-+#define REG_EXTCAP_REVISION	0x00
-+#define REG_EXTCAP_NAME		0x04
-+#define REG_EXTCAP_PORTINFO	0x08
-+#define REG_EXTCAP_PORTTYPE	0x0c
-+#define REG_EXTCAP_MANTISSA1	0x10
-+#define REG_EXTCAP_MANTISSA2	0x14
-+#define REG_EXTCAP_MANTISSA3	0x18
-+#define REG_EXTCAP_MANTISSA4	0x1c
-+#define REG_EXTCAP_MANTISSA5	0x20
-+#define REG_EXTCAP_MANTISSA6	0x24
-+
-+#define REG_EXTCAP_DBC_CAPABILITY	0x00
-+#define REG_EXTCAP_DBC_DOORBELL		0x04
-+#define REG_EXTCAP_DBC_ERSTSIZE		0x08
-+#define REG_EXTCAP_DBC_ERST_LOW		0x10
-+#define REG_EXTCAP_DBC_ERST_HIGH	0x14
-+#define REG_EXTCAP_DBC_ERDP_LOW		0x18
-+#define REG_EXTCAP_DBC_ERDP_HIGH	0x1c
-+#define REG_EXTCAP_DBC_CONTROL		0x20
-+#define REG_EXTCAP_DBC_STATUS		0x24
-+#define REG_EXTCAP_DBC_PORTSC		0x28
-+#define REG_EXTCAP_DBC_CONT_LOW		0x30
-+#define REG_EXTCAP_DBC_CONT_HIGH	0x34
-+#define REG_EXTCAP_DBC_DEVINFO1		0x38
-+#define REG_EXTCAP_DBC_DEVINFO2		0x3c
-+
-+#define dump_register(nm)		\
-+{					\
-+	.name	= __stringify(nm),	\
-+	.offset	= REG_ ##nm,		\
-+}
-+
-+struct usbssp_regset {
-+	char			name[DEBUGFS_NAMELEN];
-+	struct debugfs_regset32	regset;
-+	size_t			nregs;
-+	struct dentry		*parent;
-+	struct list_head	list;
-+};
-+
-+struct usbssp_file_map {
-+	const char		*name;
-+	int			(*show)(struct seq_file *s, void *unused);
-+};
-+
-+struct usbssp_ep_priv {
-+	char			name[DEBUGFS_NAMELEN];
-+	struct dentry		*root;
-+};
-+
-+struct usbssp_slot_priv {
-+	char			name[DEBUGFS_NAMELEN];
-+	struct dentry		*root;
-+	struct usbssp_ep_priv	*eps[31];
-+	struct usbssp_device	*dev;
-+};
-+
-+#ifdef CONFIG_DEBUG_FS
-+void usbssp_debugfs_init(struct usbssp_udc *usbssp_data);
-+void usbssp_debugfs_exit(struct usbssp_udc *usbssp_data);
-+void __init usbssp_debugfs_create_root(void);
-+void __exit usbssp_debugfs_remove_root(void);
-+void usbssp_debugfs_create_slot(struct usbssp_udc *usbssp_data, int slot_id);
-+void usbssp_debugfs_remove_slot(struct usbssp_udc *usbssp_data, int slot_id);
-+void usbssp_debugfs_create_endpoint(struct usbssp_udc *usbssp_data,
-+				    struct usbssp_device *dev_priv,
-+				    int ep_index);
-+void usbssp_debugfs_remove_endpoint(struct usbssp_udc *usbssp_data,
-+				    struct usbssp_device *dev_priv,
-+				    int ep_index);
-+#else
-+static inline void usbssp_debugfs_init(struct usbssp_udc *usbssp_data) { }
-+static inline void usbssp_debugfs_exit(struct usbssp_udc *usbssp_data) { }
-+static inline void __init usbssp_debugfs_create_root(void) { }
-+static inline void __exit usbssp_debugfs_remove_root(void) { }
-+static inline void usbssp_debugfs_create_slot(struct usbssp_udc *usbssp_data,
-+					      int s) { }
-+static inline void usbssp_debugfs_remove_slot(struct usbssp_udc *xusbssp_data,
-+					      int s) { }
-+static inline void
-+usbssp_debugfs_create_endpoint(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_device *dev_priv,
-+			       int ep_index) { }
-+static inline void
-+usbssp_debugfs_remove_endpoint(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_device *dev_priv,
-+			       int ep_index) { }
-+#endif /* CONFIG_DEBUG_FS */
-+#endif /*__LINUX_USBSSP_DEBUGFS_H*/
 -- 
 2.17.1
 
