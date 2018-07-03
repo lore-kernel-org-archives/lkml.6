@@ -2,112 +2,76 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F424C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC026C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C8924791
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C8924791
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6A7CA24791
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 21:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A7CA24791
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753185AbeGCVCZ (ORCPT
+        id S1753290AbeGCVCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 17:02:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45510 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753111AbeGCVCX (ORCPT
+        Tue, 3 Jul 2018 17:02:43 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:40325 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753076AbeGCVCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 17:02:23 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faSRE-0002qH-Bh; Tue, 03 Jul 2018 23:02:16 +0200
-Date:   Tue, 3 Jul 2018 23:02:15 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-cc:     "will.deacon@arm.com" <will.deacon@arm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "Hocko, Michal" <MHocko@suse.com>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 2/3] ioremap: Update pgtable free interfaces with
- addr
-In-Reply-To: <1530287995.14039.361.camel@hpe.com>
-Message-ID: <alpine.DEB.2.21.1807032301140.1816@nanos.tec.linutronix.de>
-References: <20180627141348.21777-1-toshi.kani@hpe.com>  <20180627141348.21777-3-toshi.kani@hpe.com>  <20180627155632.GH30631@arm.com> <1530115885.14039.295.camel@hpe.com>  <20180629122358.GC17859@arm.com> <1530287995.14039.361.camel@hpe.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 3 Jul 2018 17:02:42 -0400
+Received: by mail-yw0-f194.google.com with SMTP id p129-v6so1191065ywg.7;
+        Tue, 03 Jul 2018 14:02:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+8rXZGIpX/10zuxWhU7tABwyqZaUaHvZ2kptj+UHXEQ=;
+        b=N2RiOg7ht8+iTFa6RybBZspzOvk4e2LpRyS6Mn3RAN2F+RQ79ao/LiOw0MHSBy52CQ
+         VCLkh2cP69X9mfLPd6UnN/ZIYaQtdbXOxoiTVvXw9TRC4zYklqhM5I+VwYRbJ/nZa43V
+         zehKbOdz580i9b89CtR7xUtbHNiExa6h0AxlbIoisUCLpkuCYCZvc/7Zb5K2EnpD4KxU
+         GEVaUTluwuKtc8K3aLHKkdrG9BEO24KkkMbYKWvFp4b1P0qizN6BHy0aaeS6okERIyi5
+         8Sx+uzXU3dhF/mmJdpFMz+DZ3uVlp/yWBxRfr/mjO1lXzS5NUQA5rl5BSlpTqzbPdjPW
+         6Y4A==
+X-Gm-Message-State: APt69E3xs6T4KksxfmcZoT5+VF+RpFMi7mbJyoib56dWDML2uEKs2ulO
+        nL1cErDXSUWwHYE1JJ3PPA==
+X-Google-Smtp-Source: AAOMgpdTviDuUJMSeVGeMGZxzB+/spdVAjOEoJY4lHkQxsqaKjNuTda0zFT9oy7C8NaxBdNSYhLBSw==
+X-Received: by 2002:a0d:d181:: with SMTP id t123-v6mr16196579ywd.227.1530651761442;
+        Tue, 03 Jul 2018 14:02:41 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id 204-v6sm361414yws.4.2018.07.03.14.02.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 03 Jul 2018 14:02:40 -0700 (PDT)
+Date:   Tue, 3 Jul 2018 15:02:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+Cc:     thierry.reding@gmail.com, mark.rutland@arm.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Add DataImage, Inc. vendor prefix
+Message-ID: <20180703210238.GA31190@rob-hp-laptop>
+References: <1529930490-11874-1-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1529930490-11874-1-git-send-email-michal.vokac@ysoft.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Jun 2018, Kani, Toshi wrote:
-> On Fri, 2018-06-29 at 13:23 +0100, Will Deacon wrote:
-> > Hi Toshi, Thomas,
-> > 
-> > On Wed, Jun 27, 2018 at 04:13:22PM +0000, Kani, Toshi wrote:
-> > > On Wed, 2018-06-27 at 16:56 +0100, Will Deacon wrote:
-> > > > On Wed, Jun 27, 2018 at 08:13:47AM -0600, Toshi Kani wrote:
-> > > > > From: Chintan Pandya <cpandya@codeaurora.org>
-> > > > > 
-> > > > > The following kernel panic was observed on ARM64 platform due to a stale
-> > > > > TLB entry.
-> > > > > 
-> > > > >  1. ioremap with 4K size, a valid pte page table is set.
-> > > > >  2. iounmap it, its pte entry is set to 0.
-> > > > >  3. ioremap the same address with 2M size, update its pmd entry with
-> > > > >     a new value.
-> > > > >  4. CPU may hit an exception because the old pmd entry is still in TLB,
-> > > > >     which leads to a kernel panic.
-> > > > > 
-> > > > > Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
-> > > > > table") has addressed this panic by falling to pte mappings in the above
-> > > > > case on ARM64.
-> > > > > 
-> > > > > To support pmd mappings in all cases, TLB purge needs to be performed
-> > > > > in this case on ARM64.
-> > > > > 
-> > > > > Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
-> > > > > so that TLB purge can be added later in seprate patches.
-> > > > 
-> > > > So I acked v13 of Chintan's series posted here:
-> > > > 
-> > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/582953.html
-> > > > 
-> > > > any chance this lot could all be merged together, please?
-> > > 
-> > > Chintan's patch 2/3 and 3/3 apply cleanly on top of my series. Can you
-> > > please coordinate with Thomas on the logistics?
-> > 
-> > Sure. I guess having this series on a common branch that I can pull into
-> > arm64 and apply Chintan's other patches on top would work.
-> > 
-> > How does that sound?
+On Mon, Jun 25, 2018 at 02:41:29PM +0200, Michal Vokáč wrote:
+> DataImage is a Taiwan-based manufacturer of LCD panels.
 > 
-> Should this go thru -mm tree then?
-> 
-> Andrew, Thomas, what do you think? 
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-I just pick it up and provide Will a branch to pull that lot from.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Thanks,
-
-	tglx
