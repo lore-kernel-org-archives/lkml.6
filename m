@@ -2,71 +2,85 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4F3C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4788EC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C2924E2C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 05:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB2A22B3E
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 06:05:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgI5KR2K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C2924E2C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5AwKwav"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB2A22B3E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754157AbeGCF7U (ORCPT
+        id S1754195AbeGCGFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 01:59:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45416 "EHLO mail.kernel.org"
+        Tue, 3 Jul 2018 02:05:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754001AbeGCF7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 01:59:19 -0400
-Received: from dragon (unknown [104.237.91.44])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1753789AbeGCGFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 02:05:08 -0400
+Received: from localhost.localdomain (unknown [171.61.87.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E97E24E2B;
-        Tue,  3 Jul 2018 05:59:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9125E2246B;
+        Tue,  3 Jul 2018 06:05:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1530597558;
-        bh=wE1XK1pTy91b7wzXE2BvW7G8cYU/HInLKutkJKDYjtw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TgI5KR2KeknYdLcevrcYxWYg2EJ4L34uwxiqfbiOjBnpeFIRlZYigo7r+ebFfBVu5
-         I0rlVbEOvFyCFUPpbnz1LonnwWemu/Atf/72FRvk87w6a35p6KaUCbmLeJd4G1wib6
-         b0zOVX/VieEhe+5f0nclp+enLpYG07Z55wq6+bqc=
-Date:   Tue, 3 Jul 2018 13:59:04 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv2 1/2] ARM: dts: imx53: PPD: Add fixed-regulator
- information
-Message-ID: <20180703055902.GE4348@dragon>
-References: <20180628163639.1078-1-sebastian.reichel@collabora.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628163639.1078-1-sebastian.reichel@collabora.co.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        s=default; t=1530597908;
+        bh=0/zuTleqSsnjMnY+CDspVcE5HFctMHG1Cg/NpX5NucE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=o5AwKwavi1MX/BiPN/rKDzu5/7FctJpfeTGapiDGGJU+j62MroW/VVNTSrMcFnSCI
+         f1MN9bgRy8f4VFrfwmKmuIa7tCn2NH7DWN4Z49UqDpB3phch5FTWPbfVasyxV7XXfz
+         Jz3ESMBQ/7cC4CBFg92bCqV0lToWwxPO4cM0lkWo=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v3 0/6] crypto: Add Qcom PRNG support
+Date:   Tue,  3 Jul 2018 11:34:28 +0530
+Message-Id: <20180703060434.19293-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 28, 2018 at 06:36:38PM +0200, Sebastian Reichel wrote:
-> Add information about 3V3 power rail to avoid kernel warnings,
-> that dummy regulators have been added.
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+This series removes the hwrng qcom driver and replaces it with crypto qcom
+driver and then adds support for Execution Environment (EE) found in v2
+version of the hardware and ACPI support for these
 
-I changed subject prefix to 'ARM: dts: imx53-ppd: ...', and applied
-both.
+Timur Tabi (1):
+  crypto: qcom: Add ACPI support
 
-Shawn
+Vinod Koul (5):
+  hwrng: remove msm hw_random driver
+  dt-bindings: crypto: Move prng binding to crypto
+  crypto: Add Qcom prng driver
+  dt-bindings: crypto: Add new compatible qcom,prng-ee
+  crypto: qcom: Add support for prng-ee
+
+ .../bindings/{rng => crypto}/qcom,prng.txt         |   4 +-
+ drivers/char/hw_random/Kconfig                     |  13 --
+ drivers/char/hw_random/Makefile                    |   1 -
+ drivers/char/hw_random/msm-rng.c                   | 183 ----------------
+ drivers/crypto/Kconfig                             |  11 +
+ drivers/crypto/Makefile                            |   1 +
+ drivers/crypto/qcom-rng.c                          | 244 +++++++++++++++++++++
+ 7 files changed, 259 insertions(+), 198 deletions(-)
+ rename Documentation/devicetree/bindings/{rng => crypto}/qcom,prng.txt (73%)
+ delete mode 100644 drivers/char/hw_random/msm-rng.c
+ create mode 100644 drivers/crypto/qcom-rng.c
+
+-- 
+2.14.4
+
