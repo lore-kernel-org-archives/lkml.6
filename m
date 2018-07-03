@@ -2,157 +2,150 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35E0C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BE5C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7A82244D
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D08382244D
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 07:21:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHI6fezu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7A82244D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dz/vszoH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08382244D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933313AbeGCHV3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 03:21:29 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46747 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932802AbeGCHV0 (ORCPT
+        id S933120AbeGCHVQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 03:21:16 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43321 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932734AbeGCHVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 03:21:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u6-v6so690896lju.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Jul 2018 00:21:26 -0700 (PDT)
+        Tue, 3 Jul 2018 03:21:08 -0400
+Received: by mail-lf0-f65.google.com with SMTP id m12-v6so734563lfc.10;
+        Tue, 03 Jul 2018 00:21:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mAhAb6Gx5VvTr8G6mqKdwiVj+JSA81/HtN577BT8Riw=;
-        b=CHI6fezu+y/PCQXI+UoK/SChwcol8AbaQ7IUN17CiTW9K5vFM6c+RIVwP6PvViHu4M
-         YeJbe5cTTbGl9rcMbHBeILScixsC8Bt3+cioVP5CQeP53Ko1Abvq2GRiVcwKHsCA9fEK
-         Dz9R/68dcH8rLgd45Hub5EOxpTSF0RTjzZBZw=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/Gc7xJ5dE/rSLF8g/aKS5HaMl9JkU1C85YvWz97Mjj0=;
+        b=Dz/vszoHVnaaBQzopMEhvOpWRc2bWjHnfR2rNMQDir5Iq0ws2WLhKsakrup6WYzBLc
+         Blo04ljAsshxn1xZwa3YbZJ5pY5BuI8wFZsKZVbhOrbQf4oGdZnMtNAi5Ldr1Fuo9s1P
+         EDN03/uH8Gk5et39durkJbipJr6hRwXpejz9sA4y+uQF7DBCMOpX0BNsapqwhyD+oRtD
+         JwjfyOBHXFTdV78r/oLCUgz/TCnwOY9RKkX4j+LnJrFXO3bkpclHcPNzgQWm6jdyaHok
+         yvUMZr1Dd/xoI866K+f9Yh0t9TWbCpOBsvqUh7+AsY9ZOu5iOU4zc4Xevj6F6+bSB5Vq
+         t77Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=mAhAb6Gx5VvTr8G6mqKdwiVj+JSA81/HtN577BT8Riw=;
-        b=nRs7M5tXrII+T+WfYrfkTaD96JQbzdVGqNIbs+hUFxiQBwdnZGFzccx01vVy/VEmGk
-         ddO78UoPLz4h0LwL3Tuv1bwqN4+RcB2v/hjZCaMBjPLwFCbqZlb4gGOi+qNoEk4VtAdK
-         3+LEp7zUs8uuwSNcN/JxnirwUaJbdG55pz3ZbXiyFBNLnKM26IF/3aot6a69ezu4gIZ5
-         auoUs2uHfNdSTyvqfRK58qMgOvcirVBrXdlS9Sb/bG2erxYuzMfTiZPZSVgfRAT7fZIH
-         tEhhz+ksUSXo+b2msvLMmLhGo5WODWOy7kqffrp/8SN+IsB+s7ag2nCl5lRDUWmN5EHm
-         PiOg==
-X-Gm-Message-State: APt69E2RGK7dNTBBT0N+1A4gCeECAbacZJohVujOiukW/cXqksMBSgtI
-        p2wO78bsGmHMatzCE1TTnreKWw==
-X-Google-Smtp-Source: AAOMgpeCCAXJIsL1a5h9Q2ldmX1+fUS5gAla/1bZDU8h4J5Eqdz0q0JNmkE5HzcnPEyti8YJXbrORw==
-X-Received: by 2002:a2e:9c82:: with SMTP id x2-v6mr11304663lji.131.1530602485572;
-        Tue, 03 Jul 2018 00:21:25 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id n17-v6sm67580ljg.55.2018.07.03.00.21.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 03 Jul 2018 00:21:25 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs
-Date:   Tue,  3 Jul 2018 09:20:33 +0200
-Message-Id: <20180703072034.20213-7-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180703072034.20213-1-niklas.cassel@linaro.org>
-References: <20180703072034.20213-1-niklas.cassel@linaro.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/Gc7xJ5dE/rSLF8g/aKS5HaMl9JkU1C85YvWz97Mjj0=;
+        b=cEWvZaoWISWehFBA7BHQZEpbX85lJvKVjK3K5xl++lkEXMSBeMj2ZTwLDVvxKs0DAq
+         81xNR7XBHg4GRv9OuCzNMJW0Hp6TLHWLgba+leiCVs9+hdRk0wqEqWoXy4DcnbQxQP8e
+         NfQo2Yq0B4NaLpEkNIRL9zW1/KIAi8WBE6SrNnBLXmgzir3uZ33BPBTX64jbvj74Hdyk
+         jsgR4to54kYTV6WmrR2DQ3RU208qZDenyCaZzpFMofPKtgnztAT+FtrRBK1Ne0ysoHuw
+         48WKMUl7F2FAMX+Ud39xxNJFaQ69ED0cu/1gNXnnnENsefIejb3AvSGJIvNlftZg6DgP
+         NhZg==
+X-Gm-Message-State: APt69E22GjemGaf9p+rrg7oB+PATvX4FgGd3FSrAPVpQLzKhZxJb8b73
+        WvPguHHZaGgSJcwgAF88k5PPPDDD
+X-Google-Smtp-Source: AAOMgpfw9mURmGJUjvbAd8nvT4jjA1DfSB4U70KUNzYJpEKVNz/ZTKohm5m//C9Ru6KAa4In1nVzvg==
+X-Received: by 2002:a19:9cca:: with SMTP id f193-v6mr1075515lfe.60.1530602466917;
+        Tue, 03 Jul 2018 00:21:06 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm111968lfs.26.2018.07.03.00.21.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Jul 2018 00:21:05 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1faFcQ-00032R-7H; Tue, 03 Jul 2018 09:20:58 +0200
+Date:   Tue, 3 Jul 2018 09:20:58 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        alan@linux.intel.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180703072058.GN9802@localhost>
+References: <20180601082259.17563-1-johan@kernel.org>
+ <20180628120103.GA28131@kroah.com>
+ <20180629094607.GC31718@amd>
+ <20180629114646.GU629@localhost>
+ <20180629120554.GA2477@amd>
+ <20180629120914.GA9802@localhost>
+ <20180702193226.GB30798@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180702193226.GB30798@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
-we unconditionally include the soc/qcom/Makefile.
+On Mon, Jul 02, 2018 at 09:32:26PM +0200, Pavel Machek wrote:
+> On Fri 2018-06-29 14:09:14, Johan Hovold wrote:
+> > On Fri, Jun 29, 2018 at 02:05:54PM +0200, Pavel Machek wrote:
+> > > On Fri 2018-06-29 13:46:46, Johan Hovold wrote:
+> > > > On Fri, Jun 29, 2018 at 11:46:07AM +0200, Pavel Machek wrote:
+> > > > > 
+> > > > > > > Finally, note that documentation (including kerneldoc) remains to be
+> > > > > > > written, but hopefully this will not hinder review given that the
+> > > > > > > current interfaces are fairly self-describing.
+> > > > > > 
+> > > > > > This all looks great.  Thanks for doing this work and adding a new
+> > > > > > subsystem for something that has been asked for for many years.
+> > > > > > 
+> > > > > > All now merged in my tree, nice job!
+> > > > > 
+> > > > > I don't think discussion was finished on this one.
+> > > > > 
+> > > > > In particular, we agreed that /dev/gnssrawX would be better device
+> > > > > name, so that we still have place where to put proper abstraction
+> > > > > layer in future.
+> > > > 
+> > > > I did not agree with you on that. I said we could consider that name if
+> > > > this was to be changed at all, which I do not think is necessary for
+> > > > the reasons spelled out in this thread.
+> > > 
+> > > So, again: there's nothing gnss specific in those patches. It does not
+> > > know about the format of the data passed around. (Best you can claim
+> > > that somehow data flow characteristics are unique to gnss.) And this
+> > > takes namespace needed for real gnss subsystem. Please don't do it.
+> > 
+> > This is the real gnss subsystem. Get over it.
+> 
+> Congratulations. You have created gnss subsystem that has 0 lines of
+> code that are gnss-specific.
 
-This opens up the possibility to compile test the code even when building
-for other architectures.
+We have been through this already.
 
-Allow COMPILE_TEST for all qcom SoC Kconfigs, except for two Kconfigs
-that depend on QCOM_SCM, since that triggers lots of build errors in
-qcom_scm.
+> This is not real gnss subsystem. This is pipe that passes data,
+> similar to /dev/psaux or mouse on /dev/ttyS0. Sooner or later, real
+> gnss subsystem (with unified interface) will be needed, as it was for
+> input, and this "pipe and gpio" thing should not hog required
+> namespace.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/soc/qcom/Kconfig | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+It is still the gnss subsystem with a raw interface to the underlying
+protocols. As I've said repeatedly, *if* someone ever comes up with a
+way of abstracting these protocols, and can make the case this is really
+something we want to handle in the kernel, we would still be using the
+same drivers for managing power and I/O. Get it? It's the same
+subsystem, you'd just be adding a second higher-level interface (cf.
+hiddev and hidraw).
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index ac657164a136..fd09b95be0ba 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -33,7 +33,7 @@ config QCOM_GLINK_SSR
- 
- config QCOM_GSBI
-         tristate "QCOM General Serial Bus Interface"
--        depends on ARCH_QCOM
-+        depends on ARCH_QCOM || COMPILE_TEST
-         select MFD_SYSCON
-         help
-           Say y here to enable GSBI support.  The GSBI provides control
-@@ -42,7 +42,7 @@ config QCOM_GSBI
- 
- config QCOM_LLCC
- 	tristate "Qualcomm Technologies, Inc. LLCC driver"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	help
- 	  Qualcomm Technologies, Inc. platform specific
- 	  Last Level Cache Controller(LLCC) driver. This provides interfaces
-@@ -73,7 +73,8 @@ config QCOM_PM
- 
- config QCOM_QMI_HELPERS
- 	tristate
--	depends on ARCH_QCOM && NET
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on NET
- 	help
- 	  Helper library for handling QMI encoded messages.  QMI encoded
- 	  messages are used in communication between the majority of QRTR
-@@ -104,7 +105,7 @@ config QCOM_RPMH
- 
- config QCOM_SMEM
- 	tristate "Qualcomm Shared Memory Manager (SMEM)"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on HWSPINLOCK
- 	help
- 	  Say y here to enable support for the Qualcomm Shared Memory Manager.
-@@ -113,7 +114,7 @@ config QCOM_SMEM
- 
- config QCOM_SMD_RPM
- 	tristate "Qualcomm Resource Power Manager (RPM) over SMD"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
- 	  If you say yes to this option, support will be included for the
-@@ -150,7 +151,7 @@ config QCOM_SMSM
- 
- config QCOM_WCNSS_CTRL
- 	tristate "Qualcomm WCNSS control driver"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
- 	  Client driver for the WCNSS_CTRL SMD channel, used to download nv
-@@ -158,7 +159,7 @@ config QCOM_WCNSS_CTRL
- 
- config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
-           Enable APR IPC protocol support between
--- 
-2.17.1
+So again, all that this comes down to is bike shedding about the device
+node name.
 
+Johan
