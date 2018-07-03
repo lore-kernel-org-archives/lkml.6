@@ -3,95 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D15C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA391C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F86217AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:49:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F86217AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 71EAF217AE
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 18:49:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71EAF217AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934592AbeGCStS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 14:49:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45171 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934465AbeGCStQ (ORCPT
+        id S934631AbeGCStc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 14:49:32 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16560 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934488AbeGCSta (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 14:49:16 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1faQMA-0000zp-KQ; Tue, 03 Jul 2018 20:48:54 +0200
-Date:   Tue, 3 Jul 2018 20:48:54 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Kai Huang <kai.huang@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 02/13] x86/sgx: add SGX definitions to cpufeature
-In-Reply-To: <20180703182118.15024-3-jarkko.sakkinen@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1807032041310.1816@nanos.tec.linutronix.de>
-References: <20180703182118.15024-1-jarkko.sakkinen@linux.intel.com> <20180703182118.15024-3-jarkko.sakkinen@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 3 Jul 2018 14:49:30 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b3bc53a0000>; Tue, 03 Jul 2018 11:49:30 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 03 Jul 2018 11:49:29 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 03 Jul 2018 11:49:29 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 3 Jul
+ 2018 18:49:29 +0000
+Subject: Re: [PATCH v2 5/6] mm: track gup pages with page->dma_pinned_* fields
+To:     Christopher Lameter <cl@linux.com>
+CC:     Jan Kara <jack@suse.cz>, <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20180702005654.20369-1-jhubbard@nvidia.com>
+ <20180702005654.20369-6-jhubbard@nvidia.com>
+ <20180702095331.n5zfz35d3invl5al@quack2.suse.cz>
+ <bb798475-ebf3-7b02-409f-8c4347fa6674@nvidia.com>
+ <010001645d77ee2c-de7fedbd-f52d-4b74-9388-e6435973792b-000000@email.amazonses.com>
+ <f01666d5-8da1-7bea-adfb-c3571a54587a@nvidia.com>
+ <01000164611dacae-5ac25e48-b845-43ef-9992-fc1047d8e0a0-000000@email.amazonses.com>
+ <3c71556f-1d71-873a-6f74-121865568bf7@nvidia.com>
+ <0100016461425062-724aa9d3-d7c1-4fa2-a87b-dc59cc5f7800-000000@email.amazonses.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <2e18c1a3-08a3-abaf-1721-89bc527579ab@nvidia.com>
+Date:   Tue, 3 Jul 2018 11:48:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <0100016461425062-724aa9d3-d7c1-4fa2-a87b-dc59cc5f7800-000000@email.amazonses.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 3 Jul 2018, Jarkko Sakkinen wrote:
-
-Subject: x86/sgx: add SGX definitions to cpufeature
-
-The prefix is bogus. Not everything you touch is SGX just because.
-
-The proper prefix is 'x86/cpufeatures:' 
-The following sentence starts with an uppercase letter.
-
-And with the proper prefix the subject wants to be something like:
-
-  x86/cpufeatures: Add SGX and SGX_LC CPU features
-
-> From: Kai Huang <kai.huang@linux.intel.com>
+On 07/03/2018 10:48 AM, Christopher Lameter wrote:
+> On Tue, 3 Jul 2018, John Hubbard wrote:
 > 
-> Added X86_FEATURE_SGX and X86_FEATURE_SGX_LC definitions that define the
-
-Add the ...
-
-->						definitions that define
-
-That's redundant.
-
-> bits CPUID level 7 bits for determining whether the CPU supports SGX and
-
-bits ... bits ?? 
-
-> launch configuration other than the Intel proprietary key. If this the
-> case, IA32_SGXLEPUBKEYHASHn MSRs (0 < n < 4) are available for defining the
-> root key for enclaves.
+>> The page->_refcount field is used normally, in addition to the dma_pinned_count.
+>> But the problem is that, unless the caller knows what kind of page it is,
+>> the page->dma_pinned_count cannot be looked at, because it is unioned with
+>> page->lru.prev.  page->dma_pinned_flags, at least starting at bit 1, are
+>> safe to look at due to pointer alignment, but now you cannot atomically
+>> count...
+>>
+>> So this seems unsolvable without having the caller specify that it knows the
+>> page type, and that it is therefore safe to decrement page->dma_pinned_count.
+>> I was hoping I'd found a way, but clearly I haven't. :)
 > 
-> Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
+> Try to find some way to indicate that the page is pinned by using some of
+> the existing page flags? There is already an MLOCK flag. Maybe some
+> creativity with that can lead to something (but then the MLOCKed pages are
+> on the unevictable LRU....). cgroups used to have something called struct
+> page_ext. Oh its there in linux/mm/page_ext.c.
+> 
 
-Lacks your SOB
+Yes, that would provide just a touch more cabability: we could both read and
+write a dma-pinned page(_ext) flag safely, instead of only being able to just 
+read.  I'm doubt that that's enough additional information, though. The general
+problem of allowing random put_page() calls to decrement the dma-pinned count (see
+Jan's diagram at the beginning of this thread) cannot be solved by anything less
+than some sort of "who (or which special type of caller, at least) owns this page"
+approach, as far as I can see. The put_user_pages() provides arguably the simplest 
+version of that kind of solution.
 
-Thanks,
+Also, even just using a single bit from page extensions would cost some extra memory, 
+because for example on 64-bit systems many configurations do not need the additional 
+flags that page_ext.h provides, so they return "false" from the page_ext_operations.need() 
+callback. Changing get_user_pages to require page extensions would lead to
+*every* configuration requiring page extensions, so 64-bit users would lose some memory
+for sure. On the other hand, it avoids the "take page off of the LRU" complexity that 
+I've got here. But again, I don't think a single flag, or even a count, would actually 
+solve the problem.
 
-	tglx
+
