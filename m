@@ -2,204 +2,199 @@ Return-Path: <SRS0=3XDn=JT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A405C6778C
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC570C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3842821A89
-	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:13:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="DJhMwElZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3842821A89
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 9112C208E4
+	for <linux-kernel@archiver.kernel.org>; Tue,  3 Jul 2018 15:13:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9112C208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933732AbeGCPNW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 3 Jul 2018 11:13:22 -0400
-Received: from mail-db5eur01on0122.outbound.protection.outlook.com ([104.47.2.122]:52768
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S933930AbeGCPNu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 3 Jul 2018 11:13:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36436 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932693AbeGCPK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Jul 2018 11:10:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MLOWrs0VGv0IenUkzoSttLkZoveSYYRT75RUexG2KNg=;
- b=DJhMwElZLc3PLrW7sfVRD1mJtp7jJR/5j9jiRLyboGELJHNXoYbg+nga470abmoVfTLW1+nNiIGC6n0KBycCYh4J03eoRsfX8zskvHs9YyZQRjfOgBFVt+4unZ78oCDtua8WDE+IuBOBMkVInRlbgsRO46UQPC3pGawYSK2esb4=
-Received: from localhost.localdomain (185.231.240.5) by
- DB6PR0801MB1334.eurprd08.prod.outlook.com (2603:10a6:4:a::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.18; Tue, 3 Jul 2018 15:10:23 +0000
-Subject: [PATCH v8 10/17] list_lru: Pass dst_memcg argument to
- memcg_drain_list_lru_node()
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     vdavydov.dev@gmail.com, shakeelb@google.com,
-        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
-        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
-        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
-        aryabinin@virtuozzo.com, akpm@linux-foundation.org,
-        ktkhai@virtuozzo.com
-Date:   Tue, 03 Jul 2018 18:10:21 +0300
-Message-ID: <153063062118.1818.2761273817739499749.stgit@localhost.localdomain>
-In-Reply-To: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
-References: <153063036670.1818.16010062622751502.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+        id S933578AbeGCPJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Jul 2018 11:09:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B3694AD30;
+        Tue,  3 Jul 2018 15:09:42 +0000 (UTC)
+Subject: Re: [RFC net-next 15/15] net: lora: Add Semtech SX1301
+To:     Mark Brown <broonie@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Jian-Hong Pan <starnight@g.ncu.edu.tw>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Steve deRosier <derosier@gmail.com>, linux-spi@vger.kernel.org,
+        LoRa_Community_Support@semtech.com
+References: <20180701110804.32415-1-afaerber@suse.de>
+ <20180701110804.32415-16-afaerber@suse.de>
+ <20180702161258.GA18744@sirena.org.uk>
+ <4e06cc72-2092-70f3-c801-bf6e4c3cbec2@suse.de>
+ <20180703145022.GA13744@sirena.org.uk>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <809fc546-6012-37f3-9485-cfd8eaf99488@suse.de>
+Date:   Tue, 3 Jul 2018 17:09:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: VI1PR0501CA0028.eurprd05.prod.outlook.com
- (2603:10a6:800:60::14) To DB6PR0801MB1334.eurprd08.prod.outlook.com
- (2603:10a6:4:a::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6b82ac58-213c-4393-caff-08d5e0f71b51
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1334;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;3:6i6srBGFR2xx5K6tMstXgFkqwXY6w6fiF3h57zkkwkjNO4z9nXjtvVtpWOZ3ugo2FfuDUQS1+j94bvXX/gjK9svX1olrR6L5e7ChgTuG1/8EnmquU7ovqhJ7exAb66SYykhbSQrrzyN95pB+grOh8LfcdjNrEB33/S03o8UquFGDMm2OJ8skF3uWoZLRvzQzOY8fPcu8SS9cMuRYEyLaZZ5P2etsgjS2UVshMTnYXNtGGmTsMthoVEgg4vsikyTm;25:pJEt6Xd+M/GfovNDCUFCjNWG1y0o3jOTsl2xbzZ16ZqvQN29WTI9JxONeB1/GOeALWUgUC02rnIylqjApytBYpYhjhZYoqvlT8qjZ0H085mAtYh4Cp7Lctw2ZwXmWu9Dn85kVwHmK7lFCqHxKhtfb0lyNrK8dpkjx5e0polz9mDAtQto+sGlwKmP9ZAtk+yTwpRjpKBmdBkR5mXzngqmj3elb6guix2aElxXw+MYCj1wpLIEF2z2fhue8ctKuj7qsDQLCHAqI/I0mbyAYbn1n9qgaC8TEgAbrfddKYF3KuCqtZfBDhR1KfmU4lEVkcYJR3F1CvcCCaUw2tttc9iogg==;31:cjRmabVwOHDXJCVTH7fD0o6Kgr7ICq39pgbCKHfC2Xpal99a5B6axJKBTwAcXomIVmBzwQmQAOf0lf1yPekyVvNd4u7RuANXxfBeIiVGK6k5SXne8fNn/8/fD2p8KmiOzWM1a+By3Bf3m26Z9tVwCQxGfPypppabR78ihljB+Ow3mbaDIqtteeiac5DYRHq6LZZKqy7ioVHIsdZCRxVD23bDgI7JWA1kUczbpNOebPw=
-X-MS-TrafficTypeDiagnostic: DB6PR0801MB1334:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;20:rTqvRE7A0LiUyfgKvzsvIQ6bwzfGFlM7Rs9nxrNzYwcnQFuXEXwO7x2P4lQ9PVr2l/Cqa+rgEkjShPRrcVygjvr105j/v0vRrSATpeTqwR3902R6bqXdpxxehtRlJihoGbZaeJ7NmCD95wfm/rgCulqw30rPOTAGKiU2ZVTKGqqb06MM791eY0UuxOsVkxMP82Tiol2qJjZsnBTJdm/BvO8Pgb5kljOa2D1DAzfPazcWEqahtwrHtq7n/BmPU+qikRj6iEAG4cGoq6BYAxrPAlPjsCyVcfYkvc5ZnPpQsmdkZlTdMabJYjiS3toDYbzuTUw3dWVd8qEF24A+y821r8iAD4RCWv3Tv9H/boijY8ZuxPqP8VlxEXdYnSBM2YnnWfcAWl3euMaxCRPvWuCzM9Pjz2ef3dVUlrfiOI6cy4A0y6q0Zn2rlw6w/6nT1Akj5vy0wak5nwl7QZcXRRm2FtdIQjBYgUJlJqwg7pzvqTVNGn//LnDOn2VmGZVdFlpF;4:wutVvZ2L97Oao1XQSaQ+XKXWVhNIiI4bZDxAb3xJK69T7VtIs5nwbZ7tYsuxQNUrEYT8uY9RT9oFSVK5iKU0hNADYEx6ZuPK+ehpO4LmhsJYLowfrwOhvEkeKx6gByyH396aSA/f36kp2mJSzi2shTz/qRB1HvLAK3wp/B2zMq4KjucSc1RFdeovbfx3T1rubWKSBueqJql+yzc5g5v8nVq5pAb/im5Yu5H7kimr+4Pp3NUmEKGxyJ4h0Nzuv+67puHEHEHkAtIP8Z9aAHnFzYTFIfHWqX9ywXwgv/S+alt4EbxHOeQCJB/3QFG125sZ6z1yNzbxe/+Y+r3DWxpRh3M+6WixsLtjg677oZjgu0GOsD8gguwrJtA3coUbdE3o
-X-Microsoft-Antispam-PRVS: <DB6PR0801MB13348AF91170185272D0135ACD420@DB6PR0801MB1334.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(211936372134217)(153496737603132);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231280)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0801MB1334;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1334;
-X-Forefront-PRVS: 0722981D2A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(376002)(366004)(396003)(39850400004)(346002)(189003)(199004)(53936002)(5660300001)(39060400002)(6116002)(3846002)(106356001)(23676004)(316002)(2486003)(86362001)(478600001)(33896004)(7696005)(105586002)(52116002)(76176011)(7736002)(50466002)(8936002)(305945005)(7416002)(81156014)(81166006)(230700001)(386003)(25786009)(2906002)(6506007)(8676002)(66066001)(103116003)(68736007)(97736004)(14444005)(486006)(26005)(186003)(956004)(58126008)(16526019)(9686003)(61506002)(47776003)(55016002)(446003)(476003)(11346002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB1334;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjEzMzQ7MjM6Yis1eTJLemdwZkFjK2xjK3R5bzFPdjc0?=
- =?utf-8?B?RFh4QkpBUUhkbmlDNUVIZW1ya1o5MUxIbEZYRytLWjdydm12bndMK1QzcUZy?=
- =?utf-8?B?VitObW9FTjErTW9YNzdVWmpuS3htSHNWRnFMTUpVazY1anY1Sk1kMHhlbkQz?=
- =?utf-8?B?Q3dqdlkvOVI4dVFZVXR4Y05zcXc3b0F4bXg5VlcyekpLRjVmenJ5U1N1NFg2?=
- =?utf-8?B?cGs0QWxzaDE5eTlINnpEWTdSRUErUVBXaG5ITlBoRWlmKzlRVkY0SmJXaGxX?=
- =?utf-8?B?ZkNOR3lVY1V3QkcvY3dTU2F3K2pNQ283SEUzQUxZK2R5cWI4cFpsYTVhbFlN?=
- =?utf-8?B?cWpEZHhzUGVXeVRSdGUzTlUvaE9jeC9HMzlUZHVYWkorcUlUVGZmZ2sxVzNL?=
- =?utf-8?B?eW1wWDRHMThvSk5kWFZKRnI5bkx4aUtTNXkvZzlzNDZqY3hQREMyb2N3R3Vr?=
- =?utf-8?B?M2VGb09NUzJvUlV0TGpiR1drTjd3MFpMdFhKMGUrYUFOSkVBWFFGVXgzWEc1?=
- =?utf-8?B?Sy82b1JPVnExbzUwR2V0aGozNENzWVVyNnUxMENsNmQ1WDRnUTZOcm1KbEpv?=
- =?utf-8?B?WE82ZG9lWW1iRmtDdmFjenJMNUFHeThqdXRmU0dGT3RqdkRqMFF6Sy9Ddjk4?=
- =?utf-8?B?ZDRrNXpSWEtuelBtVnFvcDNoVCs0cDVmc0tRZURXclBsRlZncFhsbWh3K0F3?=
- =?utf-8?B?TWJTZ1F3Z3Y2d214WmxsWnpEdjFlR0dadkVIei84OXQwZ3hDbHFOdko1bXdu?=
- =?utf-8?B?RWxwSWFvc3BhckU0NkNueGY5NVQ2aWhodUEwZHFVbnZtSlJOaDJBTE44UVdY?=
- =?utf-8?B?OFNON0drUWY1TlVMdGw0ZzdQbUNFZzZRQmNEVi91cTEvZHdSVWpmNlNWQ2lt?=
- =?utf-8?B?V0ptcXBwU1N6dTRoUHRUa0RIQjNvZk1zZURteUlla3BlZHNrNmY4Zk1pK2hI?=
- =?utf-8?B?Vjd5dTRGTkR5ZktBZFVSaWRrUHl0WFFwZDU2RjhOTkFoSHZ5UVlDUWFzNVBa?=
- =?utf-8?B?a3oyVVliMVZFWVVKU21FTkdydDA3VzZXNVhEUWZmc3Z6V1JTdTNqMnRYM2Yr?=
- =?utf-8?B?b3BFaWREcVFJSjdOdFBTdVFJVDdRQllGOC82b0luQWl6QkFtM25iWmNIczNl?=
- =?utf-8?B?S3BxNi9WZHJMVUJPdUYyd09jelJZeDZrdUgrdExxZGk0TGJHaTVYRU1wdkVr?=
- =?utf-8?B?VXZxTDRsMmU3LzdFQWZVaENabVIyclpzeTdjOWlHS3JZY3Jqc0x5N0xPVmlI?=
- =?utf-8?B?eHBlQWg5bi9nTStJUXl0NTBVTURlZVNrYXRmSEpJWmhZVDFqbEUyd0I4NldG?=
- =?utf-8?B?TVgxeHJFTUllWUt5TlJXNkRuNnJEOEx5RmgwcXc1VHFvQmhHbEl0WHM5VDFH?=
- =?utf-8?B?cTFValRoMnN2M1F4OXRUbVZ5UzRNZFlBY0VFaXJ2T05NY1pYVUZzdEc5ZkFh?=
- =?utf-8?B?U3ZMdExaRjVYT1VoMGI4cXNPckdYdWluQ1o0TWZXOUpoWkwrbkQvNjM4bDlm?=
- =?utf-8?B?VzluWUJUd2xSVU96c21qL2FOcTNEU2JCS3JmNVU4YTJwdmdKNkZwMS9Fa3pD?=
- =?utf-8?B?bzdETVJyUFUrSjdNTXJCZnVMSzZPbE5YdnpOT01TajYvbitpL2JwL3VKaHNI?=
- =?utf-8?B?MlJLUjBMNE0yOW1HQjlFMHdVZGdBeFVFVkFXcDhJV2ZyUE1rOTdjQXpYaEdV?=
- =?utf-8?Q?p+tA0bRTl/nIP42zIXLZucnxigzx+HYkYWfgom7LP?=
-X-Microsoft-Antispam-Message-Info: GkY+z5YDX3A6qI1AJHku6iHxGCtT5F1P5crbWgOZ7BkHuvkROOI+SxcAhNGlS72SMiVVwZoecgQTXCnev8KKkNDOBa7i/L1RuHvDTx9kpku/daFqRK5Du2GsDTh01SiocvUMdjKX1pDr3PuLAKN4Gy3+qDtFfLAbOE8lgfrXjeTSoR5ccEEgnXbuIuatqEHAu/c27vK5J1a7pLfMYfpo1OhhNTiqq1JM9R9Z4r9i1kySCVMS554qHBJBw9weySBXmCxY3hwpGZekEaIg2aa/DdsvxyTwH3+CwqqWw8WID4XNa5WltUkT7E4nBjEWBPzCozwq9u/bwhB0bxcrpVxXsRhdBXijFoAjBlk5wp/rXjM=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;6:5rSM+K8/ysQbI4D4zci2q9tWOQLSPHpOqXkwi+/jW2HUNvx3Xqfqw1myvz48s9fWpqWVq7QXyoZb9nvSt85BmzZxhmuB4aPrZPO8Ar8fNs84C/T9jyqlvYABjEu6X/3oXYOkbzEgdbLrJVquQ5HSahNwCwr8bY5r16U8qV0kL+2L2787lcmXOKToU63Q0UI/1ghtvICgF6pdGgkbmwkUvHi3vAZqZizGmedQb1MsHK+KSTXVuzkfiTF+NUKPNKXC4MZdD7AEyw7koVL0PHE5f1ziRh4gQaZNEnhBMF/BZE6tuZFWI0NyxkcDFNWd6oool/nq7aRCETBH+pM9DZghVFyvLKE4AcFkTyuxdP8yX1XttTYcs6MZ9UjiP8zmDm8nDiCiavmIKtq3OY51yks5Nd6SW16Llc35QJ6FgDE6EIaqK7qfSOE+iGBxo9dEzrsQlvnN44SCIbfQQvwnAjxoWQ==;5:9MVP6HMG8r3aKtALgRIvd74o1w9ywq7pQtmRIxCz5kraAFGp9d6sErqV4bdhJPpzIrLfwJIqfDWC7ByprWhtrbaeLxizUa/99AbOy8p7dr0HStJBIn/hX8W4pM7AaZZirdaxmevC9Nyk5j/ugZy24Ze2mEwU0TU6lSb/l5PnbIw=;24:JrYROb7KTyisnQGGGUtuRHJ8AWroUZFVKFxuXE3ltRxPnUYY4OTI2Tv6DdMs09dM4VBD9X6UIEhfoRqc3syyha95RwXmkCW8lk+D9BDglQU=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1334;7:UIt4puEifb+PyO/xXiWLzzrddVujc3Y+qqe3ETQco5lkKPddG7WnWXcQnyLVBggd/heDWXKZpv8yu7u1pTliUSNcJuO5k754Zb9x0pNzhHViS9Tsck639wmSZc9EaUBYFmTZAdTdCzFLG9+/m4BGat9jfINtTpdYvV9Q9/cE5fjaLYr596+jjbyWy6fl/svJE8M1knSkFu9/EnbZxt9jtn/Bwr8MMJUpyynGBB9Cb4nUaXeHcVT6FFYDG7KI+TKZ;20:KMnlMxMAqwL3j/18gKHM6jj7OKCbDIHkFFE72E8rT6TlI8AnIgJWvfYme2wd6KZfgQP9ITInnNcyrlxZz68B2QeM4uw3zJ8FtXFgpuFUjeovdMZbnluf8xbsU4Jdw4pLOhNYxFZxWMnb0Kz7BatNMFYm+OaFeoCym2uELSJzPUI=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jul 2018 15:10:23.6190 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b82ac58-213c-4393-caff-08d5e0f71b51
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1334
+In-Reply-To: <20180703145022.GA13744@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is just refactoring to allow next patches to have
-dst_memcg pointer in memcg_drain_list_lru_node().
+Am 03.07.2018 um 16:50 schrieb Mark Brown:
+> On Mon, Jul 02, 2018 at 07:34:21PM +0200, Andreas Färber wrote:
+>> Hi Mark,
+>>
+>> This driver is still evolving, there's newer code on my lora-next branch
+>> already: https://github.com/afaerber/linux/commits/lora-next
+> 
+> Please don't top post, reply in line with needed context.  This allows
+> readers to readily follow the flow of conversation and understand what
+> you are talking about and also helps ensure that everything in the
+> discussion is being addressed.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Tested-by: Shakeel Butt <shakeelb@google.com>
----
- include/linux/list_lru.h |    2 +-
- mm/list_lru.c            |   11 ++++++-----
- mm/memcontrol.c          |    2 +-
- 3 files changed, 8 insertions(+), 7 deletions(-)
+I did reply inline, if you cared to read on. ;)
 
-diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
-index c4cdda4dffa0..144d6d70320c 100644
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -70,7 +70,7 @@ int __list_lru_init(struct list_lru *lru, bool memcg_aware, bool lock_irq,
- 	__list_lru_init((lru), true, false, NULL, shrinker)
- 
- int memcg_update_all_list_lrus(int num_memcgs);
--void memcg_drain_all_list_lrus(int src_idx, int dst_idx);
-+void memcg_drain_all_list_lrus(int src_idx, struct mem_cgroup *dst_memcg);
- 
- /**
-  * list_lru_add: add an element to the lru list's tail
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 016c7d3924e4..467820201e2f 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -515,8 +515,9 @@ int memcg_update_all_list_lrus(int new_size)
- }
- 
- static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
--				      int src_idx, int dst_idx)
-+				      int src_idx, struct mem_cgroup *dst_memcg)
- {
-+	int dst_idx = dst_memcg->kmemcg_id;
- 	struct list_lru_one *src, *dst;
- 
- 	/*
-@@ -536,7 +537,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
- }
- 
- static void memcg_drain_list_lru(struct list_lru *lru,
--				 int src_idx, int dst_idx)
-+				 int src_idx, struct mem_cgroup *dst_memcg)
- {
- 	int i;
- 
-@@ -544,16 +545,16 @@ static void memcg_drain_list_lru(struct list_lru *lru,
- 		return;
- 
- 	for_each_node(i)
--		memcg_drain_list_lru_node(&lru->node[i], src_idx, dst_idx);
-+		memcg_drain_list_lru_node(&lru->node[i], src_idx, dst_memcg);
- }
- 
--void memcg_drain_all_list_lrus(int src_idx, int dst_idx)
-+void memcg_drain_all_list_lrus(int src_idx, struct mem_cgroup *dst_memcg)
- {
- 	struct list_lru *lru;
- 
- 	mutex_lock(&list_lrus_mutex);
- 	list_for_each_entry(lru, &list_lrus, list)
--		memcg_drain_list_lru(lru, src_idx, dst_idx);
-+		memcg_drain_list_lru(lru, src_idx, dst_memcg);
- 	mutex_unlock(&list_lrus_mutex);
- }
- #else
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f81581e26667..510c435a15dd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3246,7 +3246,7 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
- 	}
- 	rcu_read_unlock();
- 
--	memcg_drain_all_list_lrus(kmemcg_id, parent->kmemcg_id);
-+	memcg_drain_all_list_lrus(kmemcg_id, parent);
- 
- 	memcg_free_cache_id(kmemcg_id);
- }
+>> 2) This SPI device is in turn exposing the two SPI masters that you
+>> already found below, and I didn't see a sane way to split that code out
+>> into drivers/spi/, so it's in drivers/net/lora/ here - has there been
+>> any precedence either way?
+> 
+> A MFD?
 
+I know of mfd, but how would the the the net vs. spi pieces interact
+then? Some functions would need to be exported then or is there an
+easier way without needing to set a cross-module API in stone?
+
+>> Am 02.07.2018 um 18:12 schrieb Mark Brown:
+>>> On Sun, Jul 01, 2018 at 01:08:04PM +0200, Andreas Färber wrote:
+>>>> +static void sx1301_radio_spi_set_cs(struct spi_device *spi, bool enable)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	dev_dbg(&spi->dev, "setting SPI CS to %s\n", enable ? "1" : "0");
+>>>> +
+>>>> +	if (enable)
+>>>> +		return;
+> 
+>>> So we never disable chip select?
+> 
+>> Not here, I instead did that in transfer_one below.
+> 
+> That's obviously at best going to be fragile, you're implementing half
+> the operation here and half somewhere else which is most likely going to
+> break at some point when the framework changes.
+> 
+>>>> +		if (ret) {
+>>>> +			dev_err(&spi->dev, "SPI radio address write failed\n");
+>>>> +			return ret;
+>>>> +		}
+>>>> +
+>>>> +		ret = sx1301_write(ssx->parent, ssx->regs + REG_RADIO_X_DATA, (tx_buf && xfr->len >= 2) ? tx_buf[1] : 0);
+>>>> +		if (ret) {
+>>>> +			dev_err(&spi->dev, "SPI radio data write failed\n");
+>>>> +			return ret;
+>>>> +		}
+> 
+>>> This looks awfully like you're coming in at the wrong abstraction layer
+>>> and the hardware actually implements a register abstraction rather than
+>>> a SPI one so you should be using regmap as the abstraction.
+> 
+>> I don't understand. Ben has suggested using regmap for the SPI _device_
+>> that we're talking to, which may be a good idea. But this SX1301 device
+>> in turn has two SPI _masters_ talking to an SX125x slave each. I don't
+>> see how using regmap instead of my wrappers avoids this spi_controller?
+> 
+> It seems obvious from the code that this isn't actually interacting with
+> a SPI controller, you're writing an address and a value to a register
+> map rather than dealing with a byte stream.  There may be a SPI bus
+> somewhere behind some other hardware but you don't seem to be
+> interacting with it as such.
+> 
+>> The whole point of this spi_controller is to abstract and separate the
+>> SX1255 vs. SX1257 vs. whatever-radio-attached into a separate driver,
+>> instead of mixing it into the SX1301 driver - to me that looks cleaner
+>> and more extensible. It also has the side-effect that we could configure
+>> the two radios via DT (frequencies, clk output, etc.).
+> 
+> A register map would work just as well here, we already have plenty of
+> devices that abstract at this level (most obviously the I2C/SPI devices
+> that use it to offer both interfaces with a single core driver).
+
+The address and data registers together form a two-byte SPI message!
+
+It is transmitted by writing to the CS register.
+
+The received data is afterwards available in another register.
+
+HTE,
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
